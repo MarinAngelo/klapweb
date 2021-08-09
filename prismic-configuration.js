@@ -7,11 +7,11 @@ module.exports = {
   // your repository.
   //
   // Example: 'my-repo' if your Prismic repository URL is 'my-repo.prismic.io'.
-  prismicRepo: 'klap-webentwicklung',
+  prismicRepo: 'klap-web-site',
 
   // The default language for content in your Prismic repository.
-  defaultLanguage: 'en-us',
+  defaultLanguage: 'de-ch',
 
   // All available languages for content in your Prismic repository.
-  langs: ['en-us', 'fr-fr'],
+  langs: ['de-ch'],
 }
