@@ -1,0 +1,45 @@
+{
+  "name": "gatsby-multi-language-website",
+  "description": "Multi-language website example with Gatsby.js using Prismic headless CMS",
+  "author": "Prismic",
+  "dependencies": {
+    "gatsby": "^3.10.2",
+    "gatsby-plugin-image": "^1.10.1",
+    "gatsby-plugin-manifest": "^3.10.0",
+    "gatsby-plugin-prismic-previews": "^4.0.2",
+    "gatsby-plugin-react-helmet": "^4.10.0",
+    "gatsby-plugin-sass": "^4.10.0",
+    "gatsby-plugin-sharp": "^3.10.2",
+    "gatsby-source-filesystem": "^3.10.0",
+    "gatsby-source-prismic": "^4.0.2",
+    "gatsby-transformer-sharp": "^3.10.0",
+    "node-sass": "^6.0.1",
+    "prismic-javascript": "^3.0.2",
+    "prismic-reactjs": "^1.3.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.2"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,jsx,json,scss,md}\"",
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "start": "npm run clean && npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "start:prod": "npm run clean && npm run build && npm run serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prismicio/gatsby-multi-language-site"
+  }
+}
