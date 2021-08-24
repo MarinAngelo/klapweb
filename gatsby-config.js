@@ -7,7 +7,7 @@ const prismicConfig = require('./prismic-configuration')
 
 module.exports = {
   siteMetadata: {
-    title: 'Multi-language site',
+    title: 'Klap Web',
     description: 'Sample multi-language website with Prismic CMS & Gatsby.js',
   },
   plugins: [
