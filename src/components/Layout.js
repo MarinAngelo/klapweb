@@ -9,11 +9,6 @@ import { createGlobalStyle } from "styled-components"
 import { TopMenu } from './TopMenu'
 import { Footer } from './Footer'
 
-// web vitals
-getCLS(console.log);
-getFID(console.log);
-getLCP(console.log);
-
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
@@ -70,6 +65,11 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
       }
     }
   `)
+
+    // web vitals
+/*     getCLS(console.log);
+    getFID(console.log);
+    getLCP(console.log); */
 
   return (
     <>
