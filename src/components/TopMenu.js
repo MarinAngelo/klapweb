@@ -23,11 +23,11 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
   return (
     <header>
       <Navbar bg="light" expand="lg">
-        <Container>
+        <Container fluid>
           <Navbar.Brand href="#home">{topMenu.branding}</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+            <Nav className="ms-auto">
               {/* <Nav.Link href="#home">Home</Nav.Link> */}
               {topMenu.body.map((nav, i) => {
                 if(nav.slice_type === "2nd_level") {
@@ -36,7 +36,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                   {nav.items.map((navitem, i) => {
                     return (
                       <NavDropdown.Item key={i}> 
-                        <Link to={navitem.third_level_link.url} >
+                        <Link to={navitem.third_level_link.url} className="nav-link">
                           {navitem.third_level_link_text}
                         </Link>
                       </NavDropdown.Item>
@@ -46,8 +46,16 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 </NavDropdown>
                   )
                 }
+                if(nav.slice_type === "1st_level") {
+                  return (
+                    <Nav.Item key={i}>
+                      <Link to={nav.primary.nav_link.url} className="nav-link">
+                        {nav.primary.link_text}
+                      </Link>
+                    </Nav.Item>
+                  )
+                } else {return null}
               })}
-              <Nav.Link href="#link">Link</Nav.Link>
             </Nav>
                 <LanguageSwitcher activeDocMeta={activeDocMeta} />
           </Navbar.Collapse>
