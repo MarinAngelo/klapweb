@@ -1,10 +1,27 @@
 {
   "Main": {
     "display_title": {
+      "type": "Text",
+      "config": {
+        "label": "Display Titel",
+        "placeholder": "Display Titel wird nur im CMS angezeigt, nicht auf der Website",
+        "useAsTitle": true
+      }
+    },
+    "site_title": {
       "type": "StructuredText",
       "config": {
         "single": "heading1",
-        "label": "display_title"
+        "label": "Seiten Titel",
+        "placeholder": "Seiten Titel"
+      }
+    },
+    "content": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+        "label": "Text",
+        "placeholder": "Text"
       }
     },
     "body": {
@@ -12,203 +29,412 @@
       "fieldset": "Slice zone",
       "config": {
         "labels": {
-          "headline_with_button": [],
-          "full_width_image": [],
-          "info_with_image": [],
-          "text_info": [],
-          "email_signup": []
+          "hero": [],
+          "call_to_action_grid": [],
+          "price_list": [],
+          "anrisstext": [],
+          "carousel": [
+            {
+              "name": "bildergalerie",
+              "display": "Bildergalerie"
+            }
+          ]
         },
         "choices": {
-          "headline_with_button": {
+          "hero": {
             "type": "Slice",
-            "fieldset": "Headline with button",
-            "description": "Headline & description with button",
-            "icon": "library_books",
+            "fieldset": "Startbildschirm",
+            "description": "Ein Bildschirm-füllendes Element mit Foto und Text",
+            "icon": "card_membership",
             "display": "list",
             "non-repeat": {
-              "headline": {
+              "hero_title": {
                 "type": "StructuredText",
                 "config": {
-                  "single": "heading1, heading2",
-                  "label": "headline"
+                  "single": "heading1",
+                  "label": "Startbildschirm Titel",
+                  "placeholder": "Startbildschirm Titel"
                 }
               },
-              "description": {
+              "hero_content": {
                 "type": "StructuredText",
                 "config": {
-                  "multi": "paragraph, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "description"
+                  "single": "heading2",
+                  "label": "Startbildschirm Untertitel",
+                  "placeholder": "Startbildschirm Untertitel"
                 }
               },
-              "button": {
-                "type": "Image",
+              "hereo_cta_button_label": {
+                "type": "Text",
                 "config": {
-                  "constraint": {
-                    "width": 235,
-                    "height": 75
-                  },
-                  "thumbnails": [],
-                  "label": "button"
-                }
-              }
-            },
-            "repeat": {}
-          },
-          "full_width_image": {
-            "type": "Slice",
-            "fieldset": "Full width image",
-            "description": "Full page width featured image",
-            "icon": "image",
-            "display": "list",
-            "non-repeat": {
-              "background_image_position": {
-                "type": "Select",
-                "config": {
-                  "options": ["Left", "Right"],
-                  "default_value": "Left",
-                  "label": "background_image_position"
+                  "label": "Hereo CTA Button Label",
+                  "placeholder": "Call to Action Schaltflächen-Label"
                 }
               },
-              "image": {
-                "type": "Image",
+              "cta_target": {
+                "type": "Link",
                 "config": {
-                  "constraint": {
-                    "width": 1080,
-                    "height": 580
-                  },
-                  "thumbnails": [],
-                  "label": "image"
+                  "select": "document",
+                  "customtypes": [
+                    "page"
+                  ],
+                  "label": "CTA Target",
+                  "placeholder": "Call to Action Schaltflächen Ziel"
                 }
-              }
-            },
-            "repeat": {}
-          },
-          "info_with_image": {
-            "type": "Slice",
-            "fieldset": "Info with image",
-            "description": "Text section with featured image",
-            "icon": "art_track",
-            "display": "list",
-            "non-repeat": {
-              "featured_image": {
+              },
+              "background_image": {
                 "type": "Image",
                 "config": {
                   "constraint": {
-                    "width": 600,
-                    "height": 690
+                    "width": null
                   },
                   "thumbnails": [
                     {
                       "name": "tablet",
-                      "width": 800,
-                      "height": 400
+                      "width": null,
+                      "height": 1024
                     },
                     {
-                      "name": "mobile",
-                      "width": 400,
-                      "height": 300
+                      "name": "laptop",
+                      "width": 1200,
+                      "height": null
+                    },
+                    {
+                      "name": "phone_landscape",
+                      "width": 576,
+                      "height": null
+                    },
+                    {
+                      "name": "phone",
+                      "width": null,
+                      "height": 768
                     }
                   ],
-                  "label": "featured_image"
+                  "label": "Background Image"
                 }
               },
+              "bg_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Hintergrund Farbe des Startbildschirms (sichtbar bei kleinen Bildschirmen, nicht sichtbar bei Verwendung von Bild)"
+                }
+              },
+              "banner_bg_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Hintergrundfarbe des Banners"
+                }
+              },
+              "banner_bg_transparency": {
+                "type": "Number",
+                "config": {
+                  "label": "Banner-Hintergrund-Transparenz in Prozent",
+                  "placeholder": "Hintergrund-Transparenz in Prozent (0-100)"
+                }
+              },
+              "text_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Schriftfarbe"
+                }
+              },
+              "button_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Schaltfläche Schrift- und Rahmenfarbe"
+                }
+              },
+              "button_bg_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Schaltrlächen Hintergrundfarbe"
+                }
+              },
+              "button_transparent": {
+                "type": "Boolean",
+                "config": {
+                  "placeholder_false": "Nein",
+                  "placeholder_true": "Ja",
+                  "default_value": true,
+                  "label": "Schaltflächen-Hintergrund transparent?"
+                }
+              }
+            },
+            "repeat": {}
+          },
+          "call_to_action_grid": {
+            "type": "Slice",
+            "fieldset": "Call to Action Boxen",
+            "description": "Call to action grid",
+            "icon": "face",
+            "display": "list",
+            "non-repeat": {
               "section_title": {
                 "type": "StructuredText",
                 "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Section Title",
+                  "placeholder": "Bereichs-Titel"
+                }
+              }
+            },
+            "repeat": {
+              "featured_image": {
+                "type": "Image",
+                "config": {
+                  "constraint": {},
+                  "thumbnails": [],
+                  "label": "Bild"
+                }
+              },
+              "call_to_action_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Call to action title",
+                  "placeholder": "Call to action Titel"
+                }
+              },
+              "content": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+                  "label": "Content",
+                  "placeholder": "Call to action Inhalte"
+                }
+              },
+              "button_label": {
+                "type": "Text",
+                "config": {
+                  "label": "Button Label",
+                  "placeholder": "Schaltflächen-Text"
+                }
+              },
+              "button_destination": {
+                "type": "Link",
+                "config": {
+                  "select": "document",
+                  "customtypes": [
+                    "page"
+                  ],
+                  "label": "Button Destination",
+                  "placeholder": "Schaltflächen Link-Ziel"
+                }
+              },
+              "anchor_link_label": {
+                "type": "Text",
+                "config": {
+                  "label": "Anker Link Text",
+                  "placeholder": "Anker Link Text"
+                }
+              },
+              "link_to_anchor": {
+                "type": "Text",
+                "config": {
+                  "label": "Link auf Anker",
+                  "placeholder": "Git hier den Anker ein, den du bei einem Text unter auf der gleichen Seite gesetzt hast."
+                }
+              }
+            }
+          },
+          "anrisstext": {
+            "type": "Slice",
+            "fieldset": "Anrisstext",
+            "description": "Anrisstext, die mit einem Link zu weiterführenden Texten führt.",
+            "icon": "arrow_forward",
+            "display": "list",
+            "non-repeat": {},
+            "repeat": {
+              "anchor": {
+                "type": "Text",
+                "config": {
+                  "label": "Anker",
+                  "placeholder": "Git hier einen Anker ein um vom Seitenanfang hier hin zu springen."
+                }
+              },
+              "title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Titel",
+                  "placeholder": "Titel"
+                }
+              },
+              "teasertext": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "label": "Anrisstext",
+                  "placeholder": "Git hier einen Anrisstext ein..."
+                }
+              },
+              "button_label": {
+                "type": "Text",
+                "config": {
+                  "label": "Schaltflächen Text",
+                  "placeholder": "Gib hier den Schaltflächen Text für Link zu Volltext ein"
+                }
+              },
+              "link_to_correspondig_text": {
+                "type": "Link",
+                "config": {
+                  "select": "document",
+                  "customtypes": [
+                    "page"
+                  ],
+                  "label": "Link zu Volltext",
+                  "placeholder": "Setze hier den Link zum zugehörigen Volltext"
+                }
+              }
+            }
+          },
+          "carousel": {
+            "type": "Slice",
+            "fieldset": "Bildergalerie",
+            "description": "Bildergalerie",
+            "icon": "image",
+            "display": "list",
+            "non-repeat": {
+              "section_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Abschnittüberschrift",
+                  "placeholder": "Git hier eine Abschnittüberschrift ein"
+                }
+              }
+            },
+            "repeat": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "constraint": {},
+                  "thumbnails": [],
+                  "label": "Bild"
+                }
+              },
+              "alt": {
+                "type": "Text",
+                "config": {
+                  "label": "Alternativer Text",
+                  "placeholder": "Alternativer Text"
+                }
+              },
+              "link": {
+                "type": "Link",
+                "config": {
+                  "label": "Link",
+                  "placeholder": "Link",
+                  "select": null
+                }
+              },
+              "caption_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Bildtitel",
+                  "placeholder": "Gib hier einen Bildtitel ein"
+                }
+              },
+              "caption_text": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "label": "Bildtext",
+                  "placeholder": "Gib hier einen kurzen Text zum Bild ein"
+                }
+              }
+            }
+          },
+          "bild_und_text": {
+            "type": "Slice",
+            "fieldset": "Bild und Text",
+            "description": "Eine Komponente mit Bild und Text",
+            "icon": "account_balance_wallet",
+            "display": "grid",
+            "non-repeat": {},
+            "repeat": {
+              "picture": {
+                "type": "Image",
+                "config": {
+                  "constraint": {},
+                  "thumbnails": [],
+                  "label": "Bild"
+                }
+              },
+              "caption": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Bild Titel"
+                }
+              },
+              "title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Überschrift",
+                  "placeholder": "Überschrift"
                 }
               },
               "text": {
                 "type": "StructuredText",
                 "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
+                  "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
                   "allowTargetBlank": true,
-                  "label": "text"
+                  "label": "Text",
+                  "placeholder": "Text"
+                }
+              },
+              "alignment": {
+                "type": "Select",
+                "config": {
+                  "options": [
+                    "Bild rechts Text links",
+                    "Text rechts Bild links"
+                  ],
+                  "default_value": "Bild rechts Text links",
+                  "label": "Ausrichtung",
+                  "placeholder": "Ausrichtung"
                 }
               }
-            },
+            }
+          },
+          "text_block": {
+            "type": "Slice",
+            "fieldset": "Text Block",
+            "description": "Text Block",
+            "icon": "format_color_text",
+            "display": "list",
+            "non-repeat": {},
             "repeat": {}
           },
-          "text_info": {
+          "bilder-karussell": {
             "type": "Slice",
-            "fieldset": "Text info",
-            "description": "2 column text section",
-            "icon": "subject",
+            "fieldset": "Bilder-Karussell",
+            "description": "Bilder-Karussell",
+            "icon": "face",
             "display": "list",
-            "non-repeat": {
-              "section_title": {
-                "type": "StructuredText",
+            "non-repeat": {},
+            "repeat": {
+              "image": {
+                "type": "Image",
                 "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
-                }
-              },
-              "left_column_text": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "left_column_text"
-                }
-              },
-              "right_column_text": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "right_column_text"
+                  "constraint": {
+                    "width": 2000,
+                    "height": 800
+                  },
+                  "thumbnails": [
+                    {
+                      "name": "phone",
+                      "width": 411,
+                      "height": null
+                    }
+                  ],
+                  "label": "Bild"
                 }
               }
-            },
-            "repeat": {}
-          },
-          "email_signup": {
-            "type": "Slice",
-            "fieldset": "Email signup",
-            "description": "Email signup form",
-            "icon": "email",
-            "display": "list",
-            "non-repeat": {
-              "section_title": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
-                }
-              },
-              "description": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "description"
-                }
-              },
-              "input_label": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "input_label"
-                }
-              },
-              "input_placeholder": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "input_placeholder"
-                }
-              },
-              "button_text": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "button_text"
-                }
-              }
-            },
-            "repeat": {}
+            }
           }
         }
       }

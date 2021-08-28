@@ -48,11 +48,11 @@ export const query = graphql`
             slice_type
             slice_label
           }
-          ...HomepageDataBodyEmailSignup
-          ...HomepageDataBodyFullWidthImage
-          ...HomepageDataBodyHeadlineWithButton
-          ...HomepageDataBodyInfoWithImage
-          ...HomepageDataBodyTextInfo
+          #...HomepageDataBodyEmailSignup
+          #...HomepageDataBodyFullWidthImage
+          #...HomepageDataBodyHeadlineWithButton
+          #...HomepageDataBodyInfoWithImage
+          #...HomepageDataBodyTextInfo
         }
       }
     }

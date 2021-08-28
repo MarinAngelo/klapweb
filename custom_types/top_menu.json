@@ -1,32 +1,108 @@
 {
-  "Main": {
-    "display_title": {
-      "type": "StructuredText",
+  "Navigation": {
+    "display_name": {
+      "type": "Text",
       "config": {
-        "single": "heading1",
-        "label": "display_title"
+        "label": "Display Anzeige",
+        "placeholder": "Hauptnavigation"
       }
     },
-    "menu_links": {
-      "type": "Group",
+    "branding": {
+      "type": "Text",
       "config": {
-        "fields": {
-          "label": {
-            "type": "StructuredText",
-            "config": {
-              "single": "paragraph",
-              "label": "label"
-            }
+        "label": "Firmen Name",
+        "placeholder": "Firmen Name"
+      }
+    },
+    "logo": {
+      "type": "Image",
+      "config": {
+        "constraint": {},
+        "thumbnails": [],
+        "label": "Logo"
+      }
+    },
+    "menue_transparent": {
+      "type": "Number",
+      "config": {
+        "label": "Transparenz der Kopfzeile (Prozentual)",
+        "placeholder": "50"
+      }
+    },
+    "body": {
+      "type": "Slices",
+      "fieldset": "Slice zone",
+      "config": {
+        "choices": {
+          "1st_level": {
+            "type": "Slice",
+            "fieldset": "1st Level",
+            "description": "1st Level Nav item",
+            "icon": "filter_1",
+            "display": "list",
+            "non-repeat": {
+              "nav_link": {
+                "type": "Link",
+                "config": {
+                  "allowTargetBlank": true,
+                  "label": "Link Ziel",
+                  "placeholder": "/kontakt",
+                  "select": null
+                }
+              },
+              "link_text": {
+                "type": "Text",
+                "config": {
+                  "label": "Link Text",
+                  "placeholder": "Kontakt"
+                }
+              }
+            },
+            "repeat": {}
           },
-          "link": {
-            "type": "Link",
-            "config": {
-              "label": "link",
-              "placeholder": "Select a Link..."
+          "2nd_level": {
+            "type": "Slice",
+            "fieldset": "2nd Level",
+            "description": "2nd Level Nav item",
+            "icon": "filter_2",
+            "display": "list",
+            "non-repeat": {
+              "nav_link": {
+                "type": "Link",
+                "config": {
+                  "label": "Nav Link",
+                  "allowTargetBlank": true,
+                  "select": null
+                }
+              },
+              "link_text": {
+                "type": "Text",
+                "config": {
+                  "label": "Link Text",
+                  "placeholder": "Link Text..."
+                }
+              }
+            },
+            "repeat": {
+              "third_level_link": {
+                "type": "Link",
+                "config": {
+                  "allowTargetBlank": true,
+                  "label": "3rd Level Link Ziel",
+                  "placeholder": "Auswahl obn rechts beachten",
+                  "select": null
+                }
+              },
+              "third_level_link_text": {
+                "type": "Text",
+                "config": {
+                  "label": "3rd Level Link Text",
+                  "placeholder": "Mein mega Angebot"
+                }
+              }
             }
           }
-        },
-        "label": "menu_links"
+        }
       }
     }
   }
