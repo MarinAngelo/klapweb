@@ -9,6 +9,7 @@ import Container from 'react-bootstrap/Container'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
+  console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
     ? topMenu.menu_links.map((menuLink, index) => (
         <li key={`top-nav-${index}`}>
@@ -23,20 +24,32 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
     <header>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand href="#home">{topMenu.branding}</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
+              {/* <Nav.Link href="#home">Home</Nav.Link> */}
+              {topMenu.body.map((nav, i) => {
+                if(nav.slice_type === "2nd_level") {
+                  return (
+                <NavDropdown title={nav.primary.link_text} id="basic-nav-dropdown" key={i}>
+                  {nav.items.map((navitem, i) => {
+                    return (
+                      <NavDropdown.Item key={i}> 
+                        <Link to={navitem.third_level_link.url} >
+                          {navitem.third_level_link_text}
+                        </Link>
+                      </NavDropdown.Item>
+                    )
+                  })}
+                  {/* <NavDropdown.Divider /> */}
+                </NavDropdown>
+                  )
+                }
+              })}
               <Nav.Link href="#link">Link</Nav.Link>
-              <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-              </NavDropdown>
             </Nav>
+                <LanguageSwitcher activeDocMeta={activeDocMeta} />
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -69,7 +82,7 @@ export const query = graphql`
           primary {
             link_text
             nav_link {
-              uid
+              url
             }
           }
           slice_type
@@ -78,16 +91,12 @@ export const query = graphql`
           slice_type
           primary {
             link_text
-            nav_link {
-              lang
-              uid
-            }
           }
           items {
             third_level_link_text
             third_level_link {
               lang
-              uid
+              url
             }
           }
         }

@@ -67,14 +67,6 @@
             "icon": "filter_2",
             "display": "list",
             "non-repeat": {
-              "nav_link": {
-                "type": "Link",
-                "config": {
-                  "label": "Nav Link",
-                  "allowTargetBlank": true,
-                  "select": null
-                }
-              },
               "link_text": {
                 "type": "Text",
                 "config": {
