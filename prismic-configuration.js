@@ -13,5 +13,5 @@ module.exports = {
   defaultLanguage: 'de-ch',
 
   // All available languages for content in your Prismic repository.
-  langs: ['de-ch'],
+  langs: ['de-ch', 'en-gb'],
 }

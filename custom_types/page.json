@@ -1,16 +1,26 @@
 {
   "Main": {
-    "display_title": {
-      "type": "StructuredText",
-      "config": {
-        "single": "heading1",
-        "label": "display_title"
-      }
-    },
     "uid": {
       "type": "UID",
       "config": {
-        "label": "uid"
+        "label": "Slug",
+        "placeholder": "URL-Teil nach \"www.deine-url/\""
+      }
+    },
+    "page_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1",
+        "label": "Page title",
+        "placeholder": "Seiten Titel"
+      }
+    },
+    "content": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+        "label": "Content",
+        "placeholder": "Inhalte"
       }
     },
     "body": {
@@ -18,203 +28,72 @@
       "fieldset": "Slice zone",
       "config": {
         "labels": {
-          "headline_with_button": [],
-          "full_width_image": [],
-          "info_with_image": [],
-          "text_info": [],
-          "email_signup": []
+          "preisliste": []
         },
         "choices": {
-          "headline_with_button": {
+          "preisliste": {
             "type": "Slice",
-            "fieldset": "Headline with button",
-            "description": "Headline & description with button",
-            "icon": "library_books",
+            "fieldset": "Preisliste",
+            "description": "Preisliste",
+            "icon": "format_list_bulleted",
             "display": "list",
             "non-repeat": {
-              "headline": {
+              "price_section_title": {
                 "type": "StructuredText",
                 "config": {
-                  "single": "heading1, heading2",
-                  "label": "headline"
-                }
-              },
-              "description": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "description"
-                }
-              },
-              "button": {
-                "type": "Image",
-                "config": {
-                  "constraint": {
-                    "width": 235,
-                    "height": 75
-                  },
-                  "thumbnails": [],
-                  "label": "button"
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Überschrift Preisliten Abschnitt",
+                  "placeholder": "Hier Überschrift Preisliten Abschnitt eingeben"
                 }
               }
             },
-            "repeat": {}
-          },
-          "full_width_image": {
-            "type": "Slice",
-            "fieldset": "Full width image",
-            "description": "Full page width featured image",
-            "icon": "image",
-            "display": "list",
-            "non-repeat": {
-              "background_image_position": {
+            "repeat": {
+              "price_list_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Preislisten Überschrift",
+                  "placeholder": "Hier Preislisten Überschrift eingeben"
+                }
+              },
+              "price_description": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "label": "Preis Beschreibung",
+                  "placeholder": "Hier Preis Beschreibung eingeben"
+                }
+              },
+              "price": {
+                "type": "Number",
+                "config": {
+                  "label": "Preis",
+                  "placeholder": "Hier Preis eingeben"
+                }
+              },
+              "price_annex": {
                 "type": "Select",
                 "config": {
-                  "options": ["Left", "Right"],
-                  "default_value": "Left",
-                  "label": "background_image_position"
-                }
-              },
-              "image": {
-                "type": "Image",
-                "config": {
-                  "constraint": {
-                    "width": 1080,
-                    "height": 580
-                  },
-                  "thumbnails": [],
-                  "label": "image"
-                }
-              }
-            },
-            "repeat": {}
-          },
-          "info_with_image": {
-            "type": "Slice",
-            "fieldset": "Info with image",
-            "description": "Text section with featured image",
-            "icon": "art_track",
-            "display": "list",
-            "non-repeat": {
-              "featured_image": {
-                "type": "Image",
-                "config": {
-                  "constraint": {
-                    "width": 600,
-                    "height": 690
-                  },
-                  "thumbnails": [
-                    {
-                      "name": "tablet",
-                      "width": 800,
-                      "height": 400
-                    },
-                    {
-                      "name": "mobile",
-                      "width": 400,
-                      "height": 300
-                    }
+                  "options": [
+                    "Am beliebtesten",
+                    "Empfohlen"
                   ],
-                  "label": "featured_image"
+                  "label": "Preis Zusatz",
+                  "placeholder": "Hier Preis Zusatz auswählen"
                 }
               },
-              "section_title": {
-                "type": "StructuredText",
+              "price_type": {
+                "type": "Select",
                 "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
-                }
-              },
-              "text": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "text"
+                  "options": [
+                    "Pauschal",
+                    "Jährlich"
+                  ],
+                  "label": "Preis Typ",
+                  "placeholder": "Hier Preis Typ auswählen"
                 }
               }
-            },
-            "repeat": {}
-          },
-          "text_info": {
-            "type": "Slice",
-            "fieldset": "Text info",
-            "description": "2 column text section",
-            "icon": "subject",
-            "display": "list",
-            "non-repeat": {
-              "section_title": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
-                }
-              },
-              "left_column_text": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "left_column_text"
-                }
-              },
-              "right_column_text": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, heading3, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "right_column_text"
-                }
-              }
-            },
-            "repeat": {}
-          },
-          "email_signup": {
-            "type": "Slice",
-            "fieldset": "Email signup",
-            "description": "Email signup form",
-            "icon": "email",
-            "display": "list",
-            "non-repeat": {
-              "section_title": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "heading1, heading2",
-                  "label": "section_title"
-                }
-              },
-              "description": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph, strong, em, hyperlink, list-item, o-list-item",
-                  "allowTargetBlank": true,
-                  "label": "description"
-                }
-              },
-              "input_label": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "input_label"
-                }
-              },
-              "input_placeholder": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "input_placeholder"
-                }
-              },
-              "button_text": {
-                "type": "StructuredText",
-                "config": {
-                  "single": "paragraph",
-                  "label": "button_text"
-                }
-              }
-            },
-            "repeat": {}
+            }
           }
         }
       }
