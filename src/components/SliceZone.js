@@ -6,6 +6,7 @@ import {
   HeadlineWithButton,
   InfoWithImage,
   TextInfo,
+  Hero,
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
@@ -15,6 +16,7 @@ export const SliceZone = ({ slices }) => {
     full_width_image: FullWidthImage,
     info_with_image: InfoWithImage,
     text_info: TextInfo,
+    hero: Hero,
   }
 
   return slices.map((slice, index) => {
