@@ -24,7 +24,9 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
     <header>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">{topMenu.branding}</Navbar.Brand>
+          <Link to="/" className="nav-link">
+          <Navbar.Brand href="/">{topMenu.branding}</Navbar.Brand>
+          </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">

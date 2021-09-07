@@ -6,7 +6,8 @@ import { repositoryConfigs } from '../utils/prismicPreviews'
 
 import { Layout } from '../components/Layout'
 import { SliceZone } from '../components/SliceZone'
-import { RichText } from 'prismic-reactjs'
+import { PageTitle } from '../components/PageTitle'
+import { PageContent } from '../components/PageContent'
 
 const PageTemplate = ({ data }) => {
   console.log('Page data', data)
@@ -27,8 +28,8 @@ const PageTemplate = ({ data }) => {
 
   return (
     <Layout topMenu={topMenu.data} activeDocMeta={activeDoc}>
-      <RichText render={data.prismicPage.data.page_title.raw || []} />
-      <RichText render={data.prismicPage.data.content.raw || []} />
+      <PageTitle pageTitle={data.prismicPage.data.page_title.raw} />
+      <PageContent pageContent={data.prismicPage.data.content.raw} />
       <SliceZone slices={page.body} />
     </Layout>
   )
@@ -62,6 +63,7 @@ export const query = graphql`
             slice_label
             slice_type
           }
+          ...PrismicPageDataBodyPreisliste
           #...PageDataBodyEmailSignup
           #...PageDataBodyFullWidthImage
           #...PageDataBodyHeadlineWithButton

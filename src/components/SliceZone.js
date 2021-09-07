@@ -7,6 +7,7 @@ import {
   InfoWithImage,
   TextInfo,
   Hero,
+  Preisliste,
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
@@ -17,6 +18,7 @@ export const SliceZone = ({ slices }) => {
     info_with_image: InfoWithImage,
     text_info: TextInfo,
     hero: Hero,
+    preisliste: Preisliste,
   }
 
   return slices.map((slice, index) => {
