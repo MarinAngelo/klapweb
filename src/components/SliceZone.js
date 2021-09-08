@@ -8,6 +8,9 @@ import {
   TextInfo,
   Hero,
   Preisliste,
+  CallToActionGrid,
+  Anrisstext,
+  Carousel,
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
@@ -19,6 +22,9 @@ export const SliceZone = ({ slices }) => {
     text_info: TextInfo,
     hero: Hero,
     preisliste: Preisliste,
+    call_to_action_grid: CallToActionGrid,
+    anrisstext: Anrisstext,
+    carousel: Carousel,
   }
 
   return slices.map((slice, index) => {

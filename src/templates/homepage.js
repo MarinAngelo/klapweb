@@ -49,6 +49,9 @@ export const query = graphql`
             slice_label
           }
           ...PrismicHomepageDataBodyHero
+          ...PrismicHomepageDataBodyCallToActionGrid
+          ...PrismicHomepageDataBodyAnrisstext
+          ...PrismicHomepageDataBodyCarousel
           #...HomepageDataBodyEmailSignup
           #...HomepageDataBodyFullWidthImage
           #...HomepageDataBodyHeadlineWithButton
