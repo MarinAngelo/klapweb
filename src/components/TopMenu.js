@@ -9,7 +9,7 @@ import Container from 'react-bootstrap/Container'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
-  console.log('Top Menu', topMenu);
+  // console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
     ? topMenu.menu_links.map((menuLink, index) => (
         <li key={`top-nav-${index}`}>

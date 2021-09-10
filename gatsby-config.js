@@ -14,6 +14,12 @@ module.exports = {
   plugins: [
     'gatsby-plugin-ipfs',
     {
+      resolve: "gatsby-plugin-anchor-links",
+      options: {
+        offset: -100
+      }
+    },
+    {
       resolve: 'gatsby-source-prismic',
       options: {
         repositoryName: prismicConfig.prismicRepo,

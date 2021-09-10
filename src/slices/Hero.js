@@ -32,7 +32,7 @@ const PageCover = styled.section`
 `
 
 export const Hero = ({ slice }) => {
-    console.log('Hero data', slice)
+    // console.log('Hero data', slice)
     return (
         <PageCover className="d-flex position-relative"
             bgImage={slice.primary.background_image.url}
