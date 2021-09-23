@@ -93,7 +93,7 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
       </Helmet>
       <GlobalStyle />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
-      <Container fluid style={{ paddingLeft: "-15px", paddingRight: "-15px" }}>
+      <Container fluid >
       <main>{children}</main>
       </Container>
       <Footer />

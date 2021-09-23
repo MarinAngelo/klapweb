@@ -7,6 +7,29 @@ import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Container from 'react-bootstrap/Container'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import styled from 'styled-components'
+
+const StyledNavbar = styled(Navbar)`
+// Extra small devices (portrait phones, less than 576px)
+// No media query for xs since this is the default in Bootstrap
+background-color: transparent !important;
+// Small devices (landscape phones, 576px and up, col-sm)
+@media (min-width: 576px) {
+
+}
+// Medium devices (tablets, 768px and up, col-md)
+@media (min-width: 768px) {
+
+}
+// Large devices (desktops, 992px and up, col-lg)
+@media (min-width: 992px) {
+
+}
+// Extra large devices (large desktops, 1200px and up, col-xl)
+@media (min-width: 1200px) {
+
+}
+`
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
   // console.log('Top Menu', topMenu);
@@ -22,7 +45,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
 
   return (
     <header>
-      <Navbar bg="light" expand="lg">
+      <Navbar expand="lg" fixed="top">
         <Container>
           <Link to="/" className="nav-link">
           <Navbar.Brand>{topMenu.branding}</Navbar.Brand>

@@ -7,21 +7,20 @@ const StyledAnchorLinkButton = styled(AnchorLink)`
     border-radius: 15px;
     letter-spacing: 2px;
     text-decoration: none !important;
-    border: 2px solid;
+    border: 1px solid;
 
     color: var(--page-link-color);
     border-color: var(--page-link-color);
     display: inline-block;
 
     padding: 0.4rem 0.8rem;
-    font-size: 1.3rem;
+    font-size: 1rem;
 
     &:hover{
         color: var(--page-button-hover-color) !important;
         background: var(--page-button-hover-bg-color);
         border-color: var(--page-link-color);
         transition-duration: 0.4s;
-
     }
 
     // Small devices (landscape phones, 576px and up)

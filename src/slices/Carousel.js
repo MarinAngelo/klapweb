@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { RichText } from 'prismic-reactjs'
 
 const StyledImageSlider = styled(ImageSlider)`
-  margin-left: -15px;
-  margin-right: -15px;
+  margin-left: -12px;
+  margin-right: -12px;
 `
 
 export const Carousel = ({ slice }) => {
