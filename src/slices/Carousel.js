@@ -3,6 +3,8 @@ import { graphql } from 'gatsby'
 import ImageSlider from 'react-bootstrap/Carousel'
 import styled from 'styled-components'
 import { RichText } from 'prismic-reactjs'
+import { Row, Col } from 'react-bootstrap'
+import SectionTitle from '../components/SectionTitle'
 
 const StyledImageSlider = styled(ImageSlider)`
   margin-left: -12px;
@@ -13,12 +15,15 @@ export const Carousel = ({ slice }) => {
     console.log('Carousel data', slice)
 
     return (
-        <div>
-        {/* <SectionTitle title={slice.primary.section_title} /> */}
+      <>
+        <SectionTitle title={slice.primary.section_title.raw} style={{color: "white"}} />
+      <Row className="mt-4 mt-md-5 mb-4 mb-md-5" style={{background: "black", padding: "5vw"}}>
+          <Col md={1}></Col>
+          <Col>
         <StyledImageSlider>
           {slice.items.map((slice, i) => (
             <ImageSlider.Item key={i}>
-              <a href={slice.link}>
+              <a href={slice.link.url} target="_blank">
                 <img
                   className="d-block w-100"
                   src={slice.image.url}
@@ -32,7 +37,10 @@ export const Carousel = ({ slice }) => {
             </ImageSlider.Item>
           ))}
         </StyledImageSlider>
-        </div>
+        </Col>
+        <Col md={1}></Col>
+        </Row>
+        </>
     )
 }
 
