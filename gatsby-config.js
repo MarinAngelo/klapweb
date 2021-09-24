@@ -6,13 +6,13 @@ dotenv.config()
 const prismicConfig = require('./prismic-configuration')
 
 module.exports = {
-  pathPrefix: '__GATSBY_IPFS_PATH_PREFIX__',
+  // pathPrefix: '__GATSBY_IPFS_PATH_PREFIX__',
   siteMetadata: {
     title: 'Klap Web',
     description: 'Sample multi-language website with Prismic CMS & Gatsby.js',
   },
   plugins: [
-    'gatsby-plugin-ipfs',
+    // 'gatsby-plugin-ipfs',
     {
       resolve: "gatsby-plugin-anchor-links",
       options: {
