@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { Link, graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 import { StaticImage } from 'gatsby-plugin-image'
@@ -12,7 +13,7 @@ import styled from 'styled-components'
 const StyledNavbar = styled(Navbar)`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
-background-color: transparent !important;
+background-color: ${props => props.scrolled ? "silver" : null};
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
 
@@ -32,6 +33,14 @@ background-color: transparent !important;
 `
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
+
+  const [scroll, setScroll] = useState(false);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      setScroll(window.scrollY > 150);
+    });
+  }, []);
   // console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
     ? topMenu.menu_links.map((menuLink, index) => (
@@ -45,7 +54,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
 
   return (
     <header>
-      <Navbar expand="lg" fixed="top">
+      <StyledNavbar expand="lg" fixed="top" scrolled={scroll ? 1 : 0}>
         <Container>
           <Link to="/" className="nav-link">
           <Navbar.Brand>{topMenu.branding}</Navbar.Brand>
@@ -85,7 +94,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 <LanguageSwitcher activeDocMeta={activeDocMeta} />
           </Navbar.Collapse>
         </Container>
-      </Navbar>
+      </StyledNavbar>
       {/* <div className="menu">
         <Link to="/">
           <StaticImage
