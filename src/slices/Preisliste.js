@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
-import { Row, Card } from 'react-bootstrap'
+import { Row, Card, Col } from 'react-bootstrap'
 import styled from 'styled-components'
+import MainLayoutPart from '../components/MainLayoutPart'
 
 const StyledCard = styled(Card)`
     // determins breakepoint
@@ -22,11 +23,16 @@ const StyledCard = styled(Card)`
 `
 
 export const Preisliste = ({ slice }) => {
-  console.log('Preislisten data', slice)
-  return (
-    <div>
-      <RichText render={slice.primary.price_section_title.raw} />
-      <Row className="justify-content-md-center" xs={1} md={2} lg={12}>
+  // console.log('Preislisten data', slice)
+
+  const priceListContent = (
+    <>
+    <Row className="mb-3 mb-lg-5">
+      <Col>
+    <RichText render={slice.primary.price_section_title.raw} />
+      </Col>
+    </Row>
+      <Row className="justify-content-md-center" xs={1} md={2}>
         {slice.items.map((price, i) => {
           return (
             <StyledCard annex={price.price_annex}>
@@ -49,7 +55,10 @@ export const Preisliste = ({ slice }) => {
           )
         })}
       </Row>
-    </div>
+      </>
+  )
+  return (
+    <MainLayoutPart content={priceListContent} />
   )
 }
 

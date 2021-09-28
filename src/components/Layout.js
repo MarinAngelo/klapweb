@@ -3,7 +3,7 @@ import { useStaticQuery, graphql } from 'gatsby'
 import { Helmet } from 'react-helmet'
 import { getLCP, getFID, getCLS } from 'web-vitals';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { Container } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import { createGlobalStyle } from "styled-components"
 
 import { TopMenu } from './TopMenu'
@@ -66,10 +66,10 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
     }
   `)
 
-    // web vitals
-/*     getCLS(console.log);
-    getFID(console.log);
-    getLCP(console.log); */
+  // web vitals
+  /*     getCLS(console.log);
+      getFID(console.log);
+      getLCP(console.log); */
 
   return (
     <>
@@ -94,7 +94,13 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
       <GlobalStyle />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
       <Container fluid >
-      <main>{children}</main>
+        <main>
+          <Row>
+            <Col>
+            {children}
+            </Col>
+          </Row>
+        </main>
       </Container>
       <Footer />
     </>
