@@ -19,8 +19,10 @@ exports.linkResolver = (doc) => {
 
     case 'page': {
       return doc.lang === defaultLanguage
-        ? `/page/${doc.uid}`
-        : `/page/${doc.lang}/${doc.uid}`
+        // ? `/page/${doc.uid}`
+        ? `/${doc.uid}`
+        // : `/page/${doc.lang}/${doc.uid}`
+        : `/${doc.lang}/${doc.uid}`
     }
 
     default:
