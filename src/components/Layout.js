@@ -101,8 +101,8 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
             </Col>
           </Row>
         </main>
-      </Container>
       <Footer />
+      </Container>
     </>
   )
 }

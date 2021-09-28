@@ -1,18 +1,47 @@
 import * as React from 'react'
+import { Row, Col } from 'react-bootstrap'
+import MainLayoutPart from './MainLayoutPart'
+import styled from 'styled-components'
 
-import twitterIcon from '../images/twitter.png'
-import instagramIcon from '../images/instagram.png'
-import facebookIcon from '../images/facebook.png'
+export const Footer = () => {
 
-export const Footer = () => (
-  <footer>
-    <p className="copyright">
-      &copy; {new Date().getFullYear()} Todoapp-Powered by Prismic
-    </p>
-    <div className="social">
-      <img src={facebookIcon} alt="Facebook social icon" />
-      <img src={instagramIcon} alt="Instagram social icon" />
-      <img src={twitterIcon} alt="Twitter social icon" />
-    </div>
-  </footer>
-)
+  const footerContent = (
+    <footer>
+      <p className="copyright">
+        &copy; {new Date().getFullYear()} Klap-Web
+      </p>
+    </footer>
+  )
+
+  return (
+    <>
+    <MainFooterRow>
+      <Col>
+    <MainLayoutPart content={footerContent} />
+      </Col>
+    </MainFooterRow>
+    </>
+  )
+}
+
+const MainFooterRow = styled(Row)`
+// Extra small devices (portrait phones, less than 576px)
+// No media query for xs since this is the default in Bootstrap
+background-color: silver;
+// Small devices (landscape phones, 576px and up, col-sm)
+@media (min-width: 576px) {
+
+}
+// Medium devices (tablets, 768px and up, col-md)
+@media (min-width: 768px) {
+
+}
+// Large devices (desktops, 992px and up, col-lg)
+@media (min-width: 992px) {
+  margin-top: 10rem;
+}
+// Extra large devices (large desktops, 1200px and up, col-xl)
+@media (min-width: 1200px) {
+
+}
+`
