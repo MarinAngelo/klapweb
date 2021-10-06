@@ -25,13 +25,29 @@ export const Footer = ({ topMenu, websiteDaten }) => {
             })}
           </FooterNav>
         </Col>
-        <Col></Col>
+        <Col>
+            <h3>Kontakt Daten</h3>
+            <address>
+              {websiteDaten.branding}<br />
+              {websiteDaten.street}<br />
+              {websiteDaten.zip_code} {websiteDaten.place}<br />
+            <a href={`mailto:${websiteDaten.email}`}>{websiteDaten.email}</a>
+              </address>
+        </Col>
       </Row>
       <BottomRow className="mt-3 mt-md-4">
         <Col>
           <p className="copyright">
             &copy; {new Date().getFullYear()} {websiteDaten.branding}
           </p>
+        </Col>
+        <Col>
+          <Link to="/datenschutzerklaerung">Datenschutzerklärung</Link>
+        </Col>
+        <Col>
+            <p>
+            Webentwicklung: <a href="https://klap-web.ch/">Klap-Web</a>
+            </p>
         </Col>
       </BottomRow>
     </footer>

@@ -4,6 +4,10 @@ const websiteDatenQuery = graphql`
 fragment WebsiteDatenFragment on PrismicWebsiteDaten {
          data {
         branding
+        street
+        zip_code
+        place
+        email
       }
     }
 `
