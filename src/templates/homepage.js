@@ -9,9 +9,11 @@ import { SliceZone } from '../components/SliceZone'
 
 const HomepageTemplate = ({ data }) => {
   if (!data) return null
-
+  
+  console.log('homepage data', data)
   const homepage = data.prismicHomepage || {}
   const topMenu = data.prismicTopMenu || {}
+  const websiteDaten = data.prismicWebsiteDaten || {}
 
   const { lang, type, url } = homepage || {}
   const alternateLanguages = homepage.alternate_languages || []
@@ -23,7 +25,7 @@ const HomepageTemplate = ({ data }) => {
   }
 
   return (
-    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc}>
+    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
       <SliceZone slices={homepage.data.body} />
     </Layout>
   )
@@ -62,6 +64,9 @@ export const query = graphql`
     }
     prismicTopMenu(lang: { eq: $lang }) {
       ...TopMenuFragment
+    }
+    prismicWebsiteDaten(lang: { eq: $lang }) {
+      ...WebsiteDatenFragment
     }
   }
 `

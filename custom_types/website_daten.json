@@ -1,0 +1,89 @@
+{
+    "Main": {
+        "display_title": {
+            "type": "Text",
+            "config": {
+                "label": "Display Titel",
+                "placeholder": "Display Titel"
+            }
+        },
+        "contact_details_title": {
+            "type": "StructuredText",
+            "config": {
+                "single": "heading2, heading3, heading4, heading5, heading6",
+                "label": "Kontakt Daten Titel",
+                "placeholder": "Kontakt Daten Titel"
+            }
+        },
+        "name": {
+            "type": "Text",
+            "config": {
+                "label": "Name",
+                "placeholder": "Name"
+            }
+        },
+        "first_name": {
+            "type": "Text",
+            "config": {
+                "label": "Vorname",
+                "placeholder": "Vorname"
+            }
+        },
+        "branding": {
+            "type": "Text",
+            "config": {
+                "label": "Firma",
+                "placeholder": "Firma"
+            }
+        },
+        "street": {
+            "type": "Text",
+            "config": {
+                "label": "Strasse Nr.",
+                "placeholder": "Strasse Nr."
+            }
+        },
+        "zip_code": {
+            "type": "Text",
+            "config": {
+                "label": "PLZ",
+                "placeholder": "PLZ"
+            }
+        },
+        "place": {
+            "type": "Text",
+            "config": {
+                "label": "Ort",
+                "placeholder": "Ort"
+            }
+        },
+        "phone": {
+            "type": "Text",
+            "config": {
+                "label": "Tel.",
+                "placeholder": "Tel."
+            }
+        },
+        "email": {
+            "type": "Text",
+            "config": {
+                "label": "E-Mail",
+                "placeholder": "E-Mail"
+            }
+        },
+        "website": {
+            "type": "Text",
+            "config": {
+                "label": "Website",
+                "placeholder": "Website"
+            }
+        },
+        "facebook": {
+            "type": "Text",
+            "config": {
+                "label": "Facebook",
+                "placeholder": "Facebook"
+            }
+        }
+    }
+}

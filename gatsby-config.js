@@ -29,6 +29,7 @@ module.exports = {
           homepage: require('./custom_types/homepage.json'),
           page: require('./custom_types/page.json'),
           top_menu: require('./custom_types/top_menu.json'),
+          website_daten: require('./custom_types/website_daten.json'),
         },
       },
     },

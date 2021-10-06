@@ -7,7 +7,8 @@ import { Container, Row, Col } from 'react-bootstrap'
 import { createGlobalStyle } from "styled-components"
 
 import { TopMenu } from './TopMenu'
-import { Footer } from './Footer'
+import { Footer } from './footer/Footer'
+import { websiteDatenQuery } from './footer/footerQuery';
 
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
@@ -53,8 +54,8 @@ body {
 
 }
 `
-
-export const Layout = ({ children, topMenu, activeDocMeta }) => {
+export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
+  console.log('website daten from layout', websiteDaten)
   const queryData = useStaticQuery(graphql`
     query SiteQuery {
       site {
@@ -101,7 +102,7 @@ export const Layout = ({ children, topMenu, activeDocMeta }) => {
             </Col>
           </Row>
         </main>
-      <Footer />
+        <Footer topMenu={topMenu} websiteDaten={websiteDaten} />
       </Container>
     </>
   )

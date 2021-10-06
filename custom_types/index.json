@@ -16,5 +16,11 @@
     "name": "Top Menu",
     "repeatable": false,
     "value": "top_menu.json"
+  },
+  {
+    "id": "website_daten",
+    "name": "Website Daten",
+    "repeatable": false,
+    "value": "website_daten.json"
   }
 ]

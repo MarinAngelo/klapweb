@@ -29,9 +29,10 @@ const PageTemplate = ({ data }) => {
   }
 
   const topMenu = data.prismicTopMenu || {}
+  const websiteDaten = data.prismicWebsiteDaten || {}
 
   return (
-    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc}>
+    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
       <PageTopRow>
         <Col>        
       <PageTitle pageTitle={data.prismicPage.data.page_title.raw} />
@@ -107,6 +108,9 @@ query pageQuery($id: String, $lang: String) {
     }
     prismicTopMenu(lang: { eq: $lang }) {
       ...TopMenuFragment
+    }
+    prismicWebsiteDaten(lang: { eq: $lang }) {
+      ...WebsiteDatenFragment
     }
   }
 `

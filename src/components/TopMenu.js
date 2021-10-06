@@ -10,30 +10,6 @@ import Container from 'react-bootstrap/Container'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import styled from 'styled-components'
 
-const StyledNavbar = styled(Navbar)`
-// Extra small devices (portrait phones, less than 576px)
-// No media query for xs since this is the default in Bootstrap
-background-color: ${props => props.scrolled ? "silver" : null};
-transition-timing-function: ease-in;
-transition: 2s;
-// Small devices (landscape phones, 576px and up, col-sm)
-@media (min-width: 576px) {
-
-}
-// Medium devices (tablets, 768px and up, col-md)
-@media (min-width: 768px) {
-
-}
-// Large devices (desktops, 992px and up, col-lg)
-@media (min-width: 992px) {
-
-}
-// Extra large devices (large desktops, 1200px and up, col-xl)
-@media (min-width: 1200px) {
-
-}
-`
-
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
 
   const [scroll, setScroll] = useState(false);
@@ -45,14 +21,14 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
   }, []);
   // console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
-    ? topMenu.menu_links.map((menuLink, index) => (
-        <li key={`top-nav-${index}`}>
-          <Link id={menuLink.link.id} to={menuLink.link.url}>
-            {RichText.asText(menuLink.label.raw)}
-          </Link>
-        </li>
-      ))
-    : null */
+? topMenu.menu_links.map((menuLink, index) => (
+  <li key={`top-nav-${index}`}>
+  <Link id={menuLink.link.id} to={menuLink.link.url}>
+  {RichText.asText(menuLink.label.raw)}
+  </Link>
+  </li>
+  ))
+  : null */
 
   return (
     <header>
@@ -99,18 +75,18 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
       </StyledNavbar>
       {/* <div className="menu">
         <Link to="/">
-          <StaticImage
-            src="../images/logo.png"
-            alt="Site logo"
-            placeholder="none"
-            className="logo"
-          />
+        <StaticImage
+        src="../images/logo.png"
+        alt="Site logo"
+        placeholder="none"
+        className="logo"
+        />
         </Link>
-      </div>
-      <div className="menu">
+        </div>
+        <div className="menu">
         <ul>
-          {renderedMenuLinks}
-          <LanguageSwitcher activeDocMeta={activeDocMeta} />
+        {renderedMenuLinks}
+        <LanguageSwitcher activeDocMeta={activeDocMeta} />
         </ul>
       </div> */}
     </header>
@@ -118,38 +94,62 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
 }
 
 export const query = graphql`
-  fragment TopMenuFragment on PrismicTopMenu {
-    _previewable
-    data {
-      body {
-        ... on PrismicTopMenuDataBody1stLevel {
-          primary {
-            link_text
-            nav_link {
-              url
-            }
-          }
-          slice_type
-        }
-        ... on PrismicTopMenuDataBody2ndLevel {
-          slice_type
-          primary {
-            link_text
-          }
-          items {
-            third_level_link_text
-            third_level_link {
-              lang
-              url
-            }
+fragment TopMenuFragment on PrismicTopMenu {
+  _previewable
+  data {
+    body {
+      ... on PrismicTopMenuDataBody1stLevel {
+        primary {
+          link_text
+          nav_link {
+            url
           }
         }
+        slice_type
       }
-      branding
-      logo {
-        alt
-        url
+      ... on PrismicTopMenuDataBody2ndLevel {
+        slice_type
+        primary {
+          link_text
+        }
+        items {
+          third_level_link_text
+          third_level_link {
+            lang
+            url
+          }
+        }
       }
     }
+    branding
+    logo {
+      alt
+      url
+    }
   }
+}
+`
+
+const StyledNavbar = styled(Navbar)`
+// Extra small devices (portrait phones, less than 576px)
+// No media query for xs since this is the default in Bootstrap
+background-color: ${props => props.scrolled ? "silver" : null};
+transition-timing-function: ease-in;
+transition: 2s;
+// Small devices (landscape phones, 576px and up, col-sm)
+@media (min-width: 576px) {
+
+}
+// Medium devices (tablets, 768px and up, col-md)
+@media (min-width: 768px) {
+
+}
+// Large devices (desktops, 992px and up, col-lg)
+@media (min-width: 992px) {
+
+}
+// Extra large devices (large desktops, 1200px and up, col-xl)
+@media (min-width: 1200px) {
+
+}
 `
