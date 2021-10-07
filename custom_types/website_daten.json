@@ -7,14 +7,6 @@
                 "placeholder": "Display Titel"
             }
         },
-        "contact_details_title": {
-            "type": "StructuredText",
-            "config": {
-                "single": "heading2, heading3, heading4, heading5, heading6",
-                "label": "Kontakt Daten Titel",
-                "placeholder": "Kontakt Daten Titel"
-            }
-        },
         "name": {
             "type": "Text",
             "config": {
@@ -83,6 +75,28 @@
             "config": {
                 "label": "Facebook",
                 "placeholder": "Facebook"
+            }
+        },
+        "contact_data_title": {
+            "type": "Text",
+            "config": {
+                "label": "Kontakt Daten Titel",
+                "default": "Kontakt Daten",
+                "placeholder": "Kontakt Daten"
+            }
+        },
+        "privacy_policy": {
+            "type": "Text",
+            "config": {
+                "label": "Datenschutzerklärung",
+                "placeholder": "Datenschutzerklärung"
+            }
+        },
+        "web_dev": {
+            "type": "Text",
+            "config": {
+                "label": "Webentwikcklung",
+                "placeholder": "Webentwikcklung"
             }
         }
     }

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Row, Col, Nav } from 'react-bootstrap'
 import MainLayoutPart from '../MainLayoutPart'
 import { Link } from 'gatsby'
-import { MainFooterRow, FooterNav, BottomRow } from './styledFooter'
+import { MainFooterRow, FooterNav, BottomRow, AddressCol } from './styledFooter'
 import { footerQuery, websiteDatenQuery } from './footerQuery'
 
 export const Footer = ({ topMenu, websiteDaten }) => {
@@ -12,10 +12,16 @@ export const Footer = ({ topMenu, websiteDaten }) => {
   // If not translated fallback
   const siteData = websiteDaten || {}
 
+  // Defaut Values
+  const webDev = websiteDaten.web_dev ? websiteDaten.web_dev : "Webentwicklung"
+  const contactDataTitle = websiteDaten.contact_data_title ? websiteDaten.contact_data_title : "Kontakt Daten"
+  const privacyPolicy = websiteDaten.privacy_policy ? websiteDaten.privacy_policy : "Datenschutzerklärung"
+  console.log('Web Def', webDev)
+  
   const footerContent = (
     <footer>
       <Row>
-        <Col>
+        <Col xs={12} md={6} className="d-flex justify-content-center">
           <FooterNav className="flex-column">
             {topMenu.body.map((nav, i) => {
               // If not translated fallback
@@ -30,28 +36,30 @@ export const Footer = ({ topMenu, websiteDaten }) => {
             })}
           </FooterNav>
         </Col>
-        <Col>
-          <h3>Kontakt Daten</h3>
+        <AddressCol xs={12} md={6} className="d-flex justify-content-center">
+          <div className="address-block"> 
+          <h4>{contactDataTitle}</h4>
           <address>
             {siteData.branding}<br />
             {siteData.street}<br />
             {siteData.zip_code} {siteData.place}<br />
             <a href={`mailto:${siteData.email}`}>{siteData.email}</a>
           </address>
-        </Col>
+          </div>
+        </AddressCol>
       </Row>
       <BottomRow className="mt-3 mt-md-4">
-        <Col>
-          <p className="copyright">
-            &copy; {new Date().getFullYear()} {siteData.branding}
+        <Col xs={12} md={4} className="d-flex justify-content-center">
+          <Link to="/datenschutzerklaerung" className="buttom-row-link">{privacyPolicy}</Link>
+        </Col>
+        <Col xs={12} md={4} className="d-flex justify-content-center">
+          <p>
+            {webDev}: <a href="https://klap-web.ch/">klap-web.ch</a>
           </p>
         </Col>
-        <Col>
-          <Link to="/datenschutzerklaerung">Datenschutzerklärung</Link>
-        </Col>
-        <Col>
-          <p>
-            Webentwicklung: <a href="https://klap-web.ch/">Klap-Web</a>
+        <Col xs={12} md={4} className="d-flex justify-content-center">
+          <p className="copyright">
+            &copy; {new Date().getFullYear()} {siteData.branding}
           </p>
         </Col>
       </BottomRow>

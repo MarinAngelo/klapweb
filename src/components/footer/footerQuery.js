@@ -8,6 +8,9 @@ fragment WebsiteDatenFragment on PrismicWebsiteDaten {
         zip_code
         place
         email
+        web_dev
+        contact_data_title
+        privacy_policy
       }
     }
 `

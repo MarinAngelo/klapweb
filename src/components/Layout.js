@@ -13,6 +13,11 @@ import { websiteDatenQuery } from './footer/footerQuery';
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
+html {
+  --footer-color: black;
+  --footer-hover-color: pink;
+}
+
 body {
     color: #718075;
     background: #E1FFE9;
