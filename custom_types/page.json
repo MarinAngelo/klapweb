@@ -27,9 +27,7 @@
       "type": "Slices",
       "fieldset": "Slice zone",
       "config": {
-        "labels": {
-          "preisliste": []
-        },
+        "labels": null,
         "choices": {
           "preisliste": {
             "type": "Slice",
@@ -94,6 +92,22 @@
                 }
               }
             }
+          },
+          "html_inhalte": {
+            "type": "Slice",
+            "fieldset": "HTML Inhalte",
+            "description": "HTML Code",
+            "icon": "code",
+            "display": "list",
+            "non-repeat": {
+              "html_code": {
+                "type": "Text",
+                "config": {
+                  "label": "HTML Code"
+                }
+              }
+            },
+            "repeat": {}
           }
         }
       }

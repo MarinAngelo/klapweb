@@ -5,8 +5,8 @@
   "dependencies": {
     "bootstrap": "^5.0.1",
     "gatsby": "^3.10.2",
-    "gatsby-plugin-image": "^1.10.1",
     "gatsby-plugin-anchor-links": "^1.2.0",
+    "gatsby-plugin-image": "^1.10.1",
     "gatsby-plugin-ipfs": "^2.0.2",
     "gatsby-plugin-manifest": "^3.10.0",
     "gatsby-plugin-prismic-previews": "^4.0.2",

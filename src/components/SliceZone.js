@@ -11,10 +11,12 @@ import {
   CallToActionGrid,
   Anrisstext,
   Carousel,
+  HtmlContent
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
   const sliceComponents = {
+    // Key = slice type from api
     headline_with_button: HeadlineWithButton,
     email_signup: EmailSignup,
     full_width_image: FullWidthImage,
@@ -25,6 +27,7 @@ export const SliceZone = ({ slices }) => {
     call_to_action_grid: CallToActionGrid,
     anrisstext: Anrisstext,
     carousel: Carousel,
+    html_inhalte: HtmlContent
   }
 
   return slices.map((slice, index) => {

@@ -11,7 +11,6 @@ import { PageContent } from '../components/PageContent'
 import { Row, Col } from 'react-bootstrap'
 import styled from 'styled-components'
 
-
 const PageTemplate = ({ data }) => {
   console.log('Page data', data)
   if (!data) return null
@@ -90,6 +89,7 @@ query pageQuery($id: String, $lang: String) {
       }
       content {
         raw
+        html
       }
       body {
         ... on PrismicSliceType {
@@ -98,6 +98,7 @@ query pageQuery($id: String, $lang: String) {
           slice_type
         }
         ...PrismicPageDataBodyPreisliste
+        ...PrismicPageDataBodyHtmlInhalte
           #...PageDataBodyEmailSignup
           #...PageDataBodyFullWidthImage
           #...PageDataBodyHeadlineWithButton
