@@ -119,7 +119,7 @@ text-align: center;
 const MainFooterRow = styled(Row)`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
-background-color: silver;
+background-color: var(--footer-bg-color);
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
 

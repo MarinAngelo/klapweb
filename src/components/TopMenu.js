@@ -5,8 +5,9 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Container from 'react-bootstrap/Container'
-import { LanguageSwitcher } from './LanguageSwitcher'
+// import { LanguageSwitcher } from './LanguageSwitcher'
 import styled from 'styled-components'
+import { useLocation } from '@reach/router'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
   console.log('Top Menu Data', topMenu)
@@ -17,6 +18,10 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
       setScroll(window.scrollY > 150);
     });
   }, []);
+
+  const [expanded, setExpanded] = useState(false);
+
+  const { pathname } = useLocation();
   // console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
 ? topMenu.menu_links.map((menuLink, index) => (
@@ -30,20 +35,31 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
 
   return (
     <header>
-      <StyledNavbar expand="lg" fixed="top" scrolled={scroll ? 1 : 0}>
+      <StyledNavbar 
+        expand="lg" 
+        fixed="top" 
+        scrolled={scroll ? 1 : 0} 
+        pathname={pathname}
+        expanded={expanded}
+        >
         <Container fluid>
           <Link to="/" className="nav-link">
           {/* <Navbar.Brand>{topMenu.branding}</Navbar.Brand> */}
           <Navbar.Brand>
               <img
                 src={topMenu.logo.url}
-                height="100"
+                // height="65"
                 className="d-inline-block align-top"
                 alt="Klap Web"
               />
           </Navbar.Brand>
           </Link>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <StyledNavbarToggle 
+          scrolled={scroll ? 1 : 0}
+          pathname={pathname} 
+          aria-controls="basic-navbar-nav" 
+          onClick={() => setExpanded(expanded ? false : "expanded")} 
+          />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {/* <Nav.Link href="#home">Home</Nav.Link> */}
@@ -75,7 +91,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 } else {return null}
               })}
             </Nav>
-                <LanguageSwitcher activeDocMeta={activeDocMeta} />
+                {/* <LanguageSwitcher activeDocMeta={activeDocMeta} /> */}
           </Navbar.Collapse>
         </Container>
       </StyledNavbar>
@@ -139,11 +155,19 @@ fragment TopMenuFragment on PrismicTopMenu {
 const StyledNavbar = styled(Navbar)`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
-background-color: ${props => props.scrolled ? "silver" : null};
+background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)"
+                             : props.expanded ? "var(--header-bg-color)" 
+                             : props.scrolled ? "var(--header-bg-color)" 
+                             : null};
 transition-timing-function: ease-in;
 transition: 2s;
-.nav-link {
-  font-size: 1.6rem !important;
+a.nav-link {
+  font-size: 1.4rem;
+  color: var(--header-color) !important;
+}
+img{
+  margin-left: 0;
+  height: 35px;
 }
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
@@ -155,10 +179,27 @@ transition: 2s;
 }
 // Large devices (desktops, 992px and up, col-lg)
 @media (min-width: 992px) {
-
+    img{
+    margin-left: 1.2rem;
+    height: 55px;
+  }
+  #basic-navbar-nav {
+    margin-right: 4rem;
+  }
 }
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
 
 }
 `
+const StyledNavbarToggle = styled(Navbar.Toggle)`
+  background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)" : "transparent"} !important;
+  border: 0;
+/*   &:focus {
+    outline: none !important;
+    border: 0 !important;
+  } */
+  span.navbar-toggler-icon{
+    background-image: ${props => props.pathname !== "/" ? "var(--toggler-url-light)" : props.scrolled ? "var(--toggler-url-light)" : "var(--toggler-url-dark)"};
+  }
+`;
