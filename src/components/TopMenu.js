@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link, graphql } from 'gatsby'
-import { RichText } from 'prismic-reactjs'
-import { StaticImage } from 'gatsby-plugin-image'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
@@ -11,7 +9,7 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import styled from 'styled-components'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
-
+  console.log('Top Menu Data', topMenu)
   const [scroll, setScroll] = useState(false);
 
   useEffect(() => {
@@ -33,9 +31,17 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
   return (
     <header>
       <StyledNavbar expand="lg" fixed="top" scrolled={scroll ? 1 : 0}>
-        <Container>
+        <Container fluid>
           <Link to="/" className="nav-link">
-          <Navbar.Brand>{topMenu.branding}</Navbar.Brand>
+          {/* <Navbar.Brand>{topMenu.branding}</Navbar.Brand> */}
+          <Navbar.Brand>
+              <img
+                src={topMenu.logo.url}
+                height="100"
+                className="d-inline-block align-top"
+                alt="Klap Web"
+              />
+          </Navbar.Brand>
           </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -136,6 +142,9 @@ const StyledNavbar = styled(Navbar)`
 background-color: ${props => props.scrolled ? "silver" : null};
 transition-timing-function: ease-in;
 transition: 2s;
+.nav-link {
+  font-size: 1.6rem !important;
+}
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
 
