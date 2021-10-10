@@ -169,6 +169,9 @@ img{
   margin-left: 0;
   height: 35px;
 }
+.navbar-toggler{
+  border: 10rem;
+}
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
 
@@ -193,12 +196,14 @@ img{
 }
 `
 const StyledNavbarToggle = styled(Navbar.Toggle)`
-  background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)" : "transparent"} !important;
+  background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)" : "transparent"};
   border: 0;
-/*   &:focus {
-    outline: none !important;
-    border: 0 !important;
-  } */
+  &:focus {
+    outline: none;
+    border: 0;
+    box-shadow: none;
+  }
+
   span.navbar-toggler-icon{
     background-image: ${props => props.pathname !== "/" ? "var(--toggler-url-light)" : props.scrolled ? "var(--toggler-url-light)" : "var(--toggler-url-dark)"};
   }
