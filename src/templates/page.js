@@ -32,22 +32,25 @@ const PageTemplate = ({ data }) => {
 
   return (
     <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
-      <PageTopRow>
-        <Col>        
-      <PageTitle pageTitle={data.prismicPage.data.page_title.raw} />
-      <PageContent pageContent={data.prismicPage.data.content.raw} />
-        </Col>
-      </PageTopRow>
-      <Row style={{marginTop: "-6rem"}}>
+      {data.prismicPage.data.page_title.raw[0].text !== "" ?
+        <PageTopRow>
+          <Col>
+            <PageTitle pageTitle={data.prismicPage.data.page_title.raw} />
+            <PageContent pageContent={data.prismicPage.data.content.raw} />
+          </Col>
+        </PageTopRow>
+        : null
+      }
+      <Row style={{ marginTop: "-6rem" }}>
         <Col>
-      <SliceZone slices={page.body} />
+          <SliceZone slices={page.body} />
         </Col>
       </Row>
     </Layout>
   )
 }
 
-  const PageTopRow = styled(Row)`
+const PageTopRow = styled(Row)`
   // Extra small devices (portrait phones, less than 576px)
   // No media query for xs since this is the default in Bootstrap
   margin-top: 10vh;
@@ -99,6 +102,8 @@ query pageQuery($id: String, $lang: String) {
         }
         ...PrismicPageDataBodyPreisliste
         ...PrismicPageDataBodyHtmlInhalte
+        ...PrismicPageDataBodyBildUndText
+        ...PrismicPageDataBodyTextBlock
           #...PageDataBodyEmailSignup
           #...PageDataBodyFullWidthImage
           #...PageDataBodyHeadlineWithButton

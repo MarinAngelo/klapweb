@@ -1,4 +1,4 @@
-import * as React from 'react'
+/* import * as React from 'react'
 import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 import { GatsbyImage } from 'gatsby-plugin-image'
@@ -71,3 +71,4 @@ export const query = graphql`
     }
   }
 `
+ */

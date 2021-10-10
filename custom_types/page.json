@@ -27,7 +27,7 @@
       "type": "Slices",
       "fieldset": "Slice zone",
       "config": {
-        "labels": null,
+        "labels": {},
         "choices": {
           "preisliste": {
             "type": "Slice",
@@ -104,6 +104,83 @@
                 "type": "Text",
                 "config": {
                   "label": "HTML Code"
+                }
+              }
+            },
+            "repeat": {}
+          },
+          "bild_und_text": {
+            "type": "Slice",
+            "fieldset": "Bild und Text",
+            "description": "Eine Komponente mit Bild und Text",
+            "icon": "account_balance_wallet",
+            "display": "grid",
+            "non-repeat": {},
+            "repeat": {
+              "picture": {
+                "type": "Image",
+                "config": {
+                  "constraint": {},
+                  "thumbnails": [
+                    {
+                      "name": "laptop",
+                      "width": 960,
+                      "height": null
+                    }
+                  ],
+                  "label": "Bild"
+                }
+              },
+              "caption": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Bild Titel"
+                }
+              },
+              "title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Überschrift",
+                  "placeholder": "Überschrift"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "allowTargetBlank": true,
+                  "label": "Text",
+                  "placeholder": "Text"
+                }
+              },
+              "alignment": {
+                "type": "Select",
+                "config": {
+                  "options": [
+                    "Bild rechts Text links",
+                    "Text rechts Bild links"
+                  ],
+                  "default_value": "Bild rechts Text links",
+                  "label": "Ausrichtung",
+                  "placeholder": "Ausrichtung"
+                }
+              }
+            }
+          },
+          "text_block": {
+            "type": "Slice",
+            "fieldset": "Text Block",
+            "description": "Text Block",
+            "icon": "format_color_text",
+            "display": "list",
+            "non-repeat": {
+              "text_block": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+                  "label": "Text Block"
                 }
               }
             },

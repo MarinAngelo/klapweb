@@ -1,33 +1,37 @@
 import * as React from 'react'
 
 import {
-  EmailSignup,
+/*   EmailSignup,
   FullWidthImage,
   HeadlineWithButton,
   InfoWithImage,
-  TextInfo,
+  TextInfo, */
   Hero,
   Preisliste,
   CallToActionGrid,
   Anrisstext,
   Carousel,
-  HtmlContent
+  HtmlContent,
+  ImageAndText,
+  TextBlock
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
   const sliceComponents = {
     // Key = slice type from api
-    headline_with_button: HeadlineWithButton,
+/*     headline_with_button: HeadlineWithButton,
     email_signup: EmailSignup,
     full_width_image: FullWidthImage,
     info_with_image: InfoWithImage,
-    text_info: TextInfo,
+    text_info: TextInfo, */
     hero: Hero,
     preisliste: Preisliste,
     call_to_action_grid: CallToActionGrid,
     anrisstext: Anrisstext,
     carousel: Carousel,
-    html_inhalte: HtmlContent
+    html_inhalte: HtmlContent,
+    bild_und_text: ImageAndText,
+    text_block: TextBlock
   }
 
   return slices.map((slice, index) => {

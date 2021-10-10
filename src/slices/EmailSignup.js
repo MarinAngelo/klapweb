@@ -1,4 +1,4 @@
-import * as React from 'react'
+/* import * as React from 'react'
 import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 
@@ -90,3 +90,4 @@ export const query = graphql`
     }
   }
 `
+ */
