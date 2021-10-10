@@ -56,11 +56,11 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'gatsby-starter-default',
-        short_name: 'starter',
+        name: 'Klap Webentwicklung',
+        short_name: 'Klap Web',
         start_url: '/',
-        background_color: '#663399',
-        theme_color: '#663399',
+        background_color: '#232442',
+        theme_color: '#232442',
         display: 'minimal-ui',
         icon: path.resolve(__dirname, 'src', 'images', 'favicon.png'),
       },
