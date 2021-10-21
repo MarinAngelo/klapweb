@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
 import { Row, Col } from 'react-bootstrap'
-import { RichText } from 'prismic-reactjs'
 import styled from 'styled-components'
 
 const SpecRow = styled(Row)`

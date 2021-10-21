@@ -1,17 +1,24 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
+import { OneColSection } from '../components/OneColSection'
 
 export const TextBlock = ({ slice }) => { 
     console.log('TextBlock data', slice)    
     
     return (
-    <div>
-        <h1>TextBlock</h1>
-    </div>
+    <>
+        <OneColSection content={slice.primary.text_block.raw} />
+    </>
     )
  }
  
  export const query = graphql`
  fragment PrismicPageDataBodyTextBlock on PrismicPageDataBodyTextBlock
- {slice_type}
+ {slice_type
+    primary {
+              text_block {
+                raw
+              }
+            }
+}
  `
