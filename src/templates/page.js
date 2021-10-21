@@ -32,6 +32,7 @@ const PageTemplate = ({ data }) => {
 
   return (
     <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
+      {/* Without english version build error */}
       {data.prismicPage.data.page_title.raw[0].text !== "" ?
         <PageTopRow>
           <Col>
