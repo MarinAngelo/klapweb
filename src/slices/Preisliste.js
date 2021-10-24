@@ -7,18 +7,28 @@ import MainLayoutPart from '../components/MainLayoutPart'
 
 const StyledCard = styled(Card)`
     // determins breakepoint
-    min-width: 24rem;
+    /* min-width: 2rem; */
     margin-bottom: 1.5rem !important;
-    background-color: ${p => p.annex === "Am beliebtesten" ? 'orange' : 'var(--component-bg-color)'};
+    background-color: ${p => p.annex === "Am beliebtesten" ? 'var(--secondary-bg-color-light)' : 'var(--component-bg-color)'};
+
+    .card-body li {
+      font-size: 1rem;
+    }
+    
+    .price p {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
 
     .annex{
-        background-color: ${p => p.annex === "Am beliebtesten" ? 'var(--component-bg-color)' : 'orange'};
+        background-color: ${p => p.annex === "Am beliebtesten" ? 'var(--component-bg-color)' : '#80b580'};
         position: absolute;
         right: 0;
         top: 0;
         padding: 10px 15px;
         color: var(--page-color);
         font-weight: bold;
+        border: 1px solid;
     }
 `
 
@@ -32,9 +42,10 @@ export const Preisliste = ({ slice }) => {
     <RichText render={slice.primary.price_section_title.raw} />
       </Col>
     </Row>
-      <Row className="justify-content-md-center" xs={1} md={2}>
+      <Row md={1} lg={2} className="g-4">
         {slice.items.map((price, i) => {
           return (
+            <Col>
             <StyledCard annex={price.price_annex}>
               <Card.Body>
                   <div className="annex">
@@ -52,6 +63,7 @@ export const Preisliste = ({ slice }) => {
                 </div>
               </Card.Body>
             </StyledCard>            
+            </Col>
           )
         })}
       </Row>

@@ -11,6 +11,7 @@ margin-top: 10rem;
   p {
     padding: 1.6rem 1rem 1.6rem 1rem;
     font-size: 1.4rem;
+    color: var(--secondary-color-dark);
   }
 
 .image-col {
@@ -18,12 +19,11 @@ padding: 0;
 }
 
 .text-col {
-  background: black;
+  background: var(--secondary-bg-color-dark);
 }
 
   .center-text-box {
-    color: #DFE2E8;
-    display: flex;
+      display: flex;
     justify-content: center;
     align-items: center;
   }
