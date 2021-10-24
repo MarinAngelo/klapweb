@@ -18,7 +18,7 @@ const StyledLinkButton = styled(Link)`
 
     &:hover, &:active{
         color: var(--page-button-hover-color) !important;
-        background: var(--page-link-hover-color);
+        background: var(--page-button-hover-bg-color);
         border-color: var(--page-link-color);
         transition-duration: 0.4s;
     }

@@ -17,9 +17,10 @@ const StyledAnchorLinkButton = styled(AnchorLink)`
     font-size: 1rem;
 
     &:hover{
-        color: var(--page-button-hover-color) !important;
+        color: var(--page-color);
         background: var(--page-button-hover-bg-color);
-        border-color: var(--page-link-color);
+        border-color: var(--page-color) !important;
+        border: 2px solid;
         transition-duration: 0.4s;
     }
 

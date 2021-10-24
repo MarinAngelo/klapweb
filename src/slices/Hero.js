@@ -33,6 +33,7 @@ const PageCover = styled.section`
   .cover-text-box{
       background-color: rgba(94,95,170, 0.3) !important;
       color: #DFE2E8;
+      /* center the inner div */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -43,30 +44,68 @@ const PageCover = styled.section`
     }
   // Small devices (landscape phones, 576px and up, col-sm)
   @media (min-width: 576px) {
+
+    .cover-text-box {
+      min-height: 35vh;
+      min-width: 50vw;
+      position: absolute;
+      top: 20vh;
+      left: 8vw;
+      border-radius: 40px;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .cover-text h1{
+      font-size: 1.3rem;
+    }
+
+    .cover-text h2{
+      font-size: 1.2rem;
+      margin-top: 0;
+      padding-top: 1rem;
+    }
     
+    .cover-text {
+      width:90%;
+    }
   }
   // Medium devices (tablets, 768px and up, col-md)
   @media (min-width: 768px) {
-    
+    .cover-text-box{
+      min-width: 40vw;
+      position: absolute;
+      top: 25vh;
+      left: 10vw;
+    }
+
+    .cover-text h1{
+      font-size: 2.3rem;
+    }
+
+    .cover-text h2{
+      font-size: 1.6rem;
+    }
   }
   // Large devices (desktops, 992px and up, col-lg)
   @media (min-width: 992px) {
     
     height: calc(100vh - 55px); // minus hight of navbar
     .cover-text-box{
-      background-color: rgba(94,95,170, 0.6);
-      color: #DFE2E8;
-      min-height: 35vh;
       min-width: 40vw;
       position: absolute;
       top: 25vh;
       left: 10vw;
-      border-radius: 40px;
-      /* center the inner div */
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
+
+        .cover-text h1{
+      font-size: 2.3rem;
+    }
+
+    .cover-text h2{
+      font-size: 1.6rem;
+    }
+
     .cover-text{
       width:85%;
     }

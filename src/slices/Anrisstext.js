@@ -2,7 +2,6 @@ import * as React from 'react'
 import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 import StyledLinkButton from '../styledComponents/StyledLinkButton'
-import { Row, Col } from 'react-bootstrap'
 import MainLayoutPart from '../components/MainLayoutPart'
 
 export const Anrisstext = ({ slice }) => {
@@ -24,7 +23,7 @@ export const Anrisstext = ({ slice }) => {
                     </section>
                 )
                 return (
-                    <MainLayoutPart content={anrisstextContent} />
+                    <MainLayoutPart content={anrisstextContent} key={i} />
                 )
             })}
         </>

@@ -21,7 +21,7 @@ const StyledCard = styled(Card)`
     }
 
     .annex{
-        background-color: ${p => p.annex === "Am beliebtesten" ? 'var(--component-bg-color)' : '#80b580'};
+        background-color: ${p => p.annex === "Am beliebtesten" ? 'var(--component-bg-color)' : 'var(--page-button-hover-bg-color)'};
         position: absolute;
         right: 0;
         top: 0;

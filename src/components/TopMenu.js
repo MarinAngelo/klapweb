@@ -165,10 +165,12 @@ a.nav-link {
   font-size: 1.4rem;
   color: var(--header-color) !important;
 }
+
 img{
   margin-left: 0;
   height: 35px;
 }
+
 .navbar-toggler{
   border: 10rem;
 }
@@ -189,9 +191,16 @@ img{
   #basic-navbar-nav {
     margin-right: 4rem;
   }
+
+  a.nav-link {
+    font-size: 1rem !important;
+  }
 }
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
+  a.nav-link {
+    font-size: 1.6rem !important;
+  }
 
 }
 `

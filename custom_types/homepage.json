@@ -8,22 +8,6 @@
         "useAsTitle": true
       }
     },
-    "site_title": {
-      "type": "StructuredText",
-      "config": {
-        "single": "heading1",
-        "label": "Seiten Titel",
-        "placeholder": "Seiten Titel"
-      }
-    },
-    "content": {
-      "type": "StructuredText",
-      "config": {
-        "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-        "label": "Text",
-        "placeholder": "Text"
-      }
-    },
     "body": {
       "type": "Slices",
       "fieldset": "Slice zone",

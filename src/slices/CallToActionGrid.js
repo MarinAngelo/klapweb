@@ -24,6 +24,7 @@ margin: 0 0 .5rem 0;
     // determins breakepoint
     min-width: 28rem;
     margin: 0 .5rem 1.5rem .5rem;
+    border: none !important;
 }
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
@@ -41,7 +42,7 @@ export const CallToActionGrid = ({slice}) => {
             {slice.items.map((cta, i) => {
 
                 const anchorLinkComponent = (
-                    <StyledAnchorLinkButton to={`/#${cta.link_to_anchor}`} className="btn btn-outline-danger">
+                    <StyledAnchorLinkButton to={`/#${cta.link_to_anchor}`} className="btn btn-outline-success">
                         {cta.anchor_link_label}
                     </StyledAnchorLinkButton>
                 );

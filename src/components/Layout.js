@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
 html {
+  --page-color: #5e5faa;
   --footer-color: #aeafff;
   --footer-bg-color: #232442;
   --footer-hover-color: #dcdcff;
@@ -22,12 +23,13 @@ html {
   --secondary-bg-color-light: #ffbe97;
   --secondary-bg-color-dark: #d5895a;
   --secondary-color-dark: #973a00;
+  --page-button-hover-bg-color: #80b580;
   --toggler-url-dark: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='blueviolet' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
   --toggler-url-light: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='hotpink' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
 body {
-    color: #5e5faa;
+    color: var(--page-color);
     background: #c7c8ff;
   }
 
