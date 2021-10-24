@@ -10,7 +10,7 @@ margin-top: 10rem;
 
   p {
     padding: 1.6rem 1rem 1.6rem 1rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: var(--secondary-color-dark);
   }
 
@@ -39,19 +39,24 @@ padding: 0;
 // Medium devices (tablets, 768px and up, col-md)
 @media (min-width: 768px) {
 
+
 }
 // Large devices (desktops, 992px and up, col-lg)
 @media (min-width: 992px) {
 
   p {
     padding: 0 6rem 0 6rem;
-    font-size: 2.8rem;
+    font-size: 1.6rem;
   }
- 
-  margin-top: 11rem;
+  
+  margin-top: 12rem;
 }
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
+  p {
+    font-size: 2.6rem;
+  }
+  margin-top: 11rem;
 
 }
 
@@ -62,11 +67,11 @@ export const ImageAndText = ({ slice }) => {
 
     return (
         <SpecRow>
-            <Col md={6} className="image-col">
-            {/* <Col md={6} style={{marginLeft: "-12px"}}> */}
+            <Col sm={6} className="image-col">
+            {/* <Col sm={6} style={{marginLeft: "-12px"}}> */}
                 <img src={slice.items[0].picture.thumbnails.laptop.url} width="100%" />
             </Col>
-            <Col md={6} className="text-col center-text-box">
+            <Col sm={6} className="text-col center-text-box">
               <div className="center-text">
             <p>
                 {slice.items[0].text.text}
