@@ -90,6 +90,7 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
   return (
     <>
       <Helmet>
+        <script async type="text/javascript" src="https://userlike-cdn-widgets.s3-eu-west-1.amazonaws.com/f0e2f54e174840f19a1b945544d388aa8009cfc1bbd84e4e982ffdd4202cd7cd.js"></script>
         <meta charSet="utf-8" />
         <title>{queryData.site.siteMetadata.title}</title>
         <meta
