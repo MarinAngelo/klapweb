@@ -17,16 +17,11 @@
     "logo": {
       "type": "Image",
       "config": {
-        "constraint": {},
+        "constraint": {
+          "height": 60
+        },
         "thumbnails": [],
         "label": "Logo"
-      }
-    },
-    "menue_transparent": {
-      "type": "Number",
-      "config": {
-        "label": "Transparenz der Kopfzeile (Prozentual)",
-        "placeholder": "50"
       }
     },
     "body": {
