@@ -48,9 +48,10 @@ export const Preisliste = ({ slice }) => {
             <Col>
             <StyledCard annex={price.price_annex}>
               <Card.Body>
+                  {price.price_annex ? 
                   <div className="annex">
                     {price.price_annex}
-                  </div>
+                  </div> : null }
                 <RichText render={price.price_list_title.raw} />
                 <div className="price">
                   <p>

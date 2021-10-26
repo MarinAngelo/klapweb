@@ -43,29 +43,38 @@ body {
 
   li.language-switcher {
     font-size: 1.4rem;
-
-  }
-// Small devices (landscape phones, 576px and up, col-sm)
-@media (min-width: 576px) {
-
-}
-// Medium devices (tablets, 768px and up, col-md)
-@media (min-width: 768px) {
-
-}
-// Large devices (desktops, 992px and up, col-lg)
-@media (min-width: 992px) {
-
-  h3 {
-    margin-bottom: 1.5rem;
   }
 
-  p, li {
-    font-size: 1.6rem;
+  em {
+    font-size: .9rem;
   }
-}
-// Extra large devices (large desktops, 1200px and up, col-xl)
-@media (min-width: 1200px) {
+
+  
+  // Small devices (landscape phones, 576px and up, col-sm)
+  @media (min-width: 576px) {
+    
+  }
+  // Medium devices (tablets, 768px and up, col-md)
+  @media (min-width: 768px) {
+    
+  }
+  // Large devices (desktops, 992px and up, col-lg)
+  @media (min-width: 992px) {
+    
+    h3 {
+      margin-bottom: 1.5rem;
+    }
+    
+    p {
+      font-size: 1.6rem;
+    }
+
+    li {
+      font-size: 1.2rem !important;
+    }
+  }
+  // Extra large devices (large desktops, 1200px and up, col-xl)
+  @media (min-width: 1200px) {
 
 }
 `
