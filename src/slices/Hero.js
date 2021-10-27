@@ -2,13 +2,15 @@ import * as React from 'react'
 import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 import styled from 'styled-components'
-import { Container } from 'react-bootstrap'
 
 export const Hero = ({ slice }) => {
   // console.log('Hero data', slice)
   return (
     <PageCover className="d-flex position-relative"
-      bgImage={slice.primary.background_image.url}
+      bgImagePhone={slice.primary.background_image.thumbnails.phone.url}
+      bgImagePhoneLandscape={slice.primary.background_image.thumbnails.phone_landscape.url}
+      bgImageTablet={slice.primary.background_image.thumbnails.tablet.url}
+      bgImageLaptop={slice.primary.background_image.thumbnails.laptop.url}
     >
       <div className="cover-text-box">
         <div className="cover-text">
@@ -22,29 +24,30 @@ export const Hero = ({ slice }) => {
 const PageCover = styled.section`
   // Extra small devices (portrait phones, less than 576px)
   // No media query for xs since this is the default in Bootstrap
-  background-image: url(${props => props.bgImage});
+  background-image: url(${props => props.bgImagePhone});
   background-color: black;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
   margin: 0 -12px 0 -12px;
   height: 101vh !important;
-
+  
   .cover-text-box{
-      background-color: rgba(94,95,170, 0.3) !important;
-      color: #DFE2E8;
-      /* center the inner div */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
+    background-color: rgba(94,95,170, 0.3) !important;
+    color: #DFE2E8;
+    /* center the inner div */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
   .cover-text{
     text-align: center;
-    }
+  }
   // Small devices (landscape phones, 576px and up, col-sm)
   @media (min-width: 576px) {
-
+    background-image: url(${props => props.bgImagePhoneLandscape});
+    
     .cover-text-box {
       min-height: 35vh;
       min-width: 50vw;
@@ -55,11 +58,11 @@ const PageCover = styled.section`
       padding-top: 2rem;
       padding-bottom: 2rem;
     }
-
+    
     .cover-text h1{
       font-size: 1.3rem;
     }
-
+    
     .cover-text h2{
       font-size: 1.2rem;
       margin-top: 0;
@@ -72,23 +75,25 @@ const PageCover = styled.section`
   }
   // Medium devices (tablets, 768px and up, col-md)
   @media (min-width: 768px) {
+    background-image: url(${props => props.bgImageTablet});
     .cover-text-box{
       min-width: 40vw;
       position: absolute;
       top: 25vh;
       left: 10vw;
     }
-
+    
     .cover-text h1{
       font-size: 2.3rem;
     }
-
+    
     .cover-text h2{
       font-size: 1.6rem;
     }
   }
   // Large devices (desktops, 992px and up, col-lg)
   @media (min-width: 992px) {
+    background-image: url(${props => props.bgImageLaptop});
     
     height: calc(100vh - 55px); // minus hight of navbar
     .cover-text-box{
@@ -132,6 +137,20 @@ export const query = graphql`
               raw
             }
             background_image {
+              thumbnails {
+                  phone {
+                    url
+                  }
+                  laptop {
+                    url
+                  }
+                  phone_landscape {
+                    url
+                  }
+                  tablet {
+                    url
+                  }
+                }
               url
             }
           }
