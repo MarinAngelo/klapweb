@@ -124,7 +124,22 @@
                   "thumbnails": [
                     {
                       "name": "laptop",
-                      "width": 960,
+                      "width": 600,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet",
+                      "width": null,
+                      "height": 1024
+                    },
+                    {
+                      "name": "phone",
+                      "width": null,
+                      "height": 768
+                    },
+                    {
+                      "name": "phone_landscape",
+                      "width": 288,
                       "height": null
                     }
                   ],

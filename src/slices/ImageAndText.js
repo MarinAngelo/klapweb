@@ -65,11 +65,20 @@ padding: 0;
 export const ImageAndText = ({ slice }) => {
     console.log('ImageAndText data', slice)
 
+  const phone = slice.items[0].picture.thumbnails.phone.url
+  const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
+  const tablet = slice.items[0].picture.thumbnails.tablet.url
+  const laptop = slice.items[0].picture.thumbnails.laptop.url
+
+  const phoneWidth = slice.items[0].picture.thumbnails.phone.dimensions.width
+  const phoneLandscapeWidth = slice.items[0].picture.thumbnails.phone_landscape.dimensions.width
+  const tabletWidth = slice.items[0].picture.thumbnails.tablet.dimensions.width
+  const laptopWidth = slice.items[0].picture.thumbnails.laptop.dimensions.width
+
     return (
         <SpecRow>
             <Col sm={6} className="image-col">
-            {/* <Col sm={6} style={{marginLeft: "-12px"}}> */}
-                <img src={slice.items[0].picture.thumbnails.laptop.url} width="100%" />
+          <img src={phoneLandscape} srcSet={`${phoneLandscape} ${phoneLandscapeWidth}w, ${phone} ${phoneWidth}w, ${laptop} ${laptopWidth}w, ${tablet} ${tabletWidth}w`} />
             </Col>
             <Col sm={6} className="text-col center-text-box">
               <div className="center-text">
@@ -95,6 +104,27 @@ export const query = graphql`
                 thumbnails {
                   laptop {
                     url
+                    dimensions {
+                      width
+                    }
+                  }
+                  phone_landscape {
+                    url
+                    dimensions {
+                      width
+                    }
+                  }
+                  phone {
+                    url
+                    dimensions {
+                      width
+                    }
+                  }
+                  tablet {
+                    url
+                    dimensions {
+                      width
+                    }
                   }
                 }
               }
