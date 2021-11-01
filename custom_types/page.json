@@ -124,7 +124,7 @@
                   "thumbnails": [
                     {
                       "name": "laptop",
-                      "width": 600,
+                      "width": 930,
                       "height": null
                     },
                     {
@@ -139,7 +139,7 @@
                     },
                     {
                       "name": "phone_landscape",
-                      "width": 288,
+                      "width": 350,
                       "height": null
                     }
                   ],

@@ -57,18 +57,15 @@ padding: 0;
     font-size: 2.6rem;
   }
   margin-top: 11rem;
-
 }
-
 `
 
 export const ImageAndText = ({ slice }) => {
-  console.log('ImageAndText data', slice.items[0].picture.thumbnails.phone.url)
 
-  const phone = slice.items[0].picture.thumbnails.phone.url
   const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
-  const tablet = slice.items[0].picture.thumbnails.tablet.url
+  const phone = slice.items[0].picture.thumbnails.phone.url
   const laptop = slice.items[0].picture.thumbnails.laptop.url
+  const tablet = slice.items[0].picture.thumbnails.tablet.url
 
   const phoneWidth = slice.items[0].picture.thumbnails.phone.dimensions.width
   const phoneLandscapeWidth = slice.items[0].picture.thumbnails.phone_landscape.dimensions.width
@@ -78,7 +75,12 @@ export const ImageAndText = ({ slice }) => {
     return (
         <SpecRow>
             <Col sm={6} className="image-col">
-          <img src={phoneLandscape} srcSet={`${phoneLandscape} ${phoneLandscapeWidth}w, ${phone} ${phoneWidth}w, ${laptop} ${laptopWidth}w, ${tablet} ${tabletWidth}w`} />
+          <picture>
+            <source media="(min-width: 992px)" srcSet={laptop}></source>
+            <source media="(min-width: 768px)" srcSet={tablet}></source>
+            <source media="(min-width: 576px)" srcSet={phoneLandscape}></source>
+            <img src={phone} className="d-block w-100"/>
+          </picture>
             </Col>
             <Col sm={6} className="text-col center-text-box">
               <div className="center-text">
@@ -112,6 +114,7 @@ export const query = graphql`
                     url
                     dimensions {
                       width
+                      height
                     }
                   }
                   phone {
@@ -137,3 +140,17 @@ export const query = graphql`
             }
         }
  `
+/*   < img
+className = "d-block w-100"
+src = { phoneLandscape }
+srcSet = {`
+           ${phoneLandscape} ${phoneLandscapeWidth}w,
+           ${phone} ${phoneWidth}w, 
+           ${laptop} ${laptopWidth}w, 
+           ${tablet} ${tabletWidth}w
+           `}
+sizes = "(min-width: 1600px) 1200px,
+  (min - width: 1400px) 1100px,
+    (min - width: 1000px) 900px,
+      100vw"                       
+        /> */
