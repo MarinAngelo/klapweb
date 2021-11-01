@@ -120,7 +120,9 @@
               "picture": {
                 "type": "Image",
                 "config": {
-                  "constraint": {},
+                  "constraint": {
+                    "height": 768
+                  },
                   "thumbnails": [
                     {
                       "name": "laptop",
@@ -131,11 +133,6 @@
                       "name": "tablet",
                       "width": null,
                       "height": 1024
-                    },
-                    {
-                      "name": "phone",
-                      "width": null,
-                      "height": 768
                     },
                     {
                       "name": "phone_landscape",

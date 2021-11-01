@@ -292,8 +292,31 @@
               "image": {
                 "type": "Image",
                 "config": {
-                  "constraint": {},
-                  "thumbnails": [],
+                  "constraint": {
+                    "width": 375
+                  },
+                  "thumbnails": [
+                    {
+                      "name": "phone_landscape",
+                      "width": 667,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet",
+                      "width": 768,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet_landscape",
+                      "width": 1024,
+                      "height": null
+                    },
+                    {
+                      "name": "laptop",
+                      "width": 1920,
+                      "height": null
+                    }
+                  ],
                   "label": "Bild"
                 }
               },

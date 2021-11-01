@@ -21,18 +21,24 @@ export const Carousel = ({ slice }) => {
           <Col md={1}></Col>
           <Col>
         <StyledImageSlider>
-          {slice.items.map((slice, i) => (
+          {slice.items.map((item, i) => (
             <ImageSlider.Item key={i}>
-              <a href={slice.link.url} target="_blank">
+              <a href={item.link.url} target="_blank">
+                <picture>
+            <source media="(min-width: 1200px)" srcSet={item.image.thumbnails.laptop.url}></source>
+            <source media="(min-width: 1024px)" srcSet={item.image.thumbnails.tablet_landscape.url}></source>
+            <source media="(min-width: 768px)" srcSet={item.image.thumbnails.tablet.url}></source>
+            <source media="(min-width: 576px)" srcSet={item.image.thumbnails.phone_landscape.url}></source>
                 <img
                   className="d-block w-100"
-                  src={slice.image.url}
-                  alt={slice.alt}
+                  src={item.image.url}
+                  alt={item.alt}
                 />
+                </picture>
               </a>
               <ImageSlider.Caption>
-                <RichText render={slice.caption_title.raw} />
-                <RichText render={slice.caption_text.raw} />
+                <RichText render={item.caption_title.raw} />
+                <RichText render={item.caption_text.raw} />
               </ImageSlider.Caption>
             </ImageSlider.Item>
           ))}
@@ -57,6 +63,20 @@ items {
               }
               image {
                 url
+                thumbnails {
+                  laptop {
+                    url
+                  }
+                  phone_landscape {
+                    url
+                  }
+                  tablet {
+                    url
+                  }
+                  tablet_landscape {
+                    url
+                  }
+                }
               }
               link {
                 url

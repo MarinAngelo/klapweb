@@ -63,14 +63,9 @@ padding: 0;
 export const ImageAndText = ({ slice }) => {
 
   const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
-  const phone = slice.items[0].picture.thumbnails.phone.url
+  const phone = slice.items[0].picture.url
   const laptop = slice.items[0].picture.thumbnails.laptop.url
   const tablet = slice.items[0].picture.thumbnails.tablet.url
-
-  const phoneWidth = slice.items[0].picture.thumbnails.phone.dimensions.width
-  const phoneLandscapeWidth = slice.items[0].picture.thumbnails.phone_landscape.dimensions.width
-  const tabletWidth = slice.items[0].picture.thumbnails.tablet.dimensions.width
-  const laptopWidth = slice.items[0].picture.thumbnails.laptop.dimensions.width
 
     return (
         <SpecRow>
@@ -103,31 +98,16 @@ export const query = graphql`
                 raw
               }
               picture {
+                url
                 thumbnails {
                   laptop {
                     url
-                    dimensions {
-                      width
-                    }
                   }
                   phone_landscape {
                     url
-                    dimensions {
-                      width
-                      height
-                    }
-                  }
-                  phone {
-                    url
-                    dimensions {
-                      width
-                    }
                   }
                   tablet {
                     url
-                    dimensions {
-                      width
-                    }
                   }
                 }
               }
@@ -140,17 +120,3 @@ export const query = graphql`
             }
         }
  `
-/*   < img
-className = "d-block w-100"
-src = { phoneLandscape }
-srcSet = {`
-           ${phoneLandscape} ${phoneLandscapeWidth}w,
-           ${phone} ${phoneWidth}w, 
-           ${laptop} ${laptopWidth}w, 
-           ${tablet} ${tabletWidth}w
-           `}
-sizes = "(min-width: 1600px) 1200px,
-  (min - width: 1400px) 1100px,
-    (min - width: 1000px) 900px,
-      100vw"                       
-        /> */
