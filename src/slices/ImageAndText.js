@@ -74,7 +74,12 @@ export const ImageAndText = ({ slice }) => {
             <source media="(min-width: 992px)" srcSet={laptop}></source>
             <source media="(min-width: 768px)" srcSet={tablet}></source>
             <source media="(min-width: 576px)" srcSet={phoneLandscape}></source>
-            <img src={phone} className="d-block w-100"/>
+            <img 
+            src={phone} 
+            className="d-block w-100"
+              width="100%"
+              height="100%"
+            />
           </picture>
             </Col>
             <Col sm={6} className="text-col center-text-box">

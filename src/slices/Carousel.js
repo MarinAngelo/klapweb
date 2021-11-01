@@ -33,6 +33,8 @@ export const Carousel = ({ slice }) => {
                   className="d-block w-100"
                   src={item.image.url}
                   alt={item.alt}
+                  width="100%"
+                  height="100%"
                 />
                 </picture>
               </a>

@@ -51,6 +51,8 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 // height="65"
                 className="d-inline-block align-top"
                 alt="Klap Web"
+                width="100%"
+                height="100%"
               />
           </Navbar.Brand>
           </Link>
