@@ -52,7 +52,6 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 className="d-inline-block align-top"
                 alt="Klap Web"
                 width="100%"
-                height="100%"
               />
           </Navbar.Brand>
           </Link>
@@ -170,7 +169,7 @@ a.nav-link {
 
 img{
   margin-left: 0;
-  height: 35px;
+  height: 55px;
 }
 
 .navbar-toggler{

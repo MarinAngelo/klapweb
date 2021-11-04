@@ -24,7 +24,8 @@ export const Hero = ({ slice }) => {
 const PageCover = styled.section`
   // Extra small devices (portrait phones, less than 576px)
   // No media query for xs since this is the default in Bootstrap
-  background-image: url(${props => props.bgImagePhone});
+  background-image: linear-gradient(to bottom, rgba(35,36,66, 0.9), rgba(94,95,170, 0.3)),
+                    url(${props => props.bgImagePhone});
   background-color: black;
   background-size: cover;
   background-repeat: no-repeat;
@@ -34,7 +35,7 @@ const PageCover = styled.section`
   
   .cover-text-box{
     background-color: rgba(94,95,170, 0.3) !important;
-    color: #DFE2E8;
+    color: #a9a9da;
     /* center the inner div */
     display: flex;
     justify-content: center;
@@ -57,6 +58,7 @@ const PageCover = styled.section`
       border-radius: 40px;
       padding-top: 2rem;
       padding-bottom: 2rem;
+      color: #DFE2E8;
     }
     
     .cover-text h1{
