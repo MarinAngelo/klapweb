@@ -70,7 +70,8 @@
                 "type": "Image",
                 "config": {
                   "constraint": {
-                    "width": null
+                    "width": null,
+                    "height": 896
                   },
                   "thumbnails": [
                     {
@@ -79,19 +80,14 @@
                       "height": 1024
                     },
                     {
-                      "name": "laptop",
-                      "width": 1200,
+                      "name": "desktop",
+                      "width": 1920,
                       "height": null
                     },
                     {
-                      "name": "phone_landscape",
-                      "width": 576,
+                      "name": "mobile_ls",
+                      "width": 667,
                       "height": null
-                    },
-                    {
-                      "name": "phone",
-                      "width": null,
-                      "height": 768
                     }
                   ],
                   "label": "Background Image"

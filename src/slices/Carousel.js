@@ -64,19 +64,19 @@ items {
                 raw
               }
               image {
-                url
+                url(imgixParams: {q: 60})
                 thumbnails {
                   laptop {
-                    url
+                    url(imgixParams: {q: 60})
                   }
                   phone_landscape {
                     url
                   }
                   tablet {
-                    url
+                    url(imgixParams: {q: 60})
                   }
                   tablet_landscape {
-                    url
+                    url(imgixParams: {q: 60})
                   }
                 }
               }

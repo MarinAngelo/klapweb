@@ -5,12 +5,13 @@ import styled from 'styled-components'
 
 export const Hero = ({ slice }) => {
   // console.log('Hero data', slice)
+  
   return (
     <PageCover className="d-flex position-relative"
-      bgImagePhone={slice.primary.background_image.thumbnails.phone.url}
-      bgImagePhoneLandscape={slice.primary.background_image.thumbnails.phone_landscape.url}
+      bgImagePhone={slice.primary.background_image.url}
+      bgImagePhoneLandscape={slice.primary.background_image.thumbnails.mobile_ls.url}
       bgImageTablet={slice.primary.background_image.thumbnails.tablet.url}
-      bgImageLaptop={slice.primary.background_image.thumbnails.laptop.url}
+      bgImageLaptop={slice.primary.background_image.thumbnails.desktop.url}
     >
       <div className="cover-text-box">
         <div className="cover-text">
@@ -139,18 +140,16 @@ export const query = graphql`
               raw
             }
             background_image {
+              url(imgixParams: {q: 40})
               thumbnails {
-                  phone {
-                    url
+                  desktop {
+                    url(imgixParams: {q: 60})
                   }
-                  laptop {
-                    url
-                  }
-                  phone_landscape {
-                    url
+                  mobile_ls {
+                    url(imgixParams: {q: 60})
                   }
                   tablet {
-                    url
+                    url(imgixParams: {q: 60})
                   }
                 }
             }
