@@ -6,10 +6,9 @@ dotenv.config()
 const prismicConfig = require('./prismic-configuration')
 
 module.exports = {
-  // pathPrefix: '__GATSBY_IPFS_PATH_PREFIX__',
   siteMetadata: {
     title: 'Klap Web',
-    description: 'Sample multi-language website with Prismic CMS & Gatsby.js',
+    description: 'Konzept, Programmierung, Gestaltung',
   },
   plugins: [
     // 'gatsby-plugin-ipfs',

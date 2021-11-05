@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { RichText } from 'prismic-reactjs'
 import { Row, Col } from 'react-bootstrap'
 import SectionTitle from '../components/SectionTitle'
+import 'lazysizes'
 
 const StyledImageSlider = styled(ImageSlider)`
   margin-left: -12px;
@@ -30,11 +31,10 @@ export const Carousel = ({ slice }) => {
             <source media="(min-width: 768px)" srcSet={item.image.thumbnails.tablet.url}></source>
             <source media="(min-width: 576px)" srcSet={item.image.thumbnails.phone_landscape.url}></source>
                 <img
-                  className="d-block w-100"
+                    className="d-block w-100 lazyload"
                   src={item.image.url}
                   alt={item.alt}
-                  width="100%"
-                  height="100%"
+                  width={item.image.dimensions.width}
                 />
                 </picture>
               </a>
@@ -64,18 +64,33 @@ items {
                 raw
               }
               image {
+                dimensions {
+                      width
+                    }
                 url(imgixParams: {q: 60})
                 thumbnails {
                   laptop {
+                    dimensions {
+                      width
+                    }
                     url(imgixParams: {q: 60})
                   }
                   phone_landscape {
+                    dimensions {
+                      width
+                    }
                     url
                   }
                   tablet {
+                    dimensions {
+                      width
+                    }
                     url(imgixParams: {q: 60})
                   }
                   tablet_landscape {
+                    dimensions {
+                      width
+                    }
                     url(imgixParams: {q: 60})
                   }
                 }
