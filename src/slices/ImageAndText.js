@@ -49,7 +49,7 @@ padding: 0;
     font-size: 1.6rem;
   }
   
-  margin-top: 12rem;
+  margin-top: 11rem;
 }
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
@@ -103,16 +103,16 @@ export const query = graphql`
                 raw
               }
               picture {
-                url
+                url(imgixParams: {crop: "top", fit: "crop", h: 600, q:40})
                 thumbnails {
                   laptop {
-                    url
+                    url(imgixParams: {q:40})
                   }
                   phone_landscape {
-                    url
+                    url(imgixParams: {q:40})
                   }
                   tablet {
-                    url
+                    url(imgixParams: {crop: "top", fit: "crop", h: 750,q:40})
                   }
                 }
               }

@@ -169,7 +169,11 @@ a.nav-link {
 
 img{
   margin-left: 0;
-  height: 55px;
+  height: ${props => props.pathname !== "/" ? "35px" 
+                          : props.expanded ? "35px"
+                          : props.scrolled ? "35px"
+                          : "55px"}
+  /* height: 55px; */
 }
 
 .navbar-toggler{
