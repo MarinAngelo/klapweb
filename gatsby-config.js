@@ -7,8 +7,9 @@ const prismicConfig = require('./prismic-configuration')
 
 module.exports = {
   siteMetadata: {
-    title: 'Klap Web',
-    description: 'Konzept, Programmierung, Gestaltung',
+    language: 'de',
+    title: 'Klap Web | Konzept | Programmierung | Gestaltung',
+    description: 'Neuste Web-Technologie: Schlankes Frontend mit einem auf Deine Bedürfnisse zugeschnittenem und übersichtlichem Content Management System (CMS).',
   },
   plugins: [
     // 'gatsby-plugin-ipfs',
@@ -62,8 +63,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'Klap Webentwicklung',
-        short_name: 'Klap Web',
+        name: 'KLAP WEB',
+        short_name: 'KLAP WEB',
         start_url: '/',
         background_color: '#232442',
         theme_color: '#232442',

@@ -99,10 +99,8 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
   return (
     <>
       <Helmet>
-        {/* Prismic preview */}
-        <script async defer src="https://static.cdn.prismic.io/prismic.js?new=true&repo=klap-web-site"></script>
-        {/* Chat Client */}
-        <script async type="text/javascript" src="https://userlike-cdn-widgets.s3-eu-west-1.amazonaws.com/f0e2f54e174840f19a1b945544d388aa8009cfc1bbd84e4e982ffdd4202cd7cd.js"></script>
+        <html lang="de" />
+        {/* Meta Tags */}
         <meta charSet="utf-8" />
         <title>{queryData.site.siteMetadata.title}</title>
         <meta
@@ -115,6 +113,11 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
           rel="stylesheet"
           type="text/css"
         />
+
+        {/* Prismic preview */}
+        <script async defer src="https://static.cdn.prismic.io/prismic.js?new=true&repo=klap-web-site"></script>
+        {/* Chat Client */}
+        <script async type="text/javascript" src="https://userlike-cdn-widgets.s3-eu-west-1.amazonaws.com/f0e2f54e174840f19a1b945544d388aa8009cfc1bbd84e4e982ffdd4202cd7cd.js"></script>
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
