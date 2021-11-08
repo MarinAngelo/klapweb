@@ -61,7 +61,7 @@ padding: 0;
 `
 
 export const ImageAndText = ({ slice }) => {
-  console.log('ImageAndText Content', slice)
+  // console.log('ImageAndText Content', slice)
 
   const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
   const phone = slice.items[0].picture.url
