@@ -442,5 +442,19 @@
         }
       }
     }
+  },
+  "Seo": {
+    "site_meta_title": {
+      "type": "Text",
+      "config": {
+        "label": "Seiten Titel"
+      }
+    },
+    "site_meta_description": {
+      "type": "Text",
+      "config": {
+        "label": "Seiten Beschreibung"
+      }
+    }
   }
 }

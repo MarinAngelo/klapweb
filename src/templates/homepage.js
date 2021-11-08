@@ -6,6 +6,7 @@ import { repositoryConfigs } from '../utils/prismicPreviews'
 
 import { Layout } from '../components/Layout'
 import { SliceZone } from '../components/SliceZone'
+import SEO from '../components/seo'
 
 const HomepageTemplate = ({ data }) => {
   if (!data) return null
@@ -21,11 +22,16 @@ const HomepageTemplate = ({ data }) => {
     lang,
     type,
     url,
-    alternateLanguages,
+    alternateLanguages
   }
 
   return (
     <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
+      <SEO
+        title={homepage.data.site_meta_title}
+        description={homepage.data.site_meta_description}
+        article
+      />
       <SliceZone slices={homepage.data.body} />
     </Layout>
   )
@@ -44,6 +50,8 @@ export const query = graphql`
       url
       type
       data {
+        site_meta_description
+        site_meta_title
         body {
           ... on PrismicSliceType {
             id
