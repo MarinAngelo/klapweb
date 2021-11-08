@@ -14,6 +14,7 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-sitemap`,
+    `gatsby-plugin-offline`,
     {
       resolve: "gatsby-plugin-anchor-links",
       options: {
