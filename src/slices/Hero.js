@@ -9,7 +9,7 @@ export const Hero = ({ slice }) => {
     const thumbImgs = slice.primary.background_image.thumbnails
     console.log('thumbImgs', thumbImgs)
     return (
-        <PageCover className="d-flex position-relative"
+        <PageCover className="d-flex position-relative" role="img" aria-label={slice.primary.background_image.alt}
             mobileImg={mainImg.images.fallback.src}
             mobileLsImg={thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src}
             desktopImg={thumbImgs.desktop.localFile.childImageSharp.gatsbyImageData.images.fallback.src}
@@ -143,6 +143,7 @@ export const query = graphql`
               raw
             }
             background_image {
+                alt
                               localFile {
                   childImageSharp {
                     gatsbyImageData(quality: 60)

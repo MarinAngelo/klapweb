@@ -61,6 +61,7 @@ padding: 0;
 `
 
 export const ImageAndText = ({ slice }) => {
+  console.log('ImageAndText Content', slice)
 
   const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
   const phone = slice.items[0].picture.url
@@ -79,6 +80,7 @@ export const ImageAndText = ({ slice }) => {
             className="d-block w-100"
               width="100%"
               height="100%"
+              alt={slice.items[0].picture.alt}
             />
           </picture>
             </Col>
@@ -103,6 +105,7 @@ export const query = graphql`
                 raw
               }
               picture {
+                alt
                 url(imgixParams: {crop: "top", fit: "crop", h: 600, q:40})
                 thumbnails {
                   laptop {

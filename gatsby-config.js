@@ -8,7 +8,7 @@ const prismicConfig = require('./prismic-configuration')
 module.exports = {
   siteMetadata: {
     language: 'de',
-    title: 'Klap Web | Konzept | Programmierung | Gestaltung',
+    title: 'Klap Web | Design & Programmierung, Websites neu konzipiert.',
     description: 'Neuste Web-Technologie: Schlankes Frontend mit einem auf Deine Bedürfnisse zugeschnittenem und übersichtlichem Content Management System (CMS).',
   },
   plugins: [
