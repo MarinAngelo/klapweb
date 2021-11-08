@@ -10,9 +10,10 @@ module.exports = {
     language: 'de',
     title: 'Klap Web | Design & Programmierung, Websites neu konzipiert.',
     description: 'Neuste Web-Technologie: Schlankes Frontend mit einem auf Deine Bedürfnisse zugeschnittenem und übersichtlichem Content Management System (CMS).',
+    siteUrl: `https://www.klap-web.ch`,
   },
   plugins: [
-    // 'gatsby-plugin-ipfs',
+    `gatsby-plugin-sitemap`,
     {
       resolve: "gatsby-plugin-anchor-links",
       options: {

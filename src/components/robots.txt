@@ -1,2 +1,4 @@
 User-agent: *
 Disallow: /guides.html
+
+Sitemap: https://www.klap-web.ch/sitemap/sitemap-index.xml
