@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row'
 import styled from 'styled-components'
 import { RichText } from 'prismic-reactjs'
 import StyledAnchorLinkButton from '../styledComponents/StyledAnchorLinkButton'
+import { linkResolver } from '../utils/linkResolver'
 
 const StyledCard = styled(Card)`
 // Extra small devices (portrait phones, less than 576px)
@@ -62,7 +63,7 @@ export const CallToActionGrid = ({slice}) => {
                     <Card.Title>
                         <RichText render={cta.call_to_action_title.raw} />
                     </Card.Title>
-                    <RichText render={cta.content.raw} />
+                            <RichText render={cta.content.raw} linkResolver={linkResolver} />
                     {/* {cta.link_to_anchor ? anchorLinkComponent : goToPageLink} */}
                     {anchorLinkComponent}
                 </Card.Body>

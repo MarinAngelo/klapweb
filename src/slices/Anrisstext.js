@@ -3,6 +3,7 @@ import { graphql } from 'gatsby'
 import { RichText } from 'prismic-reactjs'
 import StyledLinkButton from '../styledComponents/StyledLinkButton'
 import MainLayoutPart from '../components/MainLayoutPart'
+import { linkResolver } from '../utils/linkResolver'
 
 export const Anrisstext = ({ slice }) => {
     // console.log('Anrisstext data', slice)
@@ -15,7 +16,7 @@ export const Anrisstext = ({ slice }) => {
                     <section id={anrisstext.anchor} key={i}>
                         <article>
                             <RichText render={anrisstext.title.raw} />
-                            <RichText render={anrisstext.teasertext.raw} />
+                            <RichText render={anrisstext.teasertext.raw} linkResolver={linkResolver}/>
                         </article>
                         <StyledLinkButton to={anrisstext.link_to_correspondig_text.url} className="btn btn-outline-danger">
                             {anrisstext.button_label}

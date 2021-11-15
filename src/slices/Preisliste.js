@@ -4,6 +4,7 @@ import { RichText } from 'prismic-reactjs'
 import { Row, Card, Col } from 'react-bootstrap'
 import styled from 'styled-components'
 import MainLayoutPart from '../components/MainLayoutPart'
+import { linkResolver } from '../utils/linkResolver'
 
 const StyledCard = styled(Card)`
     // determins breakepoint
@@ -52,7 +53,7 @@ export const Preisliste = ({ slice }) => {
                   <div className="annex">
                     {price.price_annex}
                   </div> : null }
-                <RichText render={price.price_list_title.raw} />
+                  <RichText render={price.price_list_title.raw} linkResolver={linkResolver}/>
                 <div className="price">
                   <p>
                     CHF {new Intl.NumberFormat('de-CH').format(price.price)}.00 <span className="duration">{price.price_type}</span>
@@ -60,7 +61,7 @@ export const Preisliste = ({ slice }) => {
                   {/* CHF {price} <span className="duration"></span> */}
                 </div>
                 <div className="description">
-                  <RichText render={price.price_description.raw} />
+                    <RichText render={price.price_description.raw} linkResolver={linkResolver}/>
                 </div>
               </Card.Body>
             </StyledCard>            
