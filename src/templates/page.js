@@ -10,6 +10,7 @@ import { PageTitle } from '../components/PageTitle'
 import { PageContent } from '../components/PageContent'
 import { Row, Col } from 'react-bootstrap'
 import styled from 'styled-components'
+import SEO from '../components/seo'
 
 const PageTemplate = ({ data }) => {
   console.log('Page data', data)
@@ -32,6 +33,11 @@ const PageTemplate = ({ data }) => {
 
   return (
     <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
+      <SEO
+        title={pageContent.data.site_meta_title}
+        description={pageContent.data.site_meta_description}
+        article
+      />
       {/* Without english version build error */}
       {data.prismicPage.data.page_title.raw[0].text !== "" ?
         <PageTopRow>
@@ -88,6 +94,8 @@ query pageQuery($id: String, $lang: String) {
       uid
     }
     data {
+      site_meta_description
+        site_meta_title
       page_title {
         raw
       }

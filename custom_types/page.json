@@ -27,7 +27,14 @@
       "type": "Slices",
       "fieldset": "Slice zone",
       "config": {
-        "labels": {},
+        "labels": {
+          "akkordeon": [
+            {
+              "display": "accordion",
+              "name": "accordion"
+            }
+          ]
+        },
         "choices": {
           "preisliste": {
             "type": "Slice",
@@ -197,8 +204,54 @@
               }
             },
             "repeat": {}
+          },
+          "akkordeon": {
+            "type": "Slice",
+            "fieldset": "Akkordeon",
+            "description": "Aus- und Einklappbare Textbereiche",
+            "icon": "toc",
+            "display": "list",
+            "non-repeat": {
+              "accordion_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2, heading3, heading4, heading5, heading6",
+                  "label": "Akkordeon Titel"
+                }
+              }
+            },
+            "repeat": {
+              "accordion_item_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3, heading4, heading5, heading6",
+                  "label": "Akkordeonartikel Überschrift"
+                }
+              },
+              "accordion_item_test": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph, preformatted, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",
+                  "label": "Akkordeonartikel Text"
+                }
+              }
+            }
           }
         }
+      }
+    }
+  },
+  "SEO": {
+    "site_meta_title": {
+      "type": "Text",
+      "config": {
+        "label": "Seiten Titel"
+      }
+    },
+    "site_meta_description": {
+      "type": "Text",
+      "config": {
+        "label": "Website Beschreibung"
       }
     }
   }
