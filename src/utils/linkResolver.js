@@ -12,12 +12,15 @@ const { defaultLanguage } = require('../../prismic-configuration')
  * @returns URL for the provided Prismic document.
  */
 exports.linkResolver = (doc) => {
+  // console.log('linkResolver doc', doc)
+
   switch (doc.type) {
     case 'homepage': {
       return doc.lang === defaultLanguage ? '/' : `/${doc.lang}`
     }
 
     case 'page': {
+      console.log('page triggerd', doc.uid)
       return doc.lang === defaultLanguage
         // ? `/page/${doc.uid}`
         ? `/${doc.uid}`
