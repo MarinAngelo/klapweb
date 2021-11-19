@@ -13,7 +13,7 @@ const StyledImageSlider = styled(ImageSlider)`
 `
 
 export const Carousel = ({ slice }) => {
-    console.log('Carousel data', slice)
+    // console.log('Carousel data', slice)
 
     return (
       <>

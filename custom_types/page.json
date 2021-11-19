@@ -215,7 +215,7 @@
               "accordion_title": {
                 "type": "StructuredText",
                 "config": {
-                  "single": "heading2, heading3, heading4, heading5, heading6",
+                  "single": "heading2,heading3,heading4,heading5,heading6",
                   "label": "Akkordeon Titel"
                 }
               }
@@ -224,11 +224,11 @@
               "accordion_item_title": {
                 "type": "StructuredText",
                 "config": {
-                  "single": "heading3, heading4, heading5, heading6",
+                  "single": "heading3,heading4,heading5,heading6",
                   "label": "Akkordeonartikel Überschrift"
                 }
               },
-              "accordion_item_test": {
+              "accordion_item_text": {
                 "type": "StructuredText",
                 "config": {
                   "multi": "paragraph, preformatted, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",

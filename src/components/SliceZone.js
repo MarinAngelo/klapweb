@@ -13,7 +13,8 @@ import {
   Carousel,
   HtmlContent,
   ImageAndText,
-  TextBlock
+  TextBlock,
+  Accordion
 } from '../slices'
 
 export const SliceZone = ({ slices }) => {
@@ -31,7 +32,8 @@ export const SliceZone = ({ slices }) => {
     carousel: Carousel,
     html_inhalte: HtmlContent,
     bild_und_text: ImageAndText,
-    text_block: TextBlock
+    text_block: TextBlock,
+    akkordeon: Accordion
   }
 
   return slices.map((slice, index) => {

@@ -113,6 +113,7 @@ query pageQuery($id: String, $lang: String) {
         ...PrismicPageDataBodyHtmlInhalte
         ...PrismicPageDataBodyBildUndText
         ...PrismicPageDataBodyTextBlock
+        ...PrismicPageDataBodyAkkordeon
           #...PageDataBodyEmailSignup
           #...PageDataBodyFullWidthImage
           #...PageDataBodyHeadlineWithButton

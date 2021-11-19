@@ -20,7 +20,7 @@ exports.linkResolver = (doc) => {
     }
 
     case 'page': {
-      console.log('page triggerd', doc.uid)
+      // console.log('page triggerd', doc.uid)
       return doc.lang === defaultLanguage
         // ? `/page/${doc.uid}`
         ? `/${doc.uid}`
