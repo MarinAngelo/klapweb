@@ -10,11 +10,20 @@ import { TopMenu } from './TopMenu'
 import { Footer } from './footer/Footer'
 import { websiteDatenQuery } from './footer/footerQuery';
 
+import { darkenLighten } from '../utils/ColorAdjust'
+
+const pageColor = "#5e5faa"
+const pageColorDarker = darkenLighten(pageColor, 100)
+const pageColorDark = darkenLighten(pageColor, 90)
+
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
 // No media query for xs since this is the default in Bootstrap
 html {
-  --page-color: #5e5faa;
+  --page-color: ${props => props.pageColor};
+  --page-color-dark: ${props => props.pageColorDark};
+  --page-color-darker: ${props => props.pageColorDarker};
+  --page-bg-color: #c7c8ff;
   --footer-color: #aeafff;
   --footer-bg-color: #232442;
   --footer-hover-color: #dcdcff;
@@ -30,7 +39,7 @@ html {
 
 body {
     color: var(--page-color);
-    background: #c7c8ff;
+    background: var(--page-bg-color);
   }
 
   li.language-switcher {
@@ -111,7 +120,11 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
           rel="stylesheet"
         />
       </Helmet>
-      <GlobalStyle />
+      <GlobalStyle 
+        pageColor={pageColor}
+        pageColorDarker={pageColorDarker}
+        pageColorDark={pageColorDark}
+      />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
       <Container fluid >
         <main>

@@ -51,17 +51,21 @@ fragment PrismicPageDataBodyAkkordeon on PrismicPageDataBodyAkkordeon {
 const StyledAkkordeon = styled(Akkordeon)`
 
   .accordion-body {
-    background-color: #C7C8FF;
+    background-color: var(--page-color-darker);
   }
 
   button {
-    background-color: #C7C8FF;
+    background-color: var(--page-color-darker);
+
+    &:hover {
+      background-color: var(--page-color-dark);
+    }
 
   }
 
   .accordion-button:not(.collapsed) {
-    background-color: #C7C8FF;
-    color: var(--page-coor);
+    background-color: var(--page-color-dark);
+    color: var(--page-color);
     box-shadow: none;
   }
 
