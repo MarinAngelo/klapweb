@@ -3,65 +3,8 @@ import { graphql } from 'gatsby'
 import { Row, Col } from 'react-bootstrap'
 import styled from 'styled-components'
 
-const SpecRow = styled(Row)`
-// Extra small devices (portrait phones, less than 576px)
-// No media query for xs since this is the default in Bootstrap
-margin-top: 10rem;
-
-  p {
-    padding: 1.6rem 1rem 1.6rem 1rem;
-    font-size: 1.2rem;
-    color: var(--secondary-color-dark);
-  }
-
-.image-col {
-padding: 0;
-}
-
-.text-col {
-  background: var(--secondary-bg-color-dark);
-}
-
-  .center-text-box {
-      display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .center-text {
-    text-align: center;
-  }
-
-// Small devices (landscape phones, 576px and up, col-sm)
-@media (min-width: 576px) {
-
-}
-// Medium devices (tablets, 768px and up, col-md)
-@media (min-width: 768px) {
-
-
-}
-// Large devices (desktops, 992px and up, col-lg)
-@media (min-width: 992px) {
-
-  p {
-    padding: 0 6rem 0 6rem;
-    font-size: 1.6rem;
-  }
-  
-  margin-top: 11rem;
-}
-// Extra large devices (large desktops, 1200px and up, col-xl)
-@media (min-width: 1200px) {
-  p {
-    font-size: 2.6rem;
-  }
-  margin-top: 11rem;
-}
-`
-
 export const ImageAndText = ({ slice }) => {
-  // console.log('ImageAndText Content', slice)
+  console.log('ImageAndText Content', slice.items[0].top_page_banner)
 
   const phoneLandscape = slice.items[0].picture.thumbnails.phone_landscape.url
   const phone = slice.items[0].picture.url
@@ -69,7 +12,7 @@ export const ImageAndText = ({ slice }) => {
   const tablet = slice.items[0].picture.thumbnails.tablet.url
 
     return (
-        <SpecRow>
+        <SpecRow topPageBanner={slice.items[0].top_page_banner}>
             <Col sm={6} className="image-col">
           <picture>
             <source media="(min-width: 992px)" srcSet={laptop}></source>
@@ -96,20 +39,21 @@ export const ImageAndText = ({ slice }) => {
 }
 
 export const query = graphql`
- fragment PrismicPageDataBodyBildUndText on PrismicPageDataBodyBildUndText {
-     slice_type
- items {
-              caption {
-                text
-                html
-                raw
-              }
-              picture {
-                alt
-                url(imgixParams: {crop: "top", fit: "crop", h: 600, q:40})
-                thumbnails {
-                  laptop {
-                    url(imgixParams: {q:40})
+fragment PrismicPageDataBodyBildUndText on PrismicPageDataBodyBildUndText {
+  slice_type
+  items {
+    top_page_banner
+    caption {
+      text
+      html
+      raw
+    }
+    picture {
+      alt
+      url(imgixParams: {crop: "top", fit: "crop", h: 600, q:40})
+      thumbnails {
+        laptop {
+          url(imgixParams: {q:40})
                   }
                   phone_landscape {
                     url(imgixParams: {q:40})
@@ -126,5 +70,59 @@ export const query = graphql`
                 raw
               }
             }
-        }
+          }
  `
+          const SpecRow = styled(Row)`
+          // Extra small devices (portrait phones, less than 576px)
+          // No media query for xs since this is the default in Bootstrap
+          margin-top: ${props => props.topPageBanner === true ? "2.5rem" : "0"};
+            p {
+              padding: 1.6rem 1rem 1.6rem 1rem;
+              font-size: 1.2rem;
+              color: var(--secondary-color-dark);
+            }
+          
+          .image-col {
+          padding: 0;
+          }
+          
+          .text-col {
+            background: var(--secondary-bg-color-dark);
+          }
+          
+            .center-text-box {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+          
+            .center-text {
+              text-align: center;
+            }
+          
+          // Small devices (landscape phones, 576px and up, col-sm)
+          @media (min-width: 576px) {
+          
+          }
+          // Medium devices (tablets, 768px and up, col-md)
+          @media (min-width: 768px) {
+          
+          
+          }
+          // Large devices (desktops, 992px and up, col-lg)
+          @media (min-width: 992px) {
+          
+            p {
+              padding: 0 6rem 0 6rem;
+              font-size: 1.6rem;
+            }
+            
+          }
+          // Extra large devices (large desktops, 1200px and up, col-xl)
+          @media (min-width: 1200px) {
+            p {
+              font-size: 2.6rem;
+            }
+           margin-top: ${props => props.topPageBanner === true ? "5rem" : "0"};
+          }
+          `

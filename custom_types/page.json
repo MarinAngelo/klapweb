@@ -185,6 +185,13 @@
                   "label": "Ausrichtung",
                   "placeholder": "Ausrichtung"
                 }
+              },
+              "top_page_banner": {
+                "type": "Boolean",
+                "config": {
+                  "default_value": false,
+                  "label": "Als Seitenbanner verwenden"
+                }
               }
             }
           },
@@ -231,7 +238,7 @@
               "accordion_item_text": {
                 "type": "StructuredText",
                 "config": {
-                  "multi": "paragraph, preformatted, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",
+                  "multi": "paragraph,preformatted,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
                   "label": "Akkordeonartikel Text"
                 }
               }
