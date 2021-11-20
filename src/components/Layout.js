@@ -33,14 +33,6 @@ body {
     background: #c7c8ff;
   }
 
-  h2 {
-    margin-top: 3rem;
-  }
-
-  h3 {
-    margin-top: 1.8rem;
-  }
-
   li.language-switcher {
     font-size: 1.4rem;
   }
@@ -60,11 +52,7 @@ body {
   }
   // Large devices (desktops, 992px and up, col-lg)
   @media (min-width: 992px) {
-    
-    h3 {
-      margin-bottom: 1.5rem;
-    }
-    
+      
     p {
       font-size: 1.6rem;
     }

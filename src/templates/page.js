@@ -48,7 +48,7 @@ const PageTemplate = ({ data }) => {
         </PageTopRow>
         : null
       }
-      <Row style={{ marginTop: "-6rem" }}>
+      <Row>
         <Col>
           <SliceZone slices={page.body} />
         </Col>
