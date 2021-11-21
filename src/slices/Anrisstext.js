@@ -18,7 +18,7 @@ export const Anrisstext = ({ slice }) => {
                             <RichText render={anrisstext.title.raw} />
                             <RichText render={anrisstext.teasertext.raw} linkResolver={linkResolver}/>
                         </article>
-                        <StyledLinkButton to={anrisstext.link_to_correspondig_text.url} className="btn btn-outline-danger">
+                        <StyledLinkButton to={anrisstext.link_to_correspondig_text.url} className="btn btn-outline-success">
                             {anrisstext.button_label}
                         </StyledLinkButton>
                     </section>

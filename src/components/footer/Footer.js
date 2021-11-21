@@ -70,7 +70,7 @@ export const Footer = ({ topMenu, websiteDaten }) => {
     <>
       <MainFooterRow>
         <Col>
-          <MainLayoutPart content={footerContent} usedInComponent="footer"/>
+          <MainLayoutPart content={footerContent} doNotUseLinkStyles={true}/>
         </Col>
       </MainFooterRow>
     </>

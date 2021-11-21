@@ -8,21 +8,21 @@ const StyledRow = styled(Row)`
     ${linkStyles}
   }
 `
+const MainLayoutPart = ({ content, doNotUseLinkStyles }) => {
 
-const MainLayoutPart = ({ content, usedInComponent}) => {
-
-    if (usedInComponent = "footer") {
+    if (!doNotUseLinkStyles) {
 
         return (
             <StyledRow className="mt-4 mt-md-5 mb-4 mb-md-5">
                 <Col md={1} lg={2}></Col>
                 <Col>
-                {content}
+                    {content}
                 </Col>
                 <Col md={1} lg={2}></Col>
             </StyledRow>
         )
     } else {
+
         return (
             <Row className="mt-4 mt-md-5 mb-4 mb-md-5"  >
                 <Col md={1} lg={2}></Col>
@@ -33,7 +33,7 @@ const MainLayoutPart = ({ content, usedInComponent}) => {
             </Row>
         )
     }
-    
+
 }
 
 export default MainLayoutPart

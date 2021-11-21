@@ -23,7 +23,7 @@ import { Link } from 'gatsby'
 } */
 
 export const Preisliste = ({ slice }) => {
-  console.log('Preislisten data', slice)
+  // console.log('Preislisten data', slice)
 
   const priceListContent = (
     <>
