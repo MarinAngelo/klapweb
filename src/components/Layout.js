@@ -13,8 +13,13 @@ import { websiteDatenQuery } from './footer/footerQuery';
 import { darkenLighten } from '../utils/ColorAdjust'
 
 const pageColor = "#5e5faa"
+const pageBgColor = "#c7c8ff"
+const pageLinkColor = "#8b1a8b"
+const pageBgColorDarker = darkenLighten(pageBgColor, -2)
 const pageColorDarker = darkenLighten(pageColor, 100)
+const pageBgColorDark = darkenLighten(pageBgColor, -10)
 const pageColorDark = darkenLighten(pageColor, 90)
+const pageLinkColorDarker = darkenLighten(pageLinkColor, -40)
 
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
@@ -23,7 +28,11 @@ html {
   --page-color: ${props => props.pageColor};
   --page-color-dark: ${props => props.pageColorDark};
   --page-color-darker: ${props => props.pageColorDarker};
-  --page-bg-color: #c7c8ff;
+  --page-bg-color: ${props => props.pageBgColor};
+  --page-bg-color-dark: ${props => props.pageBgColorDark};
+  --page-bg-color-darker: ${props => props.pageBgColorDarker};
+  --page-link-color: ${props => props.pageLinkColor};
+  --page-link-color-darker: ${props => props.pageLinkColorDarker};
   --footer-color: #aeafff;
   --footer-bg-color: #232442;
   --footer-hover-color: #dcdcff;
@@ -49,7 +58,6 @@ body {
   em {
     font-size: .9rem;
   }
-
   
   // Small devices (landscape phones, 576px and up, col-sm)
   @media (min-width: 576px) {
@@ -122,8 +130,13 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
       </Helmet>
       <GlobalStyle 
         pageColor={pageColor}
+        pageBgColor={pageBgColor}
         pageColorDarker={pageColorDarker}
         pageColorDark={pageColorDark}
+        pageBgColorDark={pageBgColorDark}
+        pageBgColorDarker={pageBgColorDarker}
+        pageLinkColor={pageLinkColor}
+        pageLinkColorDarker={pageLinkColorDarker}
       />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
       <Container fluid >

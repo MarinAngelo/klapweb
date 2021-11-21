@@ -2,9 +2,10 @@ import * as React from 'react'
 import Akkordeon from 'react-bootstrap/Accordion'
 import { Row, Col } from 'react-bootstrap'
 import { graphql } from 'gatsby'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import { AccordionItem } from './AccordionItem'
 import SectionTitle from '../../components/SectionTitle'
+import linkStyles from '../../components/styled/linkStyles'
 
 export const Accordion = ({ slice }) => {
   // console.log('Accordion data', slice)
@@ -15,7 +16,7 @@ export const Accordion = ({ slice }) => {
       <Row className="mt-4 mt-md-5 mb-4 mb-md-5">
         <Col md={1} lg={2}></Col>
         <Col>
-          <StyledAkkordeon flush>
+          <StyledAkkordeon defaultActiveKey={0} flush>
             {slice.items.map((item, i) => {
               console.log('key', i)
               return (
@@ -51,7 +52,11 @@ fragment PrismicPageDataBodyAkkordeon on PrismicPageDataBodyAkkordeon {
 const StyledAkkordeon = styled(Akkordeon)`
 
   .accordion-body {
-    background-color: var(--page-color-darker);
+    background-color: var(--page-bg-color-darker);
+  }
+
+  a {
+    ${linkStyles}
   }
 
   button {
@@ -70,7 +75,7 @@ const StyledAkkordeon = styled(Akkordeon)`
   }
 
   .accordion-button.collapsed {
-    color: var(--page-coor);
+    color: var(--page-color);
     &:focus {
       box-shadow: none;
     }

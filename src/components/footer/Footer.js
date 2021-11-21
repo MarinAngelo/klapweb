@@ -3,7 +3,7 @@ import { Row, Col, Nav } from 'react-bootstrap'
 import MainLayoutPart from '../MainLayoutPart'
 import { Link } from 'gatsby'
 import { MainFooterRow, FooterNav, BottomRow, AddressCol } from './styledFooter'
-import { footerQuery, websiteDatenQuery } from './footerQuery'
+// import { footerQuery, websiteDatenQuery } from './footerQuery'
 
 export const Footer = ({ topMenu, websiteDaten }) => {
   // console.log('Top Menu', topMenu)
@@ -70,7 +70,7 @@ export const Footer = ({ topMenu, websiteDaten }) => {
     <>
       <MainFooterRow>
         <Col>
-          <MainLayoutPart content={footerContent} />
+          <MainLayoutPart content={footerContent} usedInComponent="footer"/>
         </Col>
       </MainFooterRow>
     </>
