@@ -6,6 +6,7 @@ import styled, {css} from 'styled-components'
 import { AccordionItem } from './AccordionItem'
 import SectionTitle from '../../components/SectionTitle'
 import linkStyles from '../../components/styled/linkStyles'
+import { OneColSection } from '../../components/OneColSection'
 
 export const Accordion = ({ slice }) => {
   // console.log('Accordion data', slice)
@@ -13,6 +14,7 @@ export const Accordion = ({ slice }) => {
   return (
     <>
       <SectionTitle title={slice.primary.accordion_title.raw} />
+      <OneColSection content={slice.primary.accordion_explanation_text.raw} />
       <Row className="mt-4 mt-md-5 mb-4 mb-md-5">
         <Col md={1} lg={2}></Col>
         <Col>
@@ -36,6 +38,9 @@ fragment PrismicPageDataBodyAkkordeon on PrismicPageDataBodyAkkordeon {
   slice_type
   primary {
     accordion_title {
+      raw
+    }
+    accordion_explanation_text {
       raw
     }
   }

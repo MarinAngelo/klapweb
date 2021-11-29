@@ -172,8 +172,7 @@ img{
   height: ${props => props.pathname !== "/" ? "35px" 
                           : props.expanded ? "35px"
                           : props.scrolled ? "35px"
-                          : "55px"}
-  /* height: 55px; */
+                          : "50px"}
 }
 
 .navbar-toggler{

@@ -65,8 +65,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'KLAP WEB',
-        short_name: 'KLAP WEB',
+        name: 'Klap Web',
+        short_name: 'Klap Web',
         start_url: '/',
         background_color: '#232442',
         theme_color: '#232442',

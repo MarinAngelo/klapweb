@@ -225,6 +225,14 @@
                   "single": "heading2,heading3,heading4,heading5,heading6",
                   "label": "Akkordeon Titel"
                 }
+              },
+              "accordion_explanation_text": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph, preformatted, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",
+                  "allowTargetBlank": true,
+                  "label": "Akkordeon Erklärungstext"
+                }
               }
             },
             "repeat": {
