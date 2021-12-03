@@ -48,6 +48,7 @@ html {
 body {
     color: var(--page-color);
     background: var(--page-bg-color);
+    height: 100vh !important;
   }
 
   li.language-switcher {

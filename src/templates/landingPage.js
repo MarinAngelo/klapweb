@@ -2,13 +2,22 @@ import * as React from 'react'
 import { graphql } from 'gatsby'
 import { withPrismicPreview } from 'gatsby-plugin-prismic-previews'
 import { repositoryConfigs } from '../utils/prismicPreviews'
+import { RichText } from 'prismic-reactjs'
+import styled from 'styled-components'
+
+const StyledCenterDiv = styled.div`
+    background-color: black;
+    color: blueviolet;
+`
 
 const LandingPageTemplate = ({ data }) => {
-    console.log('Page data', data)
+    console.log('LandingPage data', data.prismicLandingPage.data.text)
     if (!data) return null
 
     return (
-        <h1>Hallo Landing Page</h1>
+        <StyledCenterDiv className="d-flex align-items-center justify-content-center" style={{ height: "100vh", width: "100vw" }}>
+            <RichText render={data.prismicLandingPage.data.text.raw} />
+        </StyledCenterDiv>
     )
 }
 
