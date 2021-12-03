@@ -28,6 +28,15 @@ exports.linkResolver = (doc) => {
         : `/${doc.lang}/${doc.uid}`
     }
 
+    case 'landing_page': {
+      // console.log('page triggerd', doc.uid)
+      return doc.lang === defaultLanguage
+        // ? `/page/${doc.uid}`
+        ? `/${doc.uid}`
+        // : `/page/${doc.lang}/${doc.uid}`
+        : `/${doc.lang}/${doc.uid}`
+    }
+
     default:
       return '/'
   }

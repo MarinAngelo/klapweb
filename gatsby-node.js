@@ -12,6 +12,13 @@ exports.createPages = async ({ graphql, actions }) => {
           url
         }
       }
+      allPrismicLandingPage {
+        nodes {
+          id
+          lang
+          url
+        }
+      }
       allPrismicHomepage {
         nodes {
           id
@@ -26,6 +33,17 @@ exports.createPages = async ({ graphql, actions }) => {
     createPage({
       path: page.url,
       component: path.resolve(__dirname, 'src/templates/page.js'),
+      context: {
+        id: page.id,
+        lang: page.lang,
+      },
+    })
+  })
+
+  queryData.data.allPrismicLandingPage.nodes.forEach((page) => {
+    createPage({
+      path: page.url,
+      component: path.resolve(__dirname, 'src/templates/landingPage.js'),
       context: {
         id: page.id,
         lang: page.lang,
