@@ -13,8 +13,6 @@ module.exports = {
     siteUrl: `https://www.klap-web.ch`,
   },
   plugins: [
-    `gatsby-plugin-sitemap`,
-    `gatsby-plugin-offline`,
     {
       resolve: "gatsby-plugin-anchor-links",
       options: {
@@ -32,14 +30,15 @@ module.exports = {
       options: {
         repositoryName: prismicConfig.prismicRepo,
         accessToken: process.env.PRISMIC_ACCESS_TOKEN,
-        linkResolver: require('./src/utils/linkResolver').linkResolver,
         schemas: {
           homepage: require('./custom_types/homepage.json'),
           page: require('./custom_types/page.json'),
           top_menu: require('./custom_types/top_menu.json'),
           website_daten: require('./custom_types/website_daten.json'),
           layout: require('./custom_types/layout.json'),
+          landing_page: require('./custom_types/landing_page.json'),
         },
+        linkResolver: require('./src/utils/linkResolver').linkResolver,
       },
     },
     {

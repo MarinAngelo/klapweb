@@ -12,6 +12,12 @@
     "value": "page.json"
   },
   {
+    "id": "landing_page",
+    "name": "Landing Page",
+    "repeatable": true,
+    "value": "landing_page.json"
+  },
+  {
     "id": "top_menu",
     "name": "Top Menu",
     "repeatable": false,

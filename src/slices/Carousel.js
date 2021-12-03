@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { RichText } from 'prismic-reactjs'
 import { Row, Col } from 'react-bootstrap'
 import SectionTitle from '../components/SectionTitle'
-import 'lazysizes'
 
 const StyledImageSlider = styled(ImageSlider)`
   margin-left: -12px;

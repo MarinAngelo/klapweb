@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useStaticQuery, graphql } from 'gatsby'
 import { Helmet } from 'react-helmet'
-import { getLCP, getFID, getCLS } from 'web-vitals';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Container, Row, Col } from 'react-bootstrap'
 import { createGlobalStyle } from "styled-components"
@@ -95,11 +94,6 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
       }
     }
   `)
-
-  // web vitals
-  /*     getCLS(console.log);
-      getFID(console.log);
-      getLCP(console.log); */
 
   return (
     <>
