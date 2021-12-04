@@ -4,18 +4,33 @@ import { withPrismicPreview } from 'gatsby-plugin-prismic-previews'
 import { repositoryConfigs } from '../utils/prismicPreviews'
 import { RichText } from 'prismic-reactjs'
 import styled from 'styled-components'
+import { useLocation } from '@reach/router'
 
 const StyledCenterDiv = styled.div`
-    background-color: black;
-    color: blueviolet;
+    font-size: 1.6rem;
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    p {
+        padding: 1rem;
+    }
+    background-color: ${props => props.pathname === "/janos" ? "black" : props.pathname === "/carla" ? "#ff003bb0" : "blue"};
+    color: ${props => props.pathname === "/janos" ? "red" : props.pathname === "/carla" ? "#00806fd1" : "red"};
 `
 
 const LandingPageTemplate = ({ data }) => {
     console.log('LandingPage data', data.prismicLandingPage.data.text)
+
+    const { pathname } = useLocation();
+    console.log('Pathname', pathname)
+
     if (!data) return null
 
     return (
-        <StyledCenterDiv className="d-flex align-items-center justify-content-center" style={{ height: "100vh", width: "100vw" }}>
+        <StyledCenterDiv 
+            className="d-flex align-items-center justify-content-center" 
+            style={{ height: "100vh", width: "100vw" }}
+            pathname={pathname}
+            >
             <RichText render={data.prismicLandingPage.data.text.raw} />
         </StyledCenterDiv>
     )
