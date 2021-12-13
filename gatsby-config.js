@@ -54,7 +54,9 @@ module.exports = {
         fonts: [
           `limelight`,
           `source sans pro\:300,400,400i,700`, // you can also specify font weights and styles,
-          'Indie Flower'
+          'Indie Flower',
+          'Rubik Beastly',
+          'Codystar\:400'
         ],
         display: 'swap'
       }

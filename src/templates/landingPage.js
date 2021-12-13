@@ -9,12 +9,14 @@ import { useLocation } from '@reach/router'
 const StyledCenterDiv = styled.div`
     font-size: 1.6rem;
     text-align: center;
-    font-family: 'Indie Flower', cursive;
+    font-family: ${props => props.pathname === "/janos" ? 'Rubik Beastly' : props.pathname === "/carla" ? 'Indie Flower' : "Codystar"};
+    font-weight: ${props => props.pathname === "/janos" ? null : props.pathname === "/carla" ? null : "bold"};
+    /* font-family: 'Indie Flower', cursive; */
     p {
         padding: 1rem;
     }
-    background-color: ${props => props.pathname === "/janos" ? "black" : props.pathname === "/carla" ? "#ff003bb0" : "blue"};
-    color: ${props => props.pathname === "/janos" ? "red" : props.pathname === "/carla" ? "#00806fd1" : "red"};
+    background-color: ${props => props.pathname === "/janos" ? "#1d186c" : props.pathname === "/carla" ? "#ff003bb0" : "#a32eb1"};
+    color: ${props => props.pathname === "/janos" ? "#2bcd92" : props.pathname === "/carla" ? "#00806fd1" : "#cbff00"};
 `
 
 const LandingPageTemplate = ({ data }) => {
