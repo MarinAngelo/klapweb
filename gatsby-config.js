@@ -56,7 +56,12 @@ module.exports = {
           `source sans pro\:300,400,400i,700`, // you can also specify font weights and styles,
           'Indie Flower',
           'Rubik Beastly',
-          'Codystar\:400'
+          'Codystar\:400',
+          'Gotu',
+          'Mochiy Pop P One',
+          'Michroma',
+          'Darker Grotesque\:300,400,500,600,700',
+          'Poppins\:Regular 400, Regular 400 italic, 500, 600'
         ],
         display: 'swap'
       }

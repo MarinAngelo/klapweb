@@ -163,15 +163,15 @@ background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)"
 transition-timing-function: ease-in;
 transition: 2s;
 a.nav-link {
-  font-size: 1.4rem;
+  font-size: 1rem;
   color: var(--header-color) !important;
 }
 
 img{
   margin-left: 0;
-  height: ${props => props.pathname !== "/" ? "35px" 
-                          : props.expanded ? "35px"
-                          : props.scrolled ? "35px"
+  height: ${props => props.pathname !== "/" ? "30px" 
+                          : props.expanded ? "30px"
+                          : props.scrolled ? "30px"
                           : "50px"}
 }
 
@@ -203,7 +203,7 @@ img{
 // Extra large devices (large desktops, 1200px and up, col-xl)
 @media (min-width: 1200px) {
   a.nav-link {
-    font-size: 1.6rem !important;
+    font-size: 1.3rem !important;
   }
 
 }

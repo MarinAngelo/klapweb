@@ -49,6 +49,11 @@ body {
     color: var(--page-color);
     background: var(--page-bg-color);
     height: 100vh !important;
+    font-family: 'Poppins';
+  }
+
+  h3 {
+    font-weight: 600;
   }
 
   li.language-switcher {

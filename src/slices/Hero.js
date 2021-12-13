@@ -47,6 +47,17 @@ const PageCover = styled.section`
   
   .cover-text{
     text-align: center;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    /* font-family: 'Mochiy Pop P One'; */
+    font-family: 'Michroma';
+    /* font-family: 'Gotu'; */
+  }
+
+
+  .cover-text h2 {
+    font-size: 1.3rem;
+    margin-top: 2rem;
   }
   // Small devices (landscape phones, 576px and up, col-sm)
   @media (min-width: 576px) {
