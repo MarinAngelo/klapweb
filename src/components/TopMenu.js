@@ -83,11 +83,11 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
                 }
                 if(nav.slice_type === "1st_level") {
                   return (
-                    <Nav.Item key={i}>
+                    <StyledNavItem key={i} active={pathname === nav.primary.nav_link.url ? "active" : null}>
                       <Link to={nav.primary.nav_link.url} className="nav-link">
                         {nav.primary.link_text}
                       </Link>
-                    </Nav.Item>
+                    </StyledNavItem>
                   )
                 } else {return null}
               })}
@@ -162,17 +162,13 @@ background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)"
                              : null};
 transition-timing-function: ease-in;
 transition: 2s;
-a.nav-link {
-  font-size: 1rem;
-  color: var(--header-color) !important;
-}
 
 img{
   margin-left: 0;
-  height: ${props => props.pathname !== "/" ? "30px" 
-                          : props.expanded ? "30px"
-                          : props.scrolled ? "30px"
-                          : "50px"}
+  height: ${props => props.pathname !== "/" ? "35px" 
+                          : props.expanded ? "35px"
+                          : props.scrolled ? "35px"
+                          : "45px"}
 }
 
 .navbar-toggler{
@@ -220,4 +216,17 @@ const StyledNavbarToggle = styled(Navbar.Toggle)`
   span.navbar-toggler-icon{
     background-image: ${props => props.pathname !== "/" ? "var(--toggler-url-light)" : props.scrolled ? "var(--toggler-url-light)" : "var(--toggler-url-dark)"};
   }
-`;
+`
+const StyledNavItem = styled(Nav.Item)`
+
+  a.nav-link {
+    text-decoration: ${props => props.active === "active" ? 'underline' : 'none' };
+    font-size: 1.2rem;
+    color: var(--header-color) !important;
+
+    &:hover {
+      color: var(--footer-hover-color) !important;
+      text-decoration: underline;
+    }
+  }
+`
