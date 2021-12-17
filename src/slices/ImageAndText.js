@@ -113,15 +113,15 @@ fragment PrismicPageDataBodyBildUndText on PrismicPageDataBodyBildUndText {
           @media (min-width: 992px) {
           
             p {
-              padding: 0 6rem 0 6rem;
-              font-size: 1.6rem;
+              padding: 0 4rem 0 4rem;
+              font-size: 1.4rem;
             }
             
           }
           // Extra large devices (large desktops, 1200px and up, col-xl)
           @media (min-width: 1200px) {
             p {
-              font-size: 2.6rem;
+              font-size: 2.4rem;
             }
            margin-top: ${props => props.topPageBanner === true ? "5rem" : "0"};
           }
