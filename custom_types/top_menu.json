@@ -24,12 +24,6 @@
         "label": "Logo"
       }
     },
-    "logo_alt": {
-      "type": "Text",
-      "config": {
-        "label": "Logo Alternativ Text"
-      }
-    },
     "body": {
       "type": "Slices",
       "fieldset": "Slice zone",
