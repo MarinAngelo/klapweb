@@ -8,9 +8,9 @@ const prismicConfig = require('./prismic-configuration')
 module.exports = {
   siteMetadata: {
     language: 'de',
-    title: 'Klap Web | Design & Programmierung, Websites neu konzipiert.',
-    description: 'Neuste Web-Technologie: Schlankes Frontend mit einem auf Deine Bedürfnisse zugeschnittenem und übersichtlichem Content Management System (CMS).',
-    siteUrl: `https://www.klap-web.ch`,
+    title: '',
+    description: '',
+    siteUrl: `https://xn--daniel-nf-22a.ch/`,
   },
   plugins: [
     {
@@ -54,14 +54,7 @@ module.exports = {
         fonts: [
           `limelight`,
           `source sans pro\:300,400,400i,700`, // you can also specify font weights and styles,
-          'Indie Flower',
-          'Rubik Beastly',
-          'Codystar\:400',
-          'Gotu',
-          'Mochiy Pop P One',
-          'Michroma',
-          'Darker Grotesque\:300,400,500,600,700',
-          'Poppins\:Regular 400, Regular 400 italic, 500, 600'
+          'Indie Flower'
         ],
         display: 'swap'
       }
@@ -82,8 +75,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'Klap Web',
-        short_name: 'Klap Web',
+        name: 'Name',
+        short_name: 'Short Name',
         start_url: '/',
         background_color: '#232442',
         theme_color: '#232442',
