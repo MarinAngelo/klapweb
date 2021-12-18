@@ -27,14 +27,7 @@
       "type": "Slices",
       "fieldset": "Slice zone",
       "config": {
-        "labels": {
-          "akkordeon": [
-            {
-              "display": "accordion",
-              "name": "accordion"
-            }
-          ]
-        },
+        "labels": {},
         "choices": {
           "preisliste": {
             "type": "Slice",
@@ -229,7 +222,7 @@
               "accordion_explanation_text": {
                 "type": "StructuredText",
                 "config": {
-                  "multi": "paragraph, preformatted, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",
+                  "multi": "paragraph,preformatted,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
                   "allowTargetBlank": true,
                   "label": "Akkordeon Erklärungstext"
                 }

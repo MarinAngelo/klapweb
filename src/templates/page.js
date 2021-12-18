@@ -5,11 +5,11 @@ import { withPrismicPreview } from 'gatsby-plugin-prismic-previews'
 import { repositoryConfigs } from '../utils/prismicPreviews'
 
 import { Layout } from '../components/Layout'
+import { Row, Col } from 'react-bootstrap'
 import { SliceZone } from '../components/SliceZone'
 import { PageTitle } from '../components/PageTitle'
 import { PageContent } from '../components/PageContent'
-import { Row, Col } from 'react-bootstrap'
-import styled from 'styled-components'
+import PageTopRow from '../styledComponents/StyledPageTopRow'
 import SEO from '../components/seo'
 
 const PageTemplate = ({ data }) => {
@@ -57,27 +57,6 @@ const PageTemplate = ({ data }) => {
   )
 }
 
-const PageTopRow = styled(Row)`
-  // Extra small devices (portrait phones, less than 576px)
-  // No media query for xs since this is the default in Bootstrap
-  margin-top: 10vh;
-  // Small devices (landscape phones, 576px and up, col-sm)
-  @media (min-width: 576px) {
-  
-  }
-  // Medium devices (tablets, 768px and up, col-md)
-  @media (min-width: 768px) {
-  
-  }
-  // Large devices (desktops, 992px and up, col-lg)
-  @media (min-width: 992px) {
-    margin-top: 15vh;
-  }
-  // Extra large devices (large desktops, 1200px and up, col-xl)
-  @media (min-width: 1200px) {
-  
-  }
-  `
 export const query = graphql`
 query pageQuery($id: String, $lang: String) {
   prismicPage(id: { eq: $id }, lang: { eq: $lang }) {

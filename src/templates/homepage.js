@@ -7,6 +7,10 @@ import { repositoryConfigs } from '../utils/prismicPreviews'
 import { Layout } from '../components/Layout'
 import { SliceZone } from '../components/SliceZone'
 import SEO from '../components/seo'
+import { PageTitle } from '../components/PageTitle'
+import { PageContent } from '../components/PageContent'
+import { Col } from 'react-bootstrap'
+import PageTopRow from '../styledComponents/StyledPageTopRow'
 
 const HomepageTemplate = ({ data }) => {
   if (!data) return null
@@ -32,6 +36,15 @@ const HomepageTemplate = ({ data }) => {
         description={homepage.data.site_meta_description}
         article
       />
+      {homepage.data.site_title.raw[0].text !== "" ?
+        <PageTopRow>
+          <Col>
+            <PageTitle pageTitle={homepage.data.site_title.raw} />
+            <PageContent pageContent={homepage.data.site_content.raw} />
+          </Col>
+         </PageTopRow>
+        : null
+      }
       <SliceZone slices={homepage.data.body} />
     </Layout>
   )
@@ -50,6 +63,12 @@ export const query = graphql`
       url
       type
       data {
+        site_title {
+          raw
+        }
+        site_content {
+          raw
+        }
         site_meta_description
         site_meta_title
         body {

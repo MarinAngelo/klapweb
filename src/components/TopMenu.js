@@ -22,6 +22,14 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
   const [expanded, setExpanded] = useState(false);
 
   const { pathname } = useLocation();
+
+  const logo = (<img
+    src={topMenu.logo.url}
+    // height="65"
+    className="d-inline-block align-top"
+    alt={topMenu.logo.alt}
+    width="100%"
+  />)
   // console.log('Top Menu', topMenu);
 /*   const renderedMenuLinks = topMenu.menu_links
 ? topMenu.menu_links.map((menuLink, index) => (
@@ -44,15 +52,8 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
         >
         <Container fluid>
           <Link to="/" className="nav-link">
-          {/* <Navbar.Brand>{topMenu.branding}</Navbar.Brand> */}
           <Navbar.Brand>
-              <img
-                src={topMenu.logo.url}
-                // height="65"
-                className="d-inline-block align-top"
-                alt={topMenu.logo_alt}
-                width="100%"
-              />
+              {topMenu.logo.url !== null ? logo : topMenu.branding}
           </Navbar.Brand>
           </Link>
           <StyledNavbarToggle 

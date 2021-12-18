@@ -8,6 +8,21 @@
         "useAsTitle": true
       }
     },
+    "site_title": {
+      "type": "StructuredText",
+      "config": {
+        "single": "heading1",
+        "label": "Seitentitel"
+      }
+    },
+    "site_content": {
+      "type": "StructuredText",
+      "config": {
+        "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+        "allowTargetBlank": true,
+        "label": "Seiteninhalte"
+      }
+    },
     "body": {
       "type": "Slices",
       "fieldset": "Slice zone",
@@ -414,7 +429,7 @@
               "text_block": {
                 "type": "StructuredText",
                 "config": {
-                  "multi": "paragraph, preformatted, heading2, heading3, heading4, heading5, heading6, strong, em, hyperlink, image, embed, list-item, o-list-item, rtl",
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
                   "label": "Text Block"
                 }
               }
