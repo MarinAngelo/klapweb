@@ -28,5 +28,11 @@
     "name": "Website Daten",
     "repeatable": false,
     "value": "website_daten.json"
+  },
+  {
+    "id": "theme",
+    "name": "Theme",
+    "repeatable": true,
+    "value": "theme.json"
   }
 ]

@@ -3,7 +3,6 @@ import { Row, Col, Nav } from 'react-bootstrap'
 import MainLayoutPart from '../MainLayoutPart'
 import { Link } from 'gatsby'
 import { MainFooterRow, FooterNav, BottomRow, AddressCol } from './styledFooter'
-// import { footerQuery, websiteDatenQuery } from './footerQuery'
 
 export const Footer = ({ topMenu, websiteDaten }) => {
   // console.log('Top Menu', topMenu)

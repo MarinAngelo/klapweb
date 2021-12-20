@@ -37,6 +37,7 @@ module.exports = {
           website_daten: require('./custom_types/website_daten.json'),
           layout: require('./custom_types/layout.json'),
           landing_page: require('./custom_types/landing_page.json'),
+          theme: require('./custom_types/theme.json')
         },
         linkResolver: require('./src/utils/linkResolver').linkResolver,
       },
@@ -52,7 +53,6 @@ module.exports = {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
         fonts: [
-          `limelight`,
           `source sans pro\:300,400,400i,700`, // you can also specify font weights and styles,
           'Indie Flower'
         ],

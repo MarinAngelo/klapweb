@@ -1,0 +1,86 @@
+{
+    "Main": {
+        "theme_name": {
+            "type": "Text",
+            "config": {
+                "label": "Theme Name"
+            }
+        },
+        "fonts": {
+            "type": "Group",
+            "config": {
+                "fields": {
+                    "google_font": {
+                        "type": "Select",
+                        "config": {
+                            "options": [
+                                "source sans pro",
+                                "Indie Flower",
+                                "Jura"
+                            ],
+                            "default_value": "source sans pro",
+                            "label": "Google Schrift"
+                        }
+                    },
+                    "font_usage": {
+                        "type": "Select",
+                        "config": {
+                            "options": [
+                                "Hauptschrift",
+                                "Überschriften",
+                                "Navigation",
+                                "Logo",
+                                "Spezial"
+                            ],
+                            "default_value": "Hauptschrift",
+                            "label": "Schrift Anwendung"
+                        }
+                    }
+                },
+                "label": "Schriftart"
+            }
+        },
+        "page_color": {
+            "type": "Color",
+            "config": {
+                "label": "Seitenschriftfarbe"
+            }
+        },
+        "page_bg_color": {
+            "type": "Color",
+            "config": {
+                "label": "Seitenhintergrundfarbe"
+            }
+        },
+        "page_link_color": {
+            "type": "Color",
+            "config": {
+                "label": "Seitenschriftfarbe Verweise"
+            }
+        },
+        "header-color": {
+            "type": "Color",
+            "config": {
+                "label": "Schriftfarbe Kopfbereich"
+            }
+        },
+        "header_bg_color": {
+            "type": "Color",
+            "config": {
+                "label": "Hintergrundfarbe Kopfbereich"
+            }
+        },
+        "footer_color": {
+            "type": "Color",
+            "config": {
+                "label": "Fussbereich Schriftfarbe"
+            }
+        },
+        "footer_bg_color": {
+            "type": "Color",
+            "config": {
+                "label": "Fussbereich Hintergrundfarbe"
+            }
+        }
+    }
+}

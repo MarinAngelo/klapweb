@@ -7,18 +7,18 @@ import { createGlobalStyle } from "styled-components"
 
 import { TopMenu } from './TopMenu'
 import { Footer } from './footer/Footer'
-import { websiteDatenQuery } from './footer/footerQuery';
 
 import { darkenLighten } from '../utils/ColorAdjust'
 
-const pageColor = "#5e5faa"
-const pageBgColor = "#c7c8ff"
-const pageLinkColor = "#8b1a8b"
-const pageBgColorDarker = darkenLighten(pageBgColor, -2)
-const pageColorDarker = darkenLighten(pageColor, 100)
-const pageBgColorDark = darkenLighten(pageBgColor, -10)
-const pageColorDark = darkenLighten(pageColor, 90)
-const pageLinkColorDarker = darkenLighten(pageLinkColor, -40)
+const defaultTheme = {
+  pageColor: "#5e5faa",
+  pageBgColor: "#c7c8ff",
+  pageLinkColor: "#8b1a8b",
+  headerColor: "green",
+  headerBgColor: "yellow",
+  footerColor: "blue",
+  footerBgColor: "red"
+}
 
 const GlobalStyle = createGlobalStyle`
 // Extra small devices (portrait phones, less than 576px)
@@ -32,17 +32,13 @@ html {
   --page-bg-color-darker: ${props => props.pageBgColorDarker};
   --page-link-color: ${props => props.pageLinkColor};
   --page-link-color-darker: ${props => props.pageLinkColorDarker};
-  --footer-color: #aeafff;
-  --footer-bg-color: #232442;
-  --footer-hover-color: #dcdcff;
-  --header-bg-color: #232442;
-  --header-color: #ceceff;
-  --secondary-bg-color-light: #ffbe97;
-  --secondary-bg-color-dark: #d5895a;
-  --secondary-color-dark: #973a00;
-  --page-button-hover-bg-color: #80b580;
-  --toggler-url-dark: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='blueviolet' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-  --toggler-url-light: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='hotpink' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  --header-color: ${props => props.headerColor};
+  --header-color-lighter: ${props => props.headerColorLighter};
+  --header-bg-color: ${props => props.headerBgColor};
+  --footer-color: ${props => props.footerColor};
+  --footer-bg-color: ${props => props.footerBgColor};
+  /* --toggler-url-dark: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='blueviolet' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); */
+  /* --toggler-url-light: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='hotpink' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); */
 }
 
 body {
@@ -88,10 +84,14 @@ body {
 
 }
 `
-export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
+export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten, theme }) => {
   console.log('website daten from layout', websiteDaten)
+  console.log('theme data from layout', theme)
   const queryData = useStaticQuery(graphql`
     query SiteQuery {
+          prismicTheme {
+      ...ThemeFragment
+    }
       site {
         siteMetadata {
           title
@@ -101,8 +101,24 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
     }
   `)
 
+  const themePageBgColor = queryData.prismicTheme.data.page_bg_color;
+  const themePageColor = queryData.prismicTheme.data.page_color;
+  const themePageLinkColor = queryData.prismicTheme.data.page_link_color;
+  const themeHeaderColor = queryData.prismicTheme.data.header_color;
+  const themeHeaderBgColor = queryData.prismicTheme.data.header_bg_color;
+  const themeFooterColor = queryData.prismicTheme.data.footer_color;
+  const themeFooterBgColor = queryData.prismicTheme.data.footer_bg_color;
+
+  const pageColorDarker = themePageColor ? darkenLighten(themePageColor, 100) : darkenLighten(defaultTheme.pageColor, 100)
+  const pageColorDark = themePageColor ? darkenLighten(themePageColor, 90) : darkenLighten(defaultTheme.pageColor, 90)
+  const pageBgColorDarker = themePageBgColor ? darkenLighten(themePageBgColor, -2) : darkenLighten(defaultTheme.pageBgColor, -2)
+  const pageBgColorDark = themePageBgColor ? darkenLighten(themePageBgColor, -10) : darkenLighten(defaultTheme.pageBgColor, -10)
+  const pageLinkColorDarker = themePageLinkColor ? darkenLighten(themePageLinkColor, -40) : darkenLighten(defaultTheme.pageLinkColor, -40)
+  const headerColorLighter = themeHeaderColor ? darkenLighten(themeHeaderColor, 40) : darkenLighten(defaultTheme.headerColor, 40)
+
   return (
     <>
+    {console.log('queryData in layout', themePageBgColor)}
       <Helmet>
         <html lang="de" />
         {/* Meta Tags */}
@@ -129,14 +145,19 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
         />
       </Helmet>
       <GlobalStyle 
-        pageColor={pageColor}
-        pageBgColor={pageBgColor}
+        pageColor={themePageColor ? themePageColor : defaultTheme.pageColor}
+        pageBgColor={themePageBgColor ? themePageBgColor : defaultTheme.pageBgColor}
+        pageLinkColor={themePageLinkColor ? themePageLinkColor : defaultTheme.pageLinkColor}
+        headerColor={themeHeaderColor ? themeHeaderColor : defaultTheme.headerColor}
+        headerBgColor={themeHeaderBgColor ? themeHeaderBgColor : defaultTheme.headerBgColor}
+        footerColor={themeFooterColor ? themeFooterColor : defaultTheme.footerColor}
+        footerBgColor={themeFooterBgColor ? themeFooterBgColor : defaultTheme.footerBgColor}
         pageColorDarker={pageColorDarker}
         pageColorDark={pageColorDark}
         pageBgColorDark={pageBgColorDark}
         pageBgColorDarker={pageBgColorDarker}
-        pageLinkColor={pageLinkColor}
         pageLinkColorDarker={pageLinkColorDarker}
+        headerColorLighter={headerColorLighter}
       />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
       <Container fluid >

@@ -175,6 +175,14 @@ img{
 .navbar-toggler{
   border: 10rem;
 }
+
+.navbar-brand {
+  color: var(--header-color);
+
+  &:hover {
+    color: var(--header-color-lighter) !important;
+  }
+}
 // Small devices (landscape phones, 576px and up, col-sm)
 @media (min-width: 576px) {
 
