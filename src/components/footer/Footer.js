@@ -15,7 +15,7 @@ export const Footer = ({ topMenu, websiteDaten }) => {
   const webDev = websiteDaten.web_dev ? websiteDaten.web_dev : "Webentwicklung"
   const contactDataTitle = websiteDaten.contact_data_title ? websiteDaten.contact_data_title : "Kontakt Daten"
   const privacyPolicy = websiteDaten.privacy_policy ? websiteDaten.privacy_policy : "Datenschutzerklärung"
-  console.log('Web Def', webDev)
+  // console.log('Web Def', webDev)
   
   const footerContent = (
     <footer>

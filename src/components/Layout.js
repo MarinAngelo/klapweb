@@ -45,7 +45,7 @@ body {
     color: var(--page-color);
     background: var(--page-bg-color);
     height: 100vh !important;
-    font-family: 'Poppins';
+    font-family: ${props => props.mainFont};
   }
 
   h3 {
@@ -84,9 +84,7 @@ body {
 
 }
 `
-export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten, theme }) => {
-  console.log('website daten from layout', websiteDaten)
-  console.log('theme data from layout', theme)
+export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten }) => {
   const queryData = useStaticQuery(graphql`
     query SiteQuery {
           prismicTheme {
@@ -100,6 +98,31 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten, theme }
       }
     }
   `)
+
+  console.log('theme', queryData.prismicTheme.data.fonts)
+
+  const fonts = queryData.prismicTheme.data.fonts
+  let mainFont = ""
+  let titleFont = ""
+  let navFont = ""
+  let logoFont = ""
+  let specFont = ""
+  
+  for (let index = 0; index < fonts.length; index++) {
+    const element = fonts[index];
+    switch (element.font_usage){
+      case "Hauptschrift":
+        mainFont = element.google_font
+      case "Überschriften":
+        titleFont = element.google_font
+      case "Navigation":
+        navFont = element.google_font
+      case "Logo":
+        logoFont = element.google_font
+      case "Spezial":
+        specFont = element.google_font
+    }
+  }
 
   const themePageBgColor = queryData.prismicTheme.data.page_bg_color;
   const themePageColor = queryData.prismicTheme.data.page_color;
@@ -118,7 +141,6 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten, theme }
 
   return (
     <>
-    {console.log('queryData in layout', themePageBgColor)}
       <Helmet>
         <html lang="de" />
         {/* Meta Tags */}
@@ -158,6 +180,11 @@ export const Layout = ({ children, topMenu, activeDocMeta, websiteDaten, theme }
         pageBgColorDarker={pageBgColorDarker}
         pageLinkColorDarker={pageLinkColorDarker}
         headerColorLighter={headerColorLighter}
+        mainFont={mainFont}
+        titleFont={titleFont}
+        navFont={navFont}
+        logoFont={logoFont}
+        specFont={specFont}
       />
       <TopMenu topMenu={topMenu} activeDocMeta={activeDocMeta} />
       <Container fluid >

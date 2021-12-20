@@ -15,11 +15,10 @@ import PageTopRow from '../styledComponents/StyledPageTopRow'
 const HomepageTemplate = ({ data }) => {
   if (!data) return null
   
-  console.log('homepage data', data)
+  // console.log('homepage data', data)
   const homepage = data.prismicHomepage || {}
   const topMenu = data.prismicTopMenu || {}
   const websiteDaten = data.prismicWebsiteDaten || {}
-  const theme = data.prismicTheme || {}
 
   const { lang, type, url } = homepage || {}
   const alternateLanguages = homepage.alternate_languages || []
@@ -31,7 +30,7 @@ const HomepageTemplate = ({ data }) => {
   }
 
   return (
-    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data} theme={theme.data}>
+    <Layout topMenu={topMenu.data} activeDocMeta={activeDoc} websiteDaten={websiteDaten.data}>
       <SEO
         title={homepage.data.site_meta_title}
         description={homepage.data.site_meta_description}
@@ -95,9 +94,6 @@ export const query = graphql`
     }
     prismicWebsiteDaten(lang: { eq: $lang }) {
       ...WebsiteDatenFragment
-    }
-    prismicTheme(lang: { eq: $lang }) {
-      ...ThemeFragment
     }
   }
 `
