@@ -55,7 +55,6 @@ export const query = graphql`
 fragment PrismicHomepageDataBodyCarousel on PrismicHomepageDataBodyCarousel {
 slice_type
 items {
-              alt
               caption_text {
                 raw
               }

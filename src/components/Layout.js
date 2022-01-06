@@ -11,13 +11,13 @@ import { Footer } from './footer/Footer'
 import { darkenLighten } from '../utils/ColorAdjust'
 
 const defaultTheme = {
-  pageColor: "#5e5faa",
-  pageBgColor: "#c7c8ff",
-  pageLinkColor: "#8b1a8b",
-  headerColor: "green",
-  headerBgColor: "yellow",
-  footerColor: "blue",
-  footerBgColor: "red"
+  pageColor: "grey",
+  pageBgColor: "AliceBlue",
+  pageLinkColor: "blue",
+  headerColor: "white",
+  headerBgColor: "grey",
+  footerColor: "white",
+  footerBgColor: "grey"
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -37,12 +37,12 @@ html {
   --header-bg-color: ${props => props.headerBgColor};
   --footer-color: ${props => props.footerColor};
   --footer-bg-color: ${props => props.footerBgColor};
-  /* --toggler-url-dark: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='blueviolet' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); */
-  /* --toggler-url-light: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='hotpink' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); */
+  --toggler-url-dark: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='blueviolet' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  --toggler-url-light: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='hotpink' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
 body {
-    color: var(--page-color);
+    color: var(--page-color)  ;
     background: var(--page-bg-color);
     height: 100vh !important;
     font-family: ${props => props.mainFont};

@@ -244,6 +244,153 @@
                 }
               }
             }
+          },
+          "imageGallery": {
+            "type": "Slice",
+            "fieldset": "Bildergalerie",
+            "description": "Bildergalerie",
+            "icon": "image",
+            "display": "list",
+            "non-repeat": {
+              "section_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Abschnittüberschrift",
+                  "placeholder": "Git hier eine Abschnittüberschrift ein"
+                }
+              }
+            },
+            "repeat": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "constraint": {
+                    "width": 375
+                  },
+                  "thumbnails": [
+                    {
+                      "name": "phone_landscape",
+                      "width": 667,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet",
+                      "width": 768,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet_landscape",
+                      "width": 1024,
+                      "height": null
+                    },
+                    {
+                      "name": "laptop",
+                      "width": 1920,
+                      "height": null
+                    }
+                  ],
+                  "label": "Bild"
+                }
+              },
+              "link": {
+                "type": "Link",
+                "config": {
+                  "label": "Link",
+                  "placeholder": "Link",
+                  "select": null
+                }
+              },
+              "caption_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Bildtitel",
+                  "placeholder": "Gib hier einen Bildtitel ein"
+                }
+              },
+              "caption_text": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "label": "Bildtext",
+                  "placeholder": "Gib hier einen kurzen Text zum Bild ein"
+                }
+              }
+            }
+          },
+          "bilder_karussell": {
+            "type": "Slice",
+            "fieldset": "Bilder_Karussell",
+            "description": "Bilder Karussell",
+            "icon": "3d_rotation",
+            "display": "list",
+            "non-repeat": {
+              "abschnitt_uberschrift": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading2,heading3,heading4,heading5,heading6",
+                  "label": "Abschnitt Überschrift"
+                }
+              }
+            },
+            "repeat": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "constraint": {
+                    "width": 375
+                  },
+                  "thumbnails": [
+                    {
+                      "name": "phone_landscape",
+                      "width": 667,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet",
+                      "width": 768,
+                      "height": null
+                    },
+                    {
+                      "name": "tablet_landscape",
+                      "width": 1024,
+                      "height": null
+                    },
+                    {
+                      "name": "laptop",
+                      "width": 1920,
+                      "height": null
+                    }
+                  ],
+                  "label": "Bild"
+                }
+              },
+              "link": {
+                "type": "Link",
+                "config": {
+                  "label": "Link",
+                  "placeholder": "Link",
+                  "select": null
+                }
+              },
+              "caption_title": {
+                "type": "StructuredText",
+                "config": {
+                  "single": "heading3,heading4,heading5,heading6",
+                  "label": "Bildtitel",
+                  "placeholder": "Gib hier einen Bildtitel ein"
+                }
+              },
+              "caption_text": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+                  "label": "Bildtext",
+                  "placeholder": "Gib hier einen kurzen Text zum Bild ein"
+                }
+              }
+            }
           }
         }
       }

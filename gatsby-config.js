@@ -10,7 +10,7 @@ module.exports = {
     language: 'de',
     title: '',
     description: '',
-    siteUrl: `https://xn--daniel-nf-22a.ch/`,
+    siteUrl: `https://www.klap-web.ch`,
   },
   plugins: [
     {
