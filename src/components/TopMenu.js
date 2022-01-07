@@ -180,7 +180,7 @@ img{
   color: var(--header-color);
 
   &:hover {
-    color: var(--header-color-lighter) !important;
+    color: var(--header-color) !important;
   }
 }
 // Small devices (landscape phones, 576px and up, col-sm)
