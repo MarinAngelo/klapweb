@@ -5,15 +5,15 @@ import styled from 'styled-components'
 
 export const Hero = ({ slice }) => {
     console.log('Hero data', slice)
-    const mainImg = slice.primary.background_image.localFile.childImageSharp.gatsbyImageData
+    // const mainImg = slice.primary.background_image.localFile.childImageSharp.gatsbyImageData
     const thumbImgs = slice.primary.background_image.thumbnails
     console.log('thumbImgs', thumbImgs)
     return (
         <PageCover className="d-flex position-relative" role="img" aria-label={slice.primary.background_image.alt}
-            mobileImg={mainImg.images.fallback.src}
-            mobileLsImg={thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src}
-            desktopImg={thumbImgs.desktop.localFile.childImageSharp.gatsbyImageData.images.fallback.src}
-            tabletImg={thumbImgs.tablet.localFile.childImageSharp.gatsbyImageData.images.fallback.src}
+        mobileImg={slice.primary.background_image.localFile ? slice.primary.background_image.localFile.childImageSharp.gatsbyImageData : null}
+        mobileLsImg={thumbImgs.mobile_ls.localFile ? thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+        desktopImg={thumbImgs.desktop.localFile ? thumbImgs.desktop.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+        tabletImg={thumbImgs.tablet.localFile ? thumbImgs.tablet.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
         >
             <div className="cover-text-box">
                 <div className="cover-text">
