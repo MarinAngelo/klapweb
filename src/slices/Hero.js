@@ -8,12 +8,21 @@ export const Hero = ({ slice }) => {
     // const mainImg = slice.primary.background_image.localFile.childImageSharp.gatsbyImageData
     const thumbImgs = slice.primary.background_image.thumbnails
     console.log('thumbImgs', thumbImgs)
+
+    const defaultTheme = {
+      bgColor: "black"
+    }
+
     return (
-        <PageCover className="d-flex position-relative" role="img" aria-label={slice.primary.background_image.alt}
-        mobileImg={slice.primary.background_image.localFile ? slice.primary.background_image.localFile.childImageSharp.gatsbyImageData : null}
-        mobileLsImg={thumbImgs.mobile_ls.localFile ? thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
-        desktopImg={thumbImgs.desktop.localFile ? thumbImgs.desktop.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
-        tabletImg={thumbImgs.tablet.localFile ? thumbImgs.tablet.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+        <PageCover 
+          className="d-flex position-relative" 
+          role="img" aria-label={slice.primary.background_image.alt}
+          mobileImg={slice.primary.background_image.localFile ? slice.primary.background_image.localFile.childImageSharp.gatsbyImageData : null}
+          mobileLsImg={thumbImgs.mobile_ls.localFile ? thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+          desktopImg={thumbImgs.desktop.localFile ? thumbImgs.desktop.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+          tabletImg={thumbImgs.tablet.localFile ? thumbImgs.tablet.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}
+          bgColor={slice.primary.bg_color ? slice.primary.bg_color : defaultTheme.bgColor}
+          // bgColor={slice.primary.bg_color ? slice.primary.bg_color : defaultTheme.pageColor}
         >
             <div className="cover-text-box">
                 <div className="cover-text">
@@ -24,12 +33,13 @@ export const Hero = ({ slice }) => {
         </PageCover>
     )
 }
+
 const PageCover = styled.section`
   // Extra small devices (portrait phones, less than 576px)
   // No media query for xs since this is the default in Bootstrap
   background-image: linear-gradient(to bottom, rgba(35,36,66, 0.9), rgba(94,95,170, 0.3)),
                     url(${props => props.mobileImg});
-  background-color: black;
+  background-color: ${props => props.bgColor};
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -143,6 +153,8 @@ export const query = graphql`
   fragment PrismicHomepageDataBodyHero on PrismicHomepageDataBodyHero {
               slice_type
           primary {
+            banner_bg_color
+            bg_color
             hero_content {
               html
               raw
