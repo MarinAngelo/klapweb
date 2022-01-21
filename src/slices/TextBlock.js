@@ -3,7 +3,7 @@ import { graphql } from 'gatsby'
 import { OneColSection } from '../components/OneColSection'
 
 export const TextBlock = ({ slice }) => {
-  console.log('TextBlock data', slice)
+  // console.log('TextBlock data', slice)
 
   return (
     <>
@@ -14,6 +14,14 @@ export const TextBlock = ({ slice }) => {
 
 export const query = graphql`
  fragment PrismicPageDataBodyTextBlock on PrismicPageDataBodyTextBlock
+ {slice_type
+    primary {
+              text_block {
+                raw
+              }
+            }
+}
+ fragment PrismicHomepageDataBodyTextBlock on PrismicHomepageDataBodyTextBlock
  {slice_type
     primary {
               text_block {

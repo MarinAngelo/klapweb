@@ -27,7 +27,7 @@
       "type": "Slices",
       "fieldset": "Slice zone",
       "config": {
-        "labels": null,
+        "labels": {},
         "choices": {
           "hero": {
             "type": "Slice",
@@ -400,23 +400,6 @@
               }
             }
           },
-          "text_block": {
-            "type": "Slice",
-            "fieldset": "Text Block",
-            "description": "Text Block",
-            "icon": "format_color_text",
-            "display": "list",
-            "non-repeat": {},
-            "repeat": {
-              "text_block": {
-                "type": "StructuredText",
-                "config": {
-                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-                  "label": "Text Block"
-                }
-              }
-            }
-          },
           "bilder_karussell": {
             "type": "Slice",
             "fieldset": "Bilder_Karussell",
@@ -489,6 +472,23 @@
                 }
               }
             }
+          },
+          "text_block": {
+            "type": "Slice",
+            "fieldset": "Text Block",
+            "description": "Text Block",
+            "icon": "format_color_text",
+            "display": "list",
+            "non-repeat": {
+              "text_block": {
+                "type": "StructuredText",
+                "config": {
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+                  "label": "Text Block"
+                }
+              }
+            },
+            "repeat": {}
           }
         }
       }

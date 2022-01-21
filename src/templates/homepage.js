@@ -81,6 +81,7 @@ export const query = graphql`
           ...PrismicHomepageDataBodyCallToActionGrid
           ...PrismicHomepageDataBodyAnrisstext
           ...PrismicHomepageDataBodyCarousel
+          ...PrismicHomepageDataBodyTextBlock
           #...HomepageDataBodyEmailSignup
           #...HomepageDataBodyFullWidthImage
           #...HomepageDataBodyHeadlineWithButton
