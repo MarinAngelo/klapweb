@@ -11,6 +11,7 @@ import { useLocation } from '@reach/router'
 import { StyledNavItem, StyledNavbarToggle, StyledNavbar } from './styledTopMenu'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
+  
   console.log('Top Menu Data', topMenu)
   const [scroll, setScroll] = useState(false);
 
