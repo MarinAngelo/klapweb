@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { Container, Row, Col } from 'react-bootstrap'
 import { createGlobalStyle } from "styled-components"
 
-import { TopMenu } from './TopMenu'
+import { TopMenu } from './topMenu/TopMenu'
 import { Footer } from './footer/Footer'
 
 import { darkenLighten } from '../utils/ColorAdjust'

@@ -3,7 +3,7 @@ export { FullWidthImage } from './FullWidthImage'
 export { HeadlineWithButton } from './HeadlineWithButton'
 export { InfoWithImage } from './InfoWithImage'
 export { TextInfo } from './TextInfo' */
-export { Hero } from './Hero'
+export { Hero } from './hero/Hero'
 export { Preisliste } from './Preisliste'
 export { CallToActionGrid } from './CallToActionGrid'
 export { Anrisstext } from './Anrisstext'
