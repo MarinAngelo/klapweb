@@ -1,4 +1,8 @@
 import styled from 'styled-components'
+import { hexToRgbA } from '../../utils/ColorAdjust';
+
+const rgba = hexToRgbA("#a9a9da", 0.5);
+console.log('RGBA', rgba)
 
 const PageCover = styled.section`
   // Extra small devices (portrait phones, less than 576px)
@@ -22,10 +26,10 @@ const PageCover = styled.section`
   0% { background-position: 0% 0%; }
   100% { background-position: 100% 0%; }
 }
-
   
   .cover-text-box{
-    background-color: rgba(94,95,170, 0.3) !important;
+    background-color: ${props => hexToRgbA(props.textBoxBgColor, props.textBoxBgOpacity)} !important;       
+    
     color: #a9a9da;
     /* center the inner div */
     display: flex;

@@ -5,6 +5,7 @@ fragment PrismicHomepageDataBodyHero on PrismicHomepageDataBodyHero {
               slice_type
           primary {
             banner_bg_color
+            banner_bg_transparency
             bg_color
             hero_content {
               html

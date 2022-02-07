@@ -8,7 +8,8 @@ const StyledNavbar = styled(Navbar)`
 background-color: ${props => props.pathname !== "/" ? "var(--header-bg-color)"
         : props.expanded ? "var(--header-bg-color)"
             : props.scrolled ? "var(--header-bg-color)"
-                : "transparent"};
+            :props.bgTransparent ? "transparent"
+                : "var(--header-bg-color)"};
 transition-timing-function: ease-in;
 transition: 2s;
 

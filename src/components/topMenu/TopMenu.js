@@ -11,7 +11,7 @@ import { useLocation } from '@reach/router'
 import { StyledNavItem, StyledNavbarToggle, StyledNavbar } from './styledTopMenu'
 
 export const TopMenu = ({ topMenu, activeDocMeta }) => {
-  
+
   console.log('Top Menu Data', topMenu)
   const [scroll, setScroll] = useState(false);
 
@@ -51,6 +51,7 @@ export const TopMenu = ({ topMenu, activeDocMeta }) => {
         scrolled={scroll ? 1 : 0} 
         pathname={pathname}
         expanded={expanded}
+        bgTransparent={true} // shold not be hardcoded
         >
         <Container fluid>
           <Link to="/" className="nav-link">
