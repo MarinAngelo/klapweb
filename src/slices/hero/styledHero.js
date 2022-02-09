@@ -9,19 +9,21 @@ const PageCover = styled.section`
   // No media query for xs since this is the default in Bootstrap
   background-image: linear-gradient(to bottom, rgba(35,36,66, 0.9), rgba(94,95,170, 0.3)),
                     url(${props => props.mobileImg});
-  background-color: ${props => props.bgColor};
-  background: linear-gradient( to bottom, ${props => props.bgColor}, rgba(94,95,170, 0.3)) !important;
+  /* background-color: ${props => props.bgColor};
+  background: linear-gradient( to bottom, ${props => props.bgColor}, rgba(94,95,170, 0.3)) !important; */
+background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 100%) !important;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
   margin: 0 -12px 0 -12px;
   height: 101vh !important;
 
-  .animated-gradient {
+/*   .animated-gradient {
   animation: animateBg 14s linear infinite;
   background-image: linear-gradient(90deg,#246655,#462466,#b66d52,#246655,#462466);
   background-size: 400% 100%;
-}
+} */
+
 @keyframes animateBg {
   0% { background-position: 0% 0%; }
   100% { background-position: 100% 0%; }

@@ -12,7 +12,7 @@ export const Hero = ({ slice }) => {
   const defaultTheme = {
     bgColor: "black",
     textBoxBgColor: "#a9a9da",
-    textBoxBgOpacity: 1
+    textBoxBgOpacity: 0
   }
 
   const textBoxBgTranparency = slice.primary.banner_bg_transparency

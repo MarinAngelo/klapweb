@@ -11,13 +11,19 @@ import { Footer } from './footer/Footer'
 import { darkenLighten } from '../utils/ColorAdjust'
 
 const defaultTheme = {
-  pageColor: "grey",
-  pageBgColor: "AliceBlue",
+  pageColor: "#2c2a4a",
+  // pageBgColor: "#f3f2f7",
+  pageBgColor: "#e8e6ef",
+  // pageBgColor: "#cdcce0",
+  // pageBgColor: "#a7a1ce", darker
   pageLinkColor: "blue",
-  headerColor: "white",
-  headerBgColor: "grey",
-  footerColor: "white",
-  footerBgColor: "grey"
+  headerColor: "#cdcce0",
+  // headerColor: "#f3f2f7", lighter
+  // headerBgColor: "#378152", darker
+  headerBgColor: "#5ca577",
+  footerColor: "#cdcce0",
+  footerBgColor: "#2c2a4a"
+  // footerBgColor: "#183924" dark green
 }
 
 const GlobalStyle = createGlobalStyle`
