@@ -32,7 +32,7 @@ export const Hero = ({ slice }) => {
 
   return (
     <PageCover
-      className="d-flex position-relative"
+      className="d-flex align-items-center justify-content-center" // centers the cover text box
       role="img" aria-label={slice.primary.background_image.alt}
       mobileImg={slice.primary.background_image.localFile ? slice.primary.background_image.localFile.childImageSharp.gatsbyImageData : null}
       mobileLsImg={thumbImgs.mobile_ls.localFile ? thumbImgs.mobile_ls.localFile.childImageSharp.gatsbyImageData.images.fallback.src : null}

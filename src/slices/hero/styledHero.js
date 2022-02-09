@@ -2,13 +2,13 @@ import styled from 'styled-components'
 import { hexToRgbA } from '../../utils/ColorAdjust';
 
 const rgba = hexToRgbA("#a9a9da", 0.5);
-console.log('RGBA', rgba)
+// console.log('RGBA', rgba)
 
 const PageCover = styled.section`
   // Extra small devices (portrait phones, less than 576px)
   // No media query for xs since this is the default in Bootstrap
-  background-image: linear-gradient(to bottom, rgba(35,36,66, 0.9), rgba(94,95,170, 0.3)),
-                    url(${props => props.mobileImg});
+/*   background-image: linear-gradient(to bottom, rgba(35,36,66, 0.9), rgba(94,95,170, 0.3)),
+                    url(${props => props.mobileImg}); */
   /* background-color: ${props => props.bgColor};
   background: linear-gradient( to bottom, ${props => props.bgColor}, rgba(94,95,170, 0.3)) !important; */
 background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 100%) !important;
@@ -18,21 +18,9 @@ background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 1
   margin: 0 -12px 0 -12px;
   height: 101vh !important;
 
-/*   .animated-gradient {
-  animation: animateBg 14s linear infinite;
-  background-image: linear-gradient(90deg,#246655,#462466,#b66d52,#246655,#462466);
-  background-size: 400% 100%;
-} */
-
-@keyframes animateBg {
-  0% { background-position: 0% 0%; }
-  100% { background-position: 100% 0%; }
-}
-  
   .cover-text-box{
-    background-color: ${props => hexToRgbA(props.textBoxBgColor, props.textBoxBgOpacity)} !important;       
-    
-    color: #a9a9da;
+    width: 100%;
+    color: var(--header-color);
     /* center the inner div */
     display: flex;
     justify-content: center;
@@ -48,26 +36,14 @@ background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 1
     /* font-family: 'Gotu'; */
   }
 
-
   .cover-text h2 {
     font-size: 1.3rem;
     margin-top: 2rem;
   }
+
   // Small devices (landscape phones, 576px and up, col-sm)
   @media (min-width: 576px) {
     background-image: url(${props => props.mobileLsImg});
-    
-    .cover-text-box {
-      min-height: 35vh;
-      min-width: 50vw;
-      position: absolute;
-      top: 20vh;
-      left: 8vw;
-      border-radius: 40px;
-      padding-top: 2rem;
-      padding-bottom: 2rem;
-      color: #DFE2E8;
-    }
     
     .cover-text h1{
       font-size: 1.3rem;
@@ -87,12 +63,12 @@ background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 1
   @media (min-width: 768px) {
     background-image: url(${props => props.tabletImg});
 
-    .cover-text-box{
+    /* .cover-text-box{
       min-width: 40vw;
       position: absolute;
       top: 25vh;
       left: 10vw;
-    }
+    } */
     
     .cover-text h1{
       font-size: 2.3rem;
@@ -107,12 +83,12 @@ background: linear-gradient(0deg, rgba(128,201,155,1) 17%, rgba(144,122,214,1) 1
     background-image: url(${props => props.desktopImg});
     height: calc(100vh - 55px); // minus hight of navbar
 
-    .cover-text-box{
+    /* .cover-text-box{
       min-width: 40vw;
       position: absolute;
       top: 25vh;
       left: 10vw;
-    }
+    } */
 
         .cover-text h1{
       font-size: 2.3rem;
