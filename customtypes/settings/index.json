@@ -1,6 +1,6 @@
 {
 	"id": "settings",
-	"label": "Settings",
+	"label": "Einstellungen",
 	"format": "custom",
 	"repeatable": false,
 	"status": true,

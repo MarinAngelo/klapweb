@@ -1,0 +1,33 @@
+{
+	"format": "custom",
+	"id": "layout",
+	"label": "Layout",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID"
+				}
+			},
+			"layout_name": {
+				"type": "Text",
+				"config": {
+					"label": "Layout Bezeichnung",
+					"placeholder": ""
+				}
+			},
+			"banner_top": {
+				"type": "Boolean",
+				"config": {
+					"label": "Banner Top",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			}
+		}
+	}
+}

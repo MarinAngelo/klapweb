@@ -5,6 +5,49 @@ import type * as prismic from '@prismicio/client';
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 /**
+ * Content for Layout documents
+ */
+interface LayoutDocumentData {
+	/**
+	 * Layout Bezeichnung field in *Layout*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: layout.layout_name
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	layout_name: prismic.KeyTextField;
+
+	/**
+	 * Banner Top field in *Layout*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: layout.banner_top
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	banner_top: prismic.BooleanField;
+}
+
+/**
+ * Layout document from Prismic
+ *
+ * - **API ID**: `layout`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type LayoutDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<LayoutDocumentData>,
+	'layout',
+	Lang
+>;
+
+/**
  * Item in *Navigation → Links*
  */
 export interface NavigationDocumentDataLinksItem {
@@ -185,11 +228,11 @@ export type PageDocument<Lang extends string = string> = prismic.PrismicDocument
 >;
 
 /**
- * Content for Settings documents
+ * Content for Einstellungen documents
  */
 interface SettingsDocumentData {
 	/**
-	 * Site Title field in *Settings*
+	 * Site Title field in *Einstellungen*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: Title of the site
@@ -201,7 +244,7 @@ interface SettingsDocumentData {
 }
 
 /**
- * Settings document from Prismic
+ * Einstellungen document from Prismic
  *
  * - **API ID**: `settings`
  * - **Repeatable**: `false`
@@ -215,7 +258,11 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
 	Lang
 >;
 
-export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument;
+export type AllDocumentTypes =
+	| LayoutDocument
+	| NavigationDocument
+	| PageDocument
+	| SettingsDocument;
 
 /**
  * Primary content in *Hero → Default → Primary*
@@ -290,11 +337,11 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<'hero', HeroSliceVariation>;
 
 /**
- * Primary content in *Image → Default → Primary*
+ * Primary content in *Bild → Standard → Primary*
  */
 export interface ImageSliceDefaultPrimary {
 	/**
-	 * Image field in *Image → Default → Primary*
+	 * Bild field in *Bild → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -305,7 +352,7 @@ export interface ImageSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Image Slice
+ * Standard variation for Bild Slice
  *
  * - **API ID**: `default`
  * - **Description**: Image
@@ -318,11 +365,11 @@ export type ImageSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Image → Banner → Primary*
+ * Primary content in *Bild → Banner → Primary*
  */
 export interface ImageSliceBannerPrimary {
 	/**
-	 * Image field in *Image → Banner → Primary*
+	 * Image field in *Bild → Banner → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -333,7 +380,7 @@ export interface ImageSliceBannerPrimary {
 }
 
 /**
- * Banner variation for Image Slice
+ * Banner variation for Bild Slice
  *
  * - **API ID**: `banner`
  * - **Description**: Image
@@ -346,12 +393,12 @@ export type ImageSliceBanner = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Image*
+ * Slice variation for *Bild*
  */
 type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
 
 /**
- * Image Shared Slice
+ * Bild Shared Slice
  *
  * - **API ID**: `image`
  * - **Description**: Image
@@ -712,6 +759,8 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
+			LayoutDocument,
+			LayoutDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
