@@ -6,7 +6,8 @@
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
-	console.log('Header', { settings, navigation });
+	export let layout: Content.LayoutDocument;
+	console.log('Header', { settings, navigation, layout });
 </script>
 
 <Bounded tag="header" yPadding="sm">

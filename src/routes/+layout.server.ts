@@ -7,9 +7,11 @@ export async function load({ fetch, cookies }) {
 
 	const settings = await client.getSingle('settings');
 	const navigation = await client.getSingle('navigation');
+	const layout = await client.getSingle('layout');
 
 	return {
 		settings,
-		navigation
+		navigation,
+		layout
 	};
 }

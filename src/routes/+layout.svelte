@@ -7,6 +7,7 @@
 	import Header from '$lib/components/Header.svelte';
 
 	export let data;
+	console.log('+layout.svelte data vor Header', data); // HIER hinzugefügt
 </script>
 
 <svelte:head>
@@ -23,7 +24,7 @@
 	{/if}
 </svelte:head>
 <div class="text-slate-800">
-	<Header navigation={data.navigation} settings={data.settings} />
+	<Header navigation={data.navigation} settings={data.settings} layout={data.layout} />
 	<main><slot /></main>
 </div>
 <PrismicPreview {repositoryName} />
