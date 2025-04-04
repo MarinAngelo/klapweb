@@ -22,11 +22,43 @@ export interface NavigationDocumentDataLinksItem {
 	 * Link field in *Navigation → Links*
 	 *
 	 * - **Field Type**: Link
-	 * - **Placeholder**: Link for navigation item
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	link: prismic.LinkField;
+	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Sub-Link von field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: navigation.links[].sub_link
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	sub_link: prismic.KeyTextField;
+
+	/**
+	 * Hauptnavigation field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: navigation.links[].main_nav
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	main_nav: prismic.BooleanField;
+
+	/**
+	 * Fusszeilen sekundäre Navigation field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: navigation.links[].footer_sec_nav
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	footer_sec_nav: prismic.BooleanField;
 }
 
 /**
@@ -207,7 +239,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *Hero → Default → Primary*
@@ -359,7 +391,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	 * - **API ID Path**: image_cards.default.primary.cards[].buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *ImageCards → Default → Primary → Cards*
@@ -606,7 +638,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **API ID Path**: text_with_image.withButton.primary.buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *TextWithImage → With Button → Primary*
@@ -665,6 +697,17 @@ declare module '@prismicio/client' {
 			repositoryNameOrEndpoint: string,
 			options?: prismic.ClientConfig
 		): prismic.Client<AllDocumentTypes>;
+	}
+
+	interface CreateWriteClient {
+		(
+			repositoryNameOrEndpoint: string,
+			options: prismic.WriteClientConfig
+		): prismic.WriteClient<AllDocumentTypes>;
+	}
+
+	interface CreateMigration {
+		(): prismic.Migration<AllDocumentTypes>;
 	}
 
 	namespace Content {
