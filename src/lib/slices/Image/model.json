@@ -1,12 +1,12 @@
 {
 	"id": "image",
 	"type": "SharedSlice",
-	"name": "Image",
+	"name": "Bild",
 	"description": "Image",
 	"variations": [
 		{
 			"id": "default",
-			"name": "Default",
+			"name": "Standard",
 			"docURL": "...",
 			"version": "sktwi1xtmkfgx8626",
 			"description": "Image",
@@ -14,7 +14,7 @@
 				"image": {
 					"type": "Image",
 					"config": {
-						"label": "Image",
+						"label": "Bild",
 						"constraint": {},
 						"thumbnails": []
 					}

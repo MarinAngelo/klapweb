@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
+	 import clsx from 'clsx';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -8,10 +9,15 @@
 	import Heading from './Heading.svelte';
 
 	export let slice: Content.HeroSlice;
+	const bannerTop = true;
+	
 </script>
 
 <section
-	class="relative bg-slate-900 text-white"
+	    class={clsx(
+        'relative bg-slate-900 text-white',
+        { 'banner-position-top': bannerTop }
+    )}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -43,3 +49,9 @@
 		</div>
 	</Bounded>
 </section>
+
+<style>
+	.banner-position-top {
+		margin-top: -108px;
+	}
+</style>
