@@ -10,7 +10,6 @@
 
 	export let slice: Content.HeroSlice;
 	export let layout;
-	console.log('Layout', layout);
 
 	const bannerTop = layout.data?.banner_top || false;
 </script>
@@ -42,7 +41,7 @@
 					field={slice.primary.buttonLink}
 					class="rounded bg-white px-5 py-3 font-medium text-slate-800"
 				>
-					{slice.primary.buttonText || 'Learn More'}
+					{slice.primary.buttonText}
 				</PrismicLink>
 			{/if}
 		</div>
@@ -50,7 +49,8 @@
 </section>
 
 <style>
-	.banner-position-top {
-		margin-top: -108px;
+	.banner-height {
+		/* Höhe des Bannerbereichs */
+		height: 100vh;
 	}
 </style>

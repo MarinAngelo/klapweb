@@ -7,7 +7,6 @@
 	import Header from '$lib/components/Header.svelte';
 
 	export let data;
-	console.log('+layout.svelte data vor Header', data); // HIER hinzugefügt
 </script>
 
 <svelte:head>
