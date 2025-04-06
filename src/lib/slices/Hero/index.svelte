@@ -12,6 +12,7 @@
 	export let layout;
 
 	const bannerTop = layout.data?.banner_top || false;
+
 </script>
 
 <section

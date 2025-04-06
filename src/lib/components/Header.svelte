@@ -10,22 +10,32 @@
 	export let layout: Content.LayoutDocument;
 	console.log('Header', { settings, navigation, layout });
 	const bannerTop = layout.data?.banner_top || false;
+	const bgColor = layout.data?.header_bg_color || 'white';
+	console.log('Header Layout', layout.data.bg_opacity);
+	const convertNumber = (n) => {
+		return parseFloat((0.1 + ((n - 1) / 98) * 0.89).toFixed(2));
+	};
+
+	const bgOpacity = convertNumber(layout.data?.bg_opacity || 100);
+	console.log('Header Opacity', bgOpacity);
+	const headerColor = layout.data?.header_color || 'white';
 </script>
 
 <Bounded
 	tag="header"
 	yPadding="sm"
-	class={clsx('bg-orange-600 opacity-55 z-50', { 'absolute inset-x-0 top-0': bannerTop })}
+	class={clsx({ 'absolute inset-x-0 top-0': bannerTop })}
+	style="background-color: {bgColor}; opacity: {bgOpacity}; color: white; z-index: 9999;"
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
 	<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 leading-none">
-		<a href="/" class="text-xl font-semibold tracking-tight">
+		<a href="/" class="text-xl font-semibold tracking-tight header-color"  style="--my-header-color: {headerColor};">
 			<PrismicText field={settings.data.siteTitle} />
 		</a>
 		<nav>
 			<ul class="flex flex-wrap gap-6 md:gap-10">
 				{#each navigation.data?.links as item}
-					<li class="font-semibold tracking-tight text-slate-800">
+					<li class="font-semibold tracking-tigh header-color" style="--my-header-color: {headerColor};">
 						<PrismicLink field={item.link}>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -35,3 +45,12 @@
 		</nav>
 	</div>
 </Bounded>
+
+<style>
+/* 	:global(.header) {
+		background-color: var(--color-bg);
+	} */
+    .header-color {
+        color: var(--my-header-color);
+    }
+</style>

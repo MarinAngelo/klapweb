@@ -5,7 +5,7 @@
 	"repeatable": true,
 	"status": true,
 	"json": {
-		"Main": {
+		"Generell": {
 			"uid": {
 				"type": "UID",
 				"config": {
@@ -26,6 +26,29 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
+				}
+			}
+		},
+		"Kopfzeile": {
+			"header_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe der Kopfzeile",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe der Kopfzeile",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"bg_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Transparenz der Kopfzeile",
+					"placeholder": "Eine Zahl zwischen 1 und 99"
 				}
 			}
 		}

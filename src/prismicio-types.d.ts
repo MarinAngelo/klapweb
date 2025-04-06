@@ -30,6 +30,39 @@ interface LayoutDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#boolean
 	 */
 	banner_top: prismic.BooleanField;
+
+	/**
+	 * Hintergrundfarbe der Kopfzeile field in *Layout*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: layout.header_bg_color
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe der Kopfzeile field in *Layout*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: layout.header_color
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
+	 * Transparenz der Kopfzeile field in *Layout*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
+	 * - **API ID Path**: layout.bg_opacity
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	bg_opacity: prismic.NumberField;
 }
 
 /**
