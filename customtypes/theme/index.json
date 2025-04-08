@@ -1,7 +1,7 @@
 {
 	"format": "custom",
-	"id": "layout",
-	"label": "Layout",
+	"id": "theme",
+	"label": "Design Vorlage",
 	"repeatable": true,
 	"status": true,
 	"json": {
@@ -12,10 +12,10 @@
 					"label": "UID"
 				}
 			},
-			"layout_name": {
+			"theme_name": {
 				"type": "Text",
 				"config": {
-					"label": "Layout Bezeichnung",
+					"label": "Design Vorlage Bezeichnung",
 					"placeholder": ""
 				}
 			},

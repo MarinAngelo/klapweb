@@ -4,4 +4,4 @@
     export let data;
 </script>
 
-<EnhancedSliceZone slices={data.page.data.slices} layout={data.layout} />
+<EnhancedSliceZone slices={data.page.data.slices} theme={data.theme} />

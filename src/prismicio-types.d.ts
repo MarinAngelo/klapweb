@@ -5,82 +5,6 @@ import type * as prismic from '@prismicio/client';
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 /**
- * Content for Layout documents
- */
-interface LayoutDocumentData {
-	/**
-	 * Layout Bezeichnung field in *Layout*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: layout.layout_name
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#key-text
-	 */
-	layout_name: prismic.KeyTextField;
-
-	/**
-	 * Banner Top field in *Layout*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: layout.banner_top
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#boolean
-	 */
-	banner_top: prismic.BooleanField;
-
-	/**
-	 * Hintergrundfarbe der Kopfzeile field in *Layout*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: layout.header_bg_color
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#color
-	 */
-	header_bg_color: prismic.ColorField;
-
-	/**
-	 * Textfarbe der Kopfzeile field in *Layout*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: layout.header_color
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#color
-	 */
-	header_color: prismic.ColorField;
-
-	/**
-	 * Transparenz der Kopfzeile field in *Layout*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
-	 * - **API ID Path**: layout.bg_opacity
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#number
-	 */
-	bg_opacity: prismic.NumberField;
-}
-
-/**
- * Layout document from Prismic
- *
- * - **API ID**: `layout`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/custom-types
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type LayoutDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
-	Simplify<LayoutDocumentData>,
-	'layout',
-	Lang
->;
-
-/**
  * Item in *Navigation → Links*
  */
 export interface NavigationDocumentDataLinksItem {
@@ -291,11 +215,81 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
 	Lang
 >;
 
-export type AllDocumentTypes =
-	| LayoutDocument
-	| NavigationDocument
-	| PageDocument
-	| SettingsDocument;
+/**
+ * Content for Design Vorlage documents
+ */
+interface ThemeDocumentData {
+	/**
+	 * Layout Bezeichnung field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.theme_name
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	theme_name: prismic.KeyTextField;
+
+	/**
+	 * Banner Top field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.banner_top
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	banner_top: prismic.BooleanField /**
+	 * Hintergrundfarbe der Kopfzeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_bg_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */;
+	header_bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe der Kopfzeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
+	 * Transparenz der Kopfzeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
+	 * - **API ID Path**: theme.bg_opacity
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	bg_opacity: prismic.NumberField;
+}
+
+/**
+ * Design Vorlage document from Prismic
+ *
+ * - **API ID**: `theme`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<ThemeDocumentData>,
+	'theme',
+	Lang
+>;
+
+export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
  * Primary content in *Hero → Default → Primary*
@@ -792,8 +786,6 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
-			LayoutDocument,
-			LayoutDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
@@ -802,6 +794,8 @@ declare module '@prismicio/client' {
 			PageDocumentDataSlicesSlice,
 			SettingsDocument,
 			SettingsDocumentData,
+			ThemeDocument,
+			ThemeDocumentData,
 			AllDocumentTypes,
 			HeroSlice,
 			HeroSliceDefaultPrimary,

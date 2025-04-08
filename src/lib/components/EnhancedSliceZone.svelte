@@ -3,7 +3,7 @@
     import { components } from '$lib/slices';
 
     export let slices; // Die Slices von der Seite
-    export let layout; // Die Layout-Daten
+    export let theme; // Die theme-Daten
 
     function resolve(slice) {
         const component = components[slice.slice_type];
@@ -15,5 +15,5 @@
 </script>
 
 {#each slices as slice}
-    <svelte:component this={resolve(slice)} {slice} {layout} />
+    <svelte:component this={resolve(slice)} {slice} {theme} />
 {/each}

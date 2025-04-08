@@ -8,20 +8,20 @@
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
-	export let layout: Content.LayoutDocument;
-	console.log('Header', { settings, navigation, layout });
+	export let prismicTheme: Content.ThemeDocument;
+	console.log('Header', { settings, navigation, prismicTheme });
 
 	const convertNumber = (n) => {
 		return parseFloat((0.1 + ((n - 1) / 98) * 0.89).toFixed(2));
 	};
 
 	// Fallbacks direkt
-	const bannerTop = layout.data?.banner_top || false;
+	const bannerTop = prismicTheme.data?.banner_top || false;
 
 	// Fallbacks aus app.css verwenden
-	const bgOpacity = convertNumber(layout.data?.bg_opacity || 'var(--header-bg-opacity');
-	const bgColor = layout.data?.header_bg_color || 'var(--header-bg-color)';
-	const headerColor = layout.data?.header_color || 'var(--header-color)';
+	const bgOpacity = convertNumber(prismicTheme.data?.bg_opacity || 'var(--header-bg-opacity');
+	const bgColor = prismicTheme.data?.header_bg_color || 'var(--header-bg-color)';
+	const headerColor = prismicTheme.data?.header_color || 'var(--header-color)';
 
 	// Store aktualisieren
 	theme.update((t) => ({

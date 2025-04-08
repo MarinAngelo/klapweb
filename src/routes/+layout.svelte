@@ -27,7 +27,7 @@
     <Header 
         navigation={data?.navigation || []} 
         settings={data?.settings || {}} 
-        layout={data?.layout || {}} 
+        prismicTheme={data?.prismicTheme || {}} 
     />
     <main><slot /></main>
     <Footer />
