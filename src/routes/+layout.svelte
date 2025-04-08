@@ -23,6 +23,7 @@
 		<meta name="twitter:card" content="summary_large_image" />
 	{/if}
 </svelte:head>
+<!--Hier wird die Textfarbe zugewiesen, zuweisung Hintergrundfarbe funktioniert nicht-->
 <div class="text-slate-800">
 	<Header
 		navigation={data?.navigation || []}
