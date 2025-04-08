@@ -5,6 +5,7 @@
     import { page } from '$app/stores';
     import { repositoryName } from '$lib/prismicio';
     import Header from '$lib/components/Header.svelte';
+    import Footer from '$lib/components/Footer.svelte';
 
     export let data;
 </script>
@@ -29,5 +30,6 @@
         layout={data?.layout || {}} 
     />
     <main><slot /></main>
+    <Footer />
 </div>
 <PrismicPreview {repositoryName} />

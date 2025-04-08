@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
@@ -16,11 +17,19 @@
 
 	// Fallbacks direkt
 	const bannerTop = layout.data?.banner_top || false;
-	
+
 	// Fallbacks aus app.css verwenden
-	const bgOpacity = convertNumber(layout.data?.bg_opacity || 'var(--header-bg-opacity' );
+	const bgOpacity = convertNumber(layout.data?.bg_opacity || 'var(--header-bg-opacity');
 	const bgColor = layout.data?.header_bg_color || 'var(--header-bg-color)';
 	const headerColor = layout.data?.header_color || 'var(--header-color)';
+
+	// Store aktualisieren
+	theme.update((t) => ({
+		...t,
+		headerColor,
+		bgColor,
+		bgOpacity
+	}));
 </script>
 
 <Bounded
@@ -31,13 +40,20 @@
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
 	<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 leading-none">
-		<a href="/" class="text-xl font-semibold tracking-tight header-color"  style="--my-header-color: {headerColor};">
+		<a
+			href="/"
+			class="text-xl font-semibold tracking-tight header-color"
+			style="--my-header-color: {headerColor};"
+		>
 			<PrismicText field={settings.data.siteTitle} />
 		</a>
 		<nav>
 			<ul class="flex flex-wrap gap-6 md:gap-10">
 				{#each navigation.data?.links as item}
-					<li class="font-semibold tracking-tigh header-color" style="--my-header-color: {headerColor};">
+					<li
+						class="font-semibold tracking-tigh header-color"
+						style="--my-header-color: {headerColor};"
+					>
 						<PrismicLink field={item.link}>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -47,12 +63,3 @@
 		</nav>
 	</div>
 </Bounded>
-
-<style>
-/* 	:global(.header) {
-		background-color: var(--color-bg);
-	} */
-    .header-color {
-        color: var(--my-header-color);
-    }
-</style>
