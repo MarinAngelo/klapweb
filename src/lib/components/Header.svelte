@@ -9,16 +9,18 @@
 	export let navigation: Content.NavigationDocument;
 	export let layout: Content.LayoutDocument;
 	console.log('Header', { settings, navigation, layout });
-	const bannerTop = layout.data?.banner_top || false;
-	const bgColor = layout.data?.header_bg_color || 'white';
-	console.log('Header Layout', layout.data.bg_opacity);
+
 	const convertNumber = (n) => {
 		return parseFloat((0.1 + ((n - 1) / 98) * 0.89).toFixed(2));
 	};
 
-	const bgOpacity = convertNumber(layout.data?.bg_opacity || 100);
-	console.log('Header Opacity', bgOpacity);
-	const headerColor = layout.data?.header_color || 'white';
+	// Fallbacks direkt
+	const bannerTop = layout.data?.banner_top || false;
+	
+	// Fallbacks aus app.css verwenden
+	const bgOpacity = convertNumber(layout.data?.bg_opacity || 'var(--header-bg-opacity' );
+	const bgColor = layout.data?.header_bg_color || 'var(--header-bg-color)';
+	const headerColor = layout.data?.header_color || 'var(--header-color)';
 </script>
 
 <Bounded

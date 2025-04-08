@@ -6,3 +6,11 @@
 [data-collapsible].bg-slate-100 + [data-collapsible].bg-slate-100 {
 	@apply pt-0 md:pt-0;
 }
+
+/* src/app.css (oder deine globale CSS-Datei) */
+:root {
+  /* --- Fallback Header Styles --- */
+  --header-bg-color: red;
+  --header-color: green;
+  --header-bg-opacity: 1;
+}
