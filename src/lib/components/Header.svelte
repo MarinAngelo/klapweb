@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores'; // Importiere den $page-Store
 	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
@@ -18,6 +19,9 @@
 	// Fallbacks direkt
 	const bannerTop = prismicTheme.data?.banner_top || false;
 
+	   // Überprüfen, ob die aktuelle URL "/"" ist
+    $: isHome = $page.url.pathname === '/';
+
 	// Fallbacks aus app.css verwenden
 	const bgOpacity = convertNumber(prismicTheme.data?.bg_opacity || 'var(--header-bg-opacity');
 	const bgColor = prismicTheme.data?.header_bg_color || 'var(--header-bg-color)';
@@ -35,7 +39,7 @@
 <Bounded
 	tag="header"
 	yPadding="sm"
-	class={clsx({ 'absolute inset-x-0 top-0': bannerTop })}
+	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome})}
 	style="background-color: {bgColor}; opacity: {bgOpacity}; color: white; z-index: 9999;"
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
