@@ -3,7 +3,7 @@
     import { components } from '$lib/slices';
 
     export let slices; // Die Slices von der Seite
-    export let theme; // Die theme-Daten
+    export let prismicTheme; // Die prismicTheme-Daten
 
     function resolve(slice) {
         const component = components[slice.slice_type];
@@ -15,5 +15,5 @@
 </script>
 
 {#each slices as slice}
-    <svelte:component this={resolve(slice)} {slice} {theme} />
+    <svelte:component this={resolve(slice)} {slice} {prismicTheme} />
 {/each}

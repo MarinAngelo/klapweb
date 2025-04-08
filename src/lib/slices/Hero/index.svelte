@@ -9,9 +9,9 @@
 	import Heading from './Heading.svelte';
 
 	export let slice: Content.HeroSlice;
-	export let theme;
+	export let prismicTheme;
 
-	const bannerTop = theme.data?.banner_top || false;
+	const bannerTop = prismicTheme.data?.banner_top || false;
 
 </script>
 
