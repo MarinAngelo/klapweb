@@ -198,6 +198,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
 	siteTitle: prismic.TitleField;
+
+	/**
+	 * E-Mail field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.e_mail
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	e_mail: prismic.KeyTextField;
 }
 
 /**
@@ -220,7 +231,7 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
  */
 interface ThemeDocumentData {
 	/**
-	 * Layout Bezeichnung field in *Design Vorlage*
+	 * Design Vorlage Bezeichnung field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -241,7 +252,7 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#boolean
 	 */
 	banner_top: prismic.BooleanField /**
-	 * Hintergrundfarbe der Kopfzeile field in *Design Vorlage*
+	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -252,7 +263,7 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Textfarbe der Kopfzeile field in *Design Vorlage*
+	 * Textfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -263,7 +274,7 @@ interface ThemeDocumentData {
 	header_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Kopfzeile field in *Design Vorlage*
+	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
@@ -271,7 +282,38 @@ interface ThemeDocumentData {
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/field#number
 	 */
-	bg_opacity: prismic.NumberField;
+	bg_opacity: prismic.NumberField /**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_bg_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */;
+	footer_bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	footer_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_link_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	footer_link_color: prismic.ColorField;
 }
 
 /**

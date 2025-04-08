@@ -14,6 +14,13 @@
 					"allowTargetBlank": false,
 					"single": "heading1"
 				}
+			},
+			"e_mail": {
+				"type": "Text",
+				"config": {
+					"label": "E-Mail",
+					"placeholder": ""
+				}
 			}
 		}
 	}
