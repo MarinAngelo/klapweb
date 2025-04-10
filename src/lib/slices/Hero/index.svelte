@@ -10,13 +10,17 @@
 
 	export let slice: Content.HeroSlice;
 	export let prismicTheme;
+	console.log("🚀 ~ prismicTheme:", prismicTheme)
 
 	const bannerTop = prismicTheme.data?.banner_top || false;
+	const pageBgColor = prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
+	const pageColor = prismicTheme.data?.page_color || 'var(--page-color)';
 
 </script>
 
 <section
-	class={clsx('relative bg-slate-900 text-white', { 'banner-position-top': bannerTop })}
+	class={clsx('relative', { 'banner-position-top': bannerTop })}
+	style="background-color: {pageBgColor}; color: {pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
