@@ -37,6 +37,15 @@
 								"placeholder": ""
 							}
 						},
+						"dropdown_link": {
+							"type": "Boolean",
+							"config": {
+								"label": "Ausklappbare Schaltfläche",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": false
+							}
+						},
 						"main_nav": {
 							"type": "Boolean",
 							"config": {

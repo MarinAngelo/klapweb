@@ -39,6 +39,17 @@ export interface NavigationDocumentDataLinksItem {
 	sub_link: prismic.KeyTextField;
 
 	/**
+	 * Ausklappbare Schaltfläche field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: navigation.links[].dropdown_link
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	dropdown_link: prismic.BooleanField;
+
+	/**
 	 * Hauptnavigation field in *Navigation → Links*
 	 *
 	 * - **Field Type**: Boolean

@@ -7,6 +7,7 @@
 	import { get } from 'svelte/store';
 
 	import Bounded from './Bounded.svelte';
+	import Navbar from './Navbar.svelte';
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
@@ -32,19 +33,11 @@
 		>
 			<PrismicText field={settings.data.siteTitle} />
 		</a>
-		<nav>
-			<ul class="flex flex-wrap gap-6 md:gap-10">
-				{#each navigation.data?.links as item}
-					<li
-						class="font-semibold tracking-tigh header-color"
-						style="--my-header-color: {headerColor};"
-					>
-						<PrismicLink field={item.link}>
-							<PrismicText field={item.label} />
-						</PrismicLink>
-					</li>
-				{/each}
-			</ul>
-		</nav>
+
+		<Navbar 
+			navigation={navigation}
+			headerColor={headerColor}
+		/>
+
 	</div>
 </Bounded>
