@@ -9,11 +9,26 @@
 
 /* src/app.css (oder deine globale CSS-Datei) */
 :root {
-  /* --- Fallback Header Styles --- */
-  --header-bg-color: red;
+  /* --- Fallback Styles --- */
+  --header-bg-color: rgb(136, 55, 55);
   --header-color: green;
+  --header-link-color: white;
+  --header-link-hover-color: white;
+  --header-link-active-color: white;
+  --header-link-visited-color: white;
   --header-bg-opacity: 1;
   --footer-bg-color: maroon;
   --footer-color: grey;
+  --footer-link-color: white;
+  --footer-link-hover-color: white;
+  --footer-link-active-color: white;
+  --footer-link-visited-color: white;
+  --footer-bg-opacity: 1;
   --page-bg-color: black;
+  --page-color: white;
+  --page-link-color: white;
+  --page-link-hover-color: white;
+  --page-link-active-color: white;
+  --page-link-visited-color: white;
+  --page-bg-opacity: 1;
 }

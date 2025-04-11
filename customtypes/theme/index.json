@@ -27,6 +27,20 @@
 					"placeholder_true": "Ja",
 					"default_value": false
 				}
+			},
+			"page_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
 			}
 		},
 		"Kopfzeile": {

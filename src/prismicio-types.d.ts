@@ -251,7 +251,29 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#boolean
 	 */
-	banner_top: prismic.BooleanField /**
+	banner_top: prismic.BooleanField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_bg_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_bg_color: prismic.ColorField /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color

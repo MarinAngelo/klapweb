@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
-	import clsx from 'clsx';
+	import { theme } from '$lib/stores/theme';
+
+	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -9,17 +11,12 @@
 	import Heading from './Heading.svelte';
 
 	export let slice: Content.HeroSlice;
-	export let prismicTheme;
-	console.log("🚀 ~ prismicTheme:", prismicTheme)
 
-	const bannerTop = prismicTheme.data?.banner_top || false;
-	const pageBgColor = prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
-	const pageColor = prismicTheme.data?.page_color || 'var(--page-color)';
-
+	const { pageBgColor, pageColor } = get(theme);
 </script>
 
 <section
-	class={clsx('relative', { 'banner-position-top': bannerTop })}
+	class="relative"
 	style="background-color: {pageBgColor}; color: {pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
