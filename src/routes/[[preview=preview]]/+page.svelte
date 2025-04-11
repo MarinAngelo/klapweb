@@ -1,7 +1,9 @@
 <script lang="ts">
-    import EnhancedSliceZone from '$lib/components/EnhancedSliceZone.svelte';
+	import { SliceZone } from '@prismicio/svelte';
 
-    export let data;
+	import { components } from '$lib/slices';
+
+	export let data;
 </script>
 
-<EnhancedSliceZone slices={data.page.data.slices} prismicTheme={data.prismicTheme} />
+<SliceZone slices={data.page.data.slices} {components} />
