@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
-    import Dropdown from './Dropdown.svelte';
+	import Dropdown from './Dropdown.svelte';
 	// Props definieren
 	export let navigation;
 	export let headerColor; // Wird für die Textfarbe verwendet
+	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
+	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
+	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
 
 	// Helper-Funktion, um die Unterpunkte für ein gegebenes Dropdown-Hauptitem zu finden
 	// PASSE DIESE FUNKTION AN, falls die Beziehung zwischen Haupt- und Unterpunkt anders ist!
@@ -33,12 +36,19 @@
 			{@const subItems = getSubItems(item, navigation.data.links)}
 
 			{#if subItems.length > 0}
-                <!-- Verwendung der Dropdown-Komponente -->
-                <Dropdown {item} {subItems} {headerColor} />
+				<!-- Verwendung der Dropdown-Komponente -->
+				<Dropdown
+					{item}
+					{subItems}
+					{headerColor}
+					{headerBgColor}
+					{headerLinkColor}
+					{headerLinkHoverColor}
+				/>
 			{:else if item.link?.url}
 				<li
-					class="font-semibold tracking-tight header-color"
-					style="--my-header-color: {headerColor};"
+					class="font-semibold tracking-tight"
+					style="color: {headerLinkColor};"
 				>
 					<PrismicLink field={item.link}>
 						<PrismicText field={item.label} />
@@ -49,8 +59,8 @@
 			{@const _skip = true}
 		{:else if item.link?.url}
 			<li
-				class="font-semibold tracking-tight header-color"
-				style="--my-header-color: {headerColor};"
+				class="font-semibold tracking-tight"
+				style="color: {headerLinkColor};"
 			>
 				<PrismicLink field={item.link}>
 					<PrismicText field={item.label} />

@@ -19,9 +19,11 @@
 	const bannerTop = data.prismicTheme.data?.banner_top;
 
 		// Fallbacks aus app.css verwenden
-	const headerBgOpacity = convertNumber(data.prismicTheme.data?.bg_opacity);
+	const headerBgOpacity = convertNumber(data.prismicTheme.data?.header_bg_opacity);
 	const headerBgColor = data.prismicTheme.data?.header_bg_color || 'var(--header-bg-color)';
 	const headerColor = data.prismicTheme.data?.header_color || 'var(header-color)';
+	const headerLinkColor = data.prismicTheme.data?.header_link_color || 'var(--header-link-color)';
+	const headerLinkHoverColor = data.prismicTheme.data?.header_link_hover_color || 'var(--header-link-hover-color)';
 	const footerBgColor = data.prismicTheme.data?.footer_bg_color || 'var(--footer-bg-color)';
 	const footerColor = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	const pageColor = data.prismicTheme.data?.page_color || 'var(--page-color)';
@@ -32,6 +34,8 @@
 		...t,
 		headerColor,
 		headerBgColor,
+		headerLinkColor,
+		headerLinkHoverColor,
 		headerBgOpacity,
 		bannerTop,
 		footerBgColor,

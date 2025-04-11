@@ -2,7 +2,7 @@
 	import { page } from '$app/stores'; // Importiere den $page-Store
 	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
 	import { get } from 'svelte/store';
 
@@ -12,7 +12,14 @@
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
 
-	const { bannerTop, headerBgColor, headerBgOpacity, headerColor } = get(theme);
+	const {
+		bannerTop,
+		headerBgColor,
+		headerBgOpacity,
+		headerColor,
+		headerLinkColor,
+		headerLinkHoverColor
+	} = get(theme);
 
 	// Überprüfen, ob die aktuelle URL "/"" ist
 	$: isHome = $page.url.pathname === '/';
@@ -28,16 +35,12 @@
 	<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 leading-none">
 		<a
 			href="/"
-			class="text-xl font-semibold tracking-tight header-color"
-			style="--my-header-color: {headerColor};"
+			class="text-xl font-semibold tracking-tight"
+			style="color: {headerColor};"
 		>
 			<PrismicText field={settings.data.siteTitle} />
 		</a>
 
-		<Navbar 
-			navigation={navigation}
-			headerColor={headerColor}
-		/>
-
+		<Navbar {navigation} {headerColor} {headerBgColor} {headerLinkColor} {headerLinkHoverColor} />
 	</div>
 </Bounded>

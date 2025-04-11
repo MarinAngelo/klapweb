@@ -296,6 +296,17 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
+	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
+	 * - **API ID Path**: theme.header_bg_opacity
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	header_bg_opacity: prismic.NumberField;
+
+	/**
 	 * Textfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -307,15 +318,26 @@ interface ThemeDocumentData {
 	header_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
+	 * Linkfarbe field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
-	 * - **API ID Path**: theme.bg_opacity
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_link_color
 	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/field#number
+	 * - **Documentation**: https://prismic.io/docs/field#color
 	 */
-	bg_opacity: prismic.NumberField /**
+	header_link_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe, wenn Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_link_hover_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_link_hover_color: prismic.ColorField /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color

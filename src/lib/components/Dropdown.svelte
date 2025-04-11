@@ -1,43 +1,55 @@
 <script lang="ts">
-    import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import DropdownButton from './DropdownButton.svelte'; // Import der neuen Komponente
 
-    // Props definieren
-    export let item;
-    export let subItems;
-    export let headerColor;
+	// Props definieren
+	export let item;
+	export let subItems;
+	export let headerColor;
+	export let headerBgColor;
+	export let headerLinkColor; // Wird aktuell nicht verwendet im Snippet
+	export let headerLinkHoverColor;
+
+	console.log('Hover-Farbe:', headerLinkHoverColor);
 </script>
 
 <li class="relative group">
-    <button
-        class="font-semibold tracking-tight header-color inline-flex items-center"
-        style="--my-header-color: {headerColor};"
-        aria-haspopup="true"
-        aria-expanded="false"
-    >
-        <PrismicText field={item.label} />
-        <svg
-            class="w-4 h-4 ml-1 fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-        >
-            <path
-                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-            />
-        </svg>
-    </button>
+	<DropdownButton {item} {headerColor} {headerLinkColor}/>
 
-    <ul
-        class="absolute left-0 mt-0 hidden w-48 bg-white text-slate-700 shadow-lg group-hover:block z-10 rounded py-1"
-    >
-        {#each subItems as dropdownItem}
-            <li>
-                <PrismicLink
-                    field={dropdownItem.link}
-                    class="block px-4 py-2 text-sm hover:bg-slate-100"
-                >
-                    <PrismicText field={dropdownItem.label} />
-                </PrismicLink>
-            </li>
-        {/each}
-    </ul>
+	<ul
+		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-10 rounded py-1"
+		style="background-color: {headerBgColor};"
+	>
+		{#each subItems as dropdownItem}
+			<li style="--custom-hover: {headerLinkHoverColor}; color: {headerLinkColor}">
+				<PrismicLink
+					field={dropdownItem.link}
+					class="block px-4 py-2 text-sm"
+					
+				>
+					<PrismicText field={dropdownItem.label} />
+				</PrismicLink>
+			</li>
+		{/each}
+	</ul>
 </li>
+
+<style>
+	/* Korrigierte dynamische Hover-Farbe */
+
+	/* * Wir zielen auf das Element mit der Klasse 'block' (die der Link hat),
+     * wenn es gehovert wird (:hover).
+     * Dann setzen wir die background-color unter Verwendung unserer Variable.
+     * Mit !important stellen wir sicher, dass diese Regel Vorrang vor
+     * der Tailwind-Regel hat, die durch 'hover:bg-gray-100' generiert wird.
+     */
+	.block:hover {
+		background-color: red !important;
+	}
+
+	/* Sicherstellen, dass die Textfarbe im Normalzustand passt (optional) */
+	.block {
+		/* Hier könntest du die normale Textfarbe setzen, falls nötig */
+		/* color: var(--normal-text-color); */
+	}
+</style>
