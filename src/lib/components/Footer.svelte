@@ -8,7 +8,6 @@
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
 	export let prismicTheme: Content.ThemeDocument;
-	console.log('footer data', { settings, navigation, prismicTheme });
 
 	const { footerColor, footerBgColor } = get(theme);
 

@@ -2,7 +2,6 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-
 	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -41,7 +40,8 @@
 			{#if isFilled.link(slice.primary.buttonLink)}
 				<PrismicLink
 					field={slice.primary.buttonLink}
-					class="rounded bg-white px-5 py-3 font-medium text-slate-800"
+					class="rounded px-5 py-3 font-medium"
+					style="background-color: {pageBgColor}; color: {pageColor};"
 				>
 					{slice.primary.buttonText}
 				</PrismicLink>
