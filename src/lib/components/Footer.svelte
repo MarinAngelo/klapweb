@@ -6,8 +6,7 @@
 	import Bounded from './Bounded.svelte';
 
 	export let settings: Content.SettingsDocument;
-	export let navigation: Content.NavigationDocument;
-	export let prismicTheme: Content.ThemeDocument;
+	export const navigation: Content.NavigationDocument | undefined = undefined;
 
 	const { footerColor, footerBgColor } = get(theme);
 

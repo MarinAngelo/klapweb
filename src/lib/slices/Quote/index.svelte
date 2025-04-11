@@ -2,15 +2,19 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
+		import { theme } from '$lib/stores/theme';
+	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let slice: Content.QuoteSlice;
+
+	const { pageBgColor, pageColor } = get(theme);
 </script>
 
 <Bounded
 	as="section"
-	class="bg-white"
+	style="background-color: {pageBgColor}; color: {pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -23,9 +27,9 @@
 						!isFilled.keyText(slice.primary.source) && 'text-center'
 					)}
 				>
-					<span class="-ml-3.5 select-none text-slate-400 md:-ml-5"> &ldquo; </span>
+					<span class="-ml-3.5 select-none md:-ml-5"> &ldquo; </span>
 					<PrismicText field={slice.primary.quote} />
-					<span class="select-none text-slate-400">&rdquo;</span>
+					<span class="select-none">&rdquo;</span>
 				</p>
 			</blockquote>
 			{#if isFilled.keyText(slice.primary.source)}
