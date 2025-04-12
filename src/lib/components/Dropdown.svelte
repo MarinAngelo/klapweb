@@ -13,15 +13,15 @@
 	console.log('Hover-Farbe:', headerLinkHoverColor);
 </script>
 
-<li class="relative group">
+<div class="relative group">
 	<DropdownButton {item} {headerColor} {headerLinkColor}/>
 
-	<ul
+	<div
 		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-10 rounded py-1"
 		style="background-color: {headerBgColor};"
 	>
 		{#each subItems as dropdownItem}
-			<li style="--custom-hover: {headerLinkHoverColor}; color: {headerLinkColor}">
+			<div style="--custom-hover: {headerLinkHoverColor}; color: {headerLinkColor}">
 				<PrismicLink
 					field={dropdownItem.link}
 					class="block px-4 py-2 text-sm"
@@ -29,10 +29,10 @@
 				>
 					<PrismicText field={dropdownItem.label} />
 				</PrismicLink>
-			</li>
+			</div>
 		{/each}
-	</ul>
-</li>
+	</div>
+</div>
 
 <style>
 	/* Korrigierte dynamische Hover-Farbe */

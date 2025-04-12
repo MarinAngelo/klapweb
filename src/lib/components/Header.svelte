@@ -21,6 +21,9 @@
 		headerLinkHoverColor
 	} = get(theme);
 
+	const currentPath = $page.url.pathname;
+	console.log('🚀 ~ currentPathname:', currentPath);
+
 	// Überprüfen, ob die aktuelle URL "/"" ist
 	$: isHome = $page.url.pathname === '/';
 </script>
@@ -32,15 +35,13 @@
 	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 9999;"
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
-	<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 leading-none">
-		<a
-			href="/"
-			class="text-xl font-semibold tracking-tight"
-			style="color: {headerColor};"
-		>
-			<PrismicText field={settings.data.siteTitle} />
-		</a>
-
-		<Navbar {navigation} {headerColor} {headerBgColor} {headerLinkColor} {headerLinkHoverColor} />
-	</div>
+		<Navbar
+			{navigation}
+			{headerColor}
+			{headerBgColor}
+			{headerLinkColor}
+			{headerLinkHoverColor}
+			{settings}
+			{currentPath}
+		/>
 </Bounded>
