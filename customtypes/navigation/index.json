@@ -24,8 +24,44 @@
 							"type": "Link",
 							"config": {
 								"label": "Link",
-								"placeholder": "Link for navigation item",
-								"select": null
+								"placeholder": "",
+								"select": null,
+								"allowText": false,
+								"allowTargetBlank": true
+							}
+						},
+						"sub_link": {
+							"type": "Text",
+							"config": {
+								"label": "Sub-Link von",
+								"placeholder": ""
+							}
+						},
+						"dropdown_link": {
+							"type": "Boolean",
+							"config": {
+								"label": "Ausklappbare Schaltfläche",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": false
+							}
+						},
+						"main_nav": {
+							"type": "Boolean",
+							"config": {
+								"label": "Hauptnavigation",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": true
+							}
+						},
+						"footer_sec_nav": {
+							"type": "Boolean",
+							"config": {
+								"label": "Fusszeilen sekundäre Navigation",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": false
 							}
 						}
 					}

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
+	import { theme } from '$lib/stores/theme';
+	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -10,7 +12,7 @@
 
 <Bounded
 	as="section"
-	class="bg-white"
+	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -20,7 +22,7 @@
 		</div>
 		<div>
 			{#if isFilled.image(slice.primary.image)}
-				<div class="bg-gray-100">
+				<div style="background-color: {get(theme).pageBgColor};">
 					<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
 				</div>
 			{/if}

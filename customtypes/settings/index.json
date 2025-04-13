@@ -1,6 +1,6 @@
 {
 	"id": "settings",
-	"label": "Settings",
+	"label": "Einstellungen",
 	"format": "custom",
 	"repeatable": false,
 	"status": true,
@@ -13,6 +13,13 @@
 					"placeholder": "Title of the site",
 					"allowTargetBlank": false,
 					"single": "heading1"
+				}
+			},
+			"e_mail": {
+				"type": "Text",
+				"config": {
+					"label": "E-Mail",
+					"placeholder": ""
 				}
 			}
 		}

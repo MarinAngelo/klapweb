@@ -7,9 +7,11 @@ export async function load({ fetch, cookies }) {
 
 	const settings = await client.getSingle('settings');
 	const navigation = await client.getSingle('navigation');
+	const prismicTheme = await client.getSingle('theme');
 
 	return {
 		settings,
-		navigation
+		navigation,
+		prismicTheme
 	};
 }

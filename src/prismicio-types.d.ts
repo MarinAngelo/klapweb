@@ -22,11 +22,54 @@ export interface NavigationDocumentDataLinksItem {
 	 * Link field in *Navigation → Links*
 	 *
 	 * - **Field Type**: Link
-	 * - **Placeholder**: Link for navigation item
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	link: prismic.LinkField;
+	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Sub-Link von field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: navigation.links[].sub_link
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	sub_link: prismic.KeyTextField;
+
+	/**
+	 * Ausklappbare Schaltfläche field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: navigation.links[].dropdown_link
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	dropdown_link: prismic.BooleanField;
+
+	/**
+	 * Hauptnavigation field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: navigation.links[].main_nav
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	main_nav: prismic.BooleanField;
+
+	/**
+	 * Fusszeilen sekundäre Navigation field in *Navigation → Links*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: navigation.links[].footer_sec_nav
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	footer_sec_nav: prismic.BooleanField;
 }
 
 /**
@@ -153,11 +196,11 @@ export type PageDocument<Lang extends string = string> = prismic.PrismicDocument
 >;
 
 /**
- * Content for Settings documents
+ * Content for Einstellungen documents
  */
 interface SettingsDocumentData {
 	/**
-	 * Site Title field in *Settings*
+	 * Site Title field in *Einstellungen*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: Title of the site
@@ -166,10 +209,21 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
 	siteTitle: prismic.TitleField;
+
+	/**
+	 * E-Mail field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.e_mail
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	e_mail: prismic.KeyTextField;
 }
 
 /**
- * Settings document from Prismic
+ * Einstellungen document from Prismic
  *
  * - **API ID**: `settings`
  * - **Repeatable**: `false`
@@ -183,7 +237,156 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
 	Lang
 >;
 
-export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument;
+/**
+ * Content for Design Vorlage documents
+ */
+interface ThemeDocumentData {
+	/**
+	 * Design Vorlage Bezeichnung field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.theme_name
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	theme_name: prismic.KeyTextField;
+
+	/**
+	 * Banner Top field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.banner_top
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	banner_top: prismic.BooleanField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_bg_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_bg_color: prismic.ColorField /**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_bg_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */;
+	header_bg_color: prismic.ColorField;
+
+	/**
+	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
+	 * - **API ID Path**: theme.header_bg_opacity
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	header_bg_opacity: prismic.NumberField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_link_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_link_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe, wenn Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_link_hover_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	header_link_hover_color: prismic.ColorField /**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_bg_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */;
+	footer_bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	footer_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_link_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	footer_link_color: prismic.ColorField;
+}
+
+/**
+ * Design Vorlage document from Prismic
+ *
+ * - **API ID**: `theme`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<ThemeDocumentData>,
+	'theme',
+	Lang
+>;
+
+export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
  * Primary content in *Hero → Default → Primary*
@@ -207,7 +410,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *Hero → Default → Primary*
@@ -258,11 +461,11 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<'hero', HeroSliceVariation>;
 
 /**
- * Primary content in *Image → Default → Primary*
+ * Primary content in *Bild → Standard → Primary*
  */
 export interface ImageSliceDefaultPrimary {
 	/**
-	 * Image field in *Image → Default → Primary*
+	 * Bild field in *Bild → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -273,7 +476,7 @@ export interface ImageSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Image Slice
+ * Standard variation for Bild Slice
  *
  * - **API ID**: `default`
  * - **Description**: Image
@@ -286,11 +489,11 @@ export type ImageSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Image → Banner → Primary*
+ * Primary content in *Bild → Banner → Primary*
  */
 export interface ImageSliceBannerPrimary {
 	/**
-	 * Image field in *Image → Banner → Primary*
+	 * Image field in *Bild → Banner → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -301,7 +504,7 @@ export interface ImageSliceBannerPrimary {
 }
 
 /**
- * Banner variation for Image Slice
+ * Banner variation for Bild Slice
  *
  * - **API ID**: `banner`
  * - **Description**: Image
@@ -314,12 +517,12 @@ export type ImageSliceBanner = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Image*
+ * Slice variation for *Bild*
  */
 type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
 
 /**
- * Image Shared Slice
+ * Bild Shared Slice
  *
  * - **API ID**: `image`
  * - **Description**: Image
@@ -359,7 +562,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	 * - **API ID Path**: image_cards.default.primary.cards[].buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *ImageCards → Default → Primary → Cards*
@@ -606,7 +809,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **API ID Path**: text_with_image.withButton.primary.buttonLink
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField;
+	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Button Text field in *TextWithImage → With Button → Primary*
@@ -667,6 +870,17 @@ declare module '@prismicio/client' {
 		): prismic.Client<AllDocumentTypes>;
 	}
 
+	interface CreateWriteClient {
+		(
+			repositoryNameOrEndpoint: string,
+			options: prismic.WriteClientConfig
+		): prismic.WriteClient<AllDocumentTypes>;
+	}
+
+	interface CreateMigration {
+		(): prismic.Migration<AllDocumentTypes>;
+	}
+
 	namespace Content {
 		export type {
 			NavigationDocument,
@@ -677,6 +891,8 @@ declare module '@prismicio/client' {
 			PageDocumentDataSlicesSlice,
 			SettingsDocument,
 			SettingsDocumentData,
+			ThemeDocument,
+			ThemeDocumentData,
 			AllDocumentTypes,
 			HeroSlice,
 			HeroSliceDefaultPrimary,

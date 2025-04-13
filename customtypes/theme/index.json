@@ -1,0 +1,107 @@
+{
+	"format": "custom",
+	"id": "theme",
+	"label": "Design Vorlage",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Generell": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID"
+				}
+			},
+			"theme_name": {
+				"type": "Text",
+				"config": {
+					"label": "Design Vorlage Bezeichnung",
+					"placeholder": ""
+				}
+			},
+			"banner_top": {
+				"type": "Boolean",
+				"config": {
+					"label": "Banner Top",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"page_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			}
+		},
+		"Kopfzeile": {
+			"header_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_bg_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Transparenz der Hintergrundfarbe",
+					"placeholder": "Eine Zahl zwischen 1 und 99"
+				}
+			},
+			"header_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_link_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_link_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe, wenn Maus darüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			}
+		},
+		"Fusszeile": {
+			"footer_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"footer_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"footer_link_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			}
+		}
+	}
+}
