@@ -12,7 +12,7 @@ export interface NavigationDocumentDataLinksItem {
 	 * Label field in *Navigation → Links*
 	 *
 	 * - **Field Type**: Title
-	 * - **Placeholder**: Optional - Label for the link
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].label
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
@@ -414,24 +414,34 @@ export interface HeroSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Schaltfläche Link field in *Titelbereich → Standard → Primary*
+	 * Textfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Schaltflächenlink field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.default.primary.buttonLink
+	 * - **API ID Path**: hero.default.primary.button_link
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Schaltfläge Text field in *Titelbereich → Standard → Primary*
+	 * Schaltflächentext field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.default.primary.buttonText
+	 * - **API ID Path**: hero.default.primary.button_text
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
-	buttonText: prismic.KeyTextField;
+	button_text: prismic.KeyTextField;
 
 	/**
 	 * Hintergrundbild field in *Titelbereich → Standard → Primary*
@@ -669,11 +679,11 @@ type ImageCardsSliceVariation = ImageCardsSliceDefault;
 export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSliceVariation>;
 
 /**
- * Primary content in *Quote → Default → Primary*
+ * Primary content in *Zitat → Standart → Primary*
  */
 export interface QuoteSliceDefaultPrimary {
 	/**
-	 * Quote field in *Quote → Default → Primary*
+	 * Zitat field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -683,7 +693,7 @@ export interface QuoteSliceDefaultPrimary {
 	quote: prismic.RichTextField;
 
 	/**
-	 * Source field in *Quote → Default → Primary*
+	 * Quelle field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -694,7 +704,7 @@ export interface QuoteSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Quote Slice
+ * Standart variation for Zitat Slice
  *
  * - **API ID**: `default`
  * - **Description**: Quote
@@ -707,12 +717,12 @@ export type QuoteSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Quote*
+ * Slice variation for *Zitat*
  */
 type QuoteSliceVariation = QuoteSliceDefault;
 
 /**
- * Quote Shared Slice
+ * Zitat Shared Slice
  *
  * - **API ID**: `quote`
  * - **Description**: Quote
@@ -721,11 +731,11 @@ type QuoteSliceVariation = QuoteSliceDefault;
 export type QuoteSlice = prismic.SharedSlice<'quote', QuoteSliceVariation>;
 
 /**
- * Primary content in *Text → Default → Primary*
+ * Primary content in *Text → Standard → Primary*
  */
 export interface TextSliceDefaultPrimary {
 	/**
-	 * Text field in *Text → Default → Primary*
+	 * Text field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -736,7 +746,7 @@ export interface TextSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Text Slice
+ * Standard variation for Text Slice
  *
  * - **API ID**: `default`
  * - **Description**: Text
@@ -749,11 +759,11 @@ export type TextSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Text → Two Columns → Primary*
+ * Primary content in *Text → Zwei Spalten → Primary*
  */
 export interface TextSliceTwoColumnsPrimary {
 	/**
-	 * Text field in *Text → Two Columns → Primary*
+	 * Text field in *Text → Zwei Spalten → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -764,7 +774,7 @@ export interface TextSliceTwoColumnsPrimary {
 }
 
 /**
- * Two Columns variation for Text Slice
+ * Zwei Spalten variation for Text Slice
  *
  * - **API ID**: `twoColumns`
  * - **Description**: Text

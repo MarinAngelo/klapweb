@@ -7,16 +7,16 @@
 				"__TYPE__": "StructuredTextContent",
 				"value": [
 					{
-						"type": "heading3",
+						"type": "paragraph",
 						"content": {
-							"text": "Closely"
+							"text": "Cupidatat ad fugiat labore eu voluptate magna excepteur nisi in velit amet cillum magna. Nulla Lorem consectetur ex proident in id cillum in excepteur."
 						}
 					}
 				]
 			},
 			"source": {
 				"__TYPE__": "FieldContent",
-				"value": "count",
+				"value": "does",
 				"type": "Text"
 			}
 		},

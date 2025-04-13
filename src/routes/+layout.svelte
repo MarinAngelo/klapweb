@@ -8,8 +8,14 @@
 	import { repositoryName } from '$lib/prismicio';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data;
+	console.log('🚀 ~ data:', data);
+
+	// Zugriff auf die Daten aus dem $page-Store
+	$: pageData = $page.data;
+	console.log('🚀 ~ pageData:', pageData);
 
 	// Fallbacks direkt
 	const bannerTop = data.prismicTheme.data?.banner_top;
@@ -62,7 +68,19 @@
 		settings={data?.settings || {}}
 		prismicTheme={data?.prismicTheme || {}}
 	/>
-	<main><slot /></main>
+	<main>
+		<!-- Seiten Titel -->
+		{#if $page.url.pathname !== '/' && $page.data?.title}
+			<Bounded
+				as="section"
+				style="background-color: {pageBgColor}; color: {pageColor};"
+				class="relative"
+			>
+				<h1 class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0">{$page.data?.title || 'Standarttitel'}</h1>
+			</Bounded>
+		{/if}
+		<slot />
+	</main>
 	<Footer
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}

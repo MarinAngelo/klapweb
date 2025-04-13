@@ -3,7 +3,7 @@
 import Hero from './Titelbereich/index.svelte';
 import Image from './Image/index.svelte';
 import ImageCards from './ImageCards/index.svelte';
-import Quote from './Quote/index.svelte';
+import Quote from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextWithImage from './TextWithImage/index.svelte';
 
