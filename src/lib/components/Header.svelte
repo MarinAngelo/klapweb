@@ -2,7 +2,6 @@
 	import { page } from '$app/stores'; // Importiere den $page-Store
 	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
-	import { PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
 	import { get } from 'svelte/store';
 

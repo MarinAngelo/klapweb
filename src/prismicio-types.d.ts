@@ -204,11 +204,22 @@ interface SettingsDocumentData {
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: Title of the site
-	 * - **API ID Path**: settings.siteTitle
+	 * - **API ID Path**: settings.site_title
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
-	siteTitle: prismic.TitleField;
+	site_title: prismic.TitleField;
+
+	/**
+	 * Seiten Untertitel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Title
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.site_sub_title
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	site_sub_title: prismic.TitleField;
 
 	/**
 	 * E-Mail field in *Einstellungen*

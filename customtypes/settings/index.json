@@ -6,13 +6,22 @@
 	"status": true,
 	"json": {
 		"Main": {
-			"siteTitle": {
+			"site_title": {
 				"type": "StructuredText",
 				"config": {
 					"label": "Site Title",
 					"placeholder": "Title of the site",
 					"allowTargetBlank": false,
 					"single": "heading1"
+				}
+			},
+			"site_sub_title": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Seiten Untertitel",
+					"placeholder": "",
+					"allowTargetBlank": false,
+					"single": "heading2"
 				}
 			},
 			"e_mail": {
