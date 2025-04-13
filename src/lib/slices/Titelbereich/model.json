@@ -38,9 +38,35 @@
         "backgroundImage": {
           "type": "Image",
           "config": {
-            "label": "Background Image",
+            "label": "Hintergrundbild",
             "constraint": {},
             "thumbnails": []
+          }
+        },
+        "overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Tranparenz der Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "banner_height": {
+          "type": "Select",
+          "config": {
+            "label": "Titelbild Höhe",
+            "placeholder": "",
+            "options": [
+              "100 %",
+              "50 %",
+              "33 %"
+            ]
           }
         }
       },

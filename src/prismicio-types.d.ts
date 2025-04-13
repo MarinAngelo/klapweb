@@ -389,11 +389,11 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
- * Primary content in *Hero → Default → Primary*
+ * Primary content in *Titelbereich → Standard → Primary*
  */
 export interface HeroSliceDefaultPrimary {
 	/**
-	 * Text field in *Hero → Default → Primary*
+	 * Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -403,7 +403,7 @@ export interface HeroSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Button Link field in *Hero → Default → Primary*
+	 * Schaltfläche Link field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -413,7 +413,7 @@ export interface HeroSliceDefaultPrimary {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Button Text field in *Hero → Default → Primary*
+	 * Schaltfläge Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -423,7 +423,7 @@ export interface HeroSliceDefaultPrimary {
 	buttonText: prismic.KeyTextField;
 
 	/**
-	 * Background Image field in *Hero → Default → Primary*
+	 * Hintergrundbild field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -431,10 +431,40 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */
 	backgroundImage: prismic.ImageField<never>;
+
+	/**
+	 * Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.overlay_color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	overlay_color: prismic.ColorField;
+
+	/**
+	 * Tranparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.overlay_opacity
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	overlay_opacity: prismic.NumberField;
+
+	/**
+	 * Titelbild Höhe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.banner_height
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	banner_height: prismic.SelectField<'100 %' | '50 %' | '33 %'>;
 }
 
 /**
- * Default variation for Hero Slice
+ * Standard variation for Titelbereich Slice
  *
  * - **API ID**: `default`
  * - **Description**: Hero
@@ -447,12 +477,12 @@ export type HeroSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Hero*
+ * Slice variation for *Titelbereich*
  */
 type HeroSliceVariation = HeroSliceDefault;
 
 /**
- * Hero Shared Slice
+ * Titelbereich Shared Slice
  *
  * - **API ID**: `hero`
  * - **Description**: Hero
