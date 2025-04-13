@@ -36,7 +36,7 @@
 
 <section
 	class="relative"
-	style="background-color: {overlayColor}; color: {pageColor}; height: 42vh;"
+	style="background-color: {overlayColor}; color: {pageColor}; height: {bannerHeight};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
