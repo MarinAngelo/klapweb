@@ -39,8 +39,15 @@
 <nav class="flex items-center justify-between flex-wrap p-6">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		<a href="/" class="text-xl font-semibold tracking-tight" style="color: {headerColor};">
-			<PrismicText field={settings.data.siteTitle} />
+		<a href="/"  style="color: {headerColor};">
+            <!-- Seiten Titel -->
+            <span class="text-xl font-semibold tracking-tight">
+                <PrismicText field={settings.data.site_title} /><br />
+            </span>
+			<!-- Optionaler Untertitel -->
+             <span>
+                 <PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
+             </span>
 		</a>
 	</div>
 
