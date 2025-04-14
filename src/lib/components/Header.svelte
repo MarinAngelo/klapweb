@@ -21,7 +21,6 @@
 	} = get(theme);
 
 	const currentPath = $page.url.pathname;
-	console.log('🚀 ~ currentPathname:', currentPath);
 
 	// Überprüfen, ob die aktuelle URL "/"" ist
 	$: isHome = $page.url.pathname === '/';

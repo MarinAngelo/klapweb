@@ -33,7 +33,6 @@
 		);
 	}
 
-	console.log('🚀 ~ navigation data links:', navigation.data?.links);
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6">

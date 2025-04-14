@@ -11,11 +11,9 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data;
-	console.log('🚀 ~ data:', data);
 
 	// Zugriff auf die Daten aus dem $page-Store
 	$: pageData = $page.data;
-	console.log('🚀 ~ pageData:', pageData);
 
 	// Fallbacks direkt
 	const bannerTop = data.prismicTheme.data?.banner_top;
