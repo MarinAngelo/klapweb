@@ -1,16 +1,90 @@
 {
-	"id": "formular",
-	"type": "SharedSlice",
-	"name": "Formular",
-	"description": "Formular",
-	"variations": [
-		{
-			"id": "default",
-			"name": "Default",
-			"docURL": "...",
-			"version": "initial",
-			"description": "Default",
-			"imageUrl": ""
-		}
-	]
+  "id": "form",
+  "type": "SharedSlice",
+  "name": "Formular",
+  "description": "Formular",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "form_title": {
+          "type": "Text",
+          "config": {
+            "label": "Formular Titel",
+            "placeholder": ""
+          }
+        },
+        "form_instructions": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+            "allowTargetBlank": true,
+            "label": "Formular Instruktionen"
+          }
+        },
+        "submitt_button_text": {
+          "type": "Text",
+          "config": {
+            "label": "Senden-Schaltflächen-Text"
+          }
+        },
+        "submitted_text": {
+          "type": "StructuredText",
+          "config": {
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+            "allowTargetBlank": true,
+            "label": "Gesendet Text"
+          }
+        },
+        "form_fields": {
+          "type": "Group",
+          "config": {
+            "label": "Formular Felder",
+            "repeat": true,
+            "fields": {
+              "field_name": {
+                "type": "Text",
+                "config": {
+                  "label": "Formularfeld Label"
+                }
+              },
+              "field_type": {
+                "type": "Select",
+                "config": {
+                  "options": [
+                    "text",
+                    "email",
+                    "textarea",
+                    "select"
+                  ],
+                  "label": "Feld Typ"
+                }
+              },
+              "required": {
+                "type": "Boolean",
+                "config": {
+                  "placeholder_false": "Nein",
+                  "placeholder_true": "Ja",
+                  "default_value": true,
+                  "label": "Obligatorisch"
+                }
+              },
+              "invalid_feedback-text": {
+                "type": "Text",
+                "config": {
+                  "label": "Fehlermeldung"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
 }

@@ -59,13 +59,13 @@
 					}}
 				/>
 			</div>
-			{#if isFilled.link(slice.primary.buttonLink)}
+			{#if isFilled.link(slice.primary.button_link)}
 				<PrismicLink
-					field={slice.primary.buttonLink}
+					field={slice.primary.button_link}
 					class="rounded px-5 py-3 font-medium"
 					style="background-color: {pageBgColor}; color: {pageColor};"
 				>
-					{slice.primary.buttonText}
+					{slice.primary.button_text}
 				</PrismicLink>
 			{/if}
 		</div>

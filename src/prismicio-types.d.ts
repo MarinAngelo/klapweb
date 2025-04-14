@@ -400,31 +400,132 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
- * Default variation for Formular Slice
+ * Item in *Formular → Standard → Primary → Formular Felder*
+ */
+export interface FormSliceDefaultPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	field_type: prismic.SelectField<'text' | 'email' | 'textarea' | 'select'>;
+
+	/**
+	 * Obligatorisch field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.default.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback-text
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	'invalid_feedback-text': prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Formular → Standard → Primary*
+ */
+export interface FormSliceDefaultPrimary {
+	/**
+	 * Formular Titel field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	form_title: prismic.KeyTextField;
+
+	/**
+	 * Formular Instruktionen field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_instructions
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	form_instructions: prismic.RichTextField;
+
+	/**
+	 * Senden-Schaltflächen-Text field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitt_button_text
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	submitt_button_text: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Text field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitted_text
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	submitted_text: prismic.RichTextField;
+
+	/**
+	 * Formular Felder field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceDefaultPrimaryFormFieldsItem>>;
+}
+
+/**
+ * Standard variation for Formular Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
  * - **Documentation**: https://prismic.io/docs/slice
  */
-export type FormularSliceDefault = prismic.SharedSliceVariation<
+export type FormSliceDefault = prismic.SharedSliceVariation<
 	'default',
-	Record<string, never>,
+	Simplify<FormSliceDefaultPrimary>,
 	never
 >;
 
 /**
  * Slice variation for *Formular*
  */
-type FormularSliceVariation = FormularSliceDefault;
+type FormSliceVariation = FormSliceDefault;
 
 /**
  * Formular Shared Slice
  *
- * - **API ID**: `formular`
+ * - **API ID**: `form`
  * - **Description**: Formular
  * - **Documentation**: https://prismic.io/docs/slice
  */
-export type FormularSlice = prismic.SharedSlice<'formular', FormularSliceVariation>;
+export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
 
 /**
  * Primary content in *Titelbereich → Standard → Primary*
@@ -972,9 +1073,11 @@ declare module '@prismicio/client' {
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,
-			FormularSlice,
-			FormularSliceVariation,
-			FormularSliceDefault,
+			FormSlice,
+			FormSliceDefaultPrimaryFormFieldsItem,
+			FormSliceDefaultPrimary,
+			FormSliceVariation,
+			FormSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,

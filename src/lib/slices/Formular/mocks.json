@@ -2,7 +2,22 @@
 	{
 		"__TYPE__": "SharedSliceContent",
 		"variation": "default",
-		"primary": {},
+		"primary": {
+			"form_title": {
+				"__TYPE__": "FieldContent",
+				"value": "by",
+				"type": "Text"
+			},
+			"form_fields": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": []
+					}
+				]
+			}
+		},
 		"items": []
 	}
 ]

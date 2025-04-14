@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
 
-	export let slice: Content.FormularSlice;
+	export let slice: Content.FormSlice;
 </script>
 
 <section data-slice-type={slice.slice_type} data-slice-variation={slice.variation}>
