@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| FormSlice
 	| HeroSlice
 	| QuoteSlice
 	| TextSlice
