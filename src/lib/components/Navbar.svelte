@@ -76,7 +76,7 @@
 					{@const subItems = getSubItems(item, navigation.data.links)}
 
 					{#if subItems.length > 0}
-						<!-- Verwendung der Dropdown-Komponente -->
+						<!-- Dropdown-Komponente -->
 						<li class="block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}

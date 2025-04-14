@@ -17,7 +17,7 @@
 	<DropdownButton {item} {headerColor} {headerLinkColor}/>
 
 	<div
-		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-10 rounded py-1"
+		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-50 rounded py-1"
 		style="background-color: {headerBgColor};"
 	>
 		{#each subItems as dropdownItem}

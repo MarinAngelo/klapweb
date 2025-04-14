@@ -400,6 +400,33 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
+ * Default variation for Formular Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FormularSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Record<string, never>,
+	never
+>;
+
+/**
+ * Slice variation for *Formular*
+ */
+type FormularSliceVariation = FormularSliceDefault;
+
+/**
+ * Formular Shared Slice
+ *
+ * - **API ID**: `formular`
+ * - **Description**: Formular
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FormularSlice = prismic.SharedSlice<'formular', FormularSliceVariation>;
+
+/**
  * Primary content in *Titelbereich → Standard → Primary*
  */
 export interface HeroSliceDefaultPrimary {
@@ -801,11 +828,11 @@ type TextSliceVariation = TextSliceDefault | TextSliceTwoColumns;
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
 
 /**
- * Primary content in *TextWithImage → Default → Primary*
+ * Primary content in *TextMitBild → Standard → Primary*
  */
 export interface TextWithImageSliceDefaultPrimary {
 	/**
-	 * Text field in *TextWithImage → Default → Primary*
+	 * Text field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -815,7 +842,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Image field in *TextWithImage → Default → Primary*
+	 * Bild field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -826,7 +853,7 @@ export interface TextWithImageSliceDefaultPrimary {
 }
 
 /**
- * Default variation for TextWithImage Slice
+ * Standard variation for TextMitBild Slice
  *
  * - **API ID**: `default`
  * - **Description**: TextWithImage
@@ -839,11 +866,11 @@ export type TextWithImageSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *TextWithImage → With Button → Primary*
+ * Primary content in *TextMitBild → Mit Schaltfläche → Primary*
  */
 export interface TextWithImageSliceWithButtonPrimary {
 	/**
-	 * Text field in *TextWithImage → With Button → Primary*
+	 * Text field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -853,7 +880,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Button Link field in *TextWithImage → With Button → Primary*
+	 * Button Link field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -863,7 +890,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Button Text field in *TextWithImage → With Button → Primary*
+	 * Button Text field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -873,7 +900,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	buttonText: prismic.KeyTextField;
 
 	/**
-	 * Image field in *TextWithImage → With Button → Primary*
+	 * Image field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -884,7 +911,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 }
 
 /**
- * With Button variation for TextWithImage Slice
+ * Mit Schaltfläche variation for TextMitBild Slice
  *
  * - **API ID**: `withButton`
  * - **Description**: TextWithImage
@@ -897,12 +924,12 @@ export type TextWithImageSliceWithButton = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *TextWithImage*
+ * Slice variation for *TextMitBild*
  */
 type TextWithImageSliceVariation = TextWithImageSliceDefault | TextWithImageSliceWithButton;
 
 /**
- * TextWithImage Shared Slice
+ * TextMitBild Shared Slice
  *
  * - **API ID**: `text_with_image`
  * - **Description**: TextWithImage
@@ -945,6 +972,9 @@ declare module '@prismicio/client' {
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,
+			FormularSlice,
+			FormularSliceVariation,
+			FormularSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,

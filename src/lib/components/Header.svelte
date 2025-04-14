@@ -31,7 +31,7 @@
 	tag="header"
 	yPadding="sm"
 	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
-	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 9999;"
+	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 49;"
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
 		<Navbar
