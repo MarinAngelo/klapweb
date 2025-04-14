@@ -16,6 +16,11 @@
 						"value": []
 					}
 				]
+			},
+			"submitted_title": {
+				"__TYPE__": "FieldContent",
+				"value": "tightly",
+				"type": "Text"
 			}
 		},
 		"items": []

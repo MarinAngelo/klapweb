@@ -13,7 +13,7 @@
 	let email = settings.data?.e_mail || '';
 </script>
 
-<Bounded tag="footer" yPadding="sm" style="background-color: {footerBgColor};">
+<Bounded tag="footer" yPadding="lg" style="background-color: {footerBgColor}; margin-top: 10rem;">
 	<footer style="color: {footerColor};">
 		<div class="flex justify-center items-center h-full">
 			<a href={`mailto:${email}`} class="text-center">

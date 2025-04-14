@@ -33,6 +33,13 @@
             "label": "Senden-Schaltflächen-Text"
           }
         },
+        "submitted_title": {
+          "type": "Text",
+          "config": {
+            "label": "Gesendet Titel",
+            "placeholder": ""
+          }
+        },
         "submitted_text": {
           "type": "StructuredText",
           "config": {

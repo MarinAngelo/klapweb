@@ -60,7 +60,7 @@
 	{/if}
 </svelte:head>
 <!--Hier wird die Textfarbe zugewiesen, zuweisung Hintergrundfarbe funktioniert nicht-->
-<div class="text-slate-800">
+<div style="background-color: {pageBgColor};">
 	<Header
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}

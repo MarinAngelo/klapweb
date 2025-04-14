@@ -481,6 +481,16 @@ export interface FormSliceDefaultPrimary {
 	submitt_button_text: prismic.KeyTextField;
 
 	/**
+	 * Gesendet Titel field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitted_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	submitted_title: prismic.KeyTextField;
+
+	/**
 	 * Gesendet Text field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text

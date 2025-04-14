@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
 	import { asText } from '@prismicio/client';
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
@@ -12,6 +13,7 @@
 	export let slice: Content.FormSlice;
 
 	const formFields = slice.primary.form_fields;
+	const formSubmittetTitle = slice.primary.submitted_title;
 	const formSubmittetText = asText(slice.primary.submitted_text);
 
 	// Zustand für das modale Fenster
@@ -20,15 +22,14 @@
 	// Funktion, die beim Absenden des Formulars aufgerufen wird
 	function handleSubmit(event: Event) {
 		event.preventDefault(); // Verhindert das Standardverhalten des Formulars
-		
+
 		// Modales Fenster anzeigen
 		showModal = true;
-		console.log("🚀 ~ handleSubmit ~ showModal:", showModal)
+		console.log('🚀 ~ handleSubmit ~ showModal:', showModal);
 
 		// Formular zurücksetzen
 		const form = event.target as HTMLFormElement;
 		form.reset();
-
 	}
 </script>
 
@@ -40,9 +41,14 @@
 >
 	<div class="grid grid-cols-1 items-center gap-8">
 		<div>
-			<h2 class="text-2xl font-bold">
-				{slice.primary.form_title}
-			</h2>
+			{#if slice.primary.form_title}
+				<h2 class="text-2xl font-bold">
+					{slice.primary.form_title}
+				</h2>
+			{/if}
+			{#if slice.primary.form_instructions}
+				<PrismicRichText field={slice.primary.form_instructions} />
+			{/if}
 		</div>
 		<div>
 			<form
@@ -79,13 +85,13 @@
 	<!-- Modales Fenster -->
 	{#if showModal}
 		<Modal
-			title="Vielen Dank!"
+			title={formSubmittetTitle || 'Vielen Dank!'}
 			message={[
 				{
 					type: 'paragraph',
 					text: formSubmittetText || 'Ihre Nachricht wurde erfolgreich gesendet.',
-					spans: [],
-				},
+					spans: []
+				}
 			]}
 			onClose={() => (showModal = false)}
 		/>
