@@ -10,11 +10,9 @@
 	import Modal from '$lib/components/Modal.svelte'; // Import der Modal-Komponente
 
 	export let slice: Content.FormSlice;
-	console.log('🚀 ~ form slice:', slice.primary);
 
 	const formFields = slice.primary.form_fields;
 	const formSubmittetText = asText(slice.primary.submitted_text);
-	console.log('🚀 ~ formSubmittetText:', formSubmittetText);
 
 	// Zustand für das modale Fenster
 	let showModal = false;
@@ -22,13 +20,15 @@
 	// Funktion, die beim Absenden des Formulars aufgerufen wird
 	function handleSubmit(event: Event) {
 		event.preventDefault(); // Verhindert das Standardverhalten des Formulars
+		
+		// Modales Fenster anzeigen
+		showModal = true;
+		console.log("🚀 ~ handleSubmit ~ showModal:", showModal)
 
 		// Formular zurücksetzen
 		const form = event.target as HTMLFormElement;
 		form.reset();
 
-		// Modales Fenster anzeigen
-		showModal = true;
 	}
 </script>
 
@@ -80,7 +80,13 @@
 	{#if showModal}
 		<Modal
 			title="Vielen Dank!"
-			message={formSubmittetText || 'Ihre Nachricht wurde erfolgreich gesendet.'}
+			message={[
+				{
+					type: 'paragraph',
+					text: formSubmittetText || 'Ihre Nachricht wurde erfolgreich gesendet.',
+					spans: [],
+				},
+			]}
 			onClose={() => (showModal = false)}
 		/>
 	{/if}
