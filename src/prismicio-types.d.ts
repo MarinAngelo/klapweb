@@ -318,7 +318,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	body_font: prismic.SelectField<'Roboto' | 'Open Sans'>;
+	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
 
 	/**
 	 * Navigationsschrift field in *Design Vorlage*
@@ -329,7 +329,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	nav_font: prismic.SelectField<'Roboto' | 'Open Sans'> /**
+	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'> /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
