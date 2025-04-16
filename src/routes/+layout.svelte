@@ -79,7 +79,7 @@
 		settings={data?.settings || {}}
 		prismicTheme={data?.prismicTheme || {}}
 	/>
-	<main>
+	<main style={bodyFontStyle}>
 		<!-- Seiten Titel -->
 		{#if $page.url.pathname !== '/' && $page.data?.title}
 			<Bounded
