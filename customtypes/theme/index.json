@@ -41,6 +41,22 @@
 					"label": "Hintergrundfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
+			},
+			"body_font": {
+				"type": "Select",
+				"config": {
+					"label": "Hauptschrift",
+					"placeholder": "",
+					"options": ["Roboto", "Open Sans"]
+				}
+			},
+			"nav_font": {
+				"type": "Select",
+				"config": {
+					"label": "Navigationsschrift",
+					"placeholder": "",
+					"options": ["Roboto", "Open Sans"]
+				}
 			}
 		},
 		"Kopfzeile": {

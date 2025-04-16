@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { browser } from '$app/environment';
 	import { theme } from '$lib/stores/theme';
 	import { convertNumber } from '$lib/utils'; // Import der Funktion
 
@@ -11,10 +12,14 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data;
+	console.log('Layout data:', data.prismicTheme.data.body_font);
 
 	// Zugriff auf die Daten aus dem $page-Store
 	$: pageData = $page.data;
 
+// Weise den Wert direkt der Prop bodyFont zu
+    export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
+    export let navFont: string | undefined = data.prismicTheme.data.nav_font;
 	// Fallbacks direkt
 	const bannerTop = data.prismicTheme.data?.banner_top;
 
@@ -44,6 +49,14 @@
 		pageColor,
 		pageBgColor
 	}));
+
+    $: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
+	// $: navFontStyle = `font-family: '${navFont || 'sans-serif'}', sans-serif;`;
+	
+	// CSS-Variable aktualisieren (nur im Browser)
+    $: if (browser && navFont) {
+        document.documentElement.style.setProperty('--nav-font', navFont);
+    }
 </script>
 
 <svelte:head>

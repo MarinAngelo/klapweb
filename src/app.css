@@ -7,9 +7,18 @@
 	@apply pt-0 md:pt-0;
 }
 
-/* src/app.css (oder deine globale CSS-Datei) */
+.nav-font-style {
+  font-family: var(--nav-font), sans-serif; /* Fallback über CSS-Variable */
+}
+
+/* Du könntest auch direkt die Schriftart einsetzen, aber CSS-Variablen sind flexibler */
+/* .nav-font-style { */
+/* font-family: 'Roboto', sans-serif; */
+/* } */
+
 :root {
   /* --- Fallback Styles --- */
+  --nav-font: 'Roboto'; /* Standardwert */
   --header-bg-color: rgb(136, 55, 55);
   --header-color: green;
   --header-link-color: white;

@@ -307,7 +307,29 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#color
 	 */
-	page_bg_color: prismic.ColorField /**
+	page_bg_color: prismic.ColorField;
+
+	/**
+	 * Hauptschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.body_font
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	body_font: prismic.SelectField<'Roboto' | 'Open Sans'>;
+
+	/**
+	 * Navigationsschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.nav_font
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	nav_font: prismic.SelectField<'Roboto' | 'Open Sans'> /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color

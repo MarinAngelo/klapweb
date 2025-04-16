@@ -11,6 +11,7 @@
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
 
+
 	const {
 		bannerTop,
 		headerBgColor,
