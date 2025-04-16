@@ -232,6 +232,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	e_mail: prismic.KeyTextField;
+
+	/**
+	 * Verantwortlich (Person/Unternehmen) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.responsible_person_company
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	responsible_person_company: prismic.KeyTextField;
 }
 
 /**
