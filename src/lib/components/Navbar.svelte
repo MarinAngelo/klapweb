@@ -4,6 +4,8 @@
 
 	// Props definieren
 	export let navigation;
+	console.log("🚀 ~ navigation:", navigation.data)
+	
 	export let headerColor; // Wird für die Textfarbe verwendet
 	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
 	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
@@ -99,8 +101,8 @@
 					{/if}
 				{:else if item.sub_link}
 					{@const _skip = true}
-				{:else if item.link?.url}
 					<!-- Normaler Link -->
+				{:else if item.link?.url && item.main_nav}
 					<li
 						class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''}"
 						style="color: {headerLinkColor};"

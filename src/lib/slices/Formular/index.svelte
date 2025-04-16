@@ -25,7 +25,6 @@
 
 		// Modales Fenster anzeigen
 		showModal = true;
-		console.log('🚀 ~ handleSubmit ~ showModal:', showModal);
 
 		// Formular zurücksetzen
 		const form = event.target as HTMLFormElement;

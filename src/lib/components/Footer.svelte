@@ -8,7 +8,6 @@
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
-	console.log('🚀 ~ navigation:', navigation.data.links);
 
 	const { footerColor, footerBgColor } = get(theme);
 
