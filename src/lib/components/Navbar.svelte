@@ -11,6 +11,7 @@
 	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
 	export let settings;
 
+
 	// Zustand für das Hamburger-Menü
 	let isMenuOpen = false;
 
@@ -33,10 +34,9 @@
 		);
 	}
 
-	console.log('🚀 ~ navigation data links:', navigation.data?.links);
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6">
+<nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
 		<a href="/"  style="color: {headerColor};">

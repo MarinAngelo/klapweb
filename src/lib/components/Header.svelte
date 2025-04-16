@@ -11,6 +11,7 @@
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
 
+
 	const {
 		bannerTop,
 		headerBgColor,
@@ -21,7 +22,6 @@
 	} = get(theme);
 
 	const currentPath = $page.url.pathname;
-	console.log('🚀 ~ currentPathname:', currentPath);
 
 	// Überprüfen, ob die aktuelle URL "/"" ist
 	$: isHome = $page.url.pathname === '/';

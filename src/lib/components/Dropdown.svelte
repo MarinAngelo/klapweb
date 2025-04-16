@@ -10,7 +10,6 @@
 	export let headerLinkColor; // Wird aktuell nicht verwendet im Snippet
 	export let headerLinkHoverColor;
 
-	console.log('Hover-Farbe:', headerLinkHoverColor);
 </script>
 
 <div class="relative group">
