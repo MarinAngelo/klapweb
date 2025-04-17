@@ -16,8 +16,8 @@
           "config": {
             "label": "Heading",
             "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "heading1"
+            "allowTargetBlank": false,
+            "single": "heading2"
           }
         },
         "cards": {
@@ -43,7 +43,7 @@
                   "label": "Text",
                   "placeholder": "",
                   "allowTargetBlank": true,
-                  "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+                  "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
                 }
               },
               "buttonLink": {
@@ -51,7 +51,8 @@
                 "config": {
                   "label": "Button Link",
                   "placeholder": "",
-                  "select": null
+                  "select": null,
+                  "allowTargetBlank": true
                 }
               },
               "buttonText": {

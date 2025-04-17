@@ -805,12 +805,12 @@ export interface ImageCardsSliceDefaultPrimary {
 	/**
 	 * Heading field in *ImageCards → Default → Primary*
 	 *
-	 * - **Field Type**: Rich Text
+	 * - **Field Type**: Title
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: image_cards.default.primary.heading
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
-	heading: prismic.RichTextField;
+	heading: prismic.TitleField;
 
 	/**
 	 * Cards field in *ImageCards → Default → Primary*

@@ -7,9 +7,9 @@
 				"__TYPE__": "StructuredTextContent",
 				"value": [
 					{
-						"type": "heading1",
+						"type": "heading2",
 						"content": {
-							"text": "Chance"
+							"text": "Chapter"
 						}
 					}
 				]
@@ -54,7 +54,7 @@
 										{
 											"type": "paragraph",
 											"content": {
-												"text": "In velit aute qui est aute exercitation. Lorem enim enim ut magna pariatur commodo. Id non sit sunt tempor aliquip ullamco elit consectetur consectetur mollit et et."
+												"text": "Ex laboris excepteur sunt officia aliqua et exercitation nulla tempor irure do aute labore."
 											}
 										}
 									]
@@ -64,9 +64,10 @@
 								"buttonLink",
 								{
 									"__TYPE__": "LinkContent",
+									"key": "3f7947fc-0de8-4b14-aa91-350f40514a78",
 									"value": {
 										"__TYPE__": "ExternalLink",
-										"url": "https://slicemachine.dev"
+										"url": "http://twitter.com"
 									}
 								}
 							],
