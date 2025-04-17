@@ -754,11 +754,11 @@ type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
 export type ImageSlice = prismic.SharedSlice<'image', ImageSliceVariation>;
 
 /**
- * Item in *ImageCards → Default → Primary → Cards*
+ * Item in *ImageCards → Standard → Primary → Kacheln*
  */
 export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	/**
-	 * Image field in *ImageCards → Default → Primary → Cards*
+	 * Bild field in *ImageCards → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -768,7 +768,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	image: prismic.ImageField<never>;
 
 	/**
-	 * Text field in *ImageCards → Default → Primary → Cards*
+	 * Text field in *ImageCards → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -778,7 +778,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	text: prismic.RichTextField;
 
 	/**
-	 * Button Link field in *ImageCards → Default → Primary → Cards*
+	 * Schaltflächen-Link field in *ImageCards → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -788,7 +788,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Button Text field in *ImageCards → Default → Primary → Cards*
+	 * Schaltflächen-Text field in *ImageCards → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -799,11 +799,11 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 }
 
 /**
- * Primary content in *ImageCards → Default → Primary*
+ * Primary content in *ImageCards → Standard → Primary*
  */
 export interface ImageCardsSliceDefaultPrimary {
 	/**
-	 * Heading field in *ImageCards → Default → Primary*
+	 * Titel field in *ImageCards → Standard → Primary*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: *None*
@@ -813,7 +813,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	heading: prismic.TitleField;
 
 	/**
-	 * Cards field in *ImageCards → Default → Primary*
+	 * Kacheln field in *ImageCards → Standard → Primary*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
@@ -824,7 +824,7 @@ export interface ImageCardsSliceDefaultPrimary {
 }
 
 /**
- * Default variation for ImageCards Slice
+ * Standard variation for ImageCards Slice
  *
  * - **API ID**: `default`
  * - **Description**: ImageCards

@@ -5,6 +5,7 @@
 	import { get } from 'svelte/store';
 
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
 
@@ -28,9 +29,7 @@
 	</div>
 	{#if isFilled.link(card.buttonLink)}
 		<div>
-			<PrismicLink field={card.buttonLink} class="font-semibold">
-				{card.buttonText || 'More Info'}
-			</PrismicLink>
+<Button link={card.buttonLink} text={card.buttonText || 'Mehr erfahren'} />
 		</div>
 	{/if}
 </li>
