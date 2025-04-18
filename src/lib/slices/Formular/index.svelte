@@ -19,24 +19,40 @@
 	// Zustand für das modale Fenster
 	let showModal = false;
 
-	// Funktion, die beim Absenden des Formulars aufgerufen wird
-	function handleSubmit(event: Event) {
-		event.preventDefault(); // Verhindert das Standardverhalten des Formulars
+	async function handleSubmit(event: Event) {
+		event.preventDefault(); // Verhindert Standard-Submit (Bleibt)
 
-		 // Formulardaten auslesen
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        // Alle Werte loggen
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
-		// Modales Fenster anzeigen
-		showModal = true;
-
-		// Formular zurücksetzen
 		const form = event.target as HTMLFormElement;
-		form.reset();
+		const formData = new FormData(form);
+
+		try {
+			// Sende die Formulardaten an den Endpunkt des aktuellen Pfads
+			// Netlify fängt POST-Requests an den Pfad ab, auf dem das Formular liegt
+			const response = await fetch(form.action || '/', {
+				// Nutze form.action oder den aktuellen Pfad '/'
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				// Wichtig: FormData korrekt kodieren für Netlify
+				body: new URLSearchParams(formData as any).toString()
+			});
+
+			if (response.ok) {
+				// Erfolgreich gesendet! Jetzt Modal anzeigen und Formular zurücksetzen
+				console.log('Formular erfolgreich via AJAX gesendet.');
+				showModal = true; // Modal anzeigen
+				form.reset(); // Formular zurücksetzen
+			} else {
+				// Fehler beim Senden
+				console.error('Fehler beim Senden des Formulars:', response);
+				// Optional: Zeige eine Fehlermeldung für den Benutzer an
+				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
+			}
+		} catch (error) {
+			// Netzwerkfehler o.ä.
+			console.error('Netzwerkfehler oder anderer Fehler:', error);
+			// Optional: Zeige eine Fehlermeldung für den Benutzer an
+			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+		}
 	}
 </script>
 
