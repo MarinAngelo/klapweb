@@ -128,17 +128,6 @@ interface PageDocumentData {
 	title: prismic.TitleField;
 
 	/**
-	 * Parent field in *Page*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.parent
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
-	 */
-	parent: prismic.ContentRelationshipField<'page'>;
-
-	/**
 	 * Slice Zone field in *Page*
 	 *
 	 * - **Field Type**: Slice Zone
@@ -754,11 +743,11 @@ type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
 export type ImageSlice = prismic.SharedSlice<'image', ImageSliceVariation>;
 
 /**
- * Item in *ImageCards → Standard → Primary → Kacheln*
+ * Item in *Kacheln → Standard → Primary → Kacheln*
  */
 export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	/**
-	 * Bild field in *ImageCards → Standard → Primary → Kacheln*
+	 * Bild field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -768,7 +757,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	image: prismic.ImageField<never>;
 
 	/**
-	 * Text field in *ImageCards → Standard → Primary → Kacheln*
+	 * Text field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -778,7 +767,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	text: prismic.RichTextField;
 
 	/**
-	 * Schaltflächen-Link field in *ImageCards → Standard → Primary → Kacheln*
+	 * Schaltflächen-Link field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -788,7 +777,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Schaltflächen-Text field in *ImageCards → Standard → Primary → Kacheln*
+	 * Schaltflächen-Text field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -799,11 +788,11 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 }
 
 /**
- * Primary content in *ImageCards → Standard → Primary*
+ * Primary content in *Kacheln → Standard → Primary*
  */
 export interface ImageCardsSliceDefaultPrimary {
 	/**
-	 * Titel field in *ImageCards → Standard → Primary*
+	 * Titel field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: *None*
@@ -813,7 +802,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	heading: prismic.TitleField;
 
 	/**
-	 * Kacheln field in *ImageCards → Standard → Primary*
+	 * Kacheln field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
@@ -824,7 +813,7 @@ export interface ImageCardsSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for ImageCards Slice
+ * Standard variation for Kacheln Slice
  *
  * - **API ID**: `default`
  * - **Description**: ImageCards
@@ -837,12 +826,12 @@ export type ImageCardsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *ImageCards*
+ * Slice variation for *Kacheln*
  */
 type ImageCardsSliceVariation = ImageCardsSliceDefault;
 
 /**
- * ImageCards Shared Slice
+ * Kacheln Shared Slice
  *
  * - **API ID**: `image_cards`
  * - **Description**: ImageCards

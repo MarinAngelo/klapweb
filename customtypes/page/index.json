@@ -22,14 +22,6 @@
 					"single": "heading1"
 				}
 			},
-			"parent": {
-				"type": "Link",
-				"config": {
-					"label": "Parent",
-					"select": "document",
-					"customtypes": ["page"]
-				}
-			},
 			"slices": {
 				"type": "Slices",
 				"fieldset": "Slice Zone",

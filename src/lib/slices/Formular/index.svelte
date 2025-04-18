@@ -21,7 +21,7 @@
 
 	// Funktion, die beim Absenden des Formulars aufgerufen wird
 	function handleSubmit(event: Event) {
-		event.preventDefault(); // Verhindert das Standardverhalten des Formulars
+		// event.preventDefault(); // Verhindert das Standardverhalten des Formulars
 
 		// Modales Fenster anzeigen
 		showModal = true;
