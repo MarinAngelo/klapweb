@@ -7,6 +7,7 @@
 		required: boolean;
 		'invalid_feedback-text'?: string | null;
 	};
+	console.log('Field:', field);
 </script>
 
 <div class="mb-4">
