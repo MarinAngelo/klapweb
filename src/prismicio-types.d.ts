@@ -445,7 +445,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
 	field_type: prismic.SelectField<
-		'text' | 'email' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'switch'
+		'Textfeld' | 'E-Mail' | 'Textbereich' | 'Auswahlliste' | 'Ankreuzfeld' | 'Einzelauswahl'
 	>;
 
 	/**

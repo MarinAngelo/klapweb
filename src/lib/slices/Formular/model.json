@@ -66,13 +66,12 @@
                   "label": "Feld Typ",
                   "placeholder": "",
                   "options": [
-                    "text",
-                    "email",
-                    "textarea",
-                    "select",
-                    "checkbox",
-                    "radio",
-                    "switch"
+                    "Textfeld",
+                    "E-Mail",
+                    "Textbereich",
+                    "Auswahlliste",
+                    "Ankreuzfeld",
+                    "Einzelauswahl"
                   ]
                 }
               },

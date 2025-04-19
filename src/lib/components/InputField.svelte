@@ -10,19 +10,31 @@
 		'invalid_feedback-text'?: string | null;
 	};
 
+	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
+	const typeMapping: Record<string, string> = {
+		Ankreuzfeld: 'checkbox',
+		Einzelauswahl: 'radio',
+		Auswahlliste: 'select',
+		Textfeld: 'text',
+		'E-Mail': 'email',
+		Textbereich: 'textarea'
+	};
+
+	// HTML-Typ basierend auf dem Mapping
+	const htmlType = typeMapping[field.field_type] || field.field_type;
+
 	console.log('Field:', field);
+	console.log('HTML Type:', htmlType);
 </script>
 
 <div class="mb-4">
 	<!-- Hier Labels für alle Felder-->
-	<!--    {/* DIESES Label wird dank der #if-Bedingung jetzt */}
-    {/* NUR angezeigt, wenn der field_type NICHT 'switch' ist */}-->
-	{#if field.field_type !== 'checkbox' && field.field_type !== 'switch'}
+	{#if htmlType !== 'checkbox'}
 		<label for={field.field_name} class="block text-base font-medium">
 			{field.field_name}
 		</label>
 	{/if}
-	{#if field.field_type === 'text' || field.field_type === 'email'}
+	{#if htmlType === 'text' || htmlType === 'email'}
 		<input
 			type={field.field_type}
 			id={field.field_name}
@@ -32,7 +44,7 @@
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
 				.pageColor}; border-bottom-color: {get(theme).pageColor};"
 		/>
-	{:else if field.field_type === 'textarea'}
+	{:else if htmlType === 'textarea'}
 		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
 			<textarea
 				id={field.field_name}
@@ -43,7 +55,7 @@
 				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 			></textarea>
 		</div>
-	{:else if field.field_type === 'select'}
+	{:else if htmlType === 'select'}
 		<select
 			id={field.field_name}
 			name={field.field_name}
@@ -58,7 +70,7 @@
 				<option value={option.trim()}>{option.trim()}</option>
 			{/each}
 		</select>
-	{:else if field.field_type === 'radio'}
+	{:else if htmlType === 'radio'}
 		<div class="flex flex-col gap-2">
 			{#each field.options?.split(',') || [] as option}
 				<label class="inline-flex items-center">
@@ -73,30 +85,19 @@
 				</label>
 			{/each}
 		</div>
-	{:else if field.field_type === 'checkbox'}
+	{:else if htmlType === 'checkbox'}
 		<div class="flex items-center">
 			<label class="flex items-center">
 				<input
 					type="checkbox"
 					name={field.field_name}
 					checked={field.required}
+					value="Ausgewählt"
 					class="h-5 w-5 cursor-pointer"
 					style="width: 20px; height: 20px;"
 				/>
-				<!-- Sichtbarer Text bleibt nur im <span> weil standard label nicht sichtbar gemacht -->
+				<!-- Sichtbarer Text bleibt nur im <span> -->
 				<span class="ml-2 text-base font-medium">{field.field_name}</span>
-			</label>
-		</div>
-	{:else if field.field_type === 'switch'}
-		<div class="flex items-center">
-			<label class="inline-flex items-center">
-				<input
-					type="checkbox"
-					name={field.field_name}
-					value=""
-					style="width: 160px; height: 160px; border: 1px solid red; opacity: 1; display: inline-block;"
-				/>
-				<span class="ml-2">{field.field_name}</span>
 			</label>
 		</div>
 	{/if}
@@ -104,9 +105,10 @@
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>
 	{/if}
 </div>
+
 <!-- Alle globalen styles hier definieren-->
 <style>
 	.input {
-    font-size: 18px;
-}
+		font-size: 18px;
+	}
 </style>
