@@ -63,13 +63,17 @@
               "field_type": {
                 "type": "Select",
                 "config": {
+                  "label": "Feld Typ",
+                  "placeholder": "",
                   "options": [
                     "text",
                     "email",
                     "textarea",
-                    "select"
-                  ],
-                  "label": "Feld Typ"
+                    "select",
+                    "checkbox",
+                    "radio",
+                    "switch"
+                  ]
                 }
               },
               "required": {
@@ -85,6 +89,13 @@
                 "type": "Text",
                 "config": {
                   "label": "Fehlermeldung"
+                }
+              },
+              "options": {
+                "type": "Text",
+                "config": {
+                  "label": "Optionen bei Auswahlfeldern",
+                  "placeholder": "mit Komma getrennt"
                 }
               }
             }

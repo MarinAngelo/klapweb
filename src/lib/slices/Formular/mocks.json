@@ -13,7 +13,24 @@
 				"value": [
 					{
 						"__TYPE__": "GroupItemContent",
-						"value": []
+						"value": [
+							[
+								"options",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "worth",
+									"type": "Text"
+								}
+							],
+							[
+								"field_type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "textarea",
+									"type": "Select"
+								}
+							]
+						]
 					}
 				]
 			},

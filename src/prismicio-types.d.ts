@@ -444,7 +444,9 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	 * - **API ID Path**: form.default.primary.form_fields[].field_type
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	field_type: prismic.SelectField<'text' | 'email' | 'textarea' | 'select'>;
+	field_type: prismic.SelectField<
+		'text' | 'email' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'switch'
+	>;
 
 	/**
 	 * Obligatorisch field in *Formular → Standard → Primary → Formular Felder*
@@ -466,6 +468,16 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	'invalid_feedback-text': prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.default.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	options: prismic.KeyTextField;
 }
 
 /**
