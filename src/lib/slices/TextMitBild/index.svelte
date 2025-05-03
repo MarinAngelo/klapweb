@@ -23,7 +23,7 @@
 		<div>
 			{#if isFilled.image(slice.primary.image)}
 				<div style="background-color: {get(theme).pageBgColor};">
-					<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
+					<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full rounded-lg" />
 				</div>
 			{/if}
 		</div>

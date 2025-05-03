@@ -3,7 +3,6 @@
 
     // Props definieren
     export let item;
-    export let headerColor;
     export let headerLinkColor
 </script>
 

@@ -1,54 +1,52 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
-	import DropdownButton from './DropdownButton.svelte'; // Import der neuen Komponente
+	import DropdownButton from './DropdownButton.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	// Props definieren
 	export let item;
 	export let subItems;
-	export let headerColor;
 	export let headerBgColor;
-	export let headerLinkColor; // Wird aktuell nicht verwendet im Snippet
-	export let headerLinkHoverColor;
+	export let headerLinkColor;
+	export let headerLinkHoverColor; // Dynamische Hover-Farbe
+	export let currentPath;
 
+	// Event-Dispatcher erstellen
+	const dispatch = createEventDispatcher();
 </script>
 
-<div class="relative group">
-	<DropdownButton {item} {headerColor} {headerLinkColor}/>
+<div
+	class="relative group"
+	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
+>
+	<DropdownButton {item} {headerLinkColor} />
 
-	<div
-		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-10 rounded py-1"
+	<ul
+		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-40 rounded py-1"
 		style="background-color: {headerBgColor};"
 	>
-		{#each subItems as dropdownItem}
-			<div style="--custom-hover: {headerLinkHoverColor}; color: {headerLinkColor}">
-				<PrismicLink
-					field={dropdownItem.link}
-					class="block px-4 py-2 text-sm"
-					
-				>
+		{#each subItems as dropdownItem, index}
+			<li
+				class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0
+					? 'mt-11'
+					: ''} p-2 font-semibold tracking-tight block"
+			>
+				<PrismicLink field={dropdownItem.link} on:click={() => dispatch('click')}>
 					<PrismicText field={dropdownItem.label} />
 				</PrismicLink>
-			</div>
+			</li>
 		{/each}
-	</div>
+	</ul>
 </div>
 
 <style>
-	/* Korrigierte dynamische Hover-Farbe */
-
-	/* * Wir zielen auf das Element mit der Klasse 'block' (die der Link hat),
-     * wenn es gehovert wird (:hover).
-     * Dann setzen wir die background-color unter Verwendung unserer Variable.
-     * Mit !important stellen wir sicher, dass diese Regel Vorrang vor
-     * der Tailwind-Regel hat, die durch 'hover:bg-gray-100' generiert wird.
-     */
+	/* Dynamische Hover-Farbe */
 	.block:hover {
-		background-color: red !important;
+		background-color: var(--hover-bg-color, red) !important; /* Fallback auf rot */
 	}
 
-	/* Sicherstellen, dass die Textfarbe im Normalzustand passt (optional) */
+	/* Dynamische Textfarbe */
 	.block {
-		/* Hier könntest du die normale Textfarbe setzen, falls nötig */
-		/* color: var(--normal-text-color); */
+		color: var(--normal-text-color, black); /* Fallback auf schwarz */
 	}
 </style>

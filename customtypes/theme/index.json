@@ -47,7 +47,7 @@
 				"config": {
 					"label": "Hauptschrift",
 					"placeholder": "",
-					"options": ["Roboto", "Open Sans"]
+					"options": ["Roboto", "Open Sans", "Jura"]
 				}
 			},
 			"nav_font": {
@@ -55,7 +55,7 @@
 				"config": {
 					"label": "Navigationsschrift",
 					"placeholder": "",
-					"options": ["Roboto", "Open Sans"]
+					"options": ["Roboto", "Open Sans", "Jura"]
 				}
 			}
 		},

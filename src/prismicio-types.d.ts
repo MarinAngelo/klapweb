@@ -12,7 +12,7 @@ export interface NavigationDocumentDataLinksItem {
 	 * Label field in *Navigation → Links*
 	 *
 	 * - **Field Type**: Title
-	 * - **Placeholder**: Optional - Label for the link
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].label
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| FormSlice
 	| HeroSlice
 	| QuoteSlice
 	| TextSlice
@@ -125,17 +126,6 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
 	title: prismic.TitleField;
-
-	/**
-	 * Parent field in *Page*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.parent
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
-	 */
-	parent: prismic.ContentRelationshipField<'page'>;
 
 	/**
 	 * Slice Zone field in *Page*
@@ -231,6 +221,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	e_mail: prismic.KeyTextField;
+
+	/**
+	 * Verantwortlich (Person/Unternehmen) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.responsible_person_company
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	responsible_person_company: prismic.KeyTextField;
 }
 
 /**
@@ -306,7 +307,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	body_font: prismic.SelectField<'Roboto' | 'Open Sans'>;
+	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
 
 	/**
 	 * Navigationsschrift field in *Design Vorlage*
@@ -317,7 +318,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	nav_font: prismic.SelectField<'Roboto' | 'Open Sans'> /**
+	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'> /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -422,6 +423,156 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
 
 /**
+ * Item in *Formular → Standard → Primary → Formular Felder*
+ */
+export interface FormSliceDefaultPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	field_type: prismic.SelectField<
+		'Textfeld' | 'E-Mail' | 'Textbereich' | 'Auswahlliste' | 'Ankreuzfeld' | 'Einzelauswahl'
+	>;
+
+	/**
+	 * Obligatorisch field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.default.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback-text
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	'invalid_feedback-text': prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Standard → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.default.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	options: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Formular → Standard → Primary*
+ */
+export interface FormSliceDefaultPrimary {
+	/**
+	 * Formular Titel field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	form_title: prismic.KeyTextField;
+
+	/**
+	 * Formular Instruktionen field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_instructions
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	form_instructions: prismic.RichTextField;
+
+	/**
+	 * Senden-Schaltflächen-Text field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitt_button_text
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	submitt_button_text: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Titel field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitted_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	submitted_title: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Text field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.submitted_text
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	submitted_text: prismic.RichTextField;
+
+	/**
+	 * Formular Felder field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.default.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceDefaultPrimaryFormFieldsItem>>;
+}
+
+/**
+ * Standard variation for Formular Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FormSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<FormSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Formular*
+ */
+type FormSliceVariation = FormSliceDefault;
+
+/**
+ * Formular Shared Slice
+ *
+ * - **API ID**: `form`
+ * - **Description**: Formular
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
+
+/**
  * Primary content in *Titelbereich → Standard → Primary*
  */
 export interface HeroSliceDefaultPrimary {
@@ -436,24 +587,34 @@ export interface HeroSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Schaltfläche Link field in *Titelbereich → Standard → Primary*
+	 * Textfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Schaltflächenlink field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.default.primary.buttonLink
+	 * - **API ID Path**: hero.default.primary.button_link
 	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
 	 */
-	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Schaltfläge Text field in *Titelbereich → Standard → Primary*
+	 * Schaltflächentext field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.default.primary.buttonText
+	 * - **API ID Path**: hero.default.primary.button_text
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
-	buttonText: prismic.KeyTextField;
+	button_text: prismic.KeyTextField;
 
 	/**
 	 * Hintergrundbild field in *Titelbereich → Standard → Primary*
@@ -594,11 +755,11 @@ type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
 export type ImageSlice = prismic.SharedSlice<'image', ImageSliceVariation>;
 
 /**
- * Item in *ImageCards → Default → Primary → Cards*
+ * Item in *Kacheln → Standard → Primary → Kacheln*
  */
 export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	/**
-	 * Image field in *ImageCards → Default → Primary → Cards*
+	 * Bild field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -608,7 +769,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	image: prismic.ImageField<never>;
 
 	/**
-	 * Text field in *ImageCards → Default → Primary → Cards*
+	 * Text field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -618,7 +779,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	text: prismic.RichTextField;
 
 	/**
-	 * Button Link field in *ImageCards → Default → Primary → Cards*
+	 * Schaltflächen-Link field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -628,7 +789,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Button Text field in *ImageCards → Default → Primary → Cards*
+	 * Schaltflächen-Text field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -639,21 +800,21 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 }
 
 /**
- * Primary content in *ImageCards → Default → Primary*
+ * Primary content in *Kacheln → Standard → Primary*
  */
 export interface ImageCardsSliceDefaultPrimary {
 	/**
-	 * Heading field in *ImageCards → Default → Primary*
+	 * Titel field in *Kacheln → Standard → Primary*
 	 *
-	 * - **Field Type**: Rich Text
+	 * - **Field Type**: Title
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: image_cards.default.primary.heading
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
-	heading: prismic.RichTextField;
+	heading: prismic.TitleField;
 
 	/**
-	 * Cards field in *ImageCards → Default → Primary*
+	 * Kacheln field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
@@ -664,7 +825,7 @@ export interface ImageCardsSliceDefaultPrimary {
 }
 
 /**
- * Default variation for ImageCards Slice
+ * Standard variation for Kacheln Slice
  *
  * - **API ID**: `default`
  * - **Description**: ImageCards
@@ -677,12 +838,12 @@ export type ImageCardsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *ImageCards*
+ * Slice variation for *Kacheln*
  */
 type ImageCardsSliceVariation = ImageCardsSliceDefault;
 
 /**
- * ImageCards Shared Slice
+ * Kacheln Shared Slice
  *
  * - **API ID**: `image_cards`
  * - **Description**: ImageCards
@@ -691,11 +852,11 @@ type ImageCardsSliceVariation = ImageCardsSliceDefault;
 export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSliceVariation>;
 
 /**
- * Primary content in *Quote → Default → Primary*
+ * Primary content in *Zitat → Standart → Primary*
  */
 export interface QuoteSliceDefaultPrimary {
 	/**
-	 * Quote field in *Quote → Default → Primary*
+	 * Zitat field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -705,7 +866,7 @@ export interface QuoteSliceDefaultPrimary {
 	quote: prismic.RichTextField;
 
 	/**
-	 * Source field in *Quote → Default → Primary*
+	 * Quelle field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -716,7 +877,7 @@ export interface QuoteSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Quote Slice
+ * Standart variation for Zitat Slice
  *
  * - **API ID**: `default`
  * - **Description**: Quote
@@ -729,12 +890,12 @@ export type QuoteSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Quote*
+ * Slice variation for *Zitat*
  */
 type QuoteSliceVariation = QuoteSliceDefault;
 
 /**
- * Quote Shared Slice
+ * Zitat Shared Slice
  *
  * - **API ID**: `quote`
  * - **Description**: Quote
@@ -743,11 +904,11 @@ type QuoteSliceVariation = QuoteSliceDefault;
 export type QuoteSlice = prismic.SharedSlice<'quote', QuoteSliceVariation>;
 
 /**
- * Primary content in *Text → Default → Primary*
+ * Primary content in *Text → Standard → Primary*
  */
 export interface TextSliceDefaultPrimary {
 	/**
-	 * Text field in *Text → Default → Primary*
+	 * Text field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -758,7 +919,7 @@ export interface TextSliceDefaultPrimary {
 }
 
 /**
- * Default variation for Text Slice
+ * Standard variation for Text Slice
  *
  * - **API ID**: `default`
  * - **Description**: Text
@@ -771,11 +932,11 @@ export type TextSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Text → Two Columns → Primary*
+ * Primary content in *Text → Zwei Spalten → Primary*
  */
 export interface TextSliceTwoColumnsPrimary {
 	/**
-	 * Text field in *Text → Two Columns → Primary*
+	 * Text field in *Text → Zwei Spalten → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -786,7 +947,7 @@ export interface TextSliceTwoColumnsPrimary {
 }
 
 /**
- * Two Columns variation for Text Slice
+ * Zwei Spalten variation for Text Slice
  *
  * - **API ID**: `twoColumns`
  * - **Description**: Text
@@ -813,11 +974,11 @@ type TextSliceVariation = TextSliceDefault | TextSliceTwoColumns;
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
 
 /**
- * Primary content in *TextWithImage → Default → Primary*
+ * Primary content in *TextMitBild → Standard → Primary*
  */
 export interface TextWithImageSliceDefaultPrimary {
 	/**
-	 * Text field in *TextWithImage → Default → Primary*
+	 * Text field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -827,7 +988,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Image field in *TextWithImage → Default → Primary*
+	 * Bild field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -838,7 +999,7 @@ export interface TextWithImageSliceDefaultPrimary {
 }
 
 /**
- * Default variation for TextWithImage Slice
+ * Standard variation for TextMitBild Slice
  *
  * - **API ID**: `default`
  * - **Description**: TextWithImage
@@ -851,11 +1012,11 @@ export type TextWithImageSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *TextWithImage → With Button → Primary*
+ * Primary content in *TextMitBild → Mit Schaltfläche → Primary*
  */
 export interface TextWithImageSliceWithButtonPrimary {
 	/**
-	 * Text field in *TextWithImage → With Button → Primary*
+	 * Text field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -865,7 +1026,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Button Link field in *TextWithImage → With Button → Primary*
+	 * Button Link field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
@@ -875,7 +1036,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	buttonLink: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
-	 * Button Text field in *TextWithImage → With Button → Primary*
+	 * Button Text field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -885,7 +1046,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	buttonText: prismic.KeyTextField;
 
 	/**
-	 * Image field in *TextWithImage → With Button → Primary*
+	 * Image field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -896,7 +1057,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 }
 
 /**
- * With Button variation for TextWithImage Slice
+ * Mit Schaltfläche variation for TextMitBild Slice
  *
  * - **API ID**: `withButton`
  * - **Description**: TextWithImage
@@ -909,12 +1070,12 @@ export type TextWithImageSliceWithButton = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *TextWithImage*
+ * Slice variation for *TextMitBild*
  */
 type TextWithImageSliceVariation = TextWithImageSliceDefault | TextWithImageSliceWithButton;
 
 /**
- * TextWithImage Shared Slice
+ * TextMitBild Shared Slice
  *
  * - **API ID**: `text_with_image`
  * - **Description**: TextWithImage
@@ -957,6 +1118,11 @@ declare module '@prismicio/client' {
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,
+			FormSlice,
+			FormSliceDefaultPrimaryFormFieldsItem,
+			FormSliceDefaultPrimary,
+			FormSliceVariation,
+			FormSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,

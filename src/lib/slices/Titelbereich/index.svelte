@@ -15,6 +15,7 @@
 	const { pageBgColor, pageColor } = get(theme);
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 0) || 0.5;
+	const color = slice.primary.color || 'var(--text-color)';
 
 	// Funktion zur Konvertierung von Prozentwerten in `vh`
 	function convertBannerHeight(percent: string | null): string {
@@ -36,7 +37,7 @@
 
 <section
 	class="relative"
-	style="background-color: {overlayColor}; color: {pageColor}; height: {bannerHeight};"
+	style="background-color: {overlayColor}; color: {color}; height: {bannerHeight};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -58,13 +59,13 @@
 					}}
 				/>
 			</div>
-			{#if isFilled.link(slice.primary.buttonLink)}
+			{#if isFilled.link(slice.primary.button_link)}
 				<PrismicLink
-					field={slice.primary.buttonLink}
+					field={slice.primary.button_link}
 					class="rounded px-5 py-3 font-medium"
 					style="background-color: {pageBgColor}; color: {pageColor};"
 				>
-					{slice.primary.buttonText}
+					{slice.primary.button_text}
 				</PrismicLink>
 			{/if}
 		</div>

@@ -4,6 +4,8 @@
 
 	// Props definieren
 	export let navigation;
+	console.log("🚀 ~ navigation:", navigation.data)
+	
 	export let headerColor; // Wird für die Textfarbe verwendet
 	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
 	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
@@ -39,15 +41,15 @@
 <nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		<a href="/"  style="color: {headerColor};">
-            <!-- Seiten Titel -->
-            <span class="text-xl font-semibold tracking-tight">
-                <PrismicText field={settings.data.site_title} /><br />
-            </span>
+		<a href="/" style="color: {headerColor};">
+			<!-- Seiten Titel -->
+			<span class="text-xl font-semibold tracking-tight">
+				<PrismicText field={settings.data.site_title} /><br />
+			</span>
 			<!-- Optionaler Untertitel -->
-             <span>
-                 <PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
-             </span>
+			<span>
+				<PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
+			</span>
 		</a>
 	</div>
 
@@ -67,7 +69,7 @@
 	<!-- Navigation Items -->
 	<div
 		class={`w-full lg:flex lg:items-center lg:w-auto ${
-			isMenuOpen ? 'flex flex-col mt-10 pb-10' : 'hidden'
+			isMenuOpen ? 'flex flex-col mt-10 pb-10 h-screen' : 'hidden'
 		} lg:flex`}
 	>
 		<ul class="flex flex-col lg:flex-row text-sm gap-6">
@@ -76,32 +78,37 @@
 					{@const subItems = getSubItems(item, navigation.data.links)}
 
 					{#if subItems.length > 0}
-						<!-- Verwendung der Dropdown-Komponente -->
-						<li class="block mt-4 lg:inline-block lg:mt-0">
+						<!-- Dropdown-Komponente -->
+						<li class="text-xl block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}
 								{subItems}
-								{headerColor}
 								{headerBgColor}
 								{headerLinkColor}
 								{headerLinkHoverColor}
+								{currentPath}
+								on:click={() => (isMenuOpen = false)}
 							/>
 						</li>
 					{:else if item.link?.url}
 						<li
-							class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white"
+							class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0"
 							style="color: {headerLinkColor};"
 						>
-							<PrismicLink field={item.link}>
+							<PrismicLink field={item.link} on:click={() => (isMenuOpen = false)}>
 								<PrismicText field={item.label} />
 							</PrismicLink>
 						</li>
 					{/if}
 				{:else if item.sub_link}
 					{@const _skip = true}
-				{:else if item.link?.url}
-					<li style="color: {headerLinkColor};">
-						<PrismicLink field={item.link}>
+					<!-- Normaler Link -->
+				{:else if item.link?.url && item.main_nav}
+					<li
+						class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''}"
+						style="color: {headerLinkColor};"
+					>
+						<PrismicLink field={item.link} on:click={() => (isMenuOpen = false)}>
 							<PrismicText field={item.label} />
 						</PrismicLink>
 					</li>

@@ -9,9 +9,13 @@
 	import { repositoryName } from '$lib/prismicio';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data;
 	console.log('Layout data:', data.prismicTheme.data.body_font);
+
+	// Zugriff auf die Daten aus dem $page-Store
+	$: pageData = $page.data;
 
 // Weise den Wert direkt der Prop bodyFont zu
     export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
@@ -69,13 +73,28 @@
 	{/if}
 </svelte:head>
 <!--Hier wird die Textfarbe zugewiesen, zuweisung Hintergrundfarbe funktioniert nicht-->
-<div class="text-slate-800">
+<div style="background-color: {pageBgColor};">
 	<Header
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}
 		prismicTheme={data?.prismicTheme || {}}
 	/>
+<<<<<<< HEAD
 	<main style={bodyFontStyle}><slot /></main>
+=======
+	<main style={bodyFontStyle}>
+		<!-- Seiten Titel -->
+		{#if $page.url.pathname !== '/' && $page.data?.title}
+			<Bounded
+				as="section"
+				style="background-color: {pageBgColor}; color: {pageColor};"
+			>
+				<h1 class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0">{$page.data?.title || 'Standarttitel'}</h1>
+			</Bounded>
+		{/if}
+		<slot />
+	</main>
+>>>>>>> zfdy
 	<Footer
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}

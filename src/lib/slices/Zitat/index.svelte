@@ -2,7 +2,7 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
-		import { theme } from '$lib/stores/theme';
+	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -23,7 +23,7 @@
 			<blockquote>
 				<p
 					class={clsx(
-						'text-4xl font-medium leading-tight md:text-5xl md:leading-tight',
+						'text-xl font-medium leading-tight md:text-xl md:leading-tight',
 						!isFilled.keyText(slice.primary.source) && 'text-center'
 					)}
 				>

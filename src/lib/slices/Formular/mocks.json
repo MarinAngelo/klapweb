@@ -1,0 +1,45 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"form_title": {
+				"__TYPE__": "FieldContent",
+				"value": "by",
+				"type": "Text"
+			},
+			"form_fields": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"options",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "worth",
+									"type": "Text"
+								}
+							],
+							[
+								"field_type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "Textbereich",
+									"type": "Select"
+								}
+							]
+						]
+					}
+				]
+			},
+			"submitted_title": {
+				"__TYPE__": "FieldContent",
+				"value": "tightly",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]

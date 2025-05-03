@@ -15,7 +15,7 @@
 							"type": "StructuredText",
 							"config": {
 								"label": "Label",
-								"placeholder": "Optional - Label for the link",
+								"placeholder": "",
 								"allowTargetBlank": false,
 								"single": "heading3"
 							}

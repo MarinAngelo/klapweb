@@ -21,26 +21,28 @@
 		headerLinkHoverColor
 	} = get(theme);
 
-	const currentPath = $page.url.pathname;
+	// Reaktiver Zugriff auf den aktuellen Pfad
+	$: currentPath = $page.url.pathname;
 
-	// Überprüfen, ob die aktuelle URL "/"" ist
+	// Überprüfen, ob die aktuelle URL "/" ist
 	$: isHome = $page.url.pathname === '/';
 </script>
 
 <Bounded
 	tag="header"
 	yPadding="sm"
+	tMargin="lg"
 	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
-	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 9999;"
+	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 49;"
 >
 	<!-- Beinhaltet nur den Text nicht die ganze Kopfzeile -->
-		<Navbar
-			{navigation}
-			{headerColor}
-			{headerBgColor}
-			{headerLinkColor}
-			{headerLinkHoverColor}
-			{settings}
-			{currentPath}
-		/>
+	<Navbar
+		{navigation}
+		{headerColor}
+		{headerBgColor}
+		{headerLinkColor}
+		{headerLinkHoverColor}
+		{settings}
+		{currentPath}
+	/>
 </Bounded>

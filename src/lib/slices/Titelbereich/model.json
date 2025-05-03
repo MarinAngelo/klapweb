@@ -16,22 +16,29 @@
           "config": {
             "label": "Text",
             "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "paragraph,heading1,strong,em"
+            "allowTargetBlank": false,
+            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
           }
         },
-        "buttonLink": {
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Textfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_link": {
           "type": "Link",
           "config": {
-            "label": "Schaltfläche Link",
+            "label": "Schaltflächenlink",
             "placeholder": "",
             "select": null
           }
         },
-        "buttonText": {
+        "button_text": {
           "type": "Text",
           "config": {
-            "label": "Schaltfläge Text",
+            "label": "Schaltflächentext",
             "placeholder": ""
           }
         },

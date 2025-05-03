@@ -41,4 +41,10 @@
   --page-link-visited-color: white;
   --page-bg-opacity: 1;
   --hero-overlay-color: white;
+  p, li {
+    font-size: 1.2rem;
+  }
+  h2 {
+    font-size: 1.8rem;
+  }
 }

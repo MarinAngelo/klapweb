@@ -30,6 +30,13 @@
 					"label": "E-Mail",
 					"placeholder": ""
 				}
+			},
+			"responsible_person_company": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortlich (Person/Unternehmen)",
+					"placeholder": ""
+				}
 			}
 		}
 	}

@@ -22,19 +22,14 @@
 					"single": "heading1"
 				}
 			},
-			"parent": {
-				"type": "Link",
-				"config": {
-					"label": "Parent",
-					"select": "document",
-					"customtypes": ["page"]
-				}
-			},
 			"slices": {
 				"type": "Slices",
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"form": {
+							"type": "SharedSlice"
+						},
 						"hero": {
 							"type": "SharedSlice"
 						},

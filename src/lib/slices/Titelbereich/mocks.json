@@ -9,23 +9,10 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Ullamco ea aliqua fugiat exercitation veniam sint voluptate labore. Excepteur labore aliqua consequat sit ea ullamco proident occaecat. Aliqua anim officia dolor reprehenderit veniam deserunt dolor et consectetur."
+							"text": "Ea cupidatat quis mollit officia consequat anim. Non enim sit deserunt reprehenderit cillum aute sit fugiat veniam consequat dolor in. Cillum occaecat labore tempor nisi do eiusmod esse ullamco magna consequat laboris ut laborum consectetur."
 						}
 					}
 				]
-			},
-			"buttonLink": {
-				"key": "23cfed71-b9d1-4fe6-96ea-96d253f7bbac",
-				"__TYPE__": "LinkContent",
-				"value": {
-					"__TYPE__": "ExternalLink",
-					"url": "https://prismic.io"
-				}
-			},
-			"buttonText": {
-				"__TYPE__": "FieldContent",
-				"value": "aware",
-				"type": "Text"
 			},
 			"backgroundImage": {
 				"origin": {
@@ -64,6 +51,24 @@
 				"__TYPE__": "FieldContent",
 				"value": "100 %",
 				"type": "Select"
+			},
+			"button_text": {
+				"__TYPE__": "FieldContent",
+				"value": "finally",
+				"type": "Text"
+			},
+			"button_link": {
+				"key": "2bc5a4da-30c1-45c8-8d9c-c2fe63cd18ce",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "https://prismic.io"
+				}
+			},
+			"color": {
+				"__TYPE__": "FieldContent",
+				"value": "#b74a6b",
+				"type": "Color"
 			}
 		},
 		"items": [
