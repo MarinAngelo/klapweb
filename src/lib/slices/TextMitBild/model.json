@@ -30,6 +30,42 @@
             },
             "thumbnails": []
           }
+        },
+        "bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "y_padding_same": {
+          "type": "Boolean",
+          "config": {
+            "label": "Abstand oben / unten gleich",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
+          }
+        },
+        "y_padding": {
+          "type": "Select",
+          "config": {
+            "label": "Vertikaler Abstand",
+            "placeholder": "",
+            "options": [
+              "kein Abstand",
+              "wenig",
+              "mittel",
+              "gross"
+            ]
+          }
         }
       },
       "items": {},

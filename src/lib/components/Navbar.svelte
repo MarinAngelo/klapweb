@@ -4,7 +4,6 @@
 
 	// Props definieren
 	export let navigation;
-	console.log("🚀 ~ navigation:", navigation.data)
 	
 	export let headerColor; // Wird für die Textfarbe verwendet
 	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet

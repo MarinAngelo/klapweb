@@ -23,8 +23,6 @@
 	// HTML-Typ basierend auf dem Mapping
 	const htmlType = typeMapping[field.field_type] || field.field_type;
 
-	console.log('Field:', field);
-	console.log('HTML Type:', htmlType);
 </script>
 
 <div class="mb-4">

@@ -30,7 +30,7 @@
 
 <Bounded
 	tag="header"
-	yPadding="sm"
+	yPadding="none"
 	tMargin="lg"
 	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
 	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 49;"

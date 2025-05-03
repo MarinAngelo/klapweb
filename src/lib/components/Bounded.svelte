@@ -2,7 +2,8 @@
 	import clsx from 'clsx';
 
 	export let tag = 'section';
-	export let yPadding: 'sm' | 'base' | 'lg' = 'base';
+	// Wenn nicht gesetzt, dann wird der Standardwert 'base' verwendet
+	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' = 'base-top';
 	export let collapsible = true;
 </script>
 
@@ -12,12 +13,15 @@
 	{...$$restProps}
 	class={clsx(
 		'px-6',
-		yPadding === 'sm' && 'pt-0 md:pt-0',
-		// yPadding === 'sm' && 'py-8 md:py-10',
-		yPadding === 'base' && 'pt-20 md:pt-28',
-		// yPadding === 'base' && 'py-20 md:py-28',
-		yPadding === 'lg' && 'pt-32 md:pt-48',
-		// yPadding === 'lg' && 'py-32 md:py-48',
+		yPadding === 'none' && 'py-0',
+		// Abstand oben und unten
+		yPadding === 'sm' && 'py-8 md:py-10',
+		yPadding === 'base' && 'py-20 md:py-28',
+		yPadding === 'lg' && 'py-32 md:py-48',
+		// Abstand nur oben
+		yPadding === 'sm-top' && 'pt-8 md:pt-10',
+		yPadding === 'base-top' && 'pt-20 md:pt-28',
+		yPadding === 'lg-top' && 'pt-32 md:pt-48',
 		$$props.class
 	)}
 >

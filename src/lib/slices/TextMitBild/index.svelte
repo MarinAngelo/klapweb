@@ -8,11 +8,34 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 
 	export let slice: Content.TextWithImageSlice;
+
+	// Setze den Standardwert von yPadding basierend auf y_padding_same
+	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
+
+	// Überschreibe den Standardwert von yPadding mit dem Wert aus der Slice-Definition
+	if (slice.primary.y_padding) {
+		switch (slice.primary.y_padding) {
+			case 'kein Abstand':
+				yPadding = 'none';
+				break;
+			case 'wenig':
+				yPadding = slice.primary.y_padding_same ? 'sm' : 'sm-top';
+				break;
+			case 'mittel':
+				yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
+				break;
+			case 'gross':
+				yPadding = slice.primary.y_padding_same ? 'lg' : 'lg-top';
+				break;
+		}
+	}
 </script>
 
 <Bounded
 	as="section"
-	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+	{yPadding}
+	style="background-color: {slice.primary.bg_color || get(theme).pageBgColor}; color: {slice.primary
+		.color || get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -22,7 +45,7 @@
 		</div>
 		<div>
 			{#if isFilled.image(slice.primary.image)}
-				<div style="background-color: {get(theme).pageBgColor};">
+				<div style="background-color: {slice.primary.bg_color || get(theme).pageBgColor};">
 					<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full rounded-lg" />
 				</div>
 			{/if}

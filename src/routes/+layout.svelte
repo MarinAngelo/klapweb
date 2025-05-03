@@ -12,7 +12,6 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data;
-	console.log('Layout data:', data.prismicTheme.data.body_font);
 
 	// Zugriff auf die Daten aus dem $page-Store
 	$: pageData = $page.data;
