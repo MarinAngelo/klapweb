@@ -79,9 +79,6 @@
 		settings={data?.settings || {}}
 		prismicTheme={data?.prismicTheme || {}}
 	/>
-<<<<<<< HEAD
-	<main style={bodyFontStyle}><slot /></main>
-=======
 	<main style={bodyFontStyle}>
 		<!-- Seiten Titel -->
 		{#if $page.url.pathname !== '/' && $page.data?.title}
@@ -94,7 +91,6 @@
 		{/if}
 		<slot />
 	</main>
->>>>>>> zfdy
 	<Footer
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}
