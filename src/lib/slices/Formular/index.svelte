@@ -38,7 +38,6 @@
 
 			if (response.ok) {
 				// Erfolgreich gesendet! Jetzt Modal anzeigen und Formular zurücksetzen
-				console.log('Formular erfolgreich via AJAX gesendet.');
 				showModal = true; // Modal anzeigen
 				form.reset(); // Formular zurücksetzen
 			} else {

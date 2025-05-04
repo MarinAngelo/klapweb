@@ -13,7 +13,6 @@
 	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
 	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
 	export let settings;
-	console.log("🚀 ~ settings:", settings.data.logo)
 
 	// Zustand für das Hamburger-Menü
 	let isMenuOpen = false;

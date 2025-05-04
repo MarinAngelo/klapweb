@@ -9,7 +9,6 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let slice: Content.ImageSlice;
-	console.log("🚀 ~ Imageslice:", slice.variation)
 	export let index: number;
 	
 	const { pageBgColor } = get(theme);
