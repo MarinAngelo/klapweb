@@ -232,6 +232,28 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	responsible_person_company: prismic.KeyTextField;
+
+	/**
+	 * Logo field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.logo
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	logo: prismic.ImageField<never>;
+
+	/**
+	 * Favicon field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.favicon
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never>;
 }
 
 /**

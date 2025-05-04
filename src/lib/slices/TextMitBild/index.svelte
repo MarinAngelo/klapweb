@@ -8,7 +8,6 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 
 	export let slice: Content.TextWithImageSlice;
-	console.log("🚀 ~ slice:", slice.primary.image_round)
 
 	// Setze den Standardwert von yPadding basierend auf y_padding_same
 	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';

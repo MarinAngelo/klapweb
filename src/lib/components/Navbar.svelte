@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import Dropdown from './Dropdown.svelte';
+	import { PrismicImage } from '@prismicio/svelte';
+	import { onMount } from 'svelte';
 
 	// Props definieren
 	export let navigation;
-	
+
 	export let headerColor; // Wird für die Textfarbe verwendet
 	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
 	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
 	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
 	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
 	export let settings;
-
+	console.log("🚀 ~ settings:", settings.data.logo)
 
 	// Zustand für das Hamburger-Menü
 	let isMenuOpen = false;
@@ -35,21 +37,36 @@
 		);
 	}
 
+	onMount(() => {
+		// Überprüfen, ob ein Favicon im CMS definiert ist
+		if (settings?.data?.favicon?.url) {
+			const faviconLink = document.querySelector("link[rel~='icon']") || document.createElement('link');
+			faviconLink.rel = 'icon';
+			faviconLink.href = settings.data.favicon.url; // URL des Favicons aus dem CMS
+			document.head.appendChild(faviconLink);
+		}
+	});
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		<a href="/" style="color: {headerColor};">
-			<!-- Seiten Titel -->
-			<span class="text-xl font-semibold tracking-tight">
-				<PrismicText field={settings.data.site_title} /><br />
-			</span>
-			<!-- Optionaler Untertitel -->
-			<span>
-				<PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
-			</span>
-		</a>
+		{#if settings.data.logo}
+			<!-- Logo anzeigen -->
+			 <a href="/" class="flex items-center">
+			<PrismicImage field={settings.data.logo} alt="Logo" class="h-12 w-auto" />
+			</a>
+		{:else}
+			<!-- Seiten Titel und Untertitel anzeigen -->
+			<a href="/" style="color: {headerColor};">
+				<span class="text-xl font-semibold tracking-tight">
+					<PrismicText field={settings.data.site_title} /><br />
+				</span>
+				<span>
+					<PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
+				</span>
+			</a>
+		{/if}
 	</div>
 
 	<!-- Hamburger Button -->
