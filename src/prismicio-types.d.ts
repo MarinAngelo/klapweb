@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| CodeEinbettenSlice
 	| AccordionSlice
 	| FormSlice
 	| HeroSlice
@@ -531,6 +532,48 @@ type AccordionSliceVariation = AccordionSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
+
+/**
+ * Primary content in *HtmlCodeEinbetten → Standard → Primary*
+ */
+export interface CodeEinbettenSliceDefaultPrimary {
+	/**
+	 * HTML Code field in *HtmlCodeEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: code_einbetten.default.primary.html_code
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	html_code: prismic.RichTextField;
+}
+
+/**
+ * Standard variation for HtmlCodeEinbetten Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type CodeEinbettenSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<CodeEinbettenSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *HtmlCodeEinbetten*
+ */
+type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
+
+/**
+ * HtmlCodeEinbetten Shared Slice
+ *
+ * - **API ID**: `code_einbetten`
+ * - **Description**: CodeEinbetten
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type CodeEinbettenSlice = prismic.SharedSlice<'code_einbetten', CodeEinbettenSliceVariation>;
 
 /**
  * Item in *Formular → Standard → Primary → Formular Felder*
@@ -1328,6 +1371,10 @@ declare module '@prismicio/client' {
 			AccordionSliceDefaultPrimary,
 			AccordionSliceVariation,
 			AccordionSliceDefault,
+			CodeEinbettenSlice,
+			CodeEinbettenSliceDefaultPrimary,
+			CodeEinbettenSliceVariation,
+			CodeEinbettenSliceDefault,
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,

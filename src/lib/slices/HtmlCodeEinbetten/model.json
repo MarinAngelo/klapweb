@@ -1,0 +1,28 @@
+{
+  "id": "code_einbetten",
+  "type": "SharedSlice",
+  "name": "HtmlCodeEinbetten",
+  "description": "CodeEinbetten",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "html_code": {
+          "type": "StructuredText",
+          "config": {
+            "label": "HTML Code",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "embed"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
