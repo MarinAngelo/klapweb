@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"accordion": {
+							"type": "SharedSlice"
+						},
 						"form": {
 							"type": "SharedSlice"
 						},

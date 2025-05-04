@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| AccordionSlice
 	| FormSlice
 	| HeroSlice
 	| QuoteSlice
@@ -443,6 +444,93 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
+
+/**
+ * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+ */
+export interface AccordionSliceDefaultPrimaryAccordionItemsItem {
+	/**
+	 * Titel field in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[].label
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Text field in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[].content
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	content: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *Akkordeon → Standard → Primary*
+ */
+export interface AccordionSliceDefaultPrimary {
+	/**
+	 * Überschrift field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Beschreibung field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.description
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Akkordeon Elemente field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	accordion_items: prismic.GroupField<Simplify<AccordionSliceDefaultPrimaryAccordionItemsItem>>;
+}
+
+/**
+ * Standard variation for Akkordeon Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AccordionSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AccordionSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Akkordeon*
+ */
+type AccordionSliceVariation = AccordionSliceDefault;
+
+/**
+ * Akkordeon Shared Slice
+ *
+ * - **API ID**: `accordion`
+ * - **Description**: Akkordeon
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
 
 /**
  * Item in *Formular → Standard → Primary → Formular Felder*
@@ -1235,6 +1323,11 @@ declare module '@prismicio/client' {
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,
+			AccordionSlice,
+			AccordionSliceDefaultPrimaryAccordionItemsItem,
+			AccordionSliceDefaultPrimary,
+			AccordionSliceVariation,
+			AccordionSliceDefault,
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
