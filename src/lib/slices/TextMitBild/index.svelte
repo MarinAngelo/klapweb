@@ -49,7 +49,7 @@
 					<PrismicImage
 						field={slice.primary.image}
 						sizes="100vw"
-						class="w-full {slice.primary.image_round ? 'rounded-full' : 'rounded-lg'}"
+						class="w-full {slice.primary.image_round ? 'rounded-full' : 'rounded-3xl'}"
 					/>
 				</div>
 			{/if}
