@@ -13,6 +13,7 @@
 	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
 	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
 	export let settings;
+	console.log("🚀 ~ settings:", settings)
 
 	// Zustand für das Hamburger-Menü
 	let isMenuOpen = false;
@@ -50,7 +51,7 @@
 <nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		{#if settings.data.logo}
+		{#if settings.data.logo?.url}
 			<!-- Logo anzeigen -->
 			 <a href="/" class="flex items-center">
 			<PrismicImage field={settings.data.logo} alt="Logo" class="h-12 w-auto" />
