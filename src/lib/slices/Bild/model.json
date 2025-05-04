@@ -1,49 +1,77 @@
 {
-	"id": "image",
-	"type": "SharedSlice",
-	"name": "Bild",
-	"description": "Image",
-	"variations": [
-		{
-			"id": "default",
-			"name": "Standard",
-			"docURL": "...",
-			"version": "sktwi1xtmkfgx8626",
-			"description": "Image",
-			"primary": {
-				"image": {
-					"type": "Image",
-					"config": {
-						"label": "Bild",
-						"constraint": {},
-						"thumbnails": []
-					}
-				}
-			},
-			"items": {},
-			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
-		},
-		{
-			"id": "banner",
-			"name": "Banner",
-			"docURL": "...",
-			"version": "sktwi1xtmkfgx8626",
-			"description": "Image",
-			"primary": {
-				"image": {
-					"type": "Image",
-					"config": {
-						"label": "Image",
-						"constraint": {
-							"width": 3000,
-							"height": 1000
-						},
-						"thumbnails": []
-					}
-				}
-			},
-			"items": {},
-			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
-		}
-	]
+  "id": "image",
+  "type": "SharedSlice",
+  "name": "Bild",
+  "description": "Image",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Image",
+      "primary": {
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Bild",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "banner",
+      "name": "Banner",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Image",
+      "primary": {
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Bild",
+            "constraint": {
+              "width": 3000,
+              "height": 1000
+            },
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "carousel",
+      "name": "Karussell",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Image",
+      "primary": {
+        "images": {
+          "type": "Group",
+          "config": {
+            "label": "Bilder",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
 }

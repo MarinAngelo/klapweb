@@ -685,6 +685,21 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<'hero', HeroSliceVariation>;
 
 /**
+ * Item in *Bild → Karussell → Primary → Bilder*
+ */
+export interface ImageSliceCarouselPrimaryImagesItem {
+	/**
+	 * Bild field in *Bild → Karussell → Primary → Bilder*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image.carousel.primary.images[].image
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	image: prismic.ImageField<never>;
+}
+
+/**
  * Primary content in *Bild → Standard → Primary*
  */
 export interface ImageSliceDefaultPrimary {
@@ -717,7 +732,7 @@ export type ImageSliceDefault = prismic.SharedSliceVariation<
  */
 export interface ImageSliceBannerPrimary {
 	/**
-	 * Image field in *Bild → Banner → Primary*
+	 * Bild field in *Bild → Banner → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -741,9 +756,37 @@ export type ImageSliceBanner = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Bild → Karussell → Primary*
+ */
+export interface ImageSliceCarouselPrimary {
+	/**
+	 * Bilder field in *Bild → Karussell → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image.carousel.primary.images[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	images: prismic.GroupField<Simplify<ImageSliceCarouselPrimaryImagesItem>>;
+}
+
+/**
+ * Karussell variation for Bild Slice
+ *
+ * - **API ID**: `carousel`
+ * - **Description**: Image
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ImageSliceCarousel = prismic.SharedSliceVariation<
+	'carousel',
+	Simplify<ImageSliceCarouselPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Bild*
  */
-type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
+type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner | ImageSliceCarousel;
 
 /**
  * Bild Shared Slice
@@ -1171,9 +1214,12 @@ declare module '@prismicio/client' {
 			ImageSlice,
 			ImageSliceDefaultPrimary,
 			ImageSliceBannerPrimary,
+			ImageSliceCarouselPrimaryImagesItem,
+			ImageSliceCarouselPrimary,
 			ImageSliceVariation,
 			ImageSliceDefault,
 			ImageSliceBanner,
+			ImageSliceCarousel,
 			ImageCardsSlice,
 			ImageCardsSliceDefaultPrimaryCardsItem,
 			ImageCardsSliceDefaultPrimary,
