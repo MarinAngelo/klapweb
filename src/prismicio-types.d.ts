@@ -1080,6 +1080,17 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Bild als Kreis field in *TextMitBild → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.image_round
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	image_round: prismic.BooleanField;
 }
 
 /**
