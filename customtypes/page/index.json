@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"html_code": {
+							"type": "SharedSlice"
+						},
 						"code_einbetten": {
 							"type": "SharedSlice"
 						},

@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| HtmlCodeSlice
 	| CodeEinbettenSlice
 	| AccordionSlice
 	| FormSlice
@@ -838,6 +839,48 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<'hero', HeroSliceVariation>;
 
 /**
+ * Primary content in *HtmlCode → Standard → Primary*
+ */
+export interface HtmlCodeSliceDefaultPrimary {
+	/**
+	 * HTML Code field in *HtmlCode → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: html_code.default.primary.html_code
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	html_code: prismic.RichTextField;
+}
+
+/**
+ * Standard variation for HtmlCode Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HtmlCodeSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<HtmlCodeSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *HtmlCode*
+ */
+type HtmlCodeSliceVariation = HtmlCodeSliceDefault;
+
+/**
+ * HtmlCode Shared Slice
+ *
+ * - **API ID**: `html_code`
+ * - **Description**: HtmlCode
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HtmlCodeSlice = prismic.SharedSlice<'html_code', HtmlCodeSliceVariation>;
+
+/**
  * Item in *Bild → Karussell → Primary → Bilder*
  */
 export interface ImageSliceCarouselPrimaryImagesItem {
@@ -1384,6 +1427,10 @@ declare module '@prismicio/client' {
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,
 			HeroSliceDefault,
+			HtmlCodeSlice,
+			HtmlCodeSliceDefaultPrimary,
+			HtmlCodeSliceVariation,
+			HtmlCodeSliceDefault,
 			ImageSlice,
 			ImageSliceDefaultPrimary,
 			ImageSliceBannerPrimary,
