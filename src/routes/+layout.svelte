@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import { browser } from '$app/environment';
 	import { theme } from '$lib/stores/theme';
 	import { convertNumber } from '$lib/utils'; // Import der Funktion
 
@@ -30,6 +29,10 @@
 	const footerColor = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	const pageColor = data.prismicTheme.data?.page_color || 'var(--page-color)';
 	const pageBgColor = data.prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
+	const pageLinkColor = data.prismicTheme.data?.page_link_color || 'var(--page-link-color)';
+	const pageLinkHoverColor = data.prismicTheme.data?.page_link_hover_color || 'var(--page-link-hover-color)';
+	const pageLinkActiveColor = data.prismicTheme.data?.page_link_active_color || 'var(--page-link-active-color)';
+	const pageLinkVisitedColor = data.prismicTheme.data?.page_link_visited_color || 'var(--page-link-visited-color)';
 	const navFont = data.prismicTheme.data?.nav_font || 'var(--nav-font)';
 
 	// Store aktualisieren
@@ -45,6 +48,10 @@
 		footerColor,
 		pageColor,
 		pageBgColor,
+		pageLinkColor,
+		pageLinkHoverColor,
+		pageLinkActiveColor,
+		pageLinkVisitedColor,
 		navFont
 	}));
 

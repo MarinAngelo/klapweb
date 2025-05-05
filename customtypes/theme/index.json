@@ -35,6 +35,13 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"page_link_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe",
+					"placeholder": ""
+				}
+			},
 			"page_bg_color": {
 				"type": "Color",
 				"config": {

@@ -313,6 +313,17 @@ interface ThemeDocumentData {
 	page_color: prismic.ColorField;
 
 	/**
+	 * Linkfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.page_link_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_link_color: prismic.ColorField;
+
+	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
