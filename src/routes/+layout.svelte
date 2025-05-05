@@ -13,9 +13,6 @@
 
 	export let data;
 
-	// Zugriff auf die Daten aus dem $page-Store
-	$: pageData = $page.data;
-
 // Weise den Wert direkt der Prop bodyFont zu
     export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
     export let navFont: string | undefined = data.prismicTheme.data.nav_font;
