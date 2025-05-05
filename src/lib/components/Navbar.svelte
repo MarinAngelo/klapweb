@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
+	import SvgIcon from './SvgIcons.svelte';
 
 	// Props definieren
 	export let navigation;
@@ -36,6 +37,10 @@
 				subItem.sub_link === triggerLabel && // Es muss zum aktuellen Trigger passen
 				subItem !== triggerItem // Es darf nicht der Trigger selbst sein
 		);
+	}
+
+	function toggleMenu() {
+		isMenuOpen = !isMenuOpen;
 	}
 
 	onMount(() => {
@@ -79,15 +84,25 @@
 
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden">
-		<button
-			class="flex items-center px-3 py-2 border rounded"
-			on:click={() => (isMenuOpen = !isMenuOpen)}
-		>
-			<svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-				<title>Menu</title>
-				<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-			</svg>
-		</button>
+		{#if isMenuOpen}
+			<!-- Close Button -->
+			<button
+				id="close"
+				class="btn btn-square btn-ghost h-10 w-10"
+				on:click={toggleMenu}
+			>
+				<SvgIcon name="close" />
+			</button>
+		{:else}
+			<!-- Open Button -->
+			<button
+				id="open"
+				class="btn btn-square btn-ghost h-10 w-10"
+				on:click={toggleMenu}
+			>
+				<SvgIcon name="menu" />
+			</button>
+		{/if}
 	</div>
 
 	<!-- Navigation Items -->
