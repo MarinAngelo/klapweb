@@ -1,14 +1,24 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	export let slice: Content.CodeEinbettenSlice;
 
-	// Prüfen, ob die Ansicht mobil ist
-	let isMobile = window.innerWidth <= 768;
+	let isMobile = false;
 
-	// Event-Listener für Fenstergröße (optional, falls dynamische Anpassung bei Größenänderung benötigt wird)
-	window.addEventListener('resize', () => {
+	onMount(() => {
 		isMobile = window.innerWidth <= 768;
+
+		// Event-Listener für Fenstergröße
+		const handleResize = () => {
+			isMobile = window.innerWidth <= 768;
+		};
+		window.addEventListener('resize', handleResize);
+
+		// Event-Listener entfernen, wenn die Komponente zerstört wird
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	});
 </script>
 
