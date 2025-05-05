@@ -58,7 +58,7 @@
 		{#if settings.data.logo?.url}
 			<!-- Logo anzeigen -->
 			<a href="/" class="flex items-center">
-				<PrismicImage field={settings.data.logo} alt="Logo" class="h-12 w-auto" />
+				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
 			</a>
 		{:else}
 			<!-- Seiten Titel und Untertitel anzeigen -->
