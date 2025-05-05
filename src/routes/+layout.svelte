@@ -13,9 +13,9 @@
 
 	export let data;
 
-// Weise den Wert direkt der Prop bodyFont zu
-    export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
-    export let navFont: string | undefined = data.prismicTheme.data.nav_font;
+	// Weise den Wert direkt der Prop bodyFont zu
+	export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
+	// export let footerColor: string | undefined = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	// Fallbacks direkt
 	const bannerTop = data.prismicTheme.data?.banner_top;
 
@@ -30,6 +30,7 @@
 	const footerColor = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	const pageColor = data.prismicTheme.data?.page_color || 'var(--page-color)';
 	const pageBgColor = data.prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
+	const navFont = data.prismicTheme.data?.nav_font || 'var(--nav-font)';
 
 	// Store aktualisieren
 	theme.update((t) => ({
@@ -43,16 +44,12 @@
 		footerBgColor,
 		footerColor,
 		pageColor,
-		pageBgColor
+		pageBgColor,
+		navFont
 	}));
 
-    $: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
-	// $: navFontStyle = `font-family: '${navFont || 'sans-serif'}', sans-serif;`;
-	
-	// CSS-Variable aktualisieren (nur im Browser)
-    $: if (browser && navFont) {
-        document.documentElement.style.setProperty('--nav-font', navFont);
-    }
+	$: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
+
 </script>
 
 <svelte:head>
@@ -78,11 +75,12 @@
 	<main style={bodyFontStyle}>
 		<!-- Seiten Titel -->
 		{#if $page.url.pathname !== '/' && $page.data?.title}
-			<Bounded
-				as="section"
-				style="background-color: {pageBgColor}; color: {pageColor};"
-			>
-				<h1 class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0">{$page.data?.title || 'Standarttitel'}</h1>
+			<Bounded as="section" style="background-color: {pageBgColor}; color: {pageColor};">
+				<h1
+					class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0"
+				>
+					{$page.data?.title || 'Standarttitel'}
+				</h1>
 			</Bounded>
 		{/if}
 		<slot />

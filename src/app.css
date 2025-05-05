@@ -7,15 +7,6 @@
 	@apply pt-0 md:pt-0;
 }
 
-.nav-font-style {
-  font-family: var(--nav-font), sans-serif; /* Fallback über CSS-Variable */
-}
-
-/* Du könntest auch direkt die Schriftart einsetzen, aber CSS-Variablen sind flexibler */
-/* .nav-font-style { */
-/* font-family: 'Roboto', sans-serif; */
-/* } */
-
 :root {
   /* --- Fallback Styles --- */
   --nav-font: 'Roboto'; /* Standardwert */
@@ -27,7 +18,7 @@
   --header-link-visited-color: white;
   --header-bg-opacity: 1;
   --footer-bg-color: maroon;
-  --footer-color: grey;
+  --footer-color: rgb(216, 19, 19);
   --footer-link-color: white;
   --footer-link-hover-color: white;
   --footer-link-active-color: white;

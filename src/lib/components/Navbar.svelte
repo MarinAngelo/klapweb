@@ -3,6 +3,8 @@
 	import Dropdown from './Dropdown.svelte';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { onMount } from 'svelte';
+	import { theme } from '../stores/theme';
+	import { get } from 'svelte/store';
 
 	// Props definieren
 	export let navigation;
@@ -39,21 +41,24 @@
 	onMount(() => {
 		// Überprüfen, ob ein Favicon im CMS definiert ist
 		if (settings?.data?.favicon?.url) {
-			const faviconLink = document.querySelector("link[rel~='icon']") || document.createElement('link');
-			faviconLink.rel = 'icon';
-			faviconLink.href = settings.data.favicon.url; // URL des Favicons aus dem CMS
+			const faviconLink =
+				document.querySelector("link[rel~='icon']") || document.createElement('link');
+			(faviconLink as HTMLLinkElement).rel = 'icon';
+			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url; // URL des Favicons aus dem CMS
 			document.head.appendChild(faviconLink);
 		}
 	});
+
+	const { navFont } = get(theme);
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
+<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
 		{#if settings.data.logo?.url}
 			<!-- Logo anzeigen -->
-			 <a href="/" class="flex items-center">
-			<PrismicImage field={settings.data.logo} alt="Logo" class="h-12 w-auto" />
+			<a href="/" class="flex items-center">
+				<PrismicImage field={settings.data.logo} alt="Logo" class="h-12 w-auto" />
 			</a>
 		{:else}
 			<!-- Seiten Titel und Untertitel anzeigen -->
@@ -62,7 +67,11 @@
 					<PrismicText field={settings.data.site_title} /><br />
 				</span>
 				<span>
-					<PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
+					<PrismicText
+						field={settings.data.site_sub_title}
+						style="font-size: 5rem"
+						class="text-sm"
+					/>
 				</span>
 			</a>
 		{/if}
