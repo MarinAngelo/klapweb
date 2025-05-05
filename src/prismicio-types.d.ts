@@ -534,11 +534,11 @@ type AccordionSliceVariation = AccordionSliceDefault;
 export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
 
 /**
- * Primary content in *HtmlCodeEinbetten → Standard → Primary*
+ * Primary content in *GoogleMapEinbetten → Standard → Primary*
  */
 export interface CodeEinbettenSliceDefaultPrimary {
 	/**
-	 * HTML Code field in *HtmlCodeEinbetten → Standard → Primary*
+	 * HTML Code field in *GoogleMapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -549,7 +549,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for HtmlCodeEinbetten Slice
+ * Standard variation for GoogleMapEinbetten Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -562,12 +562,12 @@ export type CodeEinbettenSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *HtmlCodeEinbetten*
+ * Slice variation for *GoogleMapEinbetten*
  */
 type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
 
 /**
- * HtmlCodeEinbetten Shared Slice
+ * GoogleMapEinbetten Shared Slice
  *
  * - **API ID**: `code_einbetten`
  * - **Description**: CodeEinbetten
