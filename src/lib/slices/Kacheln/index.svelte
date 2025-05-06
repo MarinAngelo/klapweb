@@ -11,16 +11,14 @@
 
 	export let slice: Content.ImageCardsSlice;
 
-	const { pageBgColor, pageColor } = get(theme);
 </script>
 
 <Bounded
 	tag="section"
-	style="background-color: {pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
-	<div class="grid gap-12" style="color: {pageColor}">
+	<div class="grid gap-12" style="color: {get(theme).pageColor}">
 		{#if isFilled.richText(slice.primary.heading)}
 			<Heading class="text-center">
 				<PrismicText field={slice.primary.heading} />
