@@ -54,7 +54,7 @@
 				"config": {
 					"label": "Hauptschrift",
 					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura"]
+					"options": ["Roboto", "Open Sans", "Jura", "Soleil"]
 				}
 			},
 			"nav_font": {
