@@ -56,6 +56,7 @@
 	}));
 
 	$: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
+	console.log('bodyFontStyle:', bodyFontStyle);
 
 </script>
 

@@ -9,6 +9,12 @@
     const pageLinkColor = get(theme).pageLinkColor;
     const pageLinkHoverColor = get(theme).pageLinkHoverColor;
     const pageBgColor = get(theme).pageBgColor;
+	const buttonBgColor = "green"
+	const buttonTextColor = "white"
+	const buttonBorderColor = "green"
+	const buttonHoverBgColor = "green"
+	const buttonHoverTextColor = "white"
+	const buttonHoverBorderColor = "green"
 </script>
 
 <PrismicLink

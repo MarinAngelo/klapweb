@@ -343,7 +343,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
+	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura' | 'Soleil'>;
 
 	/**
 	 * Navigationsschrift field in *Design Vorlage*
