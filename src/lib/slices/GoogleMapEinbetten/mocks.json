@@ -13,6 +13,11 @@
 						}
 					}
 				]
+			},
+			"opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "82",
+				"type": "Number"
 			}
 		},
 		"items": []

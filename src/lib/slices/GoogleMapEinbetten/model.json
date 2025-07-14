@@ -1,28 +1,35 @@
 {
-	"id": "code_einbetten",
-	"type": "SharedSlice",
-	"name": "GoogleMapEinbetten",
-	"description": "CodeEinbetten",
-	"variations": [
-		{
-			"id": "default",
-			"name": "Standard",
-			"docURL": "...",
-			"version": "initial",
-			"description": "Default",
-			"imageUrl": "",
-			"primary": {
-				"html_code": {
-					"type": "StructuredText",
-					"config": {
-						"label": "HTML Code",
-						"placeholder": "",
-						"allowTargetBlank": false,
-						"single": "embed"
-					}
-				}
-			},
-			"items": {}
-		}
-	]
+  "id": "code_einbetten",
+  "type": "SharedSlice",
+  "name": "GoogleMapEinbetten",
+  "description": "CodeEinbetten",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "html_code": {
+          "type": "StructuredText",
+          "config": {
+            "label": "HTML Code",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "embed"
+          }
+        },
+        "opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz",
+            "placeholder": "Zahl zwischen 0 und 100 %"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
 }

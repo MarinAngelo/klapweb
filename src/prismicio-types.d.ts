@@ -558,6 +558,16 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
 	html_code: prismic.RichTextField;
+
+	/**
+	 * Transparenz field in *GoogleMapEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Zahl zwischen 0 und 100 %
+	 * - **API ID Path**: code_einbetten.default.primary.opacity
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	opacity: prismic.NumberField;
 }
 
 /**
