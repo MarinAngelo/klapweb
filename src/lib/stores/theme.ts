@@ -20,7 +20,9 @@ export const theme = writable({
     pageBgColor: '', 
     pageBgOpacity: 1, 
     pageLinkColor: '', 
-    pageLinkHoverColor: '', 
+    pageLinkHoverColorBg: '', 
+    pageLinkHoverColorText: '', 
     pageLinkActiveColor: '', 
     pageLinkVisitedColor: '', 
+    navFont: '',
 });

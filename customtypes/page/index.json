@@ -27,6 +27,15 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"html_code": {
+							"type": "SharedSlice"
+						},
+						"code_einbetten": {
+							"type": "SharedSlice"
+						},
+						"accordion": {
+							"type": "SharedSlice"
+						},
 						"form": {
 							"type": "SharedSlice"
 						},

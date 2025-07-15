@@ -35,6 +35,27 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"page_link_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe",
+					"placeholder": ""
+				}
+			},
+			"link_hover_color_text": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe bei Link-Mouseover",
+					"placeholder": ""
+				}
+			},
+			"link_hover_color_bg": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe bei Link-Mouseover",
+					"placeholder": ""
+				}
+			},
 			"page_bg_color": {
 				"type": "Color",
 				"config": {
@@ -47,7 +68,7 @@
 				"config": {
 					"label": "Hauptschrift",
 					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura"]
+					"options": ["Roboto", "Open Sans", "Jura", "Soleil"]
 				}
 			},
 			"nav_font": {

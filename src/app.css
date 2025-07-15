@@ -7,14 +7,19 @@
 	@apply pt-0 md:pt-0;
 }
 
-.nav-font-style {
-  font-family: var(--nav-font), sans-serif; /* Fallback über CSS-Variable */
+/* TailwindCSS-Overrides */
+.hover\:bg-current:hover {
+  background-color: var(--hover-bg-color) !important;
 }
 
-/* Du könntest auch direkt die Schriftart einsetzen, aber CSS-Variablen sind flexibler */
-/* .nav-font-style { */
-/* font-family: 'Roboto', sans-serif; */
-/* } */
+.hover\:text-white:hover {
+  color: var(--hover-text-color) !important;
+}
+
+.focus\:ring-current:focus {
+  --tw-ring-color: var(--focus-ring-color) !important;
+  box-shadow: 0 0 0 calc(2px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color), var(--tw-ring-shadow, 0 0 #0000);
+}
 
 :root {
   /* --- Fallback Styles --- */
@@ -27,23 +32,26 @@
   --header-link-visited-color: white;
   --header-bg-opacity: 1;
   --footer-bg-color: maroon;
-  --footer-color: grey;
+  --footer-color: rgb(216, 19, 19);
   --footer-link-color: white;
   --footer-link-hover-color: white;
   --footer-link-active-color: white;
   --footer-link-visited-color: white;
   --footer-bg-opacity: 1;
-  --page-bg-color: black;
+  --page-bg-color: #000;
   --page-color: white;
-  --page-link-color: white;
-  --page-link-hover-color: white;
-  --page-link-active-color: white;
-  --page-link-visited-color: white;
+  --page-link-color: #090247;
+  --page-link-hover-color-bg: #4338CA;
+  --page-link-hover-color-text: #d8d6e9;
+  --page-link-active-color: var(--page-link-color);
+  --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;
   --hero-overlay-color: white;
+
   p, li {
     font-size: 1.2rem;
   }
+
   h2 {
     font-size: 1.8rem;
   }

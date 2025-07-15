@@ -104,6 +104,9 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| HtmlCodeSlice
+	| CodeEinbettenSlice
+	| AccordionSlice
 	| FormSlice
 	| HeroSlice
 	| QuoteSlice
@@ -232,6 +235,28 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	responsible_person_company: prismic.KeyTextField;
+
+	/**
+	 * Logo field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.logo
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	logo: prismic.ImageField<never>;
+
+	/**
+	 * Favicon field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.favicon
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never>;
 }
 
 /**
@@ -288,6 +313,39 @@ interface ThemeDocumentData {
 	page_color: prismic.ColorField;
 
 	/**
+	 * Linkfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.page_link_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	page_link_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe bei Link-Mouseover field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.link_hover_color_text
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	link_hover_color_text: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe bei Link-Mouseover field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.link_hover_color_bg
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	link_hover_color_bg: prismic.ColorField;
+
+	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -307,7 +365,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
+	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura' | 'Soleil'>;
 
 	/**
 	 * Navigationsschrift field in *Design Vorlage*
@@ -421,6 +479,145 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
+
+/**
+ * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+ */
+export interface AccordionSliceDefaultPrimaryAccordionItemsItem {
+	/**
+	 * Titel field in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[].label
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Text field in *Akkordeon → Standard → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[].content
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	content: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *Akkordeon → Standard → Primary*
+ */
+export interface AccordionSliceDefaultPrimary {
+	/**
+	 * Überschrift field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Beschreibung field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.description
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Akkordeon Elemente field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.accordion_items[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	accordion_items: prismic.GroupField<Simplify<AccordionSliceDefaultPrimaryAccordionItemsItem>>;
+}
+
+/**
+ * Standard variation for Akkordeon Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AccordionSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AccordionSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Akkordeon*
+ */
+type AccordionSliceVariation = AccordionSliceDefault;
+
+/**
+ * Akkordeon Shared Slice
+ *
+ * - **API ID**: `accordion`
+ * - **Description**: Akkordeon
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
+
+/**
+ * Primary content in *GoogleMapEinbetten → Standard → Primary*
+ */
+export interface CodeEinbettenSliceDefaultPrimary {
+	/**
+	 * HTML Code field in *GoogleMapEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: code_einbetten.default.primary.html_code
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	html_code: prismic.RichTextField;
+
+	/**
+	 * Transparenz field in *GoogleMapEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Zahl zwischen 0 und 100 %
+	 * - **API ID Path**: code_einbetten.default.primary.opacity
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	opacity: prismic.NumberField;
+}
+
+/**
+ * Standard variation for GoogleMapEinbetten Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type CodeEinbettenSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<CodeEinbettenSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *GoogleMapEinbetten*
+ */
+type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
+
+/**
+ * GoogleMapEinbetten Shared Slice
+ *
+ * - **API ID**: `code_einbetten`
+ * - **Description**: CodeEinbetten
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type CodeEinbettenSlice = prismic.SharedSlice<'code_einbetten', CodeEinbettenSliceVariation>;
 
 /**
  * Item in *Formular → Standard → Primary → Formular Felder*
@@ -685,6 +882,63 @@ type HeroSliceVariation = HeroSliceDefault;
 export type HeroSlice = prismic.SharedSlice<'hero', HeroSliceVariation>;
 
 /**
+ * Primary content in *HtmlCode → Standard → Primary*
+ */
+export interface HtmlCodeSliceDefaultPrimary {
+	/**
+	 * HTML Code field in *HtmlCode → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: html_code.default.primary.html_code
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	html_code: prismic.RichTextField;
+}
+
+/**
+ * Standard variation for HtmlCode Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HtmlCodeSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<HtmlCodeSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *HtmlCode*
+ */
+type HtmlCodeSliceVariation = HtmlCodeSliceDefault;
+
+/**
+ * HtmlCode Shared Slice
+ *
+ * - **API ID**: `html_code`
+ * - **Description**: HtmlCode
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HtmlCodeSlice = prismic.SharedSlice<'html_code', HtmlCodeSliceVariation>;
+
+/**
+ * Item in *Bild → Karussell → Primary → Bilder*
+ */
+export interface ImageSliceCarouselPrimaryImagesItem {
+	/**
+	 * Bild field in *Bild → Karussell → Primary → Bilder*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image.carousel.primary.images[].image
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	image: prismic.ImageField<never>;
+}
+
+/**
  * Primary content in *Bild → Standard → Primary*
  */
 export interface ImageSliceDefaultPrimary {
@@ -717,7 +971,7 @@ export type ImageSliceDefault = prismic.SharedSliceVariation<
  */
 export interface ImageSliceBannerPrimary {
 	/**
-	 * Image field in *Bild → Banner → Primary*
+	 * Bild field in *Bild → Banner → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -741,9 +995,37 @@ export type ImageSliceBanner = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Bild → Karussell → Primary*
+ */
+export interface ImageSliceCarouselPrimary {
+	/**
+	 * Bilder field in *Bild → Karussell → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image.carousel.primary.images[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	images: prismic.GroupField<Simplify<ImageSliceCarouselPrimaryImagesItem>>;
+}
+
+/**
+ * Karussell variation for Bild Slice
+ *
+ * - **API ID**: `carousel`
+ * - **Description**: Image
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ImageSliceCarousel = prismic.SharedSliceVariation<
+	'carousel',
+	Simplify<ImageSliceCarouselPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Bild*
  */
-type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner;
+type ImageSliceVariation = ImageSliceDefault | ImageSliceBanner | ImageSliceCarousel;
 
 /**
  * Bild Shared Slice
@@ -1037,6 +1319,17 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Bild als Kreis field in *TextMitBild → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.image_round
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	image_round: prismic.BooleanField;
 }
 
 /**
@@ -1159,6 +1452,15 @@ declare module '@prismicio/client' {
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,
+			AccordionSlice,
+			AccordionSliceDefaultPrimaryAccordionItemsItem,
+			AccordionSliceDefaultPrimary,
+			AccordionSliceVariation,
+			AccordionSliceDefault,
+			CodeEinbettenSlice,
+			CodeEinbettenSliceDefaultPrimary,
+			CodeEinbettenSliceVariation,
+			CodeEinbettenSliceDefault,
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
@@ -1168,12 +1470,19 @@ declare module '@prismicio/client' {
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,
 			HeroSliceDefault,
+			HtmlCodeSlice,
+			HtmlCodeSliceDefaultPrimary,
+			HtmlCodeSliceVariation,
+			HtmlCodeSliceDefault,
 			ImageSlice,
 			ImageSliceDefaultPrimary,
 			ImageSliceBannerPrimary,
+			ImageSliceCarouselPrimaryImagesItem,
+			ImageSliceCarouselPrimary,
 			ImageSliceVariation,
 			ImageSliceDefault,
 			ImageSliceBanner,
+			ImageSliceCarousel,
 			ImageCardsSlice,
 			ImageCardsSliceDefaultPrimaryCardsItem,
 			ImageCardsSliceDefaultPrimary,

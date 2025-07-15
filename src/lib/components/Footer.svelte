@@ -9,7 +9,7 @@
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
 
-	const { footerColor, footerBgColor } = get(theme);
+	const { footerColor, footerBgColor } = get(theme);	
 
 	let email = settings.data?.e_mail || '';
 	let responsiblePersonCompany = settings.data?.responsible_person_company || '';

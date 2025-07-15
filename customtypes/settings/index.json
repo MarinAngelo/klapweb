@@ -37,6 +37,22 @@
 					"label": "Verantwortlich (Person/Unternehmen)",
 					"placeholder": ""
 				}
+			},
+			"logo": {
+				"type": "Image",
+				"config": {
+					"label": "Logo",
+					"constraint": {},
+					"thumbnails": []
+				}
+			},
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon",
+					"constraint": {},
+					"thumbnails": []
+				}
 			}
 		}
 	}

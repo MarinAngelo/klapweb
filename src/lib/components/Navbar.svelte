@@ -1,17 +1,21 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import Dropdown from './Dropdown.svelte';
+	import { PrismicImage } from '@prismicio/svelte';
+	import { onMount } from 'svelte';
+	import { theme } from '../stores/theme';
+	import { get } from 'svelte/store';
+	import SvgIcon from './SvgIcons.svelte';
 
 	// Props definieren
 	export let navigation;
-	
+
 	export let headerColor; // Wird für die Textfarbe verwendet
 	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
 	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
 	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
 	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
 	export let settings;
-
 
 	// Zustand für das Hamburger-Menü
 	let isMenuOpen = false;
@@ -35,34 +39,70 @@
 		);
 	}
 
+	function toggleMenu() {
+		isMenuOpen = !isMenuOpen;
+	}
+
+	onMount(() => {
+		// Überprüfen, ob ein Favicon im CMS definiert ist
+		if (settings?.data?.favicon?.url) {
+			const faviconLink =
+				document.querySelector("link[rel~='icon']") || document.createElement('link');
+			(faviconLink as HTMLLinkElement).rel = 'icon';
+			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url; // URL des Favicons aus dem CMS
+			document.head.appendChild(faviconLink);
+		}
+	});
+
+	const { navFont } = get(theme);
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6 nav-font-style">
+<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		<a href="/" style="color: {headerColor};">
-			<!-- Seiten Titel -->
-			<span class="text-xl font-semibold tracking-tight">
-				<PrismicText field={settings.data.site_title} /><br />
-			</span>
-			<!-- Optionaler Untertitel -->
-			<span>
-				<PrismicText field={settings.data.site_sub_title} style="font-size: 5rem" class="text-sm" />
-			</span>
-		</a>
+		{#if settings.data.logo?.url}
+			<!-- Logo anzeigen -->
+			<a href="/" class="flex items-center">
+				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
+			</a>
+		{:else}
+			<!-- Seiten Titel und Untertitel anzeigen -->
+			<a href="/" style="color: {headerColor};">
+				<span class="text-xl font-semibold tracking-tight">
+					<PrismicText field={settings.data.site_title} /><br />
+				</span>
+				<span>
+					<PrismicText
+						field={settings.data.site_sub_title}
+						style="font-size: 5rem"
+						class="text-sm"
+					/>
+				</span>
+			</a>
+		{/if}
 	</div>
 
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden">
-		<button
-			class="flex items-center px-3 py-2 border rounded"
-			on:click={() => (isMenuOpen = !isMenuOpen)}
-		>
-			<svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-				<title>Menu</title>
-				<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-			</svg>
-		</button>
+		{#if isMenuOpen}
+			<!-- Close Button -->
+			<button
+				id="close"
+				class="btn btn-square btn-ghost h-10 w-10"
+				on:click={toggleMenu}
+			>
+				<SvgIcon name="close" />
+			</button>
+		{:else}
+			<!-- Open Button -->
+			<button
+				id="open"
+				class="btn btn-square btn-ghost h-10 w-10"
+				on:click={toggleMenu}
+			>
+				<SvgIcon name="menu" />
+			</button>
+		{/if}
 	</div>
 
 	<!-- Navigation Items -->

@@ -1,17 +1,34 @@
 <script lang="ts">
-	import { PrismicLink } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
+    import { PrismicLink } from '@prismicio/svelte';
+    import { theme } from '$lib/stores/theme';
+    import { get } from 'svelte/store';
 
-	export let link: any; // Der Link, der an PrismicLink übergeben wird
-	export let text: string = 'Mehr erfahren'; // Standardtext für den Button
+    export let link: any;
+    export let text: string = 'Mehr erfahren';
+
+    const pageLinkColor = get(theme).pageLinkColor;
+    const pageLinkHoverColorText = get(theme).pageLinkHoverColorText;
+    const pageLinkHoverColorBg = get(theme).pageLinkHoverColorBg;
+
 </script>
 
 <PrismicLink
-	field={link}
-	class="text-xs sm:text-sm inline-block px-4 py-2 font-semibold rounded-full hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-	style="--button-bg-color: {get(theme).pageBgColor}; --button-text-color: {get(theme)
-		.pageColor}; border: 1px solid var(--button-text-color);"
+    field={link}
+    class="inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm
+           bg-transparent border
+           hover:bg-current hover:text-white
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current
+           transition duration-200 ease-in-out"
+           
+    style={`
+        border-color: ${pageLinkColor};
+        color: ${pageLinkColor};
+
+        /* TailwindCSS-Overrides */
+        --hover-bg-color: ${pageLinkHoverColorBg}; /* Für hover:bg-[...] */
+        --hover-text-color: ${pageLinkHoverColorText}; /* Für hover:text-[...] */
+        --focus-ring-color: ${pageLinkColor}; /* Für focus:ring-[...] */
+    `}
 >
-	{text}
+    {text}
 </PrismicLink>

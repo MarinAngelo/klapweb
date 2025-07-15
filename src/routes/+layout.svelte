@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import { browser } from '$app/environment';
 	import { theme } from '$lib/stores/theme';
 	import { convertNumber } from '$lib/utils'; // Import der Funktion
 
@@ -13,12 +12,9 @@
 
 	export let data;
 
-	// Zugriff auf die Daten aus dem $page-Store
-	$: pageData = $page.data;
-
-// Weise den Wert direkt der Prop bodyFont zu
-    export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
-    export let navFont: string | undefined = data.prismicTheme.data.nav_font;
+	// Weise den Wert direkt der Prop bodyFont zu
+	export let bodyFont: string | undefined = data.prismicTheme.data.body_font;
+	// export let footerColor: string | undefined = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	// Fallbacks direkt
 	const bannerTop = data.prismicTheme.data?.banner_top;
 
@@ -33,6 +29,12 @@
 	const footerColor = data.prismicTheme.data?.footer_color || 'var(--footer-color)';
 	const pageColor = data.prismicTheme.data?.page_color || 'var(--page-color)';
 	const pageBgColor = data.prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
+	const pageLinkColor = data.prismicTheme.data?.page_link_color || 'var(--page-link-color)';
+	const pageLinkHoverColorBg = data.prismicTheme.data?.page_link_hover_color_bg || 'var(--page-link-hover-color-bg)';
+	const pageLinkHoverColorText = data.prismicTheme.data?.page_link_hover_color_text || 'var(--page-link-hover-color-text)';
+	const pageLinkActiveColor = data.prismicTheme.data?.page_link_active_color || 'var(--page-link-active-color)';
+	const pageLinkVisitedColor = data.prismicTheme.data?.page_link_visited_color || 'var(--page-link-visited-color)';
+	const navFont = data.prismicTheme.data?.nav_font || 'var(--nav-font)';
 
 	// Store aktualisieren
 	theme.update((t) => ({
@@ -46,16 +48,18 @@
 		footerBgColor,
 		footerColor,
 		pageColor,
-		pageBgColor
+		pageBgColor,
+		pageLinkColor,
+		pageLinkHoverColorBg,
+		pageLinkHoverColorText,
+		pageLinkActiveColor,
+		pageLinkVisitedColor,
+		navFont
 	}));
 
-    $: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
-	// $: navFontStyle = `font-family: '${navFont || 'sans-serif'}', sans-serif;`;
-	
-	// CSS-Variable aktualisieren (nur im Browser)
-    $: if (browser && navFont) {
-        document.documentElement.style.setProperty('--nav-font', navFont);
-    }
+	$: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
+	console.log('bodyFontStyle:', bodyFontStyle);
+
 </script>
 
 <svelte:head>
@@ -81,11 +85,12 @@
 	<main style={bodyFontStyle}>
 		<!-- Seiten Titel -->
 		{#if $page.url.pathname !== '/' && $page.data?.title}
-			<Bounded
-				as="section"
-				style="background-color: {pageBgColor}; color: {pageColor};"
-			>
-				<h1 class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0">{$page.data?.title || 'Standarttitel'}</h1>
+			<Bounded as="section" style="background-color: {pageBgColor}; color: {pageColor};">
+				<h1
+					class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0"
+				>
+					{$page.data?.title || 'Standarttitel'}
+				</h1>
 			</Bounded>
 		{/if}
 		<slot />

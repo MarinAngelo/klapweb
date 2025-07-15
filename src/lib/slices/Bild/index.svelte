@@ -4,6 +4,7 @@
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
+	import Carousel from './carousel.svelte';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -24,5 +25,8 @@
 		<div style="background-color: {pageBgColor};">
 			<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
 		</div>
+	{/if}
+	{#if slice.variation === 'carousel'}
+		<Carousel images={slice.primary.images.map(item => item.image)} />
 	{/if}
 </Bounded>
