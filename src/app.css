@@ -40,8 +40,8 @@
   --footer-bg-opacity: 1;
   --page-bg-color: #000;
   --page-color: white;
-  --page-link-color: red;
-  --page-link-hover-color: rgb(226, 156, 177);
+  --page-link-color: #090247;
+  --page-link-hover-color: #4338CA;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;
