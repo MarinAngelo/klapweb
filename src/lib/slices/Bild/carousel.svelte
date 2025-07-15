@@ -42,7 +42,6 @@
     on:touchmove={handleTouchMove}
     on:touchend={handleTouchEnd}
 >
-    <!-- Bilder -->
     <div class="carousel-images flex transition-transform duration-500" style="transform: translateX(-{currentIndex * 100}%);">
         {#each images as image, index}
             <div class="carousel-item flex-shrink-0 w-full">
@@ -51,22 +50,20 @@
         {/each}
     </div>
 
-    <!-- Navigation -->
-    <button class="prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block" on:click={prevImage}>
+    <button class="prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block" on:click={prevImage} aria-label="Vorheriges Bild">
         &#10094;
     </button>
-    <button class="next absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block" on:click={nextImage}>
+    <button class="next absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block" on:click={nextImage} aria-label="Nächstes Bild">
         &#10095;
     </button>
 
-    <!-- Indikatoren -->
     <div class="indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {#each images as _, index}
-            <div
-                class="indicator w-3 h-3 rounded-full cursor-pointer"
+            <button
+                type="button" class="indicator w-3 h-3 rounded-full cursor-pointer"
                 class:selected={index === currentIndex}
                 on:click={() => (currentIndex = index)}
-            ></div>
+                aria-label="Gehe zu Bild {index + 1}" ></button>
         {/each}
     </div>
 </div>
@@ -93,6 +90,10 @@
 
     .indicators .indicator {
         background-color: gray;
+        /* Füge hier display: block; hinzu, um sicherzustellen, dass der Button als Blockelement gerendert wird */
+        display: block;
+        border: none; /* Button hat standardmäßig einen Border, den wir entfernen wollen */
+        padding: 0; /* Standard-Padding des Buttons entfernen */
     }
 
     .indicators .indicator.selected {
