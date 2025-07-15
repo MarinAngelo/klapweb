@@ -24,6 +24,7 @@
            hover:bg-current hover:text-white
            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current
            transition duration-200 ease-in-out"
+           
     style={`
         border-color: ${pageLinkColor};
         color: ${pageLinkColor};
@@ -34,18 +35,3 @@
 >
     {text}
 </PrismicLink>
-
-<style>
-    :global(.hover\:bg-current:hover) {
-        background-color: var(--hover-bg-color) !important;
-    }
-
-    :global(.hover\:text-white:hover) {
-        color: var(--hover-text-color) !important;
-    }
-
-    :global(.focus\:ring-current:focus) {
-        --tw-ring-color: var(--focus-ring-color) !important;
-        box-shadow: 0 0 0 calc(2px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color), var(--tw-ring-shadow, 0 0 #0000);
-    }
-</style>
