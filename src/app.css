@@ -41,9 +41,9 @@
   --page-bg-color: #000;
   --page-color: white;
   --page-link-color: red;
-  --page-link-hover-color: white;
-  --page-link-active-color: white;
-  --page-link-visited-color: white;
+  --page-link-hover-color: rgb(226, 156, 177);
+  --page-link-active-color: var(--page-link-color);
+  --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;
   --hero-overlay-color: white;
 

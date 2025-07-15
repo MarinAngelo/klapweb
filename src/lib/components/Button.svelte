@@ -8,13 +8,7 @@
 
     const pageLinkColor = get(theme).pageLinkColor;
     const pageLinkHoverColor = get(theme).pageLinkHoverColor;
-    const pageBgColor = get(theme).pageBgColor;
-	const buttonBgColor = "green"
-	const buttonTextColor = "white"
-	const buttonBorderColor = "green"
-	const buttonHoverBgColor = "green"
-	const buttonHoverTextColor = "white"
-	const buttonHoverBorderColor = "green"
+
 </script>
 
 <PrismicLink
@@ -28,8 +22,10 @@
     style={`
         border-color: ${pageLinkColor};
         color: ${pageLinkColor};
+
+        /* TailwindCSS-Overrides */
         --hover-bg-color: ${pageLinkColor}; /* Für hover:bg-[...] */
-        --hover-text-color: ${pageBgColor}; /* Für hover:text-[...] */
+        --hover-text-color: ${pageLinkHoverColor}; /* Für hover:text-[...] */
         --focus-ring-color: ${pageLinkColor}; /* Für focus:ring-[...] */
     `}
 >

@@ -42,6 +42,13 @@
 					"placeholder": ""
 				}
 			},
+			"link_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Farbe bei Link-Mouseover",
+					"placeholder": ""
+				}
+			},
 			"page_bg_color": {
 				"type": "Color",
 				"config": {
