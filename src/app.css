@@ -41,7 +41,8 @@
   --page-bg-color: #000;
   --page-color: white;
   --page-link-color: #090247;
-  --page-link-hover-color: #4338CA;
+  --page-link-hover-color-bg: #4338CA;
+  --page-link-hover-color-text: #d8d6e9;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;

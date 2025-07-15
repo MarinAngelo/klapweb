@@ -7,7 +7,8 @@
     export let text: string = 'Mehr erfahren';
 
     const pageLinkColor = get(theme).pageLinkColor;
-    const pageLinkHoverColor = get(theme).pageLinkHoverColor;
+    const pageLinkHoverColorText = get(theme).pageLinkHoverColorText;
+    const pageLinkHoverColorBg = get(theme).pageLinkHoverColorBg;
 
 </script>
 
@@ -24,8 +25,8 @@
         color: ${pageLinkColor};
 
         /* TailwindCSS-Overrides */
-        --hover-bg-color: ${pageLinkColor}; /* Für hover:bg-[...] */
-        --hover-text-color: ${pageLinkHoverColor}; /* Für hover:text-[...] */
+        --hover-bg-color: ${pageLinkHoverColorBg}; /* Für hover:bg-[...] */
+        --hover-text-color: ${pageLinkHoverColorText}; /* Für hover:text-[...] */
         --focus-ring-color: ${pageLinkColor}; /* Für focus:ring-[...] */
     `}
 >

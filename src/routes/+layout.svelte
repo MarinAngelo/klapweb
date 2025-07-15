@@ -30,7 +30,8 @@
 	const pageColor = data.prismicTheme.data?.page_color || 'var(--page-color)';
 	const pageBgColor = data.prismicTheme.data?.page_bg_color || 'var(--page-bg-color)';
 	const pageLinkColor = data.prismicTheme.data?.page_link_color || 'var(--page-link-color)';
-	const pageLinkHoverColor = data.prismicTheme.data?.page_link_hover_color || 'var(--page-link-hover-color)';
+	const pageLinkHoverColorBg = data.prismicTheme.data?.page_link_hover_color_bg || 'var(--page-link-hover-color-bg)';
+	const pageLinkHoverColorText = data.prismicTheme.data?.page_link_hover_color_text || 'var(--page-link-hover-color-text)';
 	const pageLinkActiveColor = data.prismicTheme.data?.page_link_active_color || 'var(--page-link-active-color)';
 	const pageLinkVisitedColor = data.prismicTheme.data?.page_link_visited_color || 'var(--page-link-visited-color)';
 	const navFont = data.prismicTheme.data?.nav_font || 'var(--nav-font)';
@@ -49,7 +50,8 @@
 		pageColor,
 		pageBgColor,
 		pageLinkColor,
-		pageLinkHoverColor,
+		pageLinkHoverColorBg,
+		pageLinkHoverColorText,
 		pageLinkActiveColor,
 		pageLinkVisitedColor,
 		navFont

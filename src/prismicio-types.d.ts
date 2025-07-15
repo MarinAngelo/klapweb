@@ -324,15 +324,26 @@ interface ThemeDocumentData {
 	page_link_color: prismic.ColorField;
 
 	/**
-	 * Farbe bei Link-Mouseover field in *Design Vorlage*
+	 * Textfarbe bei Link-Mouseover field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color
+	 * - **API ID Path**: theme.link_hover_color_text
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#color
 	 */
-	link_hover_color: prismic.ColorField;
+	link_hover_color_text: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe bei Link-Mouseover field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.link_hover_color_bg
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	link_hover_color_bg: prismic.ColorField;
 
 	/**
 	 * Hintergrundfarbe field in *Design Vorlage*

@@ -42,10 +42,17 @@
 					"placeholder": ""
 				}
 			},
-			"link_hover_color": {
+			"link_hover_color_text": {
 				"type": "Color",
 				"config": {
-					"label": "Farbe bei Link-Mouseover",
+					"label": "Textfarbe bei Link-Mouseover",
+					"placeholder": ""
+				}
+			},
+			"link_hover_color_bg": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe bei Link-Mouseover",
 					"placeholder": ""
 				}
 			},
