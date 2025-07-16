@@ -14,14 +14,14 @@
 
 	const { pageBgColor, pageColor } = get(theme);
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 0) || 0.5;
+	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
 
 	// Funktion zur Konvertierung von Prozentwerten in `vh`
 	function convertBannerHeight(percent: string | null): string {
 		switch (percent) {
 			case '100 %':
-				return '84vh';
+				return '92vh';
 			case '50 %':
 				return '42vh';
 			case '33 %':
@@ -32,7 +32,8 @@
 	}
 
 	// Konvertierter Wert für die Bannerhöhe
-	const bannerHeight = convertBannerHeight(slice.primary.banner_height);
+	const bannerHeight = convertBannerHeight(slice.primary.banner_height ?? '100 %') || '92vh';
+	console.log('Banner height:', bannerHeight);
 </script>
 
 <section

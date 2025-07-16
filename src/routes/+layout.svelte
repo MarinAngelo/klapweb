@@ -19,7 +19,7 @@
 	const bannerTop = data.prismicTheme.data?.banner_top;
 
 	// Fallbacks aus app.css verwenden
-	const headerBgOpacity = convertNumber(data.prismicTheme.data?.header_bg_opacity ?? 0) || 0.5;
+	const headerBgOpacity = convertNumber(data.prismicTheme.data?.header_bg_opacity ?? 99) || 0.99;
 	const headerBgColor = data.prismicTheme.data?.header_bg_color || 'var(--header-bg-color)';
 	const headerColor = data.prismicTheme.data?.header_color || 'var(header-color)';
 	const headerLinkColor = data.prismicTheme.data?.header_link_color || 'var(--header-link-color)';
