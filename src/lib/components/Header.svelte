@@ -21,6 +21,15 @@
 		headerLinkHoverColor
 	} = get(theme);
 
+	console.log('Header settings:', {
+		bannerTop,
+		headerBgColor,
+		headerBgOpacity,
+		headerColor,
+		headerLinkColor,
+		headerLinkHoverColor
+	});
+
 	// Reaktiver Zugriff auf den aktuellen Pfad
 	$: currentPath = $page.url.pathname;
 
