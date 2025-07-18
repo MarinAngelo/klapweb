@@ -21,13 +21,13 @@
 	function convertBannerHeight(percent: string | null): string {
 		switch (percent) {
 			case '100 %':
-				return '92vh';
+				return '100vh';
 			case '50 %':
-				return '42vh';
+				return '50vh';
 			case '33 %':
-				return '28vh';
+				return '33vh';
 			default:
-				return '42vh'; // Standardwert
+				return '100vh'; // Standardwert
 		}
 	}
 
