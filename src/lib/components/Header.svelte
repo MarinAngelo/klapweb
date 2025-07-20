@@ -42,21 +42,20 @@
 </script>
 
 <Bounded
-	tag="header"
-	yPadding="none"
-	tMargin="lg"
-	bind:elementRef={headerEl}
-	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
-	style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; z-index: 49;"
+    tag="header"
+    yPadding="none"
+    tMargin="lg"
+    bind:elementRef={headerEl}
+    class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
+    style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; position: relative; z-index: 100;"
 >
-
-	<Navbar
-		{navigation}
-		{headerColor}
-		{headerBgColor}
-		{headerLinkColor}
-		{headerLinkHoverColor}
-		{settings}
-		{currentPath}
-	/>
+    <Navbar
+        {navigation}
+        {headerColor}
+        {headerBgColor}
+        {headerLinkColor}
+        {headerLinkHoverColor}
+        {settings}
+        {currentPath}
+    />
 </Bounded>
