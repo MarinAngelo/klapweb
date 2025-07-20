@@ -9,6 +9,11 @@
 
 	export let slice: Content.TextWithImageSlice;
 
+	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
+	export let slices; // Diese Zeile hinzufügen
+	export let context; // Diese Zeile hinzufügen
+	export let index; // Diese Zeile hinzufügen
+
 	// Setze den Standardwert von yPadding basierend auf y_padding_same
 	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
 
