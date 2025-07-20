@@ -10,14 +10,16 @@
 
 	export let slice: Content.ImageSlice;
 	export let index: number;
-	
+	export let slices;
+	export let context;
+
 	const { pageBgColor } = get(theme);
 </script>
 
 <Bounded
 	tag="section"
 	class={clsx(index === 0 && 'pt-0 md:pt-0')}
-    style={index === 0 ? `background-color: ${pageBgColor};` : `background-color: ${pageBgColor};`} 
+	style={index === 0 ? `background-color: ${pageBgColor};` : `background-color: ${pageBgColor};`}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -27,6 +29,6 @@
 		</div>
 	{/if}
 	{#if slice.variation === 'carousel'}
-		<Carousel images={slice.primary.images.map(item => item.image)} />
+		<Carousel images={slice.primary.images.map((item) => item.image)} />
 	{/if}
 </Bounded>

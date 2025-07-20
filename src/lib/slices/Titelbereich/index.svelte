@@ -9,6 +9,10 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Heading from './Heading.svelte';
 
+	export let slices; // Diese Zeile hinzufügen
+	export let context; // Diese Zeile hinzufügen
+	export let index; // Diese Zeile hinzufügen
+
 	export let slice: Content.HeroSlice;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
