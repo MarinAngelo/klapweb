@@ -10,6 +10,11 @@
 	export let slice: Content.QuoteSlice;
 
 	const { pageBgColor, pageColor } = get(theme);
+
+	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
+	export let slices;
+	export let context;
+	export let index;
 </script>
 
 <Bounded

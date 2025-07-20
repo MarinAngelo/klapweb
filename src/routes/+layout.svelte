@@ -58,7 +58,6 @@
 	}));
 
 	$: bodyFontStyle = `font-family: '${bodyFont || 'sans-serif'}', sans-serif;`;
-	console.log('bodyFontStyle:', bodyFontStyle);
 
 </script>
 
@@ -80,7 +79,6 @@
 	<Header
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}
-		prismicTheme={data?.prismicTheme || {}}
 	/>
 	<main style={bodyFontStyle}>
 		<!-- Seiten Titel -->
@@ -98,7 +96,6 @@
 	<Footer
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}
-		prismicTheme={data?.prismicTheme || {}}
 	/>
 </div>
 <PrismicPreview {repositoryName} />

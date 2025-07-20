@@ -8,6 +8,9 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 
 	export let slice: Content.TextSlice;
+	export let slices;
+	export let context;
+	export let index;
 
 	const { pageColor, pageBgColor } = get(theme);
 </script>
