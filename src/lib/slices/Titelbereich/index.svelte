@@ -2,43 +2,45 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
+	import { headerHeight } from '$lib/stores/headerHeight';
+	import { derived } from 'svelte/store';
 	import { convertNumber } from '$lib/utils';
-
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-
 	import Heading from './Heading.svelte';
 
 	export let slice: Content.HeroSlice;
 
-	const { pageBgColor, pageColor } = get(theme);
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
 
-	// Funktion zur Konvertierung von Prozentwerten in `vh`
-	function convertBannerHeight(percent: string | null): string {
-		switch (percent) {
-			case '100 %':
-				return '100vh';
-			case '50 %':
+	const bannerHeight = derived([theme, headerHeight], ([$theme, $headerHeight]) => {
+		const raw = slice.primary.banner_height ?? '100 %';
+		const clean = raw.replace(/\s/g, '');
+		const bannerTop = $theme.bannerTop;
+
+		if (!$theme.bannerTop && $headerHeight === 0) {
+			// ⏳ Headerhöhe noch nicht bekannt → erstmal keine Höhe zurückgeben
+			return 'auto';
+		}
+
+		switch (clean) {
+			case '100%':
+				return bannerTop ? '100vh' : `calc(100vh - ${$headerHeight}px)`;
+			case '50%':
 				return '50vh';
-			case '33 %':
+			case '33%':
 				return '33vh';
 			default:
-				return '100vh'; // Standardwert
+				return '100vh';
 		}
-	}
-
-	// Konvertierter Wert für die Bannerhöhe
-	const bannerHeight = convertBannerHeight(slice.primary.banner_height ?? '100 %') || '92vh';
-	console.log('Banner height:', bannerHeight);
+	});
 </script>
 
 <section
 	class="relative"
-	style="background-color: {overlayColor}; color: {color}; height: {bannerHeight};"
+	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -64,7 +66,7 @@
 				<PrismicLink
 					field={slice.primary.button_link}
 					class="rounded px-5 py-3 font-medium"
-					style="background-color: {pageBgColor}; color: {pageColor};"
+					style="background-color: {theme.pageBgColor}; color: {theme.pageColor};"
 				>
 					{slice.primary.button_text}
 				</PrismicLink>
