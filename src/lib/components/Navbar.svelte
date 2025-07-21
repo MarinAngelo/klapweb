@@ -44,7 +44,7 @@
 	<div class="flex items-center flex-shrink-0 mr-6">
 		{#if prismicTheme.data.logo?.url}
 			<a href="/" class="flex items-center">
-				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
+				<PrismicImage field={prismicTheme.data.logo} alt={prismicTheme.data.logo.alt} class="h-12 w-auto" />
 			</a>
 		{:else}
 			<a href="/" style="color: {headerColor};">
