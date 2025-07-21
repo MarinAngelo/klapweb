@@ -837,7 +837,7 @@ export interface HeroSliceDefaultPrimary {
 	 * Tranparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: 0% - 100%
 	 * - **API ID Path**: hero.default.primary.overlay_opacity
 	 * - **Documentation**: https://prismic.io/docs/field#number
 	 */
@@ -852,6 +852,36 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
 	banner_height: prismic.SelectField<'100 %' | '50 %' | '33 %'>;
+
+	/**
+	 * Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.text_overlay_color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	text_overlay_color: prismic.ColorField;
+
+	/**
+	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0% - 100%
+	 * - **API ID Path**: hero.default.primary.text_overlay_opacity
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	text_overlay_opacity: prismic.NumberField;
+
+	/**
+	 * Text Überlagerungsfeld Grösse field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.text_overlay_padding
+	 * - **Documentation**: https://prismic.io/docs/field#select
+	 */
+	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
 }
 
 /**

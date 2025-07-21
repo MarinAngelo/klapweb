@@ -15,6 +15,22 @@
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
 
+	// Text overlay style
+	export let text_overlay_padding: string = 'mittel';
+
+	// Mapping von CMS-Wert zu CSS-Padding
+	const paddingMap: Record<string, string> = {
+		klein: '1rem 2rem',
+		mittel: '2rem 4rem',
+		gross: '4rem 6rem'
+	};
+
+	// Padding-Wert aus dem Slice holen und mappen
+	$: textOverlayPadding = paddingMap[slice.primary.text_overlay_padding] ?? paddingMap['mittel'];
+
+	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
+	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
+
 	const bannerHeight = derived([theme, headerHeight], ([$theme, $headerHeight]) => {
 		const raw = slice.primary.banner_height ?? '100%';
 		const clean = raw.replace(/\s/g, '');
@@ -51,12 +67,22 @@
 	{/if}
 
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
-		<div class="grid justify-items-center gap-8">
-			<div class="max-w-2xl text-center">
-				<PrismicRichText
-					field={slice.primary.text}
-					components={{ heading1: Heading }}
-				/>
+		<div class="relative flex flex-col items-center justify-center min-h-[60vh]">
+			<div class="relative w-full max-w-2xl flex items-center justify-center">
+				<!-- Overlay -->
+				<div
+					class="absolute inset-0 rounded-lg"
+					style="
+						background-color: {textOverlayColor};
+						opacity: {textOverlayOpacity};
+						pointer-events: none;
+					"
+					aria-hidden="true"
+				></div>
+				<!-- Inhalt mit dynamischem Padding -->
+				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+					<PrismicRichText field={slice.primary.text} components={{ heading1: Heading }} />
+				</div>
 			</div>
 
 			{#if isFilled.link(slice.primary.button_link)}
