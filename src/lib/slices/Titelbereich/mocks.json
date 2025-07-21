@@ -44,7 +44,7 @@
 			},
 			"overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "42",
+				"value": "49",
 				"type": "Number"
 			},
 			"banner_height": {
@@ -69,6 +69,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "#b74a6b",
 				"type": "Color"
+			},
+			"text_overlay_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#3b4431",
+				"type": "Color"
+			},
+			"text_overlay_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "68",
+				"type": "Number"
+			},
+			"text_overlay_padding": {
+				"__TYPE__": "FieldContent",
+				"value": "klein",
+				"type": "Select"
 			}
 		},
 		"items": [
