@@ -5,7 +5,7 @@
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
 	import { get } from 'svelte/store';
-	import { afterUpdate } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
@@ -15,16 +15,19 @@
 
 	let headerEl: HTMLElement;
 
-	afterUpdate(() => {
-		if (!headerEl) {
-			return;
-		}
-		headerHeight.set(headerEl.offsetHeight);
-
-		const observer = new ResizeObserver(() => {
+	// Dynamische Aktualisierung der Headerhöhe
+	function updateHeaderHeight() {
+		if (headerEl) {
 			headerHeight.set(headerEl.offsetHeight);
-		});
+		}
+	}
+
+	onMount(() => {
+		updateHeaderHeight();
+
+		const observer = new ResizeObserver(updateHeaderHeight);
 		observer.observe(headerEl);
+
 		return () => observer.disconnect();
 	});
 
@@ -42,20 +45,26 @@
 </script>
 
 <Bounded
-    tag="header"
-    yPadding="none"
-    tMargin="lg"
-    bind:elementRef={headerEl}
-    class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
-    style="background-color: {headerBgColor}; opacity: {headerBgOpacity}; color: white; position: relative; z-index: 100;"
+	tag="header"
+	yPadding="none"
+	tMargin="lg"
+	bind:elementRef={headerEl}
+	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
+	style="
+		background-color: {headerBgColor};
+		opacity: {headerBgOpacity};
+		color: {headerColor};
+		position: {bannerTop && isHome ? 'absolute' : 'relative'};
+		z-index: 100;
+	"
 >
-    <Navbar
-        {navigation}
-        {headerColor}
-        {headerBgColor}
-        {headerLinkColor}
-        {headerLinkHoverColor}
-        {settings}
-        {currentPath}
-    />
+	<Navbar
+		{navigation}
+		{headerColor}
+		{headerBgColor}
+		{headerLinkColor}
+		{headerLinkHoverColor}
+		{settings}
+		{currentPath}
+	/>
 </Bounded>
