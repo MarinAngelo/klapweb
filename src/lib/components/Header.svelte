@@ -5,7 +5,8 @@
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
 	import { get } from 'svelte/store';
-	import { afterUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
+	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
@@ -15,7 +16,7 @@
 
 	let headerEl: HTMLElement;
 
-	// Dynamische Aktualisierung der Headerhöhe
+	// Headerhöhe dynamisch setzen
 	function updateHeaderHeight() {
 		if (headerEl) {
 			headerHeight.set(headerEl.offsetHeight);
@@ -42,6 +43,15 @@
 
 	$: currentPath = $page.url.pathname;
 	$: isHome = $page.url.pathname === '/';
+
+	// Dynamischer Style je nach Menüstatus
+	$: headerStyle = `
+		background-color: ${headerBgColor};
+		opacity: ${$isMenuOpen ? 1 : headerBgOpacity};
+		color: ${headerColor};
+		position: ${bannerTop && isHome ? 'absolute' : 'relative'};
+		z-index: 100;
+	`;
 </script>
 
 <Bounded
@@ -50,13 +60,7 @@
 	tMargin="lg"
 	bind:elementRef={headerEl}
 	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
-	style="
-		background-color: {headerBgColor};
-		opacity: {headerBgOpacity};
-		color: {headerColor};
-		position: {bannerTop && isHome ? 'absolute' : 'relative'};
-		z-index: 100;
-	"
+	style={headerStyle}
 >
 	<Navbar
 		{navigation}
