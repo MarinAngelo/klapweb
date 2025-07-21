@@ -26,5 +26,8 @@
 		$$props.class
 	)}
 >
-	<div class="mx-auto w-full max-w-6xl"><slot /></div>
+<div class="mx-auto w-full max-w-6xl relative overflow-visible">
+	<slot />
+</div>
+
 </svelte:element>

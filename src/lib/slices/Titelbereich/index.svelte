@@ -9,10 +9,6 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Heading from './Heading.svelte';
 
-	export let slices; // Diese Zeile hinzufügen
-	export let context; // Diese Zeile hinzufügen
-	export let index; // Diese Zeile hinzufügen
-
 	export let slice: Content.HeroSlice;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
@@ -20,12 +16,11 @@
 	const color = slice.primary.color || 'var(--text-color)';
 
 	const bannerHeight = derived([theme, headerHeight], ([$theme, $headerHeight]) => {
-		const raw = slice.primary.banner_height ?? '100 %';
+		const raw = slice.primary.banner_height ?? '100%';
 		const clean = raw.replace(/\s/g, '');
 		const bannerTop = $theme.bannerTop;
 
-		if (!$theme.bannerTop && $headerHeight === 0) {
-			// ⏳ Headerhöhe noch nicht bekannt → erstmal keine Höhe zurückgeben
+		if (!bannerTop && (!$headerHeight || $headerHeight === 0)) {
 			return 'auto';
 		}
 
@@ -43,29 +38,27 @@
 </script>
 
 <section
-	class="relative"
+	class="relative z-0 overflow-visible"
 	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
 >
 	{#if isFilled.image(slice.primary.backgroundImage)}
 		<PrismicImage
 			field={slice.primary.backgroundImage}
 			alt=""
-			class="absolute inset-0 h-full w-full pointer-events-none select-none object-cover"
+			class="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
 			style="opacity: {overlayOpacity};"
 		/>
 	{/if}
-	<Bounded tag="div" yPadding="lg" class="relative">
+
+	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div class="grid justify-items-center gap-8">
 			<div class="max-w-2xl text-center">
 				<PrismicRichText
 					field={slice.primary.text}
-					components={{
-						heading1: Heading
-					}}
+					components={{ heading1: Heading }}
 				/>
 			</div>
+
 			{#if isFilled.link(slice.primary.button_link)}
 				<PrismicLink
 					field={slice.primary.button_link}
