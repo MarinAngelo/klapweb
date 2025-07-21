@@ -16,7 +16,6 @@
 
 	let headerEl: HTMLElement;
 
-	// Headerhöhe dynamisch setzen
 	function updateHeaderHeight() {
 		if (headerEl) {
 			headerHeight.set(headerEl.offsetHeight);
@@ -25,10 +24,8 @@
 
 	onMount(() => {
 		updateHeaderHeight();
-
 		const observer = new ResizeObserver(updateHeaderHeight);
 		observer.observe(headerEl);
-
 		return () => observer.disconnect();
 	});
 
@@ -51,6 +48,7 @@
 		color: ${headerColor};
 		position: ${bannerTop && isHome ? 'absolute' : 'relative'};
 		z-index: 100;
+		transition: opacity 300ms ease;
 	`;
 </script>
 
@@ -59,7 +57,10 @@
 	yPadding="none"
 	tMargin="lg"
 	bind:elementRef={headerEl}
-	class={clsx({ 'absolute inset-x-0 top-0': bannerTop && isHome })}
+	class={clsx(
+		{ 'absolute inset-x-0 top-0': bannerTop && isHome },
+		'transition-opacity duration-300 ease-in-out'
+	)}
 	style={headerStyle}
 >
 	<Navbar
