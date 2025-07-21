@@ -8,6 +8,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Heading from './Heading.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.HeroSlice;
 
@@ -82,18 +83,11 @@
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<PrismicRichText field={slice.primary.text} components={{ heading1: Heading }} />
+					{#if isFilled.link(slice.primary.button_link)}
+						<Button  link={slice.primary.button_link} text={slice.primary.button_text || 'Mehr erfahren'} />
+					{/if}
 				</div>
 			</div>
-
-			{#if isFilled.link(slice.primary.button_link)}
-				<PrismicLink
-					field={slice.primary.button_link}
-					class="rounded px-5 py-3 font-medium"
-					style="background-color: {theme.pageBgColor}; color: {theme.pageColor};"
-				>
-					{slice.primary.button_text}
-				</PrismicLink>
-			{/if}
 		</div>
 	</Bounded>
 </section>
