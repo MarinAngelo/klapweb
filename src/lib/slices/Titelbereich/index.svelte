@@ -1,23 +1,24 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
+	import { PrismicImage } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { derived } from 'svelte/store';
 	import { convertNumber } from '$lib/utils';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-	import Heading from './Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
+	import { createBannerHeight } from '$lib/utils/bannerHeight';
+	import { onMount, afterUpdate } from 'svelte';
 
 	export let slice: Content.HeroSlice;
+
+	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
+	let richTextDiv: HTMLDivElement;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
-
-	// Text overlay style
-	export let text_overlay_padding: string = 'mittel';
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -32,26 +33,11 @@
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
 	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
 
-	const bannerHeight = derived([theme, headerHeight], ([$theme, $headerHeight]) => {
-		const raw = slice.primary.banner_height ?? '100%';
-		const clean = raw.replace(/\s/g, '');
-		const bannerTop = $theme.bannerTop;
+	const bannerHeight = createBannerHeight(theme, headerHeight, slice);
 
-		if (!bannerTop && (!$headerHeight || $headerHeight === 0)) {
-			return 'auto';
-		}
+	onMount(() => addMarginIfLastIsHeading(richTextDiv));
+    afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 
-		switch (clean) {
-			case '100%':
-				return bannerTop ? '100vh' : `calc(100vh - ${$headerHeight}px)`;
-			case '50%':
-				return '50vh';
-			case '33%':
-				return '33vh';
-			default:
-				return '100vh';
-		}
-	});
 </script>
 
 <section
@@ -82,12 +68,29 @@
 				></div>
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
-					<PrismicRichText field={slice.primary.text} components={{ heading1: Heading }} />
+					<div bind:this={richTextDiv}>
+						<PrismicRichText field={slice.primary.text} />
+					</div>
 					{#if isFilled.link(slice.primary.button_link)}
-						<Button  link={slice.primary.button_link} text={slice.primary.button_text || 'Mehr erfahren'} />
+						<Button
+							link={slice.primary.button_link}
+							text={slice.primary.button_text || 'Mehr erfahren'}
+						/>
 					{/if}
 				</div>
 			</div>
 		</div>
 	</Bounded>
 </section>
+
+<style>
+	/* Nur für den Bereich mit .richtext */
+	.richtext h1,
+	.richtext h2,
+	.richtext h3,
+	.richtext h4,
+	.richtext h5,
+	.richtext h6 {
+		margin-top: 4rem !important;
+	}
+</style>

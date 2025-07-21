@@ -14,7 +14,7 @@
 
 <PrismicLink
     field={link}
-    class="inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm
+    class="inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6
            bg-transparent border
            hover:bg-current hover:text-white
            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current
