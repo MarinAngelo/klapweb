@@ -3,7 +3,6 @@
 	import { PrismicImage } from '@prismicio/svelte';
 	import Dropdown from './Dropdown.svelte';
 	import SvgIcon from './SvgIcons.svelte';
-	import { onMount } from 'svelte';
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
@@ -15,6 +14,7 @@
 	export let headerLinkHoverColor;
 	export let currentPath;
 	export let settings;
+	export let prismicTheme;
 
 	const { navFont } = get(theme);
 
@@ -37,21 +37,12 @@
 		);
 	}
 
-	onMount(() => {
-		if (settings?.data?.favicon?.url) {
-			const faviconLink =
-				document.querySelector("link[rel~='icon']") || document.createElement('link');
-			(faviconLink as HTMLLinkElement).rel = 'icon';
-			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url;
-			document.head.appendChild(faviconLink);
-		}
-	});
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		{#if settings.data.logo?.url}
+		{#if prismicTheme.data.logo?.url}
 			<a href="/" class="flex items-center">
 				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
 			</a>

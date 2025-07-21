@@ -6,6 +6,14 @@
 	"status": true,
 	"json": {
 		"Generell": {
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon",
+					"constraint": {},
+					"thumbnails": []
+				}
+			},
 			"uid": {
 				"type": "UID",
 				"config": {
@@ -81,6 +89,14 @@
 			}
 		},
 		"Kopfzeile": {
+			"logo": {
+				"type": "Image",
+				"config": {
+					"label": "Logo",
+					"constraint": {},
+					"thumbnails": []
+				}
+			},
 			"header_bg_color": {
 				"type": "Color",
 				"config": {
