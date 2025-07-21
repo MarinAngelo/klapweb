@@ -1,72 +1,61 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
-	import Dropdown from './Dropdown.svelte';
 	import { PrismicImage } from '@prismicio/svelte';
+	import Dropdown from './Dropdown.svelte';
+	import SvgIcon from './SvgIcons.svelte';
 	import { onMount } from 'svelte';
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
-	import SvgIcon from './SvgIcons.svelte';
+	import { isMenuOpen } from '../stores/isMenuOpen';
 
-	// Props definieren
 	export let navigation;
-
-	export let headerColor; // Wird für die Textfarbe verwendet
-	export let headerBgColor; // Wird für den Hintergrund des Dropdowns verwendet
-	export let headerLinkColor; // Wird für die Textfarbe der Links verwendet
-	export let headerLinkHoverColor; // Wird für die Hover-Farbe der Links verwendet
-	export let currentPath; // Aktueller Pfadname, um den aktiven Link zu bestimmen
+	export let headerColor;
+	export let headerBgColor;
+	export let headerLinkColor;
+	export let headerLinkHoverColor;
+	export let currentPath;
 	export let settings;
 
-	// Zustand für das Hamburger-Menü
-	let isMenuOpen = false;
+	const { navFont } = get(theme);
 
-	// Helper-Funktion, um die Unterpunkte für ein gegebenes Dropdown-Hauptitem zu finden
-	// PASSE DIESE FUNKTION AN, falls die Beziehung zwischen Haupt- und Unterpunkt anders ist!
+	function toggleMenu() {
+		isMenuOpen.update((open) => !open);
+	}
+
+	// Hilfsfunktion zum Ermitteln der Subitems
 	function getSubItems(triggerItem, allLinks) {
-		if (!triggerItem || !allLinks) {
-			return [];
-		}
-		// Annahme: Das 'sub_link'-Feld des Unterpunkts entspricht dem 'label'-Feld des Hauptpunkts.
-		const triggerLabel = triggerItem.label?.[0]?.text; // Sicherer Zugriff auf den Label-Text
-		if (!triggerLabel) {
-			return [];
-		}
+		if (!triggerItem || !allLinks) return [];
+
+		const triggerLabel = triggerItem.label?.[0]?.text;
+		if (!triggerLabel) return [];
+
 		return allLinks.filter(
 			(subItem) =>
-				subItem.sub_link && // Es muss ein Unterpunkt sein
-				subItem.sub_link === triggerLabel && // Es muss zum aktuellen Trigger passen
-				subItem !== triggerItem // Es darf nicht der Trigger selbst sein
+				subItem.sub_link &&
+				subItem.sub_link === triggerLabel &&
+				subItem !== triggerItem
 		);
 	}
 
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen;
-	}
-
 	onMount(() => {
-		// Überprüfen, ob ein Favicon im CMS definiert ist
 		if (settings?.data?.favicon?.url) {
 			const faviconLink =
 				document.querySelector("link[rel~='icon']") || document.createElement('link');
 			(faviconLink as HTMLLinkElement).rel = 'icon';
-			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url; // URL des Favicons aus dem CMS
+			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url;
 			document.head.appendChild(faviconLink);
 		}
 	});
-
-	const { navFont } = get(theme);
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
 		{#if settings.data.logo?.url}
-			<!-- Logo anzeigen -->
 			<a href="/" class="flex items-center">
 				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
 			</a>
 		{:else}
-			<!-- Seiten Titel und Untertitel anzeigen -->
 			<a href="/" style="color: {headerColor};">
 				<span class="text-xl font-semibold tracking-tight">
 					<PrismicText field={settings.data.site_title} /><br />
@@ -84,31 +73,23 @@
 
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden">
-		{#if isMenuOpen}
-			<!-- Close Button -->
-			<button
-				id="close"
-				class="btn btn-square btn-ghost h-10 w-10"
-				on:click={toggleMenu}
-			>
+		{#if $isMenuOpen}
+			<!-- Close -->
+			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
 				<SvgIcon name="close" />
 			</button>
 		{:else}
-			<!-- Open Button -->
-			<button
-				id="open"
-				class="btn btn-square btn-ghost h-10 w-10"
-				on:click={toggleMenu}
-			>
+			<!-- Open -->
+			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
 				<SvgIcon name="menu" />
 			</button>
 		{/if}
 	</div>
 
-	<!-- Navigation Items -->
+	<!-- Menüinhalte -->
 	<div
 		class={`w-full lg:flex lg:items-center lg:w-auto ${
-			isMenuOpen ? 'flex flex-col mt-10 pb-10 h-screen' : 'hidden'
+			$isMenuOpen ? 'flex flex-col mt-10 pb-10 h-screen' : 'hidden'
 		} lg:flex`}
 	>
 		<ul class="flex flex-col lg:flex-row text-sm gap-6">
@@ -117,7 +98,6 @@
 					{@const subItems = getSubItems(item, navigation.data.links)}
 
 					{#if subItems.length > 0}
-						<!-- Dropdown-Komponente -->
 						<li class="text-xl block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}
@@ -126,28 +106,24 @@
 								{headerLinkColor}
 								{headerLinkHoverColor}
 								{currentPath}
-								on:click={() => (isMenuOpen = false)}
+								on:click={() => isMenuOpen.set(false)}
 							/>
 						</li>
 					{:else if item.link?.url}
-						<li
-							class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor};"
-						>
-							<PrismicLink field={item.link} on:click={() => (isMenuOpen = false)}>
+						<li class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0" style="color: {headerLinkColor};">
+							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
 							</PrismicLink>
 						</li>
 					{/if}
 				{:else if item.sub_link}
-					{@const _skip = true}
-					<!-- Normaler Link -->
+					<!-- überspringen -->
 				{:else if item.link?.url && item.main_nav}
 					<li
 						class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''}"
 						style="color: {headerLinkColor};"
 					>
-						<PrismicLink field={item.link} on:click={() => (isMenuOpen = false)}>
+						<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 							<PrismicText field={item.label} />
 						</PrismicLink>
 					</li>
