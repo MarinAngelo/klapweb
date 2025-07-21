@@ -235,28 +235,6 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	responsible_person_company: prismic.KeyTextField;
-
-	/**
-	 * Logo field in *Einstellungen*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.logo
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#image
-	 */
-	logo: prismic.ImageField<never>;
-
-	/**
-	 * Favicon field in *Einstellungen*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.favicon
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/field#image
-	 */
-	favicon: prismic.ImageField<never>;
 }
 
 /**
@@ -278,6 +256,17 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
  * Content for Design Vorlage documents
  */
 interface ThemeDocumentData {
+	/**
+	 * Favicon field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.favicon
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never>;
+
 	/**
 	 * Design Vorlage Bezeichnung field in *Design Vorlage*
 	 *
@@ -377,6 +366,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
 	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'> /**
+	 * Logo field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.logo
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */;
+	logo: prismic.ImageField<never>;
+
+	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -384,7 +384,7 @@ interface ThemeDocumentData {
 	 * - **API ID Path**: theme.header_bg_color
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/field#color
-	 */;
+	 */
 	header_bg_color: prismic.ColorField;
 
 	/**
