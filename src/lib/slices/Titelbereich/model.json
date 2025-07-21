@@ -61,7 +61,7 @@
           "type": "Number",
           "config": {
             "label": "Tranparenz der Überlagerungsfarbe",
-            "placeholder": ""
+            "placeholder": "0% - 100%"
           }
         },
         "banner_height": {
@@ -73,6 +73,32 @@
               "100 %",
               "50 %",
               "33 %"
+            ]
+          }
+        },
+        "text_overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Text Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "text_overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz Text Überlagerungsfarbe",
+            "placeholder": "0% - 100%"
+          }
+        },
+        "text_overlay_padding": {
+          "type": "Select",
+          "config": {
+            "label": "Text Überlagerungsfeld Grösse",
+            "placeholder": "",
+            "options": [
+              "klein",
+              "mittel",
+              "gross"
             ]
           }
         }
