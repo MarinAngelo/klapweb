@@ -20,6 +20,7 @@ interface PrismicThemeData {
 	page_link_hover_color_text?: string;
 	nav_font?: string;
 	body_font?: string;
+	button_bg_color?: string;
 	// Füge hier weitere relevante Felder aus deinen Prismic-Daten hinzu
 }
 
@@ -69,6 +70,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.page_link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
 	const pageLinkHoverColorText =
 		prismicThemeData.page_link_hover_color_text || getCssVar('--page-link-hover-color-text');
+	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
 	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
 	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
 
@@ -90,6 +92,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageLinkActiveColor,
 		pageLinkVisitedColor,
 		navFont,
-		bodyFont
+		bodyFont,
+		buttonBgColor
 	}));
 }

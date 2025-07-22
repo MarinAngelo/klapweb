@@ -26,4 +26,5 @@ export const theme = writable({
     pageLinkVisitedColor: '', 
     bodyFont: '',
     navFont: '',
+    buttonBgColor: '',
 });

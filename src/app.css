@@ -48,6 +48,7 @@
   --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;
   --hero-overlay-color: transparent;
+  --button-bg-color: transparent;
 
   p, li {
     font-size: 1.2rem;

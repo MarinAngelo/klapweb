@@ -21,7 +21,15 @@
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
 	const bannerTop = get(theme).bannerTop;
-	
+
+	// Fallbacks aus dem globalen Theme holen
+	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
+
+	// Button-Farben aus Slice, mit Fallbacks
+	const buttonBgColor = slice.primary.button_bg_color || pageLinkColor;
+	const buttonBgColorHover = slice.primary.button_bg_color_hover || pageLinkHoverColorBg;
+	const buttonTextColor = slice.primary.button_text_color || pageLinkColor;
+	const buttonTextColorHover = slice.primary.button_text_color_hover || pageLinkHoverColorText;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -39,25 +47,25 @@
 	const bannerHeight = createBannerHeight(theme, headerHeight, slice);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
-    afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
-
+	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
 	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
 >
-
-{#if isFilled.image(slice.primary.backgroundImage)}
-	<PrismicImage
-		field={slice.primary.backgroundImage}
-		alt=""
-		class="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-		style="opacity: {overlayOpacity};"
-	/>
-{/if}
+	{#if isFilled.image(slice.primary.backgroundImage)}
+		<PrismicImage
+			field={slice.primary.backgroundImage}
+			alt=""
+			class="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
+			style="opacity: {overlayOpacity};"
+		/>
+	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
-		<div class="relative flex flex-col items-center justify-center min-h-[60vh]" style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
+		<div
+			class="relative flex flex-col items-center justify-center min-h-[60vh]"
+			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
 		>
 			<div class="relative w-full max-w-2xl flex items-center justify-center">
 				<!-- Overlay -->
@@ -79,6 +87,10 @@
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
+							color={buttonTextColor}
+							bgColor={buttonBgColor}
+							hoverBgColor={buttonBgColorHover}
+							hoverTextColor={buttonTextColorHover}
 						/>
 					{/if}
 				</div>

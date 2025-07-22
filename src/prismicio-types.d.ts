@@ -814,6 +814,46 @@ export interface HeroSliceDefaultPrimary {
 	button_text: prismic.KeyTextField;
 
 	/**
+	 * Schaltfläche Hintergrundfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrund Mouseover field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_bg_color_hover
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	button_bg_color_hover: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_text_color
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	button_text_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_text_color_hover
+	 * - **Documentation**: https://prismic.io/docs/field#color
+	 */
+	button_text_color_hover: prismic.ColorField;
+
+	/**
 	 * Hintergrundbild field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Image
