@@ -23,6 +23,7 @@
 
 :root {
   /* --- Fallback Styles --- */
+  --body-font: 'Roboto', sans-serif; /* Standardwert */
   --nav-font: 'Roboto'; /* Standardwert */
   --header-bg-color: #4B2F36;
   --header-color: green;
