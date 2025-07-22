@@ -69,7 +69,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageLinkHoverColorBg =
 		prismicThemeData.page_link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
 	const pageLinkHoverColorText =
-		prismicThemeData.page_link_hover_color_text || getCssVar('--page-link-hover-color-text');
+		prismicThemeData.link_hover_color_text || getCssVar('--page-link-hover-color-text');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
 	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
 	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
