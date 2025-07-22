@@ -12,6 +12,14 @@
 					"label": "UID"
 				}
 			},
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon",
+					"constraint": {},
+					"thumbnails": []
+				}
+			},
 			"theme_name": {
 				"type": "Text",
 				"config": {
@@ -81,6 +89,14 @@
 			}
 		},
 		"Kopfzeile": {
+			"logo": {
+				"type": "Image",
+				"config": {
+					"label": "Logo",
+					"constraint": {},
+					"thumbnails": []
+				}
+			},
 			"header_bg_color": {
 				"type": "Color",
 				"config": {

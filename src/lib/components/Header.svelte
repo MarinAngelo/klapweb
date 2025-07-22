@@ -13,6 +13,7 @@
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
+	export let prismicTheme: Content.PrismicThemeDocument;
 
 	let headerEl: HTMLElement;
 
@@ -71,5 +72,6 @@
 		{headerLinkHoverColor}
 		{settings}
 		{currentPath}
+		{prismicTheme}
 	/>
 </Bounded>

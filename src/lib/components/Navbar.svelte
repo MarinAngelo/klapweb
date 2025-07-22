@@ -3,7 +3,6 @@
 	import { PrismicImage } from '@prismicio/svelte';
 	import Dropdown from './Dropdown.svelte';
 	import SvgIcon from './SvgIcons.svelte';
-	import { onMount } from 'svelte';
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
@@ -15,6 +14,7 @@
 	export let headerLinkHoverColor;
 	export let currentPath;
 	export let settings;
+	export let prismicTheme;
 
 	const { navFont } = get(theme);
 
@@ -30,30 +30,21 @@
 		if (!triggerLabel) return [];
 
 		return allLinks.filter(
-			(subItem) =>
-				subItem.sub_link &&
-				subItem.sub_link === triggerLabel &&
-				subItem !== triggerItem
+			(subItem) => subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
 		);
 	}
-
-	onMount(() => {
-		if (settings?.data?.favicon?.url) {
-			const faviconLink =
-				document.querySelector("link[rel~='icon']") || document.createElement('link');
-			(faviconLink as HTMLLinkElement).rel = 'icon';
-			(faviconLink as HTMLLinkElement).href = settings.data.favicon.url;
-			document.head.appendChild(faviconLink);
-		}
-	});
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Logo -->
 	<div class="flex items-center flex-shrink-0 mr-6">
-		{#if settings.data.logo?.url}
+		{#if prismicTheme.data.logo?.url}
 			<a href="/" class="flex items-center">
-				<PrismicImage field={settings.data.logo} alt={settings.data.alt} class="h-12 w-auto" />
+				<PrismicImage
+					field={prismicTheme.data.logo}
+					alt={prismicTheme.data.logo.alt}
+					class="h-12 w-auto"
+				/>
 			</a>
 		{:else}
 			<a href="/" style="color: {headerColor};">
@@ -110,7 +101,10 @@
 							/>
 						</li>
 					{:else if item.link?.url}
-						<li class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0" style="color: {headerLinkColor};">
+						<li
+							class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0"
+							style="color: {headerLinkColor};"
+						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
 							</PrismicLink>
@@ -121,9 +115,18 @@
 				{:else if item.link?.url && item.main_nav}
 					<li
 						class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''}"
-						style="color: {headerLinkColor};"
+						style="
+							color: {headerLinkColor};
+							--hover-bg-color: transparent;
+							--hover-text-color: {headerLinkHoverColor};
+						"
 					>
-						<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
+						<PrismicLink
+							field={item.link}
+							on:click={() => isMenuOpen.set(false)}
+							class="hover:text-white hover:bg-current transition"
+							style="color: inherit;"
+						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
 					</li>

@@ -23,6 +23,7 @@
 
 :root {
   /* --- Fallback Styles --- */
+  --body-font: 'Roboto', sans-serif; /* Standardwert */
   --nav-font: 'Roboto'; /* Standardwert */
   --header-bg-color: #4B2F36;
   --header-color: green;
@@ -47,6 +48,7 @@
   --page-link-visited-color: var(--page-link-color);
   --page-bg-opacity: 1;
   --hero-overlay-color: transparent;
+  --button-bg-color: transparent;
 
   p, li {
     font-size: 1.2rem;

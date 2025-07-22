@@ -42,6 +42,34 @@
             "placeholder": ""
           }
         },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color_hover": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrund Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_text_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_text_color_hover": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "backgroundImage": {
           "type": "Image",
           "config": {
