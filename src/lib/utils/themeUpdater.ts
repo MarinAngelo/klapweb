@@ -67,7 +67,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColorBg =
-		prismicThemeData.page_link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
+		prismicThemeData.link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
 	const pageLinkHoverColorText =
 		prismicThemeData.link_hover_color_text || getCssVar('--page-link-hover-color-text');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
