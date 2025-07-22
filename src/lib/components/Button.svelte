@@ -1,34 +1,43 @@
 <script lang="ts">
-    import { PrismicLink } from '@prismicio/svelte';
-    import { theme } from '$lib/stores/theme';
-    import { get } from 'svelte/store';
+	import { PrismicLink } from '@prismicio/svelte';
+	import { theme } from '$lib/stores/theme';
+	import { get } from 'svelte/store';
 
-    export let link: any;
-    export let text: string = 'Mehr erfahren';
+	export let link: any;
+	export let text: string = 'Mehr erfahren';
 
-    const pageLinkColor = get(theme).pageLinkColor;
-    const pageLinkHoverColorText = get(theme).pageLinkHoverColorText;
-    const pageLinkHoverColorBg = get(theme).pageLinkHoverColorBg;
+	// Props für Farbüberschreibungen
+	export let color: string | undefined;
+	export let bgColor: string | undefined;
+	export let hoverTextColor: string | undefined;
+	export let hoverBgColor: string | undefined;
 
+	const {
+		pageLinkColor,
+		pageLinkHoverColorText,
+		pageLinkHoverColorBg,
+		buttonBgColor
+	} = get(theme);
+
+	$: resolvedColor = color ?? pageLinkColor;
+	$: resolvedBgColor = bgColor ?? buttonBgColor ?? 'transparent';
+	$: resolvedHoverTextColor = hoverTextColor ?? pageLinkHoverColorText;
+	$: resolvedHoverBgColor = hoverBgColor ?? pageLinkHoverColorBg;
 </script>
 
 <PrismicLink
-    field={link}
-    class="inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6
-           bg-transparent border
-           hover:bg-current hover:text-white
-           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current
-           transition duration-200 ease-in-out"
-           
-    style={`
-        border-color: ${pageLinkColor};
-        color: ${pageLinkColor};
-
-        /* TailwindCSS-Overrides */
-        --hover-bg-color: ${pageLinkHoverColorBg}; /* Für hover:bg-[...] */
-        --hover-text-color: ${pageLinkHoverColorText}; /* Für hover:text-[...] */
-        --focus-ring-color: ${pageLinkColor}; /* Für focus:ring-[...] */
-    `}
+	field={link}
+	class="inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6
+	       border transition duration-200 ease-in-out
+	       hover:bg-current hover:text-white focus:ring-current"
+	style={`
+		background-color: ${resolvedBgColor};
+		color: ${resolvedColor};
+		border-color: ${resolvedColor};
+		--hover-bg-color: ${resolvedHoverBgColor};
+		--hover-text-color: ${resolvedHoverTextColor};
+		--focus-ring-color: ${resolvedColor};
+	`}
 >
-    {text}
+	{text}
 </PrismicLink>
