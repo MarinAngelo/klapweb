@@ -454,6 +454,17 @@ interface ThemeDocumentData {
 	header_link_color: prismic.ColorField;
 
 	/**
+	 * Link Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 5
+	 * - **API ID Path**: theme.header_font_size
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	header_font_size: prismic.NumberField;
+
+	/**
 	 * Linkfarbe, wenn Maus darüber field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color

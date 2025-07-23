@@ -10,6 +10,7 @@
 	export let headerLinkColor;
 	export let headerLinkHoverColor; // Dynamische Hover-Farbe
 	export let currentPath;
+	export let headerfontSize;
 
 	// Event-Dispatcher erstellen
 	const dispatch = createEventDispatcher();
@@ -19,7 +20,7 @@
 	class="relative group"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 >
-	<DropdownButton {item} {headerLinkColor} />
+	<DropdownButton {item} {headerLinkColor} {headerfontSize} />
 
 	<ul
 		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-40 rounded py-1"
@@ -30,6 +31,7 @@
 				class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0
 					? 'mt-11'
 					: ''} p-2 font-semibold tracking-tight block"
+				style="color: {headerLinkColor}; font-size: {headerfontSize}rem"
 			>
 				<PrismicLink field={dropdownItem.link} on:click={() => dispatch('click')}>
 					<PrismicText field={dropdownItem.label} />
