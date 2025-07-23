@@ -9,7 +9,6 @@
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
 
-
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
 
@@ -18,7 +17,9 @@
 	export let prismicTheme: Content.PrismicThemeDocument;
 
 	let headerEl: HTMLElement;
-	const logoHeightRem = prismicTheme.data.logo_height || 3; // Standardwert 3rem
+	const logoHeight = prismicTheme.data.logo_height || 3; // Standardwert 3rem
+	const siteTitleFontSize = settings.data.site_title_font_size || 1.5;
+	const siteSubtitleFontSize = settings.data.site_sub_title_font_size || 1;
 
 	function updateHeaderHeight() {
 		if (headerEl) {
@@ -68,41 +69,44 @@
 	style={headerStyle}
 >
 	<!-- Logo -->
-	 <div class="flex items-center justify-between w-full">
-		 <div class="logo m-0">
-			 {#if prismicTheme.data.logo?.url}
-				 <a href="/" class="flex items-center">
-					 <PrismicImage
-						 field={prismicTheme.data.logo}
-						 alt={prismicTheme.data.logo.alt}
-						 class="w-auto"
-						 style="height: {logoHeightRem}rem;"
-					 />
-				 </a>
-			 {:else}
-				 <a href="/" style="color: {headerColor};">
-					 <span class="text-xl font-semibold tracking-tight">
-						 <PrismicText field={settings.data.site_title} /><br />
-					 </span>
-					 <span>
-						 <PrismicText
-							 field={settings.data.site_sub_title}
-							 style="font-size: 5rem"
-							 class="text-sm"
-						 />
-					 </span>
-				 </a>
-			 {/if}
-		 </div>
-		 <Navbar
-			 {navigation}
-			 {headerColor}
-			 {headerBgColor}
-			 {headerLinkColor}
-			 {headerLinkHoverColor}
-			 {settings}
-			 {currentPath}
-			 {prismicTheme}
-		 />
-	 </div>
+	<div class="flex items-center justify-between w-full">
+		<div class="logo m-0">
+			{#if prismicTheme.data.logo?.url}
+				<a href="/" class="flex items-center">
+					<PrismicImage
+						field={prismicTheme.data.logo}
+						alt={prismicTheme.data.logo.alt}
+						class="w-auto"
+						style="height: {logoHeight}rem;"
+					/>
+				</a>
+			{:else}
+				<a href="/" style="color: {headerColor};">
+					<span
+						class="text-xl font-semibold tracking-tight"
+						style="font-size: {siteTitleFontSize}rem;"
+					>
+						<PrismicText field={settings.data.site_title} /><br />
+					</span>
+					<span style="font-size: {siteSubtitleFontSize}rem;">
+						<PrismicText
+							field={settings.data.site_sub_title}
+							
+							class="text-sm"
+						/>
+					</span>
+				</a>
+			{/if}
+		</div>
+		<Navbar
+			{navigation}
+			{headerColor}
+			{headerBgColor}
+			{headerLinkColor}
+			{headerLinkHoverColor}
+			{settings}
+			{currentPath}
+			{prismicTheme}
+		/>
+	</div>
 </Bounded>
