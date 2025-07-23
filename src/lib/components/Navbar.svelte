@@ -36,31 +36,6 @@
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
-	<!-- Logo -->
-	<div class="flex items-center flex-shrink-0 mr-6">
-		{#if prismicTheme.data.logo?.url}
-			<a href="/" class="flex items-center">
-				<PrismicImage
-					field={prismicTheme.data.logo}
-					alt={prismicTheme.data.logo.alt}
-					class="h-12 w-auto"
-				/>
-			</a>
-		{:else}
-			<a href="/" style="color: {headerColor};">
-				<span class="text-xl font-semibold tracking-tight">
-					<PrismicText field={settings.data.site_title} /><br />
-				</span>
-				<span>
-					<PrismicText
-						field={settings.data.site_sub_title}
-						style="font-size: 5rem"
-						class="text-sm"
-					/>
-				</span>
-			</a>
-		{/if}
-	</div>
 
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden">
