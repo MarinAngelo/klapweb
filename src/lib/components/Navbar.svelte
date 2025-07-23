@@ -15,6 +15,8 @@
 	export let currentPath;
 	export let settings;
 	export let prismicTheme;
+	export let headerfontSize;
+	export let headerHeight;
 
 	const { navFont } = get(theme);
 
@@ -36,29 +38,40 @@
 </script>
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
-
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden">
 		{#if $isMenuOpen}
 			<!-- Close -->
-			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
+			<button
+				class="btn btn-square btn-ghost h-10 w-10 absolute right-4 top-8"
+				on:click={toggleMenu}
+			>
 				<SvgIcon name="close" />
 			</button>
 		{:else}
 			<!-- Open -->
-			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
+			<button
+				class="btn btn-square btn-ghost h-10 w-10 absolute right-4 top-8"
+				on:click={toggleMenu}
+			>
 				<SvgIcon name="menu" />
 			</button>
 		{/if}
 	</div>
 
-	<!-- Menüinhalte -->
+	<!-- Menüinhalte: Vollbild auf Mobile -->
 	<div
-		class={`w-full lg:flex lg:items-center lg:w-auto ${
-			$isMenuOpen ? 'flex flex-col mt-10 pb-10 h-screen' : 'hidden'
-		} lg:flex`}
+		class={`${
+			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
+		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
+		style={$isMenuOpen
+			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor};`
+			: ''}
 	>
-		<ul class="flex flex-col lg:flex-row text-sm gap-6">
+		<ul
+			class="flex flex-col items-start text-left gap-6 w-full
+                   lg:flex-row lg:items-center lg:text-center lg:gap-6 lg:w-auto"
+		>
 			{#each navigation.data?.links as item}
 				{#if item.dropdown_link === true}
 					{@const subItems = getSubItems(item, navigation.data.links)}
@@ -72,13 +85,14 @@
 								{headerLinkColor}
 								{headerLinkHoverColor}
 								{currentPath}
+								{headerfontSize}
 								on:click={() => isMenuOpen.set(false)}
 							/>
 						</li>
 					{:else if item.link?.url}
 						<li
-							class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor};"
+							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
+							style="color: {headerLinkColor}; font-size: 5rem;"
 						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
@@ -100,7 +114,7 @@
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
 							class="hover:text-white hover:bg-current transition"
-							style="color: inherit;"
+							style="color: inherit; font-size: {headerfontSize}rem;"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>

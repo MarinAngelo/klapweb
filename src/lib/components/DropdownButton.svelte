@@ -4,11 +4,12 @@
     // Props definieren
     export let item;
     export let headerLinkColor
+    export let headerfontSize;
 </script>
 
 <button
     class="font-semibold tracking-tight inline-flex items-center"
-    style="color: {headerLinkColor};"
+    style="color: {headerLinkColor}; font-size: {headerfontSize}rem;"
     aria-haspopup="true"
     aria-expanded="false"
 >
