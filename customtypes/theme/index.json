@@ -132,6 +132,13 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"header_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Link Schriftgrösse",
+					"placeholder": "1 - 5"
+				}
+			},
 			"header_link_hover_color": {
 				"type": "Color",
 				"config": {

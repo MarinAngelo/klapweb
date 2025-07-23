@@ -15,6 +15,7 @@
 	export let currentPath;
 	export let settings;
 	export let prismicTheme;
+	export let headerfontSize;
 
 	const { navFont } = get(theme);
 
@@ -58,7 +59,7 @@
 			$isMenuOpen ? 'flex flex-col mt-10 pb-10 h-screen' : 'hidden'
 		} lg:flex`}
 	>
-		<ul class="flex flex-col lg:flex-row text-sm gap-6">
+		<ul class="flex flex-col lg:flex-row gap-6">
 			{#each navigation.data?.links as item}
 				{#if item.dropdown_link === true}
 					{@const subItems = getSubItems(item, navigation.data.links)}
@@ -72,13 +73,14 @@
 								{headerLinkColor}
 								{headerLinkHoverColor}
 								{currentPath}
+								{headerfontSize}
 								on:click={() => isMenuOpen.set(false)}
 							/>
 						</li>
 					{:else if item.link?.url}
 						<li
-							class="text-xl font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor};"
+							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
+							style="color: {headerLinkColor}; font-size: 5rem;"
 						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
@@ -100,7 +102,7 @@
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
 							class="hover:text-white hover:bg-current transition"
-							style="color: inherit;"
+							style="color: inherit; font-size: {headerfontSize}rem;"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>

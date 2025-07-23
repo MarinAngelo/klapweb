@@ -20,6 +20,7 @@
 	const logoHeight = prismicTheme.data.logo_height || 3; // Standardwert 3rem
 	const siteTitleFontSize = settings.data.site_title_font_size || 1.5;
 	const siteSubtitleFontSize = settings.data.site_sub_title_font_size || 1;
+	const headerfontSize = prismicTheme.data.header_font_size || 1.4;
 
 	function updateHeaderHeight() {
 		if (headerEl) {
@@ -72,7 +73,7 @@
 	<div class="flex items-center justify-between w-full">
 		<div class="logo m-0">
 			{#if prismicTheme.data.logo?.url}
-				<a href="/" class="flex items-center">
+				<a href="/" class="flex items-center mt-2 mb-2">
 					<PrismicImage
 						field={prismicTheme.data.logo}
 						alt={prismicTheme.data.logo.alt}
@@ -81,7 +82,7 @@
 					/>
 				</a>
 			{:else}
-				<a href="/" style="color: {headerColor};">
+				<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 					<span
 						class="text-xl font-semibold tracking-tight"
 						style="font-size: {siteTitleFontSize}rem;"
@@ -107,6 +108,7 @@
 			{settings}
 			{currentPath}
 			{prismicTheme}
+			{headerfontSize}
 		/>
 	</div>
 </Bounded>
