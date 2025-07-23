@@ -7,6 +7,8 @@
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
+	import { PrismicImage, PrismicText } from '@prismicio/svelte';
+
 
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
@@ -64,14 +66,41 @@
 	)}
 	style={headerStyle}
 >
-	<Navbar
-		{navigation}
-		{headerColor}
-		{headerBgColor}
-		{headerLinkColor}
-		{headerLinkHoverColor}
-		{settings}
-		{currentPath}
-		{prismicTheme}
-	/>
+	<!-- Logo -->
+	 <div class="flex items-center justify-between w-full">
+		 <div class="logo m-0">
+			 {#if prismicTheme.data.logo?.url}
+				 <a href="/" class="flex items-center">
+					 <PrismicImage
+						 field={prismicTheme.data.logo}
+						 alt={prismicTheme.data.logo.alt}
+						 class="h-24 w-auto"
+					 />
+				 </a>
+			 {:else}
+				 <a href="/" style="color: {headerColor};">
+					 <span class="text-xl font-semibold tracking-tight">
+						 <PrismicText field={settings.data.site_title} /><br />
+					 </span>
+					 <span>
+						 <PrismicText
+							 field={settings.data.site_sub_title}
+							 style="font-size: 5rem"
+							 class="text-sm"
+						 />
+					 </span>
+				 </a>
+			 {/if}
+		 </div>
+		 <Navbar
+			 {navigation}
+			 {headerColor}
+			 {headerBgColor}
+			 {headerLinkColor}
+			 {headerLinkHoverColor}
+			 {settings}
+			 {currentPath}
+			 {prismicTheme}
+		 />
+	 </div>
 </Bounded>
