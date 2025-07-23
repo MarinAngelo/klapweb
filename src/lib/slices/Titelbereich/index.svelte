@@ -26,7 +26,7 @@
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
 
 	// Button-Farben aus Slice, mit Fallbacks
-	const buttonBgColor = slice.primary.button_bg_color || pageLinkColor;
+	const buttonBgColor = slice.primary.button_bg_color || 'transparent';
 	const buttonBgColorHover = slice.primary.button_bg_color_hover || pageLinkHoverColorBg;
 	const buttonTextColor = slice.primary.button_text_color || pageLinkColor;
 	const buttonTextColorHover = slice.primary.button_text_color_hover || pageLinkHoverColorText;

@@ -193,7 +193,7 @@ export type PageDocument<Lang extends string = string> = prismic.PrismicDocument
  */
 interface SettingsDocumentData {
 	/**
-	 * Site Title field in *Einstellungen*
+	 * Website Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: Title of the site
@@ -204,7 +204,18 @@ interface SettingsDocumentData {
 	site_title: prismic.TitleField;
 
 	/**
-	 * Seiten Untertitel field in *Einstellungen*
+	 * Website Titel Schriftgrösse field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 20
+	 * - **API ID Path**: settings.site_title_font_size
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	site_title_font_size: prismic.NumberField;
+
+	/**
+	 * Website Untertitel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Title
 	 * - **Placeholder**: *None*
@@ -213,6 +224,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
 	site_sub_title: prismic.TitleField;
+
+	/**
+	 * Website Untertitel Schriftgrösse field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 20
+	 * - **API ID Path**: settings.site_sub_title_font_size
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	site_sub_title_font_size: prismic.NumberField;
 
 	/**
 	 * E-Mail field in *Einstellungen*
@@ -257,17 +279,6 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
  */
 interface ThemeDocumentData {
 	/**
-	 * Favicon field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.favicon
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/field#image
-	 */
-	favicon: prismic.ImageField<never>;
-
-	/**
 	 * Design Vorlage Bezeichnung field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Text
@@ -277,6 +288,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	theme_name: prismic.KeyTextField;
+
+	/**
+	 * Favicon field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.favicon
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never>;
 
 	/**
 	 * Banner Top field in *Design Vorlage*
@@ -375,6 +397,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */;
 	logo: prismic.ImageField<never>;
+
+	/**
+	 * Logo Grösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 20
+	 * - **API ID Path**: theme.logo_height
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	logo_height: prismic.NumberField;
 
 	/**
 	 * Hintergrundfarbe field in *Design Vorlage*

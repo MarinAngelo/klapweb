@@ -9,19 +9,33 @@
 			"site_title": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Site Title",
+					"label": "Website Titel",
 					"placeholder": "Title of the site",
 					"allowTargetBlank": false,
 					"single": "heading1"
 				}
 			},
+			"site_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website Titel Schriftgrösse",
+					"placeholder": "1 - 20"
+				}
+			},
 			"site_sub_title": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Seiten Untertitel",
+					"label": "Website Untertitel",
 					"placeholder": "",
 					"allowTargetBlank": false,
 					"single": "heading2"
+				}
+			},
+			"site_sub_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website Untertitel Schriftgrösse",
+					"placeholder": "1 - 20"
 				}
 			},
 			"e_mail": {
