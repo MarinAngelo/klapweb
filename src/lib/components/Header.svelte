@@ -70,7 +70,7 @@
 	style={headerStyle}
 >
 	<!-- Logo -->
-	<div class="flex items-center justify-between w-full">
+	<div class="flex { $isMenuOpen ? '' : 'items-center' } justify-between w-full">
 		<div class="logo m-0">
 			{#if prismicTheme.data.logo?.url}
 				<a href="/" class="flex items-center mt-2 mb-2">
@@ -82,6 +82,7 @@
 					/>
 				</a>
 			{:else}
+			<!-- Text-Logo -->
 				<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 					<span
 						class="text-xl font-semibold tracking-tight"
@@ -109,6 +110,7 @@
 			{currentPath}
 			{prismicTheme}
 			{headerfontSize}
+			{headerHeight}
 		/>
 	</div>
 </Bounded>
