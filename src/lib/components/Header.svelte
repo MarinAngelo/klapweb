@@ -18,6 +18,7 @@
 	export let prismicTheme: Content.PrismicThemeDocument;
 
 	let headerEl: HTMLElement;
+	const logoHeightRem = prismicTheme.data.logo_height || 3; // Standardwert 3rem
 
 	function updateHeaderHeight() {
 		if (headerEl) {
@@ -74,7 +75,8 @@
 					 <PrismicImage
 						 field={prismicTheme.data.logo}
 						 alt={prismicTheme.data.logo.alt}
-						 class="h-24 w-auto"
+						 class="w-auto"
+						 style="height: {logoHeightRem}rem;"
 					 />
 				 </a>
 			 {:else}

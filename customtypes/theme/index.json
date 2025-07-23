@@ -6,6 +6,13 @@
 	"status": true,
 	"json": {
 		"Generell": {
+			"theme_name": {
+				"type": "Text",
+				"config": {
+					"label": "Design Vorlage Bezeichnung",
+					"placeholder": ""
+				}
+			},
 			"uid": {
 				"type": "UID",
 				"config": {
@@ -18,13 +25,6 @@
 					"label": "Favicon",
 					"constraint": {},
 					"thumbnails": []
-				}
-			},
-			"theme_name": {
-				"type": "Text",
-				"config": {
-					"label": "Design Vorlage Bezeichnung",
-					"placeholder": ""
 				}
 			},
 			"banner_top": {
@@ -95,6 +95,13 @@
 					"label": "Logo",
 					"constraint": {},
 					"thumbnails": []
+				}
+			},
+			"logo_height": {
+				"type": "Number",
+				"config": {
+					"label": "Logo Grösse",
+					"placeholder": "1 - 20"
 				}
 			},
 			"header_bg_color": {

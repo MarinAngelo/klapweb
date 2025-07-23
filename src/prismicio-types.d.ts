@@ -257,17 +257,6 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
  */
 interface ThemeDocumentData {
 	/**
-	 * Favicon field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.favicon
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/field#image
-	 */
-	favicon: prismic.ImageField<never>;
-
-	/**
 	 * Design Vorlage Bezeichnung field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Text
@@ -277,6 +266,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#key-text
 	 */
 	theme_name: prismic.KeyTextField;
+
+	/**
+	 * Favicon field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.favicon
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never>;
 
 	/**
 	 * Banner Top field in *Design Vorlage*
@@ -375,6 +375,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */;
 	logo: prismic.ImageField<never>;
+
+	/**
+	 * Logo Grösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 20
+	 * - **API ID Path**: theme.logo_height
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/field#number
+	 */
+	logo_height: prismic.NumberField;
 
 	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
