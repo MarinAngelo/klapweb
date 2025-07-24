@@ -27,7 +27,6 @@
 	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 >
-	<!-- Button (nun mit Click-Handler) -->
 	<div on:click={toggleDropdown}>
 		<DropdownButton {item} {headerLinkColor} {headerfontSize} />
 	</div>
@@ -41,7 +40,10 @@
 				<li
 					class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0 ? 'mt-11' : ''} p-2 font-semibold tracking-tight block"
 					style="color: {headerLinkColor}; font-size: {headerfontSize}rem"
-					on:click={closeDropdown}
+					on:click={() => {
+						closeDropdown();
+						dispatch('click'); // 🟢 wichtig: Event an Parent senden!
+					}}
 				>
 					<PrismicLink field={dropdownItem.link}>
 						<PrismicText field={dropdownItem.label} />
@@ -51,12 +53,3 @@
 		</ul>
 	{/if}
 </div>
-
-<style>
-	.block:hover {
-		background-color: var(--hover-bg-color, red) !important;
-	}
-	.block {
-		color: var(--normal-text-color, black);
-	}
-</style>
