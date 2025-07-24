@@ -3,52 +3,60 @@
 	import DropdownButton from './DropdownButton.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	// Props definieren
 	export let item;
 	export let subItems;
 	export let headerBgColor;
 	export let headerLinkColor;
-	export let headerLinkHoverColor; // Dynamische Hover-Farbe
+	export let headerLinkHoverColor;
 	export let currentPath;
 	export let headerfontSize;
 
-	// Event-Dispatcher erstellen
 	const dispatch = createEventDispatcher();
+	let isOpen = false;
+
+	function toggleDropdown() {
+		isOpen = !isOpen;
+	}
+
+	function closeDropdown() {
+		isOpen = false;
+	}
 </script>
 
 <div
-	class="relative group"
+	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 >
-	<DropdownButton {item} {headerLinkColor} {headerfontSize} />
+	<!-- Button (nun mit Click-Handler) -->
+	<div on:click={toggleDropdown}>
+		<DropdownButton {item} {headerLinkColor} {headerfontSize} />
+	</div>
 
-	<ul
-		class="absolute left-0 mt-0 hidden w-48 shadow-lg group-hover:block z-40 rounded py-1"
-		style="background-color: {headerBgColor};"
-	>
-		{#each subItems as dropdownItem, index}
-			<li
-				class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0
-					? 'mt-11'
-					: ''} p-2 font-semibold tracking-tight block"
-				style="color: {headerLinkColor}; font-size: {headerfontSize}rem"
-			>
-				<PrismicLink field={dropdownItem.link} on:click={() => dispatch('click')}>
-					<PrismicText field={dropdownItem.label} />
-				</PrismicLink>
-			</li>
-		{/each}
-	</ul>
+	{#if isOpen}
+		<ul
+			class="absolute left-0 mt-0 w-48 shadow-lg z-40 rounded py-1"
+			style="background-color: {headerBgColor};"
+		>
+			{#each subItems as dropdownItem, index}
+				<li
+					class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0 ? 'mt-11' : ''} p-2 font-semibold tracking-tight block"
+					style="color: {headerLinkColor}; font-size: {headerfontSize}rem"
+					on:click={closeDropdown}
+				>
+					<PrismicLink field={dropdownItem.link}>
+						<PrismicText field={dropdownItem.label} />
+					</PrismicLink>
+				</li>
+			{/each}
+		</ul>
+	{/if}
 </div>
 
 <style>
-	/* Dynamische Hover-Farbe */
 	.block:hover {
-		background-color: var(--hover-bg-color, red) !important; /* Fallback auf rot */
+		background-color: var(--hover-bg-color, red) !important;
 	}
-
-	/* Dynamische Textfarbe */
 	.block {
-		color: var(--normal-text-color, black); /* Fallback auf schwarz */
+		color: var(--normal-text-color, black);
 	}
 </style>
