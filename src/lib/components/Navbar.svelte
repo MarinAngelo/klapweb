@@ -102,7 +102,9 @@
 					<!-- überspringen -->
 				{:else if item.link?.url && item.main_nav}
 					<li
-						class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''} hover:no-underline
+						class="text-xl font-semibold {currentPath === item.link.url
+							? 'underline'
+							: ''} hover:no-underline
 "
 						style="
 							color: {headerLinkColor};
