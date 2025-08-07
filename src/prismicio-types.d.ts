@@ -104,6 +104,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
 	| AccordionSlice
@@ -674,6 +675,88 @@ type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type CodeEinbettenSlice = prismic.SharedSlice<'code_einbetten', CodeEinbettenSliceVariation>;
+
+/**
+ * Primary content in *Event → Standart → Primary*
+ */
+export interface EventSliceDefaultPrimary {
+	/**
+	 * Titel field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.description
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Start Datum und Zeit field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Timestamp
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.start_date_time
+	 * - **Documentation**: https://prismic.io/docs/field#timestamp
+	 */
+	start_date_time: prismic.TimestampField;
+
+	/**
+	 * End Datum Zeit field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Timestamp
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.end_date_timje
+	 * - **Documentation**: https://prismic.io/docs/field#timestamp
+	 */
+	end_date_timje: prismic.TimestampField;
+
+	/**
+	 * Bild field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.image
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	image: prismic.ImageField<never>;
+}
+
+/**
+ * Standart variation for Event Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<EventSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Event*
+ */
+type EventSliceVariation = EventSliceDefault;
+
+/**
+ * Event Shared Slice
+ *
+ * - **API ID**: `event`
+ * - **Description**: Event
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventSlice = prismic.SharedSlice<'event', EventSliceVariation>;
 
 /**
  * Item in *Formular → Standard → Primary → Formular Felder*
@@ -1587,6 +1670,10 @@ declare module '@prismicio/client' {
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
 			CodeEinbettenSliceDefault,
+			EventSlice,
+			EventSliceDefaultPrimary,
+			EventSliceVariation,
+			EventSliceDefault,
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,

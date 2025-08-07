@@ -1,0 +1,57 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "sometime",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Nulla anim proident pariatur mollit aute sint esse aute amet laboris elit ut adipisicing aliqua culpa. Consequat ex est commodo nulla do sint adipisicing proident veniam quis sint labore. Velit sunt sit duis eu irure magna reprehenderit do est irure."
+						}
+					}
+				]
+			},
+			"start_date_time": {
+				"__TYPE__": "FieldContent",
+				"type": "Timestamp",
+				"value": "2020-10-29T23:09:58Z"
+			},
+			"end_date_timje": {
+				"__TYPE__": "FieldContent",
+				"type": "Timestamp",
+				"value": "2018-09-23T16:20:50Z"
+			},
+			"image": {
+				"__TYPE__": "ImageContent",
+				"origin": {
+					"id": "main",
+					"url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+					"width": 3882,
+					"height": 2584
+				},
+				"url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+				"width": 3882,
+				"height": 2584,
+				"edit": {
+					"zoom": 1,
+					"crop": {
+						"x": 0,
+						"y": 0
+					},
+					"background": "transparent"
+				},
+				"alt": "natural",
+				"thumbnails": {}
+			}
+		},
+		"items": []
+	}
+]

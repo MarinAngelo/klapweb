@@ -1,0 +1,57 @@
+{
+  "id": "event",
+  "type": "SharedSlice",
+  "name": "Event",
+  "description": "Event",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standart",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Titel",
+            "placeholder": ""
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Beschreibung",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item"
+          }
+        },
+        "start_date_time": {
+          "type": "Timestamp",
+          "config": {
+            "label": "Start Datum und Zeit",
+            "placeholder": ""
+          }
+        },
+        "end_date_timje": {
+          "type": "Timestamp",
+          "config": {
+            "label": "End Datum Zeit",
+            "placeholder": ""
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Bild",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
