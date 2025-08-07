@@ -19,6 +19,21 @@
             "placeholder": ""
           }
         },
+        "sub_title": {
+          "type": "Text",
+          "config": {
+            "label": "Untertitel",
+            "placeholder": ""
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Bild",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
         "description": {
           "type": "StructuredText",
           "config": {
@@ -35,19 +50,26 @@
             "placeholder": ""
           }
         },
-        "end_date_timje": {
+        "end_date_time": {
           "type": "Timestamp",
           "config": {
             "label": "End Datum Zeit",
             "placeholder": ""
           }
         },
-        "image": {
-          "type": "Image",
+        "location_text": {
+          "type": "StructuredText",
           "config": {
-            "label": "Bild",
-            "constraint": {},
-            "thumbnails": []
+            "label": "Ort",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item"
+          }
+        },
+        "geopoint": {
+          "type": "GeoPoint",
+          "config": {
+            "label": "Google Maps URL"
           }
         }
       },

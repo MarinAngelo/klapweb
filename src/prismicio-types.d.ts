@@ -4,6 +4,39 @@ import type * as prismic from '@prismicio/client';
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
+type EventDocumentDataSlicesSlice = EventSlice;
+
+/**
+ * Content for Event documents
+ */
+interface EventDocumentData {
+	/**
+	 * Slice Zone field in *Event*
+	 *
+	 * - **Field Type**: Slice Zone
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.slices[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#slices
+	 */
+	slices: prismic.SliceZone<EventDocumentDataSlicesSlice>;
+}
+
+/**
+ * Event document from Prismic
+ *
+ * - **API ID**: `event`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<EventDocumentData>,
+	'event',
+	Lang
+>;
+
 /**
  * Item in *Navigation → Links*
  */
@@ -535,7 +568,12 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 	Lang
 >;
 
-export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
+export type AllDocumentTypes =
+	| EventDocument
+	| NavigationDocument
+	| PageDocument
+	| SettingsDocument
+	| ThemeDocument;
 
 /**
  * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
@@ -691,6 +729,26 @@ export interface EventSliceDefaultPrimary {
 	title: prismic.KeyTextField;
 
 	/**
+	 * Untertitel field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.sub_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	sub_title: prismic.KeyTextField;
+
+	/**
+	 * Bild field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.image
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	image: prismic.ImageField<never>;
+
+	/**
 	 * Beschreibung field in *Event → Standart → Primary*
 	 *
 	 * - **Field Type**: Rich Text
@@ -715,20 +773,30 @@ export interface EventSliceDefaultPrimary {
 	 *
 	 * - **Field Type**: Timestamp
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.default.primary.end_date_timje
+	 * - **API ID Path**: event.default.primary.end_date_time
 	 * - **Documentation**: https://prismic.io/docs/field#timestamp
 	 */
-	end_date_timje: prismic.TimestampField;
+	end_date_time: prismic.TimestampField;
 
 	/**
-	 * Bild field in *Event → Standart → Primary*
+	 * Ort field in *Event → Standart → Primary*
 	 *
-	 * - **Field Type**: Image
+	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.default.primary.image
-	 * - **Documentation**: https://prismic.io/docs/field#image
+	 * - **API ID Path**: event.default.primary.location_text
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
 	 */
-	image: prismic.ImageField<never>;
+	location_text: prismic.RichTextField;
+
+	/**
+	 * Google Maps URL field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: GeoPoint
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.geopoint
+	 * - **Documentation**: https://prismic.io/docs/field#geopoint
+	 */
+	geopoint: prismic.GeoPointField;
 }
 
 /**
@@ -1650,6 +1718,9 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
+			EventDocument,
+			EventDocumentData,
+			EventDocumentDataSlicesSlice,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,

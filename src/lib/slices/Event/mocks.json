@@ -24,13 +24,7 @@
 				"type": "Timestamp",
 				"value": "2020-10-29T23:09:58Z"
 			},
-			"end_date_timje": {
-				"__TYPE__": "FieldContent",
-				"type": "Timestamp",
-				"value": "2018-09-23T16:20:50Z"
-			},
 			"image": {
-				"__TYPE__": "ImageContent",
 				"origin": {
 					"id": "main",
 					"url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
@@ -49,7 +43,37 @@
 					"background": "transparent"
 				},
 				"alt": "natural",
+				"credits": null,
+				"__TYPE__": "ImageContent",
 				"thumbnails": {}
+			},
+			"end_date_time": {
+				"__TYPE__": "FieldContent",
+				"type": "Timestamp",
+				"value": "2012-02-15T18:16:50Z"
+			},
+			"geopoint": {
+				"position": {
+					"lat": 48.8841267,
+					"lng": 2.3300579
+				},
+				"__TYPE__": "GeoPointContent"
+			},
+			"location_text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Nisi cillum ullamco excepteur consequat veniam enim adipisicing. Labore eiusmod officia ad eiusmod officia eiusmod aliquip ea velit irure amet commodo."
+						}
+					}
+				]
+			},
+			"sub_title": {
+				"__TYPE__": "FieldContent",
+				"value": "language",
+				"type": "Text"
 			}
 		},
 		"items": []
