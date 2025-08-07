@@ -171,6 +171,18 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */
 	meta_image: prismic.ImageField<never>;
+
+	/**
+	 * Keine Indexierung field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.no_index
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	no_index: prismic.BooleanField;
 }
 
 /**
