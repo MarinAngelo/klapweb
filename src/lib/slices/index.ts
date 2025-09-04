@@ -4,6 +4,7 @@ import Akkordeon from './Akkordeon/index.svelte';
 import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
+import GlobaleEvents from './GlobaleEvents/index.svelte';
 import Titelbereich from './Titelbereich/index.svelte';
 import HtmlCode from './HtmlCode/index.svelte';
 import Bild from './Bild/index.svelte';
@@ -17,6 +18,7 @@ export const components = {
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,
+	globale_events: GlobaleEvents,
 	hero: Titelbereich,
 	html_code: HtmlCode,
 	image: Bild,

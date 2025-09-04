@@ -137,6 +137,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
@@ -977,6 +978,48 @@ type FormSliceVariation = FormSliceDefault;
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
 
 /**
+ * Primary content in *GlobaleEvents → Standart → Primary*
+ */
+export interface GlobaleEventsSliceDefaultPrimary {
+	/**
+	 * Events field in *GlobaleEvents → Standart → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: globale_events.default.primary.events
+	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+	 */
+	events: prismic.ContentRelationshipField<'event'>;
+}
+
+/**
+ * Standart variation for GlobaleEvents Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<GlobaleEventsSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *GlobaleEvents*
+ */
+type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
+
+/**
+ * GlobaleEvents Shared Slice
+ *
+ * - **API ID**: `globale_events`
+ * - **Description**: GlobaleEvents
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
+
+/**
  * Primary content in *Titelbereich → Standard → Primary*
  */
 export interface HeroSliceDefaultPrimary {
@@ -1750,6 +1793,10 @@ declare module '@prismicio/client' {
 			FormSliceDefaultPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
+			GlobaleEventsSlice,
+			GlobaleEventsSliceDefaultPrimary,
+			GlobaleEventsSliceVariation,
+			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,
