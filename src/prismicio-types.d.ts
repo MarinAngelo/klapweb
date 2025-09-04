@@ -716,6 +716,21 @@ type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
 export type CodeEinbettenSlice = prismic.SharedSlice<'code_einbetten', CodeEinbettenSliceVariation>;
 
 /**
+ * Item in *Event → Standart → Primary → Weitere Daten*
+ */
+export interface EventSliceDefaultPrimaryAdditionalDatesItem {
+	/**
+	 * Datum field in *Event → Standart → Primary → Weitere Daten*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.additional_dates[].date
+	 * - **Documentation**: https://prismic.io/docs/field#date
+	 */
+	date: prismic.DateField;
+}
+
+/**
  * Primary content in *Event → Standart → Primary*
  */
 export interface EventSliceDefaultPrimary {
@@ -798,6 +813,16 @@ export interface EventSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/field#geopoint
 	 */
 	geopoint: prismic.GeoPointField;
+
+	/**
+	 * Weitere Daten field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.additional_dates[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	additional_dates: prismic.GroupField<Simplify<EventSliceDefaultPrimaryAdditionalDatesItem>>;
 }
 
 /**
@@ -1785,6 +1810,7 @@ declare module '@prismicio/client' {
 			CodeEinbettenSliceVariation,
 			CodeEinbettenSliceDefault,
 			EventSlice,
+			EventSliceDefaultPrimaryAdditionalDatesItem,
 			EventSliceDefaultPrimary,
 			EventSliceVariation,
 			EventSliceDefault,

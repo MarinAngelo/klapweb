@@ -71,6 +71,22 @@
           "config": {
             "label": "Google Maps URL"
           }
+        },
+        "additional_dates": {
+          "type": "Group",
+          "config": {
+            "label": "Weitere Daten",
+            "repeat": true,
+            "fields": {
+              "date": {
+                "type": "Date",
+                "config": {
+                  "label": "Datum",
+                  "placeholder": ""
+                }
+              }
+            }
+          }
         }
       },
       "items": {}

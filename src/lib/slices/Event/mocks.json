@@ -74,6 +74,24 @@
 				"__TYPE__": "FieldContent",
 				"value": "language",
 				"type": "Text"
+			},
+			"additional_dates": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"date",
+								{
+									"__TYPE__": "FieldContent",
+									"type": "Date",
+									"value": "2017-11-12"
+								}
+							]
+						]
+					}
+				]
 			}
 		},
 		"items": []
