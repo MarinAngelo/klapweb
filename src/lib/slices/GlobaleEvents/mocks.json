@@ -10,6 +10,11 @@
 					"__TYPE__": "DocumentLink",
 					"id": "mock_document_id"
 				}
+			},
+			"section_title": {
+				"__TYPE__": "FieldContent",
+				"value": "ate",
+				"type": "Text"
 			}
 		},
 		"items": []

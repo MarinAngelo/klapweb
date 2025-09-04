@@ -95,4 +95,25 @@ export function updateTheme(data: ThemeUpdateData): void {
 		bodyFont,
 		buttonBgColor
 	}));
+
+	// NEU: Werte auch als CSS-Variablen setzen
+	if (typeof window !== 'undefined') {
+		const root = document.documentElement;
+		root.style.setProperty('--header-bg-color', headerBgColor);
+		root.style.setProperty('--header-color', headerColor);
+		root.style.setProperty('--header-link-color', headerLinkColor);
+		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
+		root.style.setProperty('--footer-bg-color', footerBgColor);
+		root.style.setProperty('--footer-color', footerColor);
+		root.style.setProperty('--page-color', pageColor);
+		root.style.setProperty('--page-bg-color', pageBgColor);
+		root.style.setProperty('--page-link-color', pageLinkColor);
+		root.style.setProperty('--page-link-hover-color-bg', pageLinkHoverColorBg);
+		root.style.setProperty('--page-link-hover-color-text', pageLinkHoverColorText);
+		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
+		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
+		root.style.setProperty('--nav-font', navFont);
+		root.style.setProperty('--body-font', bodyFont);
+		root.style.setProperty('--button-bg-color', buttonBgColor);
+	}
 }

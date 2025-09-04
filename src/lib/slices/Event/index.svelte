@@ -2,6 +2,9 @@
 	import { asText, asHTML } from '@prismicio/helpers';
 	import { PrismicRichText, PrismicImage, PrismicLink } from '@prismicio/svelte';
 	import type { Content } from '@prismicio/client';
+	import Bounded from '$lib/components/Bounded.svelte';
+	import { theme } from '$lib/stores/theme';
+	import { get } from 'svelte/store';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
@@ -11,7 +14,7 @@
 		if (!date) return '';
 		return new Intl.DateTimeFormat('de-CH', {
 			dateStyle: 'long',
-			timeStyle: 'short',
+			timeStyle: 'short'
 		}).format(new Date(date));
 	};
 
@@ -60,8 +63,7 @@ END:VCALENDAR`;
 		description?: string;
 		location?: string;
 	}) => {
-		const format = (d: string) =>
-			new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, '');
+		const format = (d: string) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, '');
 		const params = new URLSearchParams({
 			action: 'TEMPLATE',
 			text: title,
@@ -88,16 +90,17 @@ END:VCALENDAR`;
 	}
 </script>
 
-<section
-	class="event-slice p-6 md:p-12"
+<Bounded
+	tag="section"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	style="color: {get(theme).pageColor}"
 >
 	{#if primary.title}
-		<h2 class="text-3xl font-bold mb-4">{primary.title}</h2>
+		<h3>{primary.title}</h3>
 	{/if}
 	{#if primary.sub_title}
-		<h3 class="text-3xl font-bold mb-4">{primary.sub_title}</h3>
+		<h4>{primary.sub_title}</h4>
 	{/if}
 
 	{#if primary.image?.url}
@@ -118,6 +121,37 @@ END:VCALENDAR`;
 			{#if primary.end_date_time}
 				<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
 			{/if}
+						<!-- Kalender-Links -->
+			{#if icsUrl}
+				<PrismicLink
+					field={{
+						link_type: 'Web',
+						url: icsUrl
+					}}
+					download="event.ics"
+					target="_blank"
+					data-type="prismic-link"
+				>
+					Zum Kalender hinzufügen (.ics)
+				</PrismicLink><br />
+
+				<PrismicLink
+					field={{
+						link_type: 'Web',
+						url: getGoogleCalendarLink({
+							title: primary.title,
+							start: primary.start_date_time,
+							end: primary.end_date_time,
+							description: asText(primary.description),
+							location: asText(primary.location_text)
+						})
+					}}
+					target="_blank"
+					data-type="prismic-link"
+				>
+					In Google Calendar öffnen
+				</PrismicLink><br />
+			{/if}
 			{#if primary.location_text}
 				<div class="mt-4">
 					<strong>Ort:</strong>
@@ -125,49 +159,19 @@ END:VCALENDAR`;
 				</div>
 			{/if}
 			{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
-<PrismicLink
-	field={{
-		link_type: 'Web',
-		url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
-	}}
-	target="_blank"
-	data-type="prismic-link"
->
-	Standort auf Google Maps anzeigen
-</PrismicLink><br>
+				<PrismicLink
+					field={{
+						link_type: 'Web',
+						url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
+					}}
+					target="_blank"
+					data-type="prismic-link"
+				>
+					Standort auf Google Maps anzeigen
+				</PrismicLink><br />
 			{/if}
 
-			<!-- Kalender-Links -->
-			{#if icsUrl}
-		<PrismicLink
-			field={{
-				link_type: 'Web',
-				url: icsUrl
-			}}
-			download="event.ics"
-			target="_blank"
-			data-type="prismic-link"
-		>
-		Zum Kalender hinzufügen (.ics)
-		</PrismicLink><br>
 
-		<PrismicLink
-			field={{
-				link_type: 'Web',
-				url: getGoogleCalendarLink({
-					title: primary.title,
-					start: primary.start_date_time,
-					end: primary.end_date_time,
-					description: asText(primary.description),
-					location: asText(primary.location_text)
-				})
-			}}
-			target="_blank"
-			data-type="prismic-link"
-		>
-			In Google Calendar öffnen
-		</PrismicLink><br>
-			{/if}
 		</div>
 	</div>
-</section>
+</Bounded>

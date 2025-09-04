@@ -28,9 +28,8 @@ a[data-type="prismic-link"] {
 
 a[data-type="prismic-link"]:hover {
 	color: var(--page-link-hover-color-text);
-	background-color: var(--page-link-hover-color-bg);
+	/* background-color: var(--page-link-hover-color-bg); */
 }
-
 
 :root {
   /* --- Fallback Styles --- */
@@ -61,11 +60,12 @@ a[data-type="prismic-link"]:hover {
   --hero-overlay-color: transparent;
   --button-bg-color: transparent;
 
+  h2 {
+    font-size: 1.8rem;
+  }
+  
   p, li {
     font-size: 1.2rem;
   }
 
-  h2 {
-    font-size: 1.8rem;
-  }
 }
