@@ -145,14 +145,14 @@ END:VCALENDAR`;
 	<div class="grid md:grid-cols-2 gap-6 mb-6">
 		<div>
 			{#if primary.start_date_time}
-			{#if primary.type === 'Wiederkehrend'}
+			{#if primary.additional_dates.length > 0}
 				<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
 			{:else}
 				<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
 			{/if}
 			{/if}
 			{#if primary.end_date_time}
-				{#if primary.type === 'Wiederkehrend'}
+				{#if primary.additional_dates.length > 0}
 					<p><strong>Ende:</strong> {formatTime(primary.end_date_time)}</p>
 				{:else}
 					<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
@@ -207,7 +207,7 @@ END:VCALENDAR`;
 					Standort auf Google Maps anzeigen
 				</PrismicLink><br />
 			{/if}
-			{#if primary.type === 'Wiederkehrend'}
+			{#if primary.additional_dates.length > 0}
 			{#if allDates.length > 0 && primary.type !== 'Einmahlig'}
 				<div class="mt-4">
 					<strong>Daten:</strong>

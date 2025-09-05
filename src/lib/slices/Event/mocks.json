@@ -92,11 +92,6 @@
 						]
 					}
 				]
-			},
-			"type": {
-				"__TYPE__": "FieldContent",
-				"value": "Einmahlig",
-				"type": "Select"
 			}
 		},
 		"items": []

@@ -735,16 +735,6 @@ export interface EventSliceDefaultPrimaryAdditionalDatesItem {
  */
 export interface EventSliceDefaultPrimary {
 	/**
-	 * Art des Events field in *Event → Standart → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.default.primary.type
-	 * - **Documentation**: https://prismic.io/docs/field#select
-	 */
-	type: prismic.SelectField<'Einmahlig' | 'Wiederkehrend'>;
-
-	/**
 	 * Titel field in *Event → Standart → Primary*
 	 *
 	 * - **Field Type**: Text

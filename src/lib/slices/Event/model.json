@@ -12,17 +12,6 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "type": {
-          "type": "Select",
-          "config": {
-            "label": "Art des Events",
-            "placeholder": "",
-            "options": [
-              "Einmahlig",
-              "Wiederkehrend"
-            ]
-          }
-        },
         "title": {
           "type": "Text",
           "config": {
