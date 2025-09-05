@@ -5,14 +5,12 @@
 	import { SliceZone } from '@prismicio/svelte';
 	import { components } from '$lib/slices';
 	import type { Content } from '@prismicio/client';
-	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 
 	export let slice: Content.GlobaleEventsSlice;
-	console.log('GlobaleEvents Slice:', slice);
 
-	let eventSlices: string | any[] = [];
+	let eventSlices: any[] = [];
 	let loading = true;
 
 	onMount(async () => {
@@ -21,7 +19,11 @@
 			const eventDoc = await client.getByID(slice.primary.events.id);
 
 			// Alle Slices des Event-Dokuments
-			eventSlices = (eventDoc.data as { slices?: any[] }).slices ?? [];
+			if ('slices' in eventDoc.data) {
+				eventSlices = eventDoc.data.slices ?? [];
+			} else {
+				console.warn('The fetched document does not contain slices.');
+			}
 		}
 		loading = false;
 	});
@@ -33,7 +35,11 @@
 	data-slice-variation={slice.variation}
 >
 	{#if loading}
-		<p>Lade Event …</p>
+		<div class="flex items-center justify-center gap-2 w-full">
+			<span
+				class="animate-spin inline-block w-5 h-5 border-2 border-t-transparent border-gray-400 rounded-full"
+			></span>
+		</div>
 	{:else if eventSlices.length > 0}
 		<SliceZone slices={eventSlices} {components} />
 	{:else}
