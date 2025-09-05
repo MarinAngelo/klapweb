@@ -8,6 +8,7 @@
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
+	console.log('Event Slice:', slice);
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => {
@@ -15,6 +16,15 @@
 		return new Intl.DateTimeFormat('de-CH', {
 			dateStyle: 'long',
 			timeStyle: 'short'
+		}).format(new Date(date));
+	};
+
+	// Uhrzeit formatieren
+	const formatTime = (date: string | null) => {
+		if (!date) return '';
+		return new Intl.DateTimeFormat('de-CH', {
+			hour: '2-digit',
+			minute: '2-digit'
 		}).format(new Date(date));
 	};
 
@@ -88,9 +98,29 @@ END:VCALENDAR`;
 		const blob = new Blob([icsContent], { type: 'text/calendar' });
 		icsUrl = URL.createObjectURL(blob);
 	}
+
+	// Array mit allen Daten: start_date_time + additional_dates, nur zukünftige oder heutige
+	let allDates: string[] = [];
+	$: {
+		const now = new Date();
+		allDates = [];
+		if (primary.start_date_time) {
+			const startDate = new Date(primary.start_date_time);
+			if (startDate >= new Date(now.toDateString())) {
+				allDates.push(primary.start_date_time);
+			}
+		}
+		if (primary.additional_dates && Array.isArray(primary.additional_dates)) {
+			allDates = allDates.concat(
+				primary.additional_dates
+					.filter((d) => d.date && new Date(d.date) >= new Date(now.toDateString()))
+					.map((d) => d.date)
+			);
+		}
+	}
 </script>
 
-<Bounded  
+<Bounded
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	style="color: {get(theme).pageColor}"
@@ -115,12 +145,20 @@ END:VCALENDAR`;
 	<div class="grid md:grid-cols-2 gap-6 mb-6">
 		<div>
 			{#if primary.start_date_time}
+			{#if primary.type === 'Wiederkehrend'}
+				<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
+			{:else}
 				<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
 			{/if}
-			{#if primary.end_date_time}
-				<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
 			{/if}
-						<!-- Kalender-Links -->
+			{#if primary.end_date_time}
+				{#if primary.type === 'Wiederkehrend'}
+					<p><strong>Ende:</strong> {formatTime(primary.end_date_time)}</p>
+				{:else}
+					<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
+				{/if}
+			{/if}
+			<!-- Kalender-Links -->
 			{#if icsUrl}
 				<PrismicLink
 					field={{
@@ -169,8 +207,22 @@ END:VCALENDAR`;
 					Standort auf Google Maps anzeigen
 				</PrismicLink><br />
 			{/if}
-
-
+			{#if primary.type === 'Wiederkehrend'}
+			{#if allDates.length > 0 && primary.type !== 'Einmahlig'}
+				<div class="mt-4">
+					<strong>Daten:</strong>
+					{#each allDates as date}
+						<p>
+							- {date
+								? new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date(date))
+								: ''}
+						</p>
+					{/each}
+				</div>
+			{:else}
+				<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
+			{/if}
+			{/if}
 		</div>
 	</div>
 </Bounded>

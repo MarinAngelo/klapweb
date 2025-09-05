@@ -60,15 +60,16 @@ a[data-type="prismic-link"]:hover {
   --hero-overlay-color: transparent;
   --button-bg-color: transparent;
 
-  h2 {
-    font-size: 2rem;
-  }
-  h3 {
-    font-size: 1.6rem;
-  }
-  
-  p, li {
-    font-size: 1.2rem;
-  }
+}
 
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.6rem;
+}
+
+p, li {
+  font-size: 1.2rem;
 }
