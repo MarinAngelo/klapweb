@@ -12,13 +12,6 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "section_title": {
-          "type": "Text",
-          "config": {
-            "label": "Abschnitt Überschrift",
-            "placeholder": ""
-          }
-        },
         "events": {
           "type": "Link",
           "config": {

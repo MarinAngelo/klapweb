@@ -1007,16 +1007,6 @@ export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
  */
 export interface GlobaleEventsSliceDefaultPrimary {
 	/**
-	 * Abschnitt Überschrift field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: globale_events.default.primary.section_title
-	 * - **Documentation**: https://prismic.io/docs/field#key-text
-	 */
-	section_title: prismic.KeyTextField;
-
-	/**
 	 * Events field in *GlobaleEvents → Standart → Primary*
 	 *
 	 * - **Field Type**: Content Relationship

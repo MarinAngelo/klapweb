@@ -90,16 +90,16 @@ END:VCALENDAR`;
 	}
 </script>
 
-<Bounded  yPadding="none"
+<Bounded  
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	style="color: {get(theme).pageColor}"
 >
 	{#if primary.title}
-		<h3>{primary.title}</h3>
+		<h2>{primary.title}</h2>
 	{/if}
 	{#if primary.sub_title}
-		<h4>{primary.sub_title}</h4>
+		<h3>{primary.sub_title}</h3>
 	{/if}
 
 	{#if primary.image?.url}

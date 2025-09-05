@@ -35,11 +35,6 @@
 	{#if loading}
 		<p>Lade Event …</p>
 	{:else if eventSlices.length > 0}
-		{#if slice.primary.section_title}
-			<Bounded>
-				<h2>{slice.primary.section_title}</h2>
-			</Bounded>
-		{/if}
 		<SliceZone slices={eventSlices} {components} />
 	{:else}
 		<p class="text-red-500 italic">

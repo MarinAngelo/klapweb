@@ -61,7 +61,10 @@ a[data-type="prismic-link"]:hover {
   --button-bg-color: transparent;
 
   h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.6rem;
   }
   
   p, li {
