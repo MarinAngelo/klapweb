@@ -755,16 +755,6 @@ export interface EventSliceDefaultPrimary {
 	sub_title: prismic.KeyTextField;
 
 	/**
-	 * Bild field in *Event → Standart → Primary*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.default.primary.image
-	 * - **Documentation**: https://prismic.io/docs/field#image
-	 */
-	image: prismic.ImageField<never>;
-
-	/**
 	 * Beschreibung field in *Event → Standart → Primary*
 	 *
 	 * - **Field Type**: Rich Text

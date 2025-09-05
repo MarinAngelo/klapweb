@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { asText, asHTML } from '@prismicio/helpers';
-	import { PrismicRichText, PrismicImage, PrismicLink } from '@prismicio/svelte';
+	import { asText } from '@prismicio/helpers';
+	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
@@ -8,7 +8,6 @@
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
-	console.log('Event Slice:', slice);
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => {
@@ -111,11 +110,10 @@ END:VCALENDAR`;
 			}
 		}
 		if (primary.additional_dates && Array.isArray(primary.additional_dates)) {
-			allDates = allDates.concat(
-				primary.additional_dates
-					.filter((d) => d.date && new Date(d.date) >= new Date(now.toDateString()))
-					.map((d) => d.date)
-			);
+			const additional = primary.additional_dates
+				.filter((d) => d.date && new Date(d.date) >= new Date(now.toDateString()))
+				.map((d) => d.date as string); // <--- Hier wird das Array zu string[]
+			allDates = allDates.concat(additional);
 		}
 	}
 </script>
@@ -132,10 +130,6 @@ END:VCALENDAR`;
 		<h3>{primary.sub_title}</h3>
 	{/if}
 
-	{#if primary.image?.url}
-		<PrismicImage field={primary.image} class="mb-6 rounded-xl shadow" />
-	{/if}
-
 	{#if primary.description}
 		<div>
 			<PrismicRichText field={primary.description} />
@@ -145,11 +139,11 @@ END:VCALENDAR`;
 	<div class="grid md:grid-cols-2 gap-6 mb-6">
 		<div>
 			{#if primary.start_date_time}
-			{#if primary.additional_dates.length > 0}
-				<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
-			{:else}
-				<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
-			{/if}
+				{#if primary.additional_dates.length > 0}
+					<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
+				{:else}
+					<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
+				{/if}
 			{/if}
 			{#if primary.end_date_time}
 				{#if primary.additional_dates.length > 0}
@@ -208,20 +202,20 @@ END:VCALENDAR`;
 				</PrismicLink><br />
 			{/if}
 			{#if primary.additional_dates.length > 0}
-			{#if allDates.length > 0 && primary.type !== 'Einmahlig'}
-				<div class="mt-4">
-					<strong>Daten:</strong>
-					{#each allDates as date}
-						<p>
-							- {date
-								? new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date(date))
-								: ''}
-						</p>
-					{/each}
-				</div>
-			{:else}
-				<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
-			{/if}
+				{#if allDates.length > 0 && primary.additional_dates.length > 0}
+					<div class="mt-4">
+						<strong>Daten:</strong>
+						{#each allDates as date}
+							<p>
+								- {date
+									? new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date(date))
+									: ''}
+							</p>
+						{/each}
+					</div>
+				{:else}
+					<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
+				{/if}
 			{/if}
 		</div>
 	</div>

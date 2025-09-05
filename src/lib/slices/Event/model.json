@@ -26,14 +26,6 @@
             "placeholder": ""
           }
         },
-        "image": {
-          "type": "Image",
-          "config": {
-            "label": "Bild",
-            "constraint": {},
-            "thumbnails": []
-          }
-        },
         "description": {
           "type": "StructuredText",
           "config": {
