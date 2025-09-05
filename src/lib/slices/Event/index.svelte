@@ -90,8 +90,7 @@ END:VCALENDAR`;
 	}
 </script>
 
-<Bounded
-	tag="section"
+<Bounded  yPadding="none"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	style="color: {get(theme).pageColor}"
