@@ -11,8 +11,13 @@
 	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
 	import { onMount, afterUpdate } from 'svelte';
+	import { writable } from 'svelte/store';
 
 	export let slice: Content.HeroSlice;
+	const sliceStore = writable(slice);
+
+	// Wenn sich slice ändert, aktualisiere den Store
+	$: sliceStore.set(slice);
 
 	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
 	let richTextDiv: HTMLDivElement;
@@ -20,7 +25,11 @@
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
-	const bannerTop = get(theme).bannerTop;
+	const bannerTop = slice.primary.banner_overlap ?? false;
+
+
+	// bannerTop im Theme-Store aktualisieren
+	$: theme.update((t) => ({ ...t, bannerTop }));
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -44,7 +53,7 @@
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
 	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
 
-	const bannerHeight = createBannerHeight(theme, headerHeight, slice);
+	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));

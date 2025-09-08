@@ -104,6 +104,10 @@
 				"__TYPE__": "FieldContent",
 				"value": "#132e35",
 				"type": "Color"
+			},
+			"banner_overlap": {
+				"__TYPE__": "BooleanContent",
+				"value": true
 			}
 		},
 		"items": [
