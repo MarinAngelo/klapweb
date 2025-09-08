@@ -45,6 +45,9 @@
         <meta name="og:image" content={$page.data.meta_image.url} />
         <meta name="twitter:card" content="summary_large_image" />
     {/if}
+    {#if $page.data?.no_index}
+		<meta name="robots" content="noindex" />
+	{/if}
 </svelte:head>
 <div style="background-color: {$theme.pageBgColor};">
     <Header

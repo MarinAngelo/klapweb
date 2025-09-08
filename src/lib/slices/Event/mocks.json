@@ -1,0 +1,76 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "sometime",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Nulla anim proident pariatur mollit aute sint esse aute amet laboris elit ut adipisicing aliqua culpa. Consequat ex est commodo nulla do sint adipisicing proident veniam quis sint labore. Velit sunt sit duis eu irure magna reprehenderit do est irure."
+						}
+					}
+				]
+			},
+			"start_date_time": {
+				"__TYPE__": "FieldContent",
+				"type": "Timestamp",
+				"value": "2020-10-29T23:09:58Z"
+			},
+			"end_date_time": {
+				"__TYPE__": "FieldContent",
+				"type": "Timestamp",
+				"value": "2012-02-15T18:16:50Z"
+			},
+			"geopoint": {
+				"position": {
+					"lat": 48.8841267,
+					"lng": 2.3300579
+				},
+				"__TYPE__": "GeoPointContent"
+			},
+			"location_text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Nisi cillum ullamco excepteur consequat veniam enim adipisicing. Labore eiusmod officia ad eiusmod officia eiusmod aliquip ea velit irure amet commodo."
+						}
+					}
+				]
+			},
+			"sub_title": {
+				"__TYPE__": "FieldContent",
+				"value": "language",
+				"type": "Text"
+			},
+			"additional_dates": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"date",
+								{
+									"__TYPE__": "FieldContent",
+									"type": "Date",
+									"value": "2017-11-12"
+								}
+							]
+						]
+					}
+				]
+			}
+		},
+		"items": []
+	}
+]

@@ -4,6 +4,39 @@ import type * as prismic from '@prismicio/client';
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
+type EventDocumentDataSlicesSlice = EventSlice;
+
+/**
+ * Content for Event documents
+ */
+interface EventDocumentData {
+	/**
+	 * Slice Zone field in *Event*
+	 *
+	 * - **Field Type**: Slice Zone
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.slices[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/field#slices
+	 */
+	slices: prismic.SliceZone<EventDocumentDataSlicesSlice>;
+}
+
+/**
+ * Event document from Prismic
+ *
+ * - **API ID**: `event`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<EventDocumentData>,
+	'event',
+	Lang
+>;
+
 /**
  * Item in *Navigation → Links*
  */
@@ -104,6 +137,8 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| GlobaleEventsSlice
+	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
 	| AccordionSlice
@@ -171,6 +206,18 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */
 	meta_image: prismic.ImageField<never>;
+
+	/**
+	 * Keine Indexierung field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.no_index
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	no_index: prismic.BooleanField;
 }
 
 /**
@@ -522,7 +569,12 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 	Lang
 >;
 
-export type AllDocumentTypes = NavigationDocument | PageDocument | SettingsDocument | ThemeDocument;
+export type AllDocumentTypes =
+	| EventDocument
+	| NavigationDocument
+	| PageDocument
+	| SettingsDocument
+	| ThemeDocument;
 
 /**
  * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
@@ -662,6 +714,133 @@ type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type CodeEinbettenSlice = prismic.SharedSlice<'code_einbetten', CodeEinbettenSliceVariation>;
+
+/**
+ * Item in *Event → Standart → Primary → Weitere Daten*
+ */
+export interface EventSliceDefaultPrimaryAdditionalDatesItem {
+	/**
+	 * Datum field in *Event → Standart → Primary → Weitere Daten*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.additional_dates[].date
+	 * - **Documentation**: https://prismic.io/docs/field#date
+	 */
+	date: prismic.DateField;
+}
+
+/**
+ * Primary content in *Event → Standart → Primary*
+ */
+export interface EventSliceDefaultPrimary {
+	/**
+	 * Titel field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Untertitel field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.sub_title
+	 * - **Documentation**: https://prismic.io/docs/field#key-text
+	 */
+	sub_title: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.description
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Start Datum und Zeit field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Timestamp
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.start_date_time
+	 * - **Documentation**: https://prismic.io/docs/field#timestamp
+	 */
+	start_date_time: prismic.TimestampField;
+
+	/**
+	 * End Datum Zeit field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Timestamp
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.end_date_time
+	 * - **Documentation**: https://prismic.io/docs/field#timestamp
+	 */
+	end_date_time: prismic.TimestampField;
+
+	/**
+	 * Ort field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.location_text
+	 * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+	 */
+	location_text: prismic.RichTextField;
+
+	/**
+	 * Google Maps URL field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: GeoPoint
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.geopoint
+	 * - **Documentation**: https://prismic.io/docs/field#geopoint
+	 */
+	geopoint: prismic.GeoPointField;
+
+	/**
+	 * Weitere Daten field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.default.primary.additional_dates[]
+	 * - **Documentation**: https://prismic.io/docs/field#group
+	 */
+	additional_dates: prismic.GroupField<Simplify<EventSliceDefaultPrimaryAdditionalDatesItem>>;
+}
+
+/**
+ * Standart variation for Event Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<EventSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Event*
+ */
+type EventSliceVariation = EventSliceDefault;
+
+/**
+ * Event Shared Slice
+ *
+ * - **API ID**: `event`
+ * - **Description**: Event
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventSlice = prismic.SharedSlice<'event', EventSliceVariation>;
 
 /**
  * Item in *Formular → Standard → Primary → Formular Felder*
@@ -812,6 +991,48 @@ type FormSliceVariation = FormSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
+
+/**
+ * Primary content in *GlobaleEvents → Standart → Primary*
+ */
+export interface GlobaleEventsSliceDefaultPrimary {
+	/**
+	 * Events field in *GlobaleEvents → Standart → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: globale_events.default.primary.events
+	 * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+	 */
+	events: prismic.ContentRelationshipField<'event'>;
+}
+
+/**
+ * Standart variation for GlobaleEvents Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<GlobaleEventsSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *GlobaleEvents*
+ */
+type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
+
+/**
+ * GlobaleEvents Shared Slice
+ *
+ * - **API ID**: `globale_events`
+ * - **Description**: GlobaleEvents
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
 
 /**
  * Primary content in *Titelbereich → Standard → Primary*
@@ -1555,6 +1776,9 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
+			EventDocument,
+			EventDocumentData,
+			EventDocumentDataSlicesSlice,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
@@ -1575,11 +1799,20 @@ declare module '@prismicio/client' {
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
 			CodeEinbettenSliceDefault,
+			EventSlice,
+			EventSliceDefaultPrimaryAdditionalDatesItem,
+			EventSliceDefaultPrimary,
+			EventSliceVariation,
+			EventSliceDefault,
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
+			GlobaleEventsSlice,
+			GlobaleEventsSliceDefaultPrimary,
+			GlobaleEventsSliceVariation,
+			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceVariation,
