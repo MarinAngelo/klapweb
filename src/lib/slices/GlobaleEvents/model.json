@@ -1,0 +1,30 @@
+{
+  "id": "globale_events",
+  "type": "SharedSlice",
+  "name": "GlobaleEvents",
+  "description": "GlobaleEvents",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standart",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "events": {
+          "type": "Link",
+          "config": {
+            "label": "Events",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              "event"
+            ]
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

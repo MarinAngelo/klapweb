@@ -27,6 +27,12 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"globale_events": {
+							"type": "SharedSlice"
+						},
+						"event": {
+							"type": "SharedSlice"
+						},
 						"html_code": {
 							"type": "SharedSlice"
 						},
@@ -85,6 +91,15 @@
 						"height": 1260
 					},
 					"thumbnails": []
+				}
+			},
+			"no_index": {
+				"type": "Boolean",
+				"config": {
+					"label": "Keine Indexierung",
+					"placeholder_false": "Nein ",
+					"placeholder_true": "Ja",
+					"default_value": false
 				}
 			}
 		}
