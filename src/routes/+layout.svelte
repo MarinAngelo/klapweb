@@ -31,6 +31,9 @@
 
     // Zugriff auf die Store-Werte für die Styles
     $: bodyFontStyle = `font-family: '${$theme.bodyFont || 'sans-serif'}', sans-serif;`;
+
+        $: bannerTop = $theme.bannerTop;
+
 </script>
 
 <svelte:head>
@@ -56,7 +59,7 @@
         prismicTheme={data?.prismicTheme || {}}
     />
     <main style={bodyFontStyle}>
-        {#if $page.data?.title}
+        {#if $page.data?.title  && bannerTop === false}
             <Bounded as="section" style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};">
                 <h1
                     class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0"
