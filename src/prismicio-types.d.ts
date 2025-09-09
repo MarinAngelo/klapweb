@@ -1125,7 +1125,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.backgroundImage
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */
-	backgroundImage: prismic.ImageField<never>;
+	backgroundImage: prismic.ImageField<'mobile'>;
 
 	/**
 	 * Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
