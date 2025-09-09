@@ -49,7 +49,8 @@
 	};
 
 	// Padding-Wert aus dem Slice holen und mappen
-	$: textOverlayPadding = paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
+	$: textOverlayPadding =
+		paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
 
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
 	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
@@ -91,6 +92,14 @@
 				></div>
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+					<!-- Responsive Anpassung des Paddings -->
+					<style>
+						@media (max-width: 640px) {
+							.relative.z-10.text-center {
+								padding: 0 !important;
+							}
+						}
+					</style>
 					<div bind:this={richTextDiv}>
 						<PrismicRichText field={slice.primary.text} />
 					</div>
