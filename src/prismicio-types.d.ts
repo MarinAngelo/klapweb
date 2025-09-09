@@ -348,18 +348,6 @@ interface ThemeDocumentData {
 	favicon: prismic.ImageField<never>;
 
 	/**
-	 * Banner Top field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: theme.banner_top
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/field#boolean
-	 */
-	banner_top: prismic.BooleanField;
-
-	/**
 	 * Textfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1039,6 +1027,17 @@ export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEv
  */
 export interface HeroSliceDefaultPrimary {
 	/**
+	 * Überlappend field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.default.primary.banner_overlap
+	 * - **Documentation**: https://prismic.io/docs/field#boolean
+	 */
+	banner_overlap: prismic.BooleanField;
+
+	/**
 	 * Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
@@ -1126,7 +1125,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.backgroundImage
 	 * - **Documentation**: https://prismic.io/docs/field#image
 	 */
-	backgroundImage: prismic.ImageField<never>;
+	backgroundImage: prismic.ImageField<'mobile'>;
 
 	/**
 	 * Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
@@ -1153,10 +1152,11 @@ export interface HeroSliceDefaultPrimary {
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
+	 * - **Default Value**: 100 %
 	 * - **API ID Path**: hero.default.primary.banner_height
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	banner_height: prismic.SelectField<'100 %' | '50 %' | '33 %'>;
+	banner_height: prismic.SelectField<'100 %' | '50 %' | '33 %', 'filled'>;
 
 	/**
 	 * Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*

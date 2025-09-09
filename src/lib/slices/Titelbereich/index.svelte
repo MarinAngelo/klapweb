@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { PrismicImage } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
@@ -11,8 +10,16 @@
 	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
 	import { onMount, afterUpdate } from 'svelte';
+	import { writable } from 'svelte/store';
+	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
+	console.log('slice in Titelbereich:', slice.primary.backgroundImage);
+	export let image = slice.primary.backgroundImage;
+	const sliceStore = writable(slice);
+
+	// Wenn sich slice ändert, aktualisiere den Store
+	$: sliceStore.set(slice);
 
 	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
 	let richTextDiv: HTMLDivElement;
@@ -20,7 +27,10 @@
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
 	const color = slice.primary.color || 'var(--text-color)';
-	const bannerTop = get(theme).bannerTop;
+	const bannerTop = slice.primary.banner_overlap ?? false;
+
+	// bannerTop im Theme-Store aktualisieren
+	$: theme.update((t) => ({ ...t, bannerTop }));
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -39,12 +49,12 @@
 	};
 
 	// Padding-Wert aus dem Slice holen und mappen
-	$: textOverlayPadding = paddingMap[slice.primary.text_overlay_padding] ?? paddingMap['mittel'];
+	$: textOverlayPadding = paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
 
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
 	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
 
-	const bannerHeight = createBannerHeight(theme, headerHeight, slice);
+	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
@@ -54,11 +64,12 @@
 	class="relative z-0 overflow-visible"
 	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
 >
-	{#if isFilled.image(slice.primary.backgroundImage)}
-		<PrismicImage
-			field={slice.primary.backgroundImage}
-			alt=""
-			class="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
+	{#if image && typeof image.url === 'string' && image.url}
+		<ResponsivePrismicImage
+			{image}
+			sizes="100vw"
+			widths={[1280, 1920, 2560]}
+			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
 			style="opacity: {overlayOpacity};"
 		/>
 	{/if}

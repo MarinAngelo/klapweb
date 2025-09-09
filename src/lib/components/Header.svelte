@@ -35,24 +35,22 @@
 		return () => observer.disconnect();
 	});
 
-	const {
-		bannerTop,
-		headerBgColor,
-		headerBgOpacity,
-		headerColor,
-		headerLinkColor,
-		headerLinkHoverColor
-	} = get(theme);
+    $: bannerTop = $theme.bannerTop;
+    $: headerBgColor = $theme.headerBgColor;
+    $: headerBgOpacity = $theme.headerBgOpacity;
+    $: headerColor = $theme.headerColor;
+    $: headerLinkColor = $theme.headerLinkColor;
+    $: headerLinkHoverColor = $theme.headerLinkHoverColor;
+
 
 	$: currentPath = $page.url.pathname;
-	$: isHome = $page.url.pathname === '/';
 
 	// Dynamischer Style je nach Menüstatus
 	$: headerStyle = `
 		background-color: ${headerBgColor};
 		opacity: ${$isMenuOpen ? 1 : headerBgOpacity};
 		color: ${headerColor};
-		position: ${bannerTop && isHome ? 'absolute' : 'relative'};
+		position: ${bannerTop ? 'absolute' : 'relative'};
 		z-index: 100;
 		transition: opacity 300ms ease;
 	`;
@@ -64,7 +62,7 @@
 	tMargin="lg"
 	bind:elementRef={headerEl}
 	class={clsx(
-		{ 'absolute inset-x-0 top-0': bannerTop && isHome },
+		{ 'absolute inset-x-0 top-0': bannerTop },
 		'transition-opacity duration-300 ease-in-out'
 	)}
 	style={headerStyle}

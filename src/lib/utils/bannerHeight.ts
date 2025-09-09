@@ -3,12 +3,12 @@ import { derived, type Readable } from 'svelte/store';
 export function createBannerHeight(
 	theme: Readable<any>,
 	headerHeight: Readable<number>,
-	slice: { primary: { banner_height?: string } }
+	slice: Readable<{ primary: { banner_height?: string; banner_overlap?: boolean } }>
 ) {
-	return derived([theme, headerHeight], ([$theme, $headerHeight]) => {
-		const raw = slice.primary.banner_height ?? '100%';
+	return derived([theme, headerHeight, slice], ([$theme, $headerHeight, $slice]) => {
+		const raw = $slice.primary.banner_height ?? '100%';
 		const clean = raw.replace(/\s/g, '');
-		const bannerTop = $theme.bannerTop;
+		const bannerTop = $slice.primary.banner_overlap ?? $theme.bannerTop;
 
 		if (!bannerTop && (!$headerHeight || $headerHeight === 0)) {
 			return 'auto';

@@ -27,15 +27,6 @@
 					"thumbnails": []
 				}
 			},
-			"banner_top": {
-				"type": "Boolean",
-				"config": {
-					"label": "Banner Top",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
 			"page_color": {
 				"type": "Color",
 				"config": {

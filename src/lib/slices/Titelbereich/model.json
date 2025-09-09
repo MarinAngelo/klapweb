@@ -11,6 +11,15 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Hero",
       "primary": {
+        "banner_overlap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Überlappend",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {
@@ -75,7 +84,13 @@
           "config": {
             "label": "Hintergrundbild",
             "constraint": {},
-            "thumbnails": []
+            "thumbnails": [
+              {
+                "name": "mobile",
+                "width": 1080,
+                "height": 1920
+              }
+            ]
           }
         },
         "overlay_color": {
@@ -101,7 +116,8 @@
               "100 %",
               "50 %",
               "33 %"
-            ]
+            ],
+            "default_value": "100 %"
           }
         },
         "text_overlay_color": {

@@ -50,7 +50,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	}
 
 	const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 99) || 0.99;
-	const bannerTop = prismicThemeData.banner_top ?? false;
+	const bannerTop = false;
 
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
 	const headerColor = prismicThemeData.header_color || getCssVar('--header-color');
