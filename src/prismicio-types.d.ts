@@ -337,15 +337,15 @@ interface ThemeDocumentData {
 	theme_name: prismic.KeyTextField;
 
 	/**
-	 * Favicon field in *Design Vorlage*
+	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.favicon
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_bg_color
 	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/field#image
+	 * - **Documentation**: https://prismic.io/docs/field#color
 	 */
-	favicon: prismic.ImageField<never>;
+	page_bg_color: prismic.ColorField;
 
 	/**
 	 * Textfarbe field in *Design Vorlage*
@@ -370,7 +370,7 @@ interface ThemeDocumentData {
 	page_link_color: prismic.ColorField;
 
 	/**
-	 * Textfarbe bei Link-Mouseover field in *Design Vorlage*
+	 * Linkfarbe wenn Maus darüber field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -381,7 +381,7 @@ interface ThemeDocumentData {
 	link_hover_color_text: prismic.ColorField;
 
 	/**
-	 * Hintergrundfarbe bei Link-Mouseover field in *Design Vorlage*
+	 * Linkhintergrundfarbe Maus darüber field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -390,17 +390,6 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/field#color
 	 */
 	link_hover_color_bg: prismic.ColorField;
-
-	/**
-	 * Hintergrundfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: theme.page_bg_color
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/field#color
-	 */
-	page_bg_color: prismic.ColorField;
 
 	/**
 	 * Hauptschrift field in *Design Vorlage*
@@ -422,7 +411,18 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/field#select
 	 */
-	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'> /**
+	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
+
+	/**
+	 * Favicon field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.favicon
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/field#image
+	 */
+	favicon: prismic.ImageField<never> /**
 	 * Logo field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
