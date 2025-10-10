@@ -63,11 +63,21 @@
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
+	// Responsive: Prüfen, ob mobile (<= 640px)
+	let isMobile = false;
+	onMount(() => {
+		const check = () => (isMobile = window.innerWidth <= 640);
+		check();
+		window.addEventListener('resize', check);
+		return () => window.removeEventListener('resize', check);
+	});
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
-	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
+	style="background-color: {isMobile
+		? textOverlayColor
+		: overlayColor}; color: {color}; height: {$bannerHeight};"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage
@@ -75,7 +85,7 @@
 			sizes="100vw"
 			widths={[1280, 1920, 2560]}
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {overlayOpacity};"
+			style="opacity: {isMobile ? textOverlayOpacity : overlayOpacity};"
 		/>
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
@@ -85,15 +95,17 @@
 		>
 			<div class="relative w-full max-w-2xl flex items-center justify-center">
 				<!-- Overlay -->
-				<div
-					class="absolute inset-0 rounded-lg"
-					style="
+				{#if !isMobile}
+					<div
+						class="absolute inset-0 rounded-lg"
+						style="
 						background-color: {textOverlayColor};
 						opacity: {textOverlayOpacity};
 						pointer-events: none;
 					"
-					aria-hidden="true"
-				></div>
+						aria-hidden="true"
+					></div>
+				{/if}
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->
