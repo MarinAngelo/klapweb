@@ -1,6 +1,6 @@
 {
-	"name": "sveltekit-starter-prismic-multi-page",
-	"version": "0.0.1",
+	"name": "Klap-Web",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"dev": "concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",

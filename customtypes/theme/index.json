@@ -106,7 +106,7 @@
 				"type": "Number",
 				"config": {
 					"label": "Transparenz der Hintergrundfarbe",
-					"placeholder": "Eine Zahl zwischen 1 und 99"
+					"placeholder": "0 - 100 %"
 				}
 			},
 			"header_color": {

@@ -14,7 +14,7 @@
         "banner_overlap": {
           "type": "Boolean",
           "config": {
-            "label": "Überlappend",
+            "label": "Überlappend mit Kopfzeile",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
@@ -96,15 +96,15 @@
         "overlay_color": {
           "type": "Color",
           "config": {
-            "label": "Überlagerungsfarbe",
+            "label": "Bild Überlagerungsfarbe",
             "placeholder": ""
           }
         },
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Tranparenz der Überlagerungsfarbe",
-            "placeholder": "0% - 100%"
+            "label": "Transparenz der Überlagerungsfarbe",
+            "placeholder": "0 - 100 %"
           }
         },
         "banner_height": {
@@ -131,7 +131,7 @@
           "type": "Number",
           "config": {
             "label": "Transparenz Text Überlagerungsfarbe",
-            "placeholder": "0% - 100%"
+            "placeholder": "0 - 100 %"
           }
         },
         "text_overlay_padding": {

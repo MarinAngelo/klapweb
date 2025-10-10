@@ -15,7 +15,6 @@
 				]
 			},
 			"backgroundImage": {
-				"__TYPE__": "ImageContent",
 				"origin": {
 					"id": "main",
 					"url": "https://images.unsplash.com/photo-1593642633279-1796119d5482",
@@ -34,6 +33,8 @@
 					"background": "transparent"
 				},
 				"alt": "invented",
+				"credits": null,
+				"__TYPE__": "ImageContent",
 				"thumbnails": {
 					"mobile": {
 						"origin": {
@@ -53,18 +54,19 @@
 							},
 							"background": "transparent"
 						},
-						"alt": "shade"
+						"alt": "shade",
+						"credits": null
 					}
 				}
 			},
 			"overlay_color": {
 				"__TYPE__": "FieldContent",
-				"value": "#848f30",
+				"value": "#7eb28d",
 				"type": "Color"
 			},
 			"overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "49",
+				"value": "84",
 				"type": "Number"
 			},
 			"banner_height": {
@@ -97,7 +99,7 @@
 			},
 			"text_overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "68",
+				"value": "2",
 				"type": "Number"
 			},
 			"text_overlay_padding": {

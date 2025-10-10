@@ -3,7 +3,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { convertNumber } from '$lib/utils';
+	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -25,7 +25,9 @@
 	let richTextDiv: HTMLDivElement;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
+	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 0) || 0;
+	console.log('overlayOpacity fomr cms:', slice.primary.overlay_opacity);
+	console.log('overlayOpacity:', overlayOpacity);
 	const color = slice.primary.color || 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
@@ -53,7 +55,9 @@
 		paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
 
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
-	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
+	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1;
+	console.log('textOverlayOpacity fomr cms:', slice.primary.text_overlay_opacity);
+	console.log('textOverlayOpacity:', textOverlayOpacity);
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 

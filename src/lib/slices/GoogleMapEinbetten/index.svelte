@@ -4,7 +4,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { convertNumber } from '$lib/utils';
+	import { convertNumber } from '$lib/utils/convertNumber';
 	export let slice: Content.CodeEinbettenSlice;
 
 	let isMobile = false;
