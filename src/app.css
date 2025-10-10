@@ -39,7 +39,8 @@ a[data-type="prismic-link"]:hover {
   --header-color: #cfcefe;
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
-  --header-bg-opacity: 0.5;
+  /* not css notation, as it will be recalculated as coming from cms */
+  --header-bg-opacity: 0;
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
   --header-link-active-color: #cfcefe;
   --header-link-visited-color: #cfcefe;

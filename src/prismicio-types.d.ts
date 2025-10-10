@@ -459,7 +459,7 @@ interface ThemeDocumentData {
 	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: Eine Zahl zwischen 1 und 99
+	 * - **Placeholder**: 0 - 100 %
 	 * - **API ID Path**: theme.header_bg_opacity
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/field#number
@@ -1027,7 +1027,7 @@ export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEv
  */
 export interface HeroSliceDefaultPrimary {
 	/**
-	 * Überlappend field in *Titelbereich → Standard → Primary*
+	 * Überlappend mit Kopfzeile field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -1128,7 +1128,7 @@ export interface HeroSliceDefaultPrimary {
 	backgroundImage: prismic.ImageField<'mobile'>;
 
 	/**
-	 * Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Bild Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -1138,10 +1138,10 @@ export interface HeroSliceDefaultPrimary {
 	overlay_color: prismic.ColorField;
 
 	/**
-	 * Tranparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Transparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0% - 100%
+	 * - **Placeholder**: 0 - 100 %
 	 * - **API ID Path**: hero.default.primary.overlay_opacity
 	 * - **Documentation**: https://prismic.io/docs/field#number
 	 */
@@ -1172,7 +1172,7 @@ export interface HeroSliceDefaultPrimary {
 	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0% - 100%
+	 * - **Placeholder**: 0 - 100 %
 	 * - **API ID Path**: hero.default.primary.text_overlay_opacity
 	 * - **Documentation**: https://prismic.io/docs/field#number
 	 */

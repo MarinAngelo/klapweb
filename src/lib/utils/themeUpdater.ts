@@ -1,5 +1,5 @@
 import { theme } from '$lib/stores/theme';
-import { convertNumber } from '$lib/utils';
+import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
 interface PrismicThemeData {
@@ -49,7 +49,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		return;
 	}
 
-	const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 99) || 0.99;
+	const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 0) || 0;
 	const bannerTop = false;
 
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
