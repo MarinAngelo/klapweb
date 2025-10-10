@@ -25,7 +25,7 @@
 	let richTextDiv: HTMLDivElement;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 0) || 0;
+	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100;
 	console.log('overlayOpacity fomr cms:', slice.primary.overlay_opacity);
 	console.log('overlayOpacity:', overlayOpacity);
 	const color = slice.primary.color || 'var(--text-color)';
