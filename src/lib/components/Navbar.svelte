@@ -38,21 +38,15 @@
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
 	<!-- Hamburger Button -->
-	<div class="block lg:hidden">
+	<div class="block lg:hidden h-full flex items-center">
 		{#if $isMenuOpen}
 			<!-- Close -->
-			<button
-				class="btn btn-square btn-ghost h-10 w-10 absolute right-4 top-8"
-				on:click={toggleMenu}
-			>
+			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
 				<SvgIcon name="close" />
 			</button>
 		{:else}
 			<!-- Open -->
-			<button
-				class="btn btn-square btn-ghost h-10 w-10 absolute right-4 top-8"
-				on:click={toggleMenu}
-			>
+			<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
 				<SvgIcon name="menu" />
 			</button>
 		{/if}
