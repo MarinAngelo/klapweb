@@ -1,9 +1,9 @@
 {
 	"id": "navigation",
 	"label": "Navigation",
-	"format": "custom",
 	"repeatable": false,
 	"status": true,
+	"format": "custom",
 	"json": {
 		"Main": {
 			"links": {
@@ -16,7 +16,6 @@
 							"config": {
 								"label": "Label",
 								"placeholder": "",
-								"allowTargetBlank": false,
 								"single": "heading3"
 							}
 						},
@@ -25,9 +24,12 @@
 							"config": {
 								"label": "Link",
 								"placeholder": "",
-								"select": null,
+								"allowTargetBlank": true,
 								"allowText": false,
-								"allowTargetBlank": true
+								"select": "document",
+								"customtypes": [
+									"page"
+								]
 							}
 						},
 						"sub_link": {
