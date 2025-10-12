@@ -130,6 +130,11 @@
 			"banner_overlap": {
 				"__TYPE__": "BooleanContent",
 				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "9",
+				"type": "Number"
 			}
 		},
 		"items": [

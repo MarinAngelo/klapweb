@@ -20,6 +20,13 @@
             "default_value": false
           }
         },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {

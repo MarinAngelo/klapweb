@@ -45,14 +45,30 @@
 
 	$: currentPath = $page.url.pathname;
 
+		// Hilfsfunktion: Hex + Prozent zu RGBA
+	function hexToRgba(hex, alpha) {
+		let hexValue = hex.replace('#', '');
+		if (hexValue.length === 3) {
+			hexValue = hexValue
+				.split('')
+				.map((x) => x + x)
+				.join('');
+		}
+		const num = parseInt(hexValue, 16);
+		const r = (num >> 16) & 255;
+		const g = (num >> 8) & 255;
+		const b = num & 255;
+		return `rgba(${r},${g},${b},${alpha})`;
+	}
+
+	$: headerBgColorRgba = hexToRgba(headerBgColor, headerBgOpacity);
+
 	// Dynamischer Style je nach Menüstatus
 	$: headerStyle = `
-		background-color: ${headerBgColor};
-		opacity: ${$isMenuOpen ? 1 : headerBgOpacity};
+		background-color: ${headerBgColorRgba};
 		color: ${headerColor};
 		position: ${bannerTop ? 'absolute' : 'relative'};
 		z-index: 100;
-		transition: opacity 300ms ease;
 	`;
 </script>
 

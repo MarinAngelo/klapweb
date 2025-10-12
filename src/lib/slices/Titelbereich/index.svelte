@@ -9,12 +9,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
-	console.log('slice in Titelbereich:', slice.primary.backgroundImage);
+	console.log('slice in Titelbereich Header BG Opacity:', slice.primary.header_bg_opacity);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -26,13 +26,21 @@
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100;
-	console.log('overlayOpacity fomr cms:', slice.primary.overlay_opacity);
-	console.log('overlayOpacity:', overlayOpacity);
+	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
 	const color = slice.primary.color || 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
 	// bannerTop im Theme-Store aktualisieren
 	$: theme.update((t) => ({ ...t, bannerTop }));
+
+    onMount(() => {
+        theme.update((t) => ({ ...t, headerBgOpacity }));
+    });
+
+    onDestroy(() => {
+        // Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
+        theme.update((t) => ({ ...t, headerBgOpacity: 1 }));
+    });
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -71,6 +79,8 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
+
+	
 </script>
 
 <section
