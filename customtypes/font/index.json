@@ -1,0 +1,43 @@
+{
+	"format": "custom",
+	"id": "font",
+	"label": "Schrift",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"name": {
+				"type": "Text",
+				"config": {
+					"label": "Name",
+					"placeholder": ""
+				}
+			},
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID",
+					"placeholder": "gleich wie Name"
+				}
+			},
+			"provider": {
+				"type": "Select",
+				"config": {
+					"label": "Anbieter",
+					"placeholder": "",
+					"options": ["Google", "Adobe", "Lokal"],
+					"default_value": "Google"
+				}
+			},
+			"variant": {
+				"type": "Select",
+				"config": {
+					"label": "Ausprägung",
+					"placeholder": "",
+					"options": ["Regulär", "Fett", "Kursiv"],
+					"default_value": "Regulär"
+				}
+			}
+		}
+	}
+}

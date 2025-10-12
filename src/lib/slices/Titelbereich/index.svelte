@@ -14,7 +14,7 @@
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
-	console.log('slice in Titelbereich Header BG Opacity:', slice.primary.header_bg_opacity);
+	console.log('slice in Titelbereich:', slice.primary.font.data.name);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -33,14 +33,14 @@
 	// bannerTop im Theme-Store aktualisieren
 	$: theme.update((t) => ({ ...t, bannerTop }));
 
-    onMount(() => {
-        theme.update((t) => ({ ...t, headerBgOpacity }));
-    });
+	onMount(() => {
+		theme.update((t) => ({ ...t, headerBgOpacity }));
+	});
 
-    onDestroy(() => {
-        // Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
-        theme.update((t) => ({ ...t, headerBgOpacity: 1 }));
-    });
+	onDestroy(() => {
+		// Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
+		theme.update((t) => ({ ...t, headerBgOpacity: 1 }));
+	});
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -79,15 +79,14 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
-
-	
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
 	style="background-color: {isMobile
 		? textOverlayColor
-		: overlayColor}; color: {color}; height: {$bannerHeight};"
+		: overlayColor}; color: {color}; height: {$bannerHeight};font-family: '{slice.primary.font.data
+		.name}', sans-serif;"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage
