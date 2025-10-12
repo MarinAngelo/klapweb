@@ -14,7 +14,6 @@
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
-	console.log('slice in Titelbereich:', slice.primary.font.data.name);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -79,14 +78,21 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
+
+	// Hilfsfunktion: Font-Name sicher extrahieren -->
+	function getFontName(fontField: any) {
+		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+	}
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
-	style="background-color: {isMobile
-		? textOverlayColor
-		: overlayColor}; color: {color}; height: {$bannerHeight};font-family: '{slice.primary.font.data
-		.name}', sans-serif;"
+	style="background-color: {isMobile ? textOverlayColor : overlayColor};
+		color: {color};
+		height: {$bannerHeight};
+		font-family: {getFontName(slice.primary.font)
+		? `'${getFontName(slice.primary.font)}', sans-serif`
+		: 'sans-serif'};"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage
