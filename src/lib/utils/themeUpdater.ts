@@ -71,8 +71,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageLinkHoverColorText =
 		prismicThemeData.link_hover_color_text || getCssVar('--page-link-hover-color-text');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
-	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
-	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
+	const bodyFont = prismicThemeData.body_font.data.name || getCssVar('--body-font').replace(/'/g, '');
+	const navFont = prismicThemeData.nav_font.data.name || getCssVar('--nav-font').replace(/'/g, '');
 
 	theme.update((t) => ({
 		...t,

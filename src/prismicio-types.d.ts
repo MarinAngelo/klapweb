@@ -91,6 +91,61 @@ export type EventDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 /**
+ * Content for Schrift documents
+ */
+interface FontDocumentData {
+	/**
+	 * Name field in *Schrift*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: font.name
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	name: prismic.KeyTextField;
+
+	/**
+	 * Anbieter field in *Schrift*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Google
+	 * - **API ID Path**: font.provider
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	provider: prismic.SelectField<'Google' | 'Adobe' | 'Lokal', 'filled'>;
+
+	/**
+	 * Ausprägung field in *Schrift*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Regulär
+	 * - **API ID Path**: font.variant
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	variant: prismic.SelectField<'Regulär' | 'Fett' | 'Kursiv', 'filled'>;
+}
+
+/**
+ * Schrift document from Prismic
+ *
+ * - **API ID**: `font`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type FontDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<FontDocumentData>,
+	'font',
+	Lang
+>;
+
+/**
  * Item in *Navigation → Links*
  */
 export interface NavigationDocumentDataLinksItem {
@@ -412,6 +467,17 @@ interface ThemeDocumentData {
 	page_color: prismic.ColorField;
 
 	/**
+	 * Hauptschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.body_font
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	body_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
+
+	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -443,28 +509,6 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	link_hover_color_bg: prismic.ColorField;
-
-	/**
-	 * Hauptschrift field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.body_font
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	body_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura' | 'Soleil'>;
-
-	/**
-	 * Navigationsschrift field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.nav_font
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	nav_font: prismic.SelectField<'Roboto' | 'Open Sans' | 'Jura'>;
 
 	/**
 	 * Favicon field in *Design Vorlage*
@@ -550,7 +594,18 @@ interface ThemeDocumentData {
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	header_link_hover_color: prismic.ColorField /**
+	header_link_hover_color: prismic.ColorField;
+
+	/**
+	 * Navigationsschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.nav_font
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	nav_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]> /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -601,6 +656,7 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 
 export type AllDocumentTypes =
 	| EventDocument
+	| FontDocument
 	| NavigationDocument
 	| PageDocument
 	| SettingsDocument
@@ -1108,6 +1164,16 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	color: prismic.ColorField;
+
+	/**
+	 * Schriftart field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.font
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name', 'provider', 'variant'] }]>;
 
 	/**
 	 * Schaltflächenlink field in *Titelbereich → Standard → Primary*
@@ -1831,6 +1897,8 @@ declare module '@prismicio/client' {
 			EventDocument,
 			EventDocumentData,
 			EventDocumentDataSlicesSlice,
+			FontDocument,
+			FontDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
