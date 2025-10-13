@@ -8,7 +8,7 @@ export const theme = writable({
     headerLinkActiveColor: '', 
     headerLinkVisitedColor: '', 
 	headerBgColor: '', 
-	headerBgOpacity: 1,
+	headerBgOpacity: 0,
     footerColor: '', 
     footerLinkColor: '', 
     footerLinkHoverColor: '', 

@@ -12,6 +12,7 @@
 	import Preformatted from './PrismicRichText/Preformatted.svelte';
 	import Strong from './PrismicRichText/Strong.svelte';
 	import Hyperlink from './PrismicRichText/Hyperlink.svelte';
+	import Label from './PrismicRichText/Label.svelte'; 
 
 	export let field: ComponentProps<PrismicRichText>['field'];
 	export let components: ComponentProps<PrismicRichText>['components'] = {};
@@ -31,6 +32,10 @@
 		preformatted: Preformatted,
 		strong: Strong,
 		hyperlink: Hyperlink,
+
+		// 👇 NEU: Label-Renderer als Svelte-Komponente
+		label: Label,
+
 		...components
 	}}
 />

@@ -3,18 +3,17 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { convertNumber } from '$lib/utils';
+	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
-	console.log('slice in Titelbereich:', slice.primary.backgroundImage);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -25,12 +24,22 @@
 	let richTextDiv: HTMLDivElement;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity = convertNumber(slice.primary.overlay_opacity ?? 99) || 0.99;
+	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100;
+	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
 	const color = slice.primary.color || 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
 	// bannerTop im Theme-Store aktualisieren
 	$: theme.update((t) => ({ ...t, bannerTop }));
+
+	onMount(() => {
+		theme.update((t) => ({ ...t, headerBgOpacity }));
+	});
+
+	onDestroy(() => {
+		// Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
+		theme.update((t) => ({ ...t, headerBgOpacity: 1 }));
+	});
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -53,17 +62,43 @@
 		paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
 
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
-	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 99) || 0.99;
+	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1;
+	console.log('textOverlayOpacity fomr cms:', slice.primary.text_overlay_opacity);
+	console.log('textOverlayOpacity:', textOverlayOpacity);
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
+	// Responsive: Prüfen, ob mobile (<= 640px)
+	let isMobile = false;
+	onMount(() => {
+		const check = () => (isMobile = window.innerWidth <= 640);
+		check();
+		window.addEventListener('resize', check);
+		return () => window.removeEventListener('resize', check);
+	});
+
+	// Hilfsfunktion: Font-Name sicher extrahieren -->
+	function getFontName(fontField: any) {
+		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+	}
+	// Hilfsfunktion: Font-Family sicher extrahieren -->
+	function getFontFamily(fontField: any) {
+		const name =
+			fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+		if (!name) return 'sans-serif';
+		return name.includes(' ') ? `'${name}', sans-serif` : `${name}, sans-serif`;
+	}
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
-	style="background-color: {overlayColor}; color: {color}; height: {$bannerHeight};"
+	style="background-color: {isMobile ? textOverlayColor : overlayColor};
+		color: {color};
+		height: {$bannerHeight};
+		font-family: {getFontFamily(slice.primary.font)};
+	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage
@@ -71,7 +106,7 @@
 			sizes="100vw"
 			widths={[1280, 1920, 2560]}
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {overlayOpacity};"
+			style="opacity: {isMobile ? textOverlayOpacity : overlayOpacity};"
 		/>
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
@@ -81,15 +116,17 @@
 		>
 			<div class="relative w-full max-w-2xl flex items-center justify-center">
 				<!-- Overlay -->
-				<div
-					class="absolute inset-0 rounded-lg"
-					style="
+				{#if !isMobile}
+					<div
+						class="absolute inset-0 rounded-lg"
+						style="
 						background-color: {textOverlayColor};
 						opacity: {textOverlayOpacity};
 						pointer-events: none;
 					"
-					aria-hidden="true"
-				></div>
+						aria-hidden="true"
+					></div>
+				{/if}
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->

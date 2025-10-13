@@ -14,10 +14,17 @@
         "banner_overlap": {
           "type": "Boolean",
           "config": {
-            "label": "Überlappend",
+            "label": "Überlappend mit Kopfzeile",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
+          }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
           }
         },
         "text": {
@@ -34,6 +41,24 @@
           "config": {
             "label": "Textfarbe",
             "placeholder": ""
+          }
+        },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variant"
+                ]
+              }
+            ]
           }
         },
         "button_link": {
@@ -96,15 +121,15 @@
         "overlay_color": {
           "type": "Color",
           "config": {
-            "label": "Überlagerungsfarbe",
+            "label": "Bild Überlagerungsfarbe",
             "placeholder": ""
           }
         },
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Tranparenz der Überlagerungsfarbe",
-            "placeholder": "0% - 100%"
+            "label": "Transparenz der Überlagerungsfarbe",
+            "placeholder": "0 - 100 %"
           }
         },
         "banner_height": {
@@ -131,7 +156,7 @@
           "type": "Number",
           "config": {
             "label": "Transparenz Text Überlagerungsfarbe",
-            "placeholder": "0% - 100%"
+            "placeholder": "0 - 100 %"
           }
         },
         "text_overlay_padding": {
