@@ -38,7 +38,7 @@
 
 	onDestroy(() => {
 		// Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
-		theme.update((t) => ({ ...t, headerBgOpacity: 1 }));
+		theme.update((t) => ({ ...t, headerBgOpacity: 1, bannerTop: false }));
 	});
 
 	// Fallbacks aus dem globalen Theme holen
@@ -114,16 +114,17 @@
 			class="relative flex flex-col items-center justify-center min-h-[60vh]"
 			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
 		>
-			<div class="relative w-full max-w-2xl flex items-center justify-center">
+			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
 				{#if !isMobile}
 					<div
-						class="absolute inset-0 rounded-lg"
+						class="absolute inset-0"
 						style="
 						background-color: {textOverlayColor};
 						opacity: {textOverlayOpacity};
 						pointer-events: none;
-					"
+						border-radius: 3rem;
+						"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -137,7 +138,7 @@
 							}
 						}
 					</style>
-					<div bind:this={richTextDiv}>
+					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						<PrismicRichText field={slice.primary.text} />
 					</div>
 					{#if isFilled.link(slice.primary.button_link)}

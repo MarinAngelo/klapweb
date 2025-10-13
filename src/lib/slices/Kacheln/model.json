@@ -34,7 +34,13 @@
                     "width": 2200,
                     "height": 1200
                   },
-                  "thumbnails": []
+                  "thumbnails": [
+                    {
+                      "name": "Quadrat",
+                      "width": 1200,
+                      "height": 1200
+                    }
+                  ]
                 }
               },
               "text": {

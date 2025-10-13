@@ -1511,7 +1511,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	 * - **API ID Path**: image_cards.default.primary.cards[].image
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	image: prismic.ImageField<never>;
+	image: prismic.ImageField<'Quadrat'>;
 
 	/**
 	 * Text field in *Kacheln → Standard → Primary → Kacheln*

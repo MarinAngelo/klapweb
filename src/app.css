@@ -12,6 +12,15 @@
   background-color: var(--hover-bg-color) !important;
 }
 
+.leading-loose * {
+  line-height: 2 !important;
+}
+
+/* letter-spacing */
+.tracking-wider-all * {
+  letter-spacing: 0.12em !important;
+}
+
 .hover\:text-white:hover {
   color: var(--hover-text-color) !important;
 }
