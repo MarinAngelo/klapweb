@@ -29,13 +29,11 @@
 					"default_value": "Google"
 				}
 			},
-			"variant": {
-				"type": "Select",
+			"variants": {
+				"type": "Text",
 				"config": {
-					"label": "Ausprägung",
-					"placeholder": "",
-					"options": ["Regulär", "Fett", "Kursiv"],
-					"default_value": "Regulär"
+					"label": "Varianten (Google)",
+					"placeholder": "z.B. \"ital,wght@0,100..900;1,100..900\""
 				}
 			}
 		}

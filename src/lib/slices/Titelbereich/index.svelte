@@ -83,6 +83,13 @@
 	function getFontName(fontField: any) {
 		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
 	}
+	// Hilfsfunktion: Font-Family sicher extrahieren -->
+	function getFontFamily(fontField: any) {
+		const name =
+			fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+		if (!name) return 'sans-serif';
+		return name.includes(' ') ? `'${name}', sans-serif` : `${name}, sans-serif`;
+	}
 </script>
 
 <section
@@ -90,9 +97,8 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {getFontName(slice.primary.font)
-		? `'${getFontName(slice.primary.font)}', sans-serif`
-		: 'sans-serif'};"
+		font-family: {getFontFamily(slice.primary.font)};
+	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage

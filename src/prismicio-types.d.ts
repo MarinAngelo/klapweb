@@ -118,16 +118,15 @@ interface FontDocumentData {
 	provider: prismic.SelectField<'Google' | 'Adobe' | 'Lokal', 'filled'>;
 
 	/**
-	 * Ausprägung field in *Schrift*
+	 * Varianten (Google) field in *Schrift*
 	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Regulär
-	 * - **API ID Path**: font.variant
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. "ital,wght@0,100..900;1,100..900"
+	 * - **API ID Path**: font.variants
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
-	variant: prismic.SelectField<'Regulär' | 'Fett' | 'Kursiv', 'filled'>;
+	variants: prismic.KeyTextField;
 }
 
 /**
