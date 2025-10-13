@@ -698,6 +698,52 @@ export interface AccordionSliceDefaultPrimaryAccordionItemsItem {
 }
 
 /**
+ * Item in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+ */
+export interface AccordionSliceBildUndTextPrimaryAccordionItemsItem {
+	/**
+	 * Titel field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Text field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].content
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	content: prismic.RichTextField;
+
+	/**
+	 * Bild field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
+
+	/**
+	 * Bild Links field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].standardBildLinks
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	standardBildLinks: prismic.BooleanField;
+}
+
+/**
  * Primary content in *Akkordeon → Standard → Primary*
  */
 export interface AccordionSliceDefaultPrimary {
@@ -746,9 +792,57 @@ export type AccordionSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Akkordeon → Bild und Text → Primary*
+ */
+export interface AccordionSliceBildUndTextPrimary {
+	/**
+	 * Überschrift field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Beschreibung field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Akkordeon Elemente field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	accordion_items: prismic.GroupField<Simplify<AccordionSliceBildUndTextPrimaryAccordionItemsItem>>;
+}
+
+/**
+ * Bild und Text variation for Akkordeon Slice
+ *
+ * - **API ID**: `bildUndText`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AccordionSliceBildUndText = prismic.SharedSliceVariation<
+	'bildUndText',
+	Simplify<AccordionSliceBildUndTextPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Akkordeon*
  */
-type AccordionSliceVariation = AccordionSliceDefault;
+type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText;
 
 /**
  * Akkordeon Shared Slice
@@ -1719,11 +1813,11 @@ type TextSliceVariation = TextSliceDefault | TextSliceTwoColumns;
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
 
 /**
- * Primary content in *TextMitBild → Standard → Primary*
+ * Primary content in *TextMitBild → Standard Bild rechts → Primary*
  */
 export interface TextWithImageSliceDefaultPrimary {
 	/**
-	 * Text field in *TextMitBild → Standard → Primary*
+	 * Text field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -1733,7 +1827,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Bild field in *TextMitBild → Standard → Primary*
+	 * Bild field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Image
 	 * - **Placeholder**: *None*
@@ -1743,7 +1837,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	image: prismic.ImageField<never>;
 
 	/**
-	 * Hintergrundfarbe field in *TextMitBild → Standard → Primary*
+	 * Hintergrundfarbe field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -1753,7 +1847,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	bg_color: prismic.ColorField;
 
 	/**
-	 * Schriftfarbe field in *TextMitBild → Standard → Primary*
+	 * Schriftfarbe field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -1763,7 +1857,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *TextMitBild → Standard → Primary*
+	 * Abstand oben / unten gleich field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -1774,7 +1868,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	y_padding_same: prismic.BooleanField;
 
 	/**
-	 * Vertikaler Abstand field in *TextMitBild → Standard → Primary*
+	 * Vertikaler Abstand field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -1784,7 +1878,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
 
 	/**
-	 * Bild als Kreis field in *TextMitBild → Standard → Primary*
+	 * Bild als Kreis field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -1796,7 +1890,7 @@ export interface TextWithImageSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for TextMitBild Slice
+ * Standard Bild rechts variation for TextMitBild Slice
  *
  * - **API ID**: `default`
  * - **Description**: TextWithImage
@@ -1867,9 +1961,102 @@ export type TextWithImageSliceWithButton = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *TextMitBild → Standard Bild links → Primary*
+ */
+export interface TextWithImageSliceStandardBildLinksPrimary {
+	/**
+	 * Text field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Bild field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
+
+	/**
+	 * Hintergrundfarbe field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Abstand oben / unten gleich field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.y_padding_same
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	y_padding_same: prismic.BooleanField;
+
+	/**
+	 * Vertikaler Abstand field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Bild als Kreis field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.image_round
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	image_round: prismic.BooleanField;
+}
+
+/**
+ * Standard Bild links variation for TextMitBild Slice
+ *
+ * - **API ID**: `standardBildLinks`
+ * - **Description**: TextWithImage
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TextWithImageSliceStandardBildLinks = prismic.SharedSliceVariation<
+	'standardBildLinks',
+	Simplify<TextWithImageSliceStandardBildLinksPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *TextMitBild*
  */
-type TextWithImageSliceVariation = TextWithImageSliceDefault | TextWithImageSliceWithButton;
+type TextWithImageSliceVariation =
+	| TextWithImageSliceDefault
+	| TextWithImageSliceWithButton
+	| TextWithImageSliceStandardBildLinks;
 
 /**
  * TextMitBild Shared Slice
@@ -1923,8 +2110,11 @@ declare module '@prismicio/client' {
 			AccordionSlice,
 			AccordionSliceDefaultPrimaryAccordionItemsItem,
 			AccordionSliceDefaultPrimary,
+			AccordionSliceBildUndTextPrimaryAccordionItemsItem,
+			AccordionSliceBildUndTextPrimary,
 			AccordionSliceVariation,
 			AccordionSliceDefault,
+			AccordionSliceBildUndText,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
@@ -1978,9 +2168,11 @@ declare module '@prismicio/client' {
 			TextWithImageSlice,
 			TextWithImageSliceDefaultPrimary,
 			TextWithImageSliceWithButtonPrimary,
+			TextWithImageSliceStandardBildLinksPrimary,
 			TextWithImageSliceVariation,
 			TextWithImageSliceDefault,
-			TextWithImageSliceWithButton
+			TextWithImageSliceWithButton,
+			TextWithImageSliceStandardBildLinks
 		};
 	}
 }

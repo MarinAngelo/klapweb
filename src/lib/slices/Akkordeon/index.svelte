@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
-	import { PrismicText } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 
 	export let slice: Content.AccordionSlice;
+	console.log('Akkordeon slice:', slice);
 
 	// Zustand für geöffnete Items
 	let openIndex: number | null = null;
@@ -30,7 +31,7 @@
 				<PrismicRichText field={slice.primary.heading} />
 		{/if}
 		{#if slice.primary.description}
-				<PrismicRichText field={slice.primary.description} /><br />
+			<PrismicRichText field={slice.primary.description} /><br />
 		{/if}
 		{#each slice.primary.accordion_items as item, index}
 			<div class="border-b pb-4" style="border-color: {pageColor}">
@@ -40,7 +41,7 @@
 					aria-expanded={openIndex === index}
 					on:click={() => toggleItem(index)}
 				>
-				{item.label}
+					{item.label}
 					<svg
 						class="w-4 h-4 ml-1 fill-current transform transition-transform"
 						xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +52,16 @@
 					</svg>
 				</button>
 				<div class={openIndex === index ? 'block mt-2' : 'hidden'}>
-					<PrismicRichText field={item.content} />
+					{#if slice.variation === 'bildUndText'}
+						<ImageTextGrid
+							image={item.image}
+							text={item.content}
+							imageLeft={item.standardBildLinks ?? false}
+							{theme}
+						/>
+					{:else}
+						<PrismicRichText field={item.content} />
+					{/if}
 				</div>
 			</div>
 		{/each}
