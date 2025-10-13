@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
+	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
@@ -37,8 +37,11 @@
 	});
 
 	onDestroy(() => {
-		// Setze auf einen Default-Wert zurück, z.B. 1 (voll sichtbar) oder was dein Theme-Default ist
-		theme.update((t) => ({ ...t, headerBgOpacity: 1, bannerTop: false }));
+		theme.update((t) => ({
+			...t,
+			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
+			bannerTop: THEME_DEFAULTS.bannerTop
+		}));
 	});
 
 	// Fallbacks aus dem globalen Theme holen
