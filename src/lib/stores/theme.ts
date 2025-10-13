@@ -1,24 +1,24 @@
 import { writable } from 'svelte/store';
 
 export const THEME_DEFAULTS = {
+    // Aus Slices/Titelbereich/index.svelte
 	bannerTop: false,
+	headerBgOpacity: 1,
+    // Aus Custom Type "Theme" hier keine expliziten Default-Werte, da diese aus CSS-Variablen geholt werden
 	headerColor: '',
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkActiveColor: '',
 	headerLinkVisitedColor: '',
 	headerBgColor: '',
-	headerBgOpacity: 1,
 	footerColor: '',
 	footerLinkColor: '',
 	footerLinkHoverColor: '',
 	footerLinkActiveColor: '',
 	footerLinkVisitedColor: '',
 	footerBgColor: '',
-	footerBgOpacity: 1,
 	pageColor: '',
 	pageBgColor: '',
-	pageBgOpacity: 1,
 	pageLinkColor: '',
 	pageLinkHoverColorBg: '',
 	pageLinkHoverColorText: '',

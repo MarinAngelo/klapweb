@@ -61,13 +61,11 @@ a[data-type="prismic-link"]:hover {
   --footer-link-hover-color: #cfcefe;
   --footer-link-active-color: #cfcefe;
   --footer-link-visited-color: #cfcefe;
-  --footer-bg-opacity: 1;
   --page-link-color: #090247;
   --page-link-hover-color-bg: transparent;
   --page-link-hover-color-text: var(--page-link-color);
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
-  --page-bg-opacity: 1;
   --hero-overlay-color: transparent;
   --button-bg-color: transparent;
 
