@@ -13,6 +13,10 @@
 	export let data;
 	console.log('Layout data:', data);
 
+	// Adobe Fonts URL generieren
+	$: adobeFontId = data?.adobeFontId; // z.B. "lal6jiy"
+	$: adobeFontUrl = adobeFontId ? `https://use.typekit.net/${adobeFontId}.css` : null;
+
 	// Hilfsfunktion: Erzeuge Google Fonts URL aus Array von Font-Objekten
 	function getGoogleFontsUrl(fontsArr: any[]): string | null {
 		if (!Array.isArray(fontsArr) || !fontsArr.length) return null;
@@ -28,13 +32,8 @@
 		return `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`;
 	}
 
-	console.log('data.fonts:', data?.fonts);
 	$: googleFontsUrl = getGoogleFontsUrl(data?.fonts);
-	$: {
-		if (googleFontsUrl) {
-			console.log('font url:', googleFontsUrl);
-		}
-	}
+
 	// Favicon bereitstellen
 	onMount(() => {
 		if (data.prismicTheme?.data?.favicon?.url) {
@@ -73,6 +72,9 @@
 	{#if $page.data?.no_index}
 		<meta name="robots" content="noindex" />
 	{/if}
+    {#if adobeFontUrl}
+        <link rel="stylesheet" href={adobeFontUrl} />
+    {/if}
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
 <div style="background-color: {$theme.pageBgColor};">

@@ -127,6 +127,17 @@ interface FontDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	variants: prismic.KeyTextField;
+
+	/**
+	 * Schrift ID (Adobe) field in *Schrift*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: font.adobeFontId
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	adobeFontId: prismic.KeyTextField;
 }
 
 /**
