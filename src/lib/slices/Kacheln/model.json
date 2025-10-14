@@ -58,7 +58,10 @@
                   "label": "Schaltflächen-Link",
                   "placeholder": "",
                   "select": null,
-                  "allowTargetBlank": true
+                  "allowTargetBlank": true,
+                  "customtypes": [
+                    "page"
+                  ]
                 }
               },
               "buttonText": {
