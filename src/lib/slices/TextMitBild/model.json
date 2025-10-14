@@ -101,7 +101,10 @@
           "config": {
             "label": "Button Link",
             "placeholder": "",
-            "select": null
+            "select": null,
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "buttonText": {
