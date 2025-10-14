@@ -47,7 +47,7 @@
 	data-slice-variation={slice.variation}
 >
 	<ImageTextGrid
-		image={slice.primary.image}
+		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}
 		text={slice.primary.text}
 		imageLeft={isBildLinks}
 		imageBgColor={slice.primary.bg_color || get(theme).pageBgColor}

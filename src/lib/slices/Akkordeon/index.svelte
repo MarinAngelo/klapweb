@@ -54,9 +54,9 @@
 				<div class={openIndex === index ? 'block mt-2' : 'hidden'}>
 					{#if slice.variation === 'bildUndText'}
 						<ImageTextGrid
-							image={item.image}
+							image={'image' in item ? item.image : null}
 							text={item.content}
-							imageLeft={item.standardBildLinks ?? false}
+							imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
 							{theme}
 						/>
 					{:else}
