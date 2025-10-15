@@ -7,13 +7,14 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
+	import { isMobile } from '$lib/stores/isMobile';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
-	export let bodyBgColor; 
-	export let buttonColor; 
-	export let buttonBgColor; 
-	export let buttonHoverColor; 
-	export let buttonHoverBgColor; 
+	export let bodyBgColor;
+	export let buttonColor;
+	export let buttonBgColor;
+	export let buttonHoverColor;
+	export let buttonHoverBgColor;
 	export let borderColor;
 </script>
 
@@ -39,11 +40,19 @@
 			/>
 		</div>
 	{/if}
-	<div class="leading-relaxed {bodyBgColor || borderColor ? 'pl-6 pr-6' : ''}">
+	<div
+		class="leading-relaxed {bodyBgColor || borderColor ? 'pl-6 pr-6' : ''}"
+		class:pl-6={isMobile}
+		class:pr-6={isMobile}
+	>
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}
-		<div class={bodyBgColor || borderColor ? 'pl-6' : ''}>
+		<div
+			class={bodyBgColor || (borderColor && isMobile) ? 'pl-6' : ''}
+			class:pl-6={isMobile}
+			class:pr-6={isMobile}
+		>
 			<Button
 				link={card.buttonLink}
 				text={card.buttonText || 'Mehr erfahren'}

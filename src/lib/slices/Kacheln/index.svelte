@@ -16,7 +16,12 @@
 	export const index: number = 0; // Initialize with a default value and specify the type
 </script>
 
-<Bounded tag="section" data-slice-type={slice.slice_type} data-slice-variation={slice.variation}>
+<Bounded
+	tag="section"
+	specialLayout={true}
+	data-slice-type={slice.slice_type}
+	data-slice-variation={slice.variation}
+>
 	<div class="grid gap-12" style="color: {get(theme).pageColor}">
 		{#if isFilled.richText(slice.primary.heading)}
 			<Heading class="text-center">
