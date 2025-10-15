@@ -41,17 +41,16 @@
 		</div>
 	{/if}
 	<div
-		class="leading-relaxed {bodyBgColor || borderColor ? 'pl-6 pr-6' : ''}"
-		class:pl-6={isMobile}
-		class:pr-6={isMobile}
+		class="leading-relaxed"
+		class:pl-6={$isMobile || !!bodyBgColor || !!borderColor}
+		class:pr-6={$isMobile || !!bodyBgColor || !!borderColor}
 	>
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}
 		<div
-			class={bodyBgColor || (borderColor && isMobile) ? 'pl-6' : ''}
-			class:pl-6={isMobile}
-			class:pr-6={isMobile}
+			class:pl-6={$isMobile || !!bodyBgColor || !!borderColor}
+			class:pr-6={$isMobile || !!bodyBgColor || !!borderColor}
 		>
 			<Button
 				link={card.buttonLink}
