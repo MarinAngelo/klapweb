@@ -17,10 +17,19 @@ interface PrismicThemeData {
 	page_bg_color?: string;
 	page_link_color?: string;
 	page_link_hover_color_bg?: string;
-	page_link_hover_color_text?: string;
+	page_link_hover_color?: string;
 	nav_font?: string;
 	body_font?: string;
+	button_color?: string;
 	button_bg_color?: string;
+	button_hover_color?: string;
+	button_hover_bg_color?: string;
+	button_active_color?: string;
+	button_visited_color?: string;
+	button_active_bg_color?: string;
+	button_border_radius?: number;
+	button_padding_y?: number;
+	button_padding_x?: number;
 	// Füge hier weitere relevante Felder aus deinen Prismic-Daten hinzu
 }
 
@@ -68,9 +77,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColorBg =
 		prismicThemeData.link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
-	const pageLinkHoverColorText =
-		prismicThemeData.link_hover_color_text || getCssVar('--page-link-hover-color-text');
+	const pageLinkHoverColor =
+		prismicThemeData.link_hover_color || getCssVar('--page-link-hover-color');
+	const buttonColor = prismicThemeData.button_color || getCssVar('--button-color');
+	const buttonHoverColor = prismicThemeData.button_hover_color || getCssVar('--button-hover-color');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
+	const buttonHoverBgColor = prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
 	const bodyFont =
 		prismicThemeData.body_font?.data?.name || getCssVar('--body-font').replace(/'/g, '');
 	const navFont =
@@ -90,12 +102,15 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageBgColor,
 		pageLinkColor,
 		pageLinkHoverColorBg,
-		pageLinkHoverColorText,
+		pageLinkHoverColor,
 		pageLinkActiveColor,
 		pageLinkVisitedColor,
 		navFont,
 		bodyFont,
-		buttonBgColor
+		buttonColor,
+		buttonHoverColor,
+		buttonBgColor,
+		buttonHoverBgColor
 	}));
 
 	// NEU: Werte auch als CSS-Variablen setzen
@@ -111,11 +126,14 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--page-bg-color', pageBgColor);
 		root.style.setProperty('--page-link-color', pageLinkColor);
 		root.style.setProperty('--page-link-hover-color-bg', pageLinkHoverColorBg);
-		root.style.setProperty('--page-link-hover-color-text', pageLinkHoverColorText);
+		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
 		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
 		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
 		root.style.setProperty('--nav-font', navFont);
 		root.style.setProperty('--body-font', bodyFont);
+		root.style.setProperty('--button-color', buttonColor);
+		root.style.setProperty('--button-hover-color', buttonHoverColor);
 		root.style.setProperty('--button-bg-color', buttonBgColor);
+		root.style.setProperty('--button-hover-bg-color', buttonHoverBgColor);
 	}
 }

@@ -42,7 +42,9 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
 					]
 				}
@@ -54,17 +56,10 @@
 					"placeholder": ""
 				}
 			},
-			"link_hover_color_text": {
+			"link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
-					"placeholder": ""
-				}
-			},
-			"link_hover_color_bg": {
-				"type": "Color",
-				"config": {
-					"label": "Linkhintergrundfarbe Maus darüber",
 					"placeholder": ""
 				}
 			},
@@ -137,7 +132,9 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
 					]
 				}
