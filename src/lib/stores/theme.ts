@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 
 export const THEME_DEFAULTS = {
+	// Globale Defaults
+	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
     // Aus Slices/Titelbereich/index.svelte
 	bannerTop: false,
 	headerBgOpacity: 1,

@@ -1608,6 +1608,26 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	image: prismic.ImageField<'Quadrat'>;
 
 	/**
+	 * Bild Überlagerungsfarbe field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.default.primary.cards[].image_overlay_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	image_overlay_color: prismic.ColorField;
+
+	/**
+	 * Transparenz der Überlagerungsfarbe field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0 - 100 %
+	 * - **API ID Path**: image_cards.default.primary.cards[].image_overlay_opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	image_overlay_opacity: prismic.NumberField;
+
+	/**
 	 * Text field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Rich Text

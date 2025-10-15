@@ -23,7 +23,6 @@
 							[
 								"image",
 								{
-									"__TYPE__": "ImageContent",
 									"origin": {
 										"id": "main",
 										"url": "https://images.unsplash.com/photo-1547082299-de196ea013d6",
@@ -42,6 +41,8 @@
 										"background": "transparent"
 									},
 									"alt": "giving",
+									"credits": null,
+									"__TYPE__": "ImageContent",
 									"thumbnails": {
 										"Quadrat": {
 											"origin": {
@@ -61,7 +62,8 @@
 												},
 												"background": "transparent"
 											},
-											"alt": "friend"
+											"alt": "friend",
+											"credits": null
 										}
 									}
 								}
@@ -97,6 +99,22 @@
 									"__TYPE__": "FieldContent",
 									"value": "wagon",
 									"type": "Text"
+								}
+							],
+							[
+								"image_overlay_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#9e2956",
+									"type": "Color"
+								}
+							],
+							[
+								"image_overlay_opacity",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "17",
+									"type": "Number"
 								}
 							]
 						]

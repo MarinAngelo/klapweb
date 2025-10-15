@@ -43,6 +43,20 @@
                   ]
                 }
               },
+              "image_overlay_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Bild Überlagerungsfarbe",
+                  "placeholder": ""
+                }
+              },
+              "image_overlay_opacity": {
+                "type": "Number",
+                "config": {
+                  "label": "Transparenz der Überlagerungsfarbe",
+                  "placeholder": "0 - 100 %"
+                }
+              },
               "text": {
                 "type": "StructuredText",
                 "config": {
