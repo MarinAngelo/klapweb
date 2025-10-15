@@ -11,9 +11,9 @@
 
 	export let slice: Content.ImageCardsSlice;
 	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export let slices; // Diese Zeile hinzufügen
-	export let context; // Diese Zeile hinzufügen
-	export let index; // Diese Zeile hinzufügen
+	export const slices: any = {}; // Initialize with an empty object and provide a type
+	export const context: any = {}; // Initialize with an empty object and provide a type
+	export const index: number = 0; // Initialize with a default value and specify the type
 </script>
 
 <Bounded tag="section" data-slice-type={slice.slice_type} data-slice-variation={slice.variation}>
@@ -25,7 +25,15 @@
 		{/if}
 		<ul class="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
 			{#each slice.primary.cards as card}
-				<ImageCard {card} />
+				<ImageCard
+					{card}
+					bodyBgColor={slice.primary.body_bg_color}
+					buttonColor={slice.primary.button_color}
+					buttonBgColor={slice.primary.button_bg_color}
+					buttonHoverColor={slice.primary.button_hover_color}
+					buttonHoverBgColor={slice.primary.button_hover_bg_color}
+					borderColor={slice.primary.border_color}
+				/>
 			{/each}
 		</ul>
 	</div>

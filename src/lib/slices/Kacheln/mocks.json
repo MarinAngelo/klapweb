@@ -116,42 +116,40 @@
 									"value": "17",
 									"type": "Number"
 								}
-							],
-							[
-								"button_color",
-								{
-									"__TYPE__": "FieldContent",
-									"value": "#86c368",
-									"type": "Color"
-								}
-							],
-							[
-								"button_bg_color",
-								{
-									"__TYPE__": "FieldContent",
-									"value": "#1ac7bb",
-									"type": "Color"
-								}
-							],
-							[
-								"button_hover_color",
-								{
-									"__TYPE__": "FieldContent",
-									"value": "#70e174",
-									"type": "Color"
-								}
-							],
-							[
-								"button_hover_bg_color",
-								{
-									"__TYPE__": "FieldContent",
-									"value": "#ae3d2e",
-									"type": "Color"
-								}
 							]
 						]
 					}
 				]
+			},
+			"body_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#9a0ad3",
+				"type": "Color"
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#38c913",
+				"type": "Color"
+			},
+			"button_hover_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#162808",
+				"type": "Color"
+			},
+			"button_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#4a9039",
+				"type": "Color"
+			},
+			"button_hover_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#411686",
+				"type": "Color"
+			},
+			"border_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c1c6ee",
+				"type": "Color"
 			}
 		},
 		"items": []

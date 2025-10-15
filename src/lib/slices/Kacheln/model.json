@@ -20,6 +20,48 @@
             "single": "heading2"
           }
         },
+        "body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Schriftfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Schriftfarbe Maus drüber",
+            "placeholder": ""
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Hintergrundfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Hintergrundf. Maus drüber",
+            "placeholder": ""
+          }
+        },
+        "border_color": {
+          "type": "Color",
+          "config": {
+            "label": "Farbe der Umrandung",
+            "placeholder": ""
+          }
+        },
         "cards": {
           "type": "Group",
           "config": {
@@ -82,34 +124,6 @@
                 "type": "Text",
                 "config": {
                   "label": "Schaltflächen-Text",
-                  "placeholder": ""
-                }
-              },
-              "button_color": {
-                "type": "Color",
-                "config": {
-                  "label": "Schaltflächen Schriftfarbe",
-                  "placeholder": ""
-                }
-              },
-              "button_hover_color": {
-                "type": "Color",
-                "config": {
-                  "label": "Schaltfl. Schriftfarbe Maus drüber",
-                  "placeholder": ""
-                }
-              },
-              "button_bg_color": {
-                "type": "Color",
-                "config": {
-                  "label": "Schaltflächen Hintergrundfarbe",
-                  "placeholder": ""
-                }
-              },
-              "button_hover_bg_color": {
-                "type": "Color",
-                "config": {
-                  "label": "Schaltfl. Hintergrundf. Maus drüber",
                   "placeholder": ""
                 }
               }

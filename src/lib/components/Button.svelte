@@ -11,7 +11,6 @@
 	export let bgColor: string | undefined;
 	export let hoverColor: string | undefined;
 	export let hoverBgColor: string | undefined;
-	console.log('hoverBgColor', hoverBgColor);
 
 	const { pageLinkColor, pageLinkHoverColor, buttonBgColor } = get(theme);
 

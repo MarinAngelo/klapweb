@@ -9,11 +9,21 @@
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
-	console.log('card', card.button_hover_bg_color);
-
+	export let bodyBgColor; 
+	export let buttonColor; 
+	export let buttonBgColor; 
+	export let buttonHoverColor; 
+	export let buttonHoverBgColor; 
+	export let borderColor;
 </script>
 
-<li class="grid gap-8">
+<li
+	class="grid gap-8 border rounded-xl"
+	style="
+		background-color: {bodyBgColor || get(theme).pageBgColor};
+		border-color: {borderColor || get(theme).pageBgColor};
+	"
+>
 	{#if isFilled.image(card.image)}
 		<div class="relative">
 			{#if isFilled.link(card.buttonLink)}
@@ -23,25 +33,24 @@
 			{:else}
 				<PrismicImage field={card.image} sizes="100vw" class="w-full" />
 			{/if}
-			<!-- Overlay immer außerhalb der Link-Bedingung -->
 			<ImageOverlay
 				color={card.image_overlay_color || get(theme).pageBgColor}
 				opacity={convertNumber(card.image_overlay_opacity || get(theme).imageOverlayOpacity)}
 			/>
 		</div>
 	{/if}
-	<div class="leading-relaxed">
+	<div class="leading-relaxed {bodyBgColor || borderColor ? 'pl-6 pr-6' : ''}">
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}
-		<div>
+		<div class={bodyBgColor || borderColor ? 'pl-6' : ''}>
 			<Button
 				link={card.buttonLink}
 				text={card.buttonText || 'Mehr erfahren'}
-				color={card.button_color || get(theme).buttonColor}
-				bgColor={card.button_bg_color || get(theme).buttonBgColor}
-				hoverColor={card.button_hover_color || get(theme).buttonHoverColor}
-				hoverBgColor={card.button_hover_bg_color || get(theme).buttonHoverBgColor}
+				color={buttonColor || get(theme).buttonColor}
+				bgColor={buttonBgColor || get(theme).buttonBgColor}
+				hoverColor={buttonHoverColor || get(theme).buttonHoverColor}
+				hoverBgColor={buttonHoverBgColor || get(theme).buttonHoverBgColor}
 			/>
 		</div>
 	{/if}
