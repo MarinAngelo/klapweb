@@ -4,11 +4,10 @@
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
-	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
-
+	import { hexToRgba } from '$lib/utils/color';
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
 
@@ -35,24 +34,20 @@
 		return () => observer.disconnect();
 	});
 
-    $: bannerTop = $theme.bannerTop;
-    $: headerBgColor = $theme.headerBgColor;
-    $: headerBgOpacity = $theme.headerBgOpacity;
-    $: headerColor = $theme.headerColor;
-    $: headerLinkColor = $theme.headerLinkColor;
-    $: headerLinkHoverColor = $theme.headerLinkHoverColor;
-
-
+	$: bannerTop = $theme.bannerTop;
+	$: headerBgColor = $theme.headerBgColor;
+	$: headerBgOpacity = $theme.headerBgOpacity;
+	$: headerColor = $theme.headerColor;
+	$: headerLinkColor = $theme.headerLinkColor;
+	$: headerLinkHoverColor = $theme.headerLinkHoverColor;
 	$: currentPath = $page.url.pathname;
-
+	$: headerBgColorRgba = hexToRgba(headerBgColor, headerBgOpacity);
 	// Dynamischer Style je nach Menüstatus
 	$: headerStyle = `
-		background-color: ${headerBgColor};
-		opacity: ${$isMenuOpen ? 1 : headerBgOpacity};
+		background-color: ${headerBgColorRgba};
 		color: ${headerColor};
 		position: ${bannerTop ? 'absolute' : 'relative'};
 		z-index: 100;
-		transition: opacity 300ms ease;
 	`;
 </script>
 
@@ -68,7 +63,7 @@
 	style={headerStyle}
 >
 	<!-- Logo -->
-	<div class="flex { $isMenuOpen ? '' : 'items-center' } justify-between w-full">
+	<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
 		<div class="logo m-0">
 			{#if prismicTheme.data.logo?.url}
 				<a href="/" class="flex items-center mt-2 mb-2">
@@ -80,7 +75,7 @@
 					/>
 				</a>
 			{:else}
-			<!-- Text-Logo -->
+				<!-- Text-Logo -->
 				<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 					<span
 						class="text-xl font-semibold tracking-tight"
@@ -89,11 +84,7 @@
 						<PrismicText field={settings.data.site_title} /><br />
 					</span>
 					<span style="font-size: {siteSubtitleFontSize}rem;">
-						<PrismicText
-							field={settings.data.site_sub_title}
-							
-							class="text-sm"
-						/>
+						<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 					</span>
 				</a>
 			{/if}

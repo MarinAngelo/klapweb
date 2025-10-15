@@ -20,6 +20,13 @@
             "default_value": false
           }
         },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {
@@ -36,12 +43,33 @@
             "placeholder": ""
           }
         },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variant"
+                ]
+              }
+            ]
+          }
+        },
         "button_link": {
           "type": "Link",
           "config": {
             "label": "Schaltflächenlink",
             "placeholder": "",
-            "select": null
+            "select": null,
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "button_text": {

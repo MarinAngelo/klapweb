@@ -130,6 +130,19 @@
 			"banner_overlap": {
 				"__TYPE__": "BooleanContent",
 				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "9",
+				"type": "Number"
+			},
+			"font": {
+				"key": "66470b7e-4a74-4bb3-a469-edf5af11a995",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "DocumentLink",
+					"id": "mock_document_id"
+				}
 			}
 		},
 		"items": [

@@ -18,7 +18,7 @@
             "label": "Überschrift",
             "placeholder": "",
             "allowTargetBlank": true,
-            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+            "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
           }
         },
         "description": {
@@ -27,7 +27,7 @@
             "label": "Beschreibung",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
           }
         },
         "accordion_items": {
@@ -50,6 +50,77 @@
                   "placeholder": "",
                   "allowTargetBlank": true,
                   "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    },
+    {
+      "id": "bildUndText",
+      "name": "Bild und Text",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Überschrift",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Beschreibung",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+          }
+        },
+        "accordion_items": {
+          "type": "Group",
+          "config": {
+            "label": "Akkordeon Elemente",
+            "repeat": true,
+            "fields": {
+              "label": {
+                "type": "Text",
+                "config": {
+                  "label": "Titel",
+                  "placeholder": ""
+                }
+              },
+              "content": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Text",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+                }
+              },
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              },
+              "standardBildLinks": {
+                "type": "Boolean",
+                "config": {
+                  "label": "Bild Links",
+                  "placeholder_false": "Nein",
+                  "placeholder_true": "Ja",
+                  "default_value": false
                 }
               }
             }

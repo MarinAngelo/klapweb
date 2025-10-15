@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
+	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
@@ -9,12 +9,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import { addMarginIfLastIsHeading } from '$lib/utils/addMarginIfLastIsHeading';
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 
 	export let slice: Content.HeroSlice;
-	console.log('slice in Titelbereich:', slice.primary.backgroundImage);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -26,13 +25,24 @@
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100;
-	console.log('overlayOpacity fomr cms:', slice.primary.overlay_opacity);
-	console.log('overlayOpacity:', overlayOpacity);
+	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
 	const color = slice.primary.color || 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
 	// bannerTop im Theme-Store aktualisieren
 	$: theme.update((t) => ({ ...t, bannerTop }));
+
+	onMount(() => {
+		theme.update((t) => ({ ...t, headerBgOpacity }));
+	});
+
+	onDestroy(() => {
+		theme.update((t) => ({
+			...t,
+			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
+			bannerTop: THEME_DEFAULTS.bannerTop
+		}));
+	});
 
 	// Fallbacks aus dem globalen Theme holen
 	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
@@ -71,13 +81,27 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
+
+	// Hilfsfunktion: Font-Name sicher extrahieren -->
+	function getFontName(fontField: any) {
+		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+	}
+	// Hilfsfunktion: Font-Family sicher extrahieren -->
+	function getFontFamily(fontField: any) {
+		const name =
+			fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+		if (!name) return 'sans-serif';
+		return name.includes(' ') ? `'${name}', sans-serif` : `${name}, sans-serif`;
+	}
 </script>
 
 <section
 	class="relative z-0 overflow-visible"
-	style="background-color: {isMobile
-		? textOverlayColor
-		: overlayColor}; color: {color}; height: {$bannerHeight};"
+	style="background-color: {isMobile ? textOverlayColor : overlayColor};
+		color: {color};
+		height: {$bannerHeight};
+		font-family: {getFontFamily(slice.primary.font)};
+	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<ResponsivePrismicImage
@@ -93,16 +117,17 @@
 			class="relative flex flex-col items-center justify-center min-h-[60vh]"
 			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
 		>
-			<div class="relative w-full max-w-2xl flex items-center justify-center">
+			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
 				{#if !isMobile}
 					<div
-						class="absolute inset-0 rounded-lg"
+						class="absolute inset-0"
 						style="
 						background-color: {textOverlayColor};
 						opacity: {textOverlayOpacity};
 						pointer-events: none;
-					"
+						border-radius: 3rem;
+						"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -116,7 +141,7 @@
 							}
 						}
 					</style>
-					<div bind:this={richTextDiv}>
+					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						<PrismicRichText field={slice.primary.text} />
 					</div>
 					{#if isFilled.link(slice.primary.button_link)}

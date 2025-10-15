@@ -6,21 +6,21 @@
 
 	export let node: RTLinkNode;
 
-	const { pageLinkColor, pageLinkHoverColorText } = get(theme);
+	const { pageLinkColor, pageLinkHoverColor } = get(theme);
 
 	let isHover = false;
 
-	const href = asLink(node); // erzeugt z. B. https://example.com
+	const href = asLink(node as any); // cast node to 'any' to satisfy the type requirement
 </script>
 
 <a
 	href={href}
-	target={node.data?.target}
-	rel={node.data?.target === '_blank' ? 'noopener noreferrer' : undefined}
+	target={node.data && 'target' in node.data ? node.data.target : undefined}
+	rel={node.data && typeof node.data === 'object' && 'target' in node.data && node.data.target === '_blank' ? 'noopener noreferrer' : undefined}
 	on:mouseenter={() => (isHover = true)}
 	on:mouseleave={() => (isHover = false)}
-	class="underline decoration-1 underline-offset-2 transition-colors duration-200"
-	style="color: {isHover ? pageLinkHoverColorText : pageLinkColor};"
+	class="underline decoration-1 underline-offset-2 transition-colors duration-200 italic"
+	style="color: {isHover ? pageLinkHoverColor : pageLinkColor};"
 >
 	<slot />
 </a>

@@ -20,6 +20,48 @@
             "single": "heading2"
           }
         },
+        "body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Schriftfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Schriftfarbe Maus drüber",
+            "placeholder": ""
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Hintergrundfarbe",
+            "placeholder": ""
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Hintergrundf. Maus drüber",
+            "placeholder": ""
+          }
+        },
+        "border_color": {
+          "type": "Color",
+          "config": {
+            "label": "Farbe der Umrandung",
+            "placeholder": ""
+          }
+        },
         "cards": {
           "type": "Group",
           "config": {
@@ -34,7 +76,27 @@
                     "width": 2200,
                     "height": 1200
                   },
-                  "thumbnails": []
+                  "thumbnails": [
+                    {
+                      "name": "Quadrat",
+                      "width": 1200,
+                      "height": 1200
+                    }
+                  ]
+                }
+              },
+              "image_overlay_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Bild Überlagerungsfarbe",
+                  "placeholder": ""
+                }
+              },
+              "image_overlay_opacity": {
+                "type": "Number",
+                "config": {
+                  "label": "Transparenz der Überlagerungsfarbe",
+                  "placeholder": "0 - 100 %"
                 }
               },
               "text": {
@@ -52,7 +114,10 @@
                   "label": "Schaltflächen-Link",
                   "placeholder": "",
                   "select": null,
-                  "allowTargetBlank": true
+                  "allowTargetBlank": true,
+                  "customtypes": [
+                    "page"
+                  ]
                 }
               },
               "buttonText": {

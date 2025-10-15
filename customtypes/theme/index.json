@@ -33,6 +33,22 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"body_font": {
+				"type": "Link",
+				"config": {
+					"label": "Hauptschrift",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": [
+								"name"
+							]
+						}
+					]
+				}
+			},
 			"page_link_color": {
 				"type": "Color",
 				"config": {
@@ -40,34 +56,11 @@
 					"placeholder": ""
 				}
 			},
-			"link_hover_color_text": {
+			"link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": ""
-				}
-			},
-			"link_hover_color_bg": {
-				"type": "Color",
-				"config": {
-					"label": "Linkhintergrundfarbe Maus darüber",
-					"placeholder": ""
-				}
-			},
-			"body_font": {
-				"type": "Select",
-				"config": {
-					"label": "Hauptschrift",
-					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura", "Soleil"]
-				}
-			},
-			"nav_font": {
-				"type": "Select",
-				"config": {
-					"label": "Navigationsschrift",
-					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura"]
 				}
 			},
 			"favicon": {
@@ -93,13 +86,6 @@
 				"config": {
 					"label": "Logo Grösse",
 					"placeholder": "1 - 20"
-				}
-			},
-			"header_bg_color": {
-				"type": "Color",
-				"config": {
-					"label": "Hintergrundfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"header_bg_opacity": {
@@ -135,6 +121,22 @@
 				"config": {
 					"label": "Linkfarbe, wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"nav_font": {
+				"type": "Link",
+				"config": {
+					"label": "Navigationsschrift",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": [
+								"name"
+							]
+						}
+					]
 				}
 			}
 		},
