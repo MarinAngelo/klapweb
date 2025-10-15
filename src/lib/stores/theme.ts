@@ -22,13 +22,21 @@ export const THEME_DEFAULTS = {
 	pageColor: '',
 	pageBgColor: '',
 	pageLinkColor: '',
-	pageLinkHoverColorBg: '',
-	pageLinkHoverColorText: '',
+	pageLinkHoverColor: '',
 	pageLinkActiveColor: '',
 	pageLinkVisitedColor: '',
 	bodyFont: '',
 	navFont: '',
-	buttonBgColor: ''
+	buttonColor: '',
+	buttonHoverColor: '',
+	buttonBgColor: '',
+	buttonHoverBgColor: '',
+	buttonActiveColor: '',
+	buttonVisitedColor: '',
+	buttonActiveBgColor: '',
+	buttonBorderRadius: 0,
+	buttonPaddingY: 0,
+	buttonPaddingX: 0,
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

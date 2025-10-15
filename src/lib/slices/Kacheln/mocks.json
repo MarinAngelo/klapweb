@@ -116,6 +116,38 @@
 									"value": "17",
 									"type": "Number"
 								}
+							],
+							[
+								"button_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#86c368",
+									"type": "Color"
+								}
+							],
+							[
+								"button_bg_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#1ac7bb",
+									"type": "Color"
+								}
+							],
+							[
+								"button_hover_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#70e174",
+									"type": "Color"
+								}
+							],
+							[
+								"button_hover_bg_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#ae3d2e",
+									"type": "Color"
+								}
 							]
 						]
 					}

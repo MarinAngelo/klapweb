@@ -9,7 +9,7 @@
 
 /* TailwindCSS-Overrides */
 .hover\:bg-current:hover {
-  background-color: var(--hover-bg-color) !important;
+  background-color: var(--button-hover-bg-color) !important;
 }
 
 .leading-loose * {
@@ -22,7 +22,13 @@
 }
 
 .hover\:text-white:hover {
-  color: var(--hover-text-color) !important;
+  color: var(--page-link-hover-color) !important;
+}
+
+.button-prismic-link:hover {
+    background-color: var(--hover-bg-color) !important;
+    color: var(--hover-text-color) !important;
+    border-color: var(--hover-text-color) !important; /* Border-Farbe beim Hover */
 }
 
 .focus\:ring-current:focus {
@@ -36,8 +42,7 @@ a[data-type="prismic-link"] {
 }
 
 a[data-type="prismic-link"]:hover {
-	color: var(--page-link-hover-color-text);
-	/* background-color: var(--page-link-hover-color-bg); */
+	color: var(--page-link-hover-color) !important;
 }
 
 :root {
@@ -48,6 +53,8 @@ a[data-type="prismic-link"]:hover {
   --header-color: #cfcefe;
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
+  --page-link-color: #26683c;
+  --page-link-hover-color: #2ca741;
   /* not css notation, as it will be recalculated as coming from cms */
   --header-bg-opacity: 0;
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
@@ -57,17 +64,25 @@ a[data-type="prismic-link"]:hover {
   --nav-font: 'Roboto'; 
   --footer-bg-color: #232442;
   --footer-color: #5f5fab;
-  --footer-link-color: #cfcefe;
-  --footer-link-hover-color: #cfcefe;
-  --footer-link-active-color: #cfcefe;
-  --footer-link-visited-color: #cfcefe;
-  --page-link-color: #090247;
+  --footer-link-color: var(--page-link-color);
+  --footer-link-hover-color: var(--page-link-hover-color);
+  --footer-link-active-color: var(--page-link-color);
+  --footer-link-visited-color: var(--page-link-color);
   --page-link-hover-color-bg: transparent;
-  --page-link-hover-color-text: var(--page-link-color);
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
   --hero-overlay-color: transparent;
+  --button-color: var(--page-link-color);
+  --button-hover-color: var(--page-link-hover-color);
   --button-bg-color: transparent;
+  --button-hover-bg-color: transparent;
+  --button-active-bg-color: var(--page-link-active-color);
+  --button-active-color: var(--page-link-active-color);
+  --button-visited-color: var(--page-link-visited-color);
+  --button-border-radius: 0;
+  --button-padding-y: 0.5rem;
+  --button-padding-x: 1rem;
+  --focus-ring-color: #000000;
 
 }
 

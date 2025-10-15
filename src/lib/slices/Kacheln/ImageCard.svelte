@@ -9,11 +9,8 @@
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
-	
-	const pageBgColor = get(theme).pageBgColor;
-	const imageOverlayOpacity = get(theme).imageOverlayOpacity; // Fallback aus Theme
-	const overlayColor = card.image_overlay_color || pageBgColor; // Fallback aus Theme
-	const overlayOpacity = convertNumber(card.image_overlay_opacity || imageOverlayOpacity); // Standardwert 50, ergibt 0.5
+	console.log('card', card.button_hover_bg_color);
+
 </script>
 
 <li class="grid gap-8">
@@ -27,7 +24,10 @@
 				<PrismicImage field={card.image} sizes="100vw" class="w-full" />
 			{/if}
 			<!-- Overlay immer außerhalb der Link-Bedingung -->
-			<ImageOverlay color={overlayColor} opacity={overlayOpacity} />
+			<ImageOverlay
+				color={card.image_overlay_color || get(theme).pageBgColor}
+				opacity={convertNumber(card.image_overlay_opacity || get(theme).imageOverlayOpacity)}
+			/>
 		</div>
 	{/if}
 	<div class="leading-relaxed">
@@ -35,7 +35,14 @@
 	</div>
 	{#if isFilled.link(card.buttonLink)}
 		<div>
-			<Button link={card.buttonLink} text={card.buttonText || 'Mehr erfahren'} />
+			<Button
+				link={card.buttonLink}
+				text={card.buttonText || 'Mehr erfahren'}
+				color={card.button_color || get(theme).buttonColor}
+				bgColor={card.button_bg_color || get(theme).buttonBgColor}
+				hoverColor={card.button_hover_color || get(theme).buttonHoverColor}
+				hoverBgColor={card.button_hover_bg_color || get(theme).buttonHoverBgColor}
+			/>
 		</div>
 	{/if}
 </li>

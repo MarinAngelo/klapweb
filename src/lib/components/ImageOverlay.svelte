@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { hexToRgba } from '../utils/color';
+    
 	export let color: string;
 	export let opacity: number;
 </script>

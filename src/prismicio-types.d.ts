@@ -503,22 +503,11 @@ interface ThemeDocumentData {
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color_text
+	 * - **API ID Path**: theme.link_hover_color
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	link_hover_color_text: prismic.ColorField;
-
-	/**
-	 * Linkhintergrundfarbe Maus darüber field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color_bg
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	link_hover_color_bg: prismic.ColorField;
+	link_hover_color: prismic.ColorField;
 
 	/**
 	 * Favicon field in *Design Vorlage*
@@ -1656,6 +1645,46 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	buttonText: prismic.KeyTextField;
+
+	/**
+	 * Schaltflächen Schriftfarbe field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.default.primary.cards[].button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfl. Schriftfarbe Maus drüber field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.default.primary.cards[].button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltflächen Hintergrundfarbe field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.default.primary.cards[].button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfl. Hintergrundf. Maus drüber field in *Kacheln → Standard → Primary → Kacheln*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.default.primary.cards[].button_hover_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_bg_color: prismic.ColorField;
 }
 
 /**
