@@ -552,17 +552,6 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 0 - 100 %
-	 * - **API ID Path**: theme.header_bg_opacity
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	header_bg_opacity: prismic.NumberField;
-
-	/**
 	 * Textfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1465,96 +1454,6 @@ export interface HeroSliceMitBildKarusellPrimary {
 	header_bg_opacity: prismic.NumberField;
 
 	/**
-	 * Text field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	text: prismic.RichTextField;
-
-	/**
-	 * Textfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	color: prismic.ColorField;
-
-	/**
-	 * Schriftart field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.font
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name', 'provider', 'variant'] }]>;
-
-	/**
-	 * Schaltflächenlink field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Link
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_link
-	 * - **Documentation**: https://prismic.io/docs/fields/link
-	 */
-	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
-
-	/**
-	 * Schaltflächentext field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	button_text: prismic.KeyTextField;
-
-	/**
-	 * Schaltfläche Hintergrundfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_bg_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche Hintergrund Mouseover field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_bg_color_hover
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_bg_color_hover: prismic.ColorField;
-
-	/**
-	 * Schaltfläche Text- und Rahmenfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_text_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_text_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche T & R Mouseover field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.mitBildKarusell.primary.button_text_color_hover
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_text_color_hover: prismic.ColorField;
-
-	/**
 	 * Bild Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
 	 *
 	 * - **Field Type**: Color
@@ -1563,47 +1462,6 @@ export interface HeroSliceMitBildKarusellPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	overlay_color: prismic.ColorField;
-
-	/**
-	 * Titelbild Höhe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: 100 %
-	 * - **API ID Path**: hero.mitBildKarusell.primary.banner_height
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	banner_height: prismic.SelectField<'100 %' | '50 %' | '33 %', 'filled'>;
-
-	/**
-	 * Text Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.text_overlay_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	text_overlay_color: prismic.ColorField;
-
-	/**
-	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 0 - 100 %
-	 * - **API ID Path**: hero.mitBildKarusell.primary.text_overlay_opacity
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	text_overlay_opacity: prismic.NumberField;
-
-	/**
-	 * Text Überlagerungsfeld Grösse field in *Titelbereich → Mit Bild Karusell → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: hero.mitBildKarusell.primary.text_overlay_padding
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
 
 	/**
 	 * Bilder Karusell field in *Titelbereich → Mit Bild Karusell → Primary*
