@@ -177,6 +177,176 @@
       },
       "items": {},
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "mitBildKarusell",
+      "name": "Mit Bild Karusell",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Hero",
+      "primary": {
+        "banner_overlap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Überlappend mit Kopfzeile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Text",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
+          }
+        },
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Textfarbe",
+            "placeholder": ""
+          }
+        },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variant"
+                ]
+              }
+            ]
+          }
+        },
+        "button_link": {
+          "type": "Link",
+          "config": {
+            "label": "Schaltflächenlink",
+            "placeholder": "",
+            "select": null,
+            "customtypes": [
+              "page"
+            ]
+          }
+        },
+        "button_text": {
+          "type": "Text",
+          "config": {
+            "label": "Schaltflächentext",
+            "placeholder": ""
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color_hover": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrund Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_text_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_text_color_hover": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Bild Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "banner_height": {
+          "type": "Select",
+          "config": {
+            "label": "Titelbild Höhe",
+            "placeholder": "",
+            "options": [
+              "100 %",
+              "50 %",
+              "33 %"
+            ],
+            "default_value": "100 %"
+          }
+        },
+        "text_overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Text Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "text_overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz Text Überlagerungsfarbe",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "text_overlay_padding": {
+          "type": "Select",
+          "config": {
+            "label": "Text Überlagerungsfeld Grösse",
+            "placeholder": "",
+            "options": [
+              "klein",
+              "mittel",
+              "gross"
+            ]
+          }
+        },
+        "imageMerryGoRound": {
+          "type": "Group",
+          "config": {
+            "label": "Bilder Karusell",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]
 }

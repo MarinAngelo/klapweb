@@ -12,8 +12,10 @@
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
+	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 
 	export let slice: Content.HeroSlice;
+	console.log('Titelbereich slice:', slice);
 	export let image = slice.primary.backgroundImage;
 	const sliceStore = writable(slice);
 
@@ -111,6 +113,9 @@
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
 			style="opacity: {isMobile ? textOverlayOpacity : overlayOpacity};"
 		/>
+	{/if}
+	{#if slice.variation === 'mitBildKarusell'}
+		<ImageCarousel images={slice.primary.imageMerryGoRound} />
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div

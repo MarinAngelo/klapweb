@@ -42,9 +42,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}
@@ -86,6 +84,13 @@
 				"config": {
 					"label": "Logo Grösse",
 					"placeholder": "1 - 20"
+				}
+			},
+			"header_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": ""
 				}
 			},
 			"header_bg_opacity": {
@@ -132,9 +137,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}
