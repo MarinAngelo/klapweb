@@ -141,7 +141,7 @@
 				fullHeight={true}
 				autoplay={true}
 				intervalMs={5000}
-				transitionMs={4000}
+				transitionMs={8000}
 			/>
 		{/if}
 	{/if}
