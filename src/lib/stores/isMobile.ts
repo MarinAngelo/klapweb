@@ -25,7 +25,9 @@ export const isMobile = createIsMobileStore();
 
 export function isLandscape() {
 	if (typeof window !== 'undefined') {
-		return window.matchMedia('(orientation: landscape)').matches;
+		const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+		const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+		return isTouchDevice && isLandscape;
 	}
 	return false;
 }

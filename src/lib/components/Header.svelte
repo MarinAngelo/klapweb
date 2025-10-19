@@ -11,6 +11,7 @@
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
 	import { isLandscape } from '$lib/stores/isMobile';
+	console.log('isLandscae:', isLandscape());
 
 	let landscape = false;
 
