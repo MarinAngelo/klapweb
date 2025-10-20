@@ -13,9 +13,10 @@
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
+	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
+	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.HeroSlice;
-	console.log('Titelbereich slice:', slice);
 	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 
@@ -54,9 +55,7 @@
 
 	// Button-Farben aus Slice, mit Fallbacks
 	const buttonBgColor =
-		'button_bg_color' in slice.primary
-			? slice.primary.button_bg_color || undefined
-			: 'transparent';
+		'button_bg_color' in slice.primary ? slice.primary.button_bg_color || undefined : 'transparent';
 	const buttonBgColorHover =
 		'button_bg_color_hover' in slice.primary
 			? slice.primary.button_bg_color_hover ?? undefined
@@ -95,9 +94,8 @@
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 	// Responsive: Prüfen, ob mobile (<= 640px)
-	let isMobile = false;
 	onMount(() => {
-		const check = () => (isMobile = window.innerWidth <= 640);
+		const check = () => isMobile.set(window.innerWidth <= 640);
 		check();
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
@@ -121,7 +119,7 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {getFontFamily(slice.primary.font)};
+		font-family: {'font' in slice.primary ? getFontFamily(slice.primary.font) : 'sans-serif'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
@@ -130,11 +128,13 @@
 			sizes="100vw"
 			widths={[1280, 1920, 2560]}
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {isMobile ? textOverlayOpacity : overlayOpacity};"
+			style="opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
 		/>
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
-		{#if slice.variation === 'mitBildKarusell'}
+		{#if $isMobile}
+			<ImageCarouselMobile images={slice.primary.imageMerryGoRound} />
+		{:else}
 			<ImageCarousel
 				images={slice.primary.imageMerryGoRound}
 				background={true}

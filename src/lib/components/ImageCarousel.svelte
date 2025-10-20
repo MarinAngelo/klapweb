@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { isMobile } from '$lib/stores/isMobile';
-	console.log('isMobile store imported in ImageCarousel:', $isMobile);
 
 	// Props
 	export let images: Array<{ image: any }> = [];
