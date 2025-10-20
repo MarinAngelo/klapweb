@@ -12,9 +12,12 @@
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
+	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
+	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
+	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.HeroSlice;
-	export let image = slice.primary.backgroundImage;
+	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 
 	// Wenn sich slice ändert, aktualisiere den Store
@@ -24,9 +27,12 @@
 	let richTextDiv: HTMLDivElement;
 
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity = convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100;
+	const overlayOpacity =
+		'overlay_opacity' in slice.primary
+			? convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100
+			: 100;
 	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
-	const color = slice.primary.color || 'var(--text-color)';
+	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
 	// bannerTop im Theme-Store aktualisieren
@@ -45,13 +51,23 @@
 	});
 
 	// Fallbacks aus dem globalen Theme holen
-	const { pageLinkColor, pageLinkHoverColorText, pageLinkHoverColorBg } = get(theme);
+	const { pageLinkColor, headerLinkHoverColor: pageLinkHoverColorText } = get(theme);
 
 	// Button-Farben aus Slice, mit Fallbacks
-	const buttonBgColor = slice.primary.button_bg_color || 'transparent';
-	const buttonBgColorHover = slice.primary.button_bg_color_hover || pageLinkHoverColorBg;
-	const buttonTextColor = slice.primary.button_text_color || pageLinkColor;
-	const buttonTextColorHover = slice.primary.button_text_color_hover || pageLinkHoverColorText;
+	const buttonBgColor =
+		'button_bg_color' in slice.primary ? slice.primary.button_bg_color || undefined : 'transparent';
+	const buttonBgColorHover =
+		'button_bg_color_hover' in slice.primary
+			? slice.primary.button_bg_color_hover ?? undefined
+			: pageLinkHoverColorText;
+	const buttonTextColor =
+		'button_text_color' in slice.primary
+			? slice.primary.button_text_color || undefined
+			: pageLinkColor;
+	const buttonTextColorHover =
+		'button_text_color_hover' in slice.primary
+			? slice.primary.button_text_color_hover
+			: pageLinkHoverColorText;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -62,21 +78,24 @@
 
 	// Padding-Wert aus dem Slice holen und mappen
 	$: textOverlayPadding =
-		paddingMap[slice.primary.text_overlay_padding ?? 'mittel'] ?? paddingMap['mittel'];
+		'text_overlay_padding' in slice.primary &&
+		(slice.primary.text_overlay_padding ?? '') in paddingMap
+			? paddingMap[slice.primary.text_overlay_padding ?? '']
+			: paddingMap['mittel'];
 
-	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
-	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1;
-	console.log('textOverlayOpacity fomr cms:', slice.primary.text_overlay_opacity);
-	console.log('textOverlayOpacity:', textOverlayOpacity);
+	const textOverlayColor = slice.primary.overlay_color || 'var(--text-color)';
+	const textOverlayOpacity =
+		'text_overlay_opacity' in slice.primary
+			? convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1
+			: 1;
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 	// Responsive: Prüfen, ob mobile (<= 640px)
-	let isMobile = false;
 	onMount(() => {
-		const check = () => (isMobile = window.innerWidth <= 640);
+		const check = () => isMobile.set(window.innerWidth <= 640);
 		check();
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
@@ -100,7 +119,7 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {getFontFamily(slice.primary.font)};
+		font-family: {'font' in slice.primary ? getFontFamily(slice.primary.font) : 'sans-serif'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
@@ -109,8 +128,22 @@
 			sizes="100vw"
 			widths={[1280, 1920, 2560]}
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {isMobile ? textOverlayOpacity : overlayOpacity};"
+			style="opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
 		/>
+	{/if}
+	{#if slice.variation === 'mitBildKarusell'}
+		{#if $isMobile}
+			<ImageCarouselMobile images={slice.primary.imageMerryGoRound} />
+		{:else}
+			<ImageCarousel
+				images={slice.primary.imageMerryGoRound}
+				background={true}
+				fullHeight={true}
+				autoplay={true}
+				intervalMs={5000}
+				transitionMs={8000}
+			/>
+		{/if}
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div
@@ -142,16 +175,18 @@
 						}
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
-						<PrismicRichText field={slice.primary.text} />
+						{#if 'text' in slice.primary}
+							<PrismicRichText field={slice.primary.text} />
+						{/if}
 					</div>
-					{#if isFilled.link(slice.primary.button_link)}
+					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
 							color={buttonTextColor}
 							bgColor={buttonBgColor}
 							hoverBgColor={buttonBgColorHover}
-							hoverTextColor={buttonTextColorHover}
+							hoverColor={buttonTextColorHover ?? undefined}
 						/>
 					{/if}
 				</div>
