@@ -83,6 +83,7 @@ a[data-type="prismic-link"]:hover {
   --button-padding-y: 0.5rem;
   --button-padding-x: 1rem;
   --focus-ring-color: #000000;
+  --hover-bg-color: red;
 
 }
 
