@@ -9,6 +9,9 @@
     export let images: Array<{ image: any }> = [];
     export let autoplay = true;
     export let intervalMs = 5000;
+    
+    // 💡 NEUE PROP: Zeit (in ms), nach der Autoplay ohne Benutzeraktion wieder startet
+    export let inactivityDelayMs = 10000; // Standard: 10 Sekunden Inaktivität
 
     // Layout
     export let mode: 'background' | 'standalone' = 'background';
@@ -20,6 +23,8 @@
     // State
     let current = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
+    // 💡 NEUER ZUSTAND: Der Timeout, der die Inaktivität misst
+    let inactivityTimeout: ReturnType<typeof setTimeout> | null = null;
 
     function len() {
         return images?.length ?? 0;
@@ -27,59 +32,84 @@
     function has(i: number) {
         return Boolean(images?.[i]?.image);
     }
-
-    // Funktion zum Stoppen des Autoplays, wenn manuell gewechselt wird
-    function manualChange() {
-        if (timer) {
-            clearInterval(timer);
-            // Optional: Timer auf null setzen, wenn er nicht neu starten soll
-            timer = null; 
+    
+    // 💡 NEUE FUNKTION: Startet den Autoplay-Intervall
+    function startAutoplay() {
+        if (!autoplay || len() <= 1 || timer) return;
+        timer = setInterval(autoplayNext, intervalMs);
+    }
+    
+    // 💡 NEUE FUNKTION: Setzt den Inaktivitäts-Timeout zurück
+    function resetAutoplayTimeout() {
+        if (inactivityTimeout) clearTimeout(inactivityTimeout);
+        
+        if (autoplay) {
+            inactivityTimeout = setTimeout(() => {
+                startAutoplay();
+                inactivityTimeout = null;
+            }, inactivityDelayMs);
         }
     }
 
+    // Funktion stoppt beide Timer
+    function stopAutoplay() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null; 
+        }
+        if (inactivityTimeout) {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = null;
+        }
+    }
+
+    // Reine Helferfunktion, die NUR den Index erhöht (für setInterval)
+    function autoplayNext() {
+        if (!len()) return;
+        current = (current + 1) % len();
+    }
+    
+    // Funktionen für manuelle Steuerung (Klick/Tastatur)
     function next() {
-        manualChange();
+        stopAutoplay();
+        resetAutoplayTimeout(); // Timer-Reset nach manueller Aktion
         if (!len()) return;
         current = (current + 1) % len();
     }
     function prev() {
-        manualChange();
+        stopAutoplay();
+        resetAutoplayTimeout(); // Timer-Reset nach manueller Aktion
         if (!len()) return;
         current = (current - 1 + len()) % len();
     }
 
-    // 💡 NEUE FUNKTION: Handler für Tastatur-Events
     function handleKeydown(event: KeyboardEvent) {
         if (len() <= 1) return;
 
         switch (event.key) {
             case 'ArrowLeft':
                 prev();
-                event.preventDefault(); // Verhindert ggf. Scrollen oder Zurück-Aktion des Browsers
+                event.preventDefault(); 
                 break;
             case 'ArrowRight':
                 next();
-                event.preventDefault(); // Verhindert ggf. Scrollen des Browsers
+                event.preventDefault(); 
                 break;
         }
     }
 
     onMount(() => {
         if (browser) {
-            // Autoplay starten
-            if (autoplay && len() > 1) {
-                timer = setInterval(next, intervalMs);
-            }
+            // Autoplay initial starten
+            startAutoplay();
 
-            // 💡 Tastatur-Listener zum Dokument hinzufügen
             document.addEventListener('keydown', handleKeydown);
         }
 
         // Cleanup-Funktion
         return () => {
             if (timer) clearInterval(timer);
-            
-            // 💡 Tastatur-Listener beim Entfernen der Komponente entfernen
+            if (inactivityTimeout) clearTimeout(inactivityTimeout); // Cleanup für den Timeout
             if (browser) {
                 document.removeEventListener('keydown', handleKeydown);
             }
@@ -105,7 +135,8 @@
             class="relative w-full h-full overflow-hidden" 
             role="region" 
             aria-label="Image carousel"
-            tabindex="0" >
+            tabindex="0"
+        >
             {#key currentKey}
                 <div
                     class="absolute inset-0 w-full h-full"
