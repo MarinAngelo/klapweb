@@ -135,7 +135,6 @@
             class="relative w-full h-full overflow-hidden" 
             role="region" 
             aria-label="Image carousel"
-            tabindex="0"
         >
             {#key currentKey}
                 <div

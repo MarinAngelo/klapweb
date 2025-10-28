@@ -11,6 +11,9 @@
 	import Bounded from './Bounded.svelte';
 	import Navbar from './Navbar.svelte';
 	import { isLandscape } from '$lib/stores/isMobile';
+	console.log('isLandscape', isLandscape());
+	import { isMobile } from '$lib/stores/isMobile';
+	console.log('isMobile', $isMobile);
 
 	let landscape = false;
 
@@ -61,7 +64,7 @@
 	`;
 </script>
 
-{#if !landscape}
+{#if !$isMobile || ($isMobile && !landscape)}
 	<Bounded
 		tag="header"
 		yPadding="none"
