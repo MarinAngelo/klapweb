@@ -27,10 +27,14 @@
 		}
 	}
 
+	// ✅ NEU: Client-Side Guard
+	let mounted = false;
+
 	onMount(() => {
 		updateHeaderHeight();
 		const observer = new ResizeObserver(updateHeaderHeight);
 		observer.observe(headerEl);
+		mounted = true; // ✅ Setze mounted auf true
 		return () => observer.disconnect();
 	});
 
@@ -52,53 +56,53 @@
 	`;
 </script>
 
-<Bounded
-	tag="header"
-	yPadding="none"
-	tMargin="lg"
-	bind:elementRef={headerEl}
-	class={clsx(
-		{ 'absolute inset-x-0 top-0': bannerTop },
-		'transition-opacity duration-300 ease-in-out'
-	)}
-	style={headerStyle}
->
-	<!-- Logo -->
-	<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
-		<div class="logo m-0">
-			{#if prismicTheme.data.logo?.url}
-				<a href="/" class="flex items-center mt-2 mb-2">
-					<PrismicImage
-						field={prismicTheme.data.logo}
-						alt={prismicTheme.data.logo.alt}
-						class="w-auto"
-						style="height: {logoHeight}rem;"
-					/>
-				</a>
-			{:else}
-				<!-- Text-Logo -->
-				<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
-					<span
-						class="text-xl font-semibold tracking-tight"
-						style="font-size: {siteTitleFontSize}rem;"
-					>
-						<PrismicText field={settings.data.site_title} /><br />
-					</span>
-					<span style="font-size: {siteSubtitleFontSize}rem;">
-						<PrismicText field={settings.data.site_sub_title} class="text-sm" />
-					</span>
-				</a>
-			{/if}
+<div class:hidden={!mounted}>
+	<Bounded
+		tag="header"
+		yPadding="none"
+		tMargin="lg"
+		bind:elementRef={headerEl}
+		class={clsx(
+			{ 'absolute inset-x-0 top-0': bannerTop },
+			'transition-opacity duration-300 ease-in-out'
+		)}
+		style={headerStyle}
+	>
+		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
+			<div class="logo m-0">
+				{#if prismicTheme.data.logo?.url}
+					<a href="/" class="flex items-center mt-2 mb-2">
+						<PrismicImage
+							field={prismicTheme.data.logo}
+							alt={prismicTheme.data.logo.alt}
+							class="w-auto"
+							style="height: {logoHeight}rem;"
+						/>
+					</a>
+				{:else}
+					<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
+						<span
+							class="text-xl font-semibold tracking-tight"
+							style="font-size: {siteTitleFontSize}rem;"
+						>
+							<PrismicText field={settings.data.site_title} /><br />
+						</span>
+						<span style="font-size: {siteSubtitleFontSize}rem;">
+							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
+						</span>
+					</a>
+				{/if}
+			</div>
+			<Navbar
+				{navigation}
+				{headerBgColor}
+				{headerLinkColor}
+				{headerLinkHoverBgColor}
+				{headerLinkHoverColor}
+				{currentPath}
+				{headerfontSize}
+				{headerHeight}
+			/>
 		</div>
-		<Navbar
-			{navigation}
-			{headerBgColor}
-			{headerLinkColor}
-			{headerLinkHoverBgColor}
-			{headerLinkHoverColor}
-			{currentPath}
-			{headerfontSize}
-			{headerHeight}
-		/>
-	</div>
-</Bounded>
+	</Bounded>
+</div>
