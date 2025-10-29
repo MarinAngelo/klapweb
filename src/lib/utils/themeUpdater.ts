@@ -53,7 +53,10 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const prismicThemeData = data.prismicTheme?.data;
 
 	// Debug: Wert ausgeben
-	console.log('prismicThemeData.header_link_hover_color:', prismicThemeData?.header_link_hover_color);
+	console.log(
+		'prismicThemeData.header_link_hover_color:',
+		prismicThemeData?.header_link_hover_color
+	);
 
 	if (!prismicThemeData) {
 		// Handle the case where prismicThemeData is not available
@@ -62,8 +65,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	}
 
 	const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 0) || 0;
-	const bannerTop = false;
-
+	const bannerTop = prismicThemeData.banner_top === true;
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
 	const headerColor = prismicThemeData.header_color || getCssVar('--header-color');
 	const headerLinkColor = prismicThemeData.header_link_color || getCssVar('--header-link-color');
@@ -87,10 +89,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
 	const buttonHoverBgColor =
 		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
-	const bodyFont =
-		prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
-	const navFont =
-		prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
+	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
+	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
 
 	theme.update((t) => ({
 		...t,

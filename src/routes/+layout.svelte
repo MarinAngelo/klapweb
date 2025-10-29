@@ -55,6 +55,12 @@
 	$: bodyFontStyle = `font-family: '${$theme.bodyFont || 'sans-serif'}', sans-serif;`;
 
 	$: bannerTop = $theme.bannerTop;
+
+	// ✅ NEU: Client-Side Guard
+	let mounted = false;
+	onMount(() => {
+		mounted = true;
+	});
 </script>
 
 <svelte:head>
@@ -72,9 +78,9 @@
 	{#if $page.data?.no_index}
 		<meta name="robots" content="noindex" />
 	{/if}
-    {#if adobeFontUrl}
-        <link rel="stylesheet" href={adobeFontUrl} />
-    {/if}
+	{#if adobeFontUrl}
+		<link rel="stylesheet" href={adobeFontUrl} />
+	{/if}
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
 <div style="background-color: {$theme.pageBgColor};">
@@ -85,16 +91,18 @@
 	/>
 	<main style={bodyFontStyle}>
 		{#if $page.data?.title && bannerTop === false}
-			<Bounded
-				as="section"
-				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
-			>
-				<h1
-					class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0"
+			<div class:hidden={!mounted}>
+				<Bounded
+					as="section"
+					style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 				>
-					{$page.data?.title || 'Standarttitel'}
-				</h1>
-			</Bounded>
+					<h1
+						class="font-semibold leading-tight tracking-tight md:leading-tight text-3xl md:text-4xl mb-7 mt-12 first:mt-0 last:mb-0"
+					>
+						{$page.data?.title || 'Standarttitel'}
+					</h1>
+				</Bounded>
+			</div>
 		{/if}
 		<slot />
 	</main>
