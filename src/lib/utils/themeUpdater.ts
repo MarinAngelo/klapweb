@@ -10,15 +10,14 @@ interface PrismicThemeData {
 	header_link_color?: string;
 	header_link_hover_color?: string;
 	header_link_hover_bg_color?: string;
+	page_color?: string;
+	page_bg_color?: string;
+	page_link_color?: string;
+	page_link_hover_color?: string;
 	page_link_active_color?: string;
 	page_link_visited_color?: string;
 	footer_bg_color?: string;
 	footer_color?: string;
-	page_color?: string;
-	page_bg_color?: string;
-	page_link_color?: string;
-	page_link_hover_color_bg?: string;
-	page_link_hover_color?: string;
 	nav_font?: string;
 	body_font?: string;
 	button_color?: string;
@@ -81,19 +80,17 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
-	const pageLinkHoverColorBg =
-		prismicThemeData.link_hover_color_bg || getCssVar('--page-link-hover-color-bg');
 	const pageLinkHoverColor =
-		prismicThemeData.link_hover_color || getCssVar('--page-link-hover-color');
+		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
 	const buttonColor = prismicThemeData.button_color || getCssVar('--button-color');
 	const buttonHoverColor = prismicThemeData.button_hover_color || getCssVar('--button-hover-color');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
 	const buttonHoverBgColor =
 		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
 	const bodyFont =
-		prismicThemeData.body_font?.data?.name || getCssVar('--body-font').replace(/'/g, '');
+		prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
 	const navFont =
-		prismicThemeData.nav_font?.data?.name || getCssVar('--nav-font').replace(/'/g, '');
+		prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
 
 	theme.update((t) => ({
 		...t,
@@ -109,7 +106,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageColor,
 		pageBgColor,
 		pageLinkColor,
-		pageLinkHoverColorBg,
 		pageLinkHoverColor,
 		pageLinkActiveColor,
 		pageLinkVisitedColor,
@@ -134,7 +130,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--page-color', pageColor);
 		root.style.setProperty('--page-bg-color', pageBgColor);
 		root.style.setProperty('--page-link-color', pageLinkColor);
-		root.style.setProperty('--page-link-hover-color-bg', pageLinkHoverColorBg);
 		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
 		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
 		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);

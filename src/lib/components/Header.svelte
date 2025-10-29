@@ -92,14 +92,11 @@
 		</div>
 		<Navbar
 			{navigation}
-			{headerColor}
 			{headerBgColor}
 			{headerLinkColor}
 			{headerLinkHoverBgColor}
 			{headerLinkHoverColor}
-			{settings}
 			{currentPath}
-			{prismicTheme}
 			{headerfontSize}
 			{headerHeight}
 		/>

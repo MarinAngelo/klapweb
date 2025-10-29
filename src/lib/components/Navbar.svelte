@@ -7,14 +7,11 @@
 	import { isMenuOpen } from '../stores/isMenuOpen';
 
 	export let navigation;
-	export let headerColor;
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
 	export let headerLinkHoverBgColor;
 	export let currentPath;
-	export let settings;
-	export let prismicTheme;
 	export let headerfontSize;
 	export let headerHeight;
 
