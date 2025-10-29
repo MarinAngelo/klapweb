@@ -40,6 +40,7 @@
 	$: headerColor = $theme.headerColor;
 	$: headerLinkColor = $theme.headerLinkColor;
 	$: headerLinkHoverColor = $theme.headerLinkHoverColor;
+	$: headerLinkHoverBgColor = $theme.headerLinkHoverBgColor;
 	$: currentPath = $page.url.pathname;
 	$: headerBgColorRgba = hexToRgba(headerBgColor, headerBgOpacity);
 	// Dynamischer Style je nach Menüstatus
@@ -94,6 +95,7 @@
 			{headerColor}
 			{headerBgColor}
 			{headerLinkColor}
+			{headerLinkHoverBgColor}
 			{headerLinkHoverColor}
 			{settings}
 			{currentPath}

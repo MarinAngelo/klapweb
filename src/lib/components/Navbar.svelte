@@ -11,6 +11,7 @@
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
+	export let headerLinkHoverBgColor;
 	export let currentPath;
 	export let settings;
 	export let prismicTheme;
@@ -76,6 +77,7 @@
 								{subItems}
 								{headerBgColor}
 								{headerLinkColor}
+								{headerLinkHoverBgColor}
 								{headerLinkHoverColor}
 								{currentPath}
 								{headerfontSize}

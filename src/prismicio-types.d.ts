@@ -596,6 +596,17 @@ interface ThemeDocumentData {
 	header_link_hover_color: prismic.ColorField;
 
 	/**
+	 * Linkhintergrund wenn Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.header_link_hover_bg_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_link_hover_bg_color: prismic.ColorField;
+
+	/**
 	 * Navigationsschrift field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Content Relationship

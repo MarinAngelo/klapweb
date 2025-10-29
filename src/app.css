@@ -58,6 +58,7 @@ a[data-type="prismic-link"]:hover {
   --header-color: #cfcefe;
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
+  --header-link-hover-bg-color: red;
   --page-link-color: #26683c;
   --page-link-hover-color: #2ca741;
   /* not css notation, as it will be recalculated as coming from cms */

@@ -8,6 +8,7 @@
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
+	export let headerLinkHoverBgColor;
 	export let currentPath;
 	export let headerfontSize;
 
@@ -56,7 +57,7 @@
 						class="block w-full transition-colors dropdown-link"
 						style="
 					color: {headerLinkColor};
-					--hover-bg-color: {headerLinkHoverColor};
+					--hover-bg-color: {headerLinkHoverBgColor};
 				"
 					>
 						<PrismicText field={dropdownItem.label} />

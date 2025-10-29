@@ -42,9 +42,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}
@@ -123,6 +121,13 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"header_link_hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkhintergrund wenn Maus darüber",
+					"placeholder": ""
+				}
+			},
 			"nav_font": {
 				"type": "Link",
 				"config": {
@@ -132,9 +137,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}

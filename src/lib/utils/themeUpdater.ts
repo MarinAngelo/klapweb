@@ -9,6 +9,7 @@ interface PrismicThemeData {
 	header_color?: string;
 	header_link_color?: string;
 	header_link_hover_color?: string;
+	header_link_hover_bg_color?: string;
 	page_link_active_color?: string;
 	page_link_visited_color?: string;
 	footer_bg_color?: string;
@@ -52,6 +53,9 @@ const getCssVar = (name: string): string => {
 export function updateTheme(data: ThemeUpdateData): void {
 	const prismicThemeData = data.prismicTheme?.data;
 
+	// Debug: Wert ausgeben
+	console.log('prismicThemeData.header_link_hover_color:', prismicThemeData?.header_link_hover_color);
+
 	if (!prismicThemeData) {
 		// Handle the case where prismicThemeData is not available
 		console.warn('Prismic theme data is missing, theme will not be updated from Prismic.');
@@ -66,6 +70,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const headerLinkColor = prismicThemeData.header_link_color || getCssVar('--header-link-color');
 	const headerLinkHoverColor =
 		prismicThemeData.header_link_hover_color || getCssVar('--header-link-hover-color');
+	const headerLinkHoverBgColor =
+		prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
 	const pageLinkActiveColor =
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
 	const pageLinkVisitedColor =
@@ -82,7 +88,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const buttonColor = prismicThemeData.button_color || getCssVar('--button-color');
 	const buttonHoverColor = prismicThemeData.button_hover_color || getCssVar('--button-hover-color');
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
-	const buttonHoverBgColor = prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
+	const buttonHoverBgColor =
+		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
 	const bodyFont =
 		prismicThemeData.body_font?.data?.name || getCssVar('--body-font').replace(/'/g, '');
 	const navFont =
@@ -94,6 +101,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		headerBgColor,
 		headerLinkColor,
 		headerLinkHoverColor,
+		headerLinkHoverBgColor,
 		headerBgOpacity,
 		bannerTop,
 		footerBgColor,
@@ -120,6 +128,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--header-color', headerColor);
 		root.style.setProperty('--header-link-color', headerLinkColor);
 		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
+		root.style.setProperty('--header-link-hover-bg-color', headerLinkHoverBgColor);
 		root.style.setProperty('--footer-bg-color', footerBgColor);
 		root.style.setProperty('--footer-color', footerColor);
 		root.style.setProperty('--page-color', pageColor);
