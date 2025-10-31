@@ -39,12 +39,7 @@
 					"label": "Hauptschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": [
-						{
-							"id": "font",
-							"fields": ["name"]
-						}
-					]
+					"customtypes": ["font"]
 				}
 			},
 			"page_link_color": {
@@ -134,12 +129,7 @@
 					"label": "Navigationsschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": [
-						{
-							"id": "font",
-							"fields": ["name"]
-						}
-					]
+					"customtypes": ["font"]
 				}
 			}
 		},
