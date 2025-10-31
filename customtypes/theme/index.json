@@ -39,14 +39,7 @@
 					"label": "Hauptschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": [
-						{
-							"id": "font",
-							"fields": [
-								"name"
-							]
-						}
-					]
+					"customtypes": ["font"]
 				}
 			},
 			"page_link_color": {
@@ -56,10 +49,17 @@
 					"placeholder": ""
 				}
 			},
-			"link_hover_color": {
+			"link_hover_color_text": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
+					"placeholder": ""
+				}
+			},
+			"link_hover_color_bg": {
+				"type": "Color",
+				"config": {
+					"label": "Linkhintergrundfarbe Maus darüber",
 					"placeholder": ""
 				}
 			},
@@ -129,14 +129,7 @@
 					"label": "Navigationsschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": [
-						{
-							"id": "font",
-							"fields": [
-								"name"
-							]
-						}
-					]
+					"customtypes": ["font"]
 				}
 			}
 		},
