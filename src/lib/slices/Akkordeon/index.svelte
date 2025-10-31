@@ -7,7 +7,6 @@
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 
 	export let slice: Content.AccordionSlice;
-	console.log('Akkordeon slice:', slice);
 
 	// Zustand für geöffnete Items
 	let openIndex: number | null = null;

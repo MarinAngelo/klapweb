@@ -66,8 +66,6 @@
 
 	const textOverlayColor = slice.primary.text_overlay_color || 'var(--text-color)';
 	const textOverlayOpacity = convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1;
-	console.log('textOverlayOpacity fomr cms:', slice.primary.text_overlay_opacity);
-	console.log('textOverlayOpacity:', textOverlayOpacity);
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 

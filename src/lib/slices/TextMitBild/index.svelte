@@ -7,7 +7,6 @@
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 
 	export let slice: Content.TextWithImageSlice;
-	console.log('TextMitBild slice:', slice.variation);
 
 	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
 	export let slices; // Diese Zeile hinzufügen
