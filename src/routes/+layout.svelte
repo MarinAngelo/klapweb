@@ -11,7 +11,6 @@
 	import { theme } from '$lib/stores/theme'; // Importiere den Store, um auf seine Werte zuzugreifen
 
 	export let data;
-	console.log('Layout data:', data);
 
 	// Adobe Fonts URL generieren
 	$: adobeFontId = data?.adobeFontId; // z.B. "lal6jiy"

@@ -43,6 +43,15 @@
             "placeholder": ""
           }
         },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": ["font"]
+          }
+        },
         "button_link": {
           "type": "Link",
           "config": {

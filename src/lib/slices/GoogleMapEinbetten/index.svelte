@@ -26,7 +26,6 @@
 
 	const { pageBgColor } = get(theme);
 	const opacity = convertNumber(slice.primary.opacity ?? 0) || 0.5; 
-	console.log('Opacity:', opacity);
 
 </script>
 
