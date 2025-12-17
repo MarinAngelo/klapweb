@@ -88,6 +88,13 @@
 					"placeholder": "1 - 20"
 				}
 			},
+			"header_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"header_bg_opacity": {
 				"type": "Number",
 				"config": {
