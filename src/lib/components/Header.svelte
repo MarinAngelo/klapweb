@@ -18,6 +18,7 @@
     // --- STATE ---
     let headerEl: HTMLElement | undefined;
     let observer: ResizeObserver;
+    let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 
     // --- STANDARDWERTE ---
     const logoHeight = prismicTheme?.data?.logo_height || 3;
@@ -26,8 +27,16 @@
     const headerfontSize = prismicTheme?.data?.header_font_size || 1.4;
 
     function updateHeaderHeight() {
+        // 1. ZUERST PRÜFEN: Mobile Landscape?
+        // Wenn ja -> Sofort 0 zurückgeben und abbrechen.
+        if (landscapeQuery && landscapeQuery.matches) {
+            headerHeight.set(0);
+            return;
+        }
+
+        // 2. Ansonsten: Messen
         if (headerEl) {
-            // Wir prüfen, ob der Header durch CSS ausgeblendet wurde (offsetParent ist null bei display: none)
+            // Wenn das Element per CSS (display: none) versteckt ist, ist offsetParent null
             if (headerEl.offsetParent === null) {
                 headerHeight.set(0);
             } else {
@@ -39,17 +48,25 @@
     }
 
     onMount(() => {
-        // Observer kümmert sich um Änderungen (auch wenn CSS den Header ausblendet)
+        // A. Media Query definieren: Touch + Querformat
+        landscapeQuery = window.matchMedia('(pointer: coarse) and (orientation: landscape)');
+        
+        // B. Event Listener: Wenn man das Handy dreht, sofort updateHeaderHeight feuern
+        // (Das ist schneller als der ResizeObserver)
+        landscapeQuery.addEventListener('change', updateHeaderHeight);
+
+        // C. Normaler Observer
         observer = new ResizeObserver(updateHeaderHeight);
         
-        // Initial einmal messen
+        // Initialer Aufruf
         updateHeaderHeight();
 
-        // Ein zusätzlicher Listener, falls sich die Orientierung ändert
+        // Zusätzlicher Resize Listener für Desktop
         window.addEventListener('resize', updateHeaderHeight);
 
         return () => {
             window.removeEventListener('resize', updateHeaderHeight);
+            if (landscapeQuery) landscapeQuery.removeEventListener('change', updateHeaderHeight);
             if (observer) observer.disconnect();
         };
     });
@@ -132,24 +149,7 @@
 </header>
 
 <style>
-    /* DIE MAGIE:
-       Dies ist reines CSS. Es wird vom Browser sofort ausgeführt.
-       
-       Bedingung:
-       1. Ausrichtung: Querformat (landscape)
-       2. Zeiger: Grob/Touch (pointer: coarse)
-       
-       Ergebnis: Header wird ausgeblendet (display: none).
-       Desktop-Mäuse haben 'pointer: fine', daher bleibt er dort sichtbar.
-    */
     @media (orientation: landscape) and (pointer: coarse) {
-        .smart-header {
-            display: none !important;
-        }
-    }
-    
-    /* Optional: Fallback für sehr flache Bildschirme (Handy quer), falls pointer:coarse nicht greift */
-    @media (orientation: landscape) and (max-height: 500px) {
         .smart-header {
             display: none !important;
         }
