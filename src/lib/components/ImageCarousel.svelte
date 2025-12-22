@@ -2,47 +2,64 @@
     import { PrismicImage } from '@prismicio/svelte';
     import { fade } from 'svelte/transition';
     import { cubicOut } from 'svelte/easing';
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { browser } from '$app/environment';
 
     // Props
     export let images: Array<{ image: any }> = [];
     export let autoplay = true;
     export let intervalMs = 5000;
-    
-    // 💡 NEUE PROP: Zeit (in ms), nach der Autoplay ohne Benutzeraktion wieder startet
-    export let inactivityDelayMs = 10000; // Standard: 10 Sekunden Inaktivität
-
-    // Layout
+    export let inactivityDelayMs = 10000;
     export let mode: 'background' | 'standalone' = 'background';
-
-    // Transition
     export let transitionMs = 800;
     export let transitionEasing = cubicOut;
 
     // State
     let current = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
-    // 💡 NEUER ZUSTAND: Der Timeout, der die Inaktivität misst
     let inactivityTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    function len() {
-        return images?.length ?? 0;
-    }
-    function has(i: number) {
-        return Boolean(images?.[i]?.image);
-    }
     
-    // 💡 NEUE FUNKTION: Startet den Autoplay-Intervall
+    // --- AUTOPLAY LOGIK ---
     function startAutoplay() {
         if (!autoplay || len() <= 1 || timer) return;
         timer = setInterval(autoplayNext, intervalMs);
     }
-    
-    // 💡 NEUE FUNKTION: Setzt den Inaktivitäts-Timeout zurück
+
+    function stopAutoplay() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+        if (inactivityTimeout) {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = null;
+        }
+    }
+
+    // Entscheidung: Autoplay an/aus basierend auf Gerät & Orientierung
+    function handleOrientationAutoplay() {
+        if (!browser) return;
+
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+        const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+
+        if (isTouch && isPortrait) {
+            // Handy Hochkant -> Autoplay AUS, Swipe aktiv
+            stopAutoplay();
+        } else {
+            // Handy Quer / Desktop -> Autoplay AN
+            if (!timer) startAutoplay();
+        }
+    }
+
     function resetAutoplayTimeout() {
-        if (inactivityTimeout) clearTimeout(inactivityTimeout);
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+        const isPortrait = window.matchMedia('(orientation: portrait)').matches;
         
+        // Timeout nicht nutzen im Hochkant-Modus
+        if (isTouch && isPortrait) return;
+
+        if (inactivityTimeout) clearTimeout(inactivityTimeout);
         if (autoplay) {
             inactivityTimeout = setTimeout(() => {
                 startAutoplay();
@@ -51,88 +68,70 @@
         }
     }
 
-    // Funktion stoppt beide Timer
-    function stopAutoplay() {
-        if (timer) {
-            clearInterval(timer);
-            timer = null; 
-        }
-        if (inactivityTimeout) {
-            clearTimeout(inactivityTimeout);
-            inactivityTimeout = null;
-        }
+    function len() {
+        return images?.length ?? 0;
     }
-
-    // Reine Helferfunktion, die NUR den Index erhöht (für setInterval)
+    function has(i: number) {
+        return Boolean(images?.[i]?.image);
+    }
     function autoplayNext() {
         if (!len()) return;
         current = (current + 1) % len();
     }
-    
-    // Funktionen für manuelle Steuerung (Klick/Tastatur)
     function next() {
         stopAutoplay();
-        resetAutoplayTimeout(); // Timer-Reset nach manueller Aktion
+        resetAutoplayTimeout();
         if (!len()) return;
         current = (current + 1) % len();
     }
     function prev() {
         stopAutoplay();
-        resetAutoplayTimeout(); // Timer-Reset nach manueller Aktion
+        resetAutoplayTimeout();
         if (!len()) return;
         current = (current - 1 + len()) % len();
     }
-
     function handleKeydown(event: KeyboardEvent) {
         if (len() <= 1) return;
-
         switch (event.key) {
-            case 'ArrowLeft':
-                prev();
-                event.preventDefault(); 
-                break;
-            case 'ArrowRight':
-                next();
-                event.preventDefault(); 
-                break;
+            case 'ArrowLeft': prev(); break;
+            case 'ArrowRight': next(); break;
         }
     }
 
+    // --- LIFECYCLE ---
     onMount(() => {
         if (browser) {
-            // Autoplay initial starten
-            startAutoplay();
-
+            handleOrientationAutoplay();
+            window.addEventListener('resize', handleOrientationAutoplay);
+            window.addEventListener('orientationchange', handleOrientationAutoplay);
             document.addEventListener('keydown', handleKeydown);
         }
-
-        // Cleanup-Funktion
-        return () => {
-            if (timer) clearInterval(timer);
-            if (inactivityTimeout) clearTimeout(inactivityTimeout); // Cleanup für den Timeout
-            if (browser) {
-                document.removeEventListener('keydown', handleKeydown);
-            }
-        };
     });
 
-    // Safety bei dynamischem Nachladen
+    onDestroy(() => {
+        stopAutoplay();
+        if (browser) {
+            window.removeEventListener('resize', handleOrientationAutoplay);
+            window.removeEventListener('orientationchange', handleOrientationAutoplay);
+            document.removeEventListener('keydown', handleKeydown);
+        }
+    });
+
     $: if (len() > 0 && current >= len()) current = len() - 1;
 
-    // Layout-Klassen
+    // Wir nutzen hier 100dvh für moderne mobile Browser
     const outerClass =
         mode === 'background'
-            ? 'absolute inset-0 h-full' // Parent muss Höhe liefern!
-            : 'relative w-screen left-1/2 right-1/2 -mx-[50vw] h-screen'; // 100vh
+            ? 'absolute inset-0 h-full' 
+            : 'relative w-screen left-1/2 right-1/2 -mx-[50vw] h-[100dvh]'; 
 
-    // Für Keyed-Block: auf URL keyen, nicht nur auf Index
     $: currentKey = images?.[current]?.image?.url ?? `idx-${current}`;
 </script>
 
 {#if len() > 0}
     <div class={outerClass}>
         <div 
-            class="relative w-full h-full overflow-hidden" 
+            class="carousel-container relative w-full h-full overflow-hidden" 
             role="region" 
             aria-label="Image carousel"
         >
@@ -146,7 +145,7 @@
                         <PrismicImage
                             field={images[current].image}
                             sizes="100vw"
-                            class="w-full h-full object-cover select-none"
+                            class="w-full h-full object-cover select-none pointer-events-none"
                         />
                     {:else}
                         <div class="w-full h-full bg-black/10" />
@@ -155,21 +154,23 @@
             {/key}
 
             <button
-                class="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70"
+                class="nav-arrow absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
                 on:click={prev}
                 aria-label="Vorheriges Bild"
-                type="button">‹</button
-            >
+                type="button">
+                <span class="text-xl font-bold">&#10094;</span>
+            </button>
 
             <button
-                class="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70"
+                class="nav-arrow absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
                 on:click={next}
                 aria-label="Nächstes Bild"
-                type="button">›</button
-            >
+                type="button">
+                <span class="text-xl font-bold">&#10095;</span>
+            </button>
 
             <div
-                class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm"
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm pointer-events-none backdrop-blur-md"
             >
                 {current + 1} / {len()}
             </div>
@@ -178,3 +179,41 @@
 {:else}
     <p class="sr-only">Keine Bilder vorhanden</p>
 {/if}
+
+<style>
+    /* 1. Pfeile ausblenden auf allen Touch-Geräten */
+    @media (pointer: coarse) {
+        .nav-arrow {
+            display: none !important;
+        }
+    }
+
+    /* 2. DER HÖHEN-FIX (SCROLLBARER CINEMA MODE)
+       
+       Änderung: position: absolute (statt fixed)
+       
+       Warum?
+       - 'absolute' orientiert sich am Eltern-Element (Hero). 
+       - Wenn du scrollst, bewegt sich der Hero nach oben -> Bild bewegt sich mit.
+       - 'height: 100dvh' garantiert trotzdem volle Bildschirmhöhe.
+       - 'width: 100vw' + 'left/margin' Tricks sorgen für volle Breite, 
+         selbst wenn der Hero Padding hätte.
+    */
+    @media (pointer: coarse) and (orientation: landscape) {
+        .carousel-container {
+            position: absolute !important; /* WICHTIG: absolute statt fixed */
+            top: 0 !important;
+            
+            /* Breakout-Trick: Garantiert volle Breite, auch im Container */
+            left: 50% !important;
+            right: auto !important;
+            margin-left: -50vw !important;
+            width: 100vw !important;
+            
+            height: 100dvh !important; /* Volle dynamische Höhe */
+            
+            z-index: 0;
+            border-radius: 0 !important;
+        }
+    }
+</style>
