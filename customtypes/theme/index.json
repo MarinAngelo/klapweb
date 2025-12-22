@@ -98,8 +98,8 @@
 			"header_bg_opacity": {
 				"type": "Number",
 				"config": {
-					"label": "Transparenz der Hintergrundfarbe",
-					"placeholder": "0 - 100 %"
+					"label": "Hintergrundfarbe",
+					"placeholder": ""
 				}
 			},
 			"header_color": {

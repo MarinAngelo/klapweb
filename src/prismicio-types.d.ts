@@ -565,13 +565,13 @@ interface ThemeDocumentData {
 	/**
 	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 0 - 100 %
-	 * - **API ID Path**: theme.header_bg_opacity
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.header_bg_color
 	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	header_bg_opacity: prismic.NumberField;
+	header_bg_color: prismic.ColorField;
 
 	/**
 	 * Textfarbe field in *Design Vorlage*
@@ -1247,6 +1247,21 @@ type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
 export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
 
 /**
+ * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
+ */
+export interface HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem {
+	/**
+	 * Bild field in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.mitBildKarusell.primary.imageMerryGoRound[].image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
+}
+
+/**
  * Primary content in *Titelbereich → Standard → Primary*
  */
 export interface HeroSliceDefaultPrimary {
@@ -1447,9 +1462,70 @@ export type HeroSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Titelbereich → Mit Bild Karusell → Primary*
+ */
+export interface HeroSliceMitBildKarusellPrimary {
+	/**
+	 * Überlappend mit Kopfzeile field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.mitBildKarusell.primary.banner_overlap
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	banner_overlap: prismic.BooleanField;
+
+	/**
+	 * Transparenz überlagerter Kopfzeile field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0 - 100 %
+	 * - **API ID Path**: hero.mitBildKarusell.primary.header_bg_opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	header_bg_opacity: prismic.NumberField;
+
+	/**
+	 * Bild Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.mitBildKarusell.primary.overlay_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	overlay_color: prismic.ColorField;
+
+	/**
+	 * Bilder Karusell field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.mitBildKarusell.primary.imageMerryGoRound[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	imageMerryGoRound: prismic.GroupField<
+		Simplify<HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem>
+	>;
+}
+
+/**
+ * Mit Bild Karusell variation for Titelbereich Slice
+ *
+ * - **API ID**: `mitBildKarusell`
+ * - **Description**: Hero
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type HeroSliceMitBildKarusell = prismic.SharedSliceVariation<
+	'mitBildKarusell',
+	Simplify<HeroSliceMitBildKarusellPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Titelbereich*
  */
-type HeroSliceVariation = HeroSliceDefault;
+type HeroSliceVariation = HeroSliceDefault | HeroSliceMitBildKarusell;
 
 /**
  * Titelbereich Shared Slice
@@ -2237,8 +2313,11 @@ declare module '@prismicio/client' {
 			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
+			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,
+			HeroSliceMitBildKarusellPrimary,
 			HeroSliceVariation,
 			HeroSliceDefault,
+			HeroSliceMitBildKarusell,
 			HtmlCodeSlice,
 			HtmlCodeSliceDefaultPrimary,
 			HtmlCodeSliceVariation,

@@ -168,6 +168,57 @@
       },
       "items": {},
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "mitBildKarusell",
+      "name": "Mit Bild Karusell",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Hero",
+      "primary": {
+        "banner_overlap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Überlappend mit Kopfzeile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Bild Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "imageMerryGoRound": {
+          "type": "Group",
+          "config": {
+            "label": "Bilder Karusell",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]
 }
