@@ -1,5 +1,9 @@
 <script lang="ts">
-    import { PrismicImage, PrismicRichText } from '@prismicio/svelte';
+	// 1. PrismicImage holen wir weiter aus der Library (da hast du keinen Wrapper)
+import { PrismicImage } from '@prismicio/svelte';
+
+// 2. WICHTIG: PrismicRichText holen wir aus DEINER eigenen Datei
+import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	export let image: any;
 	export let text: any;
 	export let imageLeft: boolean = false;
