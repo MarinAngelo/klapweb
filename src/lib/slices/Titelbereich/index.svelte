@@ -83,7 +83,8 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
-	const textOverlayColor = slice.primary.overlay_color || 'var(--text-color)';
+	const textOverlayColor = 
+		'text_overlay_color' in slice.primary ? slice.primary.text_overlay_color || 'var(--text-color)' : 'var(--text-color)';
 	const textOverlayOpacity =
 		'text_overlay_opacity' in slice.primary
 			? convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1
@@ -152,7 +153,7 @@
 		>
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
-				{#if !isMobile}
+				{#if !$isMobile}
 					<div
 						class="absolute inset-0"
 						style="
