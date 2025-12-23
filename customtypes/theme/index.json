@@ -92,6 +92,13 @@
 				"type": "Color",
 				"config": {
 					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_bg_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Hintergrundfarbe",
 					"placeholder": ""
 				}
 			},
@@ -121,6 +128,13 @@
 				"config": {
 					"label": "Linkfarbe, wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_link_hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkhintergrund wenn Maus darüber",
+					"placeholder": ""
 				}
 			},
 			"nav_font": {

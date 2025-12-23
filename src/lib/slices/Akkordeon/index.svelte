@@ -71,4 +71,14 @@
 	button {
 		text-align: left;
 	}
+	/* 👇 Das hier zwingt die Zahlen zurück, egal was Tailwind sagt */
+    :global([data-slice-type="accordion"] ol) {
+        list-style-type: decimal !important;
+        padding-left: 1.5rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    :global([data-slice-type="accordion"] li) {
+        padding-left: 0.5rem;
+    }
 </style>

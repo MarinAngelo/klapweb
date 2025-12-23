@@ -292,7 +292,7 @@ interface PageDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
-	slices: prismic.SliceZone<PageDocumentDataSlicesSlice> /**
+	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
 	 * Meta Title field in *Page*
 	 *
 	 * - **Field Type**: Text
@@ -300,7 +300,7 @@ interface PageDocumentData {
 	 * - **API ID Path**: page.meta_title
 	 * - **Tab**: SEO & Metadata
 	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */;
+	 */
 	meta_title: prismic.KeyTextField;
 
 	/**
@@ -485,7 +485,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	body_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
+	body_font: prismic.ContentRelationshipField<'font'>;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
@@ -503,11 +503,22 @@ interface ThemeDocumentData {
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color
+	 * - **API ID Path**: theme.link_hover_color_text
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	link_hover_color: prismic.ColorField;
+	link_hover_color_text: prismic.ColorField;
+
+	/**
+	 * Linkhintergrundfarbe Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.link_hover_color_bg
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	link_hover_color_bg: prismic.ColorField;
 
 	/**
 	 * Favicon field in *Design Vorlage*
@@ -518,7 +529,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	favicon: prismic.ImageField<never> /**
+	favicon: prismic.ImageField<never>; /**
 	 * Logo field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
@@ -526,7 +537,7 @@ interface ThemeDocumentData {
 	 * - **API ID Path**: theme.logo
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */;
+	 */
 	logo: prismic.ImageField<never>;
 
 	/**
@@ -542,6 +553,17 @@ interface ThemeDocumentData {
 
 	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_bg_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_bg_color: prismic.ColorField;
+
+	/**
+	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -596,6 +618,17 @@ interface ThemeDocumentData {
 	header_link_hover_color: prismic.ColorField;
 
 	/**
+	 * Linkhintergrund wenn Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.header_link_hover_bg_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_link_hover_bg_color: prismic.ColorField;
+
+	/**
 	 * Navigationsschrift field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Content Relationship
@@ -604,7 +637,7 @@ interface ThemeDocumentData {
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	nav_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]> /**
+	nav_font: prismic.ContentRelationshipField<'font'>; /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -612,7 +645,7 @@ interface ThemeDocumentData {
 	 * - **API ID Path**: theme.footer_bg_color
 	 * - **Tab**: Fusszeile
 	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */;
+	 */
 	footer_bg_color: prismic.ColorField;
 
 	/**
@@ -1281,7 +1314,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.font
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name', 'provider', 'variant'] }]>;
+	font: prismic.ContentRelationshipField<'font'>;
 
 	/**
 	 * Schaltflächenlink field in *Titelbereich → Standard → Primary*

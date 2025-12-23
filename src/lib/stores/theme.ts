@@ -10,6 +10,7 @@ export const THEME_DEFAULTS = {
 	headerColor: '',
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
+	headerLinkHoverBgColor: '',
 	headerLinkActiveColor: '',
 	headerLinkVisitedColor: '',
 	headerBgColor: '',

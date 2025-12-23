@@ -8,6 +8,7 @@
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
+	export let headerLinkHoverBgColor;
 	export let currentPath;
 	export let headerfontSize;
 
@@ -53,10 +54,10 @@
 							closeDropdown();
 							dispatch('click');
 						}}
-						class="block w-full hover:bg-current transition-colors"
+						class="block w-full transition-colors dropdown-link"
 						style="
 					color: {headerLinkColor};
-					--hover-bg-color: {headerLinkHoverColor};
+					--hover-bg-color: {headerLinkHoverBgColor};
 				"
 					>
 						<PrismicText field={dropdownItem.label} />
@@ -66,3 +67,13 @@
 		</ul>
 	{/if}
 </div>
+
+<style>
+	:global(.dropdown-link:hover) {
+		background-color: var(--hover-bg-color) !important;
+	}
+	/* optional: falls du auch Textfarbe beim Hover über Variable steuern willst */
+	:global(.dropdown-link:hover) * {
+		color: inherit;
+	}
+</style>

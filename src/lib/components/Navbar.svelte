@@ -7,13 +7,11 @@
 	import { isMenuOpen } from '../stores/isMenuOpen';
 
 	export let navigation;
-	export let headerColor;
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
+	export let headerLinkHoverBgColor;
 	export let currentPath;
-	export let settings;
-	export let prismicTheme;
 	export let headerfontSize;
 	export let headerHeight;
 
@@ -76,6 +74,7 @@
 								{subItems}
 								{headerBgColor}
 								{headerLinkColor}
+								{headerLinkHoverBgColor}
 								{headerLinkHoverColor}
 								{currentPath}
 								{headerfontSize}
@@ -109,8 +108,9 @@
 						<PrismicLink
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
-							class="hover:text-white hover:bg-current transition"
-							style="color: inherit; font-size: {headerfontSize}rem;"
+							class="transition nav-link"
+							style="color: inherit; font-size: {headerfontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
+								'#fff'};"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
