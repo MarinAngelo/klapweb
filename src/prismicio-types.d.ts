@@ -563,15 +563,15 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
+	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Color
+	 * - **Field Type**: Number
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.header_bg_color
+	 * - **API ID Path**: theme.header_bg_opacity
 	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	header_bg_color: prismic.ColorField;
+	header_bg_opacity: prismic.NumberField;
 
 	/**
 	 * Textfarbe field in *Design Vorlage*
@@ -596,10 +596,10 @@ interface ThemeDocumentData {
 	header_link_color: prismic.ColorField;
 
 	/**
-	 * Link Schriftgrösse field in *Design Vorlage*
+	 * Link Schriftgrösse in rem field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 5
+	 * - **Placeholder**: z.b. 1.5
 	 * - **API ID Path**: theme.header_font_size
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/number

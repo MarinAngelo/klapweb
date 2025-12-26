@@ -119,8 +119,8 @@
 			"header_font_size": {
 				"type": "Number",
 				"config": {
-					"label": "Link Schriftgrösse",
-					"placeholder": "1 - 5"
+					"label": "Link Schriftgrösse in rem",
+					"placeholder": "z.b. 1.5"
 				}
 			},
 			"header_link_hover_color": {
