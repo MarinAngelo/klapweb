@@ -9,8 +9,14 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { updateTheme } from '$lib/utils/themeUpdater'; // Importiere die neue Funktion
 	import { theme } from '$lib/stores/theme'; // Importiere den Store, um auf seine Werte zuzugreifen
+	import { getFontSize } from '$lib/utils/fontMapper'; // Importiere den Helper
 
 	export let data;
+	console.log('Layout data:', data);
+
+	// Debugging: Schau in die Konsole im Browser, was wirklich ankommt!
+    console.log('Mobile Key aus Prismic:', data?.prismicTheme?.data?.base_font_size_mobile);
+    console.log('Desktop Key aus Prismic:', data?.prismicTheme?.data?.base_font_size_desktop);
 
 	// Adobe Fonts URL generieren
 	$: adobeFontId = data?.adobeFontId; // z.B. "lal6jiy"
@@ -60,6 +66,21 @@
 	onMount(() => {
 		mounted = true;
 	});
+
+	// 1. Hole die Werte aus den Prismic Settings
+	$: mobileSizeKey = data?.prismicTheme?.data?.base_font_size_mobile;
+	$: desktopSizeKey = data?.prismicTheme?.data?.base_font_size_desktop;
+
+	// 2. Wandle sie in Pixel-Werte um (z.B. "18px")
+	$: cssMobileSize = getFontSize(mobileSizeKey);
+	$: cssDesktopSize = getFontSize(desktopSizeKey);
+
+	// --- NEU: Injektion via JavaScript ---
+    // Wir schreiben die Variablen direkt auf das <html> Element (document.documentElement)
+    $: if (typeof document !== 'undefined') {
+        document.documentElement.style.setProperty('--global-size-mobile', cssMobileSize);
+        document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
+    }
 </script>
 
 <svelte:head>
@@ -82,7 +103,9 @@
 	{/if}
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
-<div style="background-color: {$theme.pageBgColor};">
+<div
+	style="background-color: {$theme.pageBgColor};"
+>
 	<Header
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}

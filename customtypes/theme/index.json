@@ -42,6 +42,22 @@
 					"customtypes": ["font"]
 				}
 			},
+			"base_font_size_mobile": {
+				"type": "Select",
+				"config": {
+					"label": "Mobile Basis-Schriftgrösse",
+					"placeholder": "",
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+				}
+			},
+			"base_font_size_desktop": {
+				"type": "Select",
+				"config": {
+					"label": " Desktop Basis-Schriftgrösse",
+					"placeholder": "",
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+				}
+			},
 			"page_link_color": {
 				"type": "Color",
 				"config": {

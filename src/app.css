@@ -51,6 +51,8 @@ a[data-type="prismic-link"]:hover {
 }
 
 :root {
+  --global-size-mobile: 16px;
+  --global-size-desktop: 16px;
   /* --- Fallback Styles, die im CMS verwendet werden --- */
   --page-bg-color: #c7c9fe;
   --page-color: #5f5fab;
@@ -92,6 +94,19 @@ a[data-type="prismic-link"]:hover {
   --hover-bg-color: red;
 
 }
+
+/* Hier passiert die Magie: Wir ändern die Basis-Größe des HTML-Tags */
+html {
+  font-size: var(--global-size-mobile);
+}
+
+@media (min-width: 1024px) { /* Ab Tailwind "lg" Breakpoint oder deinem gewünschten */
+  html {
+    font-size: var(--global-size-desktop);
+  }
+}
+
+
 
 @layer base {
   /* Hier definieren wir die globale Hierarchie. 

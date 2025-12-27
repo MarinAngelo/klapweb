@@ -488,6 +488,32 @@ interface ThemeDocumentData {
 	body_font: prismic.ContentRelationshipField<'font'>;
 
 	/**
+	 * Mobile Basis-Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.base_font_size_mobile
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	base_font_size_mobile: prismic.SelectField<
+		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
+	>;
+
+	/**
+	 *  Desktop Basis-Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.base_font_size_desktop
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	base_font_size_desktop: prismic.SelectField<
+		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
+	>;
+
+	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
