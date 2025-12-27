@@ -35,7 +35,7 @@
 		{#each slice.primary.accordion_items as item, index}
 			<div class="border-b pb-4" style="border-color: {pageColor}">
 				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full"
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
 					aria-haspopup="true"
 					aria-expanded={openIndex === index}
 					on:click={() => toggleItem(index)}
