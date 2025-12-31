@@ -72,10 +72,8 @@ a[data-type="prismic-link"]:hover {
   --nav-font: 'Roboto'; 
   --footer-bg-color: #232442;
   --footer-color: #5f5fab;
-  --footer-link-color: var(--page-link-color);
-  --footer-link-hover-color: var(--page-link-hover-color);
-  --footer-link-active-color: var(--page-link-color);
-  --footer-link-visited-color: var(--page-link-color);
+  --footer-font-size-top-bar: 1;
+  --footer-font-size-button-bar: 0.8;
   --page-link-hover-color-bg: transparent;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);

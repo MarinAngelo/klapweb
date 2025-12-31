@@ -1,61 +1,64 @@
 <script lang="ts">
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
-	import type { Content } from '@prismicio/client';
+    import { PrismicLink, PrismicText } from '@prismicio/svelte';
+    import { theme } from '$lib/stores/theme';
+    import type { Content } from '@prismicio/client';
 
-	import Bounded from './Bounded.svelte';
+    import Bounded from './Bounded.svelte';
 
-	export let settings: Content.SettingsDocument;
-	export let navigation: Content.NavigationDocument;
+    export let settings: Content.SettingsDocument;
+    export let navigation: Content.NavigationDocument;
 
-	const { footerColor, footerBgColor } = get(theme);	
+    $: ({ footerColor, footerBgColor, footerFontSizeTopBar, footerFontSizeButtonBar } = $theme);
 
-	let email = settings.data?.e_mail || '';
-	let responsiblePersonCompany = settings.data?.responsible_person_company || '';
+    let email = settings.data?.e_mail || '';
+    let responsiblePersonCompany = settings.data?.responsible_person_company || '';
 
-	// Aktuelles Jahr dynamisch generieren
-	const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
 </script>
 
-<Bounded tag="footer" yPadding="base" style="background-color: {footerBgColor}; margin-top: 10rem;">
-	<footer class="pb-6" style="color: {footerColor};">
-		<div class="flex justify-center items-center h-full mb-9 hover:underline">
-			<a href={`mailto:${email}`} class="text-center">
-				Kontakt: {email}
-			</a>
-		</div>
-		<div class="flex flex-col sm:flex-row sm:justify-between items-center lg:gap-4">
-			<!-- Links ausgerichtetes div -->
-			<div class="text-left sm:text-left w-full sm:w-auto">
-				<ul class="flex flex-col items-center sm:items-start gap-2">
-					{#each navigation.data.links as link}
-						{#if link.footer_sec_nav === true && link.link.url}
-							<li>
-								<PrismicLink
-									field={link.link}
-									class="hover:underline text-sm/10 text-center sm:text-left"
-								>
-									<PrismicText field={link.label} />
-								</PrismicLink>
-							</li>
-						{/if}
-					{/each}
-				</ul>
-			</div>
+<Bounded 
+    tag="footer" 
+    yPadding="none" 
+    style="background-color: {footerBgColor}; color: {footerColor} !important; margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
+>
+    <footer class="w-full h-full text-inherit">
+        
+		<!-- Topbar -->
+        <div class="flex justify-center items-center h-full mb-9 hover:underline">
+            <a href={`mailto:${email}`} class="text-center text-inherit" style="font-size: {footerFontSizeTopBar}rem;">
+                Kontakt: {email}
+            </a>
+        </div>
 
-			<!-- Rechts ausgerichtetes div -->
-			<div class="text-center sm:text-right w-full sm:w-auto">
-				<p>
-					<a href="https://www.klap-web.ch/" target="_blank" class="text-sm/10 hover:underline">
-						Webentwicklung: www.klap-web.ch
-					</a>
-				</p>
-			</div>
-		</div>
-		<div class="mt-4 text-center text-sm">
-			&copy; {currentYear}
-			{responsiblePersonCompany}. Alle Rechte vorbehalten.
-		</div>
-	</footer>
+        <div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
+    <ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
+        {#each navigation.data.links as link}
+            {#if link.footer_sec_nav === true && link.link.url}
+                <li class="m-0">
+                    <PrismicLink
+                        field={link.link}
+                        class="hover:underline text-sm leading-tight text-center"
+                        style="color: {footerColor}; font-size: {footerFontSizeTopBar}rem;"
+                    >
+                        <PrismicText field={link.label} />
+                    </PrismicLink>
+                </li>
+            {/if}
+        {/each}
+    </ul>
+</div>
+        
+        <hr class="border-current opacity-20 mb-6"> 
+
+        <!-- Buttonbar -->
+        <div class="mt-4 text-center">
+            <p class="leading-tight text-inherit"  style="font-size: {footerFontSizeButtonBar}rem;">
+                &copy; {currentYear}
+                {responsiblePersonCompany}. Alle Rechte vorbehalten. <br>
+                <a href="https://www.klap-web.ch/" target="_blank" class="hover:underline text-inherit">
+                    Webentwicklung: www.klap-web.ch
+                </a>
+            </p>
+        </div>
+    </footer>
 </Bounded>

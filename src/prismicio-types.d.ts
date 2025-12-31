@@ -686,15 +686,26 @@ interface ThemeDocumentData {
 	footer_color: prismic.ColorField;
 
 	/**
-	 * Linkfarbe field in *Design Vorlage*
+	 * Textgrösse Obere Fusszeile field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: theme.footer_link_color
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.5 - 2
+	 * - **API ID Path**: theme.footer_font_size_top_bar
 	 * - **Tab**: Fusszeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	footer_link_color: prismic.ColorField;
+	footer_font_size_top_bar: prismic.NumberField;
+
+	/**
+	 * Textgrösse Untere Fusszeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.2 - 1.5
+	 * - **API ID Path**: theme.footer_font_size_button_bar
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	footer_font_size_button_bar: prismic.NumberField;
 }
 
 /**

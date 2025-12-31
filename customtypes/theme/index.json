@@ -192,11 +192,18 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"footer_link_color": {
-				"type": "Color",
+			"footer_font_size_top_bar": {
+				"type": "Number",
 				"config": {
-					"label": "Linkfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
+					"label": "Textgrösse Obere Fusszeile",
+					"placeholder": "0.5 - 2"
+				}
+			},
+			"footer_font_size_button_bar": {
+				"type": "Number",
+				"config": {
+					"label": "Textgrösse Untere Fusszeile",
+					"placeholder": "0.2 - 1.5"
 				}
 			}
 		}

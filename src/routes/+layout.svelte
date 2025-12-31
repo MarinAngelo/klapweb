@@ -12,11 +12,6 @@
 	import { getFontSize } from '$lib/utils/fontMapper'; // Importiere den Helper
 
 	export let data;
-	console.log('Layout data:', data);
-
-	// Debugging: Schau in die Konsole im Browser, was wirklich ankommt!
-    console.log('Mobile Key aus Prismic:', data?.prismicTheme?.data?.base_font_size_mobile);
-    console.log('Desktop Key aus Prismic:', data?.prismicTheme?.data?.base_font_size_desktop);
 
 	// Adobe Fonts URL generieren
 	$: adobeFontId = data?.adobeFontId; // z.B. "lal6jiy"

@@ -18,6 +18,8 @@ interface PrismicThemeData {
 	page_link_visited_color?: string;
 	footer_bg_color?: string;
 	footer_color?: string;
+	footer_font_size_top_bar?: number;
+	footer_font_size_button_bar?: number;
 	nav_font?: string;
 	body_font?: string;
 	button_color?: string;
@@ -52,12 +54,6 @@ const getCssVar = (name: string): string => {
 export function updateTheme(data: ThemeUpdateData): void {
 	const prismicThemeData = data.prismicTheme?.data;
 
-	// Debug: Wert ausgeben
-	console.log(
-		'prismicThemeData.header_link_hover_color:',
-		prismicThemeData?.header_link_hover_color
-	);
-
 	if (!prismicThemeData) {
 		// Handle the case where prismicThemeData is not available
 		console.warn('Prismic theme data is missing, theme will not be updated from Prismic.');
@@ -89,6 +85,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
 	const buttonHoverBgColor =
 		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
+	const footerFontSizeTopBar = prismicThemeData.footer_font_size_top_bar || getCssVar('--footer-font-size-top-bar');
+	const footerFontSizeButtonBar = prismicThemeData.footer_font_size_button_bar || getCssVar('--footer-font-size-button-bar');
 	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
 	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
 
@@ -103,6 +101,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 		bannerTop,
 		footerBgColor,
 		footerColor,
+		footerFontSizeTopBar,
+		footerFontSizeButtonBar,
 		pageColor,
 		pageBgColor,
 		pageLinkColor,

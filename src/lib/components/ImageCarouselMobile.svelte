@@ -66,7 +66,6 @@
 	const SPEED_THRESHOLD = 0.4;
 
 	function onPointerDown(e: PointerEvent) {
-		console.log('[Mobile Carousel] PointerDown event triggered.');
 
 		if (!browser || len() <= 1) return;
 
@@ -118,7 +117,6 @@
 		const isFar = Math.abs(deltaX) > SWIPE_THRESHOLD;
 
 		if (wasHorizontal && isFar) {
-			console.log('[Mobile Carousel] Swipe detected and threshold met. Changing state.');
 
 			const direction = deltaX < 0 ? 1 : -1;
 
@@ -128,7 +126,6 @@
 			// KRITISCH: Erzwingt den Key-Update und damit das Neurendern des Blocks
 			forceKeyUpdate++;
 		} else {
-			console.log('[Mobile Carousel] Swipe too short or vertical. Resetting.');
 		}
 
 		// Variablen zurücksetzen
