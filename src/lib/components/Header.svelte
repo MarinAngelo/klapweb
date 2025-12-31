@@ -22,8 +22,8 @@
 
     // --- STANDARDWERTE ---
     const logoHeight = prismicTheme?.data?.logo_height || 3;
-    const siteTitleFontSize = settings?.data?.site_title_font_size || 1.5;
-    const siteSubtitleFontSize = settings?.data?.site_sub_title_font_size || 1;
+    const siteTitleFontSize = prismicTheme?.data?.site_title_font_size || 1.5;
+    const siteSubtitleFontSize = prismicTheme?.data?.site_sub_title_font_size || 1;
     const headerfontSize = prismicTheme?.data?.header_font_size || 1.4;
 
     function updateHeaderHeight() {

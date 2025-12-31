@@ -369,17 +369,6 @@ interface SettingsDocumentData {
 	site_title: prismic.RichTextField;
 
 	/**
-	 * Website Titel Schriftgrösse field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
-	 * - **API ID Path**: settings.site_title_font_size
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	site_title_font_size: prismic.NumberField;
-
-	/**
 	 * Website Untertitel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Rich Text
@@ -389,17 +378,6 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	site_sub_title: prismic.RichTextField;
-
-	/**
-	 * Website Untertitel Schriftgrösse field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
-	 * - **API ID Path**: settings.site_sub_title_font_size
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	site_sub_title_font_size: prismic.NumberField;
 
 	/**
 	 * E-Mail field in *Einstellungen*
@@ -556,6 +534,39 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
+	 * Website-Titel Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.5 - 5 (rem)
+	 * - **API ID Path**: theme.site_title_font_size
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	site_title_font_size: prismic.NumberField;
+
+	/**
+	 * Website-Untertitel Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.5 - 4 (rem)
+	 * - **API ID Path**: theme.site_sub_title_font_size
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	site_sub_title_font_size: prismic.NumberField;
+
+	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
 	 * Logo field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
@@ -589,7 +600,7 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Hintergrundfarbe field in *Design Vorlage*
+	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: *None*
@@ -598,17 +609,6 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	header_bg_opacity: prismic.NumberField;
-
-	/**
-	 * Textfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: theme.header_color
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	header_color: prismic.ColorField;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*

@@ -89,6 +89,27 @@
 			}
 		},
 		"Kopfzeile": {
+			"site_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website-Titel Schriftgrösse",
+					"placeholder": "0.5 - 5 (rem)"
+				}
+			},
+			"site_sub_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website-Untertitel Schriftgrösse",
+					"placeholder": "0.5 - 4 (rem)"
+				}
+			},
+			"header_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"logo": {
 				"type": "Image",
 				"config": {
@@ -114,15 +135,8 @@
 			"header_bg_opacity": {
 				"type": "Number",
 				"config": {
-					"label": "Hintergrundfarbe",
+					"label": "Transparenz der Hintergrundfarbe",
 					"placeholder": ""
-				}
-			},
-			"header_color": {
-				"type": "Color",
-				"config": {
-					"label": "Textfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"header_link_color": {
