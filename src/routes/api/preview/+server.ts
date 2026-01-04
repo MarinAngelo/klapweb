@@ -10,21 +10,17 @@ export async function GET(event) {
 
   const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
-  // Prismic helper erzeugt einen Redirect (302) mit Location
   const res = await redirectToPreviewURL({ client, event });
 
   const location = res.headers.get('location');
   if (!location) return res;
 
-  // ✅ Loop-Killer: entferne Preview-Query-Params aus der Ziel-URL
+  // ✅ Location bereinigen (token raus), aber ORIGINAL-Response behalten (Set-Cookie bleibt!)
   const u = new URL(location, event.url.origin);
   u.searchParams.delete('token');
   u.searchParams.delete('documentId');
   u.searchParams.delete('websitePreviewId');
 
-  const headers = new Headers(res.headers);
-  headers.set('location', u.pathname + u.search + u.hash);
-
-  // Wichtig: Body leer lassen, Status beibehalten (meist 302)
-  return new Response(null, { status: res.status, headers });
+  res.headers.set('location', u.pathname + u.search + u.hash);
+  return res;
 }
