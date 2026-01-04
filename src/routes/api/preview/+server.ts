@@ -1,34 +1,30 @@
+import { redirectToPreviewURL } from '@prismicio/svelte/kit';
 import { createClient } from '$lib/prismicio';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 export const prerender = false;
 
 export async function GET(event) {
   const token = event.url.searchParams.get('token');
-  const documentId = event.url.searchParams.get('documentId');
-
   if (!token) throw error(400, 'Missing Prismic preview token.');
 
   const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
-  // resolvePreviewURL setzt (via enableAutoPreviews) den Preview-Ref ins Cookie
-  const url = await client.resolvePreviewURL({
-    previewToken: token,
-    documentID: documentId ?? undefined,
-    defaultURL: '/',
-    // WICHTIG: normale Seite-URLs, nicht /preview/...
-    linkResolver: (doc: any) => {
-      if (doc?.type === 'page' && doc?.uid === 'home') return '/';
-      if (doc?.type === 'page' && doc?.uid) return `/${doc.uid}`;
-      return '/';
-    }
-  });
+  // Prismic helper erzeugt einen Redirect (302) mit Location
+  const res = await redirectToPreviewURL({ client, event });
 
-  // Loop-Killer: Query sicher entfernen
-  const u = new URL(url, event.url.origin);
+  const location = res.headers.get('location');
+  if (!location) return res;
+
+  // ✅ Loop-Killer: entferne Preview-Query-Params aus der Ziel-URL
+  const u = new URL(location, event.url.origin);
   u.searchParams.delete('token');
   u.searchParams.delete('documentId');
   u.searchParams.delete('websitePreviewId');
 
-  throw redirect(302, u.pathname + u.search + u.hash);
+  const headers = new Headers(res.headers);
+  headers.set('location', u.pathname + u.search + u.hash);
+
+  // Wichtig: Body leer lassen, Status beibehalten (meist 302)
+  return new Response(null, { status: res.status, headers });
 }
