@@ -1,5 +1,0 @@
-[[redirects]]
-  from = "/preview/*"
-  to = "/api/preview"
-  status = 302
-  force = true
