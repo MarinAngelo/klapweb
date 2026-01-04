@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import { redirectToPreviewURL } from '@prismicio/svelte/kit';
 import { createClient } from '$lib/prismicio.js';
 
