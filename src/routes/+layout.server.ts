@@ -1,19 +1,20 @@
-import { createClient } from '$lib/prismicio';
+import { redirect } from '@sveltejs/kit';
 
-export const prerender = 'auto';
+export async function load(event) {
+  const u = new URL(event.url);
 
-export async function load({ fetch, cookies }) {
-	const client = createClient({ fetch, cookies });
+  const hadPreviewParams =
+    u.searchParams.has('token') ||
+    u.searchParams.has('documentId') ||
+    u.searchParams.has('websitePreviewId');
 
-	const settings = await client.getSingle('settings');
-	const navigation = await client.getSingle('navigation');
-	const prismicTheme = await client.getSingle('theme');
-	const fonts = await client.getAllByType('font');
+  if (hadPreviewParams) {
+    u.searchParams.delete('token');
+    u.searchParams.delete('documentId');
+    u.searchParams.delete('websitePreviewId');
 
-	return {
-		settings,
-		navigation,
-		prismicTheme,
-		fonts
-	};
+    throw redirect(302, u.pathname + (u.search ? u.search : '') + (u.hash ? u.hash : ''));
+  }
+
+  // ... dein bisheriger layout load code
 }
