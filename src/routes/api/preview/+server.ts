@@ -10,23 +10,22 @@ export async function GET(event) {
 
   if (!previewToken) throw error(400, 'Missing Prismic preview token.');
 
-  // ✅ 1) Preview-Cookie IMMER setzen (das ist bei dir der Blocker)
+  // ✅ Preview-Cookie setzen (cross-site von prismic.io -> deine Domain)
   event.cookies.set(prismic.cookie.preview, previewToken, {
     path: '/',
     httpOnly: true,
-    // Prismic Preview kommt cross-site (prismic.io -> deine domain)
-    // Daher: None + secure, sonst wird’s vom Browser verworfen
     sameSite: 'none',
     secure: true
   });
 
-  // ✅ 2) Ziel-URL auflösen
   const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
+  // ✅ Ziel-URL des Preview-Dokuments auflösen
   const target = await client.resolvePreviewURL({
     previewToken,
     documentID: documentId,
     defaultURL: '/',
+    // Wichtig: auf deine "normalen" URLs routen
     linkResolver: (doc: any) => {
       if (doc?.type === 'page' && doc?.uid === 'home') return '/';
       if (doc?.type === 'page' && doc?.uid) return `/${doc.uid}`;
@@ -34,11 +33,7 @@ export async function GET(event) {
     }
   });
 
-  // ✅ 3) token sicher entfernen (Loop-Killer)
+  // ✅ Loop-Killer: niemals Query zurückgeben
   const u = new URL(target, event.url.origin);
-  u.searchParams.delete('token');
-  u.searchParams.delete('documentId');
-  u.searchParams.delete('websitePreviewId');
-
-  throw redirect(302, u.pathname + u.search + u.hash);
+  throw redirect(302, u.pathname);
 }

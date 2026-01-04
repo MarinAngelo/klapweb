@@ -1,20 +1,18 @@
-import { redirect } from '@sveltejs/kit';
+import { createClient } from '$lib/prismicio';
+
+export const prerender = false;
 
 export async function load(event) {
-  const u = new URL(event.url);
+  const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
-  const hadPreviewParams =
-    u.searchParams.has('token') ||
-    u.searchParams.has('documentId') ||
-    u.searchParams.has('websitePreviewId');
+  // Passe die Single-Types an, falls sie bei dir anders heißen:
+  const settings = await client.getSingle('settings');
+  const navigation = await client.getSingle('navigation');
+  const theme = await client.getSingle('theme');
 
-  if (hadPreviewParams) {
-    u.searchParams.delete('token');
-    u.searchParams.delete('documentId');
-    u.searchParams.delete('websitePreviewId');
-
-    throw redirect(302, u.pathname + (u.search ? u.search : '') + (u.hash ? u.hash : ''));
-  }
-
-  // ... dein bisheriger layout load code
+  return {
+    settings,
+    navigation,
+    theme
+  };
 }
