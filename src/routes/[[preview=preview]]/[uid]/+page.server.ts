@@ -19,7 +19,7 @@ export async function load({ params, fetch, cookies }) {
 	};
 }
 
-export async function entries() {
+/* export async function entries() {
 	const client = createClient();
 
 	const pages = await client.getAllByType('page');
@@ -27,4 +27,4 @@ export async function entries() {
 	return pages.map((page) => {
 		return { uid: page.uid };
 	});
-}
+} */
