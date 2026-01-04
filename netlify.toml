@@ -1,6 +1,5 @@
 [[redirects]]
-  from = "/preview"
+  from = "/preview/*"
   to = "/api/preview"
   status = 302
   force = true
-  query = { token = ":token" }

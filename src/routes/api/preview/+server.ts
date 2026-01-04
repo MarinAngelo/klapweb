@@ -1,10 +1,19 @@
+// src/routes/api/preview/+server.ts
+import { redirectToPreviewURL } from '@prismicio/svelte/kit';
+import { createClient } from '$lib/prismicio';
+import { error } from '@sveltejs/kit';
+
 export const prerender = false;
 
-import { redirectToPreviewURL } from '@prismicio/svelte/kit';
-import { createClient } from '$lib/prismicio.js';
+export async function GET(event) {
+  const url = new URL(event.request.url);
+  const token = url.searchParams.get('token');
 
-export async function GET({ fetch, request, cookies }) {
-	const client = createClient({ fetch });
+  // Wichtig: Ohne token NICHT weiter-redirecten (Loop verhindern)
+  if (!token) {
+    throw error(400, 'Missing Prismic preview token.');
+  }
 
-	return await redirectToPreviewURL({ client, request, cookies });
+  const client = createClient({ fetch: event.fetch, cookies: event.cookies });
+  return await redirectToPreviewURL({ client, event });
 }
