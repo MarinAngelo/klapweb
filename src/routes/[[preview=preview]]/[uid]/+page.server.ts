@@ -1,30 +1,32 @@
+import { asText } from '@prismicio/client';
+import { createClient } from '$lib/prismicio';
+import { redirect, error } from '@sveltejs/kit';
+
 export const prerender = false;
 
-import { asText } from '@prismicio/client';
+export async function load(event) {
+  const token = event.url.searchParams.get('token');
 
-import { createClient } from '$lib/prismicio';
+  // ✅ Wenn Prismic token an /preview/... hängt: sofort zu /api/preview
+  if (token) {
+    throw redirect(302, `/api/preview?${event.url.searchParams.toString()}`);
+  }
 
-export async function load({ params, fetch, cookies }) {
-	const client = createClient({ fetch, cookies });
+  const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
-	const page = await client.getByUID('page', params.uid);
+  try {
+    const page = await client.getByUID('page', event.params.uid);
 
-	return {
-		page,
-		title: asText(page.data.title),
-		meta_description: page.data.meta_description,
-		meta_title: page.data.meta_title,
-		meta_image: page.data.meta_image.url,
-		no_index: page.data.no_index,
-	};
+    return {
+      page,
+      title: asText(page.data.title),
+      meta_description: page.data.meta_description,
+      meta_title: page.data.meta_title,
+      meta_image: page.data.meta_image.url,
+      no_index: page.data.no_index
+    };
+  } catch {
+    // ✅ verhindert 500 bei unbekannter UID
+    throw error(404, 'Page not found');
+  }
 }
-
-/* export async function entries() {
-	const client = createClient();
-
-	const pages = await client.getAllByType('page');
-
-	return pages.map((page) => {
-		return { uid: page.uid };
-	});
-} */
