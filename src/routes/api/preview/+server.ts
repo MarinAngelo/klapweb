@@ -1,4 +1,3 @@
-// src/routes/api/preview/+server.ts
 import { createClient } from '$lib/prismicio';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -12,27 +11,24 @@ export async function GET(event) {
 
   const client = createClient({ fetch: event.fetch, cookies: event.cookies });
 
-  // Wichtig: wir lösen die URL selbst auf und geben eine defaultURL an
-  let url = '/';
+  // resolvePreviewURL setzt (via enableAutoPreviews) den Preview-Ref ins Cookie
+  const url = await client.resolvePreviewURL({
+    previewToken: token,
+    documentID: documentId ?? undefined,
+    defaultURL: '/',
+    // WICHTIG: normale Seite-URLs, nicht /preview/...
+    linkResolver: (doc: any) => {
+      if (doc?.type === 'page' && doc?.uid === 'home') return '/';
+      if (doc?.type === 'page' && doc?.uid) return `/${doc.uid}`;
+      return '/';
+    }
+  });
 
-  try {
-    // Prismic Client API: resolvePreviewURL erwartet previewToken + documentID + linkResolver/defaultURL
-    url = await client.resolvePreviewURL({
-      previewToken: token,
-      documentID: documentId ?? undefined,
-      defaultURL: '/',
-      // Preview soll bei dir immer unter /preview/... landen:
-      linkResolver: (doc: any) => {
-        if (doc?.type === 'page' && doc?.uid === 'home') return '/preview';
-        if (doc?.type === 'page' && doc?.uid) return `/preview/${doc.uid}`;
-        return '/preview';
-      }
-    });
-  } catch (e) {
-    // Wenn Prismic resolvePreviewURL hier crasht, lieber sauberer Fehler:
-    console.error('resolvePreviewURL failed', e);
-    throw error(500, e instanceof Error ? e.message : String(e));
-  }
+  // Loop-Killer: Query sicher entfernen
+  const u = new URL(url, event.url.origin);
+  u.searchParams.delete('token');
+  u.searchParams.delete('documentId');
+  u.searchParams.delete('websitePreviewId');
 
-  throw redirect(302, url);
+  throw redirect(302, u.pathname + u.search + u.hash);
 }
