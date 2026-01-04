@@ -87,9 +87,29 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
 	const footerFontSizeTopBar = prismicThemeData.footer_font_size_top_bar || getCssVar('--footer-font-size-top-bar');
 	const footerFontSizeButtonBar = prismicThemeData.footer_font_size_button_bar || getCssVar('--footer-font-size-button-bar');
-	const bodyFont = prismicThemeData.body_font || getCssVar('--body-font').replace(/'/g, '');
-	const navFont = prismicThemeData.nav_font || getCssVar('--nav-font').replace(/'/g, '');
+	// Hilfsfunktion: Extrahiert den Schriftnamen aus einem Prismic Link Objekt
+    const getFontName = (fontField: any): string | null => {
+        // Fall 1: Das Feld ist gefüllt und die verknüpften Daten (fetchLinks) sind da
+        if (fontField?.data?.name) {
+            return fontField.data.name;
+        }
+        // Fall 2: Direkt aus dem Font-Objekt (uid oder slug)
+        if (fontField?.uid) {
+            return fontField.uid;
+        }
+        if (fontField?.slug) {
+            return fontField.slug;
+        }
+        // Fall 3: Fallback, falls das Feld leer ist
+        return null;
+    };
 
+    // WICHTIG: Hier holen wir jetzt den Namen, nicht das Objekt!
+    console.log('body_font raw value:', prismicThemeData.body_font);
+    const bodyFont = getFontName(prismicThemeData.body_font) || getCssVar('--body-font').replace(/'/g, '').replace(/"/g, '').trim();
+    console.log('bodyFont processed value:', bodyFont);
+    const navFont = getFontName(prismicThemeData.nav_font) || getCssVar('--nav-font').replace(/'/g, '').replace(/"/g, '').trim();
+	
 	theme.update((t) => ({
 		...t,
 		headerColor,
