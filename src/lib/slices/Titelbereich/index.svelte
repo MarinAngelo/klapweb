@@ -17,7 +17,6 @@
 	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.HeroSlice;
-	console.log('Titelbereich Slice:', slice);
 	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 

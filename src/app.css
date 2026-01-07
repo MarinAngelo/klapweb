@@ -75,7 +75,7 @@ a[data-type="prismic-link"]:hover {
   --logo-height: 5; /* in rem */
   --header-color: #1c1c25;
   --header-bg-color: #6468e1;
-  --header-bg-opacity: 100;
+  --header-bg-opacity: 50;
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
   --header-link-font-size: 1.5; /* in rem */

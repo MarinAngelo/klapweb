@@ -4,7 +4,6 @@ export const THEME_DEFAULTS = {
 	// Globale Defaults
 	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
 	bannerTop: false, // Aus Slices/Titelbereich/index.svelte
-	headerBgOpacity: 1, // wird aus Slice gesetzt
 	
 	// Generelle Seitenfarben und Schriftarten (wie in app.css)
 	pageColor: '',
@@ -28,6 +27,7 @@ export const THEME_DEFAULTS = {
 	logoHeight: 0,
 	headerColor: '',
 	headerBgColor: '',
+	headerBgOpacity: 0, // wird aus Slice gesetzt
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',

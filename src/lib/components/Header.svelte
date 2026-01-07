@@ -25,18 +25,17 @@
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || get(theme).siteSubtitleFontSize;
-	$: headerBgColor = prismicTheme?.data?.header_bg_color || get(theme).headerBgColor;
-	$: headerBgOpacity = prismicTheme?.data?.header_bg_opacity || get(theme).headerBgOpacity;
-    $: headerLinkFontSize =
-        prismicTheme?.data?.header_link_font_size || get(theme).headerLinkFontSize; 
+	$: headerLinkFontSize =
+		prismicTheme?.data?.header_link_font_size || get(theme).headerLinkFontSize;
 	$: headerLinkColor = prismicTheme?.data?.header_link_color || get(theme).headerLinkColor;
 	$: headerLinkHoverColor =
 		prismicTheme?.data?.header_link_hover_color || get(theme).headerLinkHoverColor;
 	$: bannerTop = $theme.bannerTop;
 	$: headerColor = $theme.headerColor;
 
-	$: computedBgColor = hexToRgba(headerBgColor, headerBgOpacity);
-	console.log('ComputedHeader BG Color:', computedBgColor);
+	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;
+	const headerBgOpacity = prismicTheme?.data?.header_bg_opacity ?? get(theme).headerBgOpacity;
+	const computedBgColor = hexToRgba(headerBgColor, headerBgOpacity);
 
 	function updateHeaderHeight() {
 		// 1. ZUERST PRÜFEN: Mobile Landscape?
@@ -134,7 +133,7 @@
 					{navigation}
 					headerBgColor={computedBgColor}
 					{headerLinkColor}
-                    {headerLinkFontSize}
+					{headerLinkFontSize}
 					{headerLinkHoverColor}
 					{currentPath}
 					{headerHeight}
