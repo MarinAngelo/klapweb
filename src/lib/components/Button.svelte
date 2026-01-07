@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { PrismicLink } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 
 	export let link: any;
 	export let text: string = 'Mehr erfahren';
@@ -12,12 +11,10 @@
 	export let hoverColor: string | undefined;
 	export let hoverBgColor: string | undefined;
 
-	const { pageLinkColor, pageLinkHoverColor, buttonBgColor } = get(theme);
-
-	$: resolvedColor = color ?? pageLinkColor;
-	$: resolvedBgColor = bgColor ?? buttonBgColor ?? 'transparent';
-	$: resolvedHoverColor = hoverColor ?? pageLinkHoverColor;
-	$: resolvedHoverBgColor = hoverBgColor ?? 'red';
+	$: resolvedColor = color ?? $theme.pageButtonColor;
+	$: resolvedBgColor = bgColor ?? $theme.pageButtonBgColor;
+	$: resolvedHoverColor = hoverColor ?? $theme.pageButtonHoverColor;
+	$: resolvedHoverBgColor = hoverBgColor ?? $theme.pageButtonHoverBgColor;
 </script>
 
 <PrismicLink
@@ -28,8 +25,8 @@
         background-color: ${resolvedBgColor};
         color: ${resolvedColor};
         border-color: ${resolvedColor};
-        --hover-bg-color: ${resolvedHoverBgColor};
         --hover-text-color: ${resolvedHoverColor};
+        --hover-bg-color: ${resolvedHoverBgColor};
         --focus-ring-color: ${resolvedColor};
     `}
 >

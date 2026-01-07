@@ -19,13 +19,6 @@
 					"label": "UID"
 				}
 			},
-			"page_bg_color": {
-				"type": "Color",
-				"config": {
-					"label": "Hintergrundfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
-				}
-			},
 			"page_color": {
 				"type": "Color",
 				"config": {
@@ -33,13 +26,25 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"body_font": {
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_font": {
 				"type": "Link",
 				"config": {
 					"label": "Hauptschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": ["font"]
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
 				}
 			},
 			"base_font_size_mobile": {
@@ -62,21 +67,42 @@
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_text": {
+			"page_link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_bg": {
+			"page_button_color": {
 				"type": "Color",
 				"config": {
-					"label": "Linkhintergrundfarbe Maus darüber",
-					"placeholder": ""
+					"label": "Schaltflächen-Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltflächen-Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltfl. SF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltfl. HF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"favicon": {
@@ -93,21 +119,14 @@
 				"type": "Number",
 				"config": {
 					"label": "Website-Titel Schriftgrösse",
-					"placeholder": "0.5 - 5 (rem)"
+					"placeholder": "1 - 5"
 				}
 			},
 			"site_sub_title_font_size": {
 				"type": "Number",
 				"config": {
 					"label": "Website-Untertitel Schriftgrösse",
-					"placeholder": "0.5 - 4 (rem)"
-				}
-			},
-			"header_color": {
-				"type": "Color",
-				"config": {
-					"label": "Textfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
+					"placeholder": "0.5 - 4"
 				}
 			},
 			"logo": {
@@ -122,7 +141,7 @@
 				"type": "Number",
 				"config": {
 					"label": "Logo Grösse",
-					"placeholder": "1 - 20"
+					"placeholder": "1 - 8"
 				}
 			},
 			"header_bg_color": {
@@ -135,8 +154,8 @@
 			"header_bg_opacity": {
 				"type": "Number",
 				"config": {
-					"label": "Transparenz der Hintergrundfarbe",
-					"placeholder": ""
+					"label": "Deckkraft der Hintergrundfarbe",
+					"placeholder": "in %"
 				}
 			},
 			"header_link_color": {
@@ -146,13 +165,6 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"header_font_size": {
-				"type": "Number",
-				"config": {
-					"label": "Link Schriftgrösse in rem",
-					"placeholder": "z.b. 1.5"
-				}
-			},
 			"header_link_hover_color": {
 				"type": "Color",
 				"config": {
@@ -160,20 +172,25 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"header_link_hover_bg_color": {
-				"type": "Color",
+			"header_link_font_size": {
+				"type": "Number",
 				"config": {
-					"label": "Linkhintergrund wenn Maus darüber",
-					"placeholder": ""
+					"label": "Link Schriftgrösse",
+					"placeholder": "1.5 - 3"
 				}
 			},
-			"nav_font": {
+			"header_link_font": {
 				"type": "Link",
 				"config": {
-					"label": "Navigationsschrift",
+					"label": "Link Schriftart",
 					"select": "document",
 					"repeat": false,
-					"customtypes": ["font"]
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
 				}
 			}
 		},
@@ -204,6 +221,20 @@
 				"config": {
 					"label": "Textgrösse Untere Fusszeile",
 					"placeholder": "0.2 - 1.5"
+				}
+			},
+			"footer_link_color": {
+				"type": "Color",
+				"config": {
+					"label": "Link Farbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"footer_link_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe wenn Maus darüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			}
 		}

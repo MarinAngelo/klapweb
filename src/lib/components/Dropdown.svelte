@@ -10,7 +10,7 @@
 	export let headerLinkHoverColor;
 	export let headerLinkHoverBgColor;
 	export let currentPath;
-	export let headerfontSize;
+	export let headerLinkFontSize;
 
 	const dispatch = createEventDispatcher();
 	let isOpen = false;
@@ -28,7 +28,7 @@
 	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 >
-	<DropdownButton {item} {headerLinkColor} {headerfontSize} onClick={toggleDropdown} />
+	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} />
 
 	{#if isOpen}
 		<ul
@@ -41,7 +41,7 @@
 						? 'mt-11'
 						: ''} p-2 font-semibold tracking-tight block text-left"
 					style="
-				font-size: {headerfontSize}rem;
+				font-size: {headerLinkFontSize}rem;
 				white-space: normal;
 				overflow-wrap: anywhere;
 				min-width: 14rem;

@@ -52,7 +52,7 @@
 	}
 
 	// Zugriff auf die Store-Werte für die Styles
-	$: bodyFontStyle = `font-family: '${$theme.bodyFont || 'sans-serif'}', sans-serif;`;
+	$: bodyFontStyle = $theme.pageFont ? `font-family: '${$theme.pageFont}';` : '';
 
 	$: bannerTop = $theme.bannerTop;
 

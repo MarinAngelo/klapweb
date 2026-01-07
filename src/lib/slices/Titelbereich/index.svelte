@@ -17,6 +17,7 @@
 	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.HeroSlice;
+	console.log('Titelbereich Slice:', slice);
 	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 
@@ -50,24 +51,12 @@
 		}));
 	});
 
-	// Fallbacks aus dem globalen Theme holen
-	const { pageLinkColor, headerLinkHoverColor: pageLinkHoverColorText } = get(theme);
-
-	// Button-Farben aus Slice, mit Fallbacks
-	const buttonBgColor =
-		'button_bg_color' in slice.primary ? slice.primary.button_bg_color || undefined : 'transparent';
-	const buttonBgColorHover =
-		'button_bg_color_hover' in slice.primary
-			? slice.primary.button_bg_color_hover ?? undefined
-			: pageLinkHoverColorText;
-	const buttonTextColor =
-		'button_text_color' in slice.primary
-			? slice.primary.button_text_color || undefined
-			: pageLinkColor;
-	const buttonTextColorHover =
-		'button_text_color_hover' in slice.primary
-			? slice.primary.button_text_color_hover
-			: pageLinkHoverColorText;
+	// Button-Farben aus Slice (Type-safe)
+    // WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
+    $: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
+    $: buttonHoverColor = 'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
+    $: buttonBgColor = 'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
+    $: buttonHoverBgColor = 'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -83,8 +72,10 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
-	const textOverlayColor = 
-		'text_overlay_color' in slice.primary ? slice.primary.text_overlay_color || 'var(--text-color)' : 'var(--text-color)';
+	const textOverlayColor =
+		'text_overlay_color' in slice.primary
+			? slice.primary.text_overlay_color || 'var(--text-color)'
+			: 'var(--text-color)';
 	const textOverlayOpacity =
 		'text_overlay_opacity' in slice.primary
 			? convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1
@@ -184,10 +175,10 @@
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
-							color={buttonTextColor}
-							bgColor={buttonBgColor}
-							hoverBgColor={buttonBgColorHover}
-							hoverColor={buttonTextColorHover ?? undefined}
+							color={buttonColor || get(theme).pageButtonColor}
+							bgColor={buttonBgColor || get(theme).pageButtonBgColor}
+							hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
+							hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
 						/>
 					{/if}
 				</div>

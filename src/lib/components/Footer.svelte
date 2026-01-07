@@ -8,12 +8,18 @@
     export let settings: Content.SettingsDocument;
     export let navigation: Content.NavigationDocument;
 
-    $: ({ footerColor, footerBgColor, footerFontSizeTopBar, footerFontSizeButtonBar } = $theme);
+    $: ({ footerColor, footerBgColor, footerFontSizeTopBar, footerFontSizeButtonBar, footerLinkColor, footerLinkHoverColor } = $theme);
 
     let email = settings.data?.e_mail || '';
     let responsiblePersonCompany = settings.data?.responsible_person_company || '';
 
     const currentYear = new Date().getFullYear();
+    
+    // Event-Handler für Hover-Effekte
+    const handleHover = (e: Event, color: string) => {
+        const el = e.target as HTMLElement;
+        if (el) el.style.color = color;
+    };
 </script>
 
 <Bounded 
@@ -24,21 +30,26 @@
     <footer class="w-full h-full text-inherit">
         
 		<!-- Topbar -->
-        <div class="flex justify-center items-center h-full mb-9 hover:underline">
-            <a href={`mailto:${email}`} class="text-center text-inherit" style="font-size: {footerFontSizeTopBar}rem;">
-                Kontakt: {email}
-            </a>
+        <div class="flex justify-center items-center h-full mb-9">
+            <p>Kontakt: 
+                <a href={`mailto:${email}`} class="text-center text-inherit hover:underline" 
+                   style="font-size: {footerFontSizeTopBar}rem; color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
+                   on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
+                   on:mouseleave={(e) => handleHover(e, footerLinkColor)}>
+                    {email}
+                </a>
+            </p>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
     <ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
         {#each navigation.data.links as link}
-            {#if link.footer_sec_nav === true && link.link.url}
+            {#if link.footer_sec_nav === true && link.link}
                 <li class="m-0">
                     <PrismicLink
                         field={link.link}
-                        class="hover:underline text-sm leading-tight text-center"
-                        style="color: {footerColor}; font-size: {footerFontSizeTopBar}rem;"
+                        class="footer-nav-link hover:underline text-sm leading-tight text-center"
+                        style="color: {footerLinkColor}; font-size: {footerFontSizeTopBar}rem;"
                     >
                         <PrismicText field={link.label} />
                     </PrismicLink>
@@ -54,11 +65,20 @@
         <div class="mt-4 text-center">
             <p class="leading-tight text-inherit"  style="font-size: {footerFontSizeButtonBar}rem;">
                 &copy; {currentYear}
-                {responsiblePersonCompany}. Alle Rechte vorbehalten. <br>
-                <a href="https://www.klap-web.ch/" target="_blank" class="hover:underline text-inherit">
-                    Webentwicklung: www.klap-web.ch
+                {responsiblePersonCompany}. Alle Rechte vorbehalten. <br> Webentwicklung: 
+                <a href="https://www.klap-web.ch/" target="_blank" class="hover:underline text-inherit" 
+                   style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
+                   on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
+                   on:mouseleave={(e) => handleHover(e, footerLinkColor)}>
+                    www.klap-web.ch
                 </a>
             </p>
         </div>
     </footer>
 </Bounded>
+
+<style>
+    :global(.footer-nav-link:hover) {
+        color: var(--footer-link-hover-color) !important;
+    }
+</style>

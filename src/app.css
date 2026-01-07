@@ -53,43 +53,59 @@ a[data-type="prismic-link"]:hover {
 :root {
   --global-size-mobile: 16px;
   --global-size-desktop: 16px;
+  
   /* --- Fallback Styles, die im CMS verwendet werden --- */
-  --page-bg-color: #c7c9fe;
+  /* Generelle Seitenfarben und Schriftarten */
   --page-color: #5f5fab;
-  --header-bg-color: #232442;
-  --header-color: #cfcefe;
+  --page-bg-color: #c7c9fe;
+  --page-font: 'Roboto', sans-serif; /* Fallback greift nicht, Problem in app.html stattdessen wird system font verwendet */
+  --base-font-size-mobile: 16px;  /* unused, wird direkt in +layout.svelte verwendet */
+  --base-font-size-desktop: 16px; /* unused, wird direkt in +layout.svelte verwendet */
+  --page-link-color: #26683c;
+  /* Button Farben */
+  --page-link-hover-color: #2ca741;
+  --page-button-color: var(--page-link-color);
+  --page-button-bg-color: transparent;
+  --page-button-hover-color: var(--page-link-hover-color);
+  --page-button-hover-bg-color: transparent;
+
+  /* Kopfzeile Farben */
+  --site-title-font-size: 1.5; /* in rem */
+  --site-sub-title-font-size: 1; /* in rem */
+  --logo-height: 5; /* in rem */
+  --header-color: #1c1c25;
+  --header-bg-color: #6468e1;
+  --header-bg-opacity: 100;
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
-  --header-link-hover-bg-color: red;
-  --page-link-color: #26683c;
-  --page-link-hover-color: #2ca741;
+  --header-link-font-size: 1.5; /* in rem */
+  --header-link-font: 'Roboto', sans-serif;
+
+  /* Fußzeile Farben */
+  --footer-color: #5f5fab;
+  --footer-bg-color: #232442;
+  --footer-font-size-top-bar: 1;
+  --footer-font-size-button-bar: 0.8;
+  --footer-link-color: #cfcefe;
+  --footer-link-hover-color: #b6317a;
+  /* Ende der Fallback Styles  */
+
   /* not css notation, as it will be recalculated as coming from cms */
-  --header-bg-opacity: 0;
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
   --header-link-active-color: #cfcefe;
   --header-link-visited-color: #cfcefe;
-  --body-font: 'Roboto', sans-serif;
-  --nav-font: 'Roboto'; 
-  --footer-bg-color: #232442;
-  --footer-color: #5f5fab;
-  --footer-font-size-top-bar: 1;
-  --footer-font-size-button-bar: 0.8;
-  --page-link-hover-color-bg: transparent;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
   --hero-overlay-color: transparent;
-  --button-color: var(--page-link-color);
-  --button-hover-color: var(--page-link-hover-color);
-  --button-bg-color: transparent;
-  --button-hover-bg-color: transparent;
   --button-active-bg-color: var(--page-link-active-color);
   --button-active-color: var(--page-link-active-color);
   --button-visited-color: var(--page-link-visited-color);
   --button-border-radius: 0;
   --button-padding-y: 0.5rem;
   --button-padding-x: 1rem;
-  --focus-ring-color: #000000;
-  --hover-bg-color: red;
+  --hover-text-color: var(--page-button-color);
+  --focus-ring-color: var(--hover-text-color);
+  --hover-bg-color: var(--page--button-hover-bg-color);
 
 }
 
