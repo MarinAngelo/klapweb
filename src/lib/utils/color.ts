@@ -10,5 +10,9 @@ export function hexToRgba(hex: string, alpha: number): string {
 	const r = (num >> 16) & 255;
 	const g = (num >> 8) & 255;
 	const b = num & 255;
-	return `rgba(${r},${g},${b},${alpha})`;
+	
+	// Wenn alpha > 1 ist, ist es wahrscheinlich ein Prozent-Wert
+	const normalizedAlpha = alpha > 1 ? alpha / 100 : alpha;
+	
+	return `rgba(${r},${g},${b},${normalizedAlpha})`;
 }

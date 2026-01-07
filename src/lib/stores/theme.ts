@@ -5,7 +5,6 @@ export const THEME_DEFAULTS = {
 	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
     // Aus Slices/Titelbereich/index.svelte
 	bannerTop: false,
-	headerBgOpacity: 1,
     // Aus Custom Type "Theme" hier keine expliziten Default-Werte, da diese aus CSS-Variablen geholt werden
 	pageColor: '',
 	pageBgColor: '',
@@ -13,14 +12,18 @@ export const THEME_DEFAULTS = {
 	baseFontSizeMobile: 0,
 	baseFontSizeDesktop: 0,
 	headerColor: '',
+	headerLinkFontSize: 0,
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
 	headerLinkActiveColor: '',
 	headerLinkVisitedColor: '',
 	headerBgColor: '',
+	headerBgOpacity: 0,
 	footerColor: '',
 	footerBgColor: '',
+	footerLinkColor: '',
+	footerLinkHoverColor: '',
 	footerFontSizeTopBar: 0,
 	footerFontSizeButtonBar: 0,
 	pageLinkColor: '',
@@ -38,6 +41,9 @@ export const THEME_DEFAULTS = {
 	buttonBorderRadius: 0,
 	buttonPaddingY: 0,
 	buttonPaddingX: 0,
+	siteTitleFontSize: 0,
+	siteSubtitleFontSize: 0,
+	logoHeight: 0,
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

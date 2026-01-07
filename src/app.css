@@ -69,19 +69,24 @@ a[data-type="prismic-link"]:hover {
   --page-button-hover-bg-color: transparent;
 
   /* Kopfzeile Farben */
-  --header-bg-color: #232442;
-  --header-color: #cfcefe;
+  --site-title-font-size: 1.5; /* in rem */
+  --site-sub-title-font-size: 1; /* in rem */
+  --logo-height: 5; /* in rem */
+  --header-color: #1c1c25;
+  --header-bg-color: #6468e1;
+  --header-bg-opacity: 100;
+  --header-link-font-size: 1.5; /* in rem */
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
-  --header-link-hover-bg-color: red;
   /* not css notation, as it will be recalculated as coming from cms */
-  --header-bg-opacity: 0;
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
   --header-link-active-color: #cfcefe;
   --header-link-visited-color: #cfcefe;
   --header-link-font: 'Roboto', sans-serif;
   --footer-bg-color: #232442;
   --footer-color: #5f5fab;
+  --footer-link-color: #cfcefe;
+  --footer-link-hover-color: #b6317a;
   --footer-font-size-top-bar: 1;
   --footer-font-size-button-bar: 0.8;
   --page-link-active-color: var(--page-link-color);

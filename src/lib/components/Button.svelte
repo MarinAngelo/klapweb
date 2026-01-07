@@ -12,13 +12,9 @@
 	export let hoverBgColor: string | undefined;
 
 	$: resolvedColor = color ?? $theme.pageButtonColor;
-	console.log('resolvedColor', resolvedColor);
 	$: resolvedBgColor = bgColor ?? $theme.pageButtonBgColor;
-	console.log('resolvedBgColor', resolvedBgColor);
 	$: resolvedHoverColor = hoverColor ?? $theme.pageButtonHoverColor;
-	console.log('resolvedHoverColor', resolvedHoverColor);
 	$: resolvedHoverBgColor = hoverBgColor ?? $theme.pageButtonHoverBgColor;
-	console.log('resolvedHoverBgColor', resolvedHoverBgColor);
 </script>
 
 <PrismicLink

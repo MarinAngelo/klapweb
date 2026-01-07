@@ -9,10 +9,9 @@
 	export let navigation;
 	export let headerBgColor;
 	export let headerLinkColor;
+	export let headerLinkFontSize;
 	export let headerLinkHoverColor;
-	export let headerLinkHoverBgColor;
 	export let currentPath;
-	export let headerfontSize;
 	export let headerHeight;
 
 	const { headerLinkFont } = get(theme);
@@ -74,17 +73,16 @@
 								{subItems}
 								{headerBgColor}
 								{headerLinkColor}
-								{headerLinkHoverBgColor}
+								{headerLinkFontSize}
 								{headerLinkHoverColor}
 								{currentPath}
-								{headerfontSize}
 								on:click={() => isMenuOpen.set(false)}
 							/>
 						</li>
 					{:else if item.link?.url}
 						<li
 							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor}; font-size: 5rem;"
+							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
 						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
@@ -109,7 +107,7 @@
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
 							class="transition nav-link"
-							style="color: inherit; font-size: {headerfontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
+							style="color: inherit; font-size: {headerLinkFontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
 								'#fff'};"
 						>
 							<PrismicText field={item.label} />
