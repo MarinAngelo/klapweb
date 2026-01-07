@@ -30,34 +30,33 @@
     <footer class="w-full h-full text-inherit">
         
 		<!-- Topbar -->
-        <div class="flex justify-center items-center h-full mb-9">
-            <p style="color: {footerColor}">Kontakt: 
-                <a href={`mailto:${email}`} class="text-center text-inherit hover:underline" 
-                   style="font-size: {footerFontSizeTopBar}rem; color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-                   on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-                   on:mouseleave={(e) => handleHover(e, footerLinkColor)}>
-                    {email}
-                </a>
-            </p>
-        </div>
-
         <div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
-    <ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
-        {#each navigation.data.links as link}
-            {#if link.footer_sec_nav === true && link.link}
+            <ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
+                {#each navigation.data.links as link}
+                {#if link.footer_sec_nav === true && link.link}
                 <li class="m-0">
                     <PrismicLink
-                        field={link.link}
-                        class="footer-nav-link hover:underline text-sm leading-tight text-center"
-                        style="color: {footerLinkColor}; font-size: {footerFontSizeTopBar}rem;"
+                    field={link.link}
+                    class="footer-nav-link hover:underline text-sm leading-tight text-center"
+                    style="color: {footerLinkColor}; font-size: {footerFontSizeTopBar}rem;"
                     >
-                        <PrismicText field={link.label} />
-                    </PrismicLink>
-                </li>
+                    <PrismicText field={link.label} />
+                </PrismicLink>
+            </li>
             {/if}
-        {/each}
-    </ul>
-</div>
+            {/each}
+        </ul>
+    </div>
+    <div class="flex justify-center items-center h-full mb-9">
+        <p style="color: {footerColor}; font-size: {footerFontSizeTopBar}rem;">Kontakt: 
+            <a href={`mailto:${email}`} class="text-center text-inherit hover:underline" 
+               style="font-size: {footerFontSizeTopBar}rem; color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
+               on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
+               on:mouseleave={(e) => handleHover(e, footerLinkColor)}>
+                {email}
+            </a>
+        </p>
+    </div>
         
         <hr class="border-current opacity-20 mb-6"> 
 
