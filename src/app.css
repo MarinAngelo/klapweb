@@ -53,6 +53,7 @@ a[data-type="prismic-link"]:hover {
 :root {
   --global-size-mobile: 16px;
   --global-size-desktop: 16px;
+  
   /* --- Fallback Styles, die im CMS verwendet werden --- */
   /* Generelle Seitenfarben und Schriftarten */
   --page-color: #5f5fab;
@@ -75,20 +76,24 @@ a[data-type="prismic-link"]:hover {
   --header-color: #1c1c25;
   --header-bg-color: #6468e1;
   --header-bg-opacity: 100;
-  --header-link-font-size: 1.5; /* in rem */
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
+  --header-link-font-size: 1.5; /* in rem */
+  --header-link-font: 'Roboto', sans-serif;
+
+  /* Fußzeile Farben */
+  --footer-color: #5f5fab;
+  --footer-bg-color: #232442;
+  --footer-font-size-top-bar: 1;
+  --footer-font-size-button-bar: 0.8;
+  --footer-link-color: #cfcefe;
+  --footer-link-hover-color: #b6317a;
+  /* Ende der Fallback Styles  */
+
   /* not css notation, as it will be recalculated as coming from cms */
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
   --header-link-active-color: #cfcefe;
   --header-link-visited-color: #cfcefe;
-  --header-link-font: 'Roboto', sans-serif;
-  --footer-bg-color: #232442;
-  --footer-color: #5f5fab;
-  --footer-link-color: #cfcefe;
-  --footer-link-hover-color: #b6317a;
-  --footer-font-size-top-bar: 1;
-  --footer-font-size-button-bar: 0.8;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
   --hero-overlay-color: transparent;

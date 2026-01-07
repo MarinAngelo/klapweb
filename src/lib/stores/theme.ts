@@ -3,47 +3,55 @@ import { writable } from 'svelte/store';
 export const THEME_DEFAULTS = {
 	// Globale Defaults
 	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
-    // Aus Slices/Titelbereich/index.svelte
-	bannerTop: false,
-    // Aus Custom Type "Theme" hier keine expliziten Default-Werte, da diese aus CSS-Variablen geholt werden
+	bannerTop: false, // Aus Slices/Titelbereich/index.svelte
+	headerBgOpacity: 1, // wird aus Slice gesetzt
+	
+	// Generelle Seitenfarben und Schriftarten (wie in app.css)
 	pageColor: '',
 	pageBgColor: '',
 	pageFont: '',
 	baseFontSizeMobile: 0,
 	baseFontSizeDesktop: 0,
+	pageLinkColor: '',
+	
+	// Button Farben (wie in app.css)
+	pageLinkHoverColor: '',
+	pageButtonColor: '',
+	pageButtonBgColor: '',
+	pageButtonHoverColor: '',
+	pageButtonHoverBgColor: '',
+	
+	// Kopfzeile Farben (wie in app.css)
+	siteTitleFontSize: 0,
+	siteSubtitleFontSize: 0,
+	headerFontSize: 0,
+	logoHeight: 0,
 	headerColor: '',
-	headerLinkFontSize: 0,
+	headerBgColor: '',
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
-	headerLinkActiveColor: '',
-	headerLinkVisitedColor: '',
-	headerBgColor: '',
-	headerBgOpacity: 0,
+	headerLinkFont: '',
+	
+	// Fußzeile Farben (wie in app.css)
 	footerColor: '',
 	footerBgColor: '',
-	footerLinkColor: '',
-	footerLinkHoverColor: '',
 	footerFontSizeTopBar: 0,
 	footerFontSizeButtonBar: 0,
-	pageLinkColor: '',
-	pageLinkHoverColor: '',
+	footerLinkColor: '',
+	footerLinkHoverColor: '',
+	
+	// Weitere Eigenschaften (nicht in app.css)
+	headerLinkActiveColor: '',
+	headerLinkVisitedColor: '',
 	pageLinkActiveColor: '',
 	pageLinkVisitedColor: '',
-	headerLinkFont: '',
-	pageButtonColor: '',
-	pageButtonHoverColor: '',
-	pageButtonBgColor: '',
-	pageButtonHoverBgColor: '',
 	buttonActiveColor: '',
 	buttonVisitedColor: '',
 	buttonActiveBgColor: '',
 	buttonBorderRadius: 0,
 	buttonPaddingY: 0,
 	buttonPaddingX: 0,
-	siteTitleFontSize: 0,
-	siteSubtitleFontSize: 0,
-	logoHeight: 0,
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

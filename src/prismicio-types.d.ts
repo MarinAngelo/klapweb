@@ -570,7 +570,7 @@ interface ThemeDocumentData {
 	 * Website-Titel Schriftgrösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0.5 - 5
+	 * - **Placeholder**: 1 - 5
 	 * - **API ID Path**: theme.site_title_font_size
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/number
@@ -603,7 +603,7 @@ interface ThemeDocumentData {
 	 * Logo Grösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
+	 * - **Placeholder**: 1 - 8
 	 * - **API ID Path**: theme.logo_height
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/number
