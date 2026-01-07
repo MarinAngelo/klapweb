@@ -31,7 +31,7 @@
         
 		<!-- Topbar -->
         <div class="flex justify-center items-center h-full mb-9">
-            <p>Kontakt: 
+            <p style="color: {footerColor}">Kontakt: 
                 <a href={`mailto:${email}`} class="text-center text-inherit hover:underline" 
                    style="font-size: {footerFontSizeTopBar}rem; color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
                    on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
