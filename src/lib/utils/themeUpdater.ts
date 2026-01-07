@@ -68,7 +68,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 
 	// const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 0) || 0;
 	const bannerTop = prismicThemeData.banner_top === true;
-	const headerBgOpacity = prismicThemeData.header_bg_opacity || parseFloat(getCssVar('--header-bg-opacity'));
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
 	const pageFont = prismicThemeData.page_font?.data?.name || getCssVar('--page-font');
@@ -84,6 +83,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const logoHeight = prismicThemeData.logo_height || parseFloat(getCssVar('--logo-height'));
 	const headerColor = prismicThemeData.header_color || getCssVar('--header-color');
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
+	const headerBgOpacity = prismicThemeData.header_bg_opacity || parseFloat(getCssVar('--header-bg-opacity'));
 	const headerLinkColor = prismicThemeData.header_link_color || getCssVar('--header-link-color');
 	const headerLinkHoverColor = prismicThemeData.header_link_hover_color || getCssVar('--header-link-hover-color');
 	const headerLinkHoverBgColor = prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
