@@ -3,35 +3,49 @@ import { writable } from 'svelte/store';
 export const THEME_DEFAULTS = {
 	// Globale Defaults
 	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
-    // Aus Slices/Titelbereich/index.svelte
-	bannerTop: false,
-	headerBgOpacity: 1,
-    // Aus Custom Type "Theme" hier keine expliziten Default-Werte, da diese aus CSS-Variablen geholt werden
+	bannerTop: false, // Aus Slices/Titelbereich/index.svelte
+	
+	// Generelle Seitenfarben und Schriftarten (wie in app.css)
+	pageColor: '',
+	pageBgColor: '',
+	pageFont: '',
+	baseFontSizeMobile: 0,
+	baseFontSizeDesktop: 0,
+	pageLinkColor: '',
+	
+	// Button Farben (wie in app.css)
+	pageLinkHoverColor: '',
+	pageButtonColor: '',
+	pageButtonBgColor: '',
+	pageButtonHoverColor: '',
+	pageButtonHoverBgColor: '',
+	
+	// Kopfzeile Farben (wie in app.css)
+	siteTitleFontSize: 0,
+	siteSubtitleFontSize: 0,
+	headerFontSize: 0,
+	logoHeight: 0,
 	headerColor: '',
+	headerBgColor: '',
+	headerBgOpacity: 0, // wird aus Slice gesetzt
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
-	headerLinkActiveColor: '',
-	headerLinkVisitedColor: '',
-	headerBgColor: '',
+	headerLinkFont: '',
+	
+	// Fußzeile Farben (wie in app.css)
 	footerColor: '',
+	footerBgColor: '',
+	footerFontSizeTopBar: 0,
+	footerFontSizeButtonBar: 0,
 	footerLinkColor: '',
 	footerLinkHoverColor: '',
-	footerLinkActiveColor: '',
-	footerLinkVisitedColor: '',
-	footerBgColor: '',
-	pageColor: '',
-	pageBgColor: '',
-	pageLinkColor: '',
-	pageLinkHoverColor: '',
+	
+	// Weitere Eigenschaften (nicht in app.css)
+	headerLinkActiveColor: '',
+	headerLinkVisitedColor: '',
 	pageLinkActiveColor: '',
 	pageLinkVisitedColor: '',
-	bodyFont: '',
-	navFont: '',
-	buttonColor: '',
-	buttonHoverColor: '',
-	buttonBgColor: '',
-	buttonHoverBgColor: '',
 	buttonActiveColor: '',
 	buttonVisitedColor: '',
 	buttonActiveBgColor: '',

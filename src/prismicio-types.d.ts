@@ -369,17 +369,6 @@ interface SettingsDocumentData {
 	site_title: prismic.RichTextField;
 
 	/**
-	 * Website Titel Schriftgrösse field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
-	 * - **API ID Path**: settings.site_title_font_size
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	site_title_font_size: prismic.NumberField;
-
-	/**
 	 * Website Untertitel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Rich Text
@@ -389,17 +378,6 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	site_sub_title: prismic.RichTextField;
-
-	/**
-	 * Website Untertitel Schriftgrösse field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
-	 * - **API ID Path**: settings.site_sub_title_font_size
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	site_sub_title_font_size: prismic.NumberField;
 
 	/**
 	 * E-Mail field in *Einstellungen*
@@ -455,17 +433,6 @@ interface ThemeDocumentData {
 	theme_name: prismic.KeyTextField;
 
 	/**
-	 * Hintergrundfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: theme.page_bg_color
-	 * - **Tab**: Generell
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	page_bg_color: prismic.ColorField;
-
-	/**
 	 * Textfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -477,21 +444,58 @@ interface ThemeDocumentData {
 	page_color: prismic.ColorField;
 
 	/**
+	 * Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_bg_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_bg_color: prismic.ColorField;
+
+	/**
 	 * Hauptschrift field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.body_font
+	 * - **API ID Path**: theme.page_font
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	body_font: prismic.ContentRelationshipField<'font'>;
+	page_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
+
+	/**
+	 * Mobile Basis-Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.base_font_size_mobile
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	base_font_size_mobile: prismic.SelectField<
+		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
+	>;
+
+	/**
+	 *  Desktop Basis-Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.base_font_size_desktop
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	base_font_size_desktop: prismic.SelectField<
+		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
+	>;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: theme.page_link_color
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/color
@@ -502,23 +506,56 @@ interface ThemeDocumentData {
 	 * Linkfarbe wenn Maus darüber field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color_text
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_link_hover_color
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	link_hover_color_text: prismic.ColorField;
+	page_link_hover_color: prismic.ColorField;
 
 	/**
-	 * Linkhintergrundfarbe Maus darüber field in *Design Vorlage*
+	 * Schaltflächen-Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.link_hover_color_bg
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_button_color
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	link_hover_color_bg: prismic.ColorField;
+	page_button_color: prismic.ColorField;
+
+	/**
+	 * Schaltflächen-Hintergrundfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_button_bg_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfl. SF wenn Maus drüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_button_hover_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltfl. HF wenn Maus drüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.page_button_hover_bg_color
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_button_hover_bg_color: prismic.ColorField;
 
 	/**
 	 * Favicon field in *Design Vorlage*
@@ -530,6 +567,28 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
+	 * Website-Titel Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1 - 5
+	 * - **API ID Path**: theme.site_title_font_size
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	site_title_font_size: prismic.NumberField;
+
+	/**
+	 * Website-Untertitel Schriftgrösse field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.5 - 4
+	 * - **API ID Path**: theme.site_sub_title_font_size
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	site_sub_title_font_size: prismic.NumberField;
+
+	/**
 	 * Logo field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
@@ -544,7 +603,7 @@ interface ThemeDocumentData {
 	 * Logo Grösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 20
+	 * - **Placeholder**: 1 - 8
 	 * - **API ID Path**: theme.logo_height
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/number
@@ -563,26 +622,15 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Hintergrundfarbe field in *Design Vorlage*
+	 * Deckkraft der Hintergrundfarbe field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.header_bg_color
+	 * - **Field Type**: Number
+	 * - **Placeholder**: in %
+	 * - **API ID Path**: theme.header_bg_opacity
 	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	header_bg_color: prismic.ColorField;
-
-	/**
-	 * Textfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: theme.header_color
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	header_color: prismic.ColorField;
+	header_bg_opacity: prismic.NumberField;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
@@ -596,17 +644,6 @@ interface ThemeDocumentData {
 	header_link_color: prismic.ColorField;
 
 	/**
-	 * Link Schriftgrösse field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1 - 5
-	 * - **API ID Path**: theme.header_font_size
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	header_font_size: prismic.NumberField;
-
-	/**
 	 * Linkfarbe, wenn Maus darüber field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -618,26 +655,26 @@ interface ThemeDocumentData {
 	header_link_hover_color: prismic.ColorField;
 
 	/**
-	 * Linkhintergrund wenn Maus darüber field in *Design Vorlage*
+	 * Link Schriftgrösse field in *Design Vorlage*
 	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.header_link_hover_bg_color
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1.5 - 3
+	 * - **API ID Path**: theme.header_link_font_size
 	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	header_link_hover_bg_color: prismic.ColorField;
+	header_link_font_size: prismic.NumberField;
 
 	/**
-	 * Navigationsschrift field in *Design Vorlage*
+	 * Link Schriftart field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: theme.nav_font
+	 * - **API ID Path**: theme.header_link_font
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	nav_font: prismic.ContentRelationshipField<'font'>; /**
+	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>; /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -660,7 +697,29 @@ interface ThemeDocumentData {
 	footer_color: prismic.ColorField;
 
 	/**
-	 * Linkfarbe field in *Design Vorlage*
+	 * Textgrösse Obere Fusszeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.5 - 2
+	 * - **API ID Path**: theme.footer_font_size_top_bar
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	footer_font_size_top_bar: prismic.NumberField;
+
+	/**
+	 * Textgrösse Untere Fusszeile field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0.2 - 1.5
+	 * - **API ID Path**: theme.footer_font_size_button_bar
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	footer_font_size_button_bar: prismic.NumberField;
+
+	/**
+	 * Link Farbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -669,6 +728,17 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	footer_link_color: prismic.ColorField;
+
+	/**
+	 * Linkfarbe wenn Maus darüber field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.footer_link_hover_color
+	 * - **Tab**: Fusszeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	footer_link_hover_color: prismic.ColorField;
 }
 
 /**
@@ -1277,16 +1347,6 @@ export interface HeroSliceDefaultPrimary {
 	banner_overlap: prismic.BooleanField;
 
 	/**
-	 * Transparenz überlagerter Kopfzeile field in *Titelbereich → Standard → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 0 - 100 %
-	 * - **API ID Path**: hero.default.primary.header_bg_opacity
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	header_bg_opacity: prismic.NumberField;
-
-	/**
 	 * Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
@@ -1337,6 +1397,26 @@ export interface HeroSliceDefaultPrimary {
 	button_text: prismic.KeyTextField;
 
 	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
 	 * Schaltfläche Hintergrundfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
@@ -1351,30 +1431,10 @@ export interface HeroSliceDefaultPrimary {
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.default.primary.button_bg_color_hover
+	 * - **API ID Path**: hero.default.primary.button_hover_bg_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
-	button_bg_color_hover: prismic.ColorField;
-
-	/**
-	 * Schaltfläche Text- und Rahmenfarbe field in *Titelbereich → Standard → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.default.primary.button_text_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_text_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche T & R Mouseover field in *Titelbereich → Standard → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.default.primary.button_text_color_hover
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_text_color_hover: prismic.ColorField;
+	button_hover_bg_color: prismic.ColorField;
 
 	/**
 	 * Hintergrundbild field in *Titelbereich → Standard → Primary*

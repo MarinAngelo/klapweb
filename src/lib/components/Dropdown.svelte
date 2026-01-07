@@ -10,7 +10,7 @@
 	export let headerLinkHoverColor;
 	export let headerLinkHoverBgColor;
 	export let currentPath;
-	export let headerfontSize;
+	export let headerLinkFontSize;
 
 	const dispatch = createEventDispatcher();
 	let isOpen = false;
@@ -28,20 +28,20 @@
 	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 >
-	<DropdownButton {item} {headerLinkColor} {headerfontSize} onClick={toggleDropdown} />
+	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} />
 
 	{#if isOpen}
 		<ul
-			class="absolute left-0 mt-0 w-48 shadow-lg z-40 rounded py-1"
-			style="background-color: {headerBgColor}; min-width: 14rem; max-height: 300px; overflow-y: auto;"
+			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded py-1"
+			style="background-color: {headerBgColor}; min-width: 14rem; width: max-content;"
 		>
 			{#each subItems as dropdownItem, index}
 				<li
 					class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0
 						? 'mt-11'
-						: ''} p-2 font-semibold tracking-tight block text-left"
+						: ''} px-5 py-0 font-semibold tracking-tight block text-left"
 					style="
-				font-size: {headerfontSize}rem;
+				font-size: {headerLinkFontSize}rem;
 				white-space: normal;
 				overflow-wrap: anywhere;
 				min-width: 14rem;
@@ -69,8 +69,21 @@
 </div>
 
 <style>
+	.dropdown-menu {
+		/* Mobile: Static positioning to push content down */
+		position: static;
+	}
+	
+	/* Desktop: Absolute positioning to overlay */
+	@media (min-width: 768px) {
+		.dropdown-menu {
+			position: absolute;
+		}
+	}
+
 	:global(.dropdown-link:hover) {
 		background-color: var(--hover-bg-color) !important;
+		text-decoration: underline !important;
 	}
 	/* optional: falls du auch Textfarbe beim Hover über Variable steuern willst */
 	:global(.dropdown-link:hover) * {
