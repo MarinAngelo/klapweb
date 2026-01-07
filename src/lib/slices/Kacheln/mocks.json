@@ -126,11 +126,6 @@
 				"value": "#9a0ad3",
 				"type": "Color"
 			},
-			"button_color": {
-				"__TYPE__": "FieldContent",
-				"value": "#38c913",
-				"type": "Color"
-			},
 			"button_hover_color": {
 				"__TYPE__": "FieldContent",
 				"value": "#162808",
@@ -149,6 +144,11 @@
 			"border_color": {
 				"__TYPE__": "FieldContent",
 				"value": "#c1c6ee",
+				"type": "Color"
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#de3841",
 				"type": "Color"
 			}
 		},

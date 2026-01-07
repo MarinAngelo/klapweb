@@ -49,7 +49,9 @@
             "label": "Schriftart",
             "select": "document",
             "repeat": false,
-            "customtypes": ["font"]
+            "customtypes": [
+              "font"
+            ]
           }
         },
         "button_link": {
@@ -70,6 +72,20 @@
             "placeholder": ""
           }
         },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "button_bg_color": {
           "type": "Color",
           "config": {
@@ -77,24 +93,10 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "button_bg_color_hover": {
+        "button_hover_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfläche Hintergrund Mouseover",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche Text- und Rahmenfarbe",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color_hover": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche T & R Mouseover",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },

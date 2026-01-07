@@ -55,10 +55,10 @@
 			<Button
 				link={card.buttonLink}
 				text={card.buttonText || 'Mehr erfahren'}
-				color={buttonColor || get(theme).buttonColor}
-				bgColor={buttonBgColor || get(theme).buttonBgColor}
-				hoverColor={buttonHoverColor || get(theme).buttonHoverColor}
-				hoverBgColor={buttonHoverBgColor || get(theme).buttonHoverBgColor}
+				color={buttonColor || get(theme).pageButtonColor}
+				bgColor={buttonBgColor || get(theme).pageButtonBgColor}
+				hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
+				hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
 			/>
 		</div>
 	{/if}

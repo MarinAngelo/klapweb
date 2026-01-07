@@ -20,12 +20,12 @@ interface PrismicThemeData {
 	footer_color?: string;
 	footer_font_size_top_bar?: number;
 	footer_font_size_button_bar?: number;
-	nav_font?: string;
-	body_font?: string;
-	button_color?: string;
-	button_bg_color?: string;
-	button_hover_color?: string;
-	button_hover_bg_color?: string;
+	header_link_font?: { data?: { name?: string } };
+	page_font?: { data?: { name?: string } };
+	page_button_color?: string;
+	page_button_bg_color?: string;
+	page_button_hover_color?: string;
+	page_button_hover_bg_color?: string;
 	button_active_color?: string;
 	button_visited_color?: string;
 	button_active_bg_color?: string;
@@ -80,35 +80,16 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColor =
 		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
-	const buttonColor = prismicThemeData.button_color || getCssVar('--button-color');
-	const buttonHoverColor = prismicThemeData.button_hover_color || getCssVar('--button-hover-color');
-	const buttonBgColor = prismicThemeData.button_bg_color || getCssVar('--button-bg-color');
-	const buttonHoverBgColor =
-		prismicThemeData.button_hover_bg_color || getCssVar('--button-hover-bg-color');
-	const footerFontSizeTopBar = prismicThemeData.footer_font_size_top_bar || getCssVar('--footer-font-size-top-bar');
-	const footerFontSizeButtonBar = prismicThemeData.footer_font_size_button_bar || getCssVar('--footer-font-size-button-bar');
-	// Hilfsfunktion: Extrahiert den Schriftnamen aus einem Prismic Link Objekt
-    const getFontName = (fontField: any): string | null => {
-        // Fall 1: Das Feld ist gefüllt und die verknüpften Daten (fetchLinks) sind da
-        if (fontField?.data?.name) {
-            return fontField.data.name;
-        }
-        // Fall 2: Direkt aus dem Font-Objekt (uid oder slug)
-        if (fontField?.uid) {
-            return fontField.uid;
-        }
-        if (fontField?.slug) {
-            return fontField.slug;
-        }
-        // Fall 3: Fallback, falls das Feld leer ist
-        return null;
-    };
-
-    // WICHTIG: Hier holen wir jetzt den Namen, nicht das Objekt!
-    console.log('body_font raw value:', prismicThemeData.body_font);
-    const bodyFont = getFontName(prismicThemeData.body_font) || getCssVar('--body-font').replace(/'/g, '').replace(/"/g, '').trim();
-    console.log('bodyFont processed value:', bodyFont);
-    const navFont = getFontName(prismicThemeData.nav_font) || getCssVar('--nav-font').replace(/'/g, '').replace(/"/g, '').trim();
+	const pageButtonColor = prismicThemeData.page_button_color || getCssVar('--page-button-color');
+	console.log('Debug pageButtonColor:', pageButtonColor, 'from getCssVar:', getCssVar('--page-button-color'));
+	const pageButtonHoverColor = prismicThemeData.page_button_hover_color || getCssVar('--page-button-hover-color');
+	const pageButtonBgColor = prismicThemeData.page_button_bg_color || getCssVar('--page-button-bg-color');
+	const pageButtonHoverBgColor =
+		prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
+	const footerFontSizeTopBar = prismicThemeData.footer_font_size_top_bar || parseFloat(getCssVar('--footer-font-size-top-bar'));
+	const footerFontSizeButtonBar = prismicThemeData.footer_font_size_button_bar || parseFloat(getCssVar('--footer-font-size-button-bar'));
+	const pageFont = prismicThemeData.page_font?.data?.name || getCssVar('--page-font');
+	const headerLinkFont = prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font');
 	
 	theme.update((t) => ({
 		...t,
@@ -129,12 +110,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageLinkHoverColor,
 		pageLinkActiveColor,
 		pageLinkVisitedColor,
-		navFont,
-		bodyFont,
-		buttonColor,
-		buttonHoverColor,
-		buttonBgColor,
-		buttonHoverBgColor
+		headerLinkFont,
+		pageFont,
+		pageButtonColor,
+		pageButtonHoverColor,
+		pageButtonBgColor,
+		pageButtonHoverBgColor
 	}));
 
 	// NEU: Werte auch als CSS-Variablen setzen
@@ -153,11 +134,11 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
 		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
 		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
-		root.style.setProperty('--nav-font', navFont);
-		root.style.setProperty('--body-font', bodyFont);
-		root.style.setProperty('--button-color', buttonColor);
-		root.style.setProperty('--button-hover-color', buttonHoverColor);
-		root.style.setProperty('--button-bg-color', buttonBgColor);
-		root.style.setProperty('--button-hover-bg-color', buttonHoverBgColor);
+		root.style.setProperty('--header-link-font', headerLinkFont);
+		root.style.setProperty('--page-font', pageFont);
+		root.style.setProperty('--page-button-color', pageButtonColor);
+		root.style.setProperty('--page-button-hover-color', pageButtonHoverColor);
+		root.style.setProperty('--page-button-bg-color', pageButtonBgColor);
+		root.style.setProperty('--page-button-hover-bg-color', pageButtonHoverBgColor);
 	}
 }

@@ -112,21 +112,6 @@
 				"value": "#e40aeb",
 				"type": "Color"
 			},
-			"button_text_color": {
-				"__TYPE__": "FieldContent",
-				"value": "#3e5953",
-				"type": "Color"
-			},
-			"button_bg_color_hover": {
-				"__TYPE__": "FieldContent",
-				"value": "#1f105a",
-				"type": "Color"
-			},
-			"button_text_color_hover": {
-				"__TYPE__": "FieldContent",
-				"value": "#132e35",
-				"type": "Color"
-			},
 			"banner_overlap": {
 				"__TYPE__": "BooleanContent",
 				"value": true
@@ -143,6 +128,21 @@
 					"__TYPE__": "DocumentLink",
 					"id": "mock_document_id"
 				}
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#af6df8",
+				"type": "Color"
+			},
+			"button_hover_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c5da99",
+				"type": "Color"
+			},
+			"button_hover_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#76456d",
+				"type": "Color"
 			}
 		},
 		"items": [

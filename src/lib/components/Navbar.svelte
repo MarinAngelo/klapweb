@@ -15,7 +15,7 @@
 	export let headerfontSize;
 	export let headerHeight;
 
-	const { navFont } = get(theme);
+	const { headerLinkFont } = get(theme);
 
 	function toggleMenu() {
 		isMenuOpen.update((open) => !open);
@@ -34,7 +34,7 @@
 	}
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {navFont};">
+<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden h-full flex items-center">
 		{#if $isMenuOpen}

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { PrismicLink } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 
 	export let link: any;
 	export let text: string = 'Mehr erfahren';
@@ -12,12 +11,14 @@
 	export let hoverColor: string | undefined;
 	export let hoverBgColor: string | undefined;
 
-	const { pageLinkColor, pageLinkHoverColor, buttonBgColor } = get(theme);
-
-	$: resolvedColor = color ?? pageLinkColor;
-	$: resolvedBgColor = bgColor ?? buttonBgColor ?? 'transparent';
-	$: resolvedHoverColor = hoverColor ?? pageLinkHoverColor;
-	$: resolvedHoverBgColor = hoverBgColor ?? 'red';
+	$: resolvedColor = color ?? $theme.pageButtonColor;
+	console.log('resolvedColor', resolvedColor);
+	$: resolvedBgColor = bgColor ?? $theme.pageButtonBgColor;
+	console.log('resolvedBgColor', resolvedBgColor);
+	$: resolvedHoverColor = hoverColor ?? $theme.pageButtonHoverColor;
+	console.log('resolvedHoverColor', resolvedHoverColor);
+	$: resolvedHoverBgColor = hoverBgColor ?? $theme.pageButtonHoverBgColor;
+	console.log('resolvedHoverBgColor', resolvedHoverBgColor);
 </script>
 
 <PrismicLink
@@ -28,8 +29,8 @@
         background-color: ${resolvedBgColor};
         color: ${resolvedColor};
         border-color: ${resolvedColor};
-        --hover-bg-color: ${resolvedHoverBgColor};
         --hover-text-color: ${resolvedHoverColor};
+        --hover-bg-color: ${resolvedHoverBgColor};
         --focus-ring-color: ${resolvedColor};
     `}
 >

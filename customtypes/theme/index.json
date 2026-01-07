@@ -19,13 +19,6 @@
 					"label": "UID"
 				}
 			},
-			"page_bg_color": {
-				"type": "Color",
-				"config": {
-					"label": "Hintergrundfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
-				}
-			},
 			"page_color": {
 				"type": "Color",
 				"config": {
@@ -33,13 +26,25 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"body_font": {
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_font": {
 				"type": "Link",
 				"config": {
 					"label": "Hauptschrift",
 					"select": "document",
 					"repeat": false,
-					"customtypes": ["font"]
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
 				}
 			},
 			"base_font_size_mobile": {
@@ -62,21 +67,42 @@
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_text": {
+			"page_link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_bg": {
+			"page_button_color": {
 				"type": "Color",
 				"config": {
-					"label": "Linkhintergrundfarbe Maus darüber",
-					"placeholder": ""
+					"label": "Schaltflächen-Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltflächen-Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltfl. SF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltfl. HF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"favicon": {
@@ -167,13 +193,18 @@
 					"placeholder": ""
 				}
 			},
-			"nav_font": {
+			"header_link_font": {
 				"type": "Link",
 				"config": {
-					"label": "Navigationsschrift",
+					"label": "Link Schriftart",
 					"select": "document",
 					"repeat": false,
-					"customtypes": ["font"]
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
 				}
 			}
 		},
