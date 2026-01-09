@@ -35,7 +35,8 @@
 
 	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;
 	const headerBgOpacity = prismicTheme?.data?.header_bg_opacity ?? get(theme).headerBgOpacity;
-	const computedBgColor = hexToRgba(headerBgColor, headerBgOpacity);
+	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
+	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
 
 	function updateHeaderHeight() {
 		// 1. ZUERST PRÜFEN: Mobile Landscape?
@@ -93,7 +94,7 @@
 
 <header
 	bind:this={headerEl}
-	class="smart-header w-full transition-all duration-300 ease-in-out pointer-events-auto"
+	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
 	style:position={bannerTop ? 'absolute' : 'relative'}
 	style:top="0"
 	style:left="0"
