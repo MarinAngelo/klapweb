@@ -17,7 +17,8 @@
 	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.HeroSlice;
-	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
+	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
+	$: image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 
 	// Wenn sich slice ändert, aktualisiere den Store
