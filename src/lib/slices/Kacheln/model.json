@@ -20,10 +20,43 @@
             "single": "heading2"
           }
         },
+        "grid_columns": {
+          "type": "Select",
+          "config": {
+            "label": "Spalten je Reihe",
+            "placeholder": "2",
+            "options": [
+              "2",
+              "3"
+            ],
+            "default_value": "2"
+          }
+        },
+        "component_body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "body_bg_color": {
           "type": "Color",
           "config": {
-            "label": "Hintergrundfarbe",
+            "label": "Hintergrundfarbe Kacheln",
             "placeholder": ""
           }
         },
@@ -60,6 +93,15 @@
           "config": {
             "label": "Farbe der Umrandung",
             "placeholder": ""
+          }
+        },
+        "round_corners": {
+          "type": "Boolean",
+          "config": {
+            "label": "Runde Ecken",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
           }
         },
         "cards": {
