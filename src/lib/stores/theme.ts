@@ -27,7 +27,6 @@ export const THEME_DEFAULTS = {
 	logoHeight: 0,
 	headerColor: '',
 	headerBgColor: '',
-	headerBgOpacity: 0, // wird aus Slice gesetzt
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
@@ -52,6 +51,9 @@ export const THEME_DEFAULTS = {
 	buttonBorderRadius: 0,
 	buttonPaddingY: 0,
 	buttonPaddingX: 0,
+
+	// Titelbereich Slice spezifisch
+	headerBgOpacity: 1, // Default: voll deckend (wird aus Slice überschrieben)
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

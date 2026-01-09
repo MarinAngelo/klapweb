@@ -34,7 +34,8 @@
 	$: headerColor = $theme.headerColor;
 
 	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;
-	const headerBgOpacity = prismicTheme?.data?.header_bg_opacity ?? get(theme).headerBgOpacity;
+	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
+	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
 	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
 

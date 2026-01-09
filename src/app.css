@@ -75,12 +75,11 @@ a[data-type="prismic-link"]:hover {
   --logo-height: 5; /* in rem */
   --header-color: #1c1c25;
   --header-bg-color: #302F78;
-  --header-bg-opacity: 100; /* Deckkraft in Prozent */
   --header-link-color: #cfcefe;
   --header-link-hover-color: #716db5;
   --header-link-font-size: 1.5; /* in rem */
   --header-link-font: 'Roboto', sans-serif;
-
+  
   /* Fußzeile Farben */
   --footer-color: #5f5fab;
   --footer-bg-color: #232442;
@@ -89,7 +88,10 @@ a[data-type="prismic-link"]:hover {
   --footer-link-color: #cfcefe;
   --footer-link-hover-color: #b6317a;
   /* Ende der Fallback Styles  */
-
+  
+  /* Header Hintergrund Deckkraft aus Titelbereich */
+  --header-bg-opacity: 1; /* Deckkraft in Prozent */
+  
   /* not css notation, as it will be recalculated as coming from cms */
   /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
   --header-link-active-color: #cfcefe;
