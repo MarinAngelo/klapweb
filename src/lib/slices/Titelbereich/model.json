@@ -168,6 +168,13 @@
               "gross"
             ]
           }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz der Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
         }
       },
       "items": {},

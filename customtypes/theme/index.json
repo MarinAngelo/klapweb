@@ -151,13 +151,6 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"header_bg_opacity": {
-				"type": "Number",
-				"config": {
-					"label": "Deckkraft der Hintergrundfarbe",
-					"placeholder": "in %"
-				}
-			},
 			"header_link_color": {
 				"type": "Color",
 				"config": {

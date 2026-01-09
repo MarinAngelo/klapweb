@@ -622,17 +622,6 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Deckkraft der Hintergrundfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: in %
-	 * - **API ID Path**: theme.header_bg_opacity
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	header_bg_opacity: prismic.NumberField;
-
-	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1517,6 +1506,16 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
+
+	/**
+	 * Transparenz der Kopfzeile field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0 - 100 %
+	 * - **API ID Path**: hero.default.primary.header_bg_opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	header_bg_opacity: prismic.NumberField;
 }
 
 /**

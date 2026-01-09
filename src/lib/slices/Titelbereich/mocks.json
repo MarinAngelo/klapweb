@@ -142,6 +142,11 @@
 			"switch_off_text_overlay": {
 				"__TYPE__": "BooleanContent",
 				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "40",
+				"type": "Number"
 			}
 		},
 		"items": [

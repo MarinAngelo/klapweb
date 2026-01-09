@@ -1,10 +1,10 @@
 import { theme } from '$lib/stores/theme';
+import { get } from 'svelte/store';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
 interface PrismicThemeData {
 	banner_top?: boolean;
-	header_bg_opacity?: number;
 	page_color?: string;
 	page_bg_color?: string;
 	page_font?: { data?: { name?: string } };
@@ -66,7 +66,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 		return;
 	}
 
-	// const headerBgOpacity = convertNumber(prismicThemeData.header_bg_opacity ?? 0) || 0;
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
@@ -83,7 +82,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const logoHeight = prismicThemeData.logo_height || parseFloat(getCssVar('--logo-height'));
 	const headerColor = prismicThemeData.header_color || getCssVar('--header-color');
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
-	const headerBgOpacity = prismicThemeData.header_bg_opacity || parseFloat(getCssVar('--header-bg-opacity'));
 	const headerLinkColor = prismicThemeData.header_link_color || getCssVar('--header-link-color');
 	const headerLinkHoverColor = prismicThemeData.header_link_hover_color || getCssVar('--header-link-hover-color');
 	const headerLinkHoverBgColor = prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
@@ -117,7 +115,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 		logoHeight,
 		headerColor,
 		headerBgColor,
-		headerBgOpacity,
 		headerLinkColor,
 		headerLinkHoverColor,
 		headerLinkHoverBgColor,
@@ -151,7 +148,9 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--logo-height', logoHeight.toString());
 		root.style.setProperty('--header-color', headerColor);
 		root.style.setProperty('--header-bg-color', headerBgColor);
-		root.style.setProperty('--header-bg-opacity', headerBgOpacity.toString());
+		// headerBgOpacity: Verwende Theme Store oder CSS-Fallback
+		const currentHeaderBgOpacity = get(theme).headerBgOpacity || parseFloat(getCssVar('--header-bg-opacity'));
+		root.style.setProperty('--header-bg-opacity', currentHeaderBgOpacity.toString());
 		root.style.setProperty('--header-link-color', headerLinkColor);
 		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
 		root.style.setProperty('--header-link-hover-bg-color', headerLinkHoverBgColor);
