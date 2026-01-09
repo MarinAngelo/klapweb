@@ -1457,7 +1457,7 @@ export interface HeroSliceDefaultPrimary {
 	overlay_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Deckkraft der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1488,7 +1488,7 @@ export interface HeroSliceDefaultPrimary {
 	text_overlay_color: prismic.ColorField;
 
 	/**
-	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Deckkraft Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1496,6 +1496,17 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	text_overlay_opacity: prismic.NumberField;
+
+	/**
+	 * Text Hintergrund in Mobile aus field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.default.primary.switch_off_text_overlay
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	switch_off_text_overlay: prismic.BooleanField;
 
 	/**
 	 * Text Überlagerungsfeld Grösse field in *Titelbereich → Standard → Primary*

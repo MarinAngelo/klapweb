@@ -117,7 +117,7 @@
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz der Überlagerungsfarbe",
+            "label": "Deckkraft der Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
           }
         },
@@ -144,8 +144,17 @@
         "text_overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz Text Überlagerungsfarbe",
+            "label": "Deckkraft Text Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
+          }
+        },
+        "switch_off_text_overlay": {
+          "type": "Boolean",
+          "config": {
+            "label": "Text Hintergrund in Mobile aus",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_overlay_padding": {

@@ -26,12 +26,17 @@
 	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
 	let richTextDiv: HTMLDivElement;
 
+	const switchOffTextOverlay = (slice.primary as any).switch_off_text_overlay ?? false;
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity =
-		'overlay_opacity' in slice.primary
-			? convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100
-			: 100;
-	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
+
+	const overlayOpacity = (() => {
+		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
+			return 0.2; // Default wenn nicht gesetzt
+		}
+		return convertNumberInverse(slice.primary.overlay_opacity);
+	})();
+
+	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
@@ -75,19 +80,24 @@
 		'text_overlay_color' in slice.primary
 			? slice.primary.text_overlay_color || 'var(--text-color)'
 			: 'var(--text-color)';
-	const textOverlayOpacity =
-		'text_overlay_opacity' in slice.primary
-			? convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1
-			: 1;
+	const textOverlayOpacity = (() => {
+		if (!('text_overlay_opacity' in slice.primary) || slice.primary.text_overlay_opacity === null) {
+			return 0.2; // Default wenn nicht gesetzt
+		}
+		const result = convertNumber(slice.primary.text_overlay_opacity);
+		return result;
+	})();
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 	// Responsive: Prüfen, ob mobile (<= 640px)
+	let mounted = false;
 	onMount(() => {
 		const check = () => isMobile.set(window.innerWidth <= 640);
 		check();
+		mounted = true;
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
@@ -119,8 +129,13 @@
 			sizes="100vw"
 			widths={[1280, 1920, 2560]}
 			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
+			style=""
 		/>
+		<!-- Color overlay over the image -->
+		<div 
+			class="absolute inset-0 h-full w-full pointer-events-none select-none"
+			style="background-color: {overlayColor}; opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
+		></div>
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
 		{#if $isMobile}
@@ -128,8 +143,7 @@
 		{:else}
 			<ImageCarousel
 				images={slice.primary.imageMerryGoRound}
-				background={true}
-				fullHeight={true}
+				mode="background"
 				autoplay={true}
 				intervalMs={5000}
 				transitionMs={8000}
@@ -138,12 +152,13 @@
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div
-			class="relative flex flex-col items-center justify-center min-h-[60vh]"
+			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
 			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
 		>
 			<div class="relative w-full flex items-center justify-center">
+
 				<!-- Overlay -->
-				{#if !$isMobile}
+				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
 					<div
 						class="absolute inset-0"
 						style="
@@ -155,6 +170,7 @@
 						aria-hidden="true"
 					></div>
 				{/if}
+
 				<!-- Inhalt mit dynamischem Padding -->
 				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->
