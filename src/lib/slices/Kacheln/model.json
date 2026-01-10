@@ -20,46 +20,88 @@
             "single": "heading2"
           }
         },
+        "grid_columns": {
+          "type": "Select",
+          "config": {
+            "label": "Spalten je Reihe",
+            "placeholder": "2",
+            "options": [
+              "2",
+              "3"
+            ],
+            "default_value": "2"
+          }
+        },
+        "component_body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "body_bg_color": {
           "type": "Color",
           "config": {
-            "label": "Hintergrundfarbe",
-            "placeholder": ""
+            "label": "Hintergrundfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_color": {
           "type": "Color",
           "config": {
             "label": "Schaltflächen Schriftfarbe",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_hover_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfl. Schriftfarbe Maus drüber",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltflächen Hintergrundfarbe",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_hover_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfl. Hintergrundf. Maus drüber",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "border_color": {
           "type": "Color",
           "config": {
             "label": "Farbe der Umrandung",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "round_corners": {
+          "type": "Boolean",
+          "config": {
+            "label": "Runde Ecken",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
           }
         },
         "cards": {
@@ -89,7 +131,7 @@
                 "type": "Color",
                 "config": {
                   "label": "Bild Überlagerungsfarbe",
-                  "placeholder": ""
+                  "placeholder": "Hex-Farbcode (#RRGGBB)"
                 }
               },
               "image_overlay_opacity": {
