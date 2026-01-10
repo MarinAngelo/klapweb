@@ -57,42 +57,42 @@
           "type": "Color",
           "config": {
             "label": "Hintergrundfarbe Kacheln",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_color": {
           "type": "Color",
           "config": {
             "label": "Schaltflächen Schriftfarbe",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_hover_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfl. Schriftfarbe Maus drüber",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltflächen Hintergrundfarbe",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "button_hover_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfl. Hintergrundf. Maus drüber",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "border_color": {
           "type": "Color",
           "config": {
             "label": "Farbe der Umrandung",
-            "placeholder": ""
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
         "round_corners": {
@@ -131,7 +131,7 @@
                 "type": "Color",
                 "config": {
                   "label": "Bild Überlagerungsfarbe",
-                  "placeholder": ""
+                  "placeholder": "Hex-Farbcode (#RRGGBB)"
                 }
               },
               "image_overlay_opacity": {
