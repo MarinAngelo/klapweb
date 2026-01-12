@@ -15,6 +15,7 @@ interface PrismicThemeData {
 	page_button_hover_color?: string;
 	page_button_hover_bg_color?: string;
 	site_title_font_size?: number;
+	site_title_font?: { data?: { name?: string } };
 	site_subtitle_font_size?: number;
 	header_font_size?: number;
 	logo_height?: number;
@@ -77,6 +78,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageButtonHoverColor = prismicThemeData.page_button_hover_color || getCssVar('--page-button-hover-color');
 	const pageButtonHoverBgColor = prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
 	const siteTitleFontSize = prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
+	const siteTitleFont = prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font');
 	const siteSubtitleFontSize = prismicThemeData.site_subtitle_font_size || parseFloat(getCssVar('--site-sub-title-font-size'));
 	const headerFontSize = prismicThemeData.header_font_size || parseFloat(getCssVar('--header-font-size'));
 	const logoHeight = prismicThemeData.logo_height || parseFloat(getCssVar('--logo-height'));
@@ -110,6 +112,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageButtonHoverColor,
 		pageButtonHoverBgColor,
 		siteTitleFontSize,
+		siteTitleFont,
 		siteSubtitleFontSize,
 		headerFontSize,
 		logoHeight,
@@ -143,6 +146,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--page-button-hover-color', pageButtonHoverColor);
 		root.style.setProperty('--page-button-hover-bg-color', pageButtonHoverBgColor);
 		root.style.setProperty('--site-title-font-size', siteTitleFontSize.toString());
+		root.style.setProperty('--site-title-font', siteTitleFont);
 		root.style.setProperty('--site-sub-title-font-size', siteSubtitleFontSize.toString());
 		root.style.setProperty('--header-font-size', headerFontSize.toString());
 		root.style.setProperty('--logo-height', logoHeight.toString());

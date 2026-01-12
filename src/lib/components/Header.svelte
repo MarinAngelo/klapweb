@@ -23,6 +23,7 @@
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || get(theme).logoHeight;
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
+	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || get(theme).siteTitleFont;
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || get(theme).siteSubtitleFontSize;
 	$: headerLinkFontSize =
@@ -119,11 +120,11 @@
 					<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 						<span
 							class="text-xl font-semibold tracking-tight"
-							style="font-size: {siteTitleFontSize}rem;"
+							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
-						<span style="font-size: {siteSubtitleFontSize}rem;">
+						<span style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont}">
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>
 					</a>

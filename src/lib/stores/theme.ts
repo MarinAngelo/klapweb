@@ -22,6 +22,7 @@ export const THEME_DEFAULTS = {
 	
 	// Kopfzeile Farben (wie in app.css)
 	siteTitleFontSize: 0,
+	siteTitleFont: '',
 	siteSubtitleFontSize: 0,
 	headerFontSize: 0,
 	logoHeight: 0,
