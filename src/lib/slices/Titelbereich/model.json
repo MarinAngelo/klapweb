@@ -50,7 +50,15 @@
             "select": "document",
             "repeat": false,
             "customtypes": [
-              "font"
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variants",
+                  "adobeFontId"
+                ]
+              }
             ]
           }
         },

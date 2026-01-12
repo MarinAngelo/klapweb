@@ -71,6 +71,7 @@ a[data-type="prismic-link"]:hover {
 
   /* Kopfzeile Farben */
   --site-title-font-size: 1.5; /* in rem */
+  --site-title-font: 'Roboto', sans-serif;
   --site-sub-title-font-size: 1; /* in rem */
   --logo-height: 5; /* in rem */
   --header-color: #1c1c25;

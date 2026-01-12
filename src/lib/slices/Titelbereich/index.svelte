@@ -102,18 +102,6 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
-
-	// Hilfsfunktion: Font-Name sicher extrahieren -->
-	function getFontName(fontField: any) {
-		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
-	}
-	// Hilfsfunktion: Font-Family sicher extrahieren -->
-	function getFontFamily(fontField: any) {
-		const name =
-			fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
-		if (!name) return 'sans-serif';
-		return name.includes(' ') ? `'${name}', sans-serif` : `${name}, sans-serif`;
-	}
 </script>
 
 <section
@@ -121,7 +109,7 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {'font' in slice.primary ? getFontFamily(slice.primary.font) : 'sans-serif'};
+		font-family: {'font' in slice.primary && isFilled.contentRelationship(slice.primary.font) && slice.primary.font.data?.name || 'sans-serif'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
