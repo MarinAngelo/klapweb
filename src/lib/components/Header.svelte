@@ -31,7 +31,16 @@
 	$: headerLinkColor = prismicTheme?.data?.header_link_color || get(theme).headerLinkColor;
 	$: headerLinkHoverColor =
 		prismicTheme?.data?.header_link_hover_color || get(theme).headerLinkHoverColor;
-	$: bannerTop = $theme.bannerTop;
+
+	// bannerTop direkt aus den Seitendaten lesen, nicht aus dem Store
+	$: bannerTop = (() => {
+		const slices = $page.data?.page?.data?.slices;
+		if (!Array.isArray(slices)) return false;
+
+		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
+		return titelbereichSlice?.primary?.banner_overlap === true;
+	})();
+
 	$: headerColor = $theme.headerColor;
 
 	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;

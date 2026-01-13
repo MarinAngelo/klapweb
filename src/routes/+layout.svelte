@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount, afterUpdate } from 'svelte';
+	import { afterNavigate } from '$app/navigation';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { page } from '$app/stores';
 	import { repositoryName } from '$lib/prismicio';
@@ -54,11 +55,23 @@
 	// Zugriff auf die Store-Werte für die Styles
 	$: bodyFontStyle = $theme.pageFont ? `font-family: '${$theme.pageFont}';` : '';
 
-	$: bannerTop = $theme.bannerTop;
+	// Prüfe ob die aktuelle Seite einen Titelbereich-Slice mit banner_overlap hat
+	$: hasBannerOverlap = (() => {
+		const slices = $page.data?.page?.data?.slices;
+		if (!Array.isArray(slices)) return false;
 
-	// ✅ NEU: Client-Side Guard
+		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
+		return titelbereichSlice?.primary?.banner_overlap === true;
+	})();
+
+	// ✅ NEU: Client-Side Guard - wird bei jedem Navigationswechsel aktualisiert
 	let mounted = false;
+
 	onMount(() => {
+		mounted = true;
+	});
+
+	afterNavigate(() => {
 		mounted = true;
 	});
 
@@ -71,11 +84,11 @@
 	$: cssDesktopSize = getFontSize(desktopSizeKey);
 
 	// --- NEU: Injektion via JavaScript ---
-    // Wir schreiben die Variablen direkt auf das <html> Element (document.documentElement)
-    $: if (typeof document !== 'undefined') {
-        document.documentElement.style.setProperty('--global-size-mobile', cssMobileSize);
-        document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
-    }
+	// Wir schreiben die Variablen direkt auf das <html> Element (document.documentElement)
+	$: if (typeof document !== 'undefined') {
+		document.documentElement.style.setProperty('--global-size-mobile', cssMobileSize);
+		document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
+	}
 </script>
 
 <svelte:head>
@@ -98,26 +111,22 @@
 	{/if}
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
-<div
-	style="background-color: {$theme.pageBgColor};"
->
+<div style="background-color: {$theme.pageBgColor};">
 	<Header
 		navigation={data?.navigation || []}
 		settings={data?.settings || {}}
 		prismicTheme={data?.prismicTheme || {}}
 	/>
 	<main style={bodyFontStyle}>
-		{#if $page.data?.title && bannerTop === false}
-			<div class:hidden={!mounted}>
-				<Bounded
-					as="section"
-					style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
-				>
-					<h1 class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
-						{$page.data?.title || 'Standarttitel'}
-					</h1>
-				</Bounded>
-			</div>
+		{#if $page.data?.title && !hasBannerOverlap}
+			<Bounded
+				as="section"
+				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
+			>
+				<h1 class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
+					{$page.data?.title || 'Standarttitel'}
+				</h1>
+			</Bounded>
 		{/if}
 		<slot />
 	</main>
