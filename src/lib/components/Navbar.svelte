@@ -5,6 +5,7 @@
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
+	import { onMount, onDestroy } from 'svelte';
 
 	export let navigation;
 	export let headerBgColor;
@@ -19,6 +20,20 @@
 	function toggleMenu() {
 		isMenuOpen.update((open) => !open);
 	}
+
+	function handleScroll() {
+		if ($isMenuOpen) {
+			isMenuOpen.set(false);
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener('scroll', handleScroll);
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('scroll', handleScroll);
+	});
 
 	// Hilfsfunktion zum Ermitteln der Subitems
 	function getSubItems(triggerItem, allLinks) {
