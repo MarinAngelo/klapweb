@@ -104,7 +104,6 @@
 								{headerLinkColor}
 								{headerLinkFontSize}
 								{headerLinkHoverColor}
-								headerLinkHoverBgColor={headerLinkHoverColor}
 								{currentPath}
 								on:click={() => {
 									isMenuOpen.set(false);
