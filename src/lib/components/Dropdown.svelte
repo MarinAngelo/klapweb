@@ -28,10 +28,14 @@
 	}
 
 	onMount(() => {
-		window.addEventListener('close-dropdown', handleGlobalClose);
+		if (typeof window !== 'undefined') {
+			window.addEventListener('close-dropdown', handleGlobalClose);
+		}
 	});
 	onDestroy(() => {
-		window.removeEventListener('close-dropdown', handleGlobalClose);
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('close-dropdown', handleGlobalClose);
+		}
 	});
 </script>
 

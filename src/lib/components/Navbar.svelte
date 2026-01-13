@@ -28,33 +28,41 @@
 	}
 
 	onMount(() => {
-		window.addEventListener('scroll', handleScroll);
+		if (typeof window !== 'undefined') {
+			window.addEventListener('scroll', handleScroll);
+		}
 	});
 
 	onDestroy(() => {
-		window.removeEventListener('scroll', handleScroll);
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('scroll', handleScroll);
+		}
 	});
 
 	// Hilfsfunktion zum Ermitteln der Subitems
-	function getSubItems(triggerItem, allLinks) {
+	type NavItem = {
+		label?: { text: string }[];
+		sub_link?: string;
+		link?: { url?: string };
+		dropdown_link?: boolean;
+		main_nav?: boolean;
+		[key: string]: any;
+	};
+
+	function getSubItems(triggerItem: NavItem, allLinks: NavItem[]): NavItem[] {
 		if (!triggerItem || !allLinks) return [];
 
 		const triggerLabel = triggerItem.label?.[0]?.text;
 		if (!triggerLabel) return [];
 
 		return allLinks.filter(
-			(subItem) => subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
+			(subItem: NavItem) =>
+				subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
 		);
 	}
 </script>
 
-<nav
-	class="flex items-center justify-between flex-wrap p-6"
-	style="font-family: {headerLinkFont};"
-	on:navlinkclick={() => {
-		window.dispatchEvent(new CustomEvent('close-dropdown'));
-	}}
->
+<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden h-full flex items-center">
 		{#if $isMenuOpen}
@@ -96,6 +104,7 @@
 								{headerLinkColor}
 								{headerLinkFontSize}
 								{headerLinkHoverColor}
+								headerLinkHoverBgColor={headerLinkHoverColor}
 								{currentPath}
 								on:click={() => {
 									isMenuOpen.set(false);
