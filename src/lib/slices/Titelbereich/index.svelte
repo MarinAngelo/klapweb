@@ -42,12 +42,8 @@
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop im Theme-Store aktualisieren
-	$: theme.update((t) => ({ ...t, bannerTop }));
-
-	onMount(() => {
-		theme.update((t) => ({ ...t, headerBgOpacity }));
-	});
+	// bannerTop und headerBgOpacity im Theme-Store aktualisieren - beide reaktiv
+	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity }));
 
 	onDestroy(() => {
 		theme.update((t) => ({
@@ -157,7 +153,9 @@
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div
 			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
-			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
+			style={bannerTop === true
+				? `margin-top: -${$headerHeight}px; padding-top: ${$headerHeight * 2}px;`
+				: ''}
 		>
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
@@ -186,7 +184,7 @@
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						{#if 'text' in slice.primary}
-							<PrismicRichText field={slice.primary.text} components={components}/>
+							<PrismicRichText field={slice.primary.text} {components} />
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
