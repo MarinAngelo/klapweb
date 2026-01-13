@@ -336,6 +336,18 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	no_index: prismic.BooleanField;
+
+	/**
+	 * Landing Page field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.landing_page
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	landing_page: prismic.BooleanField;
 }
 
 /**

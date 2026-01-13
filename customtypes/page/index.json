@@ -101,6 +101,15 @@
 					"placeholder_true": "Ja",
 					"default_value": false
 				}
+			},
+			"landing_page": {
+				"type": "Boolean",
+				"config": {
+					"label": "Landing Page",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
 			}
 		}
 	}
