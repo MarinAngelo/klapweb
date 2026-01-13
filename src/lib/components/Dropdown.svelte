@@ -15,6 +15,10 @@
 	let isOpen = false;
 
 	function toggleDropdown() {
+		if (!isOpen && typeof window !== 'undefined') {
+			// Alle anderen Dropdowns schließen
+			window.dispatchEvent(new CustomEvent('close-dropdown'));
+		}
 		isOpen = !isOpen;
 	}
 
