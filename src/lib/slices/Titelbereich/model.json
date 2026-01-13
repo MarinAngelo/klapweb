@@ -33,7 +33,15 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": false,
-            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
+            "multi": "paragraph,strong,em",
+            "labels": [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6"
+    ]
           }
         },
         "color": {

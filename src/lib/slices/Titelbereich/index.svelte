@@ -15,6 +15,7 @@
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
+	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
 
 	export let slice: Content.HeroSlice;
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
@@ -57,11 +58,14 @@
 	});
 
 	// Button-Farben aus Slice (Type-safe)
-    // WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
-    $: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
-    $: buttonHoverColor = 'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
-    $: buttonBgColor = 'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
-    $: buttonHoverBgColor = 'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
+	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
+	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
+	$: buttonHoverColor =
+		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
+	$: buttonBgColor =
+		'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
+	$: buttonHoverBgColor =
+		'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -102,6 +106,12 @@
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
+
+	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,
+	// soll unsere RichTextLabel Komponente genutzt werden.
+	const components = {
+		label: RichTextLabels
+	};
 </script>
 
 <section
@@ -109,7 +119,10 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {'font' in slice.primary && isFilled.contentRelationship(slice.primary.font) && slice.primary.font.data?.name || 'sans-serif'};
+		font-family: {('font' in slice.primary &&
+		isFilled.contentRelationship(slice.primary.font) &&
+		slice.primary.font.data?.name) ||
+		'sans-serif'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
@@ -121,9 +134,11 @@
 			style=""
 		/>
 		<!-- Color overlay over the image -->
-		<div 
+		<div
 			class="absolute inset-0 h-full w-full pointer-events-none select-none"
-			style="background-color: {overlayColor}; opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
+			style="background-color: {overlayColor}; opacity: {$isMobile
+				? textOverlayOpacity
+				: overlayOpacity};"
 		></div>
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
@@ -145,7 +160,6 @@
 			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
 		>
 			<div class="relative w-full flex items-center justify-center">
-
 				<!-- Overlay -->
 				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
 					<div
@@ -172,7 +186,7 @@
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						{#if 'text' in slice.primary}
-							<PrismicRichText field={slice.primary.text} />
+							<PrismicRichText field={slice.primary.text} components={components}/>
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}

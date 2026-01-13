@@ -9,7 +9,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Ea cupidatat quis mollit officia consequat anim. Non enim sit deserunt reprehenderit cillum aute sit fugiat veniam consequat dolor in. Cillum occaecat labore tempor nisi do eiusmod esse ullamco magna consequat laboris ut laborum consectetur."
+							"text": "Sit do aute in do enim amet adipisicing velit. Adipisicing aute pariatur culpa ut magna veniam."
 						}
 					}
 				]
@@ -117,8 +117,8 @@
 				"value": true
 			},
 			"font": {
-				"__TYPE__": "LinkContent",
 				"key": "edd0f382-6dcb-455e-92f4-eb0ef309cf89",
+				"__TYPE__": "LinkContent",
 				"value": {
 					"__TYPE__": "DocumentLink",
 					"id": "mock_document_id"

@@ -150,6 +150,7 @@ html {
 
   h4 {
     @apply text-xl font-semibold mb-2;
+    color: var(--page-color);
   }
 
   p, li {
