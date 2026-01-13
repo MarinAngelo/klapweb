@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import DropdownButton from './DropdownButton.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 
 	export let item;
 	export let subItems;
 	export let headerBgColor;
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
-	export let headerLinkHoverBgColor;
 	export let currentPath;
 	export let headerLinkFontSize;
 
@@ -22,6 +21,21 @@
 	function closeDropdown() {
 		isOpen = false;
 	}
+
+	function handleGlobalClose() {
+		isOpen = false;
+	}
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('close-dropdown', handleGlobalClose);
+		}
+	});
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('close-dropdown', handleGlobalClose);
+		}
+	});
 </script>
 
 <div
@@ -57,7 +71,7 @@
 						class="block w-full transition-colors dropdown-link"
 						style="
 					color: {headerLinkColor};
-					--hover-bg-color: {headerLinkHoverBgColor};
+					
 				"
 					>
 						<PrismicText field={dropdownItem.label} />
@@ -73,7 +87,7 @@
 		/* Mobile: Static positioning to push content down */
 		position: static;
 	}
-	
+
 	/* Desktop: Absolute positioning to overlay */
 	@media (min-width: 768px) {
 		.dropdown-menu {
@@ -82,7 +96,6 @@
 	}
 
 	:global(.dropdown-link:hover) {
-		background-color: var(--hover-bg-color) !important;
 		text-decoration: underline !important;
 	}
 	/* optional: falls du auch Textfarbe beim Hover über Variable steuern willst */

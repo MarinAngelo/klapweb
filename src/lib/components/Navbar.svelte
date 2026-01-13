@@ -5,6 +5,7 @@
 	import { theme } from '../stores/theme';
 	import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
+	import { onMount, onDestroy } from 'svelte';
 
 	export let navigation;
 	export let headerBgColor;
@@ -20,15 +21,43 @@
 		isMenuOpen.update((open) => !open);
 	}
 
+	function handleScroll() {
+		if ($isMenuOpen) {
+			isMenuOpen.set(false);
+		}
+	}
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('scroll', handleScroll);
+		}
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('scroll', handleScroll);
+		}
+	});
+
 	// Hilfsfunktion zum Ermitteln der Subitems
-	function getSubItems(triggerItem, allLinks) {
+	type NavItem = {
+		label?: { text: string }[];
+		sub_link?: string;
+		link?: { url?: string };
+		dropdown_link?: boolean;
+		main_nav?: boolean;
+		[key: string]: any;
+	};
+
+	function getSubItems(triggerItem: NavItem, allLinks: NavItem[]): NavItem[] {
 		if (!triggerItem || !allLinks) return [];
 
 		const triggerLabel = triggerItem.label?.[0]?.text;
 		if (!triggerLabel) return [];
 
 		return allLinks.filter(
-			(subItem) => subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
+			(subItem: NavItem) =>
+				subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
 		);
 	}
 </script>
@@ -76,7 +105,10 @@
 								{headerLinkFontSize}
 								{headerLinkHoverColor}
 								{currentPath}
-								on:click={() => isMenuOpen.set(false)}
+								on:click={() => {
+									isMenuOpen.set(false);
+									window.dispatchEvent(new CustomEvent('close-dropdown'));
+								}}
 							/>
 						</li>
 					{:else if item.link?.url}
@@ -84,7 +116,13 @@
 							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
 							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
 						>
-							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
+							<PrismicLink
+								field={item.link}
+								on:click={() => {
+									isMenuOpen.set(false);
+									window.dispatchEvent(new CustomEvent('close-dropdown'));
+								}}
+							>
 								<PrismicText field={item.label} />
 							</PrismicLink>
 						</li>
@@ -105,7 +143,10 @@
 					>
 						<PrismicLink
 							field={item.link}
-							on:click={() => isMenuOpen.set(false)}
+							on:click={() => {
+								isMenuOpen.set(false);
+								window.dispatchEvent(new CustomEvent('close-dropdown'));
+							}}
 							class="transition nav-link"
 							style="color: inherit; font-size: {headerLinkFontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
 								'#fff'};"
