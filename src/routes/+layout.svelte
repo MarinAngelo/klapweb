@@ -64,13 +64,8 @@
 		return titelbereichSlice?.primary?.banner_overlap === true;
 	})();
 
-	// ✅ NEU: Client-Side Guard - wird bei jedem Navigationswechsel aktualisiert
-	let mounted = false;
-
-	onMount(() => {
-		mounted = true;
-	});
-
+	// Prüfe ob die aktuelle Seite als Landing Page markiert ist
+	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	afterNavigate(() => {
 		mounted = true;
 	});
@@ -112,11 +107,13 @@
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
 <div style="background-color: {$theme.pageBgColor};">
-	<Header
-		navigation={data?.navigation || []}
-		settings={data?.settings || {}}
-		prismicTheme={data?.prismicTheme || {}}
-	/>
+	{#if !isLandingPage}
+		<Header
+			navigation={data?.navigation || []}
+			settings={data?.settings || {}}
+			prismicTheme={data?.prismicTheme || {}}
+		/>
+	{/if}
 	<main style={bodyFontStyle}>
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
@@ -130,6 +127,8 @@
 		{/if}
 		<slot />
 	</main>
-	<Footer navigation={data?.navigation || []} settings={data?.settings || {}} />
+	{#if !isLandingPage}
+		<Footer navigation={data?.navigation || []} settings={data?.settings || {}} />
+	{/if}
 </div>
 <PrismicPreview {repositoryName} />
