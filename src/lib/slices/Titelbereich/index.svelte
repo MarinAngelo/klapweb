@@ -154,7 +154,7 @@
 		<div
 			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
 			style={bannerTop === true
-				? `margin-top: -${$headerHeight}px; padding-top: ${$headerHeight * 2}px;`
+				? `margin-top: -${$headerHeight}px; padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;`
 				: ''}
 		>
 			<div class="relative w-full flex items-center justify-center">
