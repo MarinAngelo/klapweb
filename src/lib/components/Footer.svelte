@@ -8,7 +8,7 @@
     export let settings: Content.SettingsDocument;
     export let navigation: Content.NavigationDocument;
 
-    $: ({ footerColor, footerBgColor, footerFontSizeTopBar, footerFontSizeButtonBar, footerLinkColor, footerLinkHoverColor } = $theme);
+    $: ({ footerColor, footerBgColor, footerFontSizeTopBar, footerFontSizeButtonBar, footerLinkColor, footerLinkHoverColor, pageFont } = $theme);
 
     let email = settings.data?.e_mail || '';
     let responsiblePersonCompany = settings.data?.responsible_person_company || '';
@@ -25,7 +25,7 @@
 <Bounded 
     tag="footer" 
     yPadding="none" 
-    style="background-color: {footerBgColor}; color: {footerColor} !important; margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
+    style="background-color: {footerBgColor}; color: {footerColor} !important; font-family: {pageFont}; margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
 >
     <footer class="w-full h-full text-inherit">
         

@@ -20,13 +20,28 @@
             "default_value": false
           }
         },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz der Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": false,
-            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
+            "multi": "paragraph,strong,em",
+            "labels": [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6"
+    ]
           }
         },
         "color": {
@@ -43,7 +58,15 @@
             "select": "document",
             "repeat": false,
             "customtypes": [
-              "font"
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variants",
+                  "adobeFontId"
+                ]
+              }
             ]
           }
         },
@@ -117,7 +140,7 @@
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz der Überlagerungsfarbe",
+            "label": "Deckkraft der Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
           }
         },
@@ -144,8 +167,17 @@
         "text_overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz Text Überlagerungsfarbe",
+            "label": "Deckkraft Text Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
+          }
+        },
+        "switch_off_text_overlay": {
+          "type": "Boolean",
+          "config": {
+            "label": "Text Hintergrund in Mobile aus",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_overlay_padding": {

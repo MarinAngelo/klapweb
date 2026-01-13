@@ -23,6 +23,7 @@
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || get(theme).logoHeight;
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
+	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || get(theme).siteTitleFont;
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || get(theme).siteSubtitleFontSize;
 	$: headerLinkFontSize =
@@ -30,11 +31,21 @@
 	$: headerLinkColor = prismicTheme?.data?.header_link_color || get(theme).headerLinkColor;
 	$: headerLinkHoverColor =
 		prismicTheme?.data?.header_link_hover_color || get(theme).headerLinkHoverColor;
-	$: bannerTop = $theme.bannerTop;
+
+	// bannerTop direkt aus den Seitendaten lesen, nicht aus dem Store
+	$: bannerTop = (() => {
+		const slices = $page.data?.page?.data?.slices;
+		if (!Array.isArray(slices)) return false;
+
+		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
+		return titelbereichSlice?.primary?.banner_overlap === true;
+	})();
+
 	$: headerColor = $theme.headerColor;
 
 	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;
-	const headerBgOpacity = prismicTheme?.data?.header_bg_opacity ?? get(theme).headerBgOpacity;
+	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
+	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
 	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
 
@@ -118,11 +129,11 @@
 					<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 						<span
 							class="text-xl font-semibold tracking-tight"
-							style="font-size: {siteTitleFontSize}rem;"
+							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
-						<span style="font-size: {siteSubtitleFontSize}rem;">
+						<span style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont}">
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>
 					</a>

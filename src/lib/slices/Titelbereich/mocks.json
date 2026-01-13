@@ -9,7 +9,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Ea cupidatat quis mollit officia consequat anim. Non enim sit deserunt reprehenderit cillum aute sit fugiat veniam consequat dolor in. Cillum occaecat labore tempor nisi do eiusmod esse ullamco magna consequat laboris ut laborum consectetur."
+							"text": "Sit do aute in do enim amet adipisicing velit. Adipisicing aute pariatur culpa ut magna veniam."
 						}
 					}
 				]
@@ -66,7 +66,7 @@
 			},
 			"overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "84",
+				"value": "3",
 				"type": "Number"
 			},
 			"banner_height": {
@@ -99,7 +99,7 @@
 			},
 			"text_overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "2",
+				"value": "53",
 				"type": "Number"
 			},
 			"text_overlay_padding": {
@@ -117,7 +117,7 @@
 				"value": true
 			},
 			"font": {
-				"key": "66470b7e-4a74-4bb3-a469-edf5af11a995",
+				"key": "edd0f382-6dcb-455e-92f4-eb0ef309cf89",
 				"__TYPE__": "LinkContent",
 				"value": {
 					"__TYPE__": "DocumentLink",
@@ -138,6 +138,15 @@
 				"__TYPE__": "FieldContent",
 				"value": "#76456d",
 				"type": "Color"
+			},
+			"switch_off_text_overlay": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "40",
+				"type": "Number"
 			}
 		},
 		"items": [

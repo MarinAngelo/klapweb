@@ -22,12 +22,12 @@ export const THEME_DEFAULTS = {
 	
 	// Kopfzeile Farben (wie in app.css)
 	siteTitleFontSize: 0,
+	siteTitleFont: '',
 	siteSubtitleFontSize: 0,
 	headerFontSize: 0,
 	logoHeight: 0,
 	headerColor: '',
 	headerBgColor: '',
-	headerBgOpacity: 0, // wird aus Slice gesetzt
 	headerLinkColor: '',
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
@@ -52,6 +52,9 @@ export const THEME_DEFAULTS = {
 	buttonBorderRadius: 0,
 	buttonPaddingY: 0,
 	buttonPaddingX: 0,
+
+	// Titelbereich Slice spezifisch
+	headerBgOpacity: 1, // Default: voll deckend (wird aus Slice überschrieben)
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

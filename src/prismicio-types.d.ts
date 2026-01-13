@@ -589,6 +589,19 @@ interface ThemeDocumentData {
 	site_sub_title_font_size: prismic.NumberField;
 
 	/**
+	 * Website-Titel Schriftart field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: theme.site_title_font
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	site_title_font: ContentRelationshipFieldWithData<
+		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+	>;
+
+	/**
 	 * Logo field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
@@ -620,17 +633,6 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	header_bg_color: prismic.ColorField;
-
-	/**
-	 * Deckkraft der Hintergrundfarbe field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: in %
-	 * - **API ID Path**: theme.header_bg_opacity
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	header_bg_opacity: prismic.NumberField;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
@@ -1347,6 +1349,16 @@ export interface HeroSliceDefaultPrimary {
 	banner_overlap: prismic.BooleanField;
 
 	/**
+	 * Transparenz der Kopfzeile field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0 - 100 %
+	 * - **API ID Path**: hero.default.primary.header_bg_opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	header_bg_opacity: prismic.NumberField;
+
+	/**
 	 * Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
@@ -1374,7 +1386,9 @@ export interface HeroSliceDefaultPrimary {
 	 * - **API ID Path**: hero.default.primary.font
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	font: prismic.ContentRelationshipField<'font'>;
+	font: ContentRelationshipFieldWithData<
+		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+	>;
 
 	/**
 	 * Schaltflächenlink field in *Titelbereich → Standard → Primary*
@@ -1457,7 +1471,7 @@ export interface HeroSliceDefaultPrimary {
 	overlay_color: prismic.ColorField;
 
 	/**
-	 * Transparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Deckkraft der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1488,7 +1502,7 @@ export interface HeroSliceDefaultPrimary {
 	text_overlay_color: prismic.ColorField;
 
 	/**
-	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Deckkraft Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1496,6 +1510,17 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	text_overlay_opacity: prismic.NumberField;
+
+	/**
+	 * Text Hintergrund in Mobile aus field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.default.primary.switch_off_text_overlay
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	switch_off_text_overlay: prismic.BooleanField;
 
 	/**
 	 * Text Überlagerungsfeld Grösse field in *Titelbereich → Standard → Primary*
@@ -1769,7 +1794,7 @@ export interface ImageCardsSliceDefaultPrimaryCardsItem {
 	 * Bild Überlagerungsfarbe field in *Kacheln → Standard → Primary → Kacheln*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.cards[].image_overlay_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1831,10 +1856,51 @@ export interface ImageCardsSliceDefaultPrimary {
 	heading: prismic.RichTextField;
 
 	/**
-	 * Hintergrundfarbe field in *Kacheln → Standard → Primary*
+	 * Spalten je Reihe field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: 2
+	 * - **Default Value**: 2
+	 * - **API ID Path**: image_cards.default.primary.grid_columns
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	grid_columns: prismic.SelectField<'2' | '3', 'filled'>;
+
+	/**
+	 * Schriftfarbe Bereich field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.default.primary.component_body_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	component_body_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe Bereich field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.default.primary.component_body_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	component_body_bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe Kacheln field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.default.primary.body_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	body_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe Kacheln field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.body_bg_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1844,7 +1910,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Schaltflächen Schriftfarbe field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.button_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1854,7 +1920,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Schaltfl. Schriftfarbe Maus drüber field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.button_hover_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1864,7 +1930,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Schaltflächen Hintergrundfarbe field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.button_bg_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1874,7 +1940,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Schaltfl. Hintergrundf. Maus drüber field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.button_hover_bg_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
@@ -1884,11 +1950,22 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Farbe der Umrandung field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
 	 * - **API ID Path**: image_cards.default.primary.border_color
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	border_color: prismic.ColorField;
+
+	/**
+	 * Runde Ecken field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: image_cards.default.primary.round_corners
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	round_corners: prismic.BooleanField;
 
 	/**
 	 * Kacheln field in *Kacheln → Standard → Primary*
