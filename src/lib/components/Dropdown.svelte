@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import DropdownButton from './DropdownButton.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 
 	export let item;
 	export let subItems;
@@ -22,6 +22,17 @@
 	function closeDropdown() {
 		isOpen = false;
 	}
+
+	function handleGlobalClose() {
+		isOpen = false;
+	}
+
+	onMount(() => {
+		window.addEventListener('close-dropdown', handleGlobalClose);
+	});
+	onDestroy(() => {
+		window.removeEventListener('close-dropdown', handleGlobalClose);
+	});
 </script>
 
 <div
@@ -73,7 +84,7 @@
 		/* Mobile: Static positioning to push content down */
 		position: static;
 	}
-	
+
 	/* Desktop: Absolute positioning to overlay */
 	@media (min-width: 768px) {
 		.dropdown-menu {

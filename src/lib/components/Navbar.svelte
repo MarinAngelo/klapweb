@@ -48,7 +48,13 @@
 	}
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
+<nav
+	class="flex items-center justify-between flex-wrap p-6"
+	style="font-family: {headerLinkFont};"
+	on:navlinkclick={() => {
+		window.dispatchEvent(new CustomEvent('close-dropdown'));
+	}}
+>
 	<!-- Hamburger Button -->
 	<div class="block lg:hidden h-full flex items-center">
 		{#if $isMenuOpen}
@@ -91,7 +97,10 @@
 								{headerLinkFontSize}
 								{headerLinkHoverColor}
 								{currentPath}
-								on:click={() => isMenuOpen.set(false)}
+								on:click={() => {
+									isMenuOpen.set(false);
+									window.dispatchEvent(new CustomEvent('close-dropdown'));
+								}}
 							/>
 						</li>
 					{:else if item.link?.url}
@@ -99,7 +108,13 @@
 							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
 							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
 						>
-							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
+							<PrismicLink
+								field={item.link}
+								on:click={() => {
+									isMenuOpen.set(false);
+									window.dispatchEvent(new CustomEvent('close-dropdown'));
+								}}
+							>
 								<PrismicText field={item.label} />
 							</PrismicLink>
 						</li>
@@ -120,7 +135,10 @@
 					>
 						<PrismicLink
 							field={item.link}
-							on:click={() => isMenuOpen.set(false)}
+							on:click={() => {
+								isMenuOpen.set(false);
+								window.dispatchEvent(new CustomEvent('close-dropdown'));
+							}}
 							class="transition nav-link"
 							style="color: inherit; font-size: {headerLinkFontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
 								'#fff'};"
