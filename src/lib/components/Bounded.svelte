@@ -1,9 +1,12 @@
 <script lang="ts">
 	import clsx from 'clsx';
+	import { isMobile } from '$lib/stores/isMobile';
 
 	export let tag = 'section';
-	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' = 'base-top';
+	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' =
+		'base-top';
 	export let collapsible = true;
+	export let specialLayout = false;
 
 	// Neu: bind:this von außen durchgereicht
 	export let elementRef: HTMLElement | null = null;
@@ -16,6 +19,7 @@
 	{...$$restProps}
 	class={clsx(
 		'px-6',
+		specialLayout && isMobile && 'px-0', // z.B. auf Mobil keine Seitenränder
 		yPadding === 'none' && 'py-0',
 		yPadding === 'sm' && 'py-8 md:py-10',
 		yPadding === 'base' && 'py-20 md:py-28',
@@ -26,8 +30,7 @@
 		$$props.class
 	)}
 >
-<div class="mx-auto w-full max-w-6xl relative overflow-visible">
-	<slot />
-</div>
-
+	<div class="mx-auto w-full max-w-6xl relative overflow-visible">
+		<slot />
+	</div>
 </svelte:element>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
-	import { PrismicText } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 
 	export let slice: Content.AccordionSlice;
 
@@ -30,17 +30,17 @@
 				<PrismicRichText field={slice.primary.heading} />
 		{/if}
 		{#if slice.primary.description}
-				<PrismicRichText field={slice.primary.description} /><br />
+			<PrismicRichText field={slice.primary.description} /><br />
 		{/if}
 		{#each slice.primary.accordion_items as item, index}
 			<div class="border-b pb-4" style="border-color: {pageColor}">
 				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full"
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
 					aria-haspopup="true"
 					aria-expanded={openIndex === index}
 					on:click={() => toggleItem(index)}
 				>
-				{item.label}
+					{item.label}
 					<svg
 						class="w-4 h-4 ml-1 fill-current transform transition-transform"
 						xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,16 @@
 					</svg>
 				</button>
 				<div class={openIndex === index ? 'block mt-2' : 'hidden'}>
-					<PrismicRichText field={item.content} />
+					{#if slice.variation === 'bildUndText'}
+						<ImageTextGrid
+							image={'image' in item ? item.image : null}
+							text={item.content}
+							imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
+							{theme}
+						/>
+					{:else}
+						<PrismicRichText field={item.content} />
+					{/if}
 				</div>
 			</div>
 		{/each}
@@ -62,4 +71,14 @@
 	button {
 		text-align: left;
 	}
+	/* 👇 Das hier zwingt die Zahlen zurück, egal was Tailwind sagt */
+    :global([data-slice-type="accordion"] ol) {
+        list-style-type: decimal !important;
+        padding-left: 1.5rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    :global([data-slice-type="accordion"] li) {
+        padding-left: 0.5rem;
+    }
 </style>

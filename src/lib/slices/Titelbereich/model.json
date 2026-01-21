@@ -20,13 +20,28 @@
             "default_value": false
           }
         },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz der Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": false,
-            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
+            "multi": "paragraph,strong,em",
+            "labels": [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6"
+    ]
           }
         },
         "color": {
@@ -36,12 +51,34 @@
             "placeholder": ""
           }
         },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variants",
+                  "adobeFontId"
+                ]
+              }
+            ]
+          }
+        },
         "button_link": {
           "type": "Link",
           "config": {
             "label": "Schaltflächenlink",
             "placeholder": "",
-            "select": null
+            "select": null,
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "button_text": {
@@ -51,6 +88,20 @@
             "placeholder": ""
           }
         },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "button_bg_color": {
           "type": "Color",
           "config": {
@@ -58,24 +109,10 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "button_bg_color_hover": {
+        "button_hover_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfläche Hintergrund Mouseover",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche Text- und Rahmenfarbe",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color_hover": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche T & R Mouseover",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
@@ -103,7 +140,7 @@
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz der Überlagerungsfarbe",
+            "label": "Deckkraft der Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
           }
         },
@@ -130,8 +167,17 @@
         "text_overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz Text Überlagerungsfarbe",
+            "label": "Deckkraft Text Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
+          }
+        },
+        "switch_off_text_overlay": {
+          "type": "Boolean",
+          "config": {
+            "label": "Text Hintergrund in Mobile aus",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_overlay_padding": {
@@ -144,6 +190,57 @@
               "mittel",
               "gross"
             ]
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "mitBildKarusell",
+      "name": "Mit Bild Karusell",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Hero",
+      "primary": {
+        "banner_overlap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Überlappend mit Kopfzeile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz überlagerter Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Bild Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "imageMerryGoRound": {
+          "type": "Group",
+          "config": {
+            "label": "Bilder Karusell",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              }
+            }
           }
         }
       },

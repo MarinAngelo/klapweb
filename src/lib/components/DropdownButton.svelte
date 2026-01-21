@@ -3,7 +3,7 @@
 
 	export let item;
 	export let headerLinkColor;
-	export let headerfontSize;
+	export let headerLinkFontSize;
 	export let onClick = () => {};
 </script>
 
@@ -11,7 +11,7 @@
 	type="button"
 	on:click={onClick}
 	class="font-semibold tracking-tight inline-flex items-center"
-	style="color: {headerLinkColor}; font-size: {headerfontSize}rem;"
+	style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
 	aria-haspopup="true"
 	aria-expanded="false"
 >

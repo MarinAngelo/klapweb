@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { PrismicImage } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
-	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 
 	export let slice: Content.TextWithImageSlice;
 
@@ -34,6 +33,8 @@
 				break;
 		}
 	}
+
+	const isBildLinks = slice.variation === 'standardBildLinks';
 </script>
 
 <Bounded
@@ -44,20 +45,12 @@
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
-	<div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
-		<div>
-			<PrismicRichText field={slice.primary.text} />
-		</div>
-		<div>
-			{#if isFilled.image(slice.primary.image)}
-				<div style="background-color: {slice.primary.bg_color || get(theme).pageBgColor};">
-					<PrismicImage
-						field={slice.primary.image}
-						sizes="100vw"
-						class="w-full {slice.primary.image_round ? 'rounded-full' : 'rounded-3xl'}"
-					/>
-				</div>
-			{/if}
-		</div>
-	</div>
+	<ImageTextGrid
+		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}
+		text={slice.primary.text}
+		imageLeft={isBildLinks}
+		imageBgColor={slice.primary.bg_color || get(theme).pageBgColor}
+		imageRound={slice.primary.image_round}
+		{theme}
+	/>
 </Bounded>

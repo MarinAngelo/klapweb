@@ -20,6 +20,90 @@
             "single": "heading2"
           }
         },
+        "grid_columns": {
+          "type": "Select",
+          "config": {
+            "label": "Spalten je Reihe",
+            "placeholder": "2",
+            "options": [
+              "2",
+              "3"
+            ],
+            "default_value": "2"
+          }
+        },
+        "component_body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Schriftfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Schriftfarbe Maus drüber",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Hintergrundf. Maus drüber",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "border_color": {
+          "type": "Color",
+          "config": {
+            "label": "Farbe der Umrandung",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "round_corners": {
+          "type": "Boolean",
+          "config": {
+            "label": "Runde Ecken",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
+          }
+        },
         "cards": {
           "type": "Group",
           "config": {
@@ -34,7 +118,27 @@
                     "width": 2200,
                     "height": 1200
                   },
-                  "thumbnails": []
+                  "thumbnails": [
+                    {
+                      "name": "Quadrat",
+                      "width": 1200,
+                      "height": 1200
+                    }
+                  ]
+                }
+              },
+              "image_overlay_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Bild Überlagerungsfarbe",
+                  "placeholder": "Hex-Farbcode (#RRGGBB)"
+                }
+              },
+              "image_overlay_opacity": {
+                "type": "Number",
+                "config": {
+                  "label": "Transparenz der Überlagerungsfarbe",
+                  "placeholder": "0 - 100 %"
                 }
               },
               "text": {
@@ -52,7 +156,10 @@
                   "label": "Schaltflächen-Link",
                   "placeholder": "",
                   "select": null,
-                  "allowTargetBlank": true
+                  "allowTargetBlank": true,
+                  "customtypes": [
+                    "page"
+                  ]
                 }
               },
               "buttonText": {

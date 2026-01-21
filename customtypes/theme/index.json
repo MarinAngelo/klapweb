@@ -19,13 +19,6 @@
 					"label": "UID"
 				}
 			},
-			"page_bg_color": {
-				"type": "Color",
-				"config": {
-					"label": "Hintergrundfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
-				}
-			},
 			"page_color": {
 				"type": "Color",
 				"config": {
@@ -33,41 +26,83 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_font": {
+				"type": "Link",
+				"config": {
+					"label": "Hauptschrift",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
+				}
+			},
+			"base_font_size_mobile": {
+				"type": "Select",
+				"config": {
+					"label": "Mobile Basis-Schriftgrösse",
+					"placeholder": "",
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+				}
+			},
+			"base_font_size_desktop": {
+				"type": "Select",
+				"config": {
+					"label": " Desktop Basis-Schriftgrösse",
+					"placeholder": "",
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+				}
+			},
 			"page_link_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_text": {
+			"page_link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
-					"placeholder": ""
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"link_hover_color_bg": {
+			"page_button_color": {
 				"type": "Color",
 				"config": {
-					"label": "Linkhintergrundfarbe Maus darüber",
-					"placeholder": ""
+					"label": "Schaltflächen-Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"body_font": {
-				"type": "Select",
+			"page_button_bg_color": {
+				"type": "Color",
 				"config": {
-					"label": "Hauptschrift",
-					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura", "Soleil"]
+					"label": "Schaltflächen-Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"nav_font": {
-				"type": "Select",
+			"page_button_hover_color": {
+				"type": "Color",
 				"config": {
-					"label": "Navigationsschrift",
-					"placeholder": "",
-					"options": ["Roboto", "Open Sans", "Jura"]
+					"label": "Schaltfl. SF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"page_button_hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schaltfl. HF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"favicon": {
@@ -80,6 +115,34 @@
 			}
 		},
 		"Kopfzeile": {
+			"site_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website-Titel Schriftgrösse",
+					"placeholder": "1 - 5"
+				}
+			},
+			"site_sub_title_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Website-Untertitel Schriftgrösse",
+					"placeholder": "0.5 - 4"
+				}
+			},
+			"site_title_font": {
+				"type": "Link",
+				"config": {
+					"label": "Website-Titel Schriftart",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name", "provider", "variants", "adobeFontId"]
+						}
+					]
+				}
+			},
 			"logo": {
 				"type": "Image",
 				"config": {
@@ -92,27 +155,13 @@
 				"type": "Number",
 				"config": {
 					"label": "Logo Grösse",
-					"placeholder": "1 - 20"
+					"placeholder": "1 - 8"
 				}
 			},
 			"header_bg_color": {
 				"type": "Color",
 				"config": {
 					"label": "Hintergrundfarbe",
-					"placeholder": "Hex-Farbcode (#RRGGBB)"
-				}
-			},
-			"header_bg_opacity": {
-				"type": "Number",
-				"config": {
-					"label": "Transparenz der Hintergrundfarbe",
-					"placeholder": "0 - 100 %"
-				}
-			},
-			"header_color": {
-				"type": "Color",
-				"config": {
-					"label": "Textfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -123,18 +172,32 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
-			"header_font_size": {
-				"type": "Number",
-				"config": {
-					"label": "Link Schriftgrösse",
-					"placeholder": "1 - 5"
-				}
-			},
 			"header_link_hover_color": {
 				"type": "Color",
 				"config": {
 					"label": "Linkfarbe, wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"header_link_font_size": {
+				"type": "Number",
+				"config": {
+					"label": "Link Schriftgrösse",
+					"placeholder": "1.5 - 3"
+				}
+			},
+			"header_link_font": {
+				"type": "Link",
+				"config": {
+					"label": "Link Schriftart",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "font",
+							"fields": ["name"]
+						}
+					]
 				}
 			}
 		},
@@ -153,10 +216,31 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"footer_font_size_top_bar": {
+				"type": "Number",
+				"config": {
+					"label": "Textgrösse Obere Fusszeile",
+					"placeholder": "0.5 - 2"
+				}
+			},
+			"footer_font_size_button_bar": {
+				"type": "Number",
+				"config": {
+					"label": "Textgrösse Untere Fusszeile",
+					"placeholder": "0.2 - 1.5"
+				}
+			},
 			"footer_link_color": {
 				"type": "Color",
 				"config": {
-					"label": "Linkfarbe",
+					"label": "Link Farbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"footer_link_hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			}

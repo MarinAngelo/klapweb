@@ -7,8 +7,8 @@
 	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
-	import InputField from '$lib/components/InputField.svelte'; // Import der neuen Komponente
-	import Modal from '$lib/components/Modal.svelte'; // Import der Modal-Komponente
+	import InputField from '$lib/components/InputField.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
 	export let slice: Content.FormSlice;
 
@@ -19,38 +19,109 @@
 	// Zustand für das modale Fenster
 	let showModal = false;
 
+	// Fehlerausgabe für Link-Blocker
+	let linkError: string | null = null;
+
+	// --- Link-Detection (Client) ---
+	function containsLink(raw: unknown): boolean {
+		if (raw == null) return false;
+		const v = String(raw);
+
+		// Normalisierung gegen Obfuskation
+		const normalized = v
+			.replace(/\(dot\)/gi, ".")
+			.replace(/\s*:\s*\/\s*\//g, "://")  // auseinandergezogene Protokolle
+			.replace(/\s+/g, " ")               // Mehrfachspaces
+			.trim();
+
+		// Email erlauben (z. B. someone@example.com)
+		if (isEmail(normalized)) return false;
+
+		const tests = [
+			/\bhttps?:\/\/\S+/i,                                        // http/https
+			/\bwww\.\S+/i,                                               // www.
+			/\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/?\S*/i,              // domain.tld[/...]
+			/\[[^\]]+]\(\s*https?:\/\/[^)]+\)/i,                         // Markdown-Link
+			/<a\s+[^>]*href\s*=\s*["']?\s*https?:\/\//i                  // HTML-Link
+		];
+
+		return tests.some((rx) => rx.test(normalized));
+	}
+
+	function isEmail(v: string): boolean {
+		// einfache Email-Prüfung (bewusst tolerant)
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+	}
+
+	function validateNoLinks(fd: FormData) {
+		// Wenn du bestimmte Felder erlauben willst (z. B. "website"), hier whitelisten.
+		// Beispiel: const whitelist = new Set(['website']);
+		// und in der Schleife: if (whitelist.has(name)) continue;
+
+		const offenders: string[] = [];
+		for (const [name, value] of fd.entries()) {
+			// Netlify/Hidden/Honeypot ignorieren
+			if (name === "form-name" || name === "bot-field") continue;
+
+			// File-Uploads ignorieren (hier blocken wir nur Textlinks)
+			if (value instanceof File) continue;
+
+			// reine Emails erlauben
+			if (isEmail(String(value))) continue;
+
+			// Link vorhanden?
+			if (containsLink(value)) {
+				offenders.push(name);
+			}
+		}
+		return offenders;
+	}
+
 	async function handleSubmit(event: Event) {
-		event.preventDefault(); // Verhindert Standard-Submit (Bleibt)
+		event.preventDefault();
 
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 
+		// Clientseitige Link-Prüfung
+		const offenders = validateNoLinks(formData);
+		if (offenders.length > 0) {
+			// Feldnamen schön darstellen (kommagetrennt)
+			const list = offenders
+				.map((n) => `„${n}”`)
+				.join(", ");
+			linkError = `Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus: ${list}.`;
+			return;
+		}
+		linkError = null;
+
 		try {
-			// Sende die Formulardaten an den Endpunkt des aktuellen Pfads
-			// Netlify fängt POST-Requests an den Pfad ab, auf dem das Formular liegt
 			const response = await fetch(form.action || '/', {
-				// Nutze form.action oder den aktuellen Pfad '/'
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				// Wichtig: FormData korrekt kodieren für Netlify
 				body: new URLSearchParams(formData as any).toString()
 			});
 
 			if (response.ok) {
-				// Erfolgreich gesendet! Jetzt Modal anzeigen und Formular zurücksetzen
-				showModal = true; // Modal anzeigen
-				form.reset(); // Formular zurücksetzen
+				showModal = true;
+				form.reset();
 			} else {
-				// Fehler beim Senden
 				console.error('Fehler beim Senden des Formulars:', response);
-				// Optional: Zeige eine Fehlermeldung für den Benutzer an
 				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
 			}
 		} catch (error) {
-			// Netzwerkfehler o.ä.
 			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			// Optional: Zeige eine Fehlermeldung für den Benutzer an
 			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+		}
+	}
+
+	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
+	function onFormInput(e: Event) {
+		if (linkError) {
+			const form = e.currentTarget as HTMLFormElement;
+			const fd = new FormData(form);
+			const offenders = validateNoLinks(fd);
+			linkError = offenders.length ? linkError : null;
 		}
 	}
 </script>
@@ -79,8 +150,10 @@
 				data-netlify="true"
 				netlify-honeypot="bot-field"
 				on:submit={handleSubmit}
+				on:input={onFormInput}
+				aria-describedby="form-error"
+				novalidate
 			>
-				<!-- Honeypot-Feld für Spam-Schutz -->
 				<input type="hidden" name="form-name" value="contact" />
 				<div hidden>
 					<label>
@@ -88,15 +161,20 @@
 					</label>
 				</div>
 
-				<!-- Iteration über die Felder -->
 				{#each formFields as field}
 					<InputField {field} />
 				{/each}
 
-				<!-- Submit-Button -->
+				{#if linkError}
+					<p id="form-error" class="mt-3 text-sm text-red-600">
+						{linkError}
+					</p>
+				{/if}
+
 				<button
 					type="submit"
 					class="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					disabled={!!linkError}
 				>
 					{slice.primary.submitt_button_text || 'Absenden'}
 				</button>
@@ -104,7 +182,6 @@
 		</div>
 	</div>
 
-	<!-- Modales Fenster -->
 	{#if showModal}
 		<Modal
 			title={formSubmittetTitle || 'Vielen Dank!'}

@@ -41,7 +41,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Deserunt nostrud id dolor nisi quis ad consectetur."
+							"text": "Elit mollit irure non adipisicing proident. Do eu laboris voluptate mollit sunt ullamco nostrud sit. Consectetur velit dolor excepteur eiusmod adipisicing exercitation officia est non magna."
 						}
 					}
 				]
@@ -52,8 +52,107 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Culpa consequat et ullamco duis consequat cupidatat culpa."
+							"text": "Sit in incididunt ullamco dolore sunt deserunt nisi pariatur ut voluptate. Voluptate sit enim officia anim commodo exercitation non qui sit dolore. Sit eiusmod non id est veniam ut fugiat ex laboris."
 						}
+					}
+				]
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "bildUndText",
+		"primary": {
+			"heading": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Officia consectetur Lorem labore adipisicing veniam in ipsum nisi voluptate consectetur."
+						}
+					}
+				]
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Non Lorem Lorem fugiat ut minim aliquip sunt ex pariatur esse excepteur velit."
+						}
+					}
+				]
+			},
+			"accordion_items": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"label",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "essential",
+									"type": "Text"
+								}
+							],
+							[
+								"content",
+								{
+									"__TYPE__": "StructuredTextContent",
+									"value": [
+										{
+											"type": "paragraph",
+											"content": {
+												"text": "Occaecat dolor ut cillum. Nulla commodo eu non in in ex Lorem anim ea et adipisicing cupidatat."
+											}
+										}
+									]
+								}
+							],
+							[
+								"image",
+								{
+									"origin": {
+										"id": "main",
+										"url": "https://images.unsplash.com/photo-1586952518485-11b180e92764",
+										"width": 4172,
+										"height": 4000
+									},
+									"url": "https://images.unsplash.com/photo-1586952518485-11b180e92764",
+									"width": 4172,
+									"height": 4000,
+									"edit": {
+										"zoom": 1,
+										"crop": {
+											"x": 0,
+											"y": 0
+										},
+										"background": "transparent"
+									},
+									"alt": "could",
+									"credits": null,
+									"__TYPE__": "ImageContent",
+									"thumbnails": {}
+								}
+							],
+							[
+								"standardBildLinks",
+								{
+									"__TYPE__": "BooleanContent",
+									"value": true
+								}
+							]
+						]
 					}
 				]
 			}
