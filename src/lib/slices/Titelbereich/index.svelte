@@ -184,7 +184,9 @@
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						{#if 'text' in slice.primary}
-							<PrismicRichText field={slice.primary.text} {components} />
+							<div style="--page-color: {color};">
+								<PrismicRichText field={slice.primary.text} {components} />
+							</div>
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
