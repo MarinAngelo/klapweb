@@ -1483,7 +1483,7 @@ export interface HeroSliceDefaultPrimary {
 	overlay_color: prismic.ColorField;
 
 	/**
-	 * Deckkraft der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Transparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1514,7 +1514,7 @@ export interface HeroSliceDefaultPrimary {
 	text_overlay_color: prismic.ColorField;
 
 	/**
-	 * Deckkraft Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %

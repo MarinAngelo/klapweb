@@ -35,13 +35,13 @@
             "allowTargetBlank": false,
             "multi": "paragraph,strong,em",
             "labels": [
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6"
-    ]
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
           }
         },
         "color": {
@@ -140,7 +140,7 @@
         "overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Deckkraft der Überlagerungsfarbe",
+            "label": "Transparenz der Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
           }
         },
@@ -167,7 +167,7 @@
         "text_overlay_opacity": {
           "type": "Number",
           "config": {
-            "label": "Deckkraft Text Überlagerungsfarbe",
+            "label": "Transparenz Text Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
           }
         },
