@@ -35,7 +35,7 @@
 		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
 			return 0.2; // Default wenn nicht gesetzt
 		}
-		return convertNumberInverse(slice.primary.overlay_opacity);
+		return convertNumber(slice.primary.overlay_opacity);
 	})();
 
 	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
@@ -184,7 +184,9 @@
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						{#if 'text' in slice.primary}
-							<PrismicRichText field={slice.primary.text} {components} />
+							<div style="--page-color: {color};">
+								<PrismicRichText field={slice.primary.text} {components} />
+							</div>
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
