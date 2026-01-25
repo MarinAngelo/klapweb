@@ -35,7 +35,7 @@
 		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
 			return 0.2; // Default wenn nicht gesetzt
 		}
-		return convertNumberInverse(slice.primary.overlay_opacity);
+		return convertNumber(slice.primary.overlay_opacity);
 	})();
 
 	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
