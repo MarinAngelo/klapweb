@@ -1,34 +1,17 @@
 <script lang="ts">
-	// ...existing code...
-
-	function validateField(field, value) {
-		if (!field || !field.field_name) return '';
-		if (field.required && (!value || String(value).trim() === '')) {
-			return field['invalid_feedback-text'] || 'Bitte Feld ausfüllen';
-		}
-		return '';
-	}
-
-	function onFieldBlur(event, field) {
-		const value = event.target.value;
-		const error = validateField(field, value);
-		fieldErrors = { ...fieldErrors, [field.field_name ?? '']: error };
-	}
-	import type { Content } from '@prismicio/client';
+	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../prismicio-types';
 	import { asText } from '@prismicio/client';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
-
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	export let slice: Content.FormSlice;
+	export let slice: FormSlice;
 
-	const formFields = slice.primary.form_fields;
+	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
@@ -40,6 +23,21 @@
 
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
+
+	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
+		if (!field || !field.field_name) return '';
+		if (field.required && (!value || String(value).trim() === '')) {
+			return field.invalid_feedback_text || 'Bitte Feld ausfüllen';
+		}
+		return '';
+	}
+
+	function onFieldBlur(event: Event, field: FormSliceDefaultPrimaryFormFieldsItem) {
+		const value = (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)
+			.value;
+		const error = validateField(field, value);
+		fieldErrors = { ...fieldErrors, [field.field_name ?? '']: error };
+	}
 
 	// --- Link-Detection (Client) ---
 	function containsLink(raw: unknown): boolean {
@@ -181,7 +179,6 @@
 				name="contact"
 				method="POST"
 				data-netlify="true"
-				netlify-honeypot="bot-field"
 				on:submit={handleSubmit}
 				on:input={onFormInput}
 				aria-describedby="form-error"
@@ -209,7 +206,15 @@
 					</p>
 				{/if}
 
-				<Button text={slice.primary.submitt_button_text || 'Absenden'} disabled={!!linkError} />
+				<Button
+					text={slice.primary.submitt_button_text || 'Absenden'}
+					disabled={!!linkError}
+					link={undefined}
+					color={undefined}
+					bgColor={undefined}
+					hoverColor={undefined}
+					hoverBgColor={undefined}
+				/>
 			</form>
 		</div>
 	</div>
