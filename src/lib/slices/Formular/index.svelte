@@ -1,4 +1,19 @@
 <script lang="ts">
+	// ...existing code...
+
+	function validateField(field, value) {
+		if (!field || !field.field_name) return '';
+		if (field.required && (!value || String(value).trim() === '')) {
+			return field['invalid_feedback-text'] || 'Bitte Feld ausfüllen';
+		}
+		return '';
+	}
+
+	function onFieldBlur(event, field) {
+		const value = event.target.value;
+		const error = validateField(field, value);
+		fieldErrors = { ...fieldErrors, [field.field_name ?? '']: error };
+	}
 	import type { Content } from '@prismicio/client';
 	import { asText } from '@prismicio/client';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -9,10 +24,14 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.FormSlice;
 
 	const formFields = slice.primary.form_fields;
+
+	// Fehlerstatus für jedes Feld
+	let fieldErrors: Record<string, string> = {};
 	const formSubmittetTitle = slice.primary.submitted_title;
 	const formSubmittetText = asText(slice.primary.submitted_text);
 
@@ -29,20 +48,20 @@
 
 		// Normalisierung gegen Obfuskation
 		const normalized = v
-			.replace(/\(dot\)/gi, ".")
-			.replace(/\s*:\s*\/\s*\//g, "://")  // auseinandergezogene Protokolle
-			.replace(/\s+/g, " ")               // Mehrfachspaces
+			.replace(/\(dot\)/gi, '.')
+			.replace(/\s*:\s*\/\s*\//g, '://') // auseinandergezogene Protokolle
+			.replace(/\s+/g, ' ') // Mehrfachspaces
 			.trim();
 
 		// Email erlauben (z. B. someone@example.com)
 		if (isEmail(normalized)) return false;
 
 		const tests = [
-			/\bhttps?:\/\/\S+/i,                                        // http/https
-			/\bwww\.\S+/i,                                               // www.
-			/\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/?\S*/i,              // domain.tld[/...]
-			/\[[^\]]+]\(\s*https?:\/\/[^)]+\)/i,                         // Markdown-Link
-			/<a\s+[^>]*href\s*=\s*["']?\s*https?:\/\//i                  // HTML-Link
+			/\bhttps?:\/\/\S+/i, // http/https
+			/\bwww\.\S+/i, // www.
+			/\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/?\S*/i, // domain.tld[/...]
+			/\[[^\]]+]\(\s*https?:\/\/[^)]+\)/i, // Markdown-Link
+			/<a\s+[^>]*href\s*=\s*["']?\s*https?:\/\//i // HTML-Link
 		];
 
 		return tests.some((rx) => rx.test(normalized));
@@ -61,7 +80,7 @@
 		const offenders: string[] = [];
 		for (const [name, value] of fd.entries()) {
 			// Netlify/Hidden/Honeypot ignorieren
-			if (name === "form-name" || name === "bot-field") continue;
+			if (name === 'form-name' || name === 'bot-field') continue;
 
 			// File-Uploads ignorieren (hier blocken wir nur Textlinks)
 			if (value instanceof File) continue;
@@ -83,13 +102,26 @@
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 
+		// Pflichtfeld-Validierung
+		let errors: Record<string, string> = {};
+		for (const field of formFields) {
+			if (field.required) {
+				const value = formData.get(field.field_name ?? '');
+				if (!value || String(value).trim() === '') {
+					errors[field.field_name ?? ''] = field['invalid_feedback-text'] || 'Bitte Feld ausfüllen';
+				}
+			}
+		}
+		fieldErrors = errors;
+		if (Object.keys(errors).length > 0) {
+			return;
+		}
+
 		// Clientseitige Link-Prüfung
 		const offenders = validateNoLinks(formData);
 		if (offenders.length > 0) {
 			// Feldnamen schön darstellen (kommagetrennt)
-			const list = offenders
-				.map((n) => `„${n}”`)
-				.join(", ");
+			const list = offenders.map((n) => `„${n}”`).join(', ');
 			linkError = `Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus: ${list}.`;
 			return;
 		}
@@ -105,6 +137,7 @@
 			if (response.ok) {
 				showModal = true;
 				form.reset();
+				fieldErrors = {};
 			} else {
 				console.error('Fehler beim Senden des Formulars:', response);
 				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
@@ -162,7 +195,12 @@
 				</div>
 
 				{#each formFields as field}
-					<InputField {field} />
+					{#if field && field.field_name}
+						<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+						{#if fieldErrors[field.field_name] && fieldErrors[field.field_name] !== ''}
+							<p class="text-red-600 text-sm mt-1">{fieldErrors[field.field_name]}</p>
+						{/if}
+					{/if}
 				{/each}
 
 				{#if linkError}
@@ -171,13 +209,7 @@
 					</p>
 				{/if}
 
-				<button
-					type="submit"
-					class="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-					disabled={!!linkError}
-				>
-					{slice.primary.submitt_button_text || 'Absenden'}
-				</button>
+				<Button text={slice.primary.submitt_button_text || 'Absenden'} disabled={!!linkError} />
 			</form>
 		</div>
 	</div>
