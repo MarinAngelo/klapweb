@@ -84,10 +84,11 @@
                   "label": "Obligatorisch"
                 }
               },
-              "invalid_feedback-text": {
+              "invalid_feedback_text": {
                 "type": "Text",
                 "config": {
-                  "label": "Fehlermeldung"
+                  "label": "Fehlermeldung",
+                  "placeholder": "Bitte ausfüllen"
                 }
               },
               "options": {
