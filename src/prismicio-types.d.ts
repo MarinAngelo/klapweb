@@ -1179,11 +1179,11 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	 * Fehlermeldung field in *Formular → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback-text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback_text
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
-	'invalid_feedback-text': prismic.KeyTextField;
+	invalid_feedback_text: prismic.KeyTextField;
 
 	/**
 	 * Optionen bei Auswahlfeldern field in *Formular → Standard → Primary → Formular Felder*
