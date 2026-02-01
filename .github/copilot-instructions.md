@@ -1,4 +1,3 @@
-
 # Klap-Web – AI Coding Guide
 
 ## Architektur & Datenfluss
@@ -32,14 +31,14 @@
 
 ```svelte
 <script lang="ts">
-  import type { Content } from '@prismicio/client';
-  import { theme } from '$lib/stores/theme';
-  import { get } from 'svelte/store';
-  export let slice: Content.TextSlice;
-  export let slices;
-  export let context;
-  export let index;
-  const { pageColor } = get(theme);
+	import type { Content } from '@prismicio/client';
+	import { theme } from '$lib/stores/theme';
+	import { get } from 'svelte/store';
+	export let slice: Content.TextSlice;
+	export let slices;
+	export let context;
+	export let index;
+	const { pageColor } = get(theme);
 </script>
 
 <Bounded style="color: {pageColor}">...</Bounded>

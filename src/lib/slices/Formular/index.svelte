@@ -106,7 +106,7 @@
 			if (field.required) {
 				const value = formData.get(field.field_name ?? '');
 				if (!value || String(value).trim() === '') {
-					errors[field.field_name ?? ''] = field['invalid_feedback-text'] || 'Bitte Feld ausfüllen';
+					errors[field.field_name ?? ''] = field.invalid_feedback_text || 'Bitte Feld ausfüllen';
 				}
 			}
 		}
