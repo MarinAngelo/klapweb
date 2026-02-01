@@ -1,21 +1,20 @@
-# AI Coding Instructions for Klap-Web
 
 # Klap-Web – AI Coding Guide
 
-## Architekturüberblick
+## Architektur & Datenfluss
 
 - **SvelteKit + Prismic CMS**: Headless, slice-basiert, dynamisches Theming, TypeScript, TailwindCSS.
-- **Slices**: Zentrale Bausteine, liegen in `src/lib/slices/`, deutsche Namenskonvention (z.B. `Akkordeon`, `Titelbereich`).
-- **Datenfluss**: Globale Daten (Navigation, Theme, Settings) via `+layout.server.ts`, Seiteninhalte via `+page.server.ts`.
+- **Slices**: Zentrale Bausteine, in `src/lib/slices/`, deutsche Namenskonvention (z.B. `Akkordeon`, `Titelbereich`).
+- **Globale Daten** (Navigation, Theme, Settings) via `src/routes/+layout.server.ts`, Seiteninhalte via `+page.server.ts`.
 - **Theming**: Zentrale Verwaltung über Svelte-Store (`src/lib/stores/theme.ts`), Prismic liefert Theme-Daten, Umwandlung via `updateTheme()`.
-- **Komponenten**: UI-Elemente in `src/lib/components/`, Wiederverwendung und Konsistenz durch `<Bounded>`, `<ResponsivePrismicImage>`, `<PrismicRichText>`.
+- **Komponenten**: UI-Elemente in `src/lib/components/`, Wiederverwendung durch `<Bounded>`, `<ResponsivePrismicImage>`, `<PrismicRichText>`.
 
 ## Workflows & Entwicklung
 
 - **Entwicklung starten**: `npm run dev` (startet Vite + Slice Machine parallel)
 - **Slice Machine UI**: `npm run slicemachine` (http://localhost:9999)
 - **Build/Preview**: `npm run build && npm run preview`
-- **Slices anlegen**: Über Slice Machine, Implementierung in `src/lib/slices/{SliceName}/`, Registrierung in `src/lib/slices/index.ts` (automatisch)
+- **Slices anlegen**: Über Slice Machine, Implementierung in `src/lib/slices/{SliceName}/`, automatische Registrierung in `src/lib/slices/index.ts`
 - **Theme-Änderungen**: Anpassung in Prismic, Transformation via `themeUpdater.ts`, Store-Update triggert reaktive Updates
 
 ## Projektkonventionen
@@ -33,14 +32,14 @@
 
 ```svelte
 <script lang="ts">
-	import type { Content } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
-	export let slice: Content.TextSlice;
-	export let slices;
-	export let context;
-	export let index;
-	const { pageColor } = get(theme);
+  import type { Content } from '@prismicio/client';
+  import { theme } from '$lib/stores/theme';
+  import { get } from 'svelte/store';
+  export let slice: Content.TextSlice;
+  export let slices;
+  export let context;
+  export let index;
+  const { pageColor } = get(theme);
 </script>
 
 <Bounded style="color: {pageColor}">...</Bounded>
@@ -82,4 +81,4 @@
 
 ---
 
-**Letzte Aktualisierung:** 13.01.2026
+**Letzte Aktualisierung:** 01.02.2026
