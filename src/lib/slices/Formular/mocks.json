@@ -29,6 +29,14 @@
 									"value": "Textbereich",
 									"type": "Select"
 								}
+							],
+							[
+								"invalid_feedback_text",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "merely",
+									"type": "Text"
+								}
 							]
 						]
 					}

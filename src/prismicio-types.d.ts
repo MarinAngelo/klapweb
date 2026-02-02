@@ -255,6 +255,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| AnleitungSlice
 	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
@@ -960,6 +961,113 @@ type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText
 export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
 
 /**
+ * Item in *Anleitung → Default → Primary → Schritte*
+ */
+export interface AnleitungSliceDefaultPrimaryStepsItem {
+	/**
+	 * Titel field in *Anleitung → Default → Primary → Schritte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.steps[].step_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	step_title: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Anleitung → Default → Primary → Schritte*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.steps[].step_description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	step_description: prismic.RichTextField;
+
+	/**
+	 * YouTube Video field in *Anleitung → Default → Primary → Schritte*
+	 *
+	 * - **Field Type**: Embed
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.steps[].youtube_video
+	 * - **Documentation**: https://prismic.io/docs/fields/embed
+	 */
+	youtube_video: prismic.EmbedField;
+}
+
+/**
+ * Primary content in *Anleitung → Default → Primary*
+ */
+export interface AnleitungSliceDefaultPrimary {
+	/**
+	 * Titel field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Titel
+	 * - **API ID Path**: anleitung.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * YouTube Video field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Embed
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.youtube_video
+	 * - **Documentation**: https://prismic.io/docs/fields/embed
+	 */
+	youtube_video: prismic.EmbedField;
+
+	/**
+	 * Schritte field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: anleitung.default.primary.steps[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	steps: prismic.GroupField<Simplify<AnleitungSliceDefaultPrimaryStepsItem>>;
+}
+
+/**
+ * Default variation for Anleitung Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AnleitungSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AnleitungSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Anleitung*
+ */
+type AnleitungSliceVariation = AnleitungSliceDefault;
+
+/**
+ * Anleitung Shared Slice
+ *
+ * - **API ID**: `anleitung`
+ * - **Description**: Anleitung
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AnleitungSlice = prismic.SharedSlice<'anleitung', AnleitungSliceVariation>;
+
+/**
  * Primary content in *GoogleMapEinbetten → Standard → Primary*
  */
 export interface CodeEinbettenSliceDefaultPrimary {
@@ -1179,11 +1287,11 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	 * Fehlermeldung field in *Formular → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback-text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.default.primary.form_fields[].invalid_feedback_text
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
-	'invalid_feedback-text': prismic.KeyTextField;
+	invalid_feedback_text: prismic.KeyTextField;
 
 	/**
 	 * Optionen bei Auswahlfeldern field in *Formular → Standard → Primary → Formular Felder*
@@ -1483,7 +1591,7 @@ export interface HeroSliceDefaultPrimary {
 	overlay_color: prismic.ColorField;
 
 	/**
-	 * Deckkraft der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Transparenz der Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -1514,7 +1622,7 @@ export interface HeroSliceDefaultPrimary {
 	text_overlay_color: prismic.ColorField;
 
 	/**
-	 * Deckkraft Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
+	 * Transparenz Text Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 0 - 100 %
@@ -2442,6 +2550,11 @@ declare module '@prismicio/client' {
 			AccordionSliceVariation,
 			AccordionSliceDefault,
 			AccordionSliceBildUndText,
+			AnleitungSlice,
+			AnleitungSliceDefaultPrimaryStepsItem,
+			AnleitungSliceDefaultPrimary,
+			AnleitungSliceVariation,
+			AnleitungSliceDefault,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
