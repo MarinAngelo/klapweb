@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"anleitung": {
+							"type": "SharedSlice"
+						},
 						"globale_events": {
 							"type": "SharedSlice"
 						},
