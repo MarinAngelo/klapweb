@@ -26,9 +26,7 @@
 
 	// Nur Paragraphen mit text-Feld für die Adresse
 	$: computedAddress = (
-		settings?.data?.responsible_address ?? [
-			{ type: 'paragraph', text: 'Musterstraße 1\n12345 Musterstadt', spans: [] }
-		]
+		settings?.data?.responsible_address ?? []
 	).filter((b) => b.type === 'paragraph' && typeof b.text === 'string');
 </script>
 
@@ -40,11 +38,15 @@
 	</p>
 	<h2>Verantwortliche Stelle</h2>
 	<AddressBlock
-		responsible_person_company={settings?.data?.responsible_person_company ?? 'Max Mustermann'}
-		responsible_address={settings?.data?.responsible_address}
+		responsible_person_company={settings?.data?.responsible_person_company ?? 'Angelo Klap'}
+		responsible_address={
+			(settings?.data?.responsible_address && Array.isArray(settings?.data?.responsible_address) && settings?.data?.responsible_address.length > 0)
+				? settings?.data?.responsible_address
+				: [{ type: 'paragraph', text: 'Schubertstrasse 21\n8037 Zürich\nSchweiz', spans: [] }]
+		}
 		responsible_email={settings?.data?.responsible_email ??
 			settings?.data?.e_mail ??
-			'info@example.com'}
+			'admin@klap-web.ch'}
 	/>
 	<PrismicRichText
 		field={Array.isArray(privacyField) && privacyField.length > 0 ? privacyField : fallback}
