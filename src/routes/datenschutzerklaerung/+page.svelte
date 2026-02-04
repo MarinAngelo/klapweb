@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import AddressBlock from '$lib/components/AddressBlock.svelte';
 	export let data;
 
 	// Fallback-Text: Nur Datenschutzerklärung, keine Adresse
@@ -24,8 +25,11 @@
 	const privacyField = settings?.data?.privacy_policy;
 
 	// Nur Paragraphen mit text-Feld für die Adresse
-	$: computedAddress = (settings?.data?.responsible_address ?? [{ type: 'paragraph', text: 'Musterstraße 1\n12345 Musterstadt', spans: [] }])
-		.filter((b) => b.type === 'paragraph' && typeof b.text === 'string');
+	$: computedAddress = (
+		settings?.data?.responsible_address ?? [
+			{ type: 'paragraph', text: 'Musterstraße 1\n12345 Musterstadt', spans: [] }
+		]
+	).filter((b) => b.type === 'paragraph' && typeof b.text === 'string');
 </script>
 
 <main class="prose mx-auto py-12">
@@ -35,15 +39,13 @@
 		Informationen finden Sie in den folgenden Abschnitten.
 	</p>
 	<h2>Verantwortliche Stelle</h2>
-	<div class="prose address-block">
-		<p>{settings?.data?.responsible_person_company ?? 'Max Mustermann'}</p>
-		{#each computedAddress as block}
-			{#each block.text.split(/\r?\n/) as line}
-				<p>{line}</p>
-			{/each}
-		{/each}
-		<p>{settings?.data?.responsible_email ?? settings?.data?.e_mail ?? 'info@example.com'}</p>
-	</div>
+	<AddressBlock
+		responsible_person_company={settings?.data?.responsible_person_company ?? 'Max Mustermann'}
+		responsible_address={settings?.data?.responsible_address}
+		responsible_email={settings?.data?.responsible_email ??
+			settings?.data?.e_mail ??
+			'info@example.com'}
+	/>
 	<PrismicRichText
 		field={Array.isArray(privacyField) && privacyField.length > 0 ? privacyField : fallback}
 	/>
