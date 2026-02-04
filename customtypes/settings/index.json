@@ -24,6 +24,29 @@
 					"single": "heading2"
 				}
 			},
+			"responsible_person_company": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortlich (Person/Unternehmen)",
+					"placeholder": ""
+				}
+			},
+			"responsible_address": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Verantwortliche Adresse",
+					"placeholder": "",
+					"allowTargetBlank": false,
+					"multi": "paragraph"
+				}
+			},
+			"responsible_email": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortliche E-Mail",
+					"placeholder": ""
+				}
+			},
 			"e_mail": {
 				"type": "Text",
 				"config": {
@@ -31,11 +54,13 @@
 					"placeholder": ""
 				}
 			},
-			"responsible_person_company": {
-				"type": "Text",
+			"privacy_policy": {
+				"type": "StructuredText",
 				"config": {
-					"label": "Verantwortlich (Person/Unternehmen)",
-					"placeholder": ""
+					"label": "Datenschutzerkärung",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
 				}
 			}
 		}

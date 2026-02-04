@@ -393,6 +393,39 @@ interface SettingsDocumentData {
 	site_sub_title: prismic.RichTextField;
 
 	/**
+	 * Verantwortlich (Person/Unternehmen) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.responsible_person_company
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	responsible_person_company: prismic.KeyTextField;
+
+	/**
+	 * Verantwortliche Adresse field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.responsible_address
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	responsible_address: prismic.RichTextField;
+
+	/**
+	 * Verantwortliche E-Mail field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.responsible_email
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	responsible_email: prismic.KeyTextField;
+
+	/**
 	 * E-Mail field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
@@ -404,15 +437,15 @@ interface SettingsDocumentData {
 	e_mail: prismic.KeyTextField;
 
 	/**
-	 * Verantwortlich (Person/Unternehmen) field in *Einstellungen*
+	 * Datenschutzerkärung field in *Einstellungen*
 	 *
-	 * - **Field Type**: Text
+	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.responsible_person_company
+	 * - **API ID Path**: settings.privacy_policy
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
-	responsible_person_company: prismic.KeyTextField;
+	privacy_policy: prismic.RichTextField;
 }
 
 /**
