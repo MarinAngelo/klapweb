@@ -1,0 +1,74 @@
+{
+  "id": "anleitung",
+  "type": "SharedSlice",
+  "name": "Anleitung",
+  "description": "Anleitung",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Titel",
+            "placeholder": "Titel"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Beschreibung",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading2"
+          }
+        },
+        "youtube_video": {
+          "type": "Embed",
+          "config": {
+            "label": "YouTube Video",
+            "placeholder": ""
+          }
+        },
+        "steps": {
+          "type": "Group",
+          "config": {
+            "label": "Schritte",
+            "repeat": true,
+            "fields": {
+              "step_title": {
+                "type": "Text",
+                "config": {
+                  "label": "Titel",
+                  "placeholder": ""
+                }
+              },
+              "step_description": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Beschreibung",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+                }
+              },
+              "youtube_video": {
+                "type": "Embed",
+                "config": {
+                  "label": "YouTube Video",
+                  "placeholder": ""
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
