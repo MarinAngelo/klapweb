@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import AddressBlock from '$lib/components/AddressBlock.svelte';
+	import type { RTNode } from '@prismicio/types';
 	export let data;
 
 	// Fallback-Text: Nur Datenschutzerklärung, keine Adresse
-	const fallback = [
+	const fallback: [RTNode, ...RTNode[]] = [
 		{ type: 'heading2', text: 'Erhebung und Verarbeitung von Daten', spans: [] },
 		{
 			type: 'paragraph',
