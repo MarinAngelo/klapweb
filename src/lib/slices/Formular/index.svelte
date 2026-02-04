@@ -26,8 +26,16 @@
 
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
 		if (!field || !field.field_name) return '';
-		if (field.required && (!value || String(value).trim() === '')) {
+		const val = String(value ?? '').trim();
+		if (field.required && !val) {
 			return field.invalid_feedback_text || 'Bitte Feld ausfüllen';
+		}
+		// E-Mail-Validierung
+		if (field.field_type === 'E-Mail' && val) {
+			// sehr einfache Prüfung, wie in isEmail
+			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+				return 'Bitte eine gültige E-Mail-Adresse eingeben';
+			}
 		}
 		return '';
 	}
@@ -100,14 +108,13 @@
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 
-		// Pflichtfeld-Validierung
+		// Feld-Validierung (Pflicht & Typ)
 		let errors: Record<string, string> = {};
 		for (const field of formFields) {
-			if (field.required) {
-				const value = formData.get(field.field_name ?? '');
-				if (!value || String(value).trim() === '') {
-					errors[field.field_name ?? ''] = field['invalid_feedback-text'] || 'Bitte Feld ausfüllen';
-				}
+			const value = formData.get(field.field_name ?? '');
+			const error = validateField(field, value);
+			if (error) {
+				errors[field.field_name ?? ''] = error;
 			}
 		}
 		fieldErrors = errors;

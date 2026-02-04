@@ -27,8 +27,8 @@
 <div class="mb-4">
 	<!-- Hier Labels für alle Felder-->
 	{#if htmlType !== 'checkbox'}
-		<label for={field.field_name} class="block text-base font-medium">
-			{field.field_name ?? ''}
+		<label for={field.field_name} class="block text-base font-bold">
+			{field.field_name ?? ''}{field.required ? ' *' : ''}
 		</label>
 	{/if}
 	{#if htmlType === 'text' || htmlType === 'email'}
