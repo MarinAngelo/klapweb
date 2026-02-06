@@ -75,18 +75,7 @@
 		<div class="mt-4 text-center">
 			<p class="leading-tight text-inherit" style="font-size: {footerFontSizeButtonBar}rem;">
 				&copy; {currentYear}
-				{responsiblePersonCompany}. Alle Rechte vorbehalten. <br /> Webentwicklung:
-				<a
-					href="https://www.klap-web.ch/"
-					target="_blank"
-					class="hover:underline text-inherit"
-					style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-					on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-					on:mouseleave={(e) => handleHover(e, footerLinkColor)}
-				>
-					www.klap-web.ch
-				</a>
-				&nbsp;|&nbsp;
+				{responsiblePersonCompany}. Alle Rechte vorbehalten. <br />
 				<a
 					href="/datenschutzerklaerung"
 					class="hover:underline text-inherit"
@@ -96,6 +85,28 @@
 				>
 					Datenschutzerklärung
 				</a>
+				&nbsp;|&nbsp;
+				<a
+					href="/impressum"
+					class="hover:underline text-inherit"
+					style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
+					on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
+					on:mouseleave={(e) => handleHover(e, footerLinkColor)}
+				>
+					Impressum
+				</a>
+				{#if settings.data?.agb && settings.data.agb.length > 0}
+					&nbsp;|&nbsp;
+					<a
+						href="/agb"
+						class="hover:underline text-inherit"
+						style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
+						on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
+						on:mouseleave={(e) => handleHover(e, footerLinkColor)}
+					>
+						AGB
+					</a>
+				{/if}
 			</p>
 		</div>
 	</footer>

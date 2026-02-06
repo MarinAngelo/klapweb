@@ -50,7 +50,7 @@
 			"e_mail": {
 				"type": "Text",
 				"config": {
-					"label": "E-Mail",
+					"label": "Korrespondenz E-Mail",
 					"placeholder": ""
 				}
 			},
@@ -58,6 +58,92 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Datenschutzerkärung",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"legal_disclosure": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Impressum",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"contacts": {
+				"type": "Group",
+				"config": {
+					"label": "Kontakte",
+					"repeat": true,
+					"fields": {
+						"impressum": {
+							"type": "Boolean",
+							"config": {
+								"label": "Impressum",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": true
+							}
+						},
+						"title": {
+							"type": "Text",
+							"config": {
+								"label": "Titel / Funktion",
+								"placeholder": "z. B. Design"
+							}
+						},
+						"name": {
+							"type": "Text",
+							"config": {
+								"label": "Name",
+								"placeholder": ""
+							}
+						},
+						"email": {
+							"type": "Text",
+							"config": {
+								"label": "E-Mail",
+								"placeholder": ""
+							}
+						},
+						"website": {
+							"type": "Link",
+							"config": {
+								"label": "Website",
+								"placeholder": "",
+								"select": null,
+								"allowTargetBlank": true,
+								"allowText": true,
+								"repeat": false
+							}
+						},
+						"address": {
+							"type": "StructuredText",
+							"config": {
+								"label": "Adresse",
+								"placeholder": "",
+								"allowTargetBlank": false,
+								"multi": "paragraph"
+							}
+						}
+					}
+				}
+			},
+			"cookies_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Cookies Text",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"agb": {
+				"type": "StructuredText",
+				"config": {
+					"label": "AGB",
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
