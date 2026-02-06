@@ -50,7 +50,7 @@
 			"e_mail": {
 				"type": "Text",
 				"config": {
-					"label": "E-Mail",
+					"label": "Korrespondenz E-Mail",
 					"placeholder": ""
 				}
 			},

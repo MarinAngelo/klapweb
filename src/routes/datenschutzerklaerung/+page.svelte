@@ -1,6 +1,7 @@
 <script lang="ts">
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import AddressBlock from '$lib/components/AddressBlock.svelte';
+	import { hardcodeTexts } from '$lib/i18n/hardcodeTexts';
 	import type { RTNode } from '@prismicio/types';
 	export let data;
 
@@ -38,15 +39,16 @@
 	</p>
 	<h2>Verantwortliche Stelle</h2>
 	<AddressBlock
-		responsible_person_company={settings?.data?.responsible_person_company ?? 'Angelo Klap'}
+		responsible_person_company={settings?.data?.responsible_person_company ??
+			hardcodeTexts.de.responsible_person_company}
 		responsible_address={settings?.data?.responsible_address &&
 		Array.isArray(settings?.data?.responsible_address) &&
 		settings?.data?.responsible_address.length > 0
 			? settings?.data?.responsible_address
-			: [{ type: 'paragraph', text: 'Schubertstrasse 21\n8037 Zürich\nSchweiz', spans: [] }]}
+			: [{ type: 'paragraph', text: hardcodeTexts.de.responsible_address, spans: [] }]}
 		responsible_email={settings?.data?.responsible_email ??
 			settings?.data?.e_mail ??
-			'admin@klap-web.ch'}
+			hardcodeTexts.de.responsible_email}
 	/>
 	<PrismicRichText
 		field={Array.isArray(privacyField) && privacyField.length > 0 ? privacyField : fallback}

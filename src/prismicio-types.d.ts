@@ -492,7 +492,7 @@ interface SettingsDocumentData {
 	responsible_email: prismic.KeyTextField;
 
 	/**
-	 * E-Mail field in *Einstellungen*
+	 * Korrespondenz E-Mail field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
