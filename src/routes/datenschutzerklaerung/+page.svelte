@@ -2,9 +2,13 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import AddressBlock from '$lib/components/AddressBlock.svelte';
 	import { hardcodeTexts } from '$lib/i18n/hardcodeTexts';
-	import type { RTNode } from '@prismicio/types';
+
 	export let data;
 
+	const settings = data?.settings;
+
+	// Cookie-Text aus CMS oder Fallback
+	const cookiesText = settings?.data?.cookies_text ?? hardcodeTexts.de.cookies_text;
 	// Fallback-Text: Nur Datenschutzerklärung, keine Adresse
 	const fallback: [RTNode, ...RTNode[]] = [
 		{ type: 'heading2', text: 'Erhebung und Verarbeitung von Daten', spans: [] },
@@ -22,7 +26,7 @@
 	];
 
 	// settings aus data holen (wird von +layout.server.ts bereitgestellt)
-	const settings = data?.settings;
+	// bereits oben deklariert
 	const privacyField = settings?.data?.privacy_policy;
 
 	// Nur Paragraphen mit text-Feld für die Adresse
@@ -50,6 +54,13 @@
 			settings?.data?.e_mail ??
 			hardcodeTexts.de.responsible_email}
 	/>
+	<h2>Einsatz von Cookies</h2>
+	{#if Array.isArray(settings?.data?.cookies_text) && settings.data.cookies_text.length > 0}
+		<PrismicRichText field={settings.data.cookies_text} />
+	{:else}
+		<p>{hardcodeTexts.de.cookies_text}</p>
+	{/if}
+
 	<PrismicRichText
 		field={Array.isArray(privacyField) && privacyField.length > 0 ? privacyField : fallback}
 	/>

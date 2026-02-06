@@ -130,6 +130,24 @@
 						}
 					}
 				}
+			},
+			"cookies_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Cookies Text",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"agb": {
+				"type": "StructuredText",
+				"config": {
+					"label": "AGB",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
 			}
 		}
 	}

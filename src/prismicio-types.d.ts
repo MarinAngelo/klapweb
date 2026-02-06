@@ -534,6 +534,28 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	contacts: prismic.GroupField<Simplify<SettingsDocumentDataContactsItem>>;
+
+	/**
+	 * Cookies Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.cookies_text
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	cookies_text: prismic.RichTextField;
+
+	/**
+	 * AGB field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.agb
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	agb: prismic.RichTextField;
 }
 
 /**
