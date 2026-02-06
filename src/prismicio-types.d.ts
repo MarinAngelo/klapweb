@@ -367,6 +367,72 @@ export type PageDocument<Lang extends string = string> = prismic.PrismicDocument
 >;
 
 /**
+ * Item in *Einstellungen → Kontakte*
+ */
+export interface SettingsDocumentDataContactsItem {
+	/**
+	 * Impressum field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.contacts[].impressum
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	impressum: prismic.BooleanField;
+
+	/**
+	 * Titel / Funktion field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z. B. Design
+	 * - **API ID Path**: settings.contacts[].title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Name field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.contacts[].name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	name: prismic.KeyTextField;
+
+	/**
+	 * E-Mail field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.contacts[].email
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	email: prismic.KeyTextField;
+
+	/**
+	 * Website field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.contacts[].website
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	website: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Adresse field in *Einstellungen → Kontakte*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.contacts[].address
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	address: prismic.RichTextField;
+}
+
+/**
  * Content for Einstellungen documents
  */
 interface SettingsDocumentData {
@@ -446,6 +512,28 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	privacy_policy: prismic.RichTextField;
+
+	/**
+	 * Impressum field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.legal_disclosure
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	legal_disclosure: prismic.RichTextField;
+
+	/**
+	 * Kontakte field in *Einstellungen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.contacts[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	contacts: prismic.GroupField<Simplify<SettingsDocumentDataContactsItem>>;
 }
 
 /**
@@ -2572,6 +2660,7 @@ declare module '@prismicio/client' {
 			PageDocumentDataSlicesSlice,
 			SettingsDocument,
 			SettingsDocumentData,
+			SettingsDocumentDataContactsItem,
 			ThemeDocument,
 			ThemeDocumentData,
 			AllDocumentTypes,

@@ -25,13 +25,13 @@
 	const privacyField = settings?.data?.privacy_policy;
 
 	// Nur Paragraphen mit text-Feld für die Adresse
-	$: computedAddress = (
-		settings?.data?.responsible_address ?? []
-	).filter((b) => b.type === 'paragraph' && typeof b.text === 'string');
+	$: computedAddress = (settings?.data?.responsible_address ?? []).filter(
+		(b) => b.type === 'paragraph' && typeof b.text === 'string'
+	);
 </script>
 
-<main class="prose mx-auto py-12">
-	<h1>Datenschutzerklärung</h1>
+<main class="prose mx-auto py-12 px-4 sm:px-6">
+	<h1 class="break-words hyphens-auto">Datenschutzerklärung</h1>
 	<p>
 		Diese Website verarbeitet personenbezogene Daten gemäß den gesetzlichen Bestimmungen. Weitere
 		Informationen finden Sie in den folgenden Abschnitten.
@@ -39,11 +39,11 @@
 	<h2>Verantwortliche Stelle</h2>
 	<AddressBlock
 		responsible_person_company={settings?.data?.responsible_person_company ?? 'Angelo Klap'}
-		responsible_address={
-			(settings?.data?.responsible_address && Array.isArray(settings?.data?.responsible_address) && settings?.data?.responsible_address.length > 0)
-				? settings?.data?.responsible_address
-				: [{ type: 'paragraph', text: 'Schubertstrasse 21\n8037 Zürich\nSchweiz', spans: [] }]
-		}
+		responsible_address={settings?.data?.responsible_address &&
+		Array.isArray(settings?.data?.responsible_address) &&
+		settings?.data?.responsible_address.length > 0
+			? settings?.data?.responsible_address
+			: [{ type: 'paragraph', text: 'Schubertstrasse 21\n8037 Zürich\nSchweiz', spans: [] }]}
 		responsible_email={settings?.data?.responsible_email ??
 			settings?.data?.e_mail ??
 			'admin@klap-web.ch'}

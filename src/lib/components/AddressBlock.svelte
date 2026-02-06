@@ -11,7 +11,9 @@
 			<p>{line}</p>
 		{/each}
 	{/each}
-	<p>{responsible_email}</p>
+	{#if responsible_email}
+		<p>E-Mail: <a href={`mailto:${responsible_email}`}>{responsible_email}</a></p>
+	{/if}
 </div>
 
 <style>
