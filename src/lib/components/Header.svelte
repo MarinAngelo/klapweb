@@ -14,6 +14,8 @@
 	export let settings: Content.SettingsDocument | undefined;
 	export let navigation: Content.NavigationDocument | undefined;
 	export let prismicTheme: PrismicDocument | undefined;
+	export let lang: string | undefined;
+	export let locales: string[] | undefined;
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -117,7 +119,7 @@
 		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
 			<div class="logo m-0">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href="/" class="flex items-center mt-2 mb-2">
+					<a href={lang === 'de-ch' ? '/' : `/${lang}`} class="flex items-center mt-2 mb-2">
 						<PrismicImage
 							field={prismicTheme.data.logo}
 							alt={prismicTheme.data.logo.alt}
@@ -126,7 +128,7 @@
 						/>
 					</a>
 				{:else if settings?.data}
-					<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
+					<a href={lang === 'de-ch' ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerColor};">
 						<span
 							class="text-xl font-semibold tracking-tight"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
@@ -149,6 +151,8 @@
 					{headerLinkHoverColor}
 					{currentPath}
 					{headerHeight}
+					{lang}
+					{locales}
 				/>
 			{/if}
 		</div>

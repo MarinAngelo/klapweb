@@ -104,6 +104,12 @@
 	{#if adobeFontUrl}
 		<link rel="stylesheet" href={adobeFontUrl} />
 	{/if}
+	{#if $page.data.page?.alternate_languages}
+        {#each $page.data.page.alternate_languages as alt}
+            <link rel="alternate" hreflang={alt.lang} href="{alt.url}" />
+        {/each}
+        <link rel="alternate" hreflang="x-default" href="https://deine-domain.ch/" />
+    {/if}
 	<link rel="stylesheet" href={googleFontsUrl || ''} data-dynamic-google-fonts="true" />
 </svelte:head>
 <div style="background-color: {$theme.pageBgColor};">
@@ -112,6 +118,8 @@
 			navigation={data?.navigation || []}
 			settings={data?.settings || {}}
 			prismicTheme={data?.prismicTheme || {}}
+			lang={data?.lang}
+			locales={data?.locales}
 		/>
 	{/if}
 	<main style={bodyFontStyle}>
