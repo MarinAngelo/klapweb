@@ -1,18 +1,31 @@
 import { asText } from '@prismicio/client';
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { defaultLang } from '$lib/i18n/i18n';
+import { defaultLang, staticRoutes } from '$lib/i18n/i18n';
 
 export async function load({ params, fetch, cookies }) {
+	const { uid, lang = defaultLang } = params;
+
+	// 1. Prüfen, ob die UID zu einer deiner statischen Code-Seiten gehört
+	// Wir schauen, ob die UID irgendwo in den Werten von staticRoutes vorkommt
+	const isStatic = Object.values(staticRoutes).some((mapping) =>
+		Object.values(mapping).includes(uid)
+	);
+
+	// Wenn es eine statische Route ist, liefern wir nur die Basis-Daten zurück.
+	// Prismic wird hier NICHT abgefragt, um den 500er Fehler zu vermeiden.
+	if (isStatic) {
+		return {
+			uid,
+			lang
+		};
+	}
+
+	// 2. Normaler Prismic-Load für alle dynamischen CMS-Seiten
 	const client = createClient({ fetch, cookies });
 
-	// Wir extrahieren die Sprache aus der URL.
-	// Falls keine da ist (weil wir im Standard-Pfad sind), nutzen wir defaultLang.
-	const lang = params.lang || defaultLang;
-
 	try {
-		// WICHTIG: Wir übergeben params.uid UND das lang-Objekt
-		const page = await client.getByUID('page', params.uid, { lang });
+		const page = await client.getByUID('page', uid, { lang });
 
 		return {
 			page,
@@ -20,31 +33,42 @@ export async function load({ params, fetch, cookies }) {
 			meta_description: page.data.meta_description,
 			meta_title: page.data.meta_title,
 			meta_image: page.data.meta_image?.url,
-			no_index: page.data.no_index
+			no_index: page.data.no_index,
+			lang // Wir geben die Sprache explizit mit für die Inhaltskomponenten
 		};
 	} catch (e) {
-		// Wenn die Seite in dieser Sprache nicht existiert: 404
-		console.error(`Seite ${params.uid} in Sprache ${lang} nicht gefunden.`);
+		console.error(`Seite ${uid} in Sprache ${lang} nicht gefunden.`);
 		throw error(404, 'Page not found');
 	}
 }
 
 /**
- * Für statisches Rendering (SSG) müssen wir SvelteKit sagen,
- * welche Kombinationen aus UID und Sprache existieren.
+ * Für statisches Rendering (SSG)
  */
 export async function entries() {
 	const client = createClient();
 
-	// Wir holen ALLE Seiten über alle Sprachen hinweg
+	// Wir holen ALLE Seiten aus Prismic
 	const pages = await client.getAllByType('page', { lang: '*' });
 
-	return pages.map((page) => {
+	const entries = pages.map((page) => {
 		return {
 			uid: page.uid,
-			// Wenn es die Standardsprache ist, lassen wir 'lang' weg,
-			// damit die URL sauber bleibt (z.B. /ueber-uns statt /de-ch/ueber-uns)
 			lang: page.lang === defaultLang ? undefined : page.lang
 		};
 	});
+
+	// ZUSÄTZLICH: Die statischen Routen für SSG hinzufügen
+	// Damit SvelteKit weiß, dass /en-us/privacy-policy etc. existieren
+	for (const key in staticRoutes) {
+		const mapping = staticRoutes[key];
+		for (const [l, slug] of Object.entries(mapping)) {
+			entries.push({
+				uid: slug,
+				lang: l === defaultLang ? undefined : l
+			});
+		}
+	}
+
+	return entries;
 }

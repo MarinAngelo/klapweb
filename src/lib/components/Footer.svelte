@@ -2,6 +2,7 @@
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
+	import { page } from '$app/stores';
 
 	import Bounded from './Bounded.svelte';
 
@@ -10,12 +11,9 @@
 
 	$: ({
 		footerColor,
-		footerBgColor,
 		footerFontSizeTopBar,
 		footerFontSizeButtonBar,
-		footerLinkColor,
-		footerLinkHoverColor,
-		pageFont
+		footerLinkHoverColor
 	} = $theme);
 
 	let email = settings.data?.e_mail || '';
@@ -24,16 +22,16 @@
 	const currentYear = new Date().getFullYear();
 
 	// Event-Handler für Hover-Effekte
-	const handleHover = (e: Event, color: string) => {
+	const handleHover = (e: Event, color?: string) => {
 		const el = e.target as HTMLElement;
-		if (el) el.style.color = color;
+		if (el) el.style.color = color ?? 'var(--footer-link-hover-color)';
 	};
 </script>
 
 <Bounded
 	tag="footer"
 	yPadding="none"
-	style="background-color: {footerBgColor}; color: {footerColor} !important; font-family: {pageFont}; margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
+	style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
 >
 	<footer class="w-full h-full text-inherit">
 		<!-- Topbar -->
@@ -45,7 +43,7 @@
 							<PrismicLink
 								field={link.link}
 								class="footer-nav-link hover:underline text-sm leading-tight text-center"
-								style="color: {footerLinkColor}; font-size: {footerFontSizeTopBar}rem;"
+								style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
 							>
 								<PrismicText field={link.label} />
 							</PrismicLink>
@@ -55,14 +53,14 @@
 			</ul>
 		</div>
 		<div class="flex justify-center items-center h-full mb-9">
-			<p style="color: {footerColor}; font-size: {footerFontSizeTopBar}rem;">
+			<p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
 				Kontakt:
 				<a
 					href={`mailto:${email}`}
 					class="text-center text-inherit hover:underline"
-					style="font-size: {footerFontSizeTopBar}rem; color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-					on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-					on:mouseleave={(e) => handleHover(e, footerLinkColor)}
+					style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 				>
 					{email}
 				</a>
@@ -73,73 +71,81 @@
 
 		<!-- Buttonbar -->
 		<div class="mt-4 text-center">
-			
-			<p class="text-inherit footer-buttonbar-p" style="font-size: {footerFontSizeButtonBar}rem;">
-				<a
-				href="/datenschutzerklaerung"
-				class="hover:underline text-inherit"
-				style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-				on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-				on:mouseleave={(e) => handleHover(e, footerLinkColor)}
-				>
-				Datenschutzerklärung
-			</a>
-			&nbsp;|&nbsp;
-			<a
-			href="/impressum"
-			class="hover:underline text-inherit"
-			style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-			on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-			on:mouseleave={(e) => handleHover(e, footerLinkColor)}
+			<p
+				class="text-inherit footer-buttonbar-p"
+				style="font-size: var(--footer-font-size-button-bar-rem);"
 			>
-			Impressum
-		</a>
-		{#if settings.data?.agb && settings.data.agb.length > 0}
-		&nbsp;|&nbsp;
-		<a
-		href="/agb"
-		class="hover:underline text-inherit"
-		style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-		on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-		on:mouseleave={(e) => handleHover(e, footerLinkColor)}
-					>
-						AGB
-					</a>
-					{/if}
-				</p>
-				
-				<p class="text-inherit footer-buttonbar-p" style="font-size: {footerFontSizeButtonBar}rem;">
-					Website erstellt mit
+				<a
+					href={$page.data.lang === 'en-us' ? '/en-us/privacy-policy' : '/datenschutzerklaerung'}
+					class="hover:underline text-inherit"
+					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+				>
+					{$page.data.lang === 'en-us' ? 'Privacy Policy' : 'Datenschutzerklärung'}
+				</a>
+				&nbsp;|&nbsp;
+				<a
+					href={$page.data.lang === 'en-us' ? '/en-us/legal-notice' : '/impressum'}
+					class="hover:underline text-inherit"
+					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+				>
+					{$page.data.lang === 'en-us' ? 'Legal Notice' : 'Impressum'}
+				</a>
+				{#if settings.data?.agb && settings.data.agb.length > 0}
+					&nbsp;|&nbsp;
 					<a
+						href={$page.data.lang === 'en-us' ? '/en-us/terms-and-conditions' : '/agb'}
+						class="hover:underline text-inherit"
+						style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+					>
+						{$page.data.lang === 'en-us' ? 'Terms and Conditions' : 'AGB'}
+					</a>
+				{/if}
+			</p>
+
+			<p
+				class="text-inherit footer-buttonbar-p"
+				style="font-size: var(--footer-font-size-button-bar-rem);"
+			>
+				Website erstellt mit
+				<a
 					href="https://svelte.dev"
 					target="_blank"
 					rel="noopener noreferrer nofollow"
 					class="hover:underline text-inherit"
-					style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-					on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-					on:mouseleave={(e) => handleHover(e, footerLinkColor)}
-					>
+					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+				>
 					Svelte
 				</a>
 				&nbsp;|&nbsp;
 				<a
-				href="https://prismic.io"
-				target="_blank"
-				rel="noopener noreferrer nofollow"
-				class="hover:underline text-inherit"
-				style="color: {footerLinkColor}; --hover-text-color: {footerLinkHoverColor};"
-				on:mouseenter={(e) => handleHover(e, footerLinkHoverColor)}
-				on:mouseleave={(e) => handleHover(e, footerLinkColor)}
+					href="https://prismic.io"
+					target="_blank"
+					rel="noopener noreferrer nofollow"
+					class="hover:underline text-inherit"
+					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
+					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 				>
-				Prismic
-			</a>
-		</p>
-		<p class="text-inherit footer-buttonbar-p" style="font-size: {footerFontSizeButtonBar}rem;">
-			&copy; {currentYear}
-			{responsiblePersonCompany}. Alle Rechte vorbehalten.
-		</p>
-	</div>
-</footer>
+					Prismic
+				</a>
+			</p>
+			<p
+				class="text-inherit footer-buttonbar-p"
+				style="font-size: var(--footer-font-size-button-bar-rem);"
+			>
+				&copy; {currentYear}
+				{responsiblePersonCompany}. Alle Rechte vorbehalten.
+			</p>
+		</div>
+	</footer>
 </Bounded>
 
 <style>

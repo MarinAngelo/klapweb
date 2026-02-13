@@ -1,28 +1,39 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { isMenuOpen } from '../stores/isMenuOpen';
-  // HIER FEHLTE DER IMPORT:
-  import { defaultLang } from '$lib/i18n/i18n'; 
-
+  import { defaultLang, staticRoutes } from '$lib/i18n/i18n';
+  
   export let lang: string | undefined = '';
   export let locales: string[] = [];
 
-  $: alternateLanguages = $page.data.page?.alternate_languages || [];
+  // Hier nutzen wir das ? um Fehler zu vermeiden, falls .page fehlt
+  $: alternateLanguages = $page.data?.page?.alternate_languages || [];
 
   function getHref(targetLang: string) {
-    const alt = alternateLanguages.find((a: any) => a.lang === targetLang);
-    
-    // Logik für die Startseite
-    if (alt && alt.uid === 'home') {
-      return targetLang === defaultLang ? '/' : `/${targetLang}`;
+    const path = $page.url.pathname;
+    const segments = path.split('/').filter(Boolean);
+
+    // Slug extrahieren (z.B. "legal-notice" oder "impressum")
+    const currentSlug = (segments[0] === 'en-us' || segments[0] === 'de-ch') 
+        ? segments[1] 
+        : segments[0];
+
+    // 1. STATISCHES MAPPING
+    for (const key in staticRoutes) {
+      const mapping = staticRoutes[key];
+      if (Object.values(mapping).includes(currentSlug)) {
+        const targetSlug = mapping[targetLang];
+        return targetLang === defaultLang ? `/${targetSlug}` : `/${targetLang}/${targetSlug}`;
+      }
     }
 
-    // Logik für Unterseiten
+    // 2. PRISMIC LOGIK
+    // Wir prüfen hier auch nochmal mit ?, falls alternateLanguages undefined ist
+    const alt = alternateLanguages?.find((a: any) => a.lang === targetLang);
     if (alt && alt.uid) {
+      if (alt.uid === 'home') return targetLang === defaultLang ? '/' : `/${targetLang}`;
       return targetLang === defaultLang ? `/${alt.uid}` : `/${targetLang}/${alt.uid}`;
     }
-    
-    // Fallback
+
     return targetLang === defaultLang ? '/' : `/${targetLang}`;
   }
 </script>

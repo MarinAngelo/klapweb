@@ -20,3 +20,22 @@ export const defaultLang = languages[0];
 export const isLanguage = (param: string): param is string => {
 	return languages.includes(param);
 };
+
+/**
+ * MAPPING FÜR STATISCHE ROUTEN
+ * Hier definierst du die Verknüpfung der Pfade, die nicht im CMS liegen.
+ */
+export const staticRoutes: Record<string, Record<string, string>> = {
+    'impressum': {
+        'de-ch': 'impressum',
+        'en-us': 'legal-notice'
+    },
+    'datenschutz': {
+        'de-ch': 'datenschutzerklaerung',
+        'en-us': 'privacy-policy'
+    },
+    'agb': {
+        'de-ch': 'agb',
+        'en-us': 'terms-and-conditions'
+    }
+}; 
