@@ -555,7 +555,82 @@ interface SettingsDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
-	agb: prismic.RichTextField;
+	agb: prismic.RichTextField; /**
+	 * Website Domain field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung.
+	 * - **API ID Path**: settings.domain
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	domain: prismic.KeyTextField;
+
+	/**
+	 * Website Name field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Der Name der Firma/Brand (z.B. Klap Web). Wird an Seitentitel angehängt.
+	 * - **API ID Path**: settings.site_name
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	site_name: prismic.KeyTextField;
+
+	/**
+	 * Globaler SEO Titel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *Klap Web)
+	 * - **API ID Path**: settings.meta_title
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	meta_title: prismic.KeyTextField;
+
+	/**
+	 * Globale Beschreibung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: (150–160 Zeichen) Standard-Suchergebnis-Text für Seiten ohne eigene Beschreibung.
+	 * - **API ID Path**: settings.meta_description
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	meta_description: prismic.RichTextField;
+
+	/**
+	 * Standard Social Image field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.meta_image
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	meta_image: prismic.ImageField<never>;
+
+	/**
+	 * Adobe Project ID field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy
+	 * - **API ID Path**: settings.adobe_font_id
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	adobe_font_id: prismic.KeyTextField;
+
+	/**
+	 * Favicon field in *Einstellungen*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.favicon
+	 * - **Tab**: SEO
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	favicon: prismic.ImageField<never>;
 }
 
 /**
