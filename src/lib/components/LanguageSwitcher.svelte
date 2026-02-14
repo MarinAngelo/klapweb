@@ -1,51 +1,60 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { defaultLang, staticRoutes } from '$lib/i18n/i18n';
-  
-  export let lang: string | undefined = '';
+
   export let locales: string[] = [];
+  export let lang: string = '';
 
-  // Hier nutzen wir das ? um Fehler zu vermeiden, falls .page fehlt
-  $: alternateLanguages = $page.data?.page?.alternate_languages || [];
+  // 1. Reaktivität für Prismic-Daten
+  $: alternateLanguages = $page.data.page?.alternate_languages || [];
 
-  function getHref(targetLang: string) {
+  // 2. Funktion für statisches Mapping (z.B. /impressum <-> /en-us/legal-notice)
+  function getStaticHref(targetLoc: string) {
     const path = $page.url.pathname;
     const segments = path.split('/').filter(Boolean);
-
-    // Slug extrahieren (z.B. "legal-notice" oder "impressum")
+    
+    // Aktuellen Slug ohne Sprachkürzel ermitteln
     const currentSlug = (segments[0] === 'en-us' || segments[0] === 'de-ch') 
         ? segments[1] 
         : segments[0];
 
-    // 1. STATISCHES MAPPING
+    // In staticRoutes aus i18n.ts suchen
     for (const key in staticRoutes) {
       const mapping = staticRoutes[key];
       if (Object.values(mapping).includes(currentSlug)) {
-        const targetSlug = mapping[targetLang];
-        return targetLang === defaultLang ? `/${targetSlug}` : `/${targetLang}/${targetSlug}`;
+        const targetSlug = mapping[targetLoc];
+        return targetLoc === defaultLang ? `/${targetSlug}` : `/${targetLoc}/${targetSlug}`;
       }
     }
+    return null;
+  }
 
-    // 2. PRISMIC LOGIK
-    // Wir prüfen hier auch nochmal mit ?, falls alternateLanguages undefined ist
-    const alt = alternateLanguages?.find((a: any) => a.lang === targetLang);
+  function getHref(targetLoc: string, currentAlts: any[]) {
+    if (targetLoc === lang) return $page.url.pathname;
+
+    // A. PRISMIC CHECK
+    const alt = currentAlts.find((a: any) => a.lang === targetLoc);
     if (alt && alt.uid) {
-      if (alt.uid === 'home') return targetLang === defaultLang ? '/' : `/${targetLang}`;
-      return targetLang === defaultLang ? `/${alt.uid}` : `/${targetLang}/${alt.uid}`;
+      const slug = alt.uid === 'home' ? '' : alt.uid;
+      const path = targetLoc === defaultLang ? `/${slug}` : `/${targetLoc}/${slug}`;
+      return path.replace(/\/$/, '') || '/';
     }
 
-    return targetLang === defaultLang ? '/' : `/${targetLang}`;
+    // B. STATISCHER CHECK (für Impressum etc.)
+    const staticPath = getStaticHref(targetLoc);
+    if (staticPath) return staticPath;
+
+    // C. FALLBACK HOMEPAGE
+    return targetLoc === defaultLang ? '/' : `/${targetLoc}`;
   }
 </script>
 
 <div class="flex gap-3 items-center">
-  {#if locales && locales.length > 0}
+  {#if locales}
     {#each locales as loc}
       <a
-        href={getHref(loc)}
-        class="text-xs font-bold uppercase tracking-wider transition-all
-               {lang === loc ? 'opacity-100 underline underline-offset-4' : 'opacity-50 hover:opacity-100'}"
-        on:click={() => isMenuOpen.set(false)}
+        href={getHref(loc, alternateLanguages)}
+        class="text-xs font-bold uppercase transition-all {lang === loc ? 'underline opacity-100' : 'opacity-50 hover:opacity-100'}"
       >
         {loc.split('-')[0]}
       </a>

@@ -149,6 +149,67 @@
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
 				}
 			}
+		},
+		"SEO": {
+			"domain": {
+				"type": "Text",
+				"config": {
+					"label": "Website Domain",
+					"placeholder": "Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung."
+				}
+			},
+			"site_name": {
+				"type": "Text",
+				"config": {
+					"label": "Website Name",
+					"placeholder": "Der Name der Firma/Brand (z.B. Klap Web). Wird an Seitentitel angehängt."
+				}
+			},
+			"meta_title": {
+				"type": "Text",
+				"config": {
+					"label": "Globaler SEO Titel",
+					"placeholder": "Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *Klap Web)"
+				}
+			},
+			"meta_description": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Globale Beschreibung",
+					"placeholder": "(150–160 Zeichen) Standard-Suchergebnis-Text für Seiten ohne eigene Beschreibung.",
+					"allowTargetBlank": false,
+					"single": "paragraph"
+				}
+			},
+			"meta_image": {
+				"type": "Image",
+				"config": {
+					"label": "Standard Social Image",
+					"constraint": {
+						"width": 1200,
+						"height": 630
+					},
+					"thumbnails": []
+				}
+			},
+			"adobe_font_id": {
+				"type": "Text",
+				"config": {
+					"label": "Adobe Project ID",
+					"placeholder": "Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy"
+				}
+			},
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon",
+					"constraint": {
+						"width": 32,
+						"height": 32
+					},
+					"thumbnails": []
+				}
+			}
 		}
 	}
 }
