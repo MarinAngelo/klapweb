@@ -555,7 +555,19 @@ interface SettingsDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
-	agb: prismic.RichTextField; /**
+	agb: prismic.RichTextField;
+
+	/**
+	 * Sprachwechsler anzeigen? field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: settings.show_language_switcher
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	show_language_switcher: prismic.BooleanField; /**
 	 * Website Domain field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text

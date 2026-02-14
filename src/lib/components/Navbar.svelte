@@ -17,6 +17,8 @@
     export let headerHeight;
     export let lang: string | undefined;    // NEU
     export let locales: string[] | undefined; // NEU
+    export let showSwitcher: boolean | undefined; // NEU
+    console.log('Navbar received showSwitcher:', showSwitcher); // Debug-Ausgabe
 
     const { headerLinkFont } = get(theme);
 
@@ -154,9 +156,9 @@
                 {/if}
             {/each}
 
-            {#if lang && locales}
+            {#if showSwitcher && lang && locales}
                 <li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4">
-                    <LanguageSwitcher {lang} {locales} />
+                    <LanguageSwitcher {lang} {locales}/>
                 </li>
             {/if}
         </ul>

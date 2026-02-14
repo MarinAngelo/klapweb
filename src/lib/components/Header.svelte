@@ -16,6 +16,7 @@
 	export let prismicTheme: PrismicDocument | undefined;
 	export let lang: string | undefined;
 	export let locales: string[] | undefined;
+	export let showSwitcher: boolean | undefined;
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -153,6 +154,7 @@
 					{headerHeight}
 					{lang}
 					{locales}
+					{showSwitcher}
 				/>
 			{/if}
 		</div>
