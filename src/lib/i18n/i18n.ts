@@ -5,13 +5,14 @@
  */
 
 // Definiere hier deine Prismic-Sprachcodes (Locales)
-export const languages: string[] = ['de-ch', 'en-us'];
+export const languages: string[] = ['en-us', 'de-ch'];
 
 /**
  * Die Standard-Sprache (Master Language).
  * Wir nehmen automatisch das erste Element aus dem Array.
  */
 export const defaultLang = languages[0];
+console.log('Standard-Sprache (defaultLang) ist:', defaultLang);
 
 /**
  * Hilfsmethode für SvelteKit-Matcher und Server-Hooks,

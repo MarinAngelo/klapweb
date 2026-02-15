@@ -157,6 +157,15 @@
 					"placeholder_true": "Ja",
 					"default_value": false
 				}
+			},
+			"main_language": {
+				"type": "Select",
+				"config": {
+					"label": "Hauptsprache",
+					"placeholder": "",
+					"options": ["Deutsch", "Englisch"],
+					"default_value": "Deutsch"
+				}
 			}
 		},
 		"SEO": {

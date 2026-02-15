@@ -17,6 +17,7 @@
 	export let lang: string | undefined;
 	export let locales: string[] | undefined;
 	export let showSwitcher: boolean | undefined;
+	export let allAlternates: any[] = [];
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -155,6 +156,7 @@
 					{lang}
 					{locales}
 					{showSwitcher}
+					allAlternates={allAlternates}
 				/>
 			{/if}
 		</div>

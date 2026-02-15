@@ -1,6 +1,7 @@
 import { asText } from '@prismicio/client';
 import { createClient } from '$lib/prismicio';
 import { defaultLang } from '$lib/i18n/i18n';
+import { error } from '@sveltejs/kit';
 
 export async function load({ params, fetch, cookies }) {
 	const client = createClient({ fetch, cookies });

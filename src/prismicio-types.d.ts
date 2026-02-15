@@ -567,7 +567,19 @@ interface SettingsDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	show_language_switcher: prismic.BooleanField; /**
+	show_language_switcher: prismic.BooleanField;
+
+	/**
+	 * Hauptsprache field in *Einstellungen*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Deutsch
+	 * - **API ID Path**: settings.main_language
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	main_language: prismic.SelectField<'Deutsch' | 'Englisch', 'filled'>; /**
 	 * Website Domain field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text

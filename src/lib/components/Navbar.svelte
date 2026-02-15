@@ -2,7 +2,7 @@
     import { PrismicLink, PrismicText } from '@prismicio/svelte';
     import Dropdown from './Dropdown.svelte';
     import SvgIcon from './SvgIcons.svelte';
-    import LanguageSwitcher from './LanguageSwitcher.svelte'; // NEU
+    import LanguageSwitcher from './LanguageSwitcher.svelte'; 
     import { theme } from '../stores/theme';
     import { get } from 'svelte/store';
     import { isMenuOpen } from '../stores/isMenuOpen';
@@ -15,10 +15,10 @@
     export let headerLinkHoverColor;
     export let currentPath;
     export let headerHeight;
-    export let lang: string | undefined;    // NEU
-    export let locales: string[] | undefined; // NEU
-    export let showSwitcher: boolean | undefined; // NEU
-    console.log('Navbar received showSwitcher:', showSwitcher); // Debug-Ausgabe
+    export let lang: string | undefined;    
+    export let locales: string[] | undefined; 
+    export let showSwitcher: boolean | undefined; 
+    export let allAlternates: any[] = []; 
 
     const { headerLinkFont } = get(theme);
 
@@ -158,7 +158,7 @@
 
             {#if showSwitcher && lang && locales}
                 <li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4">
-                    <LanguageSwitcher {lang} {locales}/>
+                    <LanguageSwitcher {lang} {locales} {allAlternates} />
                 </li>
             {/if}
         </ul>
