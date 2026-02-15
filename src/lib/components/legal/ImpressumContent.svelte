@@ -1,32 +1,29 @@
 <script lang="ts">
     import AddressBlock from '$lib/components/AddressBlock.svelte';
     import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-    import { hardcodeTexts } from '$lib/i18n/hardcodeTexts';
+    import { _ } from '$lib/stores/i18n'; // Unser neuer Store
 
     export let data: any;
-    
-    // Die Sprache aus den Daten ziehen (de-ch oder en-us)
-    $: lang = data?.lang || 'de-ch';
-    $: texts = lang === 'en-us' ? hardcodeTexts.en : hardcodeTexts.de;
     
     // Daten-Mapping
     $: settings = data?.settings?.data;
     $: contacts = settings?.contacts ?? [];
 
-    $: responsible_person_company = settings?.responsible_person_company ?? texts.responsible_person_company;
-    $: responsible_email = settings?.responsible_email ?? texts.responsible_email;
+    // Fallbacks über den Store steuern
+    $: responsible_person_company = settings?.responsible_person_company ?? $_('Verantwortliche Person/Firma fehlt');
+    $: responsible_email = settings?.responsible_email ?? $_('E-Mail fehlt');
     $: legal_disclosure = settings?.legal_disclosure;
     
     $: responsible_address =
         Array.isArray(settings?.responsible_address) && settings.responsible_address.length > 0
             ? settings.responsible_address
-            : [{ type: 'paragraph', text: texts.responsible_address, spans: [] }];
+            : [{ type: 'paragraph', text: $_('Adresse fehlt'), spans: [] }];
 </script>
 
 <main class="prose mx-auto py-12 px-4 sm:px-6">
-    <h1>{lang === 'en-us' ? 'Legal Notice' : 'Impressum'}</h1>
+    <h1>{$_('Impressum')}</h1>
     
-    <h2>{lang === 'en-us' ? 'Contact & Responsibility' : 'Kontaktadresse & Verantwortlichkeit'}</h2>
+    <h2>{$_('Kontaktadresse & Verantwortlichkeit')}</h2>
     
     <AddressBlock {responsible_person_company} {responsible_address} {responsible_email} />
     
@@ -35,9 +32,9 @@
     {/if}
 
     <div class="mt-8">
-        <h2>{lang === 'en-us' ? 'Sources & Realization' : 'Quellenangaben & Realisierung'}</h2>
+        <h2>{$_('Quellenangaben & Realisierung')}</h2>
         
-        <h3 class="text-lg font-semibold">{lang === 'en-us' ? 'Web Development' : 'Webentwicklung'}</h3>
+        <h3 class="text-lg font-semibold">{$_('Webentwicklung')}</h3>
         <p>
             Angelo Klap<br />
             <strong>Website:</strong>
