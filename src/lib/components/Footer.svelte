@@ -1,160 +1,145 @@
 <script lang="ts">
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
-	import type { Content } from '@prismicio/client';
-	import { page } from '$app/stores';
+    import { PrismicLink, PrismicText } from '@prismicio/svelte';
+    import { theme } from '$lib/stores/theme';
+    import type { Content } from '@prismicio/client';
+    import { page } from '$app/stores';
+    import { _ } from '$lib/stores/i18n'; 
 
-	import Bounded from './Bounded.svelte';
+    import Bounded from './Bounded.svelte';
 
-	export let settings: Content.SettingsDocument;
-	export let navigation: Content.NavigationDocument;
+    export let settings: Content.SettingsDocument;
+    export let navigation: Content.NavigationDocument;
 
-	$: ({
-		footerColor,
-		footerFontSizeTopBar,
-		footerFontSizeButtonBar,
-		footerLinkHoverColor
-	} = $theme);
+    // 1. REAKTIVE SPRACH-LOGIK
+    // Wir ziehen die Werte direkt aus dem Page-Store für maximale Reaktivität
+    $: dynamicDefaultLang = $page.data.mainLang || 'de-ch';
+    $: lang = $page.data.lang || 'de-ch';
 
-	let email = settings.data?.e_mail || '';
-	let responsiblePersonCompany = settings.data?.responsible_person_company || 'Klap Web';
+    // 2. REAKTIVE LINK-GENERIERUNG
+    // Durch $: wird diese Funktion jedes Mal neu definiert/getriggert, wenn lang oder dynamicDefaultLang sich ändern
+    $: getStaticHref = (deSlug: string, enSlug: string) => {
+        const targetSlug = lang === 'en-us' ? enSlug : deSlug;
+        const isDefault = lang === dynamicDefaultLang;
+        const prefix = isDefault ? '' : `/${lang}`;
+        return `${prefix}/${targetSlug}`.replace(/\/+$/, '') || '/';
+    };
 
-	const currentYear = new Date().getFullYear();
+    $: ({
+        footerColor,
+        footerFontSizeTopBar,
+        footerFontSizeButtonBar,
+        footerLinkHoverColor
+    } = $theme);
 
-	// Event-Handler für Hover-Effekte
-	const handleHover = (e: Event, color?: string) => {
-		const el = e.target as HTMLElement;
-		if (el) el.style.color = color ?? 'var(--footer-link-hover-color)';
-	};
+    // Diese Werte können reaktiv bleiben, falls sie sich im CMS ändern
+    $: email = settings.data?.e_mail || '';
+    $: responsiblePersonCompany = settings.data?.responsible_person_company || 'Klap Web';
+
+    const currentYear = new Date().getFullYear();
+
+    const handleHover = (e: Event, color?: string) => {
+        const el = e.target as HTMLElement;
+        if (el) el.style.color = color ?? 'var(--footer-link-hover-color)';
+    };
 </script>
 
 <Bounded
-	tag="footer"
-	yPadding="none"
-	style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
+    tag="footer"
+    yPadding="none"
+    style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
 >
-	<footer class="w-full h-full text-inherit">
-		<!-- Topbar -->
-		<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
-			<ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
-				{#each navigation.data.links as link}
-					{#if link.footer_sec_nav === true && link.link}
-						<li class="m-0">
-							<PrismicLink
-								field={link.link}
-								class="footer-nav-link hover:underline text-sm leading-tight text-center"
-								style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
-							>
-								<PrismicText field={link.label} />
-							</PrismicLink>
-						</li>
-					{/if}
-				{/each}
-			</ul>
-		</div>
-		<div class="flex justify-center items-center h-full mb-9">
-			<p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
-				Kontakt:
-				<a
-					href={`mailto:${email}`}
-					class="text-center text-inherit hover:underline"
-					style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-				>
-					{email}
-				</a>
-			</p>
-		</div>
+    <footer class="w-full h-full text-inherit">
+        <div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
+            <ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
+                {#each navigation.data.links as link}
+                    {#if link.footer_sec_nav === true && link.link}
+                        <li class="m-0">
+                            <PrismicLink
+                                field={link.link}
+                                class="footer-nav-link hover:underline text-sm leading-tight text-center"
+                                style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
+                            >
+                                <PrismicText field={link.label} />
+                            </PrismicLink>
+                        </li>
+                    {/if}
+                {/each}
+            </ul>
+        </div>
+        
+        <div class="flex justify-center items-center h-full mb-9">
+            <p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
+                {$_('Kontakt')}:
+                <a
+                    href={`mailto:${email}`}
+                    class="text-center text-inherit hover:underline"
+                    style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
+                    on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+                    on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+                >
+                    {email}
+                </a>
+            </p>
+        </div>
 
-		<hr class="border-current opacity-20 mb-6" />
+        <hr class="border-current opacity-20 mb-6" />
 
-		<!-- Buttonbar -->
-		<div class="mt-4 text-center">
-			<p
-				class="text-inherit footer-buttonbar-p"
-				style="font-size: var(--footer-font-size-button-bar-rem);"
-			>
-				<a
-					href={$page.data.lang === 'en-us' ? '/en-us/privacy-policy' : '/datenschutzerklaerung'}
-					class="hover:underline text-inherit"
-					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-				>
-					{$page.data.lang === 'en-us' ? 'Privacy Policy' : 'Datenschutzerklärung'}
-				</a>
-				&nbsp;|&nbsp;
-				<a
-					href={$page.data.lang === 'en-us' ? '/en-us/legal-notice' : '/impressum'}
-					class="hover:underline text-inherit"
-					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-				>
-					{$page.data.lang === 'en-us' ? 'Legal Notice' : 'Impressum'}
-				</a>
-				{#if settings.data?.agb && settings.data.agb.length > 0}
-					&nbsp;|&nbsp;
-					<a
-						href={$page.data.lang === 'en-us' ? '/en-us/terms-and-conditions' : '/agb'}
-						class="hover:underline text-inherit"
-						style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-					>
-						{$page.data.lang === 'en-us' ? 'Terms and Conditions' : 'AGB'}
-					</a>
-				{/if}
-			</p>
+        <div class="mt-4 text-center">
+            <p class="text-inherit footer-buttonbar-p" style="font-size: var(--footer-font-size-button-bar-rem);">
+                <a
+                    href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
+                    class="hover:underline text-inherit"
+                    style="color: var(--footer-link-color);"
+                    on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+                    on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+                >
+                    {$_('Datenschutz')}
+                </a>
+                
+                &nbsp;|&nbsp;
 
-			<p
-				class="text-inherit footer-buttonbar-p"
-				style="font-size: var(--footer-font-size-button-bar-rem);"
-			>
-				Website erstellt mit
-				<a
-					href="https://svelte.dev"
-					target="_blank"
-					rel="noopener noreferrer nofollow"
-					class="hover:underline text-inherit"
-					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-				>
-					Svelte
-				</a>
-				&nbsp;|&nbsp;
-				<a
-					href="https://prismic.io"
-					target="_blank"
-					rel="noopener noreferrer nofollow"
-					class="hover:underline text-inherit"
-					style="color: var(--footer-link-color); --hover-text-color: var(--footer-link-hover-color);"
-					on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-					on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-				>
-					Prismic
-				</a>
-			</p>
-			<p
-				class="text-inherit footer-buttonbar-p"
-				style="font-size: var(--footer-font-size-button-bar-rem);"
-			>
-				&copy; {currentYear}
-				{responsiblePersonCompany}. Alle Rechte vorbehalten.
-			</p>
-		</div>
-	</footer>
+                <a
+                    href={getStaticHref('impressum', 'legal-notice')}
+                    class="hover:underline text-inherit"
+                    style="color: var(--footer-link-color);"
+                    on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+                    on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+                >
+                    {$_('Impressum')}
+                </a>
+
+                {#if settings.data?.agb && settings.data.agb.length > 0}
+                    &nbsp;|&nbsp;
+                    <a
+                        href={getStaticHref('agb', 'terms-and-conditions')}
+                        class="hover:underline text-inherit"
+                        style="color: var(--footer-link-color);"
+                        on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+                        on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+                    >
+                        {$_('AGB')}
+                    </a>
+                {/if}
+            </p>
+
+            <p class="text-inherit footer-buttonbar-p" style="font-size: var(--footer-font-size-button-bar-rem);">
+                {$_('Website erstellt mit')}
+                <a href="https://svelte.dev" target="_blank" rel="noopener noreferrer nofollow" class="hover:underline text-inherit">Svelte</a>
+                &nbsp;|&nbsp;
+                <a href="https://prismic.io" target="_blank" rel="noopener noreferrer nofollow" class="hover:underline text-inherit">Prismic</a>
+            </p>
+            
+            <p class="text-inherit footer-buttonbar-p" style="font-size: var(--footer-font-size-button-bar-rem);">
+                &copy; {currentYear} {responsiblePersonCompany}. {$_('Alle Rechte vorbehalten.')}
+            </p>
+        </div>
+    </footer>
 </Bounded>
 
 <style>
-	:global(.footer-nav-link:hover) {
-		color: var(--footer-link-hover-color) !important;
-	}
-	.footer-buttonbar-p {
-		line-height: 0.8rem;
-		margin-top: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
+    .footer-buttonbar-p {
+        line-height: 1.2;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
 </style>
