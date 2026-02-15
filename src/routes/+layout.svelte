@@ -2,7 +2,7 @@
     import '../app.css';
     import { onMount } from 'svelte';
     import { afterNavigate } from '$app/navigation';
-    import { page } from '$app/stores'; 
+    import { page } from '$app/stores';
     import { PrismicPreview } from '@prismicio/svelte/kit';
     import { asText } from '@prismicio/client';
 
@@ -18,8 +18,8 @@
     import { getFontSize } from '$lib/utils/fontMapper';
 
     export let data: any;
-    
-    // 1. REAKTIVE DATEN (WICHTIG!)
+
+    // 1. REAKTIVE DATEN
     $: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
     $: dynamicDefaultLang = mainLang || 'de-ch';
     $: showSwitcher = !!settings?.data?.show_language_switcher;
@@ -38,21 +38,20 @@
     $: cleanBaseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(/\/$/, '');
     $: currentUrl = `${cleanBaseUrl}${$page.url.pathname}`;
 
-    // --- 2. SWITCHER LOGIK (DIE LÖSUNG) ---
+    // --- 2. SWITCHER & ALTERNATES LOGIK (SYNCHRONISIERT) ---
     $: allAlternates = (() => {
-        // Falls wir auf einer Error-Seite sind, verlinke nur auf die Sprach-Homes
+        // Error-Pages: Nur Homepage-Links
         if ($page.status !== 200) {
-            return (locales || []).map(l => ({
+            return (locales || []).map((l: string) => ({
                 lang: l,
                 href: l === dynamicDefaultLang ? '/' : `/${l}`
             }));
         }
 
         const p = $page.data.page;
-        // Holen der aktuellen UID aus der URL
         const currentUid = $page.params.uid || 'home';
 
-        // A. Dokument hat explizite Übersetzungen in Prismic
+        // A. Prismic Dokumente mit Übersetzungen
         if (p?.alternate_languages?.length > 0) {
             return p.alternate_languages.map((alt: any) => ({
                 lang: alt.lang,
@@ -62,42 +61,45 @@
             }));
         }
 
-        // B. Statische Routen (Impressum etc.)
+        // B. Statische Routen Mapping
         const segments = $page.url.pathname.split('/').filter(Boolean);
-        const currentSlug = segments[0] === 'en-us' || segments[0] === 'de-ch' ? segments[1] : segments[0];
-        
+        const currentSlug = (segments[0] === 'en-us' || segments[0] === 'de-ch') ? segments[1] : segments[0];
+
         for (const key in staticRoutes) {
             const mapping = staticRoutes[key];
             if (Object.values(mapping).includes(currentSlug)) {
-                return [
-                    { lang: 'de-ch', href: `/${mapping['de-ch']}` },
-                    { lang: 'en-us', href: `/en-us/${mapping['en-us']}` }
-                ];
+                return (locales || []).map(l => {
+                    const targetSlug = mapping[l];
+                    return {
+                        lang: l,
+                        href: l === dynamicDefaultLang ? `/${targetSlug}` : `/${l}/${targetSlug}`
+                    };
+                });
             }
         }
 
-        // C. FALLBACK (PROVOZIERT 404)
-        // Wir nehmen die aktuelle UID mit in die andere Sprache
+        // C. Fallback (Gleiche UID in andere Sprache)
         if (!locales) return [];
         return locales.map((l: string) => {
-            const isDefault = l === dynamicDefaultLang;
-            const prefix = isDefault ? '' : `/${l}`;
-            // Hier erzwingen wir den Pfad, der nicht existiert
+            const prefix = l === dynamicDefaultLang ? '' : `/${l}`;
             const slug = currentUid === 'home' ? '' : `/${currentUid}`;
-            const path = `${prefix}${slug}`.replace(/\/$/, '');
             return {
                 lang: l,
-                href: path || '/'
+                href: `${prefix}${slug}`
             };
         });
-    })();
-
-    // --- SEO HREFLANG & STYLING ---
-    $: seoAlternates = allAlternates.map((alt) => ({
-        lang: alt.lang,
-        href: `${cleanBaseUrl}${alt.href.startsWith('/') ? alt.href : '/' + alt.href}`
+    })().map(item => ({ 
+        ...item, 
+        href: item.href.replace(/\/+$/, '') || '/' 
     }));
 
+    // --- SEO HREFLANG ---
+    $: seoAlternates = allAlternates.map((alt) => ({
+        lang: alt.lang,
+        href: `${cleanBaseUrl}${alt.href}`
+    }));
+
+    // --- THEME & FONTS ---
     $: { updateTheme(data); }
     $: bodyFontStyle = $theme.pageFont ? `font-family: '${$theme.pageFont}';` : '';
     $: cssMobileSize = getFontSize(prismicTheme?.data?.base_font_size_mobile);
@@ -108,17 +110,15 @@
         document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
     }
 
-    // --- FONTS ---
-    $: adobeFontUrl = settings?.data?.adobe_font_id ? `https://use.typekit.net/${settings.data.adobe_font_id}.css` : null;
-    function getGoogleFontsUrl(fontsArr: any[]) {
-        if (!Array.isArray(fontsArr)) return null;
-        const families = fontsArr
+    $: googleFontsUrl = (() => {
+        if (!Array.isArray(fonts)) return null;
+        const families = fonts
             .filter((f) => f?.data?.provider === 'Google')
             .map((f) => `family=${f.data.name.replace(/\s+/g, '+')}${f.data.variants ? ':' + f.data.variants : ''}`);
         return families.length ? `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap` : null;
-    }
-    $: googleFontsUrl = getGoogleFontsUrl(data?.fonts);
+    })();
 
+    $: adobeFontUrl = settings?.data?.adobe_font_id ? `https://use.typekit.net/${settings.data.adobe_font_id}.css` : null;
     $: hasBannerOverlap = $page.data?.page?.data?.slices?.find((s: any) => s.slice_type === 'hero')?.primary?.banner_overlap === true;
     $: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
@@ -153,28 +153,22 @@
 
 <div style="background-color: {$theme.pageBgColor};">
     {#if !isLandingPage}
-        <Header
-            navigation={navigation || []}
-            settings={settings || {}}
-            prismicTheme={prismicTheme || {}}
-            lang={lang}
-            locales={locales}
-			allAlternates={allAlternates}
-            {showSwitcher}
-        />
+        <Header {navigation} {settings} {prismicTheme} {lang} {locales} {allAlternates} {showSwitcher} />
     {/if}
     <main style={bodyFontStyle}>
         {#if $page.data?.title && !hasBannerOverlap}
             <Bounded as="section" style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};">
                 <h1 class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
-                    {$page.data?.title || 'Standardtitel'}
+                    {$page.data?.title}
                 </h1>
             </Bounded>
         {/if}
-        <slot />
+        {#key $page.url.pathname}
+            <slot />
+        {/key}
     </main>
     {#if !isLandingPage}
-        <Footer navigation={navigation || []} settings={settings || {}} lang={lang} />
+        <Footer {navigation} {settings} {lang} />
     {/if}
 </div>
 <PrismicPreview {repositoryName} />
