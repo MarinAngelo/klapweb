@@ -558,7 +558,7 @@ interface SettingsDocumentData {
 	agb: prismic.RichTextField;
 
 	/**
-	 * Sprachwechsler anzeigen? field in *Einstellungen*
+	 * Mehrere Sprachen verwenden field in *Einstellungen*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*

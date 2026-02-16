@@ -8,61 +8,74 @@ export async function load({ params, fetch, cookies, url }) {
 	const client = createClient({ fetch, cookies });
 
 	try {
-		// 1. Repo-Infos holen (Die technische "Wahrheit" von Prismic)
-		// Wir verlassen uns zu 100% auf die Repository-Einstellungen.
+		// 1. Repo-Infos (Master-Ermittlung)
 		const repo = await client.getRepository();
-		const technicalMaster = repo.languages.find((l) => l.isMaster)?.id || 'de-ch';
+		const technicalMaster =
+			repo.languages.find((l) => l.isMaster === true)?.id || repo.languages[0].id;
 		const allLocales = repo.languages.map((l) => l.id);
-
-		// Die mainLang ist nun immer der technische Master.
 		const mainLang = technicalMaster;
 
-		// 2. Basis-Settings laden (Referenz-Sprache ist der Master)
-		const baseSettings = await client
-			.getSingle('settings', { lang: mainLang })
-			.catch(() => client.getSingle('settings', { lang: '*' }));
+		// 2. Basis-Settings laden (vom Master)
+		const baseSettings = await client.getSingle('settings', { lang: mainLang }).catch(() => null);
 
-		// --- DIAGNOSE LOG (Optional, zeigt den aktiven Master an) ---
-		console.log(`[i18n] Active Master: ${mainLang} | Available: ${allLocales.join(', ')}`);
+		if (!baseSettings) {
+			throw error(
+				404,
+				`Kritisches Dokument fehlt: Bitte erstelle das Dokument 'Settings' für die Hauptsprache '${mainLang}' in Prismic.`
+			);
+		}
 
-		// 3. Sprach-Ermittlung für die aktuelle Route
+		// 3. Multilang-Check
+		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
+
+		// 4. Sprach-Ermittlung der aktuellen Route
 		const segments = url.pathname.split('/').filter(Boolean);
 		const firstSegment = segments[0];
+		let lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
 
-		// Bestimme die Sprache: URL-Pfad (/en-us/...) hat Vorrang, dann params, dann der Master.
-		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
+		// 5. Schutz-Mauer (Falls Multilang deaktiviert)
+		if (!isMultilangActive && lang !== mainLang) {
+			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
+		}
 
-		// 4. Paralleles Laden der globalen Daten
-		const [settings, navigation, prismicTheme, fonts] = await Promise.all([
-			// Aktuelle Settings (Sprachspezifisch)
-			client.getSingle('settings', { lang }).catch(() => baseSettings),
+		// 6. Paralleles Laden der globalen Daten mit klaren Fehlermeldungen
+		const [settings, navigation, theme, fonts] = await Promise.all([
+			// Aktuelle Settings (müssen für jede Sprache existieren)
+			client.getSingle('settings', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
+				);
+			}),
 
-			// Navigation (Fallback auf mainLang, falls die Sprache im CMS noch nicht angelegt wurde)
-			client
-				.getSingle('navigation', { lang })
-				.catch(() => client.getSingle('navigation', { lang: mainLang }).catch(() => null)),
+			// Navigation (muss für jede Sprache existieren)
+			client.getSingle('navigation', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
+				);
+			}),
 
-			// Theme & Fonts (Global/Sprachunabhängig)
+			// Theme & Fonts (Global)
 			client.getSingle('theme', { lang: '*' }).catch(() => null),
 			client.getAllByType('font').catch(() => [])
 		]);
 
-		if (!settings) {
-			throw error(404, { message: 'Critical configuration missing' });
-		}
-
 		return {
 			settings,
 			navigation,
-			prismicTheme,
+			prismicTheme: theme,
 			fonts,
 			lang,
-			locales: allLocales,
-			mainLang // WICHTIG: Steuert die Link-Generierung im Frontend
+			mainLang,
+			isMultilangActive,
+			locales: allLocales
 		};
 	} catch (e: any) {
+		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter
 		if (e.status) throw e;
+
 		console.error('Layout Load Error:', e);
-		throw error(500, { message: 'Internal Server Error during Layout Load' });
+		throw error(500, { message: 'Technisches Problem beim Sprach-Setup im Layout.' });
 	}
 }
