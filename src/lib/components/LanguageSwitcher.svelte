@@ -51,7 +51,7 @@
     {#each links as item}
       <a
         href={item.href}
-        class="text-xs font-bold uppercase transition-all {lang === item.loc ? 'underline opacity-100' : 'opacity-50 hover:opacity-100'}"
+        class="text-lg font-bold uppercase transition-all {lang === item.loc ? 'underline opacity-100' : 'opacity-50 hover:opacity-100'}"
       >
         {item.label}
       </a>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { PrismicLink, PrismicText } from '@prismicio/svelte';
+    import { page } from '$app/stores'; // NEU: Für die Pfad-Überwachung
     import Dropdown from './Dropdown.svelte';
     import SvgIcon from './SvgIcons.svelte';
     import LanguageSwitcher from './LanguageSwitcher.svelte'; 
@@ -22,11 +23,18 @@
 
     const { headerLinkFont } = get(theme);
 
+    // 1. REAKTIVER FIX FÜR DAS SCHLIESSEN
+    // Sobald sich der Pfad ändert (z.B. durch Sprachwechsel), schließt das Menü.
+    $: if ($page.url.pathname) {
+        isMenuOpen.set(false);
+    }
+
     function toggleMenu() {
         isMenuOpen.update((open) => !open);
     }
 
-    function handleScroll() {
+    // Schließt das Menü bei Scroll oder Touch-Bewegung
+    function handleCloseInteraction() {
         if ($isMenuOpen) {
             isMenuOpen.set(false);
         }
@@ -34,13 +42,15 @@
 
     onMount(() => {
         if (typeof window !== 'undefined') {
-            window.addEventListener('scroll', handleScroll);
+            window.addEventListener('scroll', handleCloseInteraction);
+            window.addEventListener('touchmove', handleCloseInteraction); // NEU: Für Mobile Wischen
         }
     });
 
     onDestroy(() => {
         if (typeof window !== 'undefined') {
-            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('scroll', handleCloseInteraction);
+            window.removeEventListener('touchmove', handleCloseInteraction);
         }
     });
 
@@ -56,10 +66,8 @@
 
     function getSubItems(triggerItem: NavItem, allLinks: NavItem[]): NavItem[] {
         if (!triggerItem || !allLinks) return [];
-
         const triggerLabel = triggerItem.label?.[0]?.text;
         if (!triggerLabel) return [];
-
         return allLinks.filter(
             (subItem: NavItem) =>
                 subItem.sub_link && subItem.sub_link === triggerLabel && subItem !== triggerItem
@@ -69,15 +77,13 @@
 
 <nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
     <div class="block lg:hidden h-full flex items-center">
-        {#if $isMenuOpen}
-            <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
+        <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
+            {#if $isMenuOpen}
                 <SvgIcon name="close" />
-            </button>
-        {:else}
-            <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu}>
+            {:else}
                 <SvgIcon name="menu" />
-            </button>
-        {/if}
+            {/if}
+        </button>
     </div>
 
     <div
@@ -95,7 +101,6 @@
             {#each navigation.data?.links as item}
                 {#if item.dropdown_link === true}
                     {@const subItems = getSubItems(item, navigation.data.links)}
-
                     {#if subItems.length > 0}
                         <li class="text-xl block mt-4 lg:inline-block lg:mt-0">
                             <Dropdown
@@ -106,49 +111,27 @@
                                 {headerLinkFontSize}
                                 {headerLinkHoverColor}
                                 {currentPath}
-                                on:click={() => {
-                                    isMenuOpen.set(false);
-                                    window.dispatchEvent(new CustomEvent('close-dropdown'));
-                                }}
+                                on:click={() => isMenuOpen.set(false)}
                             />
                         </li>
                     {:else if item.link?.url}
-                        <li
-                            class="font-semibold block mt-4 lg:inline-block lg:mt-0"
-                            style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
-                        >
-                            <PrismicLink
-                                field={item.link}
-                                on:click={() => {
-                                    isMenuOpen.set(false);
-                                    window.dispatchEvent(new CustomEvent('close-dropdown'));
-                                }}
-                            >
+                        <li class="font-semibold block mt-4 lg:inline-block lg:mt-0"
+                            style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;">
+                            <PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
                                 <PrismicText field={item.label} />
                             </PrismicLink>
                         </li>
                     {/if}
-                {:else if item.sub_link}
-                    {:else if item.link?.url && item.main_nav}
+                {:else if !item.sub_link && item.link?.url && item.main_nav}
                     <li
-                        class="text-xl font-semibold {currentPath === item.link.url
-                            ? 'underline'
-                            : ''} hover:no-underline"
-                        style="
-                            color: {headerLinkColor};
-                            --hover-bg-color: transparent;
-                            --hover-text-color: {headerLinkHoverColor};
-                        "
+                        class="text-xl font-semibold {currentPath === item.link.url ? 'underline' : ''} hover:no-underline"
+                        style="color: {headerLinkColor}; --hover-text-color: {headerLinkHoverColor};"
                     >
                         <PrismicLink
                             field={item.link}
-                            on:click={() => {
-                                isMenuOpen.set(false);
-                                window.dispatchEvent(new CustomEvent('close-dropdown'));
-                            }}
+                            on:click={() => isMenuOpen.set(false)}
                             class="transition nav-link"
-                            style="color: inherit; font-size: {headerLinkFontSize}rem; --nav-hover-bg: {headerLinkHoverColor}; --nav-hover-text: {headerBgColor ??
-                                '#fff'};"
+                            style="color: inherit; font-size: {headerLinkFontSize}rem;"
                         >
                             <PrismicText field={item.label} />
                         </PrismicLink>
@@ -164,9 +147,3 @@
         </ul>
     </div>
 </nav>
-
-<style>
-    @media (orientation: landscape) and (pointer: coarse) {
-        /* Deine bestehende Style-Logik kann hier bleiben, falls nötig */
-    }
-</style>
