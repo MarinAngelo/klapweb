@@ -17,7 +17,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
+            "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
             "labels": [
               "highlight",
               "note",
@@ -42,7 +42,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,image,heading4,heading5,heading6",
+            "multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
             "labels": [
               "highlight",
               "note",

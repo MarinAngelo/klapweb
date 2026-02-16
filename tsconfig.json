@@ -18,5 +18,5 @@
         "src/**/*.js",
         "src/**/*.svelte", 
         "prismicio-types.d.ts" 
-    ]
+, "src/routes/[[lang=lang]]/impressum/+page.svelte_", "src/routes/[[lang=lang]]/datenschutzerklaerung/+page.svelte_", "src/routes/[[lang=lang]]/agb/+page.svelte_"    ]
 }
