@@ -9,9 +9,7 @@ import { t } from '$lib/i18n/translations';
  * aktualisiert sich dieser Store automatisch.
  */
 export const _ = derived(page, ($page) => {
-	// Wir holen die aktuelle Sprache aus den Layout-Daten
+	// Hol dir die Sprache vom Server (data.lang) oder Fallback
 	const lang = $page.data.lang || 'de-ch';
-
-	// Wir geben eine Funktion zurück, die den Key entgegennimmt
 	return (key: string) => t(key, lang);
 });

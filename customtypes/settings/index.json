@@ -152,7 +152,7 @@
 			"show_language_switcher": {
 				"type": "Boolean",
 				"config": {
-					"label": "Sprachwechsler anzeigen?",
+					"label": "Mehrere Sprachen verwenden",
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false

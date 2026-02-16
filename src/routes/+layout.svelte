@@ -7,7 +7,7 @@
     import { asText } from '@prismicio/client';
 
     import { repositoryName } from '$lib/prismicio';
-    import { staticRoutes } from '$lib/i18n/i18n';
+    import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
     import Header from '$lib/components/Header.svelte';
     import Footer from '$lib/components/Footer.svelte';
@@ -21,7 +21,7 @@
 
     // 1. REAKTIVE DATEN
     $: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
-    $: dynamicDefaultLang = mainLang || 'de-ch';
+    $: dynamicDefaultLang = mainLang || 'de-de'; 
     $: showSwitcher = !!settings?.data?.show_language_switcher;
 
     // --- SEO & METADATEN ---
@@ -38,9 +38,9 @@
     $: cleanBaseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(/\/$/, '');
     $: currentUrl = `${cleanBaseUrl}${$page.url.pathname}`;
 
-    // --- 2. SWITCHER & ALTERNATES LOGIK (SYNCHRONISIERT) ---
+    // --- 2. SWITCHER & ALTERNATES LOGIK (KORRIGIERT) ---
     $: allAlternates = (() => {
-        // Error-Pages: Nur Homepage-Links
+        // Fallback für Error Pages
         if ($page.status !== 200) {
             return (locales || []).map((l: string) => ({
                 lang: l,
@@ -49,9 +49,28 @@
         }
 
         const p = $page.data.page;
-        const currentUid = $page.params.uid || 'home';
+        const segments = $page.url.pathname.split('/').filter(Boolean);
+        const isLangSegment = locales?.includes(segments[0]);
+        const currentSlug = isLangSegment ? segments[1] : segments[0];
 
-        // A. Prismic Dokumente mit Übersetzungen
+        // A. Statische Routen Mapping (Fix für /undefined)
+        for (const key in staticRoutes) {
+            const mapping = staticRoutes[key];
+            if (Object.values(mapping).includes(currentSlug)) {
+                return (locales || []).map(l => {
+                    const base = getLangBase(l); // Nutzt 'de' oder 'en'
+                    const targetSlug = mapping[base]; 
+                    
+                    const prefix = l === dynamicDefaultLang ? '' : `/${l}`;
+                    return {
+                        lang: l,
+                        href: `${prefix}/${targetSlug}`
+                    };
+                });
+            }
+        }
+
+        // B. Prismic Dokumente mit Übersetzungen
         if (p?.alternate_languages?.length > 0) {
             return p.alternate_languages.map((alt: any) => ({
                 lang: alt.lang,
@@ -61,27 +80,10 @@
             }));
         }
 
-        // B. Statische Routen Mapping
-        const segments = $page.url.pathname.split('/').filter(Boolean);
-        const currentSlug = (segments[0] === 'en-us' || segments[0] === 'de-ch') ? segments[1] : segments[0];
-
-        for (const key in staticRoutes) {
-            const mapping = staticRoutes[key];
-            if (Object.values(mapping).includes(currentSlug)) {
-                return (locales || []).map(l => {
-                    const targetSlug = mapping[l];
-                    return {
-                        lang: l,
-                        href: l === dynamicDefaultLang ? `/${targetSlug}` : `/${l}/${targetSlug}`
-                    };
-                });
-            }
-        }
-
-        // C. Fallback (Gleiche UID in andere Sprache)
-        if (!locales) return [];
-        return locales.map((l: string) => {
+        // C. Fallback (Gleiche UID/Segment in andere Sprache)
+        return (locales || []).map((l: string) => {
             const prefix = l === dynamicDefaultLang ? '' : `/${l}`;
+            const currentUid = $page.params.uid || currentSlug || 'home';
             const slug = currentUid === 'home' ? '' : `/${currentUid}`;
             return {
                 lang: l,
@@ -151,10 +153,20 @@
     {#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
-<div style="background-color: {$theme.pageBgColor};">
+<div style="background-color: {$theme.pageBgColor}; min-height: 100vh;">
     {#if !isLandingPage}
-        <Header {navigation} {settings} {prismicTheme} {lang} {locales} {allAlternates} {showSwitcher} />
+        <Header 
+            {navigation} 
+            {settings} 
+            {prismicTheme} 
+            {lang} 
+            {locales} 
+            {allAlternates} 
+            {showSwitcher} 
+            mainLang={data.mainLang}
+        />
     {/if}
+
     <main style={bodyFontStyle}>
         {#if $page.data?.title && !hasBannerOverlap}
             <Bounded as="section" style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};">
@@ -163,12 +175,20 @@
                 </h1>
             </Bounded>
         {/if}
+        
         {#key $page.url.pathname}
             <slot />
         {/key}
     </main>
+
     {#if !isLandingPage}
-        <Footer {navigation} {settings} {lang} />
+        <Footer 
+            {navigation} 
+            {settings} 
+            {lang} 
+            mainLang={data.mainLang}
+        />
     {/if}
 </div>
+
 <PrismicPreview {repositoryName} />

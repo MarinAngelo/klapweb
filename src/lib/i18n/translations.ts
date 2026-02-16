@@ -143,12 +143,13 @@ export const translations: Record<string, Record<string, string>> = {
 export function t(key: string, lang: string): string {
 	const entry = translations[key];
 	if (!entry) {
-        if (dev) {
-					console.warn(`[i18n] Fehlender Key: "${key}"`);
-				}
-		// Falls wir mal vergessen, einen Text einzutragen,
-		// wird einfach der deutsche Key ausgegeben.
+		if (dev) console.warn(`[i18n] Fehlender Key: "${key}"`);
 		return key;
 	}
-	return entry[lang] || entry['de-ch'] || key;
+
+	// Wir suchen eine passende Übersetzung (z.B. 'en' findet 'en-us')
+	const langBase = lang.split('-')[0]; // 'en' oder 'de'
+	const foundKey = Object.keys(entry).find((k) => k.startsWith(langBase));
+
+	return entry[foundKey || ''] || entry['de-ch'] || key;
 }
