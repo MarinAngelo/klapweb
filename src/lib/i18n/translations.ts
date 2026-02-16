@@ -121,6 +121,18 @@ export const translations: Record<string, Record<string, string>> = {
         'de-ch': 'Einsatz von Cookies',
         'en-us': 'Use of Cookies'
     },
+    'Kontakt' : {
+        'de-ch': 'Kontakt',
+        'en-us': 'Contact'
+    },
+    'Website erstellt mit': {
+        'de-ch': 'Website erstellt mit',
+        'en-us': 'Website created with'
+    },
+    'Alle Rechte vorbehalten.': {
+        'de-ch': 'Alle Rechte vorbehalten.',
+        'en-us': 'All rights reserved.'
+    }
 
 };
 

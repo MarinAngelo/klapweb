@@ -54,38 +54,37 @@ export async function load({ params, fetch, cookies, parent }) {
 /**
  * Für statisches Rendering (SSG) - Synchron mit Layout-Mapping
  */
+/** @type {import('./$types').EntryGenerator} */
 export async function entries() {
-	const client = createClient();
+    const client = createClient();
 
-	const languageMapping: Record<string, string> = {
-		Deutsch: 'de-ch',
-		Englisch: 'en-us'
-	};
+    const languageMapping: Record<string, string> = {
+        'Deutsch': 'de-ch',
+        'Englisch': 'en-us'
+    };
 
-	const allSettings = await client.getAllByType('settings', { lang: '*' });
-	const rawMainLang = allSettings[0]?.data?.main_language;
-	const mainLang = languageMapping[rawMainLang] || 'de-ch';
+    const allSettings = await client.getAllByType('settings', { lang: '*' });
+    const rawMainLang = allSettings?.[0]?.data?.main_language;
+    const mainLang = languageMapping[rawMainLang] || 'de-ch';
 
-	const pages = await client.getAllByType('page', { lang: '*' });
+    // 1. Hol dir alle Slugs, die bereits als statische Routen existieren
+    const staticSlugs = Object.values(staticRoutes).flatMap(mapping => Object.values(mapping));
 
-	const entries = pages.map((page) => {
-		return {
-			// Homepage-Logik: UID weglassen für saubere Root-URLs (/de-ch)
-			uid: page.uid === 'home' ? undefined : page.uid,
-			lang: page.lang === mainLang ? undefined : page.lang
-		};
-	});
+    const pages = await client.getAllByType('page', { lang: '*' });
 
-	// Statische Routen hinzufügen
-	for (const key in staticRoutes) {
-		const mapping = staticRoutes[key];
-		for (const [l, slug] of Object.entries(mapping)) {
-			entries.push({
-				uid: slug,
-				lang: l === mainLang ? undefined : l
-			});
-		}
-	}
+    // 2. Filter: Alles raus, was Home ist ODER eine statische Route ist
+    const entries = pages
+        .filter(page => page.uid !== 'home' && !staticSlugs.includes(page.uid)) 
+        .map((page) => {
+            return {
+                lang: page.lang === mainLang ? undefined : page.lang,
+                uid: page.uid
+            };
+        });
 
-	return entries;
+    // WICHTIG: Hier KEINE staticRoutes mehr per Loop hinzufügen!
+    // SvelteKit findet die statischen Ordner (wie /impressum) von alleine,
+    // solange dort ebenfalls eine entries-Funktion oder eine feste Route existiert.
+
+    return entries;
 }

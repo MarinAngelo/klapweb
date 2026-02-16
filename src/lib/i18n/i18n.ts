@@ -1,22 +1,13 @@
 /**
- * ZENTRALE KONFIGURATION
- * Hier definierst du alle Sprachen deines Projekts.
- * Wenn du eine Sprache hinzufügst oder entfernst, musst du es NUR HIER tun.
+ * ZENTRALE i18n KONFIGURATION
  */
 
-// Definiere hier deine Prismic-Sprachcodes (Locales)
+// Alle im Projekt unterstützten Prismic-Sprachcodes
 export const languages: string[] = ['en-us', 'de-ch'];
 
 /**
- * Die Standard-Sprache (Master Language).
- * Wir nehmen automatisch das erste Element aus dem Array.
- */
-export const defaultLang = languages[0];
-console.log('Standard-Sprache (defaultLang) ist:', defaultLang);
-
-/**
- * Hilfsmethode für SvelteKit-Matcher und Server-Hooks,
- * um zu prüfen, ob eine URL einen gültigen Sprachcode enthält.
+ * Hilfsmethode für SvelteKit-Matcher ([lang=lang]),
+ * um zu prüfen, ob ein URL-Segment ein gültiger Sprachcode ist.
  */
 export const isLanguage = (param: string): param is string => {
 	return languages.includes(param);
@@ -24,19 +15,20 @@ export const isLanguage = (param: string): param is string => {
 
 /**
  * MAPPING FÜR STATISCHE ROUTEN
- * Hier definierst du die Verknüpfung der Pfade, die nicht im CMS liegen.
+ * Diese Pfade sind im Dateisystem fix hinterlegt (z.B. /src/routes/[[lang=lang]]/impressum).
+ * Das Mapping sorgt dafür, dass die Links je nach Sprache korrekt generiert werden.
  */
 export const staticRoutes: Record<string, Record<string, string>> = {
-    'impressum': {
-        'de-ch': 'impressum',
-        'en-us': 'legal-notice'
-    },
-    'datenschutz': {
-        'de-ch': 'datenschutzerklaerung',
-        'en-us': 'privacy-policy'
-    },
-    'agb': {
-        'de-ch': 'agb',
-        'en-us': 'terms-and-conditions'
-    }
-}; 
+	impressum: {
+		'de-ch': 'impressum',
+		'en-us': 'legal-notice'
+	},
+	datenschutz: {
+		'de-ch': 'datenschutzerklaerung',
+		'en-us': 'privacy-policy'
+	},
+	agb: {
+		'de-ch': 'agb',
+		'en-us': 'terms-and-conditions'
+	}
+};

@@ -1,17 +1,14 @@
-import { asText } from '@prismicio/client';
+import { asText, filter } from '@prismicio/client'; // NEU: filter direkt importieren
 import { createClient } from '$lib/prismicio';
-import { defaultLang } from '$lib/i18n/i18n';
 import { error } from '@sveltejs/kit';
 
-export async function load({ params, fetch, cookies }) {
+export async function load({ params, fetch, cookies, parent }) {
+	const { mainLang } = await parent(); // Die dynamische Hauptsprache vom Layout holen
 	const client = createClient({ fetch, cookies });
 
-	// Falls params.lang in der URL fehlt (z.B. bei domain.com/),
-	// nutzen wir die Standardsprache aus der slicemachine.config.json.
-	const lang = params.lang || defaultLang;
+	const lang = params.lang || mainLang;
 
 	try {
-		// Wir fragen explizit nach der UID 'home' in der gewählten Sprache.
 		const page = await client.getByUID('page', 'home', { lang });
 
 		return {
@@ -24,30 +21,37 @@ export async function load({ params, fetch, cookies }) {
 		};
 	} catch (e) {
 		console.error(`Startseite 'home' für Sprache ${lang} nicht gefunden.`);
-		// Ein Fallback oder 404 auslösen
 		throw error(404, 'Startseite nicht gefunden');
 	}
 }
 
 /**
- * Erzeugt die Pfade für den Build-Prozess.
+ * Erzeugt die Pfade für die Homepages beim Build.
  */
+/** @type {import('./$types').EntryGenerator} */
 export async function entries() {
-	const client = createClient();
+    const client = createClient();
 
-	// Wir holen alle Versionen der 'home' Seite.
-	const pages = await client.getAllByType('page', {
-		lang: '*',
-		filters: [
-			// Filtert direkt in der API-Abfrage nach der UID 'home'
-			prismic.filter.at('my.page.uid', 'home')
-		]
-	});
+    const languageMapping: Record<string, string> = {
+        'Deutsch': 'de-ch',
+        'Englisch': 'en-us'
+    };
 
-	// Wir geben die Sprachen zurück. SvelteKit generiert daraus:
-	// / (für die Standard-Sprache)
-	// /en-us (für Englisch) etc.
-	return pages.map((page) => {
-		return { lang: page.lang === defaultLang ? undefined : page.lang };
-	});
+    const allSettings = await client.getAllByType('settings', { lang: '*' });
+    const rawMainLang = allSettings?.[0]?.data?.main_language;
+    const mainLang = languageMapping[rawMainLang] || 'de-ch';
+
+    // Wir holen NUR die Dokumente mit der UID 'home'
+    const pages = await client.getAllByType('page', {
+        lang: '*',
+        filters: [filter.at('my.page.uid', 'home')]
+    });
+
+    return pages.map((page) => {
+        return {
+            // Wenn es die Hauptsprache ist, wird der Pfad zu "/" (undefined)
+            // Wenn nicht, wird er zu "/en-us" etc.
+            lang: page.lang === mainLang ? undefined : page.lang
+        };
+    });
 }

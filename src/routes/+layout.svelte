@@ -30,7 +30,7 @@
     $: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
     $: finalDesc = $page.data?.meta_description || asText(settings?.data?.meta_description) || '';
     $: finalImage = $page.data?.meta_image || $page.data?.page?.data?.meta_image?.url || settings?.data?.meta_image?.url || '';
-    $: faviconUrl = settings?.data?.favicon?.url || '/favicon.ico';
+    $: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
     $: noIndex = $page.data?.no_index || false;
 
     // --- DOMAIN & URL ---
