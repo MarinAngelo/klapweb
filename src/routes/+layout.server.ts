@@ -1,19 +1,81 @@
 import { createClient } from '$lib/prismicio';
+import { error } from '@sveltejs/kit';
 
 export const prerender = 'auto';
 
-export async function load({ fetch, cookies }) {
+/** @type {import('./$types').LayoutServerLoad} */
+export async function load({ params, fetch, cookies, url }) {
 	const client = createClient({ fetch, cookies });
 
-	const settings = await client.getSingle('settings');
-	const navigation = await client.getSingle('navigation');
-	const prismicTheme = await client.getSingle('theme');
-	const fonts = await client.getAllByType('font');
+	try {
+		// 1. Repo-Infos (Master-Ermittlung)
+		const repo = await client.getRepository();
+		const technicalMaster =
+			repo.languages.find((l) => l.isMaster === true)?.id || repo.languages[0].id;
+		const allLocales = repo.languages.map((l) => l.id);
+		const mainLang = technicalMaster;
 
-	return {
-		settings,
-		navigation,
-		prismicTheme,
-		fonts
-	};
+		// 2. Basis-Settings laden (vom Master)
+		const baseSettings = await client.getSingle('settings', { lang: mainLang }).catch(() => null);
+
+		if (!baseSettings) {
+			throw error(
+				404,
+				`Kritisches Dokument fehlt: Bitte erstelle das Dokument 'Settings' für die Hauptsprache '${mainLang}' in Prismic.`
+			);
+		}
+
+		// 3. Multilang-Check
+		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
+
+		// 4. Sprach-Ermittlung der aktuellen Route
+		const segments = url.pathname.split('/').filter(Boolean);
+		const firstSegment = segments[0];
+		let lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
+
+		// 5. Schutz-Mauer (Falls Multilang deaktiviert)
+		if (!isMultilangActive && lang !== mainLang) {
+			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
+		}
+
+		// 6. Paralleles Laden der globalen Daten mit klaren Fehlermeldungen
+		const [settings, navigation, theme, fonts] = await Promise.all([
+			// Aktuelle Settings (müssen für jede Sprache existieren)
+			client.getSingle('settings', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
+				);
+			}),
+
+			// Navigation (muss für jede Sprache existieren)
+			client.getSingle('navigation', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
+				);
+			}),
+
+			// Theme & Fonts (Global)
+			client.getSingle('theme', { lang: '*' }).catch(() => null),
+			client.getAllByType('font').catch(() => [])
+		]);
+
+		return {
+			settings,
+			navigation,
+			prismicTheme: theme,
+			fonts,
+			lang,
+			mainLang,
+			isMultilangActive,
+			locales: allLocales
+		};
+	} catch (e: any) {
+		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter
+		if (e.status) throw e;
+
+		console.error('Layout Load Error:', e);
+		throw error(500, { message: 'Technisches Problem beim Sprach-Setup im Layout.' });
+	}
 }
