@@ -2,38 +2,45 @@
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: Content.AccordionSlice;
 
-	// Zustand für geöffnete Items
-	let openIndex: number | null = null;
+	const { openIndex, toggleItem } = useOpenIndex();
 
-	// Funktion zum Umschalten des geöffneten Zustands
-	function toggleItem(index: number) {
-		openIndex = openIndex === index ? null : index;
-	}
-
-	const { pageBgColor, pageColor } = get(theme);
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
 	tag="section"
-	style="background-color: {pageBgColor};"
+	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
-	<div class="flex-col gap-4" style="color: {pageColor}">
+	<div class="flex flex-col gap-4" style="color: {$theme.pageColor}">
 		{#if slice.primary.heading}
-				<PrismicRichText field={slice.primary.heading} />
+			<PrismicRichText field={slice.primary.heading} />
 		{/if}
+
 		{#if slice.primary.description}
-			<PrismicRichText field={slice.primary.description} /><br />
+			<div class="mb-4">
+				<PrismicRichText field={slice.primary.description} />
+			</div>
 		{/if}
+
 		{#each slice.primary.accordion_items as item, index}
-			<div class="border-b pb-4" style="border-color: {pageColor}">
+			<div class="border-b pb-4" style="border-color: {$theme.pageColor}">
 				<button
 					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
 					aria-haspopup="true"
@@ -50,18 +57,21 @@
 						<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
 					</svg>
 				</button>
-				<div class={openIndex === index ? 'block mt-2' : 'hidden'}>
-					{#if slice.variation === 'bildUndText'}
-						<ImageTextGrid
-							image={'image' in item ? item.image : null}
-							text={item.content}
-							imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
-							{theme}
-						/>
-					{:else}
-						<PrismicRichText field={item.content} />
-					{/if}
-				</div>
+
+				{#if openIndex === index}
+					<div class="mt-2 transition-all">
+						{#if slice.variation === 'bildUndText'}
+							<ImageTextGrid
+								image={'image' in item ? item.image : null}
+								text={item.content}
+								imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
+								{theme}
+							/>
+						{:else}
+							<PrismicRichText field={item.content} />
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/each}
 	</div>
@@ -71,14 +81,15 @@
 	button {
 		text-align: left;
 	}
-	/* 👇 Das hier zwingt die Zahlen zurück, egal was Tailwind sagt */
-    :global([data-slice-type="accordion"] ol) {
-        list-style-type: decimal !important;
-        padding-left: 1.5rem !important;
-        margin-bottom: 1rem;
-    }
-    
-    :global([data-slice-type="accordion"] li) {
-        padding-left: 0.5rem;
-    }
+
+	/* Zwingt Listen-Stile zurück */
+	:global([data-slice-type='accordion'] ol) {
+		list-style-type: decimal !important;
+		padding-left: 1.5rem !important;
+		margin-bottom: 1rem;
+	}
+
+	:global([data-slice-type='accordion'] li) {
+		padding-left: 0.5rem;
+	}
 </style>

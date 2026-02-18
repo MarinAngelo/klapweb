@@ -3,6 +3,7 @@
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';

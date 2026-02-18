@@ -1,6 +1,7 @@
 <script lang="ts">
 	import clsx from 'clsx';
 	import { isMobile } from '$lib/stores/isMobile';
+	import { reveal, type RevealOptions } from '$lib/actions/reveal';
 
 	export let tag = 'section';
 	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' =
@@ -8,18 +9,29 @@
 	export let collapsible = true;
 	export let specialLayout = false;
 
-	// Neu: bind:this von außen durchgereicht
+	export let animate: boolean = false;
+	export let animationOptions: RevealOptions = {};
+
 	export let elementRef: HTMLElement | null = null;
+
+	// Wir bereiten die Optionen vor: Wenn animate false ist,
+	// zwingen wir die direction auf 'none'.
+	$: finalOptions = animate ? { ...animationOptions } : { direction: 'none' as const };
+	// Falls keine duration gesetzt ist, Standardwert 800ms
+	if (finalOptions && typeof finalOptions.duration !== 'number') {
+		finalOptions.duration = 800;
+	}
 </script>
 
 <svelte:element
 	this={tag}
 	bind:this={elementRef}
+	use:reveal={finalOptions}
 	data-collapsible={collapsible}
 	{...$$restProps}
 	class={clsx(
 		'px-6',
-		specialLayout && isMobile && 'px-0', // z.B. auf Mobil keine Seitenränder
+		specialLayout && isMobile && 'px-0',
 		yPadding === 'none' && 'py-0',
 		yPadding === 'sm' && 'py-8 md:py-10',
 		yPadding === 'base' && 'py-20 md:py-28',

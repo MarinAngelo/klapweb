@@ -11,21 +11,43 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Text",
       "primary": {
-        "text": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Text",
-            "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
-            "labels": [
-              "highlight",
-              "note",
-              "quote"
-            ]
-          }
-        }
-      },
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
+						"labels": ["highlight", "note", "quote"]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "0"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+				}
+			},
       "items": {},
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     },
@@ -36,21 +58,43 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Text",
       "primary": {
-        "text": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Text",
-            "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
-            "labels": [
-              "highlight",
-              "note",
-              "quote"
-            ]
-          }
-        }
-      },
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
+						"labels": ["highlight", "note", "quote"]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "0"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+				}
+			},
       "items": {},
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }

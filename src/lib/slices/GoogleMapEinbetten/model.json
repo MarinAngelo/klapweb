@@ -25,7 +25,42 @@
           "type": "Number",
           "config": {
             "label": "Transparenz",
-            "placeholder": "Zahl zwischen 0 und 100 %"
+            "placeholder": "Zahl zwischen 0 und 80 %"
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "0"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
           }
         }
       },
