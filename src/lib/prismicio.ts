@@ -13,8 +13,17 @@ export const repositoryName = import.meta.env.VITE_PRISMIC_ENVIRONMENT || sm.rep
  * {@link https://prismic.io/docs/route-resolver#route-resolver}
  */
 const routes: prismic.ClientConfig['routes'] = [
-	{ type: 'page', path: '/:uid' },
-	{ type: 'page', uid: 'home', path: '/' },
+	{
+		type: 'page',
+		// Das ':lang?' sorgt dafür, dass Prismic die Sprache in den Pfad einbaut,
+		// außer es ist die Standard-Sprache (da wird sie weggelassen).
+		path: '/:lang?/:uid'
+	},
+	{
+        type: 'page',
+        uid: 'home',
+        path: '/:lang?', // Homepage-Logik
+    },
 	{ type: 'settings', path: '/' },
 	{ type: 'navigation', path: '/' },
 	{ type: 'theme', path: '/' }

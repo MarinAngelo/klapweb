@@ -126,5 +126,74 @@
 				"value": []
 			}
 		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "standardBildLinks",
+		"primary": {
+			"text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Irure officia excepteur nostrud adipisicing nostrud nisi est est voluptate non. Ad eiusmod consectetur in ea eiusmod do proident aliquip consequat. Fugiat consectetur sint incididunt officia tempor nulla."
+						}
+					}
+				]
+			},
+			"image": {
+				"origin": {
+					"id": "main",
+					"url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+					"width": 4000,
+					"height": 6000
+				},
+				"url": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
+				"width": 4000,
+				"height": 6000,
+				"edit": {
+					"zoom": 1,
+					"crop": {
+						"x": 0,
+						"y": 0
+					},
+					"background": "transparent"
+				},
+				"alt": "friend",
+				"credits": null,
+				"__TYPE__": "ImageContent",
+				"thumbnails": {}
+			},
+			"bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#8f9dbc",
+				"type": "Color"
+			},
+			"color": {
+				"__TYPE__": "FieldContent",
+				"value": "#34cb1a",
+				"type": "Color"
+			},
+			"y_padding_same": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"y_padding": {
+				"__TYPE__": "FieldContent",
+				"value": "mittel",
+				"type": "Select"
+			},
+			"image_round": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
 	}
 ]

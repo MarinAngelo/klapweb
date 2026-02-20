@@ -1,21 +1,35 @@
 <script lang="ts">
 	import clsx from 'clsx';
+	import { isMobile } from '$lib/stores/isMobile';
+	import { reveal, type RevealOptions } from '$lib/actions/reveal';
 
 	export let tag = 'section';
-	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' = 'base-top';
+	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' =
+		'base-top';
 	export let collapsible = true;
+	export let specialLayout = false;
 
-	// Neu: bind:this von außen durchgereicht
+	export let animate: boolean = false;
+	export let animationOptions: RevealOptions = {};
+
 	export let elementRef: HTMLElement | null = null;
+
+	// Wir bereiten die Optionen vor: Wenn animate false ist,
+	// zwingen wir die direction auf 'none'.
+	$: finalOptions = animate
+		? { duration: 2000, delay: 500, ...animationOptions }
+		: { direction: 'none' as const };
 </script>
 
 <svelte:element
 	this={tag}
 	bind:this={elementRef}
+	use:reveal={finalOptions}
 	data-collapsible={collapsible}
 	{...$$restProps}
 	class={clsx(
 		'px-6',
+		specialLayout && isMobile && 'px-0',
 		yPadding === 'none' && 'py-0',
 		yPadding === 'sm' && 'py-8 md:py-10',
 		yPadding === 'base' && 'py-20 md:py-28',
@@ -26,8 +40,7 @@
 		$$props.class
 	)}
 >
-<div class="mx-auto w-full max-w-6xl relative overflow-visible">
-	<slot />
-</div>
-
+	<div class="mx-auto w-full max-w-6xl relative overflow-visible">
+		<slot />
+	</div>
 </svelte:element>

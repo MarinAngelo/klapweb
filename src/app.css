@@ -4,16 +4,36 @@
 
 [data-collapsible].bg-white + [data-collapsible].bg-white,
 [data-collapsible].bg-slate-100 + [data-collapsible].bg-slate-100 {
-	@apply pt-0 md:pt-0;
+  @apply pt-0 md:pt-0;
 }
 
 /* TailwindCSS-Overrides */
-.hover\:bg-current:hover {
-  background-color: var(--hover-bg-color) !important;
+
+/* Hauptnavigation - Hover-Effekt für Links */
+.nav-link:hover {
+  color: var(--header-link-hover-color) !important;
+  text-decoration: underline !important;
 }
 
 .hover\:text-white:hover {
-  color: var(--hover-text-color) !important;
+  color: var(--page-link-hover-color) !important;
+}
+
+
+.leading-loose * {
+  line-height: 2 !important;
+}
+
+/* letter-spacing */
+.tracking-wider-all * {
+  letter-spacing: 0.12em !important;
+}
+
+
+.button-prismic-link:hover {
+    background-color: var(--hover-bg-color) !important;
+    color: var(--hover-text-color) !important;
+    border-color: var(--hover-text-color) !important; /* Border-Farbe beim Hover */
 }
 
 .focus\:ring-current:focus {
@@ -27,49 +47,131 @@ a[data-type="prismic-link"] {
 }
 
 a[data-type="prismic-link"]:hover {
-	color: var(--page-link-hover-color-text);
-	/* background-color: var(--page-link-hover-color-bg); */
+	color: var(--page-link-hover-color) !important;
 }
 
 :root {
-  /* --- Fallback Styles --- */
-  --body-font: 'Roboto', sans-serif; /* Standardwert */
-  --nav-font: 'Roboto'; /* Standardwert */
-  --header-bg-color: #4B2F36;
-  --header-color: green;
-  --header-link-color: white;
-  --header-link-hover-color: white;
-  --header-link-active-color: white;
-  --header-link-visited-color: white;
-  --header-bg-opacity: 1;
-  --footer-bg-color: #4B2F36;
-  --footer-color: #C69475;
-  --footer-link-color: white;
-  --footer-link-hover-color: white;
-  --footer-link-active-color: white;
-  --footer-link-visited-color: white;
-  --footer-bg-opacity: 1;
-  --page-bg-color: transparent;
-  --page-color: white;
-  --page-link-color: #090247;
-  --page-link-hover-color-bg: transparent;
-  --page-link-hover-color-text: var(--page-link-color);
+  --global-size-mobile: 16px;
+  --global-size-desktop: 16px;
+  
+  /* --- Fallback Styles, die im CMS verwendet werden --- */
+  /* Generelle Seitenfarben und Schriftarten */
+  --page-color: #5f5fab;
+  --page-bg-color: #c7c9fe;
+  --page-font: 'Roboto', sans-serif; /* Fallback greift nicht, Problem in app.html stattdessen wird system font verwendet */
+  --base-font-size-mobile: 16px;  /* unused, wird direkt in +layout.svelte verwendet */
+  --base-font-size-desktop: 16px; /* unused, wird direkt in +layout.svelte verwendet */
+  --page-link-color: #26683c;
+  /* Button Farben */
+  --page-link-hover-color: #2ca741;
+  --page-button-color: var(--page-link-color);
+  --page-button-bg-color: transparent;
+  --page-button-hover-color: var(--page-link-hover-color);
+  --page-button-hover-bg-color: transparent;
+
+  /* Kopfzeile Farben */
+  --site-title-font-size: 1.5; /* in rem */
+  --site-title-font-size-rem: calc(var(--site-title-font-size) * 1rem);
+  --site-title-font: 'Roboto', sans-serif;
+  --site-sub-title-font-size: 1; /* in rem */
+  --logo-height: 5; /* in rem */
+  --header-color: #1c1c25;
+  --header-bg-color: #302F78;
+  --header-link-color: #cfcefe;
+  --header-link-hover-color: #716db5;
+  --header-link-font-size: 1.5; /* in rem */
+  --header-link-font: 'Roboto', sans-serif;
+  
+  /* Fußzeile Farben */
+  --footer-color: #5f5fab;
+  --footer-bg-color: #232442;
+  --footer-font-size-top-bar: 1;
+  --footer-font-size-top-bar-rem: calc(var(--footer-font-size-top-bar) * 1rem);
+  --footer-font-size-button-bar: 0.8;
+  --footer-font-size-button-bar-rem: calc(var(--footer-font-size-button-bar) * 1rem);
+  --footer-link-color: #cfcefe;
+  --footer-link-hover-color: #b6317a;
+  /* 2. Die automatische Umrechnung */
+  /* Ende der Fallback Styles  */
+  
+  /* Header Hintergrund Deckkraft aus Titelbereich */
+  --header-bg-opacity: 1; /* Deckkraft in Prozent */
+  
+  /* not css notation, as it will be recalculated as coming from cms */
+  /* --- Fallback Styles, die nicht im CMS verwendet werden --- */
+  --header-link-active-color: #cfcefe;
+  --header-link-visited-color: #cfcefe;
   --page-link-active-color: var(--page-link-color);
   --page-link-visited-color: var(--page-link-color);
-  --page-bg-opacity: 1;
   --hero-overlay-color: transparent;
-  --button-bg-color: transparent;
+  --button-active-bg-color: var(--page-link-active-color);
+  --button-active-color: var(--page-link-active-color);
+  --button-visited-color: var(--page-link-visited-color);
+  --button-border-radius: 0;
+  --button-padding-y: 0.5rem;
+  --button-padding-x: 1rem;
+  --hover-text-color: var(--page-button-color);
+  --focus-ring-color: var(--hover-text-color);
+  --hover-bg-color: var(--page--button-hover-bg-color);
 
 }
 
-h2 {
-  font-size: 2rem;
+/* Hier passiert die Magie: Wir ändern die Basis-Größe des HTML-Tags */
+html {
+  font-size: var(--global-size-mobile);
 }
 
-h3 {
-  font-size: 1.6rem;
+@media (min-width: 1024px) { /* Ab Tailwind "lg" Breakpoint oder deinem gewünschten */
+  html {
+    font-size: var(--global-size-desktop);
+  }
 }
 
-p, li {
-  font-size: 1.2rem;
+
+
+@layer base {
+  /* Hier definieren wir die globale Hierarchie. 
+    Prismic RichText und harte HTML-Tags nutzen nun diese Basis.
+  */
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold leading-tight mb-6;
+    /* text-4xl = 2.25rem (36px), md:text-5xl = 3rem (48px) */
+    color: var(--page-color); /* Übernimmt deine Theme-Farbe */
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-semibold leading-snug mb-4 mt-8;
+    /* text-3xl = 1.875rem (30px) -> Kleiner als H1 */
+    color: var(--page-color);
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-semibold mb-3 mt-6;
+    /* text-2xl = 1.5rem (24px) */
+    color: var(--page-color);
+  }
+
+  h4 {
+    @apply text-xl font-semibold mb-2;
+    color: var(--page-color);
+  }
+
+  p, li {
+    @apply text-lg leading-relaxed mb-4;
+    /* text-lg = 1.125rem (18px) - ähnlich wie deine 1.2rem */
+    color: var(--page-color);
+  }
+
+/* Wende Styles nur an, wenn der ul/ol Tag KEINE CSS-Klasse hat.
+     Prismic gibt meistens nackte <ul> aus -> bekommt Punkte.
+     Deine Navigation hat <ul class="flex..."> -> wird ignoriert.
+  */
+  ul:not([class]) {
+    @apply list-disc list-inside mb-4;
+  }
+
+  ol:not([class]) {
+    @apply list-decimal list-inside mb-4;
+  }
 }

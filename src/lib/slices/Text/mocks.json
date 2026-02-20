@@ -7,60 +7,10 @@
 				"__TYPE__": "StructuredTextContent",
 				"value": [
 					{
-						"type": "heading1",
-						"content": {
-							"text": "Heading 1",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
-						"type": "heading2",
-						"content": {
-							"text": "Heading 2",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
-						"type": "heading3",
-						"content": {
-							"text": "Heading 3",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
 						"type": "paragraph",
 						"content": {
-							"text": "Fugiat ex ea dolor. Nisi non in et sit anim elit nostrud sunt id veniam. Voluptate mollit duis duis esse enim nostrud ea exercitation irure officia amet aute do quis.",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Incididunt ea dolore in cupidatat quis dolor sunt minim reprehenderit. Voluptate laboris proident ex quis labore aute eu officia cillum ex. Fugiat dolor elit veniam adipisicing est esse ullamco commodo amet esse sunt.",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Culpa duis nisi irure. Eu voluptate velit consequat adipisicing officia cupidatat minim qui. Reprehenderit fugiat deserunt nisi mollit nulla deserunt velit dolor irure officia enim.",
-							"spans": []
-						},
-						"direction": "ltr"
-					},
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Magna anim duis aliqua mollit qui aute.",
-							"spans": []
-						},
-						"direction": "ltr"
+							"text": "Do sunt consequat proident magna. Non consequat irure sint deserunt anim culpa irure elit ea duis exercitation excepteur esse laboris labore."
+						}
 					}
 				]
 			}
@@ -82,7 +32,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Veniam commodo cupidatat aliquip elit officia in. Consequat sunt sunt non deserunt ullamco sint."
+							"text": "Consequat sint et enim. Ipsum deserunt dolore consectetur dolor exercitation. Excepteur magna culpa minim sint pariatur proident deserunt anim."
 						}
 					}
 				]

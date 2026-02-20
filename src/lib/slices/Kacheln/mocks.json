@@ -25,25 +25,47 @@
 								{
 									"origin": {
 										"id": "main",
-										"url": "https://images.unsplash.com/photo-1448932223592-d1fc686e76ea",
-										"width": 3500,
-										"height": 2338
+										"url": "https://images.unsplash.com/photo-1547082299-de196ea013d6",
+										"width": 4272,
+										"height": 2848
 									},
-									"url": "https://images.unsplash.com/photo-1448932223592-d1fc686e76ea?rect=0%2C214%2C3500%2C1909&w=2200&h=1200",
+									"url": "https://images.unsplash.com/photo-1547082299-de196ea013d6?rect=0%2C259%2C4272%2C2330&w=2200&h=1200",
 									"width": 2200,
 									"height": 1200,
 									"edit": {
 										"zoom": 1,
 										"crop": {
 											"x": 0,
-											"y": 214
+											"y": 259
 										},
 										"background": "transparent"
 									},
-									"alt": "border",
+									"alt": "giving",
 									"credits": null,
 									"__TYPE__": "ImageContent",
-									"thumbnails": {}
+									"thumbnails": {
+										"Quadrat": {
+											"origin": {
+												"id": "Quadrat",
+												"url": "https://images.unsplash.com/photo-1586952518485-11b180e92764",
+												"width": 4172,
+												"height": 4000
+											},
+											"url": "https://images.unsplash.com/photo-1586952518485-11b180e92764?rect=86%2C0%2C4000%2C4000&w=1200&h=1200",
+											"width": 1200,
+											"height": 1200,
+											"edit": {
+												"zoom": 1,
+												"crop": {
+													"x": 86,
+													"y": 0
+												},
+												"background": "transparent"
+											},
+											"alt": "friend",
+											"credits": null
+										}
+									}
 								}
 							],
 							[
@@ -78,10 +100,80 @@
 									"value": "wagon",
 									"type": "Text"
 								}
+							],
+							[
+								"image_overlay_color",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "#9e2956",
+									"type": "Color"
+								}
+							],
+							[
+								"image_overlay_opacity",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "17",
+									"type": "Number"
+								}
 							]
 						]
 					}
 				]
+			},
+			"body_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#cdcda6",
+				"type": "Color"
+			},
+			"button_hover_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#162808",
+				"type": "Color"
+			},
+			"button_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#4a9039",
+				"type": "Color"
+			},
+			"button_hover_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#411686",
+				"type": "Color"
+			},
+			"border_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c1c6ee",
+				"type": "Color"
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#de3841",
+				"type": "Color"
+			},
+			"component_body_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#3e03be",
+				"type": "Color"
+			},
+			"body_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c903d5",
+				"type": "Color"
+			},
+			"component_body_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#8c8be0",
+				"type": "Color"
+			},
+			"grid_columns": {
+				"__TYPE__": "FieldContent",
+				"value": "3",
+				"type": "Select"
+			},
+			"round_corners": {
+				"__TYPE__": "BooleanContent",
+				"value": false
 			}
 		},
 		"items": []

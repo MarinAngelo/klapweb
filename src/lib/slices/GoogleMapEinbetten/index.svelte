@@ -4,8 +4,21 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { convertNumber } from '$lib/utils';
+	import { convertNumberInverse } from '$lib/utils/convertNumber';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+
 	export let slice: Content.CodeEinbettenSlice;
+
+	const { openIndex, toggleItem } = useOpenIndex();
+
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 
 	let isMobile = false;
 
@@ -25,12 +38,16 @@
 	});
 
 	const { pageBgColor } = get(theme);
-	const opacity = convertNumber(slice.primary.opacity ?? 0) || 0.5; 
-	console.log('Opacity:', opacity);
-
+	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
 </script>
 
-<Bounded tag="section" data-slice-type={slice.slice_type} data-slice-variation={slice.variation}>
+<Bounded
+	tag="section"
+	data-slice-type={slice.slice_type}
+	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
+>
 	<!-- HTML-Code rendern -->
 	<div class="relative w-full">
 		{#each slice.primary.html_code as code}
