@@ -132,7 +132,7 @@
 						/>
 					</a>
 				{:else if settings?.data}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerColor};">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerLinkColor};">
 						<span
 							class="text-xl font-semibold tracking-tight"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"

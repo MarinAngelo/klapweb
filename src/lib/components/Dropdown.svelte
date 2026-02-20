@@ -51,7 +51,7 @@
 	{#if isOpen}
 		<ul
 			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded py-1"
-			style="background-color: {headerBgColor}; min-width: 14rem; width: max-content;"
+			style="background-color: {headerBgColor}; min-width: 14rem;"
 		>
 			{#each subItems as dropdownItem, index}
 				<li
@@ -61,7 +61,8 @@
 					style="
 				font-size: {headerLinkFontSize}rem;
 				white-space: normal;
-				overflow-wrap: anywhere;
+				overflow-wrap: break-word;
+				hyphens: auto;
 				min-width: 14rem;
 				text-align: left;
 			"
@@ -90,12 +91,16 @@
 	.dropdown-menu {
 		/* Mobile: Static positioning to push content down */
 		position: static;
+		width: 100%;
+		max-width: 100%;
 	}
 
 	/* Desktop: Absolute positioning to overlay */
 	@media (min-width: 768px) {
 		.dropdown-menu {
 			position: absolute;
+			width: max-content;
+			max-width: none;
 		}
 	}
 

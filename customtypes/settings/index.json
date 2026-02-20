@@ -171,14 +171,14 @@
 				"type": "Text",
 				"config": {
 					"label": "Website Name",
-					"placeholder": "Der Name der Firma/Brand (z.B. Klap Web). Wird an Seitentitel angehängt."
+					"placeholder": "Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt."
 				}
 			},
 			"meta_title": {
 				"type": "Text",
 				"config": {
 					"label": "Globaler SEO Titel",
-					"placeholder": "Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *Klap Web)"
+					"placeholder": "Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *'')"
 				}
 			},
 			"meta_description": {
