@@ -15,13 +15,6 @@
 					"single": "heading1"
 				}
 			},
-			"site_title_font_size": {
-				"type": "Number",
-				"config": {
-					"label": "Website Titel Schriftgrösse",
-					"placeholder": "1 - 20"
-				}
-			},
 			"site_sub_title": {
 				"type": "StructuredText",
 				"config": {
@@ -31,25 +24,199 @@
 					"single": "heading2"
 				}
 			},
-			"site_sub_title_font_size": {
-				"type": "Number",
-				"config": {
-					"label": "Website Untertitel Schriftgrösse",
-					"placeholder": "1 - 20"
-				}
-			},
-			"e_mail": {
-				"type": "Text",
-				"config": {
-					"label": "E-Mail",
-					"placeholder": ""
-				}
-			},
 			"responsible_person_company": {
 				"type": "Text",
 				"config": {
 					"label": "Verantwortlich (Person/Unternehmen)",
 					"placeholder": ""
+				}
+			},
+			"responsible_address": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Verantwortliche Adresse",
+					"placeholder": "",
+					"allowTargetBlank": false,
+					"multi": "paragraph"
+				}
+			},
+			"responsible_email": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortliche E-Mail",
+					"placeholder": ""
+				}
+			},
+			"e_mail": {
+				"type": "Text",
+				"config": {
+					"label": "Korrespondenz E-Mail",
+					"placeholder": ""
+				}
+			},
+			"privacy_policy": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Datenschutzerkärung",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"legal_disclosure": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Impressum",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"contacts": {
+				"type": "Group",
+				"config": {
+					"label": "Kontakte",
+					"repeat": true,
+					"fields": {
+						"impressum": {
+							"type": "Boolean",
+							"config": {
+								"label": "Impressum",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": true
+							}
+						},
+						"title": {
+							"type": "Text",
+							"config": {
+								"label": "Titel / Funktion",
+								"placeholder": "z. B. Design"
+							}
+						},
+						"name": {
+							"type": "Text",
+							"config": {
+								"label": "Name",
+								"placeholder": ""
+							}
+						},
+						"email": {
+							"type": "Text",
+							"config": {
+								"label": "E-Mail",
+								"placeholder": ""
+							}
+						},
+						"website": {
+							"type": "Link",
+							"config": {
+								"label": "Website",
+								"placeholder": "",
+								"select": null,
+								"allowTargetBlank": true,
+								"allowText": true,
+								"repeat": false
+							}
+						},
+						"address": {
+							"type": "StructuredText",
+							"config": {
+								"label": "Adresse",
+								"placeholder": "",
+								"allowTargetBlank": false,
+								"multi": "paragraph"
+							}
+						}
+					}
+				}
+			},
+			"cookies_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Cookies Text",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"agb": {
+				"type": "StructuredText",
+				"config": {
+					"label": "AGB",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"show_language_switcher": {
+				"type": "Boolean",
+				"config": {
+					"label": "Mehrere Sprachen verwenden",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			}
+		},
+		"SEO": {
+			"domain": {
+				"type": "Text",
+				"config": {
+					"label": "Website Domain",
+					"placeholder": "Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung."
+				}
+			},
+			"site_name": {
+				"type": "Text",
+				"config": {
+					"label": "Website Name",
+					"placeholder": "Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt."
+				}
+			},
+			"meta_title": {
+				"type": "Text",
+				"config": {
+					"label": "Globaler SEO Titel",
+					"placeholder": "Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *'')"
+				}
+			},
+			"meta_description": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Globale Beschreibung",
+					"placeholder": "(150–160 Zeichen) Standard-Suchergebnis-Text für Seiten ohne eigene Beschreibung.",
+					"allowTargetBlank": false,
+					"single": "paragraph"
+				}
+			},
+			"meta_image": {
+				"type": "Image",
+				"config": {
+					"label": "Standard Social Image",
+					"constraint": {
+						"width": 1200,
+						"height": 630
+					},
+					"thumbnails": []
+				}
+			},
+			"adobe_font_id": {
+				"type": "Text",
+				"config": {
+					"label": "Adobe Project ID",
+					"placeholder": "Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy"
+				}
+			},
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon",
+					"constraint": {
+						"width": 32,
+						"height": 32
+					},
+					"thumbnails": []
 				}
 			}
 		}
