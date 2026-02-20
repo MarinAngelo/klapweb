@@ -5,7 +5,6 @@
 	import Button from '$lib/components/Button.svelte';
 	import { convertNumber } from '../../utils/convertNumber';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
 	import { reveal, type RevealOptions } from '$lib/actions/reveal';
 
@@ -29,8 +28,8 @@
 	use:reveal={revealOptions}
 	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners ? 'rounded-2xl' : ''}"
 	style="
-		background-color: {bodyBgColor || get(theme).pageBgColor};
-		--custom-card-color: {bodyColor || get(theme).pageColor};
+		background-color: {bodyBgColor || $theme.pageBgColor};
+		--custom-card-color: {bodyColor || $theme.pageColor};
 		{hasBorderColor ? `border-color: ${actualBorderColor};` : ''}
 	"
 >
@@ -52,13 +51,13 @@
 				/>
 			{/if}
 			<ImageOverlay
-				color={card.image_overlay_color || get(theme).pageBgColor}
-				opacity={convertNumber(card.image_overlay_opacity || get(theme).imageOverlayOpacity)}
+				color={card.image_overlay_color || $theme.pageBgColor}
+				opacity={convertNumber(card.image_overlay_opacity || $theme.imageOverlayOpacity)}
 				{roundCorners}
 			/>
 		</div>
 	{/if}
-	<div class="leading-relaxed custom-card-color pl-6 pr-6 grow">
+	<div class="leading-relaxed custom-card-color pl-6 pr-6 pb-6 grow">
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}
@@ -66,10 +65,10 @@
 			<Button
 				link={card.buttonLink}
 				text={card.buttonText || 'Mehr erfahren'}
-				color={buttonColor || get(theme).pageButtonColor}
-				bgColor={buttonBgColor || get(theme).pageButtonBgColor}
-				hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
-				hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
+				color={buttonColor || $theme.pageButtonColor}
+				bgColor={buttonBgColor || $theme.pageButtonBgColor}
+				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
+				hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
 			/>
 		</div>
 	{/if}

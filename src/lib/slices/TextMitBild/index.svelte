@@ -1,23 +1,18 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextWithImageSlice;
+	export let slices: unknown[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 
-	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export let slices; // Diese Zeile hinzufügen
-	export let context; // Diese Zeile hinzufügen
-	export let index; // Diese Zeile hinzufügen
-
-	// Setze den Standardwert von yPadding basierend auf y_padding_same
 	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
 
-	// Überschreibe den Standardwert von yPadding mit dem Wert aus der Slice-Definition
 	if (slice.primary.y_padding) {
 		switch (slice.primary.y_padding) {
 			case 'kein Abstand':
@@ -48,8 +43,7 @@
 <Bounded
 	as="section"
 	{yPadding}
-	style="background-color: {slice.primary.bg_color || get(theme).pageBgColor}; color: {slice.primary
-		.color || get(theme).pageColor};"
+	style="background-color: {slice.primary.bg_color || $theme.pageBgColor}; color: {slice.primary.color || $theme.pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -59,7 +53,7 @@
 		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}
 		text={slice.primary.text}
 		imageLeft={isBildLinks}
-		imageBgColor={slice.primary.bg_color || get(theme).pageBgColor}
+		imageBgColor={slice.primary.bg_color || $theme.pageBgColor}
 		imageRound={slice.primary.image_round}
 		{theme}
 	/>

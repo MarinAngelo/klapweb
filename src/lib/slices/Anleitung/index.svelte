@@ -4,11 +4,9 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: Content.AnleitungSlice;
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -46,7 +44,6 @@
 		{/if}
 		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url && !slice.primary.youtube_video.embed_url.startsWith('http')}
 			<div class="text-xs text-gray-500">
-				Debug: embed_url = {slice.primary.youtube_video.embed_url}
 			</div>
 		{/if}
 		{#if slice.primary.steps && slice.primary.steps.length > 0}
@@ -72,7 +69,6 @@
 						{/if}
 						{#if step.youtube_video && step.youtube_video.embed_url && !step.youtube_video.embed_url.startsWith('http')}
 							<div class="text-xs text-gray-500">
-								Debug: embed_url = {step.youtube_video.embed_url}
 							</div>
 						{/if}
 					</li>

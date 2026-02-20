@@ -4,14 +4,11 @@
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -135,7 +132,7 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: {get(theme).pageColor}"
+	style="color: {$theme.pageColor}"
 >
 	{#if primary.title}
 		<h2>{primary.title}</h2>

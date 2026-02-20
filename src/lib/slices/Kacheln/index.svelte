@@ -2,19 +2,18 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.ImageCardsSlice;
 	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export const slices: any = {}; // Initialize with an empty object and provide a type
-	export const context: any = {}; // Initialize with an empty object and provide a type
-	export const index: number = 0; // Initialize with a default value and specify the type
+	export let slices: unknown[] | undefined = undefined; // Initialize with an empty object and provide a type
+	export let context: unknown = undefined; // Initialize with an empty object and provide a type
+	export let index: number | undefined = undefined; // Initialize with a default value and specify the type
 
-	const componentBodyBgColor = slice.primary.component_body_bg_color || get(theme).pageBgColor;
-	const componentBodyColor = slice.primary.component_body_color || get(theme).pageColor;
+	$: componentBodyBgColor = slice.primary.component_body_bg_color || $theme.pageBgColor;
+	$: componentBodyColor = slice.primary.component_body_color || $theme.pageColor;
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)

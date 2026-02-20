@@ -2,19 +2,15 @@
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextSlice;
-	export let slices;
-	export let context;
-	export let index;
-
-	const { pageColor, pageBgColor } = get(theme);
+	export let slices: unknown[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 
 	$: anim = mapAnimation(
 		slice.primary.animate,
@@ -27,7 +23,7 @@
 <Bounded
 	as="section"
 	class="leading-relaxed"
-	style="color: {pageColor}; background-color: {pageBgColor};"
+	style="color: {$theme.pageColor}; background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}

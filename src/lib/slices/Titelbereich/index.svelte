@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -233,10 +232,10 @@
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
-							color={buttonColor || get(theme).pageButtonColor}
-							bgColor={buttonBgColor || get(theme).pageButtonBgColor}
-							hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
-							hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
+							color={buttonColor || $theme.pageButtonColor}
+							bgColor={buttonBgColor || $theme.pageButtonBgColor}
+							hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
+							hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
 						/>
 					{/if}
 				</div>

@@ -19,7 +19,6 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let mainLang: string | undefined;
-	console.log('MainLang in Header:', mainLang);
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;

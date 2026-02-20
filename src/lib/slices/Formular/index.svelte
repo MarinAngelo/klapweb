@@ -3,17 +3,14 @@
 	import { asText } from '@prismicio/client';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: FormSlice;
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -178,7 +175,7 @@
 
 <Bounded
 	as="section"
-	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+	style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
