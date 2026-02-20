@@ -22,50 +22,52 @@
 
 	// HTML-Typ basierend auf dem Mapping
 	const htmlType = typeMapping[field.field_type] || field.field_type;
-
 </script>
 
 <div class="mb-4">
 	<!-- Hier Labels für alle Felder-->
 	{#if htmlType !== 'checkbox'}
-		<label for={field.field_name} class="block text-base font-medium">
-			{field.field_name}
+		<label for={field.field_name} class="block text-base font-bold">
+			{field.field_name ?? ''}{field.required ? ' *' : ''}
 		</label>
 	{/if}
 	{#if htmlType === 'text' || htmlType === 'email'}
 		<input
 			type={field.field_type}
-			id={field.field_name}
-			name={field.field_name}
+			id={field.field_name ?? ''}
+			name={field.field_name ?? ''}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
 				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			on:blur
 		/>
 	{:else if htmlType === 'textarea'}
 		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
 			<textarea
-				id={field.field_name}
-				name={field.field_name}
+				id={field.field_name ?? ''}
+				name={field.field_name ?? ''}
 				required={field.required}
 				rows="4"
 				class="input mt-1 p-2 block w-full rounded-md"
 				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+				on:blur
 			></textarea>
 		</div>
 	{:else if htmlType === 'select'}
 		<select
-			id={field.field_name}
-			name={field.field_name}
+			id={field.field_name ?? ''}
+			name={field.field_name ?? ''}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
 				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			on:blur
 		>
 			<!-- Leere Option hinzufügen -->
 			<option value="" disabled selected>Bitte auswählen</option>
 			{#each field.options?.split(',') || [] as option}
-				<option value={option.trim()}>{option.trim()}</option>
+				<option value={option?.trim() ?? ''}>{option?.trim() ?? ''}</option>
 			{/each}
 		</select>
 	{:else if htmlType === 'radio'}
@@ -74,12 +76,12 @@
 				<label class="inline-flex items-center">
 					<input
 						type="radio"
-						name={field.field_name}
-						value={option.trim()}
+						name={field.field_name ?? ''}
+						value={option?.trim() ?? ''}
 						required={field.required}
 						class="form-radio text-indigo-600 focus:ring-indigo-500"
 					/>
-					<span class="ml-2">{option.trim()}</span>
+					<span class="ml-2">{option?.trim() ?? ''}</span>
 				</label>
 			{/each}
 		</div>
@@ -88,14 +90,14 @@
 			<label class="flex items-center">
 				<input
 					type="checkbox"
-					name={field.field_name}
+					name={field.field_name ?? ''}
 					checked={field.required}
 					value="Ausgewählt"
 					class="h-5 w-5 cursor-pointer"
 					style="width: 20px; height: 20px;"
 				/>
 				<!-- Sichtbarer Text bleibt nur im <span> -->
-				<span class="ml-2 text-base font-medium">{field.field_name}</span>
+				<span class="ml-2 text-base font-medium">{field.field_name ?? ''}</span>
 			</label>
 		</div>
 	{/if}

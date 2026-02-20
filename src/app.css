@@ -7,6 +7,17 @@
   @apply pt-0 md:pt-0;
 }
 
+/* Zwei-Spalten-Layout: Erstes Element ohne Top-Margin */
+.two-col > *:first-child {
+  margin-top: 0 !important;
+}
+.two-col > p:empty {
+  display: none;
+}
+.two-col > p:empty + * {
+  margin-top: 0 !important;
+}
+
 /* TailwindCSS-Overrides */
 
 /* Hauptnavigation - Hover-Effekt für Links */
@@ -71,6 +82,7 @@ a[data-type="prismic-link"]:hover {
 
   /* Kopfzeile Farben */
   --site-title-font-size: 1.5; /* in rem */
+  --site-title-font-size-rem: calc(var(--site-title-font-size) * 1rem);
   --site-title-font: 'Roboto', sans-serif;
   --site-sub-title-font-size: 1; /* in rem */
   --logo-height: 5; /* in rem */
@@ -85,9 +97,12 @@ a[data-type="prismic-link"]:hover {
   --footer-color: #5f5fab;
   --footer-bg-color: #232442;
   --footer-font-size-top-bar: 1;
+  --footer-font-size-top-bar-rem: calc(var(--footer-font-size-top-bar) * 1rem);
   --footer-font-size-button-bar: 0.8;
+  --footer-font-size-button-bar-rem: calc(var(--footer-font-size-button-bar) * 1rem);
   --footer-link-color: #cfcefe;
   --footer-link-hover-color: #b6317a;
+  /* 2. Die automatische Umrechnung */
   /* Ende der Fallback Styles  */
   
   /* Header Hintergrund Deckkraft aus Titelbereich */
