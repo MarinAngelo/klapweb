@@ -11,7 +11,7 @@ export interface RevealOptions {
 }
 
 export function reveal(node: HTMLElement, params: RevealOptions = {}) {
-	if (params.direction === 'none') {
+	if (params.direction === 'none' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 		node.style.opacity = '1';
 		node.style.transform = 'none';
 		return;

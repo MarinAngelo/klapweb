@@ -121,6 +121,7 @@
 
 	function handleScroll() {
 		if (!sectionEl || !parallaxInner) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		const inner = parallaxInner;
 		cancelAnimationFrame(rafId);
 		rafId = requestAnimationFrame(() => {
