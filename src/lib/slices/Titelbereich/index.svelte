@@ -112,9 +112,36 @@
 	const components = {
 		label: RichTextLabels
 	};
+
+	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
+	let sectionEl: HTMLElement;
+	let parallaxInner: HTMLElement | undefined;
+	const PARALLAX_FACTOR = 0.3;
+	let rafId: number;
+
+	function handleScroll() {
+		if (!sectionEl || !parallaxInner) return;
+		const inner = parallaxInner;
+		cancelAnimationFrame(rafId);
+		rafId = requestAnimationFrame(() => {
+			const rect = sectionEl.getBoundingClientRect();
+			const pY = Math.max(0, -rect.top * PARALLAX_FACTOR);
+			inner.style.transform = `translate3d(0, ${pY}px, 0)`;
+		});
+	}
+
+	onMount(() => {
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		handleScroll();
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			cancelAnimationFrame(rafId);
+		};
+	});
 </script>
 
 <section
+	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
@@ -126,13 +153,21 @@
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
-		<ResponsivePrismicImage
-			{image}
-			sizes="100vw"
-			widths={[1280, 1920, 2560]}
-			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style=""
-		/>
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div
+				bind:this={parallaxInner}
+				class="absolute inset-x-0"
+				style="height: 120%; top: -10%;"
+			>
+				<ResponsivePrismicImage
+					{image}
+					sizes="100vw"
+					widths={[1280, 1920, 2560]}
+					className="absolute inset-0 h-full w-full object-cover select-none"
+					style=""
+				/>
+			</div>
+		</div>
 		<!-- Color overlay over the image -->
 		<div
 			class="absolute inset-0 h-full w-full pointer-events-none select-none"
