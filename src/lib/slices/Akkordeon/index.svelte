@@ -6,10 +6,11 @@
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { reveal } from '$lib/actions/reveal';
 
 	export let slice: Content.AccordionSlice;
 
-	const { openIndex, toggleItem } = useOpenIndex();
+	const { openIndex, toggleItem } = useOpenIndex(0);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -18,6 +19,8 @@
 		slice.primary.anim_delay,
 		slice.primary.anim_duration
 	);
+
+	const STAGGER_MS = 150;
 </script>
 
 <Bounded
@@ -40,11 +43,17 @@
 		{/if}
 
 		{#each slice.primary.accordion_items as item, index}
-			<div class="border-b pb-4" style="border-color: {$theme.pageColor}">
+			<div
+				use:reveal={anim.animate
+					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
+					: { direction: 'none' }}
+				class="border-b pb-4"
+				style="border-color: {$theme.pageColor}"
+			>
 				<button
 					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
 					aria-haspopup="true"
-					aria-expanded={openIndex === index}
+					aria-expanded={$openIndex === index}
 					on:click={() => toggleItem(index)}
 				>
 					{item.label}
@@ -52,13 +61,13 @@
 						class="w-4 h-4 ml-1 fill-current transform transition-transform"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 20 20"
-						class:rotate-180={openIndex === index}
+						class:rotate-180={$openIndex === index}
 					>
 						<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
 					</svg>
 				</button>
 
-				{#if openIndex === index}
+				{#if $openIndex === index}
 					<div class="mt-2 transition-all">
 						{#if slice.variation === 'bildUndText'}
 							<ImageTextGrid

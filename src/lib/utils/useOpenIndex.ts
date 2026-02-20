@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
-export function useOpenIndex() {
-	let openIndex = writable<number | null>(null);
+export function useOpenIndex(initialIndex: number | null = null) {
+	let openIndex = writable<number | null>(initialIndex);
 
 	function toggleItem(index: number) {
 		openIndex.update((current) => (current === index ? null : index));
