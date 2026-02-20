@@ -294,10 +294,10 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
 	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
-	 * Meta Title field in *Page*
+	 * Meta Titel field in *Page*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: A title of the page used for social media and search engines
+	 * - **Placeholder**: Ein Seitentitel, der für soziale Medien und Suchmaschinen verwendet wird
 	 * - **API ID Path**: page.meta_title
 	 * - **Tab**: SEO & Metadata
 	 * - **Documentation**: https://prismic.io/docs/fields/text
@@ -308,7 +308,7 @@ interface PageDocumentData {
 	 * Meta Description field in *Page*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: A brief summary of the page
+	 * - **Placeholder**: Eine kurze Zusammenfassung der Seite, 150–160 Zeichen (inkl. Leerzeichen)
 	 * - **API ID Path**: page.meta_description
 	 * - **Tab**: SEO & Metadata
 	 * - **Documentation**: https://prismic.io/docs/fields/text

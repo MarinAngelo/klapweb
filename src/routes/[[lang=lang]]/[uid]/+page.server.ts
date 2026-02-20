@@ -1,5 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
+import { asText } from '@prismicio/client'; // Importiere den Helper
 
 export async function load({ params, parent }) {
 	// 1. WICHTIG: Sprache vom Layout holen
@@ -12,7 +13,8 @@ export async function load({ params, parent }) {
 
 		return {
 			page,
-			title: page.data.meta_title,
+			title: asText(page.data.title) || '', // Nutze asText, um den Titel als String zu bekommen
+			meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
 			meta_description: page.data.meta_description
 		};
 	} catch (e) {

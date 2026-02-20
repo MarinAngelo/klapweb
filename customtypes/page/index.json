@@ -74,15 +74,15 @@
 			"meta_title": {
 				"type": "Text",
 				"config": {
-					"label": "Meta Title",
-					"placeholder": "A title of the page used for social media and search engines"
+					"label": "Meta Titel",
+					"placeholder": "Ein Seitentitel, der für soziale Medien und Suchmaschinen verwendet wird"
 				}
 			},
 			"meta_description": {
 				"type": "Text",
 				"config": {
 					"label": "Meta Description",
-					"placeholder": "A brief summary of the page"
+					"placeholder": "Eine kurze Zusammenfassung der Seite, 150–160 Zeichen (inkl. Leerzeichen)"
 				}
 			},
 			"meta_image": {

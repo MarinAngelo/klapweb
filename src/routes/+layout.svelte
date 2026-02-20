@@ -26,7 +26,8 @@
 
 	// --- SEO & METADATEN ---
 	$: siteName = settings?.data?.site_name || 'Klap Web';
-	$: pageTitle = $page.data?.meta_title || settings?.data?.meta_title || siteName;
+	$: pageTitle =
+		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
 	$: finalDesc = $page.data?.meta_description || asText(settings?.data?.meta_description) || '';
 	$: finalImage =
@@ -196,6 +197,7 @@
 				as="section"
 				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 			>
+				<!--Seiten Titel Page Title-->
 				<h1 class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
 					{$page.data?.title}
 				</h1>
