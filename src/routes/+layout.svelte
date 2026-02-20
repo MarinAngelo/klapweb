@@ -16,6 +16,9 @@
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { getFontSize } from '$lib/utils/fontMapper';
+	import { reveal } from '$lib/actions/reveal';
+
+	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let data: any;
 
@@ -198,7 +201,7 @@
 				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 			>
 				<!--Seiten Titel Page Title-->
-				<h1 class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
+				<h1 use:reveal={titleFadeIn} class="tracking-tight mt-12 mb-7 first:mt-0 last:mb-0">
 					{$page.data?.title}
 				</h1>
 			</Bounded>

@@ -5,6 +5,8 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Carousel from './carousel.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -14,6 +16,16 @@
 	export let context;
 
 	const { pageBgColor } = get(theme);
+
+	const { openIndex, toggleItem } = useOpenIndex();
+
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
@@ -22,6 +34,8 @@
 	style={index === 0 ? `background-color: ${pageBgColor};` : `background-color: ${pageBgColor};`}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	{#if isFilled.image(slice.primary.image)}
 		<div style="background-color: {pageBgColor};">
@@ -29,6 +43,10 @@
 		</div>
 	{/if}
 	{#if slice.variation === 'carousel'}
-		<Carousel images={slice.primary.images.map((item) => item.image)} />
+		<Carousel
+			images={slice.primary.images.map((item) => item.image)}
+			animate={anim.animate}
+			animationOptions={anim.options}
+		/>
 	{/if}
 </Bounded>

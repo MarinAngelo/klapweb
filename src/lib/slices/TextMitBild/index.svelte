@@ -5,6 +5,7 @@
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextWithImageSlice;
 
@@ -35,6 +36,13 @@
 	}
 
 	const isBildLinks = slice.variation === 'standardBildLinks';
+
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
@@ -44,6 +52,8 @@
 		.color || get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	<ImageTextGrid
 		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}

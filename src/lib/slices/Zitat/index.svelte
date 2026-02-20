@@ -6,6 +6,7 @@
 	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.QuoteSlice;
 
@@ -15,6 +16,13 @@
 	export let slices;
 	export let context;
 	export let index;
+
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
@@ -22,6 +30,8 @@
 	style="background-color: {pageBgColor}; color: {pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	{#if isFilled.richText(slice.primary.quote)}
 		<figure class="grid gap-6">
