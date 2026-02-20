@@ -25,16 +25,14 @@ type PickContentRelationshipFieldData<
 			TSubRelationship['customtypes'],
 			TLang
 		>;
-	} & // Group
-	{
+	} & { // Group
 		[TGroup in Extract<
 			TRelationship['fields'][number],
 			prismic.CustomTypeModelFetchGroupLevel1 | prismic.CustomTypeModelFetchGroupLevel2
 		> as TGroup['id']]: TData[TGroup['id']] extends prismic.GroupField<infer TGroupData>
 			? prismic.GroupField<PickContentRelationshipFieldData<TGroup, TGroupData, TLang>>
 			: never;
-	} & // Other fields
-	{
+	} & { // Other fields
 		[TFieldKey in Extract<TRelationship['fields'][number], string>]: TFieldKey extends keyof TData
 			? TData[TFieldKey]
 			: never;
@@ -582,7 +580,7 @@ interface SettingsDocumentData {
 	 * Website Name field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: Der Name der Firma/Brand (z.B. Klap Web). Wird an Seitentitel angehängt.
+	 * - **Placeholder**: Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt.
 	 * - **API ID Path**: settings.site_name
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/text
@@ -593,7 +591,7 @@ interface SettingsDocumentData {
 	 * Globaler SEO Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *Klap Web)
+	 * - **Placeholder**: Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *'')
 	 * - **API ID Path**: settings.meta_title
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/text

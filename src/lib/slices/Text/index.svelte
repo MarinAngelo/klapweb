@@ -33,7 +33,13 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class={clsx(slice.variation === 'twoColumns' && 'md:columns-2 md:gap-6')}>
+	<div class={clsx(slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-6')}>
 		<PrismicRichText field={slice.primary.text} />
 	</div>
 </Bounded>
+
+<style>
+	:global(.two-col > *:first-child) {
+		margin-top: 0;
+	}
+</style>
