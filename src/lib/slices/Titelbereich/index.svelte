@@ -16,6 +16,10 @@
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
 	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
+	import { reveal } from '$lib/actions/reveal';
+
+	// Reines Fade-in ohne Bewegung (distance: '0px')
+	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let slice: Content.HeroSlice;
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
@@ -173,7 +177,7 @@
 				{/if}
 
 				<!-- Inhalt mit dynamischem Padding -->
-				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+				<div use:reveal={fadeIn} class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->
 					<style>
 						@media (max-width: 640px) {

@@ -7,6 +7,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
+	import { reveal, type RevealOptions } from '$lib/actions/reveal';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
 	export let roundCorners = true;
@@ -17,6 +18,7 @@
 	export let buttonHoverColor;
 	export let buttonHoverBgColor;
 	export let borderColor;
+	export let revealOptions: RevealOptions = { direction: 'none' };
 
 	// CMS-Felder können null objects sein - prüfe auf echten Wert
 	const hasBorderColor = !!(borderColor && borderColor !== null && borderColor !== '');
@@ -24,6 +26,7 @@
 </script>
 
 <li
+	use:reveal={revealOptions}
 	class="grid gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners ? 'rounded-2xl' : ''}"
 	style="
 		background-color: {bodyBgColor || get(theme).pageBgColor};

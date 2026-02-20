@@ -16,11 +16,9 @@
 
 	// Wir bereiten die Optionen vor: Wenn animate false ist,
 	// zwingen wir die direction auf 'none'.
-	$: finalOptions = animate ? { ...animationOptions } : { direction: 'none' as const };
-	// Falls keine duration gesetzt ist, Standardwert 800ms
-	if (finalOptions && typeof finalOptions.duration !== 'number') {
-		finalOptions.duration = 800;
-	}
+	$: finalOptions = animate
+		? { duration: 2000, delay: 500, ...animationOptions }
+		: { direction: 'none' as const };
 </script>
 
 <svelte:element

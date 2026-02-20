@@ -7,6 +7,7 @@
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextSlice;
 	export let slices;
@@ -14,6 +15,13 @@
 	export let index;
 
 	const { pageColor, pageBgColor } = get(theme);
+
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
@@ -22,6 +30,8 @@
 	style="color: {pageColor}; background-color: {pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	<div class={clsx(slice.variation === 'twoColumns' && 'md:columns-2 md:gap-6')}>
 		<PrismicRichText field={slice.primary.text} />

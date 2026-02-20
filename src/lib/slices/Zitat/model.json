@@ -41,7 +41,7 @@
 				},
 				"anim_delay": {
 					"type": "Number",
-					"config": { "label": "Verzögerung (ms)", "placeholder": "0" }
+					"config": { "label": "Verzögerung (ms)", "placeholder": "500" }
 				},
 				"anim_duration": {
 					"type": "Number",

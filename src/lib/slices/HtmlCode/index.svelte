@@ -3,7 +3,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: Content.HtmlCodeSlice;
 
@@ -16,9 +16,22 @@
 	const sanitizedHtmlCode = replaceHtmlTags(htmlCode);
 
 	const themePageColor = get(theme).pageColor;
+
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
-<Bounded tag="section" data-slice-type={slice.slice_type} data-slice-variation={slice.variation}>
+<Bounded
+	tag="section"
+	data-slice-type={slice.slice_type}
+	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
+>
 	<div class="html-code-container" style="--hr-color: {themePageColor};">
 		{@html sanitizedHtmlCode}
 	</div>

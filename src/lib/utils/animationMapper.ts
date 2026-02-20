@@ -15,16 +15,20 @@ export function mapAnimation(
 		Oben: 'up',
 		Unten: 'down',
 		Links: 'left',
-		Rechts: 'right',
-		Keine: 'none'
+		Rechts: 'right'
+		// 'Keine' bewusst nicht hier – wird separat als Fade-in (distance: '0px') behandelt
 	};
 
+	// "Keine" = Fade-in ohne Bewegung: direction bleibt 'up', aber distance auf 0 setzen
+	const isNoDirection = direction === 'Keine';
+
 	return {
-		animate: !!animate, // Wandelt null/undefined sicher in boolean um
+		animate: !!animate,
 		options: {
-			direction: directionMap[direction || ''] || 'up',
-			delay: delay || 0,
-			duration: duration ?? 800 // Standarddauer, falls nicht gesetzt
+			direction: directionMap[direction || ''] ?? 'up',
+			...(isNoDirection && { distance: '0px' }),
+			delay: delay ?? 500,
+			duration: duration ?? 2000
 		}
 	};
 }

@@ -38,7 +38,7 @@
 					"type": "Number",
 					"config": {
 						"label": "Verzögerung (ms)",
-						"placeholder": "0"
+						"placeholder": "500"
 					}
 				},
 				"anim_duration": {
@@ -86,7 +86,7 @@
 					"type": "Number",
 					"config": {
 						"label": "Verzögerung (ms)",
-						"placeholder": "0"
+						"placeholder": "500"
 					}
 				},
 				"anim_duration": {
@@ -140,7 +140,7 @@
 					"type": "Number",
 					"config": {
 						"label": "Verzögerung (ms)",
-						"placeholder": "0"
+						"placeholder": "500"
 					}
 				},
 				"anim_duration": {

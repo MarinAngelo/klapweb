@@ -20,8 +20,8 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 	const options = {
 		// Wir verringern den threshold für 'down', damit es früher triggert
 		threshold: params.direction === 'down' ? 0.01 : (params.threshold ?? 0.1),
-		delay: params.delay ?? 0,
-		duration: params.duration ?? 800,
+		delay: params.delay ?? 500,
+		duration: params.duration ?? 2000,
 		distance: params.distance ?? '40px', // Etwas mehr Distanz macht es sichtbarer
 		direction: params.direction ?? 'up'
 	};
@@ -39,17 +39,10 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 		return map[dir] || map.up;
 	};
 
-	// Initialer Zustand
+	// Initialer Zustand – sofort setzen, damit kein Flackern von 1→0 sichtbar ist
 	node.style.opacity = '0';
 	node.style.willChange = 'transform, opacity';
 	node.style.transform = getTransform(options.direction, options.distance);
-
-	// Wichtig: Die Transition erst NACH dem initialen Setzen definieren,
-	// damit der Browser nicht von 1 auf 0 animiert beim Laden.
-	setTimeout(() => {
-		node.style.transition = `opacity ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                                 transform ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
-	}, 10);
 
 	const observer = new IntersectionObserver(
 		(entries) => {
@@ -66,7 +59,16 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 		{ threshold: options.threshold }
 	);
 
-	observer.observe(node);
+	// Doppeltes requestAnimationFrame stellt sicher, dass der Browser den
+	// initialen Zustand (opacity: 0) committed hat, bevor Transition und
+	// Observer aktiviert werden – verhindert die Race Condition.
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			node.style.transition = `opacity ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                                 transform ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+			observer.observe(node);
+		});
+	});
 
 	return {
 		destroy() {
