@@ -227,6 +227,7 @@
 					</p>
 				{/if}
 
+				<div class="mt-8 flex justify-end">
 				<Button
 					text={slice.primary.submitt_button_text || 'Absenden'}
 					disabled={!!linkError}
@@ -236,6 +237,7 @@
 					hoverColor={undefined}
 					hoverBgColor={undefined}
 				/>
+				</div>
 			</form>
 		</div>
 	</div>

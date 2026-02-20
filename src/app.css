@@ -7,6 +7,17 @@
   @apply pt-0 md:pt-0;
 }
 
+/* Zwei-Spalten-Layout: Erstes Element ohne Top-Margin */
+.two-col > *:first-child {
+  margin-top: 0 !important;
+}
+.two-col > p:empty {
+  display: none;
+}
+.two-col > p:empty + * {
+  margin-top: 0 !important;
+}
+
 /* TailwindCSS-Overrides */
 
 /* Hauptnavigation - Hover-Effekt für Links */
