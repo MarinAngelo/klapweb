@@ -4,7 +4,7 @@
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
 	import Carousel from './carousel.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -13,12 +13,7 @@
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded

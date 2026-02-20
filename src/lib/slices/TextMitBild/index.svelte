@@ -4,7 +4,7 @@
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextWithImageSlice;
 	export let slices: unknown[] | undefined = undefined;
@@ -32,12 +32,7 @@
 
 	const isBildLinks = slice.variation === 'standardBildLinks';
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded

@@ -3,18 +3,13 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
 
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section">

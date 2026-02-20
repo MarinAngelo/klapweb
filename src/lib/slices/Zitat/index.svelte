@@ -5,19 +5,14 @@
 	import { theme } from '$lib/stores/theme';
 
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.QuoteSlice;
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded

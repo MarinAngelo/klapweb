@@ -4,7 +4,7 @@
 	import { theme } from '$lib/stores/theme';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.ImageCardsSlice;
 	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
@@ -19,12 +19,7 @@
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
 	const gridColumns = String(slice.primary.grid_columns).includes('3') ? 3 : 2;
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	// Stagger-Intervall zwischen den Kacheln (ms)
 	const STAGGER_MS = 150;

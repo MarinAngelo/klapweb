@@ -2,7 +2,7 @@
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { sanitizeHtml } from '$lib/utils/sanitizeHtml';
 
 	export let slice: Content.HtmlCodeSlice;
@@ -10,12 +10,7 @@
 	const htmlCode = (slice.primary.html_code?.[0] as { text: string })?.text || '';
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded

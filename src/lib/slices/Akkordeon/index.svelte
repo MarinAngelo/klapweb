@@ -4,7 +4,7 @@
 	import { theme } from '$lib/stores/theme';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { reveal } from '$lib/actions/reveal';
 
@@ -13,12 +13,7 @@
 	const { openIndex, toggleItem } = useOpenIndex(0);
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	const STAGGER_MS = 150;
 </script>

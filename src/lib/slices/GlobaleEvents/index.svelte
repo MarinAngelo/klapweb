@@ -7,18 +7,13 @@
     import type { Content } from '@prismicio/client';
     import { theme } from '$lib/stores/theme';
     import { page } from '$app/stores';
-    import { mapAnimation } from '$lib/utils/animationMapper';
+    import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
     import { reveal } from '$lib/actions/reveal'; // Action direkt importieren
 
     export let slice: Content.GlobaleEventsSlice;
 
     // Zentrales Mapping der Animation aus den CMS-Feldern
-    $: anim = mapAnimation(
-        slice.primary.animate,
-        slice.primary.anim_direction,
-        slice.primary.anim_delay,
-        slice.primary.anim_duration
-    );
+    $: anim = mapAnimationFromPrimary(slice.primary);
 
     let eventSlices: any[] = [];
     let loading = true;

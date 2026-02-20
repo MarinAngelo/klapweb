@@ -7,18 +7,13 @@
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: FormSlice;
 
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
@@ -32,6 +27,9 @@
 
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
+
+	// Fehlerausgabe für Sende-Fehler (ersetzt alert())
+	let submitError: string | null = null;
 
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
 		if (!field || !field.field_name) return '';
@@ -152,13 +150,12 @@
 				showModal = true;
 				form.reset();
 				fieldErrors = {};
+				submitError = null;
 			} else {
-				console.error('Fehler beim Senden des Formulars:', response);
-				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
+				submitError = 'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.';
 			}
 		} catch (error) {
-			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+			submitError = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
 		}
 	}
 
@@ -221,6 +218,12 @@
 				{#if linkError}
 					<p id="form-error" class="mt-3 text-sm text-red-600">
 						{linkError}
+					</p>
+				{/if}
+
+				{#if submitError}
+					<p class="mt-3 text-sm text-red-600" role="alert">
+						{submitError}
 					</p>
 				{/if}
 

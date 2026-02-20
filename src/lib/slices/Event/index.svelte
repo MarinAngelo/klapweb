@@ -4,19 +4,14 @@
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
 
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => {

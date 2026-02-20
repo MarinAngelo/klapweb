@@ -1,36 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { Content } from '@prismicio/client';
 	import { theme } from '$lib/stores/theme';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { convertNumberInverse } from '$lib/utils/convertNumber';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { sanitizeHtml } from '$lib/utils/sanitizeHtml';
+	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.CodeEinbettenSlice;
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
-
-	let isMobile = false;
-
-	onMount(() => {
-		isMobile = window.innerWidth <= 768;
-
-		const handleResize = () => {
-			isMobile = window.innerWidth <= 768;
-		};
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	});
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
 </script>
@@ -53,7 +33,7 @@
 							.replace(/width="\d+"/g, 'width="100%"')
 							.replace(
 								/style="[^"]*"/g,
-								isMobile
+								$isMobile
 									? 'style="width: 100%; height: 100vw;"'
 									: 'style="width: 100%; height: 25vw;"'
 							)
