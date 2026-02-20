@@ -16,7 +16,7 @@
 			"title": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Title",
+					"label": "Seitentitel",
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"single": "heading1"

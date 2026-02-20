@@ -1,5 +1,6 @@
     import { createClient } from '$lib/prismicio';
     import { error } from '@sveltejs/kit';
+    import { asText } from '@prismicio/client'; // Importiere den Helper
 
     /** @type {import('./$types').PageServerLoad} */
     export async function load({ params, parent }) {
@@ -13,11 +14,12 @@
 
             const page = await client.getByUID('page', 'home', { lang });
 
-            return {
-                page,
-                title: page.data.meta_title,
-                meta_description: page.data.meta_description
-            };
+        return {
+            page,
+            title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
+            meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
+            meta_description: page.data.meta_description
+        };
         } catch (e) {
             console.error(`[Page Load Error] Seite 'home' für Sprache ${lang} nicht gefunden.`);
             // Wenn 'home' nicht existiert, werfen wir einen 404

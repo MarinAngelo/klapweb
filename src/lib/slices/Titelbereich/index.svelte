@@ -16,6 +16,10 @@
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
 	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
+	import { reveal } from '$lib/actions/reveal';
+
+	// Reines Fade-in ohne Bewegung (distance: '0px')
+	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let slice: Content.HeroSlice;
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
@@ -108,9 +112,37 @@
 	const components = {
 		label: RichTextLabels
 	};
+
+	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
+	let sectionEl: HTMLElement;
+	let parallaxInner: HTMLElement | undefined;
+	const PARALLAX_FACTOR = 0.3;
+	let rafId: number;
+
+	function handleScroll() {
+		if (!sectionEl || !parallaxInner) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const inner = parallaxInner;
+		cancelAnimationFrame(rafId);
+		rafId = requestAnimationFrame(() => {
+			const rect = sectionEl.getBoundingClientRect();
+			const pY = Math.max(0, -rect.top * PARALLAX_FACTOR);
+			inner.style.transform = `translate3d(0, ${pY}px, 0)`;
+		});
+	}
+
+	onMount(() => {
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		handleScroll();
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			cancelAnimationFrame(rafId);
+		};
+	});
 </script>
 
 <section
+	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
@@ -122,13 +154,21 @@
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
-		<ResponsivePrismicImage
-			{image}
-			sizes="100vw"
-			widths={[1280, 1920, 2560]}
-			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style=""
-		/>
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div
+				bind:this={parallaxInner}
+				class="absolute inset-x-0"
+				style="height: 120%; top: -10%;"
+			>
+				<ResponsivePrismicImage
+					{image}
+					sizes="100vw"
+					widths={[1280, 1920, 2560]}
+					className="absolute inset-0 h-full w-full object-cover select-none"
+					style=""
+				/>
+			</div>
+		</div>
 		<!-- Color overlay over the image -->
 		<div
 			class="absolute inset-0 h-full w-full pointer-events-none select-none"
@@ -173,7 +213,7 @@
 				{/if}
 
 				<!-- Inhalt mit dynamischem Padding -->
-				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+				<div use:reveal={fadeIn} class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->
 					<style>
 						@media (max-width: 640px) {

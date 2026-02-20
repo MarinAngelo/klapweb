@@ -8,8 +8,20 @@
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: FormSlice;
+
+	const { openIndex, toggleItem } = useOpenIndex();
+
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
@@ -169,6 +181,8 @@
 	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	<div class="grid grid-cols-1 items-center gap-8">
 		<div>
