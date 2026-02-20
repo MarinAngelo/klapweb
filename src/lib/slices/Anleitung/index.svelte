@@ -42,10 +42,6 @@
 				{/if}
 			</div>
 		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url && !slice.primary.youtube_video.embed_url.startsWith('http')}
-			<div class="text-xs text-gray-500">
-			</div>
-		{/if}
 		{#if slice.primary.steps && slice.primary.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
 				{#each slice.primary.steps as step, i}
@@ -65,10 +61,6 @@
 										Ungültige Video-URL: {step.youtube_video.embed_url}
 									</div>
 								{/if}
-							</div>
-						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url && !step.youtube_video.embed_url.startsWith('http')}
-							<div class="text-xs text-gray-500">
 							</div>
 						{/if}
 					</li>

@@ -1,12 +1,12 @@
+import { browser } from '$app/environment';
+import DOMPurify from 'dompurify';
+
 /**
- * Einfache HTML-Sanitierung für CMS-Inhalte.
- * Entfernt Script-Tags, Event-Handler und javascript:-URLs.
- * Für vollständige Sanitierung wäre DOMPurify empfohlen.
+ * Bereinigt HTML mit DOMPurify im Browser.
+ * Beim SSR wird der Inhalt unverändert zurückgegeben
+ * (serverseitiger Inhalt kommt vom vertrauenswürdigen CMS).
  */
 export function sanitizeHtml(html: string): string {
-	return html
-		.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-		.replace(/\s+on\w+\s*=\s*"[^"]*"/gi, '')
-		.replace(/\s+on\w+\s*=\s*'[^']*'/gi, '')
-		.replace(/javascript\s*:/gi, '');
+	if (!browser) return html;
+	return DOMPurify.sanitize(html);
 }
