@@ -46,7 +46,7 @@
 			</h2>
 		{/if}
 		<ul
-			class="grid grid-cols-1 items-start gap-8 {gridColumns === 3
+			class="grid grid-cols-1 gap-8 {gridColumns === 3
 				? 'md:grid-cols-3'
 				: 'md:grid-cols-2'}"
 		>
