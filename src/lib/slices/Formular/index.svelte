@@ -148,11 +148,6 @@
 		}
 		linkError = null;
 
-		// Honeypot (clientseitig): bot-field ausgefüllt → Spam, silent drop
-		if (formData.get('bot-field')) return;
-		// Bot-Feld aus POST-Body entfernen → erscheint nicht im Netlify-Dashboard
-		formData.delete('bot-field');
-
 		// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
 		const nameField = formFields.find((f) => /^name$/i.test(f.field_name ?? ''));
 		if (nameField?.field_name) {
@@ -225,11 +220,6 @@
 				novalidate
 			>
 				<input type="hidden" name="form-name" value={formName} />
-				<div hidden>
-					<label>
-						Don't fill this out: <input name="bot-field" />
-					</label>
-				</div>
 
 				{#each formFields as field}
 					{#if field && field.field_name}
