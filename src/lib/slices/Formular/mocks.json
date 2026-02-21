@@ -46,6 +46,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "tightly",
 				"type": "Text"
+			},
+			"form_name": {
+				"__TYPE__": "FieldContent",
+				"value": "plural",
+				"type": "Text"
 			}
 		},
 		"items": []
