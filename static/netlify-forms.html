@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head><meta charset="utf-8" /><title>Netlify Form Registration</title></head>
+  <body>
+    <!--
+      Diese Datei dient ausschließlich der Netlify-Formular-Erkennung.
+      SSR-Seiten werden beim Build nicht statisch gescannt, daher muss das
+      Formular hier als statische HTML-Datei registriert werden.
+
+      Der Name wird automatisch vergeben: das erste Formular-Slice auf einer
+      Seite → "form_1", das zweite → "form_2" usw.
+      Kommt ein neues Formular hinzu, einfach hier eintragen und neu deployen!
+    -->
+
+    <form name="form_1" netlify hidden></form>
+    <form name="form_2" netlify hidden></form>
+    <form name="form_3" netlify hidden></form>
+  </body>
+</html>

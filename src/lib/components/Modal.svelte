@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import type { RichTextField } from '@prismicio/types';
 
 	export let title: string = 'Vielen Dank!';
@@ -13,15 +14,15 @@
 	export let onClose: () => void;
 </script>
 
-<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-	<div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-		<h3 class="text-lg font-bold mb-4">{title}</h3>
-		<PrismicRichText field={message} />
-		<button
-			class="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-			on:click={onClose}
-		>
-			Schließen
-		</button>
+<div class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0,0,0,0.4);">
+	<div
+		class="rounded-lg shadow-lg p-8 max-w-md w-full mx-4"
+		style="background-color: var(--page-bg-color); color: var(--page-color);"
+	>
+		<h3 class="text-xl font-bold mb-4">{title}</h3>
+		<div class="mb-6">
+			<PrismicRichText field={message} />
+		</div>
+		<Button link={undefined} text="Schließen" on:click={onClose} />
 	</div>
 </div>

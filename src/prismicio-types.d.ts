@@ -25,14 +25,16 @@ type PickContentRelationshipFieldData<
 			TSubRelationship['customtypes'],
 			TLang
 		>;
-	} & { // Group
+	} & // Group
+	{
 		[TGroup in Extract<
 			TRelationship['fields'][number],
 			prismic.CustomTypeModelFetchGroupLevel1 | prismic.CustomTypeModelFetchGroupLevel2
 		> as TGroup['id']]: TData[TGroup['id']] extends prismic.GroupField<infer TGroupData>
 			? prismic.GroupField<PickContentRelationshipFieldData<TGroup, TGroupData, TLang>>
 			: never;
-	} & { // Other fields
+	} & // Other fields
+	{
 		[TFieldKey in Extract<TRelationship['fields'][number], string>]: TFieldKey extends keyof TData
 			? TData[TFieldKey]
 			: never;
@@ -272,7 +274,7 @@ type PageDocumentDataSlicesSlice =
  */
 interface PageDocumentData {
 	/**
-	 * Title field in *Page*
+	 * Seitentitel field in *Page*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -1138,7 +1140,7 @@ export interface AccordionSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: accordion.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1228,7 +1230,7 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * Verzögerung (ms) field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: accordion.bildUndText.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1377,7 +1379,7 @@ export interface AnleitungSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Anleitung → Default → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: anleitung.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1471,7 +1473,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *GoogleMapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: code_einbetten.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1640,7 +1642,7 @@ export interface EventSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Event → Standart → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: event.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1747,6 +1749,16 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
  */
 export interface FormSliceDefaultPrimary {
 	/**
+	 * Formular Name z.B. Kontakt field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Kontakt
+	 * - **API ID Path**: form.default.primary.form_name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	form_name: prismic.KeyTextField;
+
+	/**
 	 * Formular Titel field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
@@ -1832,7 +1844,7 @@ export interface FormSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: form.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -1916,7 +1928,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *GlobaleEvents → Standart → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: globale_events.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2303,7 +2315,7 @@ export interface HtmlCodeSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *HtmlCode → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: html_code.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2402,7 +2414,7 @@ export interface ImageSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Bild → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: image.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2472,7 +2484,7 @@ export interface ImageSliceBannerPrimary {
 	 * Verzögerung (ms) field in *Bild → Banner → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: image.banner.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2542,7 +2554,7 @@ export interface ImageSliceCarouselPrimary {
 	 * Verzögerung (ms) field in *Bild → Karussell → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: image.carousel.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2813,7 +2825,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: image_cards.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2907,7 +2919,7 @@ export interface QuoteSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: quote.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -2991,7 +3003,7 @@ export interface TextSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: text.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -3061,7 +3073,7 @@ export interface TextSliceTwoColumnsPrimary {
 	 * Verzögerung (ms) field in *Text → Zwei Spalten → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: text.twoColumns.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -3207,7 +3219,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * Verzögerung (ms) field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: text_with_image.default.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -3307,7 +3319,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * Verzögerung (ms) field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: text_with_image.withButton.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
@@ -3439,7 +3451,7 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * Verzögerung (ms) field in *TextMitBild → Standard Bild links → Primary*
 	 *
 	 * - **Field Type**: Number
-	 * - **Placeholder**: 0
+	 * - **Placeholder**: 500
 	 * - **API ID Path**: text_with_image.standardBildLinks.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
