@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head><meta charset="utf-8" /><title>Netlify Form Registration</title></head>
+  <body>
+    <!--
+      Diese Datei dient ausschließlich der Netlify-Formular-Erkennung.
+      SSR-Seiten werden beim Build nicht statisch gescannt, daher muss das
+      Formular hier als statische HTML-Datei registriert werden.
+    -->
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+    </form>
+  </body>
+</html>

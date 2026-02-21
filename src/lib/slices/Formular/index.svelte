@@ -23,6 +23,7 @@
 		slice.primary.anim_duration
 	);
 
+	const formName = (slice.primary as any).form_name || 'contact';
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Fehlerstatus für jedes Feld
@@ -145,7 +146,7 @@
 		linkError = null;
 
 		try {
-			const response = await fetch(form.action || '/', {
+			const response = await fetch('/', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams(formData as any).toString()
@@ -197,7 +198,7 @@
 		</div>
 		<div>
 			<form
-				name="contact"
+				name={formName}
 				method="POST"
 				data-netlify="true"
 				on:submit={handleSubmit}
@@ -205,7 +206,7 @@
 				aria-describedby="form-error"
 				novalidate
 			>
-				<input type="hidden" name="form-name" value="contact" />
+				<input type="hidden" name="form-name" value={formName} />
 				<div hidden>
 					<label>
 						Don't fill this out: <input name="bot-field" />
