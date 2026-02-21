@@ -53,6 +53,7 @@
             --focus-ring-color: ${resolvedColor};
         `}
         disabled={$$props.disabled}
+        on:click
     >
         {finalText}
     </button>
