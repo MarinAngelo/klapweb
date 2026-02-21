@@ -1,7 +1,3 @@
-[build]
-  command = "npm run build"
-  publish = ".svelte-kit/output/client"
-
 [dev]
   command = "npm run vite:dev"
   port = 8888
