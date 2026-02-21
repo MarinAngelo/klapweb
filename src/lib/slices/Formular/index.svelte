@@ -29,6 +29,17 @@
 	const formName = `form_${formIndex}`;
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
+	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
+	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
+	function effectiveKey(field: FormSliceDefaultPrimaryFormFieldsItem): string {
+		return (
+			typeKeys[field.field_type] ||
+			(field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') ||
+			''
+		);
+	}
+
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
 	const formSubmittetTitle = slice.primary.submitted_title;
@@ -41,7 +52,7 @@
 	let linkError: string | null = null;
 
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
-		if (!field || !field.field_name) return '';
+		if (!field || !effectiveKey(field)) return '';
 		const val = String(value ?? '').trim();
 		if (field.required && !val) {
 			return field.invalid_feedback_text || 'Bitte Feld ausfüllen';
@@ -60,7 +71,7 @@
 		const value = (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)
 			.value;
 		const error = validateField(field, value);
-		fieldErrors = { ...fieldErrors, [field.field_name ?? '']: error };
+		fieldErrors = { ...fieldErrors, [effectiveKey(field)]: error };
 	}
 
 	// --- Link-Detection (Client) ---
@@ -127,10 +138,10 @@
 		// Feld-Validierung (Pflicht & Typ)
 		let errors: Record<string, string> = {};
 		for (const field of formFields) {
-			const value = formData.get(field.field_name ?? '');
+			const value = formData.get(effectiveKey(field));
 			const error = validateField(field, value);
 			if (error) {
-				errors[field.field_name ?? ''] = error;
+				errors[effectiveKey(field)] = error;
 			}
 		}
 		fieldErrors = errors;
@@ -149,20 +160,26 @@
 		linkError = null;
 
 		// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
-		const nameField = formFields.find((f) => /^name$/i.test(f.field_name ?? ''));
-		if (nameField?.field_name) {
-			const nameVal = formData.get(nameField.field_name);
+		const nameField = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+		if (nameField) {
+			const nameVal = formData.get(effectiveKey(nameField));
 			if (nameVal) formData.set('subject', String(nameVal));
 		}
 
 		try {
+			// Explizit alle Entries iterieren – vermeidet Probleme mit FormData as any Cast
+			const params = new URLSearchParams();
+			for (const [key, value] of formData.entries()) {
+				if (typeof value === 'string') params.append(key, value);
+			}
+
 			// Im Dev-Modus → lokaler Mock-Endpunkt
 			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
 			const endpoint = import.meta.env.DEV ? '/api/form' : '/';
 			const response = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams(formData as any).toString()
+				body: params.toString()
 			});
 
 			if (response.ok) {
@@ -222,10 +239,10 @@
 				<input type="hidden" name="form-name" value={formName} />
 
 				{#each formFields as field}
-					{#if field && field.field_name}
+					{#if field && effectiveKey(field)}
 						<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
-						{#if fieldErrors[field.field_name] && fieldErrors[field.field_name] !== ''}
-							<p class="text-red-600 text-sm mt-1">{fieldErrors[field.field_name]}</p>
+						{#if fieldErrors[effectiveKey(field)]}
+							<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
 						{/if}
 					{/if}
 				{/each}

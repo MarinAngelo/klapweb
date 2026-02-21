@@ -10,6 +10,10 @@
 		'invalid_feedback-text'?: string | null;
 	};
 
+	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
+	$: key = typeKeys[field.field_type] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
 	const typeMapping: Record<string, string> = {
 		Ankreuzfeld: 'checkbox',
@@ -27,15 +31,15 @@
 <div class="mb-4">
 	<!-- Hier Labels für alle Felder-->
 	{#if htmlType !== 'checkbox'}
-		<label for={field.field_name} class="block text-base font-bold">
+		<label for={key} class="block text-base font-bold">
 			{field.field_name ?? ''}{field.required ? ' *' : ''}
 		</label>
 	{/if}
 	{#if htmlType === 'text' || htmlType === 'email'}
 		<input
-			type={field.field_type}
-			id={field.field_name ?? ''}
-			name={field.field_name ?? ''}
+			type={htmlType}
+			id={key}
+			name={key}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
@@ -45,8 +49,8 @@
 	{:else if htmlType === 'textarea'}
 		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
 			<textarea
-				id={field.field_name ?? ''}
-				name={field.field_name ?? ''}
+				id={key}
+				name={key}
 				required={field.required}
 				rows="4"
 				class="input mt-1 p-2 block w-full rounded-md"
@@ -56,8 +60,8 @@
 		</div>
 	{:else if htmlType === 'select'}
 		<select
-			id={field.field_name ?? ''}
-			name={field.field_name ?? ''}
+			id={key}
+			name={key}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
@@ -76,7 +80,7 @@
 				<label class="inline-flex items-center">
 					<input
 						type="radio"
-						name={field.field_name ?? ''}
+						name={key}
 						value={option?.trim() ?? ''}
 						required={field.required}
 						class="form-radio text-indigo-600 focus:ring-indigo-500"
@@ -90,7 +94,7 @@
 			<label class="flex items-center">
 				<input
 					type="checkbox"
-					name={field.field_name ?? ''}
+					name={key}
 					checked={field.required}
 					value="Ausgewählt"
 					class="h-5 w-5 cursor-pointer"
