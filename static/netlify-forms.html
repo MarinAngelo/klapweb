@@ -6,8 +6,19 @@
       Diese Datei dient ausschließlich der Netlify-Formular-Erkennung.
       SSR-Seiten werden beim Build nicht statisch gescannt, daher muss das
       Formular hier als statische HTML-Datei registriert werden.
+
+      Der Name wird automatisch vergeben: das erste Formular-Slice auf einer
+      Seite → "form_1", das zweite → "form_2" usw.
+      Kommt ein neues Formular hinzu, einfach hier eintragen und neu deployen!
     -->
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+
+    <form name="form_1" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+    </form>
+    <form name="form_2" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bot-field" />
+    </form>
+    <form name="form_3" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="bot-field" />
     </form>
   </body>

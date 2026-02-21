@@ -11,6 +11,8 @@
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: FormSlice;
+	export let index: number = 0;
+	export let slices: any[] = [];
 
 	const { openIndex, toggleItem } = useOpenIndex();
 
@@ -22,7 +24,9 @@
 		slice.primary.anim_duration
 	);
 
-	const formName = (slice.primary as any).form_name || 'contact';
+	// Zählt nur Formular-Slices bis einschließlich dem aktuellen → form_1, form_2 ...
+	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
+	const formName = `form_${formIndex}`;
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Fehlerstatus für jedes Feld

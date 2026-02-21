@@ -12,13 +12,6 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "form_name": {
-          "type": "Text",
-          "config": {
-            "label": "Formular Name z.B. Kontakt",
-            "placeholder": "Kontakt"
-          }
-        },
         "form_title": {
           "type": "Text",
           "config": {
