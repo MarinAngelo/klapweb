@@ -148,6 +148,18 @@
 		}
 		linkError = null;
 
+		// Honeypot (clientseitig): bot-field ausgefüllt → Spam, silent drop
+		if (formData.get('bot-field')) return;
+		// Bot-Feld aus POST-Body entfernen → erscheint nicht im Netlify-Dashboard
+		formData.delete('bot-field');
+
+		// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
+		const nameField = formFields.find((f) => /^name$/i.test(f.field_name ?? ''));
+		if (nameField?.field_name) {
+			const nameVal = formData.get(nameField.field_name);
+			if (nameVal) formData.set('subject', String(nameVal));
+		}
+
 		try {
 			// Im Dev-Modus → lokaler Mock-Endpunkt
 			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
