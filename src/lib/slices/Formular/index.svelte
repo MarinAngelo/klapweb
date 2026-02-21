@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../prismicio-types';
-	import { asText } from '@prismicio/client';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
@@ -29,7 +28,7 @@
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
 	const formSubmittetTitle = slice.primary.submitted_title;
-	const formSubmittetText = asText(slice.primary.submitted_text);
+	const formSubmittetText = slice.primary.submitted_text;
 
 	// Zustand für das modale Fenster
 	let showModal = false;
@@ -146,7 +145,7 @@
 		linkError = null;
 
 		try {
-			const response = await fetch('/', {
+			const response = await fetch('/api/form', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams(formData as any).toString()
@@ -246,13 +245,7 @@
 	{#if showModal}
 		<Modal
 			title={formSubmittetTitle || 'Vielen Dank!'}
-			message={[
-				{
-					type: 'paragraph',
-					text: formSubmittetText || 'Ihre Nachricht wurde erfolgreich gesendet.',
-					spans: []
-				}
-			]}
+			message={formSubmittetText?.length ? formSubmittetText : [{ type: 'paragraph', text: 'Ihre Nachricht wurde erfolgreich gesendet.', spans: [] }]}
 			onClose={() => (showModal = false)}
 		/>
 	{/if}
