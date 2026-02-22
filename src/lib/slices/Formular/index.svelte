@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../prismicio-types';
+	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../../prismicio-types';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import Heading from '$lib/components/Heading.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -8,13 +9,58 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
-
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
 
-	const { openIndex, toggleItem } = useOpenIndex();
+	// Variation mitText: Zwei-Spalten-Layout
+	$: isZweiSpalten = (slice.variation as string) === 'mitText';
+	$: p = slice.primary as any; // mitText-spezifische Felder (spalten_verhaeltnis, formular_seite, text)
+
+	// Vollständige Klassennamen damit Tailwind sie erkennt:
+	// 'col-span-12' 'md:col-span-4' 'md:col-span-6' 'md:col-span-8' 'md:order-1' 'md:order-2'
+	$: formCol = isZweiSpalten
+		? p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
+			? 'col-span-12 md:col-span-8'
+			: p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
+				? 'col-span-12 md:col-span-4'
+				: 'col-span-12 md:col-span-6'
+		: '';
+	$: textCol = isZweiSpalten
+		? p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
+			? 'col-span-12 md:col-span-8'
+			: p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
+				? 'col-span-12 md:col-span-4'
+				: 'col-span-12 md:col-span-6'
+		: '';
+	$: formOrder = isZweiSpalten ? (p.formular_seite === 'Rechts' ? 'md:order-2' : 'md:order-1') : '';
+	$: textOrder = isZweiSpalten ? (p.formular_seite === 'Rechts' ? 'md:order-1' : 'md:order-2') : '';
+
+	// Text-Spalte Ausrichtung
+	// 'self-start' 'self-center' 'self-end'
+	// 'w-full' 'w-fit mx-auto' 'w-fit ml-auto'
+	// 'text-left' 'text-center' 'text-right'
+	$: textSelf = isZweiSpalten
+		? p.text_ausrichtung_v === 'Mitte'
+			? 'self-center'
+			: p.text_ausrichtung_v === 'Unten'
+				? 'self-end'
+				: 'self-start'
+		: '';
+	$: textItems = isZweiSpalten
+		? p.text_ausrichtung_h === 'Mitte'
+			? 'w-fit mx-auto'
+			: p.text_ausrichtung_h === 'Rechts'
+				? 'w-fit ml-auto'
+				: 'w-full'
+		: '';
+	$: textTextAlign = isZweiSpalten
+		? p.text_textausrichtung === 'Mitte'
+			? 'text-center'
+			: p.text_textausrichtung === 'Rechts'
+				? 'text-right'
+				: 'text-left'
+		: '';
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -34,7 +80,7 @@
 	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
 	function effectiveKey(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (
-			typeKeys[field.field_type] ||
+			typeKeys[field.field_type ?? ''] ||
 			(field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') ||
 			''
 		);
@@ -215,58 +261,112 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class="grid grid-cols-1 items-center gap-8">
-		<div>
-			{#if slice.primary.form_title}
-				<h2 class="text-2xl font-bold">
-					{slice.primary.form_title}
-				</h2>
-			{/if}
-			{#if slice.primary.form_instructions}
-				<PrismicRichText field={slice.primary.form_instructions} />
-			{/if}
-		</div>
-		<div>
-			<form
-				name={formName}
-				method="POST"
-				data-netlify="true"
-				on:submit={handleSubmit}
-				on:input={onFormInput}
-				aria-describedby="form-error"
-				novalidate
-			>
-				<input type="hidden" name="form-name" value={formName} />
-
-				{#each formFields as field}
-					{#if field && effectiveKey(field)}
-						<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
-						{#if fieldErrors[effectiveKey(field)]}
-							<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
-						{/if}
-					{/if}
-				{/each}
-
-				{#if linkError}
-					<p id="form-error" class="mt-3 text-sm text-red-600">
-						{linkError}
-					</p>
+	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
+	{#if isZweiSpalten}
+		<div class="grid grid-cols-12 items-start gap-8 md:gap-12">
+			<!-- Formular-Spalte -->
+			<div class="{formCol} {formOrder}">
+				{#if slice.primary.form_title}
+					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
 				{/if}
-
-				<div class="mt-8 flex justify-end">
-				<Button
-					text={slice.primary.submitt_button_text || 'Absenden'}
-					disabled={!!linkError}
-					link={undefined}
-					color={undefined}
-					bgColor={undefined}
-					hoverColor={undefined}
-					hoverBgColor={undefined}
-				/>
+				{#if slice.primary.form_instructions}
+					<PrismicRichText field={slice.primary.form_instructions} />
+				{/if}
+				<form
+					name={formName}
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					on:submit={handleSubmit}
+					on:input={onFormInput}
+					aria-describedby="form-error"
+					novalidate
+				>
+					<input type="hidden" name="form-name" value={formName} />
+					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
+					{#each formFields as field}
+						{#if field && effectiveKey(field)}
+							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+							{#if fieldErrors[effectiveKey(field)]}
+								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+							{/if}
+						{/if}
+					{/each}
+					{#if linkError}
+						<p id="form-error" class="mt-3 text-sm text-red-600">{linkError}</p>
+					{/if}
+					<div class="mt-8 flex justify-end">
+						<Button
+							text={slice.primary.submitt_button_text || 'Absenden'}
+							disabled={!!linkError}
+							link={undefined}
+							color={undefined}
+							bgColor={undefined}
+							hoverColor={undefined}
+							hoverBgColor={undefined}
+						/>
+					</div>
+				</form>
+			</div>
+			<!-- Text-Spalte -->
+			<div class="{textCol} {textOrder} {textSelf}">
+				<div class="{textItems} {textTextAlign}">
+					<PrismicRichText field={p.text} />
 				</div>
-			</form>
+			</div>
 		</div>
-	</div>
+	{:else}
+		<!-- Standard: einspaltig -->
+		<div class="grid grid-cols-1 items-center gap-8">
+			<div>
+				{#if slice.primary.form_title}
+					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
+				{/if}
+				{#if slice.primary.form_instructions}
+					<PrismicRichText field={slice.primary.form_instructions} />
+				{/if}
+			</div>
+			<div>
+				<form
+					name={formName}
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					on:submit={handleSubmit}
+					on:input={onFormInput}
+					aria-describedby="form-error"
+					novalidate
+				>
+					<input type="hidden" name="form-name" value={formName} />
+					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
+					{#each formFields as field}
+						{#if field && effectiveKey(field)}
+							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+							{#if fieldErrors[effectiveKey(field)]}
+								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+							{/if}
+						{/if}
+					{/each}
+					{#if linkError}
+						<p id="form-error" class="mt-3 text-sm text-red-600">
+							{linkError}
+						</p>
+					{/if}
+					<div class="mt-8 flex justify-end">
+						<Button
+							text={slice.primary.submitt_button_text || 'Absenden'}
+							disabled={!!linkError}
+							link={undefined}
+							color={undefined}
+							bgColor={undefined}
+							hoverColor={undefined}
+							hoverBgColor={undefined}
+						/>
+					</div>
+				</form>
+			</div>
+		</div>
+	{/if}
 
 	{#if showModal}
 		<Modal

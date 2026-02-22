@@ -4,15 +4,16 @@
 
 	export let field: {
 		field_name: string | null;
-		field_type: string;
+		field_type: string | null;
 		required: boolean;
-		options?: string; // Optionen als String, durch Kommas getrennt
+		options?: string | null; // Optionen als String, durch Kommas getrennt
 		'invalid_feedback-text'?: string | null;
+		invalid_feedback_text?: string | null;
 	};
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
 	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
-	$: key = typeKeys[field.field_type] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+	$: key = typeKeys[field.field_type ?? ''] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
 	const typeMapping: Record<string, string> = {
@@ -25,7 +26,7 @@
 	};
 
 	// HTML-Typ basierend auf dem Mapping
-	const htmlType = typeMapping[field.field_type] || field.field_type;
+	const htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
 </script>
 
 <div class="mb-4">
