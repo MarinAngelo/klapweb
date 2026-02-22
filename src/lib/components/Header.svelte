@@ -119,7 +119,7 @@
 	style:background-color={computedBgColor}
 	style:color={headerColor}
 >
-	<Bounded tag="div" yPadding="none" tMargin="lg">
+	<Bounded tag="div" yPadding="none" tMargin="lg" fullWidth={prismicTheme?.data?.full_screen_width === true}>
 		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
 			<div class="logo m-0">
 				{#if prismicTheme?.data?.logo?.url}

@@ -12,6 +12,7 @@
 	export let animate: boolean = false;
 	export let animationOptions: RevealOptions = {};
 
+	export let fullWidth: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
 	// Wir bereiten die Optionen vor: Wenn animate false ist,
@@ -40,7 +41,7 @@
 		$$props.class
 	)}
 >
-	<div class="mx-auto w-full max-w-6xl relative overflow-visible">
+	<div class={clsx('mx-auto w-full relative overflow-visible', !fullWidth && 'max-w-6xl')}>
 		<slot />
 	</div>
 </svelte:element>

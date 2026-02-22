@@ -115,6 +115,15 @@
 			}
 		},
 		"Kopfzeile": {
+			"full_screen_width": {
+				"type": "Boolean",
+				"config": {
+					"label": "Volle Bildschirmbreite nutzen",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"site_title_font_size": {
 				"type": "Number",
 				"config": {

@@ -75,13 +75,13 @@
     }
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
+<nav class="flex items-center justify-between flex-wrap p-6 pr-0 lg:pr-6" style="font-family: {headerLinkFont};">
     <div class="block lg:hidden h-full flex items-center">
         <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
             {#if $isMenuOpen}
-                <SvgIcon name="close" />
+                <SvgIcon name="close" color={headerLinkColor} />
             {:else}
-                <SvgIcon name="menu" />
+                <SvgIcon name="menu" color={headerLinkColor} />
             {/if}
         </button>
     </div>

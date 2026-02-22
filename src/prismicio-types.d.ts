@@ -810,6 +810,18 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
+	 * Volle Bildschirmbreite nutzen field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.full_screen_width
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	full_screen_width: prismic.BooleanField;
+
+	/**
 	 * Website-Titel Schriftgrösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Number
@@ -1748,16 +1760,6 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
  * Primary content in *Formular → Standard → Primary*
  */
 export interface FormSliceDefaultPrimary {
-	/**
-	 * Formular Name z.B. Kontakt field in *Formular → Standard → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Kontakt
-	 * - **API ID Path**: form.default.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
 	/**
 	 * Formular Titel field in *Formular → Standard → Primary*
 	 *
