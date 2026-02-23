@@ -167,6 +167,13 @@
 					"placeholder": "1 - 8"
 				}
 			},
+			"logo_color": {
+				"type": "Color",
+				"config": {
+					"label": "Logo Farbe (nur SVG)",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"header_bg_color": {
 				"type": "Color",
 				"config": {

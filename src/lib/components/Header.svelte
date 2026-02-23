@@ -28,6 +28,8 @@
 
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || get(theme).logoHeight;
+	$: logoColor = prismicTheme?.data?.logo_color || null;
+	$: isSvgLogo = !!prismicTheme?.data?.logo?.url?.toLowerCase().includes('.svg');
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
 	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || get(theme).siteTitleFont;
 	$: siteSubtitleFontSize =
@@ -124,12 +126,19 @@
 			<div class="logo m-0">
 				{#if prismicTheme?.data?.logo?.url}
 					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-2 mb-2">
-						<PrismicImage
-							field={prismicTheme.data.logo}
-							alt={prismicTheme.data.logo.alt}
-							class="w-auto"
-							style="height: {logoHeight}rem;"
-						/>
+						{#if isSvgLogo && logoColor}
+							{@const dims = prismicTheme.data.logo.dimensions}
+							<div
+								style="height: {logoHeight}rem; {dims ? `aspect-ratio: ${dims.width} / ${dims.height};` : 'width: auto;'} background-color: {logoColor}; -webkit-mask-image: url('{prismicTheme.data.logo.url}'); mask-image: url('{prismicTheme.data.logo.url}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center left; mask-position: center left;"
+							></div>
+						{:else}
+							<PrismicImage
+								field={prismicTheme.data.logo}
+								alt={prismicTheme.data.logo.alt}
+								class="w-auto"
+								style="height: {logoHeight}rem;"
+							/>
+						{/if}
 					</a>
 				{:else if settings?.data}
 					<a href={lang === mainLang ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerLinkColor};">
