@@ -13,10 +13,12 @@ import Kacheln from './Kacheln/index.svelte';
 import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
+import ButtonSlice from './Button/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
 	anleitung: Anleitung,
+	button: ButtonSlice,
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,

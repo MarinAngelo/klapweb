@@ -255,6 +255,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| ButtonSlice
 	| AnleitungSlice
 	| GlobaleEventsSlice
 	| EventSlice
@@ -879,6 +880,17 @@ interface ThemeDocumentData {
 	logo_height: prismic.NumberField;
 
 	/**
+	 * Logo Farbe (nur SVG) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.logo_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	logo_color: prismic.ColorField;
+
+	/**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1436,6 +1448,131 @@ type AnleitungSliceVariation = AnleitungSliceDefault;
 export type AnleitungSlice = prismic.SharedSlice<'anleitung', AnleitungSliceVariation>;
 
 /**
+ * Primary content in *Schaltfläche → Standard → Primary*
+ */
+export interface ButtonSliceDefaultPrimary {
+	/**
+	 * Link field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: button.default.primary.button_link
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Beschriftung field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Mehr erfahren
+	 * - **API ID Path**: button.default.primary.button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	button_text: prismic.KeyTextField;
+
+	/**
+	 * Grösse field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mittel
+	 * - **API ID Path**: button.default.primary.button_size
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
+
+	/**
+	 * Ausrichtung field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mitte
+	 * - **API ID Path**: button.default.primary.button_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Mobile: Volle Breite field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.default.primary.mobile_full_width
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_full_width: prismic.BooleanField;
+
+	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.default.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.default.primary.button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrundfarbe field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.default.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrund Mouseover field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.default.primary.button_hover_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_bg_color: prismic.ColorField;
+}
+
+/**
+ * Standard variation for Schaltfläche Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Schaltfläche
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ButtonSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<ButtonSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Schaltfläche*
+ */
+type ButtonSliceVariation = ButtonSliceDefault;
+
+/**
+ * Schaltfläche Shared Slice
+ *
+ * - **API ID**: `button`
+ * - **Description**: Schaltfläche
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ButtonSlice = prismic.SharedSlice<'button', ButtonSliceVariation>;
+
+/**
  * Primary content in *GoogleMapEinbetten → Standard → Primary*
  */
 export interface CodeEinbettenSliceDefaultPrimary {
@@ -1757,6 +1894,64 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 }
 
 /**
+ * Item in *Formular → Mit Text → Primary → Formular Felder*
+ */
+export interface FormSliceMitTextPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Mit Text → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Mit Text → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	field_type: prismic.SelectField<
+		'Textfeld' | 'E-Mail' | 'Textbereich' | 'Auswahlliste' | 'Ankreuzfeld' | 'Einzelauswahl'
+	>;
+
+	/**
+	 * Obligatorisch field in *Formular → Mit Text → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.mitText.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Mit Text → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.mitText.primary.form_fields[].invalid_feedback_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invalid_feedback_text: prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Mit Text → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.mitText.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	options: prismic.KeyTextField;
+}
+
+/**
  * Primary content in *Formular → Standard → Primary*
  */
 export interface FormSliceDefaultPrimary {
@@ -1877,9 +2072,197 @@ export type FormSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Formular → Mit Text → Primary*
+ */
+export interface FormSliceMitTextPrimary {
+	/**
+	 * Spalten-Verhältnis field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Gleich (50/50)
+	 * - **API ID Path**: form.mitText.primary.spalten_verhaeltnis
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	spalten_verhaeltnis: prismic.SelectField<
+		'Gleich (50/50)' | 'Breit Formular (2/3 + 1/3)' | 'Breit Text (1/3 + 2/3)',
+		'filled'
+	>;
+
+	/**
+	 * Formular in Spalte field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Links
+	 * - **API ID Path**: form.mitText.primary.formular_seite
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	formular_seite: prismic.SelectField<'Links' | 'Rechts', 'filled'>;
+
+	/**
+	 * Text - Vertikale Ausrichtung field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_v
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_ausrichtung_v: prismic.SelectField<'Oben' | 'Mitte' | 'Unten', 'filled'>;
+
+	/**
+	 * Text - Container horizontal field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Links
+	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_h
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_ausrichtung_h: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Text - Textausrichtung field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Links
+	 * - **API ID Path**: form.mitText.primary.text_textausrichtung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_textausrichtung: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Text field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Formular Titel field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.form_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	form_title: prismic.KeyTextField;
+
+	/**
+	 * Formular Instruktionen field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.form_instructions
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	form_instructions: prismic.RichTextField;
+
+	/**
+	 * Senden-Schaltflächen-Text field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.submitt_button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	submitt_button_text: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Titel field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.submitted_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	submitted_title: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Text field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.submitted_text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	submitted_text: prismic.RichTextField;
+
+	/**
+	 * Formular Felder field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceMitTextPrimaryFormFieldsItem>>;
+
+	/**
+	 * Animation aktivieren field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.mitText.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: form.mitText.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: form.mitText.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: form.mitText.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Mit Text variation for Formular Slice
+ *
+ * - **API ID**: `mitText`
+ * - **Description**: Formular neben Rich-Text in zwei Spalten
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type FormSliceMitText = prismic.SharedSliceVariation<
+	'mitText',
+	Simplify<FormSliceMitTextPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Formular*
  */
-type FormSliceVariation = FormSliceDefault;
+type FormSliceVariation = FormSliceDefault | FormSliceMitText;
 
 /**
  * Formular Shared Slice
@@ -2187,6 +2570,16 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
+
+	/**
+	 * Textgrösse Mobile field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: hero.default.primary.mobile_text_scale
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	mobile_text_scale: prismic.SelectField<'Normal' | 'Klein' | 'Kleiner' | 'Sehr klein'>;
 }
 
 /**
@@ -3554,6 +3947,10 @@ declare module '@prismicio/client' {
 			AnleitungSliceDefaultPrimary,
 			AnleitungSliceVariation,
 			AnleitungSliceDefault,
+			ButtonSlice,
+			ButtonSliceDefaultPrimary,
+			ButtonSliceVariation,
+			ButtonSliceDefault,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
@@ -3566,8 +3963,11 @@ declare module '@prismicio/client' {
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
+			FormSliceMitTextPrimaryFormFieldsItem,
+			FormSliceMitTextPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
+			FormSliceMitText,
 			GlobaleEventsSlice,
 			GlobaleEventsSliceDefaultPrimary,
 			GlobaleEventsSliceVariation,
