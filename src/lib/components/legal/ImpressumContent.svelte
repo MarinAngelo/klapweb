@@ -37,13 +37,13 @@
 
 		<h3 class="text-lg font-semibold">{$_('Webentwicklung')}</h3>
 		<p>
-			Angelo Klap<br />
+			Marinus Angelo Klap<br />
 			<strong>Website:</strong>
 			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline text-inherit">
-				''
+				Klap Web
 			</a><br />
 			<strong>E-Mail:</strong>
-			<a href="mailto:admin@klap-web.ch" class="hover:underline text-inherit">admin@klap-web.ch</a>
+			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline text-inherit">marinus.angelo@klap-web.ch</a>
 		</p>
 
 		{#if contacts.length > 0}
