@@ -74,6 +74,14 @@
 		gross: '4rem 6rem'
 	};
 
+	// Mobile Text-Skalierung
+	const mobileTextScaleMap: Record<string, number> = {
+		Klein: 0.8,
+		Kleiner: 0.65,
+		'Sehr klein': 0.5
+	};
+	$: mobileFontScale = mobileTextScaleMap[(slice.primary as any).mobile_text_scale as string] ?? 1.0;
+
 	// Padding-Wert aus dem Slice holen und mappen
 	$: textOverlayPadding =
 		'text_overlay_padding' in slice.primary &&
@@ -190,12 +198,13 @@
 			/>
 		{/if}
 	{/if}
-	<Bounded tag="div" yPadding="lg" class="relative z-10">
+	<Bounded tag="div" yPadding="none" class="relative z-10">
 		<div
-			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
-			style={bannerTop === true
-				? `margin-top: -${$headerHeight}px; padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;`
-				: ''}
+			class="relative flex flex-col items-center justify-center"
+			style="
+				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 80vh;'}
+				{bannerTop === true ? `padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;` : ''}
+			"
 		>
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
@@ -222,7 +231,7 @@
 							}
 						}
 					</style>
-					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
+					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
 						{#if 'text' in slice.primary}
 							<div style="--page-color: {color};">
 								<PrismicRichText field={slice.primary.text} {components} />
