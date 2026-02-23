@@ -255,6 +255,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
 	| GlobaleEventsSlice
@@ -3513,6 +3514,163 @@ type TextSliceVariation = TextSliceDefault | TextSliceTwoColumns;
 export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
 
 /**
+ * Primary content in *Text&Aktion → Standard → Primary*
+ */
+export interface TextAndCtaSliceDefaultPrimary {
+	/**
+	 * Text field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_and_cta.default.primary.text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Bildschirmhoch field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_and_cta.default.primary.fullscreen_height
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	fullscreen_height: prismic.BooleanField;
+
+	/**
+	 * Scrollen einrasten field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_and_cta.default.primary.scroll_snap
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	scroll_snap: prismic.BooleanField;
+
+	/**
+	 * Schaltfläche Link field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_and_cta.default.primary.button_link
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Schaltfläche Beschriftung field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Mehr erfahren
+	 * - **API ID Path**: text_and_cta.default.primary.button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	button_text: prismic.KeyTextField;
+
+	/**
+	 * Schaltfläche Grösse field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mittel
+	 * - **API ID Path**: text_and_cta.default.primary.button_size
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
+
+	/**
+	 * Schaltfläche Ausrichtung field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mitte
+	 * - **API ID Path**: text_and_cta.default.primary.button_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Mobile: Volle Breite field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_and_cta.default.primary.mobile_full_width
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_full_width: prismic.BooleanField;
+
+	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrundfarbe field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrund Mouseover field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.button_hover_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_bg_color: prismic.ColorField;
+}
+
+/**
+ * Standard variation for Text&Aktion Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Text&Aktion
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TextAndCtaSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<TextAndCtaSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Text&Aktion*
+ */
+type TextAndCtaSliceVariation = TextAndCtaSliceDefault;
+
+/**
+ * Text&Aktion Shared Slice
+ *
+ * - **API ID**: `text_and_cta`
+ * - **Description**: Text&Aktion
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TextAndCtaSlice = prismic.SharedSlice<'text_and_cta', TextAndCtaSliceVariation>;
+
+/**
  * Primary content in *TextMitBild → Standard Bild rechts → Primary*
  */
 export interface TextWithImageSliceDefaultPrimary {
@@ -4007,6 +4165,10 @@ declare module '@prismicio/client' {
 			TextSliceVariation,
 			TextSliceDefault,
 			TextSliceTwoColumns,
+			TextAndCtaSlice,
+			TextAndCtaSliceDefaultPrimary,
+			TextAndCtaSliceVariation,
+			TextAndCtaSliceDefault,
 			TextWithImageSlice,
 			TextWithImageSliceDefaultPrimary,
 			TextWithImageSliceWithButtonPrimary,
