@@ -9,6 +9,8 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { onMount, onDestroy } from 'svelte';
+	import { _ } from '$lib/stores/i18n';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
@@ -254,6 +256,44 @@
 	$: overlayColor = p.html_embed_overlay_color || get(theme).pageColor;
 	$: overlayOpacity = p.html_embed_overlay_opacity != null ? (100 - p.html_embed_overlay_opacity) / 100 : 0;
 
+	// Clock: current time/date in the map's timezone
+	let clockTime = '';
+	let clockDate = '';
+	let clockInterval: ReturnType<typeof setInterval> | undefined;
+
+	function updateClock(tz: string) {
+		const now = new Date();
+		clockTime = new Intl.DateTimeFormat('de-CH', {
+			timeZone: tz,
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+			hour12: false
+		}).format(now);
+		// UTC offset: "GMT+5:30" → "UTC+5:30"
+		const offsetStr = new Intl.DateTimeFormat('en', {
+			timeZone: tz,
+			timeZoneName: 'shortOffset'
+		}).formatToParts(now).find((p) => p.type === 'timeZoneName')?.value ?? '';
+		clockDate = new Intl.DateTimeFormat('de-CH', {
+			timeZone: tz,
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		}).format(now) + '  ' + offsetStr.replace('GMT', 'UTC');
+	}
+
+	onMount(() => {
+		const tz = p.map_timezone;
+		if (p.map_show_clock && tz) {
+			updateClock(tz);
+			clockInterval = setInterval(() => updateClock(tz), 1000);
+		}
+	});
+
+	onDestroy(() => clearInterval(clockInterval));
+
 	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
 	function onFormInput(e: Event) {
 		if (linkError) {
@@ -326,12 +366,21 @@
 					<PrismicRichText field={p.text} />
 				</div>
 			{#if sanitizedHtmlEmbed}
-					<div class="relative w-full mt-6">
-						{@html sanitizedHtmlEmbed}
-						<div
-							class="absolute inset-0 pointer-events-none"
-							style="background-color: {overlayColor}; opacity: {overlayOpacity};"
-						></div>
+					<div class="w-full mt-6">
+						{#if p.map_show_clock && p.map_timezone}
+							<div class="mb-2">
+								<Heading tag="h3">{$_('Meine Zeit')}</Heading>
+								<div class="text-sm">{clockDate}</div>
+								<div class="font-mono">{clockTime}</div>
+							</div>
+						{/if}
+						<div class="relative">
+							{@html sanitizedHtmlEmbed}
+							<div
+								class="absolute inset-0 pointer-events-none"
+								style="background-color: {overlayColor}; opacity: {overlayOpacity};"
+							></div>
+						</div>
 					</div>
 				{/if}
 			</div>

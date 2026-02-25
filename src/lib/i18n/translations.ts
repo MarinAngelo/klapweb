@@ -132,6 +132,10 @@ export const translations: Record<string, Record<string, string>> = {
     'Alle Rechte vorbehalten.': {
         'de-ch': 'Alle Rechte vorbehalten.',
         'en-us': 'All rights reserved.'
+    },
+    'Meine Zeit': {
+        'de-ch': 'Meine Zeit',
+        'en-us': 'Local Time'
     }
 
 };

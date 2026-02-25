@@ -238,6 +238,22 @@
             "placeholder": "30"
           }
         },
+        "map_show_clock": {
+          "type": "Boolean",
+          "config": {
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false,
+            "label": "Uhrzeit anzeigen"
+          }
+        },
+        "map_timezone": {
+          "type": "Text",
+          "config": {
+            "label": "Zeitzone (IANA, z.B. America/New_York)",
+            "placeholder": "Europe/Zurich"
+          }
+        },
         "form_title": {
           "type": "Text",
           "config": {
