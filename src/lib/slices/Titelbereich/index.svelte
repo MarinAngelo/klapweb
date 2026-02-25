@@ -3,7 +3,7 @@
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
+	import { convertNumber } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';

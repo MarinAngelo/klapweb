@@ -325,6 +325,7 @@
 					<PrismicRichText field={slice.primary.form_instructions} />
 				{/if}
 				<form
+					class="mt-16"
 					name={formName}
 					method="POST"
 					data-netlify="true"
@@ -367,13 +368,6 @@
 				</div>
 			{#if sanitizedHtmlEmbed}
 					<div class="w-full mt-6">
-						{#if p.map_show_clock && p.map_timezone}
-							<div class="mb-2">
-								<Heading tag="h3">{$_('Meine Zeit')}</Heading>
-								<div class="text-sm">{clockDate}</div>
-								<div class="font-mono">{clockTime}</div>
-							</div>
-						{/if}
 						<div class="relative">
 							{@html sanitizedHtmlEmbed}
 							<div
@@ -381,6 +375,13 @@
 								style="background-color: {overlayColor}; opacity: {overlayOpacity};"
 							></div>
 						</div>
+						{#if p.map_show_clock && p.map_timezone}
+							<div class="mt-2">
+								<Heading tag="h3">{$_('Meine Zeit')}</Heading>
+								<div class="text-sm">{clockDate}</div>
+								<div class="font-mono">{clockTime}</div>
+							</div>
+						{/if}
 					</div>
 				{/if}
 			</div>
@@ -398,6 +399,7 @@
 			</div>
 			<div>
 				<form
+					class="mt-16"
 					name={formName}
 					method="POST"
 					data-netlify="true"

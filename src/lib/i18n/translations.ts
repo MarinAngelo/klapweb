@@ -134,7 +134,7 @@ export const translations: Record<string, Record<string, string>> = {
         'en-us': 'All rights reserved.'
     },
     'Meine Zeit': {
-        'de-ch': 'Meine Zeit',
+        'de-ch': 'Meine lokale Zeit',
         'en-us': 'Local Time'
     }
 
