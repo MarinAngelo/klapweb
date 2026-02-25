@@ -263,9 +263,9 @@
 >
 	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
 	{#if isZweiSpalten}
-		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12">
+		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12 overflow-x-hidden">
 			<!-- Formular-Spalte -->
-			<div class="{formCol} {formOrder}">
+			<div class="{formCol} {formOrder} min-w-0">
 				{#if slice.primary.form_title}
 					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
 				{/if}
@@ -309,8 +309,8 @@
 				</form>
 			</div>
 			<!-- Text-Spalte -->
-			<div class="{textCol} {textOrder} {textSelf}">
-				<div class="{textItems} {textTextAlign}">
+			<div class="{textCol} {textOrder} {textSelf} min-w-0">
+				<div class="{textItems} {textTextAlign} max-w-full">
 					<PrismicRichText field={p.text} />
 				</div>
 			</div>
