@@ -54,7 +54,7 @@
 				name={key}
 				required={field.required}
 				rows="4"
-				class="input mt-1 p-2 block w-full rounded-md"
+				class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
 				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 				on:blur
 			></textarea>

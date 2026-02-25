@@ -263,7 +263,7 @@
 >
 	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
 	{#if isZweiSpalten}
-		<div class="grid grid-cols-12 items-start gap-8 md:gap-12">
+		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12">
 			<!-- Formular-Spalte -->
 			<div class="{formCol} {formOrder}">
 				{#if slice.primary.form_title}

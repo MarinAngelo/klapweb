@@ -28,7 +28,7 @@
 {#if link}
     <PrismicLink
         field={link}
-        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out"
+        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
         style={`
             background-color: ${resolvedBgColor};
             color: ${resolvedColor};
@@ -43,7 +43,7 @@
 {:else}
     <button
         type="submit"
-        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out"
+        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
         style={`
             background-color: ${resolvedBgColor};
             color: ${resolvedColor};

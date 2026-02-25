@@ -20,6 +20,12 @@
 
 /* TailwindCSS-Overrides */
 
+a:focus,
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Hauptnavigation - Hover-Effekt für Links */
 .nav-link:hover {
   color: var(--header-link-hover-color) !important;
