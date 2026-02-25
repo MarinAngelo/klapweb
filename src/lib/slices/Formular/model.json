@@ -151,7 +151,11 @@
           "type": "Select",
           "config": {
             "label": "Spalten-Verhältnis",
-            "options": ["Gleich (50/50)", "Breit Formular (2/3 + 1/3)", "Breit Text (1/3 + 2/3)"],
+            "options": [
+              "Gleich (50/50)",
+              "Breit Formular (2/3 + 1/3)",
+              "Breit Text (1/3 + 2/3)"
+            ],
             "default_value": "Gleich (50/50)"
           }
         },
@@ -159,7 +163,10 @@
           "type": "Select",
           "config": {
             "label": "Formular in Spalte",
-            "options": ["Links", "Rechts"],
+            "options": [
+              "Links",
+              "Rechts"
+            ],
             "default_value": "Links"
           }
         },
@@ -167,7 +174,11 @@
           "type": "Select",
           "config": {
             "label": "Text - Vertikale Ausrichtung",
-            "options": ["Oben", "Mitte", "Unten"],
+            "options": [
+              "Oben",
+              "Mitte",
+              "Unten"
+            ],
             "default_value": "Oben"
           }
         },
@@ -175,7 +186,11 @@
           "type": "Select",
           "config": {
             "label": "Text - Container horizontal",
-            "options": ["Links", "Mitte", "Rechts"],
+            "options": [
+              "Links",
+              "Mitte",
+              "Rechts"
+            ],
             "default_value": "Links"
           }
         },
@@ -183,7 +198,11 @@
           "type": "Select",
           "config": {
             "label": "Text - Textausrichtung",
-            "options": ["Links", "Mitte", "Rechts"],
+            "options": [
+              "Links",
+              "Mitte",
+              "Rechts"
+            ],
             "default_value": "Links"
           }
         },
@@ -192,7 +211,31 @@
           "config": {
             "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
             "allowTargetBlank": true,
-            "label": "Text"
+            "label": "Text",
+            "labels": [
+              "kompakt"
+            ]
+          }
+        },
+        "html_embed": {
+          "type": "StructuredText",
+          "config": {
+            "single": "preformatted",
+            "label": "HTML Embed (z.B. Google Maps)",
+            "placeholder": "<iframe src=\"...\" ...></iframe>"
+          }
+        },
+        "html_embed_overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Map Overlay Farbe"
+          }
+        },
+        "html_embed_overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Überlagerungs-Transparenz (0–100)",
+            "placeholder": "30"
           }
         },
         "form_title": {
@@ -295,7 +338,13 @@
           "type": "Select",
           "config": {
             "label": "Animations-Richtung",
-            "options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
             "default_value": "Oben"
           }
         },

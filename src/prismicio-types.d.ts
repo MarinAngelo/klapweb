@@ -2145,6 +2145,36 @@ export interface FormSliceMitTextPrimary {
 	text: prismic.RichTextField;
 
 	/**
+	 * HTML Embed (z.B. Google Maps) field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: <iframe src="..." ...></iframe>
+	 * - **API ID Path**: form.mitText.primary.html_embed
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	html_embed: prismic.RichTextField;
+
+	/**
+	 * Map Overlay Farbe field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	html_embed_overlay_color: prismic.ColorField;
+
+	/**
+	 * Überlagerungs-Transparenz (0–100) field in *Formular → Mit Text → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 30
+	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	html_embed_overlay_opacity: prismic.NumberField;
+
+	/**
 	 * Formular Titel field in *Formular → Mit Text → Primary*
 	 *
 	 * - **Field Type**: Text
@@ -3548,6 +3578,46 @@ export interface TextAndCtaSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	scroll_snap: prismic.BooleanField;
+
+	/**
+	 * Hintergrundfarbe field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_and_cta.default.primary.text_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	text_color: prismic.ColorField;
+
+	/**
+	 * Schriftgrösse Desktop (%) field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: text_and_cta.default.primary.text_zoom_desktop
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	text_zoom_desktop: prismic.NumberField;
+
+	/**
+	 * Schriftgrösse Mobile (%) field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: text_and_cta.default.primary.text_zoom_mobile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	text_zoom_mobile: prismic.NumberField;
 
 	/**
 	 * Schaltfläche Link field in *Text&Aktion → Standard → Primary*

@@ -58,6 +58,12 @@ button:focus {
   box-shadow: 0 0 0 calc(2px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color), var(--tw-ring-shadow, 0 0 #0000);
 }
 
+/* Label "kompakt": Paragraf-Abstand entfernen (z.B. für Adressen) */
+p:has(span.rt-kompakt) {
+  margin-bottom: 0 !important;
+  line-height: 1.5 !important;
+}
+
 a[data-type="prismic-link"] {
 	@apply underline;
 	color: var(--page-link-color);

@@ -13,48 +13,48 @@
 	export let index: number = 0;
 	export let slices: any[] = [];
 
-	// Variation mitText: Zwei-Spalten-Layout
-	$: isZweiSpalten = (slice.variation as string) === 'mitText';
-	$: p = slice.primary as any; // mitText-spezifische Felder (spalten_verhaeltnis, formular_seite, text)
+	// Variation mitText: two-column layout
+	$: isTwoColumn = (slice.variation as string) === 'mitText';
+	$: p = slice.primary as any; // mitText-specific fields (spalten_verhaeltnis, formular_seite, text)
 
 	// Vollständige Klassennamen damit Tailwind sie erkennt:
 	// 'col-span-12' 'md:col-span-4' 'md:col-span-6' 'md:col-span-8' 'md:order-1' 'md:order-2'
-	$: formCol = isZweiSpalten
+	$: formCol = isTwoColumn
 		? p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
 			? 'col-span-12 md:col-span-8'
 			: p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
 				? 'col-span-12 md:col-span-4'
 				: 'col-span-12 md:col-span-6'
 		: '';
-	$: textCol = isZweiSpalten
+	$: textCol = isTwoColumn
 		? p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
 			? 'col-span-12 md:col-span-8'
 			: p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
 				? 'col-span-12 md:col-span-4'
 				: 'col-span-12 md:col-span-6'
 		: '';
-	$: formOrder = isZweiSpalten ? (p.formular_seite === 'Rechts' ? 'md:order-2' : 'md:order-1') : '';
-	$: textOrder = isZweiSpalten ? (p.formular_seite === 'Rechts' ? 'md:order-1' : 'md:order-2') : '';
+	$: formOrder = isTwoColumn ? (p.formular_seite === 'Rechts' ? 'md:order-2' : 'md:order-1') : '';
+	$: textOrder = isTwoColumn ? (p.formular_seite === 'Rechts' ? 'md:order-1' : 'md:order-2') : '';
 
 	// Text-Spalte Ausrichtung
 	// 'self-start' 'self-center' 'self-end'
 	// 'w-full' 'w-fit mx-auto' 'w-fit ml-auto'
 	// 'text-left' 'text-center' 'text-right'
-	$: textSelf = isZweiSpalten
+	$: textSelf = isTwoColumn
 		? p.text_ausrichtung_v === 'Mitte'
 			? 'self-center'
 			: p.text_ausrichtung_v === 'Unten'
 				? 'self-end'
 				: 'self-start'
 		: '';
-	$: textItems = isZweiSpalten
+	$: textItems = isTwoColumn
 		? p.text_ausrichtung_h === 'Mitte'
 			? 'w-fit mx-auto'
 			: p.text_ausrichtung_h === 'Rechts'
 				? 'w-fit ml-auto'
 				: 'w-full'
 		: '';
-	$: textTextAlign = isZweiSpalten
+	$: textTextAlign = isTwoColumn
 		? p.text_textausrichtung === 'Mitte'
 			? 'text-center'
 			: p.text_textausrichtung === 'Rechts'
@@ -242,6 +242,18 @@
 		}
 	}
 
+	// HTML-Embed: Script-Tags entfernen (analog zu HtmlCode-Slice)
+	function sanitizeHtml(html: string): string {
+		return html.replace(/<script[\s\S]*?<\/script>/gi, '');
+	}
+	$: htmlEmbed = (p.html_embed?.[0] as { text: string } | undefined)?.text ?? '';
+	$: sanitizedHtmlEmbed = sanitizeHtml(htmlEmbed);
+	// Wenn ein Embed vorhanden ist, immer oben ausrichten (unabhängig von CMS-Einstellung)
+	$: effectiveTextSelf = sanitizedHtmlEmbed ? 'self-start' : textSelf;
+	// Overlay: CMS-Farbe oder Fallback auf pageColor; Transparenz 0–100 → 100=unsichtbar, 0=volle Deckkraft
+	$: overlayColor = p.html_embed_overlay_color || get(theme).pageColor;
+	$: overlayOpacity = p.html_embed_overlay_opacity != null ? (100 - p.html_embed_overlay_opacity) / 100 : 0;
+
 	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
 	function onFormInput(e: Event) {
 		if (linkError) {
@@ -262,7 +274,7 @@
 	animationOptions={anim.options}
 >
 	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
-	{#if isZweiSpalten}
+	{#if isTwoColumn}
 		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12 overflow-x-hidden">
 			<!-- Formular-Spalte -->
 			<div class="{formCol} {formOrder} min-w-0">
@@ -309,10 +321,19 @@
 				</form>
 			</div>
 			<!-- Text-Spalte -->
-			<div class="{textCol} {textOrder} {textSelf} min-w-0">
+			<div class="{textCol} {textOrder} {effectiveTextSelf} min-w-0">
 				<div class="{textItems} {textTextAlign} max-w-full">
 					<PrismicRichText field={p.text} />
 				</div>
+			{#if sanitizedHtmlEmbed}
+					<div class="relative w-full mt-6">
+						{@html sanitizedHtmlEmbed}
+						<div
+							class="absolute inset-0 pointer-events-none"
+							style="background-color: {overlayColor}; opacity: {overlayOpacity};"
+						></div>
+					</div>
+				{/if}
 			</div>
 		</div>
 	{:else}
