@@ -12,14 +12,18 @@
 	import Preformatted from './PrismicRichText/Preformatted.svelte';
 	import Strong from './PrismicRichText/Strong.svelte';
 	import Hyperlink from './PrismicRichText/Hyperlink.svelte';
-	import Label from './PrismicRichText/Label.svelte'; 
+	import Label from './PrismicRichText/Label.svelte';
+	import { variables } from '$lib/stores/variables';
+	import { replaceTokens } from '$lib/utils/replaceTokens';
 
 	export let field: ComponentProps<PrismicRichText>['field'];
 	export let components: ComponentProps<PrismicRichText>['components'] = {};
+
+	$: processedField = replaceTokens(field as any, $variables) as typeof field;
 </script>
 
 <PrismicRichText
-	{field}
+	field={processedField}
 	components={{
 		heading1: Heading1,
 		heading2: Heading2,

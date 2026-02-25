@@ -15,6 +15,7 @@
 
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
+	import { variables } from '$lib/stores/variables';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 
@@ -112,6 +113,9 @@
 		lang: alt.lang,
 		href: `${cleanBaseUrl}${alt.href}`
 	}));
+
+	// --- VARIABLES / TOKEN MAP ---
+	$: variables.set(data.variables ?? {});
 
 	// --- THEME & FONTS ---
 	$: {
