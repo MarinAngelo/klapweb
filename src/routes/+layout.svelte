@@ -16,6 +16,7 @@
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { variables } from '$lib/stores/variables';
+	import { applyGeoOverride } from '$lib/utils/geoVariables';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 
@@ -151,7 +152,9 @@
 			?.banner_overlap === true;
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
-	onMount(() => {});
+	onMount(() => {
+		variables.update(applyGeoOverride);
+	});
 	afterNavigate(() => {});
 </script>
 

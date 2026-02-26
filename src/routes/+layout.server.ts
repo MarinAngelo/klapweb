@@ -1,13 +1,8 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
+import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 
 export const prerender = 'auto';
-
-/** @type {import('./$types').LayoutServerLoad} */
-const EU_COUNTRIES = new Set([
-	'AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU',
-	'IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'
-]);
 
 export async function load({ params, fetch, cookies, url, request }) {
 	const client = createClient({ fetch, cookies });
@@ -69,80 +64,7 @@ export async function load({ params, fetch, cookies, url, request }) {
 			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null)
 		]);
 
-		// Build token map from manual entries
-		const tokenMap: Record<string, string> = {};
-		const vData = (variablenDoc as any)?.data;
-		const entries: { schluessel?: string; wert?: string; waehrung?: string }[] =
-			vData?.eintraege ?? [];
-		for (const entry of entries) {
-			if (entry.schluessel && entry.wert != null) {
-				tokenMap[entry.schluessel] = entry.wert;
-			}
-		}
-
-		// Fetch live exchange rates if currencies are configured
-		const baseCurrency: string = vData?.basis_waehrung ?? '';
-		const currencyEntries: { code?: string; nachkommastellen?: number }[] =
-			vData?.waehrungen ?? [];
-
-		// Raw rates from API: how many of currency X per 1 unit of baseCurrency
-		const rawRates: Record<string, number> = {};
-
-		if (baseCurrency && currencyEntries.length > 0) {
-			try {
-				const ratesRes = await fetch(
-					`https://open.er-api.com/v6/latest/${baseCurrency}`
-				);
-				if (ratesRes.ok) {
-					const ratesData = await ratesRes.json();
-					// Add base currency itself (rate = 1)
-					rawRates[baseCurrency] = 1;
-					for (const entry of currencyEntries) {
-						const code = entry.code?.toUpperCase();
-						if (!code) continue;
-						const rate: number | undefined = ratesData.rates?.[code];
-						if (rate != null) {
-							rawRates[code] = rate;
-							const decimals = entry.nachkommastellen ?? 4;
-							tokenMap[code] = parseFloat(rate.toFixed(decimals)).toString();
-						}
-					}
-				}
-			} catch {
-				// Live rates unavailable – tokens remain unresolved
-			}
-		}
-
-		// Auto-generate converted price tokens: {{PreisA_USD}}, {{PreisA_EUR}}, ...
-		// For each entry with a waehrung, compute cross-rates to all known currencies.
-		// Formula: price_in_Y = price_in_X * (rawRates[Y] / rawRates[X])
-		if (Object.keys(rawRates).length > 0) {
-			for (const entry of entries) {
-				if (!entry.schluessel || entry.wert == null || !entry.waehrung) continue;
-				const srcCurrency = entry.waehrung.toUpperCase();
-				const srcRate = rawRates[srcCurrency];
-				if (srcRate == null) continue;
-				const numericValue = parseFloat(entry.wert);
-				if (isNaN(numericValue)) continue;
-
-				for (const [tgtCurrency, tgtRate] of Object.entries(rawRates)) {
-					const converted = numericValue * (tgtRate / srcRate);
-					const decimals =
-						currencyEntries.find((c) => c.code?.toUpperCase() === tgtCurrency)
-							?.nachkommastellen ?? 2;
-					tokenMap[`${entry.schluessel}_${tgtCurrency}`] = `${tgtCurrency} ${converted.toFixed(decimals)}`;
-				}
-			}
-
-			// Geo-based currency: overwrite base token {{PreisA}} with visitor's local currency
-			const country = request.headers.get('x-country')?.toUpperCase() ?? '';
-			const geoCurrency = country === 'CH' || country === '' ? 'CHF' : EU_COUNTRIES.has(country) ? 'EUR' : 'USD';
-			for (const entry of entries) {
-				if (!entry.schluessel || !entry.waehrung) continue;
-				const geoToken = tokenMap[`${entry.schluessel}_${geoCurrency}`];
-				if (geoToken != null) tokenMap[entry.schluessel] = geoToken;
-			}
-		}
+		const variables = await buildTokenMap((variablenDoc as { data?: unknown })?.data, fetch, request);
 
 		return {
 			settings,
@@ -153,7 +75,7 @@ export async function load({ params, fetch, cookies, url, request }) {
 			mainLang,
 			isMultilangActive,
 			locales: allLocales,
-			variables: tokenMap
+			variables
 		};
 	} catch (e: any) {
 		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter

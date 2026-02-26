@@ -38,6 +38,31 @@
 				}
 			}
 		},
+		"Zahlungsplan": {
+			"zahlungsplan": {
+				"type": "Group",
+				"config": {
+					"label": "Zahlungsplan-Aufteilung (gilt für alle Preise)",
+					"repeat": true,
+					"fields": {
+						"suffix": {
+							"type": "Text",
+							"config": {
+								"label": "Token-Suffix",
+								"placeholder": "anz"
+							}
+						},
+						"prozent": {
+							"type": "Number",
+							"config": {
+								"label": "Prozent",
+								"placeholder": "30"
+							}
+						}
+					}
+				}
+			}
+		},
 		"Währungen": {
 			"basis_waehrung": {
 				"type": "Select",
