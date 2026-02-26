@@ -159,15 +159,17 @@
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
 
-	{#each seoAlternates as alt}
-		<link rel="alternate" hreflang={alt.lang} href={alt.href} />
-	{/each}
-	{#if seoAlternates.length > 0}
-		<link
-			rel="alternate"
-			hreflang="x-default"
-			href={cleanBaseUrl + (allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
-		/>
+	{#if showSwitcher}
+		{#each seoAlternates as alt}
+			<link rel="alternate" hreflang={alt.lang} href={alt.href} />
+		{/each}
+		{#if seoAlternates.length > 0}
+			<link
+				rel="alternate"
+				hreflang="x-default"
+				href={cleanBaseUrl + (allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
+			/>
+		{/if}
 	{/if}
 
 	<meta property="og:title" content={finalTitle} />
