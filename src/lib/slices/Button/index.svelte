@@ -22,9 +22,21 @@
 		Rechts: 'flex justify-end'
 	};
 
+	const yPaddingMap: Record<string, string> = {
+		'kein Abstand': 'none',
+		wenig: 'sm-top',
+		mittel: 'base-top',
+		gross: 'lg-top'
+	};
+
 	$: sizeClass = sizeMap[slice.primary.button_size] ?? sizeMap['Mittel'];
 	$: alignClass = alignMap[slice.primary.button_align] ?? alignMap['Mitte'];
 	$: mobileFullWidth = slice.primary.mobile_full_width ?? false;
+	$: yPadding = (yPaddingMap[slice.primary.y_padding] ?? 'base-top') as
+		| 'none'
+		| 'sm-top'
+		| 'base-top'
+		| 'lg-top';
 
 	$: buttonColor = slice.primary.button_color || get(theme).pageButtonColor;
 	$: buttonBgColor = slice.primary.button_bg_color || get(theme).pageButtonBgColor;
@@ -34,7 +46,7 @@
 
 <Bounded
 	tag="section"
-	yPadding="sm"
+	{yPadding}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >

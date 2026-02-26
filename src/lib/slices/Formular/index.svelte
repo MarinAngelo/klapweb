@@ -284,12 +284,20 @@
 		}).format(now) + '  ' + offsetStr.replace('GMT', 'UTC');
 	}
 
+	// URL-Parameter → wird als verstecktes Feld mitgesendet (z.B. ?dienst=DienstleistungA)
+	let urlParams: Record<string, string> = {};
+
 	onMount(() => {
 		const tz = p.map_timezone;
 		if (p.map_show_clock && tz) {
 			updateClock(tz);
 			clockInterval = setInterval(() => updateClock(tz), 1000);
 		}
+
+		const search = new URLSearchParams(window.location.search);
+		search.forEach((value, key) => {
+			urlParams = { ...urlParams, [key]: value };
+		});
 	});
 
 	onDestroy(() => clearInterval(clockInterval));
@@ -336,6 +344,9 @@
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
+					{#each Object.entries(urlParams) as [key, value]}
+						<input type="hidden" name={key} {value} />
+					{/each}
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
@@ -410,6 +421,9 @@
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
+					{#each Object.entries(urlParams) as [key, value]}
+						<input type="hidden" name={key} {value} />
+					{/each}
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
