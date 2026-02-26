@@ -140,7 +140,7 @@
 		const tests = [
 			/\bhttps?:\/\/\S+/i, // http/https
 			/\bwww\.\S+/i, // www.
-			/\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+\/?\S*/i, // domain.tld[/...]
+			/\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}(?:\/\S*)?/i, // domain.tld[/...]
 			/\[[^\]]+]\(\s*https?:\/\/[^)]+\)/i, // Markdown-Link
 			/<a\s+[^>]*href\s*=\s*["']?\s*https?:\/\//i // HTML-Link
 		];
