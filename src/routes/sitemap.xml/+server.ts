@@ -16,13 +16,16 @@ export async function GET({ fetch }) {
 	const allPages = await client.getAllByType('page', { lang: '*' }).catch(() => []);
 
 	const urls = allPages
+		.filter((page) => page.uid != null)
 		.filter((page) => !page.data?.no_index)
 		.filter((page) => isMultilang || page.lang === masterLang)
 		.map((page) => {
 			const isMainLang = page.lang === masterLang;
 			const langPrefix = isMainLang ? '' : `/${page.lang}`;
 			const slug = page.uid === 'home' ? '/' : `/${page.uid}`;
-			const loc = `${baseUrl}${langPrefix}${slug}`;
+			const rawLoc = `${baseUrl}${langPrefix}${slug}`;
+			let loc = rawLoc;
+			try { loc = new URL(rawLoc).href; } catch { /* baseUrl ungültig */ }
 			const lastmod = new Date(page.last_publication_date).toISOString().split('T')[0];
 			return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`;
 		})
