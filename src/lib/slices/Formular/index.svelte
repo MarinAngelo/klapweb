@@ -218,7 +218,10 @@
 			// Explizit alle Entries iterieren – vermeidet Probleme mit FormData as any Cast
 			const params = new URLSearchParams();
 			for (const [key, value] of formData.entries()) {
-				if (typeof value === 'string') params.append(key, value);
+				if (typeof value === 'string') {
+					if (key === 'dienstleistung' && value === '') continue;
+					params.append(key, value);
+				}
 			}
 
 			// Im Dev-Modus → lokaler Mock-Endpunkt
@@ -344,9 +347,7 @@
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
-					{#each Object.entries(urlParams) as [key, value]}
-						<input type="hidden" name={key} {value} />
-					{/each}
+					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
@@ -421,9 +422,7 @@
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
-					{#each Object.entries(urlParams) as [key, value]}
-						<input type="hidden" name={key} {value} />
-					{/each}
+					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
