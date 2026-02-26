@@ -12,6 +12,13 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
+        "form_name": {
+          "type": "Text",
+          "config": {
+            "label": "Formular-Name (technisch, eindeutig)",
+            "placeholder": "z.B. kontakt oder bestellen"
+          }
+        },
         "form_title": {
           "type": "Text",
           "config": {
@@ -252,6 +259,13 @@
           "config": {
             "label": "Zeitzone (IANA, z.B. America/New_York)",
             "placeholder": "Europe/Zurich"
+          }
+        },
+        "form_name": {
+          "type": "Text",
+          "config": {
+            "label": "Formular-Name (technisch, eindeutig)",
+            "placeholder": "z.B. kontakt oder bestellen"
           }
         },
         "form_title": {

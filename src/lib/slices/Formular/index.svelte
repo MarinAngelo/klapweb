@@ -72,9 +72,9 @@
 		slice.primary.anim_duration
 	);
 
-	// Zählt nur Formular-Slices bis einschließlich dem aktuellen → form_1, form_2 ...
+	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
-	const formName = `form_${formIndex}`;
+	const formName = (slice.primary as any).form_name?.trim() || `form_${formIndex}`;
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
