@@ -14,6 +14,12 @@
 	export let settings: Content.SettingsDocument | undefined;
 	export let navigation: Content.NavigationDocument | undefined;
 	export let prismicTheme: PrismicDocument | undefined;
+	export let lang: string | undefined;
+	export let locales: string[] | undefined;
+	export let showSwitcher: boolean | undefined;
+	export let allAlternates: any[] = [];
+	export let mainLang: string | undefined;
+	console.log('MainLang in Header:', mainLang);
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -117,7 +123,7 @@
 		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
 			<div class="logo m-0">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href="/" class="flex items-center mt-2 mb-2">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-2 mb-2">
 						<PrismicImage
 							field={prismicTheme.data.logo}
 							alt={prismicTheme.data.logo.alt}
@@ -126,7 +132,7 @@
 						/>
 					</a>
 				{:else if settings?.data}
-					<a href="/" class="mt-6 mb-6 inline-block" style="color: {headerColor};">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerLinkColor};">
 						<span
 							class="text-xl font-semibold tracking-tight"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
@@ -149,6 +155,10 @@
 					{headerLinkHoverColor}
 					{currentPath}
 					{headerHeight}
+					{lang}
+					{locales}
+					{showSwitcher}
+					allAlternates={allAlternates}
 				/>
 			{/if}
 		</div>

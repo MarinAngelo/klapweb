@@ -3,15 +3,26 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
-	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
-		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
-		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-		adapter: adapter()
+		// adapter-auto ist super für Vercel/Netlify.
+		// Für einen VPS (Ubuntu) würdest du später evtl. auf @sveltejs/adapter-node wechseln.
+		adapter: adapter(),
+
+		prerender: {
+			// Verhindert den Build-Abbruch bei toten Links im CMS
+			handleHttpError: ({ path, referrer, message }) => {
+				// 404 Fehler (tote Links) werden geloggt, aber der Build läuft weiter
+				if (message.includes('404')) {
+					console.warn(`⚠️ Prerender 404: ${path} (Verlinkt auf: ${referrer})`);
+					return;
+				}
+
+				// Echte technische Fehler (500) führen weiterhin zum Abbruch (Sicherheit!)
+				throw new Error(message);
+			}
+		}
 	}
 };
 

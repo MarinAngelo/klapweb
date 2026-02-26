@@ -7,6 +7,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import ImageOverlay from '$lib/components/ImageOverlay.svelte';
+	import { reveal, type RevealOptions } from '$lib/actions/reveal';
 
 	export let card: Content.ImageCardsSliceDefaultPrimaryCardsItem;
 	export let roundCorners = true;
@@ -17,6 +18,7 @@
 	export let buttonHoverColor;
 	export let buttonHoverBgColor;
 	export let borderColor;
+	export let revealOptions: RevealOptions = { direction: 'none' };
 
 	// CMS-Felder können null objects sein - prüfe auf echten Wert
 	const hasBorderColor = !!(borderColor && borderColor !== null && borderColor !== '');
@@ -24,7 +26,8 @@
 </script>
 
 <li
-	class="grid gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners ? 'rounded-2xl' : ''}"
+	use:reveal={revealOptions}
+	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners ? 'rounded-2xl' : ''}"
 	style="
 		background-color: {bodyBgColor || get(theme).pageBgColor};
 		--custom-card-color: {bodyColor || get(theme).pageColor};
@@ -55,7 +58,7 @@
 			/>
 		</div>
 	{/if}
-	<div class="leading-relaxed custom-card-color pl-6 pr-6">
+	<div class="leading-relaxed custom-card-color pl-6 pr-6 grow">
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}

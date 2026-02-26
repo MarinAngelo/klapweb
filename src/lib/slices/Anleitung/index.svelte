@@ -3,13 +3,26 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+
 	export let slice: Content.AnleitungSlice;
+
+	const { openIndex, toggleItem } = useOpenIndex();
+
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
-<Bounded yPadding="sm">
+<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section">
 	<div
 		class="prose max-w-3xl mx-auto"
-		data-slice-type={slice.slice_type}EmbedFieldHandler
+		data-slice-type="{slice.slice_type}EmbedFieldHandler"
 		data-slice-variation={slice.variation}
 	>
 		{#if slice.primary.title}
