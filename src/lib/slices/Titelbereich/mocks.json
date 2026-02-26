@@ -9,7 +9,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Ea cupidatat quis mollit officia consequat anim. Non enim sit deserunt reprehenderit cillum aute sit fugiat veniam consequat dolor in. Cillum occaecat labore tempor nisi do eiusmod esse ullamco magna consequat laboris ut laborum consectetur."
+							"text": "Sit do aute in do enim amet adipisicing velit. Adipisicing aute pariatur culpa ut magna veniam."
 						}
 					}
 				]
@@ -66,7 +66,7 @@
 			},
 			"overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "84",
+				"value": "30",
 				"type": "Number"
 			},
 			"banner_height": {
@@ -99,7 +99,7 @@
 			},
 			"text_overlay_opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "2",
+				"value": "42",
 				"type": "Number"
 			},
 			"text_overlay_padding": {
@@ -112,37 +112,41 @@
 				"value": "#e40aeb",
 				"type": "Color"
 			},
-			"button_text_color": {
-				"__TYPE__": "FieldContent",
-				"value": "#3e5953",
-				"type": "Color"
-			},
-			"button_bg_color_hover": {
-				"__TYPE__": "FieldContent",
-				"value": "#1f105a",
-				"type": "Color"
-			},
-			"button_text_color_hover": {
-				"__TYPE__": "FieldContent",
-				"value": "#132e35",
-				"type": "Color"
-			},
 			"banner_overlap": {
 				"__TYPE__": "BooleanContent",
 				"value": true
 			},
-			"header_bg_opacity": {
-				"__TYPE__": "FieldContent",
-				"value": "9",
-				"type": "Number"
-			},
 			"font": {
-				"key": "66470b7e-4a74-4bb3-a469-edf5af11a995",
+				"key": "edd0f382-6dcb-455e-92f4-eb0ef309cf89",
 				"__TYPE__": "LinkContent",
 				"value": {
 					"__TYPE__": "DocumentLink",
 					"id": "mock_document_id"
 				}
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#af6df8",
+				"type": "Color"
+			},
+			"button_hover_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c5da99",
+				"type": "Color"
+			},
+			"button_hover_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#76456d",
+				"type": "Color"
+			},
+			"switch_off_text_overlay": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "40",
+				"type": "Number"
 			}
 		},
 		"items": [

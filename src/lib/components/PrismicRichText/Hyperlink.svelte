@@ -10,7 +10,7 @@
 
 	let isHover = false;
 
-	const href = asLink(node as any); // cast node to 'any' to satisfy the type requirement
+	const href = asLink(node.data as any); // node.data ist das eigentliche Link-Feld
 </script>
 
 <a

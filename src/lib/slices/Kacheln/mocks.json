@@ -123,12 +123,7 @@
 			},
 			"body_bg_color": {
 				"__TYPE__": "FieldContent",
-				"value": "#9a0ad3",
-				"type": "Color"
-			},
-			"button_color": {
-				"__TYPE__": "FieldContent",
-				"value": "#38c913",
+				"value": "#cdcda6",
 				"type": "Color"
 			},
 			"button_hover_color": {
@@ -150,6 +145,35 @@
 				"__TYPE__": "FieldContent",
 				"value": "#c1c6ee",
 				"type": "Color"
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#de3841",
+				"type": "Color"
+			},
+			"component_body_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#3e03be",
+				"type": "Color"
+			},
+			"body_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#c903d5",
+				"type": "Color"
+			},
+			"component_body_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#8c8be0",
+				"type": "Color"
+			},
+			"grid_columns": {
+				"__TYPE__": "FieldContent",
+				"value": "3",
+				"type": "Select"
+			},
+			"round_corners": {
+				"__TYPE__": "BooleanContent",
+				"value": false
 			}
 		},
 		"items": []

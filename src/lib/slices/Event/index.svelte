@@ -5,9 +5,21 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
+
+	const { openIndex, toggleItem } = useOpenIndex();
+
+	// Animation aus CMS-Feldern mappen
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => {
@@ -121,6 +133,8 @@ END:VCALENDAR`;
 <Bounded
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 	style="color: {get(theme).pageColor}"
 >
 	{#if primary.title}

@@ -15,9 +15,15 @@
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
+	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
+	import { reveal } from '$lib/actions/reveal';
+
+	// Reines Fade-in ohne Bewegung (distance: '0px')
+	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let slice: Content.HeroSlice;
-	export let image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
+	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
+	$: image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);
 
 	// Wenn sich slice ändert, aktualisiere den Store
@@ -26,21 +32,22 @@
 	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
 	let richTextDiv: HTMLDivElement;
 
+	const switchOffTextOverlay = (slice.primary as any).switch_off_text_overlay ?? false;
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
-	const overlayOpacity =
-		'overlay_opacity' in slice.primary
-			? convertNumberInverse(slice.primary.overlay_opacity ?? 100) || 100
-			: 100;
-	const headerBgOpacity = convertNumber(slice.primary.header_bg_opacity ?? 0) || 0;
+
+	const overlayOpacity = (() => {
+		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
+			return 0.2; // Default wenn nicht gesetzt
+		}
+		return convertNumber(slice.primary.overlay_opacity);
+	})();
+
+	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop im Theme-Store aktualisieren
-	$: theme.update((t) => ({ ...t, bannerTop }));
-
-	onMount(() => {
-		theme.update((t) => ({ ...t, headerBgOpacity }));
-	});
+	// bannerTop und headerBgOpacity im Theme-Store aktualisieren - beide reaktiv
+	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity }));
 
 	onDestroy(() => {
 		theme.update((t) => ({
@@ -50,24 +57,15 @@
 		}));
 	});
 
-	// Fallbacks aus dem globalen Theme holen
-	const { pageLinkColor, headerLinkHoverColor: pageLinkHoverColorText } = get(theme);
-
-	// Button-Farben aus Slice, mit Fallbacks
-	const buttonBgColor =
-		'button_bg_color' in slice.primary ? slice.primary.button_bg_color || undefined : 'transparent';
-	const buttonBgColorHover =
-		'button_bg_color_hover' in slice.primary
-			? slice.primary.button_bg_color_hover ?? undefined
-			: pageLinkHoverColorText;
-	const buttonTextColor =
-		'button_text_color' in slice.primary
-			? slice.primary.button_text_color || undefined
-			: pageLinkColor;
-	const buttonTextColorHover =
-		'button_text_color_hover' in slice.primary
-			? slice.primary.button_text_color_hover
-			: pageLinkHoverColorText;
+	// Button-Farben aus Slice (Type-safe)
+	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
+	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
+	$: buttonHoverColor =
+		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
+	$: buttonBgColor =
+		'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
+	$: buttonHoverBgColor =
+		'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -83,53 +81,101 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
-	const textOverlayColor = slice.primary.overlay_color || 'var(--text-color)';
-	const textOverlayOpacity =
-		'text_overlay_opacity' in slice.primary
-			? convertNumber(slice.primary.text_overlay_opacity ?? 1) || 1
-			: 1;
+	const textOverlayColor =
+		'text_overlay_color' in slice.primary
+			? slice.primary.text_overlay_color || 'var(--text-color)'
+			: 'var(--text-color)';
+	const textOverlayOpacity = (() => {
+		if (!('text_overlay_opacity' in slice.primary) || slice.primary.text_overlay_opacity === null) {
+			return 0.2; // Default wenn nicht gesetzt
+		}
+		const result = convertNumber(slice.primary.text_overlay_opacity);
+		return result;
+	})();
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
 	// Responsive: Prüfen, ob mobile (<= 640px)
+	let mounted = false;
 	onMount(() => {
 		const check = () => isMobile.set(window.innerWidth <= 640);
 		check();
+		mounted = true;
 		window.addEventListener('resize', check);
 		return () => window.removeEventListener('resize', check);
 	});
 
-	// Hilfsfunktion: Font-Name sicher extrahieren -->
-	function getFontName(fontField: any) {
-		return fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
+	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,
+	// soll unsere RichTextLabel Komponente genutzt werden.
+	const components = {
+		label: RichTextLabels
+	};
+
+	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
+	let sectionEl: HTMLElement;
+	let parallaxInner: HTMLElement | undefined;
+	const PARALLAX_FACTOR = 0.3;
+	let rafId: number;
+
+	function handleScroll() {
+		if (!sectionEl || !parallaxInner) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const inner = parallaxInner;
+		cancelAnimationFrame(rafId);
+		rafId = requestAnimationFrame(() => {
+			const rect = sectionEl.getBoundingClientRect();
+			const pY = Math.max(0, -rect.top * PARALLAX_FACTOR);
+			inner.style.transform = `translate3d(0, ${pY}px, 0)`;
+		});
 	}
-	// Hilfsfunktion: Font-Family sicher extrahieren -->
-	function getFontFamily(fontField: any) {
-		const name =
-			fontField && 'data' in fontField && fontField.data?.name ? fontField.data.name : '';
-		if (!name) return 'sans-serif';
-		return name.includes(' ') ? `'${name}', sans-serif` : `${name}, sans-serif`;
-	}
+
+	onMount(() => {
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		handleScroll();
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			cancelAnimationFrame(rafId);
+		};
+	});
 </script>
 
 <section
+	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {'font' in slice.primary ? getFontFamily(slice.primary.font) : 'sans-serif'};
+		font-family: {('font' in slice.primary &&
+		isFilled.contentRelationship(slice.primary.font) &&
+		slice.primary.font.data?.name) ||
+		'sans-serif'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
-		<ResponsivePrismicImage
-			{image}
-			sizes="100vw"
-			widths={[1280, 1920, 2560]}
-			className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-			style="opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
-		/>
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div
+				bind:this={parallaxInner}
+				class="absolute inset-x-0"
+				style="height: 120%; top: -10%;"
+			>
+				<ResponsivePrismicImage
+					{image}
+					sizes="100vw"
+					widths={[1280, 1920, 2560]}
+					className="absolute inset-0 h-full w-full object-cover select-none"
+					style=""
+				/>
+			</div>
+		</div>
+		<!-- Color overlay over the image -->
+		<div
+			class="absolute inset-0 h-full w-full pointer-events-none select-none"
+			style="background-color: {overlayColor}; opacity: {$isMobile
+				? textOverlayOpacity
+				: overlayOpacity};"
+		></div>
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
 		{#if $isMobile}
@@ -137,8 +183,7 @@
 		{:else}
 			<ImageCarousel
 				images={slice.primary.imageMerryGoRound}
-				background={true}
-				fullHeight={true}
+				mode="background"
 				autoplay={true}
 				intervalMs={5000}
 				transitionMs={8000}
@@ -147,12 +192,14 @@
 	{/if}
 	<Bounded tag="div" yPadding="lg" class="relative z-10">
 		<div
-			class="relative flex flex-col items-center justify-center min-h-[60vh]"
-			style={bannerTop === false ? `margin-top: -${$headerHeight}px;` : ''}
+			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
+			style={bannerTop === true
+				? `margin-top: -${$headerHeight}px; padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;`
+				: ''}
 		>
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
-				{#if !isMobile}
+				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
 					<div
 						class="absolute inset-0"
 						style="
@@ -164,8 +211,9 @@
 						aria-hidden="true"
 					></div>
 				{/if}
+
 				<!-- Inhalt mit dynamischem Padding -->
-				<div class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+				<div use:reveal={fadeIn} class="relative z-10 text-center" style="padding: {textOverlayPadding};">
 					<!-- Responsive Anpassung des Paddings -->
 					<style>
 						@media (max-width: 640px) {
@@ -176,17 +224,19 @@
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
 						{#if 'text' in slice.primary}
-							<PrismicRichText field={slice.primary.text} />
+							<div style="--page-color: {color};">
+								<PrismicRichText field={slice.primary.text} {components} />
+							</div>
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
-							color={buttonTextColor}
-							bgColor={buttonBgColor}
-							hoverBgColor={buttonBgColorHover}
-							hoverColor={buttonTextColorHover ?? undefined}
+							color={buttonColor || get(theme).pageButtonColor}
+							bgColor={buttonBgColor || get(theme).pageButtonBgColor}
+							hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
+							hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
 						/>
 					{/if}
 				</div>

@@ -23,7 +23,7 @@
         "header_bg_opacity": {
           "type": "Number",
           "config": {
-            "label": "Transparenz überlagerter Kopfzeile",
+            "label": "Transparenz der Kopfzeile",
             "placeholder": "0 - 100 %"
           }
         },
@@ -33,7 +33,15 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": false,
-            "multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,heading5"
+            "multi": "paragraph,strong,em",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
           }
         },
         "color": {
@@ -49,7 +57,17 @@
             "label": "Schriftart",
             "select": "document",
             "repeat": false,
-            "customtypes": ["font"]
+            "customtypes": [
+              {
+                "id": "font",
+                "fields": [
+                  "name",
+                  "provider",
+                  "variants",
+                  "adobeFontId"
+                ]
+              }
+            ]
           }
         },
         "button_link": {
@@ -70,6 +88,20 @@
             "placeholder": ""
           }
         },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
         "button_bg_color": {
           "type": "Color",
           "config": {
@@ -77,24 +109,10 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "button_bg_color_hover": {
+        "button_hover_bg_color": {
           "type": "Color",
           "config": {
             "label": "Schaltfläche Hintergrund Mouseover",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche Text- und Rahmenfarbe",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "button_text_color_hover": {
-          "type": "Color",
-          "config": {
-            "label": "Schaltfläche T & R Mouseover",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
@@ -151,6 +169,15 @@
           "config": {
             "label": "Transparenz Text Überlagerungsfarbe",
             "placeholder": "0 - 100 %"
+          }
+        },
+        "switch_off_text_overlay": {
+          "type": "Boolean",
+          "config": {
+            "label": "Text Hintergrund in Mobile aus",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_overlay_padding": {

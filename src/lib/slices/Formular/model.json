@@ -84,10 +84,11 @@
                   "label": "Obligatorisch"
                 }
               },
-              "invalid_feedback-text": {
+              "invalid_feedback_text": {
                 "type": "Text",
                 "config": {
-                  "label": "Fehlermeldung"
+                  "label": "Fehlermeldung",
+                  "placeholder": "Bitte ausfüllen"
                 }
               },
               "options": {
@@ -98,6 +99,41 @@
                 }
               }
             }
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "500"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
           }
         }
       },
