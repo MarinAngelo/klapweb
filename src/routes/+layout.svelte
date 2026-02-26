@@ -116,7 +116,18 @@
 	}));
 
 	// --- VARIABLES / TOKEN MAP ---
-	$: variables.set(data.variables ?? {});
+	// Nur updaten wenn sich der Inhalt wirklich geändert hat (verhindert Re-Render-Kaskade).
+	// Nach dem ersten Geo-Override wird dieser bei späteren Änderungen ebenfalls neu angewendet.
+	let _prevVarsStr = '{}';
+	let _geoApplied = false;
+	$: {
+		const v = data.variables ?? {};
+		const s = JSON.stringify(v);
+		if (s !== _prevVarsStr) {
+			_prevVarsStr = s;
+			variables.set(_geoApplied ? applyGeoOverride(v) : v);
+		}
+	}
 
 	// --- THEME & FONTS ---
 	$: {

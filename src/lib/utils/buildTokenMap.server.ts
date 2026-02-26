@@ -2,6 +2,10 @@ type Entry = { schluessel?: string; wert?: string; waehrung?: string };
 type CurrencyEntry = { code?: string; nachkommastellen?: number };
 type PaymentSplit = { suffix?: string; prozent?: number };
 
+// Module-level cache: Wechselkurse werden 1 Stunde lang wiederverwendet
+let _ratesCache: { baseCurrency: string; rates: Record<string, number>; ts: number } | null = null;
+const RATES_TTL_MS = 3_600_000;
+
 const EU_COUNTRIES = new Set([
 	'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU',
 	'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK'
@@ -54,24 +58,35 @@ export async function buildTokenMap(
 	const rawRates: Record<string, number> = {};
 
 	if (baseCurrency && currencyEntries.length > 0) {
-		try {
-			const ratesRes = await fetchFn(`https://open.er-api.com/v6/latest/${baseCurrency}`);
-			if (ratesRes.ok) {
-				const ratesData = await ratesRes.json();
-				rawRates[baseCurrency] = 1;
-				for (const entry of currencyEntries) {
-					const code = entry.code?.toUpperCase();
-					if (!code) continue;
-					const rate: number | undefined = ratesData.rates?.[code];
-					if (rate != null) {
-						rawRates[code] = rate;
-						const decimals = entry.nachkommastellen ?? 4;
-						tokenMap[code] = parseFloat(rate.toFixed(decimals)).toString();
-					}
+		let fetchedRates: Record<string, number> | null = null;
+
+		if (_ratesCache?.baseCurrency === baseCurrency && Date.now() - _ratesCache.ts < RATES_TTL_MS) {
+			fetchedRates = _ratesCache.rates;
+		} else {
+			try {
+				const res = await fetchFn(`https://open.er-api.com/v6/latest/${baseCurrency}`);
+				if (res.ok) {
+					const ratesData = await res.json();
+					fetchedRates = { [baseCurrency]: 1, ...ratesData.rates };
+					_ratesCache = { baseCurrency, rates: fetchedRates, ts: Date.now() };
+				}
+			} catch {
+				// Live rates unavailable – tokens remain unresolved
+			}
+		}
+
+		if (fetchedRates) {
+			rawRates[baseCurrency] = 1;
+			for (const entry of currencyEntries) {
+				const code = entry.code?.toUpperCase();
+				if (!code) continue;
+				const rate = fetchedRates[code];
+				if (rate != null) {
+					rawRates[code] = rate;
+					const decimals = entry.nachkommastellen ?? 4;
+					tokenMap[code] = parseFloat(rate.toFixed(decimals)).toString();
 				}
 			}
-		} catch {
-			// Live rates unavailable – tokens remain unresolved
 		}
 	}
 
