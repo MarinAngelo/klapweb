@@ -17,6 +17,7 @@
 
 	// Variation mitText: two-column layout
 	$: isTwoColumn = (slice.variation as string) === 'mitText';
+	$: isTwoColumns = (slice.variation as string) === 'twoColumns';
 	$: p = slice.primary as any; // mitText-specific fields (spalten_verhaeltnis, formular_seite, text)
 
 	// Vollständige Klassennamen damit Tailwind sie erkennt:
@@ -80,6 +81,10 @@
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
 	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
+	function fieldColumn(field: FormSliceDefaultPrimaryFormFieldsItem): string {
+		return (field as any).column ?? 'Links';
+	}
+
 	function effectiveKey(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (
 			typeKeys[field.field_type ?? ''] ||
@@ -340,7 +345,6 @@
 					name={formName}
 					method="POST"
 					data-netlify="true"
-					netlify-honeypot="bot-field"
 					on:submit={handleSubmit}
 					on:input={onFormInput}
 					aria-describedby="form-error"
@@ -398,6 +402,57 @@
 				{/if}
 			</div>
 		</div>
+	{:else if isTwoColumns}
+		<!-- Zwei Spalten: Felder in 2 Spalten, mobile einspaltig -->
+		<div>
+			{#if slice.primary.form_title}
+				<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
+			{/if}
+			{#if slice.primary.form_instructions}
+				<PrismicRichText field={slice.primary.form_instructions} />
+			{/if}
+			<form
+				class="mt-16"
+				name={formName}
+				method="POST"
+				data-netlify="true"
+				on:submit={handleSubmit}
+				on:input={onFormInput}
+				aria-describedby="form-error"
+				novalidate
+			>
+				<input type="hidden" name="form-name" value={formName} />
+				<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
+				<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
+				<!-- Tailwind-Safelist: sm:col-start-1 sm:col-start-2 -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+					{#each formFields as field}
+						{#if field && effectiveKey(field)}
+							<div class="{fieldColumn(field) === 'Rechts' ? 'sm:col-start-2' : 'sm:col-start-1'}">
+								<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+								{#if fieldErrors[effectiveKey(field)]}
+									<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+								{/if}
+							</div>
+						{/if}
+					{/each}
+				</div>
+				{#if linkError}
+					<p id="form-error" class="mt-3 text-sm text-red-600">{linkError}</p>
+				{/if}
+				<div class="mt-8 flex justify-end">
+					<Button
+						text={slice.primary.submitt_button_text || 'Absenden'}
+						disabled={!!linkError}
+						link={undefined}
+						color={undefined}
+						bgColor={undefined}
+						hoverColor={undefined}
+						hoverBgColor={undefined}
+					/>
+				</div>
+			</form>
+		</div>
 	{:else}
 		<!-- Standard: einspaltig -->
 		<div class="grid grid-cols-1 items-center gap-8">
@@ -415,7 +470,6 @@
 					name={formName}
 					method="POST"
 					data-netlify="true"
-					netlify-honeypot="bot-field"
 					on:submit={handleSubmit}
 					on:input={onFormInput}
 					aria-describedby="form-error"

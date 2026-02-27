@@ -7,6 +7,7 @@
 		field_type: string | null;
 		required: boolean;
 		options?: string | null; // Optionen als String, durch Kommas getrennt
+		placeholder?: string | null;
 		'invalid_feedback-text'?: string | null;
 		invalid_feedback_text?: string | null;
 	};
@@ -23,8 +24,47 @@
 		Textfeld: 'text',
 		'E-Mail': 'email',
 		Textbereich: 'textarea',
-		Telefon: 'tel'
+		Telefon: 'tel',
+		Land: 'select-country'
 	};
+
+	const countries = [
+		'Afghanistan', 'Ägypten', 'Albanien', 'Algerien', 'Andorra', 'Angola',
+		'Antigua und Barbuda', 'Äquatorialguinea', 'Argentinien', 'Armenien',
+		'Aserbaidschan', 'Äthiopien', 'Australien', 'Bahamas', 'Bahrain',
+		'Bangladesch', 'Barbados', 'Belarus', 'Belgien', 'Belize', 'Benin',
+		'Bhutan', 'Bolivien', 'Bosnien und Herzegowina', 'Botswana', 'Brasilien',
+		'Brunei', 'Bulgarien', 'Burkina Faso', 'Burundi', 'Chile', 'China',
+		'Costa Rica', 'Dänemark', 'Deutschland', 'Dominica', 'Dominikanische Republik',
+		'Dschibuti', 'Ecuador', 'El Salvador', 'Elfenbeinküste', 'Eritrea', 'Estland',
+		'Eswatini', 'Fidschi', 'Finnland', 'Frankreich', 'Gabun', 'Gambia',
+		'Georgien', 'Ghana', 'Grenada', 'Griechenland', 'Guatemala', 'Guinea',
+		'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Indien', 'Indonesien',
+		'Irak', 'Iran', 'Irland', 'Island', 'Israel', 'Italien', 'Jamaika',
+		'Japan', 'Jemen', 'Jordanien', 'Kambodscha', 'Kamerun', 'Kanada',
+		'Kap Verde', 'Kasachstan', 'Katar', 'Kenia', 'Kirgisistan', 'Kiribati',
+		'Kolumbien', 'Komoren', 'Kongo (Dem. Rep.)', 'Kongo (Rep.)', 'Kosovo',
+		'Kroatien', 'Kuba', 'Kuwait', 'Laos', 'Lesotho', 'Lettland', 'Libanon',
+		'Liberia', 'Libyen', 'Liechtenstein', 'Litauen', 'Luxemburg', 'Madagaskar',
+		'Malawi', 'Malaysia', 'Malediven', 'Mali', 'Malta', 'Marokko',
+		'Marshallinseln', 'Mauretanien', 'Mauritius', 'Mexiko', 'Mikronesien',
+		'Moldawien', 'Monaco', 'Mongolei', 'Montenegro', 'Mosambik', 'Myanmar',
+		'Namibia', 'Nauru', 'Nepal', 'Neuseeland', 'Nicaragua', 'Niederlande',
+		'Niger', 'Nigeria', 'Nordkorea', 'Nordmazedonien', 'Norwegen', 'Oman',
+		'Österreich', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguinea', 'Paraguay',
+		'Peru', 'Philippinen', 'Polen', 'Portugal', 'Ruanda', 'Rumänien',
+		'Russland', 'Salomonen', 'Sambia', 'Samoa', 'San Marino',
+		'São Tomé und Príncipe', 'Saudi-Arabien', 'Schweden', 'Schweiz', 'Senegal',
+		'Serbien', 'Seychellen', 'Sierra Leone', 'Simbabwe', 'Singapur', 'Slowakei',
+		'Slowenien', 'Somalia', 'Spanien', 'Sri Lanka', 'St. Kitts und Nevis',
+		'St. Lucia', 'St. Vincent und die Grenadinen', 'Sudan', 'Südafrika',
+		'Südkorea', 'Südsudan', 'Suriname', 'Syrien', 'Tadschikistan', 'Tansania',
+		'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad und Tobago', 'Tschad',
+		'Tschechien', 'Tunesien', 'Türkei', 'Turkmenistan', 'Tuvalu', 'Uganda',
+		'Ukraine', 'Ungarn', 'Uruguay', 'Usbekistan', 'Vanuatu', 'Vatikanstadt',
+		'Venezuela', 'Vereinigte Arabische Emirate', 'Vereinigte Staaten',
+		'Vereinigtes Königreich', 'Vietnam', 'Zentralafrikanische Republik', 'Zypern'
+	];
 
 	// HTML-Typ basierend auf dem Mapping
 	const htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
@@ -78,6 +118,7 @@
 			id={key}
 			name={key}
 			required={field.required}
+			placeholder={field.placeholder ?? ''}
 			class="input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
 			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
 				.pageColor}; border-bottom-color: {get(theme).pageColor};"
@@ -102,6 +143,7 @@
 				id={key}
 				bind:value={localNumber}
 				required={field.required}
+				placeholder={field.placeholder ?? ""}
 				class="input p-2 flex-1 focus:outline-none focus:ring-0"
 				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
 				on:blur
@@ -115,6 +157,7 @@
 				id={key}
 				name={key}
 				required={field.required}
+				placeholder={field.placeholder ?? ""}
 				rows="4"
 				class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
 				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
@@ -152,6 +195,21 @@
 				</label>
 			{/each}
 		</div>
+	{:else if htmlType === 'select-country'}
+		<select
+			id={key}
+			name={key}
+			required={field.required}
+			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
+			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
+				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			on:blur
+		>
+			<option value="" disabled selected>Bitte auswählen</option>
+			{#each countries as country}
+				<option value={country}>{country}</option>
+			{/each}
+		</select>
 	{:else if htmlType === 'checkbox'}
 		<div class="flex items-center">
 			<label class="flex items-center">
