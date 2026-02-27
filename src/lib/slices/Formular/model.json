@@ -75,6 +75,7 @@
                   "options": [
                     "Textfeld",
                     "E-Mail",
+                    "Telefon",
                     "Textbereich",
                     "Auswahlliste",
                     "Ankreuzfeld",
@@ -324,6 +325,7 @@
                   "options": [
                     "Textfeld",
                     "E-Mail",
+                    "Telefon",
                     "Textbereich",
                     "Auswahlliste",
                     "Ankreuzfeld",

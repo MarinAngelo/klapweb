@@ -22,11 +22,47 @@
 		Auswahlliste: 'select',
 		Textfeld: 'text',
 		'E-Mail': 'email',
-		Textbereich: 'textarea'
+		Textbereich: 'textarea',
+		Telefon: 'tel'
 	};
 
 	// HTML-Typ basierend auf dem Mapping
 	const htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
+
+	// Telefon: Vorwahl + Nummer
+	const countryPrefixes = [
+		{ prefix: '+41', label: '🇨🇭 +41' },
+		{ prefix: '+49', label: '🇩🇪 +49' },
+		{ prefix: '+43', label: '🇦🇹 +43' },
+		{ prefix: '+33', label: '🇫🇷 +33' },
+		{ prefix: '+39', label: '🇮🇹 +39' },
+		{ prefix: '+44', label: '🇬🇧 +44' },
+		{ prefix: '+1',  label: '🇺🇸 +1' },
+		{ prefix: '+34', label: '🇪🇸 +34' },
+		{ prefix: '+31', label: '🇳🇱 +31' },
+		{ prefix: '+32', label: '🇧🇪 +32' },
+		{ prefix: '+352', label: '🇱🇺 +352' },
+		{ prefix: '+48', label: '🇵🇱 +48' },
+		{ prefix: '+351', label: '🇵🇹 +351' },
+		{ prefix: '+420', label: '🇨🇿 +420' },
+		{ prefix: '+7',  label: '🇷🇺 +7' },
+		{ prefix: '+90', label: '🇹🇷 +90' },
+		{ prefix: '+86', label: '🇨🇳 +86' },
+		{ prefix: '+81', label: '🇯🇵 +81' },
+		{ prefix: '+82', label: '🇰🇷 +82' },
+		{ prefix: '+91', label: '🇮🇳 +91' },
+		{ prefix: '+55', label: '🇧🇷 +55' },
+		{ prefix: '+52', label: '🇲🇽 +52' },
+		{ prefix: '+54', label: '🇦🇷 +54' },
+		{ prefix: '+61', label: '🇦🇺 +61' },
+		{ prefix: '+64', label: '🇳🇿 +64' },
+		{ prefix: '+27', label: '🇿🇦 +27' },
+		{ prefix: '+971', label: '🇦🇪 +971' },
+		{ prefix: '+966', label: '🇸🇦 +966' },
+		{ prefix: '+20', label: '🇪🇬 +20' }
+	];
+	let prefix = '+41';
+	let localNumber = '';
 </script>
 
 <div class="mb-4">
@@ -47,6 +83,32 @@
 				.pageColor}; border-bottom-color: {get(theme).pageColor};"
 			on:blur
 		/>
+	{:else if htmlType === 'tel'}
+		<div
+			class="flex items-center mt-1 border-b-2"
+			style="border-bottom-color: {get(theme).pageColor};"
+		>
+			<select
+				bind:value={prefix}
+				class="input p-2 shrink-0 focus:outline-none focus:ring-0"
+				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+			>
+				{#each countryPrefixes as cp}
+					<option value={cp.prefix}>{cp.label}</option>
+				{/each}
+			</select>
+			<input
+				type="tel"
+				id={key}
+				bind:value={localNumber}
+				required={field.required}
+				class="input p-2 flex-1 focus:outline-none focus:ring-0"
+				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+				on:blur
+			/>
+		</div>
+		<!-- Kombinierter Wert für Formular-Übermittlung; leer wenn keine Nummer eingegeben -->
+		<input type="hidden" name={key} value={localNumber ? `${prefix} ${localNumber}` : ''} />
 	{:else if htmlType === 'textarea'}
 		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
 			<textarea
