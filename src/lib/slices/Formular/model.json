@@ -55,6 +55,13 @@
             "label": "Gesendet Text"
           }
         },
+        "checkout_url": {
+          "type": "Text",
+          "config": {
+            "label": "Weiter-URL (leer = direkt absenden)",
+            "placeholder": "/beauftragung/zusammenfassung"
+          }
+        },
         "form_fields": {
           "type": "Group",
           "config": {
@@ -313,6 +320,13 @@
             "label": "Gesendet Text"
           }
         },
+        "checkout_url": {
+          "type": "Text",
+          "config": {
+            "label": "Weiter-URL (leer = direkt absenden)",
+            "placeholder": "/beauftragung/zusammenfassung"
+          }
+        },
         "form_fields": {
           "type": "Group",
           "config": {
@@ -462,6 +476,13 @@
             "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
             "allowTargetBlank": true,
             "label": "Gesendet Text"
+          }
+        },
+        "checkout_url": {
+          "type": "Text",
+          "config": {
+            "label": "Weiter-URL (leer = direkt absenden)",
+            "placeholder": "/beauftragung/zusammenfassung"
           }
         },
         "form_fields": {

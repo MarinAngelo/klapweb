@@ -159,6 +159,43 @@
 				}
 			}
 		},
+		"Rechnung": {
+			"invoice_uid": {
+				"type": "Text",
+				"config": {
+					"label": "UID / MwSt-Nummer",
+					"placeholder": "CHE-XXX.XXX.XXX MWST"
+				}
+			},
+			"invoice_iban": {
+				"type": "Text",
+				"config": {
+					"label": "IBAN",
+					"placeholder": "CH00 0000 0000 0000 0000 0"
+				}
+			},
+			"invoice_bank": {
+				"type": "Text",
+				"config": {
+					"label": "Bank",
+					"placeholder": "Musterbank"
+				}
+			},
+			"invoice_bic": {
+				"type": "Text",
+				"config": {
+					"label": "BIC / SWIFT",
+					"placeholder": "XXXXXXXX"
+				}
+			},
+			"invoice_payment_terms_days": {
+				"type": "Number",
+				"config": {
+					"label": "Zahlungsfrist (Tage)",
+					"placeholder": "30"
+				}
+			}
+		},
 		"SEO": {
 			"domain": {
 				"type": "Text",

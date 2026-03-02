@@ -1,0 +1,311 @@
+import type { RequestHandler } from '@sveltejs/kit';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { createClient } from '$lib/prismicio';
+import { asText } from '@prismicio/client';
+import { pricing, formatPriceChf } from '$lib/pricing';
+import { env } from '$env/dynamic/private';
+
+interface InvoiceRequest {
+	data: Record<string, string>;
+	labels: Record<string, string>;
+	serviceKey: string;
+}
+
+interface CompanyInfo {
+	name: string;
+	address: string;
+	email: string;
+	uid: string;
+	iban: string;
+	bank: string;
+	bic: string;
+	paymentTermsDays: number;
+}
+
+async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
+	try {
+		const client = createClient({ fetch });
+		const settings = await client.getSingle('settings');
+		const d = settings.data as Record<string, unknown>;
+
+		return {
+			name: (d.responsible_person_company as string) ?? '',
+			address: asText(d.responsible_address as Parameters<typeof asText>[0]) ?? '',
+			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
+			uid: (d.invoice_uid as string) ?? '',
+			iban: (d.invoice_iban as string) ?? '',
+			bank: (d.invoice_bank as string) ?? '',
+			bic: (d.invoice_bic as string) ?? '',
+			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30
+		};
+	} catch {
+		// Fallback falls Prismic nicht erreichbar
+		return {
+			name: '',
+			address: '',
+			email: '',
+			uid: '',
+			iban: '',
+			bank: '',
+			bic: '',
+			paymentTermsDays: 30
+		};
+	}
+}
+
+async function generatePdf(
+	invoiceNumber: string,
+	data: Record<string, string>,
+	labels: Record<string, string>,
+	serviceKey: string,
+	co: CompanyInfo
+): Promise<Uint8Array> {
+	const pdfDoc = await PDFDocument.create();
+	const page = pdfDoc.addPage([595, 842]); // A4
+	const { width, height } = page.getSize();
+
+	const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+	const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+	const black = rgb(0, 0, 0);
+	const gray = rgb(0.45, 0.45, 0.45);
+	const lightGray = rgb(0.85, 0.85, 0.85);
+
+	const marginL = 60;
+	const marginR = width - 60;
+	let y = height - 60;
+
+	// --- Firmenname ---
+	page.drawText(co.name || 'Unbekannte Firma', {
+		x: marginL,
+		y,
+		size: 18,
+		font: fontBold,
+		color: black
+	});
+
+	// --- Datum (oben rechts) ---
+	const dateStr = new Intl.DateTimeFormat('de-CH', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	}).format(new Date());
+	const dateWidth = fontRegular.widthOfTextAtSize(dateStr, 10);
+	page.drawText(dateStr, { x: marginR - dateWidth, y, size: 10, font: fontRegular, color: gray });
+
+	y -= 20;
+	// Adresse (mehrzeilig)
+	for (const line of (co.address || '').split('\n').filter(Boolean)) {
+		page.drawText(line, { x: marginL, y, size: 10, font: fontRegular, color: gray });
+		y -= 14;
+	}
+	if (co.uid) {
+		page.drawText(`UID: ${co.uid}`, { x: marginL, y, size: 9, font: fontRegular, color: gray });
+		y -= 14;
+	}
+	if (co.email) {
+		page.drawText(co.email, { x: marginL, y, size: 9, font: fontRegular, color: gray });
+	}
+
+	y -= 40;
+
+	// --- Trennlinie ---
+	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+	y -= 30;
+
+	// --- Rechnungstitel + Nummer ---
+	page.drawText('RECHNUNG', { x: marginL, y, size: 20, font: fontBold, color: black });
+	y -= 22;
+	page.drawText(`Nr. ${invoiceNumber}`, { x: marginL, y, size: 11, font: fontRegular, color: gray });
+
+	y -= 40;
+
+	// --- Empfänger ---
+	page.drawText('Rechnungsempfänger', { x: marginL, y, size: 9, font: fontBold, color: gray });
+	y -= 16;
+
+	const recipientFields = Object.entries(data).filter(
+		([k, v]) => v && !['form-name', 'bot-field', 'subject', 'dienstleistung', 'message'].includes(k)
+	);
+	for (const [key, value] of recipientFields) {
+		const label = labels[key] ?? key;
+		page.drawText(`${label}: ${value}`, { x: marginL, y, size: 10, font: fontRegular, color: black });
+		y -= 16;
+	}
+
+	y -= 30;
+
+	// --- Leistungsübersicht ---
+	const service = pricing[serviceKey];
+
+	// Header-Zeile
+	page.drawRectangle({
+		x: marginL,
+		y: y - 4,
+		width: marginR - marginL,
+		height: 22,
+		color: lightGray
+	});
+	page.drawText('Leistung', { x: marginL + 8, y: y + 4, size: 10, font: fontBold, color: black });
+	const totalLabel = 'Betrag CHF';
+	const totalLabelWidth = fontBold.widthOfTextAtSize(totalLabel, 10);
+	page.drawText(totalLabel, {
+		x: marginR - totalLabelWidth - 8,
+		y: y + 4,
+		size: 10,
+		font: fontBold,
+		color: black
+	});
+	y -= 28;
+
+	// Leistungszeile
+	const serviceLabel = service?.label ?? serviceKey;
+	const priceStr = service ? formatPriceChf(service.priceChf) : '—';
+	page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+	const priceWidth = fontRegular.widthOfTextAtSize(priceStr, 10);
+	page.drawText(priceStr, {
+		x: marginR - priceWidth - 8,
+		y,
+		size: 10,
+		font: fontRegular,
+		color: black
+	});
+
+	y -= 30;
+	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+	y -= 16;
+
+	// Total
+	const totalStr = service ? formatPriceChf(service.priceChf) : '—';
+	page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+	const totalWidth = fontBold.widthOfTextAtSize(totalStr, 10);
+	page.drawText(totalStr, {
+		x: marginR - totalWidth - 8,
+		y,
+		size: 10,
+		font: fontBold,
+		color: black
+	});
+
+	y -= 50;
+
+	// --- Zahlungsbedingungen ---
+	page.drawText(`Zahlungsbedingungen: ${co.paymentTermsDays} Tage netto`, {
+		x: marginL,
+		y,
+		size: 10,
+		font: fontRegular,
+		color: black
+	});
+	y -= 18;
+	if (co.iban) {
+		page.drawText(
+			`Bitte zahlen Sie innerhalb von ${co.paymentTermsDays} Tagen auf folgendes Konto:`,
+			{ x: marginL, y, size: 10, font: fontRegular, color: black }
+		);
+		y -= 18;
+		page.drawText(
+			`IBAN: ${co.iban}${co.bank ? `  |  Bank: ${co.bank}` : ''}${co.bic ? `  |  BIC: ${co.bic}` : ''}`,
+			{ x: marginL, y, size: 10, font: fontRegular, color: black }
+		);
+		y -= 16;
+	}
+	page.drawText(`Zahlungsreferenz: ${invoiceNumber}`, {
+		x: marginL,
+		y,
+		size: 10,
+		font: fontBold,
+		color: black
+	});
+
+	return pdfDoc.save();
+}
+
+export const POST: RequestHandler = async ({ request, fetch }) => {
+	let body: InvoiceRequest;
+	try {
+		body = await request.json();
+	} catch {
+		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
+	}
+
+	const { data, labels, serviceKey } = body;
+	const invoiceNumber = `INV-${Date.now()}`;
+
+	// Firmendaten aus Prismic Settings laden
+	const co = await fetchCompanyInfo(fetch);
+
+	// PDF generieren
+	let pdfBytes: Uint8Array;
+	try {
+		pdfBytes = await generatePdf(invoiceNumber, data, labels, serviceKey, co);
+	} catch (e) {
+		console.error('PDF-Generierung fehlgeschlagen:', e);
+		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {
+			status: 500
+		});
+	}
+
+	// Dev-Modus: E-Mail überspringen
+	if (import.meta.env.DEV) {
+		console.log(
+			`[DEV] Rechnung ${invoiceNumber} generiert (${pdfBytes.length} Bytes). E-Mail nicht gesendet.`
+		);
+		return new Response(JSON.stringify({ invoiceNumber }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	// Production: E-Mail via Resend
+	const resendKey = env.RESEND_API_KEY;
+	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const toEmail = env.INVOICE_TO_EMAIL;
+
+	if (!resendKey || !fromEmail || !toEmail) {
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL)');
+		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
+	}
+
+	const customerEmail = data['email'] ?? '';
+	const customerName = data['name'] ?? data['vorname'] ?? 'Kunde';
+	const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+
+	try {
+		const { Resend } = await import('resend');
+		const resend = new Resend(resendKey);
+
+		// E-Mail an Kunden
+		if (customerEmail) {
+			await resend.emails.send({
+				from: fromEmail,
+				to: customerEmail,
+				subject: `Ihre Rechnung ${invoiceNumber}${co.name ? ` – ${co.name}` : ''}`,
+				text: `Sehr geehrte/r ${customerName}\n\nVielen Dank für Ihre Bestellung. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${co.name}`,
+				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
+			});
+		}
+
+		// Benachrichtigung an Geschäft
+		await resend.emails.send({
+			from: fromEmail,
+			to: toEmail,
+			subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
+			text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(data)
+				.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
+				.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
+				.join('\n')}`,
+			attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
+		});
+	} catch (e) {
+		console.error('E-Mail-Versand fehlgeschlagen:', e);
+		return new Response(JSON.stringify({ error: 'E-Mail konnte nicht gesendet werden' }), {
+			status: 500
+		});
+	}
+
+	return new Response(JSON.stringify({ invoiceNumber }), {
+		status: 200,
+		headers: { 'Content-Type': 'application/json' }
+	});
+};

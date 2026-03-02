@@ -13,7 +13,7 @@
 	};
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
 	$: key = typeKeys[field.field_type ?? ''] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
@@ -66,8 +66,8 @@
 		'Vereinigtes Königreich', 'Vietnam', 'Zentralafrikanische Republik', 'Zypern'
 	];
 
-	// HTML-Typ basierend auf dem Mapping
-	const htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
+	// HTML-Typ basierend auf dem Mapping (reaktiv: aktualisiert sich wenn field.field_type ändert)
+	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
 
 	// Telefon: Vorwahl + Nummer
 	const countryPrefixes = [

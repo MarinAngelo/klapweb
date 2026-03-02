@@ -9,6 +9,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { goto } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	export let slice: FormSlice;
@@ -78,9 +79,12 @@
 	const formName = (slice.primary as any).form_name?.trim() || `form_${formIndex}`;
 	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
+	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
+	$: checkoutUrl = ((slice.primary as any).checkout_url as string | null | undefined)?.trim() || null;
+
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
 	function fieldColumn(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (field as any).column ?? 'Links';
 	}
@@ -211,6 +215,22 @@
 			return;
 		}
 		linkError = null;
+
+		// Checkout-Modus: Daten in sessionStorage speichern und zur Zusammenfassung navigieren
+		if (checkoutUrl) {
+			const data: Record<string, string> = {};
+			const labels: Record<string, string> = {};
+			for (const [key, value] of formData.entries()) {
+				if (typeof value === 'string') data[key] = value;
+			}
+			for (const field of formFields) {
+				const key = effectiveKey(field);
+				if (key) labels[key] = field.field_name ?? key;
+			}
+			sessionStorage.setItem('checkoutData', JSON.stringify({ data, labels }));
+			goto(checkoutUrl);
+			return;
+		}
 
 		// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
 		const nameField = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
@@ -424,11 +444,11 @@
 				<input type="hidden" name="form-name" value={formName} />
 				<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
 				<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
-				<!-- Tailwind-Safelist: sm:col-start-1 sm:col-start-2 -->
+				<!-- Tailwind-Safelist: sm:col-start-2 -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
-							<div class="{fieldColumn(field) === 'Rechts' ? 'sm:col-start-2' : 'sm:col-start-1'}">
+							<div class="{fieldColumn(field) === 'Rechts' ? 'sm:col-start-2' : ''}">
 								<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
 								{#if fieldErrors[effectiveKey(field)]}
 									<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
