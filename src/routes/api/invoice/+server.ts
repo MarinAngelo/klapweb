@@ -19,6 +19,7 @@ interface CompanyInfo {
 	bank: string;
 	bic: string;
 	paymentTermsDays: number;
+	vatRate: number | null;
 }
 
 async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
@@ -36,11 +37,12 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 						.join('\n')
 				: '') ?? '',
 			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
-			uid: (d.invoice_uid as string) ?? '',
+			uid: (d.company_identification_number as string) ?? '',
 			iban: (d.invoice_iban as string) ?? '',
 			bank: (d.invoice_bank as string) ?? '',
 			bic: (d.invoice_bic as string) ?? '',
-			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30
+			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
+			vatRate: (d.invoice_vat_rate as number) ?? null
 		};
 	} catch {
 		// Fallback falls Prismic nicht erreichbar
@@ -52,7 +54,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			iban: '',
 			bank: '',
 			bic: '',
-			paymentTermsDays: 30
+			paymentTermsDays: 30,
+			vatRate: null
 		};
 	}
 }
@@ -179,32 +182,43 @@ async function generatePdf(
 
 	// Leistungszeile
 	const serviceLabel = service?.label ?? serviceKey;
-	const priceStr = service ? formatPriceChf(service.priceChf) : '—';
-	page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-	const priceWidth = fontRegular.widthOfTextAtSize(priceStr, 10);
-	page.drawText(priceStr, {
-		x: marginR - priceWidth - 8,
-		y,
-		size: 10,
-		font: fontRegular,
-		color: black
-	});
+	const netPrice = service?.priceChf ?? 0;
 
-	y -= 30;
-	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
-	y -= 16;
+	const drawRight = (text: string, yPos: number, font = fontRegular) => {
+		const w = font.widthOfTextAtSize(text, 10);
+		page.drawText(text, { x: marginR - w - 8, y: yPos, size: 10, font, color: black });
+	};
 
-	// Total
-	const totalStr = service ? formatPriceChf(service.priceChf) : '—';
-	page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
-	const totalWidth = fontBold.widthOfTextAtSize(totalStr, 10);
-	page.drawText(totalStr, {
-		x: marginR - totalWidth - 8,
-		y,
-		size: 10,
-		font: fontBold,
-		color: black
-	});
+	if (co.vatRate) {
+		// Mit MWST: 3 Zeilen
+		const vatAmount = Math.round(netPrice * co.vatRate) / 100;
+		const total = netPrice + vatAmount;
+
+		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		drawRight(formatPriceChf(netPrice), y);
+		y -= 20;
+
+		page.drawText(`MwSt ${co.vatRate}%`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		drawRight(formatPriceChf(vatAmount), y);
+		y -= 30;
+
+		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+		y -= 16;
+
+		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+		drawRight(formatPriceChf(total), y, fontBold);
+	} else {
+		// Ohne MWST
+		page.drawText(`${serviceLabel}`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		drawRight(service ? formatPriceChf(netPrice) : '—', y);
+		y -= 30;
+
+		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+		y -= 16;
+
+		page.drawText('Total exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+		drawRight(service ? formatPriceChf(netPrice) : '—', y, fontBold);
+	}
 
 	y -= 50;
 

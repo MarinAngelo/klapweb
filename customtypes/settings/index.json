@@ -194,6 +194,13 @@
 					"label": "Zahlungsfrist (Tage)",
 					"placeholder": "30"
 				}
+			},
+			"invoice_vat_rate": {
+				"type": "Number",
+				"config": {
+					"label": "MWST-Satz (%)",
+					"placeholder": "8.1"
+				}
 			}
 		},
 		"SEO": {
