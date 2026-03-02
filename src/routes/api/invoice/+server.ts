@@ -1,7 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { asText } from '@prismicio/client';
 import { pricing, formatPriceChf } from '$lib/pricing';
 import { env } from '$env/dynamic/private';
 
@@ -30,7 +29,12 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 
 		return {
 			name: (d.responsible_person_company as string) ?? '',
-			address: asText(d.responsible_address as Parameters<typeof asText>[0]) ?? '',
+			address: (Array.isArray(d.responsible_address)
+				? (d.responsible_address as Array<{ text?: string }>)
+						.map((b) => b?.text ?? '')
+						.filter(Boolean)
+						.join('\n')
+				: '') ?? '',
 			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
 			uid: (d.invoice_uid as string) ?? '',
 			iban: (d.invoice_iban as string) ?? '',
@@ -131,7 +135,7 @@ async function generatePdf(
 	if (fullName) recipientLines.push({ text: fullName });
 
 	// Adresse
-	if (d['strassenr']) recipientLines.push({ text: d['strassenr'] });
+	if (d['schtrassenr']) recipientLines.push({ text: d['schtrassenr'] });
 	if (d['adresszusatz']) recipientLines.push({ text: d['adresszusatz'] });
 	const plzOrt = [d['plz'], d['ort']].filter(Boolean).join(' ');
 	if (plzOrt) recipientLines.push({ text: plzOrt });
