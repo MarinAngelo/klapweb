@@ -8,12 +8,13 @@ export interface ProductData {
 	stripeUrl: string | null;
 }
 
-export async function load({ fetch, url }) {
+export async function load({ fetch, url, parent }) {
+	const { lang } = await parent();
 	const serviceUid = url.searchParams.get('service') ?? '';
 	if (!serviceUid) return { product: null };
 	try {
 		const client = createClient({ fetch });
-		const pageDoc = await client.getByUID('page', serviceUid);
+		const pageDoc = await client.getByUID('page', serviceUid, { lang });
 		const d = pageDoc.data as Record<string, unknown>;
 		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
 		return {
