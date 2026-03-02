@@ -56,7 +56,6 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 async function generatePdf(
 	invoiceNumber: string,
 	data: Record<string, string>,
-	labels: Record<string, string>,
 	serviceKey: string,
 	co: CompanyInfo
 ): Promise<Uint8Array> {
@@ -124,12 +123,28 @@ async function generatePdf(
 	page.drawText('Rechnungsempfänger', { x: marginL, y, size: 9, font: fontBold, color: gray });
 	y -= 16;
 
-	const recipientFields = Object.entries(data).filter(
-		([k, v]) => v && !['form-name', 'bot-field', 'subject', 'dienstleistung', 'message'].includes(k)
-	);
-	for (const [key, value] of recipientFields) {
-		const label = labels[key] ?? key;
-		page.drawText(`${label}: ${value}`, { x: marginL, y, size: 10, font: fontRegular, color: black });
+	const d = data;
+	const recipientLines: Array<{ text: string; bold?: boolean }> = [];
+
+	// Name
+	const fullName = [d['vorname'], d['nachname']].filter(Boolean).join(' ');
+	if (fullName) recipientLines.push({ text: fullName });
+
+	// Adresse
+	if (d['strassenr']) recipientLines.push({ text: d['strassenr'] });
+	if (d['adresszusatz']) recipientLines.push({ text: d['adresszusatz'] });
+	const plzOrt = [d['plz'], d['ort']].filter(Boolean).join(' ');
+	if (plzOrt) recipientLines.push({ text: plzOrt });
+	if (d['land']) recipientLines.push({ text: d['land'] });
+
+	// Leerzeile + E-Mail + Projektname
+	recipientLines.push({ text: '' });
+	if (d['email']) recipientLines.push({ text: `E-Mail: ${d['email']}` });
+	if (d['projektname']) recipientLines.push({ text: `Projektname: ${d['projektname']}` });
+
+	for (const line of recipientLines) {
+		if (line.text === '') { y -= 8; continue; }
+		page.drawText(line.text, { x: marginL, y, size: 10, font: fontRegular, color: black });
 		y -= 16;
 	}
 
@@ -238,7 +253,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// PDF generieren
 	let pdfBytes: Uint8Array;
 	try {
-		pdfBytes = await generatePdf(invoiceNumber, data, labels, serviceKey, co);
+		pdfBytes = await generatePdf(invoiceNumber, data, serviceKey, co);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {
