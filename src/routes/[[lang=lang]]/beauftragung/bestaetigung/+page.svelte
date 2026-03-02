@@ -4,12 +4,9 @@
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
-	import { pricing } from '$lib/pricing';
-
 	$: isSimulated = $page.url.searchParams.get('simulated') === 'true';
 	$: method = $page.url.searchParams.get('method') ?? 'stripe';
-	$: serviceKey = $page.url.searchParams.get('service') ?? '';
-	$: service = pricing[serviceKey] ?? null;
+	$: serviceLabel = $page.url.searchParams.get('label') ?? '';
 
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
@@ -38,13 +35,9 @@
 
 	<Heading tag="h1">Vielen Dank für Ihre Bestellung!</Heading>
 
-	{#if service}
-		<p class="text-lg mb-6">
-			Ihre Bestellung <strong>{service.label}</strong> ist bei uns eingegangen.
-		</p>
-	{:else}
-		<p class="text-lg mb-6">Ihre Bestellung ist bei uns eingegangen.</p>
-	{/if}
+	<p class="text-lg mb-6">
+		Ihre Bestellung{#if serviceLabel} <strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
+	</p>
 
 	<div class="mb-8 p-6 border" style="border-color: {borderColor};">
 		{#if method === 'rechnung'}

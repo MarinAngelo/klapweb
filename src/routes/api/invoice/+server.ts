@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { pricing, formatPriceChf } from '$lib/pricing';
+import { formatPriceChf } from '$lib/pricing';
 import { env } from '$env/dynamic/private';
 
 interface InvoiceRequest {
@@ -45,7 +45,6 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			vatRate: (d.invoice_vat_rate as number) ?? null
 		};
 	} catch {
-		// Fallback falls Prismic nicht erreichbar
 		return {
 			name: '',
 			address: '',
@@ -60,10 +59,30 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 	}
 }
 
+async function fetchProductInfo(
+	fetch: typeof globalThis.fetch,
+	serviceUid: string
+): Promise<{ label: string; price: number | null }> {
+	if (!serviceUid) return { label: serviceUid, price: null };
+	try {
+		const client = createClient({ fetch });
+		const pageDoc = await client.getByUID('page', serviceUid);
+		const d = pageDoc.data as Record<string, unknown>;
+		const titleText = (pageDoc.data.title as Array<{ text: string }> | undefined)?.[0]?.text;
+		return {
+			label: titleText ?? serviceUid,
+			price: (d.ecommerce_price_chf as number) ?? null
+		};
+	} catch {
+		return { label: serviceUid, price: null };
+	}
+}
+
 async function generatePdf(
 	invoiceNumber: string,
 	data: Record<string, string>,
-	serviceKey: string,
+	serviceLabel: string,
+	netPrice: number | null,
 	co: CompanyInfo
 ): Promise<Uint8Array> {
 	const pdfDoc = await PDFDocument.create();
@@ -158,8 +177,6 @@ async function generatePdf(
 	y -= 30;
 
 	// --- Leistungsübersicht ---
-	const service = pricing[serviceKey];
-
 	// Header-Zeile
 	page.drawRectangle({
 		x: marginL,
@@ -180,16 +197,14 @@ async function generatePdf(
 	});
 	y -= 28;
 
-	// Leistungszeile
-	const serviceLabel = service?.label ?? serviceKey;
-	const netPrice = service?.priceChf ?? 0;
-
 	const drawRight = (text: string, yPos: number, font = fontRegular) => {
 		const w = font.widthOfTextAtSize(text, 10);
 		page.drawText(text, { x: marginR - w - 8, y: yPos, size: 10, font, color: black });
 	};
 
-	if (co.vatRate) {
+	const priceStr = netPrice !== null ? formatPriceChf(netPrice) : '—';
+
+	if (co.vatRate && netPrice !== null) {
 		// Mit MWST: 3 Zeilen
 		const vatAmount = Math.round(netPrice * co.vatRate) / 100;
 		const total = netPrice + vatAmount;
@@ -208,16 +223,16 @@ async function generatePdf(
 		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
 		drawRight(formatPriceChf(total), y, fontBold);
 	} else {
-		// Ohne MWST
-		page.drawText(`${serviceLabel}`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(service ? formatPriceChf(netPrice) : '—', y);
+		// Ohne MWST (oder Preis unbekannt)
+		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		drawRight(priceStr, y);
 		y -= 30;
 
 		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
 		y -= 16;
 
 		page.drawText('Total exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
-		drawRight(service ? formatPriceChf(netPrice) : '—', y, fontBold);
+		drawRight(priceStr, y, fontBold);
 	}
 
 	y -= 50;
@@ -265,13 +280,16 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const { data, labels, serviceKey } = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
-	// Firmendaten aus Prismic Settings laden
-	const co = await fetchCompanyInfo(fetch);
+	// Firmendaten + Produktdaten parallel laden
+	const [co, product] = await Promise.all([
+		fetchCompanyInfo(fetch),
+		fetchProductInfo(fetch, serviceKey)
+	]);
 
 	// PDF generieren
 	let pdfBytes: Uint8Array;
 	try {
-		pdfBytes = await generatePdf(invoiceNumber, data, serviceKey, co);
+		pdfBytes = await generatePdf(invoiceNumber, data, product.label, product.price, co);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {

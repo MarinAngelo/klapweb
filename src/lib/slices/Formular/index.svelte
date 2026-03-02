@@ -10,6 +10,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount, onDestroy } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	export let slice: FormSlice;
@@ -228,7 +229,11 @@
 				if (key) labels[key] = field.field_name ?? key;
 			}
 			sessionStorage.setItem('checkoutData', JSON.stringify({ data, labels }));
-			goto(checkoutUrl);
+			const serviceUid = data['dienstleistung'] ?? '';
+			const target = serviceUid
+				? `${checkoutUrl}?service=${encodeURIComponent(serviceUid)}`
+				: checkoutUrl;
+			goto(target);
 			return;
 		}
 
@@ -326,6 +331,11 @@
 		search.forEach((value, key) => {
 			urlParams = { ...urlParams, [key]: value };
 		});
+		// Fallback: Wenn kein dienstleistung-Param, Page-UID der aktuellen Seite verwenden
+		if (!urlParams.dienstleistung) {
+			const uid = $page.params.uid;
+			if (uid) urlParams = { ...urlParams, dienstleistung: uid };
+		}
 	});
 
 	onDestroy(() => clearInterval(clockInterval));

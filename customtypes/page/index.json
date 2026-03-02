@@ -76,6 +76,33 @@
 				}
 			}
 		},
+		"E-Commerce": {
+			"ecommerce_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "E-Commerce aktiv",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"ecommerce_price_chf": {
+				"type": "Number",
+				"config": {
+					"label": "Preis exkl. MwSt. (CHF)",
+					"placeholder": "1290"
+				}
+			},
+			"ecommerce_stripe_url": {
+				"type": "Link",
+				"config": {
+					"label": "Stripe Payment Link",
+					"placeholder": "https://buy.stripe.com/...",
+					"select": null,
+					"allowTargetBlank": true
+				}
+			}
+		},
 		"SEO & Metadata": {
 			"meta_title": {
 				"type": "Text",

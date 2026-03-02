@@ -6,7 +6,10 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { pricing, formatPriceChf } from '$lib/pricing';
+	import { formatPriceChf } from '$lib/pricing';
+	import type { ProductData } from './+page.server';
+
+	export let data: { product: ProductData | null };
 
 	interface CheckoutData {
 		data: Record<string, string>;
@@ -35,16 +38,17 @@
 		}
 	});
 
-	$: service = checkoutData ? (pricing[checkoutData.data['dienstleistung'] ?? ''] ?? null) : null;
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
+	$: displayLabel = data.product?.label ?? serviceKey;
+	$: displayPrice = data.product?.price ?? null;
 
 	$: stripeUrl =
-		service && checkoutData?.data['email']
-			? `${service.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
-			: service?.stripeUrl ?? '';
+		data.product?.stripeUrl && checkoutData?.data['email']
+			? `${data.product.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
+			: (data.product?.stripeUrl ?? '');
 
 	$: stripeTarget = import.meta.env.DEV
-		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}`
+		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}`
 		: stripeUrl;
 
 	$: buttonText =
@@ -64,6 +68,7 @@
 		orderError = null;
 
 		const serviceParam = encodeURIComponent(serviceKey);
+		const labelParam = encodeURIComponent(displayLabel);
 
 		if (selectedPayment === 'stripe') {
 			sessionStorage.removeItem('checkoutData');
@@ -89,7 +94,7 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
-				goto(`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}`);
+				goto(`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`);
 			} catch {
 				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
 				isLoading = false;
@@ -101,7 +106,7 @@
 			// Dev-Modus: Netlify-POST überspringen
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}`);
+				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 				return;
 			}
 			try {
@@ -121,7 +126,7 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}`);
+				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 			} catch {
 				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
 				isLoading = false;
@@ -147,11 +152,11 @@
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
 			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
-			{#if service}
-				<p class="text-xl font-semibold">{service.label}</p>
-				<p class="text-3xl font-bold mt-1">{formatPriceChf(service.priceChf)}</p>
+			<p class="text-xl font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
+			{#if displayPrice !== null}
+				<p class="text-3xl font-bold mt-1">{formatPriceChf(displayPrice)}</p>
+				<p class="text-sm opacity-60 mt-1">exkl. MwSt.</p>
 			{:else}
-				<p class="text-xl font-semibold">{checkoutData.data['dienstleistung'] ?? '—'}</p>
 				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>
 			{/if}
 		</div>
