@@ -26,7 +26,8 @@ export async function load({ fetch, url, parent }) {
 				stripeUrl: stripeLink?.url ?? null
 			} satisfies ProductData
 		};
-	} catch {
+	} catch (e) {
+		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
 		return { product: null };
 	}
 }

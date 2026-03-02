@@ -1,96 +1,29 @@
 {
 	"format": "custom",
 	"id": "variablen",
-	"label": "Variablen & Preise",
+	"label": "Variablen",
 	"repeatable": false,
 	"status": true,
 	"json": {
-		"Variablen & Preise": {
+		"Variablen": {
 			"eintraege": {
 				"type": "Group",
 				"config": {
-					"label": "Einträge (Variablen & Preise)",
+					"label": "Einträge (Token → Wert)",
 					"repeat": true,
 					"fields": {
 						"schluessel": {
 							"type": "Text",
 							"config": {
-								"label": "Schlüssel (Token-Name)",
-								"placeholder": "PreisA"
+								"label": "Token-Name",
+								"placeholder": "z.B. Firmename oder Telefon"
 							}
 						},
 						"wert": {
 							"type": "Text",
 							"config": {
 								"label": "Wert",
-								"placeholder": "100.00"
-							}
-						},
-						"waehrung": {
-							"type": "Select",
-							"config": {
-								"label": "Währung des Wertes (für Auto-Umrechnung)",
-								"placeholder": "Leer = kein Preis",
-								"options": ["CHF", "EUR", "USD", "GBP", "INR", "JPY", "AUD", "CAD"]
-							}
-						}
-					}
-				}
-			}
-		},
-		"Zahlungsplan": {
-			"zahlungsplan": {
-				"type": "Group",
-				"config": {
-					"label": "Zahlungsplan-Aufteilung (gilt für alle Preise)",
-					"repeat": true,
-					"fields": {
-						"suffix": {
-							"type": "Text",
-							"config": {
-								"label": "Token-Suffix",
-								"placeholder": "anz"
-							}
-						},
-						"prozent": {
-							"type": "Number",
-							"config": {
-								"label": "Prozent",
-								"placeholder": "30"
-							}
-						}
-					}
-				}
-			}
-		},
-		"Währungen": {
-			"basis_waehrung": {
-				"type": "Select",
-				"config": {
-					"label": "Basiswährung",
-					"placeholder": "",
-					"options": ["CHF", "EUR", "USD", "GBP", "INR", "JPY", "AUD", "CAD"],
-					"default_value": "CHF"
-				}
-			},
-			"waehrungen": {
-				"type": "Group",
-				"config": {
-					"label": "Angezeigte Umrechnungskurse",
-					"repeat": true,
-					"fields": {
-						"code": {
-							"type": "Text",
-							"config": {
-								"label": "Währungscode (z.B. USD)",
-								"placeholder": "USD"
-							}
-						},
-						"nachkommastellen": {
-							"type": "Number",
-							"config": {
-								"label": "Nachkommastellen",
-								"placeholder": "4"
+								"placeholder": "z.B. Klap GmbH oder +41 44 123 45 67"
 							}
 						}
 					}

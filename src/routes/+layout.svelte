@@ -16,7 +16,6 @@
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { variables } from '$lib/stores/variables';
-	import { applyGeoOverride } from '$lib/utils/geoVariables';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 
@@ -119,13 +118,12 @@
 	// Nur updaten wenn sich der Inhalt wirklich geändert hat (verhindert Re-Render-Kaskade).
 	// Nach dem ersten Geo-Override wird dieser bei späteren Änderungen ebenfalls neu angewendet.
 	let _prevVarsStr = '{}';
-	let _geoApplied = false;
 	$: {
 		const v = data.variables ?? {};
 		const s = JSON.stringify(v);
 		if (s !== _prevVarsStr) {
 			_prevVarsStr = s;
-			variables.set(_geoApplied ? applyGeoOverride(v) : v);
+			variables.set(v);
 		}
 	}
 
@@ -163,9 +161,7 @@
 			?.banner_overlap === true;
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
-	onMount(() => {
-		variables.update(applyGeoOverride);
-	});
+	onMount(() => {});
 	afterNavigate(() => {});
 </script>
 

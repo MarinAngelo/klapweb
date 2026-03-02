@@ -4,8 +4,10 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
 
 	export let slice: any;
 	export let slices: any;
@@ -39,6 +41,7 @@
 	$: buttonBgColor = slice.primary.button_bg_color || get(theme).pageButtonBgColor;
 	$: buttonHoverColor = slice.primary.button_hover_color || get(theme).pageButtonHoverColor;
 	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
+	$: beauftragungHref = getBeauftragunHref(slice.primary.button_link, $page.params.uid);
 
 	// Scroll-Snap: scroll-snap-type auf html setzen wenn aktiviert
 	onMount(() => {
@@ -73,22 +76,41 @@
 
 			{#if isFilled.link(slice.primary.button_link)}
 				<div class={alignClass}>
-					<PrismicLink
-						field={slice.primary.button_link}
-						class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
-							? 'block w-full text-center sm:inline-block sm:w-auto'
-							: 'inline-block'}"
-						style="
-							background-color: {buttonBgColor};
-							color: {buttonColor};
-							border-color: {buttonColor};
-							--hover-text-color: {buttonHoverColor};
-							--hover-bg-color: {buttonHoverBgColor};
-							--focus-ring-color: {buttonColor};
-						"
-					>
-						{slice.primary.button_text || 'Mehr erfahren'}
-					</PrismicLink>
+					{#if beauftragungHref}
+						<a
+							href={beauftragungHref}
+							class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+								? 'block w-full text-center sm:inline-block sm:w-auto'
+								: 'inline-block'}"
+							style="
+								background-color: {buttonBgColor};
+								color: {buttonColor};
+								border-color: {buttonColor};
+								--hover-text-color: {buttonHoverColor};
+								--hover-bg-color: {buttonHoverBgColor};
+								--focus-ring-color: {buttonColor};
+							"
+						>
+							{slice.primary.button_text || 'Mehr erfahren'}
+						</a>
+					{:else}
+						<PrismicLink
+							field={slice.primary.button_link}
+							class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+								? 'block w-full text-center sm:inline-block sm:w-auto'
+								: 'inline-block'}"
+							style="
+								background-color: {buttonBgColor};
+								color: {buttonColor};
+								border-color: {buttonColor};
+								--hover-text-color: {buttonHoverColor};
+								--hover-bg-color: {buttonHoverBgColor};
+								--focus-ring-color: {buttonColor};
+							"
+						>
+							{slice.primary.button_text || 'Mehr erfahren'}
+						</PrismicLink>
+					{/if}
 				</div>
 			{/if}
 		</div>

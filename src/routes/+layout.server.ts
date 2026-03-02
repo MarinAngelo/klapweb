@@ -4,7 +4,7 @@ import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 
 export const prerender = 'auto';
 
-export async function load({ params, fetch, cookies, url, request }) {
+export async function load({ params, fetch, cookies, url }) {
 	const client = createClient({ fetch, cookies });
 
 	try {
@@ -64,7 +64,7 @@ export async function load({ params, fetch, cookies, url, request }) {
 			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null)
 		]);
 
-		const variables = await buildTokenMap((variablenDoc as { data?: unknown })?.data, fetch, request);
+		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
 
 		return {
 			settings,

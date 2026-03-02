@@ -167,6 +167,14 @@
 			}
 		},
 		"Rechnung": {
+			"invoice_currency": {
+				"type": "Select",
+				"config": {
+					"label": "Währung",
+					"options": ["CHF", "EUR", "USD", "GBP"],
+					"default_value": "CHF"
+				}
+			},
 			"invoice_iban": {
 				"type": "Text",
 				"config": {
