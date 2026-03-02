@@ -19,6 +19,8 @@
 		Array.isArray(settings?.responsible_address) && settings.responsible_address.length > 0
 			? settings.responsible_address
 			: [{ type: 'paragraph', text: $_('Adresse fehlt'), spans: [] }];
+
+	$: companyId = settings?.company_identification_number ?? '';
 </script>
 
 <main class="prose mx-auto py-12 px-4 sm:px-6">
@@ -27,6 +29,10 @@
 	<h2>{$_('Kontaktadresse & Verantwortlichkeit')}</h2>
 
 	<AddressBlock {responsible_person_company} {responsible_address} {responsible_email} />
+
+	{#if companyId}
+		<p>{$_('UID')}: {companyId}</p>
+	{/if}
 
 	{#if legal_disclosure}
 		<PrismicRichText field={legal_disclosure} />

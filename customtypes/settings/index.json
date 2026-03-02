@@ -31,6 +31,13 @@
 					"placeholder": ""
 				}
 			},
+			"company_identification_number": {
+				"type": "Text",
+				"config": {
+					"label": "Unternehmenskennnummer",
+					"placeholder": "UID / CHE-Nummer / MWST-Nummer usw."
+				}
+			},
 			"responsible_address": {
 				"type": "StructuredText",
 				"config": {
@@ -160,13 +167,6 @@
 			}
 		},
 		"Rechnung": {
-			"invoice_uid": {
-				"type": "Text",
-				"config": {
-					"label": "UID / MwSt-Nummer",
-					"placeholder": "CHE-XXX.XXX.XXX MWST"
-				}
-			},
 			"invoice_iban": {
 				"type": "Text",
 				"config": {
