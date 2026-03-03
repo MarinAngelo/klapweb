@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { formatPriceChf } from '$lib/pricing';
+import { calcDisplayPrice, formatPriceChf } from '$lib/pricing';
 import { env } from '$env/dynamic/private';
 
 interface InvoiceRequest {
@@ -72,14 +72,10 @@ async function fetchProductInfo(
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? null;
-		let price: number | null = null;
-		if (basePrice != null) {
-			const afterDiscount = discountPct != null ? basePrice * (1 - discountPct / 100) : basePrice;
-			if (depositPct != null) price = Math.round(afterDiscount * depositPct / 100 * 100) / 100;
-			else if (discountPct != null) price = Math.round(afterDiscount * 100) / 100;
-			else price = basePrice;
-		}
-		return { label: titleText ?? serviceUid, price };
+		return {
+			label: titleText ?? serviceUid,
+			price: calcDisplayPrice(basePrice, discountPct, depositPct)
+		};
 	} catch {
 		return { label: serviceUid, price: null };
 	}

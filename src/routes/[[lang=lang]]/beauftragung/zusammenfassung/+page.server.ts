@@ -1,4 +1,5 @@
 import { createClient } from '$lib/prismicio';
+import { calcDisplayPrice } from '$lib/pricing';
 
 export const prerender = false;
 
@@ -22,13 +23,7 @@ export async function load({ fetch, url, parent }) {
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? null;
-		let displayAmount: number | null = null;
-		if (basePrice != null) {
-			const afterDiscount = discountPct != null ? basePrice * (1 - discountPct / 100) : basePrice;
-			if (depositPct != null) displayAmount = Math.round(afterDiscount * depositPct / 100 * 100) / 100;
-			else if (discountPct != null) displayAmount = Math.round(afterDiscount * 100) / 100;
-			else displayAmount = basePrice;
-		}
+		const displayAmount = calcDisplayPrice(basePrice, discountPct, depositPct);
 		return {
 			product: {
 				label: pageDoc.data.title
