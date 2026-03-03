@@ -166,51 +166,6 @@
 				}
 			}
 		},
-		"Rechnung": {
-			"invoice_currency": {
-				"type": "Select",
-				"config": {
-					"label": "Währung",
-					"options": ["CHF", "EUR", "USD", "GBP"],
-					"default_value": "CHF"
-				}
-			},
-			"invoice_iban": {
-				"type": "Text",
-				"config": {
-					"label": "IBAN",
-					"placeholder": "CH00 0000 0000 0000 0000 0"
-				}
-			},
-			"invoice_bank": {
-				"type": "Text",
-				"config": {
-					"label": "Bank",
-					"placeholder": "Musterbank"
-				}
-			},
-			"invoice_bic": {
-				"type": "Text",
-				"config": {
-					"label": "BIC / SWIFT",
-					"placeholder": "XXXXXXXX"
-				}
-			},
-			"invoice_payment_terms_days": {
-				"type": "Number",
-				"config": {
-					"label": "Zahlungsfrist (Tage)",
-					"placeholder": "30"
-				}
-			},
-			"invoice_vat_rate": {
-				"type": "Number",
-				"config": {
-					"label": "MWST-Satz (%)",
-					"placeholder": "8.1"
-				}
-			}
-		},
 		"SEO": {
 			"domain": {
 				"type": "Text",
@@ -273,11 +228,61 @@
 			}
 		},
 		"E-Commerce": {
+			"invoice_currency": {
+				"type": "Select",
+				"config": {
+					"label": "Währung",
+					"options": ["CHF", "EUR", "USD", "GBP"],
+					"default_value": "CHF"
+				}
+			},
+			"invoice_iban": {
+				"type": "Text",
+				"config": {
+					"label": "IBAN",
+					"placeholder": "CH00 0000 0000 0000 0000 0"
+				}
+			},
+			"invoice_bank": {
+				"type": "Text",
+				"config": {
+					"label": "Bank",
+					"placeholder": "Musterbank"
+				}
+			},
+			"invoice_bic": {
+				"type": "Text",
+				"config": {
+					"label": "BIC / SWIFT",
+					"placeholder": "XXXXXXXX"
+				}
+			},
+			"invoice_payment_terms_days": {
+				"type": "Number",
+				"config": {
+					"label": "Zahlungsfrist (Tage)",
+					"placeholder": "30"
+				}
+			},
+			"invoice_vat_rate": {
+				"type": "Number",
+				"config": {
+					"label": "MWST-Satz (%)",
+					"placeholder": "8.1"
+				}
+			},
 			"beauftragung_title": {
 				"type": "Text",
 				"config": {
 					"label": "Beauftragungsseite Titel",
 					"placeholder": "Beauftragung"
+				}
+			},
+			"zusammenfassung_title": {
+				"type": "Text",
+				"config": {
+					"label": "Bestellübersicht Titel",
+					"placeholder": "Bestellübersicht"
 				}
 			},
 			"slices3": {

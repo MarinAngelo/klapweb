@@ -9,7 +9,7 @@
 	import { formatPriceChf } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
-	export let data: { product: ProductData | null };
+	export let data: { product: ProductData | null; pageTitle: string };
 
 	interface CheckoutData {
 		data: Record<string, string>;
@@ -40,7 +40,7 @@
 
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
 	$: displayLabel = data.product?.label ?? serviceKey;
-	$: displayPrice = data.product?.price ?? null;
+	$: displayPrice = data.product?.displayAmount ?? null;
 
 	$: stripeUrl =
 		data.product?.stripeUrl && checkoutData?.data['email']
@@ -140,14 +140,14 @@
 </script>
 
 <svelte:head>
-	<title>Bestellübersicht</title>
+	<title>{data.pageTitle}</title>
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
 	{#if !checkoutData}
 		<p>Laden…</p>
 	{:else}
-		<Heading tag="h1">Bestellübersicht</Heading>
+		<Heading tag="h1">{data.pageTitle}</Heading>
 
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
