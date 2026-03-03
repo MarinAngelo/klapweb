@@ -32,6 +32,7 @@ export async function entries() {
 	return pages
 		.map((page) => {
 			if (page.uid === 'home') return null;
+			if (page.uid === 'beauftragung') return null; // static route
 			return {
 				lang: page.lang,
 				uid: page.uid

@@ -296,6 +296,38 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
 	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
+	 * E-Commerce aktiv field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.ecommerce_active
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	ecommerce_active: prismic.BooleanField;
+
+	/**
+	 * Preis exkl. MwSt. (CHF) field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1290
+	 * - **API ID Path**: page.ecommerce_price_chf
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_price_chf: prismic.NumberField;
+
+	/**
+	 * Stripe Payment Link field in *Page*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: https://buy.stripe.com/...
+	 * - **API ID Path**: page.ecommerce_stripe_url
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>; /**
 	 * Meta Titel field in *Page*
 	 *
 	 * - **Field Type**: Text
@@ -433,6 +465,8 @@ export interface SettingsDocumentDataContactsItem {
 	 */
 	address: prismic.RichTextField;
 }
+
+type SettingsDocumentDataSlices3Slice = FormSlice;
 
 /**
  * Content for Einstellungen documents
@@ -581,6 +615,18 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	show_language_switcher: prismic.BooleanField; /**
+	 * Währung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: CHF
+	 * - **API ID Path**: settings.invoice_currency
+	 * - **Tab**: Rechnung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	invoice_currency: prismic.SelectField<'CHF' | 'EUR' | 'USD' | 'GBP', 'filled'>;
+
+	/**
 	 * IBAN field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
@@ -622,7 +668,18 @@ interface SettingsDocumentData {
 	 * - **Tab**: Rechnung
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	invoice_payment_terms_days: prismic.NumberField; /**
+	invoice_payment_terms_days: prismic.NumberField;
+
+	/**
+	 * MWST-Satz (%) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 8.1
+	 * - **API ID Path**: settings.invoice_vat_rate
+	 * - **Tab**: Rechnung
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	invoice_vat_rate: prismic.NumberField; /**
 	 * Website Domain field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
@@ -697,7 +754,16 @@ interface SettingsDocumentData {
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	favicon: prismic.ImageField<never>;
+	favicon: prismic.ImageField<never>; /**
+	 * Slice Zone field in *Einstellungen*
+	 *
+	 * - **Field Type**: Slice Zone
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.slices3[]
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/slices
+	 */
+	slices3: prismic.SliceZone<SettingsDocumentDataSlices3Slice>;
 }
 
 /**
@@ -1080,141 +1146,48 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 /**
- * Item in *Variablen & Preise → Einträge (Variablen & Preise)*
+ * Item in *Variablen → Einträge (Token → Wert)*
  */
 export interface VariablenDocumentDataEintraegeItem {
 	/**
-	 * Schlüssel (Token-Name) field in *Variablen & Preise → Einträge (Variablen & Preise)*
+	 * Token-Name field in *Variablen → Einträge (Token → Wert)*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: PreisA
+	 * - **Placeholder**: z.B. Firmename oder Telefon
 	 * - **API ID Path**: variablen.eintraege[].schluessel
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	schluessel: prismic.KeyTextField;
 
 	/**
-	 * Wert field in *Variablen & Preise → Einträge (Variablen & Preise)*
+	 * Wert field in *Variablen → Einträge (Token → Wert)*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: 100.00
+	 * - **Placeholder**: z.B. Klap GmbH oder +41 44 123 45 67
 	 * - **API ID Path**: variablen.eintraege[].wert
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	wert: prismic.KeyTextField;
-
-	/**
-	 * Währung des Wertes (für Auto-Umrechnung) field in *Variablen & Preise → Einträge (Variablen & Preise)*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: Leer = kein Preis
-	 * - **API ID Path**: variablen.eintraege[].waehrung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	waehrung: prismic.SelectField<'CHF' | 'EUR' | 'USD' | 'GBP' | 'INR' | 'JPY' | 'AUD' | 'CAD'>;
 }
 
 /**
- * Item in *Variablen & Preise → Zahlungsplan-Aufteilung (gilt für alle Preise)*
- */
-export interface VariablenDocumentDataZahlungsplanItem {
-	/**
-	 * Token-Suffix field in *Variablen & Preise → Zahlungsplan-Aufteilung (gilt für alle Preise)*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: anz
-	 * - **API ID Path**: variablen.zahlungsplan[].suffix
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	suffix: prismic.KeyTextField;
-
-	/**
-	 * Prozent field in *Variablen & Preise → Zahlungsplan-Aufteilung (gilt für alle Preise)*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: variablen.zahlungsplan[].prozent
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	prozent: prismic.NumberField;
-}
-
-/**
- * Item in *Variablen & Preise → Angezeigte Umrechnungskurse*
- */
-export interface VariablenDocumentDataWaehrungenItem {
-	/**
-	 * Währungscode (z.B. USD) field in *Variablen & Preise → Angezeigte Umrechnungskurse*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: USD
-	 * - **API ID Path**: variablen.waehrungen[].code
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	code: prismic.KeyTextField;
-
-	/**
-	 * Nachkommastellen field in *Variablen & Preise → Angezeigte Umrechnungskurse*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 4
-	 * - **API ID Path**: variablen.waehrungen[].nachkommastellen
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	nachkommastellen: prismic.NumberField;
-}
-
-/**
- * Content for Variablen & Preise documents
+ * Content for Variablen documents
  */
 interface VariablenDocumentData {
 	/**
-	 * Einträge (Variablen & Preise) field in *Variablen & Preise*
+	 * Einträge (Token → Wert) field in *Variablen*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: variablen.eintraege[]
-	 * - **Tab**: Variablen & Preise
+	 * - **Tab**: Variablen
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	eintraege: prismic.GroupField<Simplify<VariablenDocumentDataEintraegeItem>>; /**
-	 * Zahlungsplan-Aufteilung (gilt für alle Preise) field in *Variablen & Preise*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: variablen.zahlungsplan[]
-	 * - **Tab**: Zahlungsplan
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	zahlungsplan: prismic.GroupField<Simplify<VariablenDocumentDataZahlungsplanItem>>; /**
-	 * Basiswährung field in *Variablen & Preise*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: CHF
-	 * - **API ID Path**: variablen.basis_waehrung
-	 * - **Tab**: Währungen
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	basis_waehrung: prismic.SelectField<
-		'CHF' | 'EUR' | 'USD' | 'GBP' | 'INR' | 'JPY' | 'AUD' | 'CAD',
-		'filled'
-	>;
-
-	/**
-	 * Angezeigte Umrechnungskurse field in *Variablen & Preise*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: variablen.waehrungen[]
-	 * - **Tab**: Währungen
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	waehrungen: prismic.GroupField<Simplify<VariablenDocumentDataWaehrungenItem>>;
+	eintraege: prismic.GroupField<Simplify<VariablenDocumentDataEintraegeItem>>;
 }
 
 /**
- * Variablen & Preise document from Prismic
+ * Variablen document from Prismic
  *
  * - **API ID**: `variablen`
  * - **Repeatable**: `false`
@@ -4693,13 +4666,12 @@ declare module '@prismicio/client' {
 			SettingsDocument,
 			SettingsDocumentData,
 			SettingsDocumentDataContactsItem,
+			SettingsDocumentDataSlices3Slice,
 			ThemeDocument,
 			ThemeDocumentData,
 			VariablenDocument,
 			VariablenDocumentData,
 			VariablenDocumentDataEintraegeItem,
-			VariablenDocumentDataZahlungsplanItem,
-			VariablenDocumentDataWaehrungenItem,
 			AllDocumentTypes,
 			AccordionSlice,
 			AccordionSliceDefaultPrimaryAccordionItemsItem,

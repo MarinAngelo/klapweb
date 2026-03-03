@@ -54,7 +54,24 @@
 	data-slice-variation={slice.variation}
 >
 	<div class={alignClass}>
-		{#if isFilled.link(slice.primary.button_link)}
+		{#if slice.variation === 'kauf'}
+			<a
+				href="/beauftragung{$page.params.uid ? `?dienstleistung=${encodeURIComponent($page.params.uid)}` : ''}"
+				class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+					? 'block w-full text-center sm:inline-block sm:w-auto'
+					: 'inline-block'}"
+				style="
+					background-color: {buttonBgColor};
+					color: {buttonColor};
+					border-color: {buttonColor};
+					--hover-text-color: {buttonHoverColor};
+					--hover-bg-color: {buttonHoverBgColor};
+					--focus-ring-color: {buttonColor};
+				"
+			>
+				{slice.primary.button_text || 'Jetzt beauftragen'}
+			</a>
+		{:else if isFilled.link(slice.primary.button_link)}
 			{#if beauftragungHref}
 				<a
 					href={beauftragungHref}
@@ -93,3 +110,4 @@
 		{/if}
 	</div>
 </Bounded>
+

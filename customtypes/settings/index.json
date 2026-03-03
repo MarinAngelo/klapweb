@@ -271,6 +271,20 @@
 					"thumbnails": []
 				}
 			}
+		},
+		"E-Commerce": {
+			"slices3": {
+				"type": "Slices",
+				"fieldset": "Checkout-Formular Zusatzfelder",
+				"description": "Formular-Felder die zusätzlich zur Beauftragungsseite erscheinen (z.B. Telefon). Kommen nicht auf die Rechnung.",
+				"config": {
+					"choices": {
+						"form": {
+							"type": "SharedSlice"
+						}
+					}
+				}
+			}
 		}
 	}
 }
