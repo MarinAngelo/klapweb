@@ -69,10 +69,17 @@ async function fetchProductInfo(
 		const pageDoc = await client.getByUID('page', serviceUid);
 		const d = pageDoc.data as Record<string, unknown>;
 		const titleText = (pageDoc.data.title as Array<{ text: string }> | undefined)?.[0]?.text;
-		return {
-			label: titleText ?? serviceUid,
-			price: (d.ecommerce_price_chf as number) ?? null
-		};
+		const basePrice = (d.ecommerce_price_chf as number) ?? null;
+		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
+		const depositPct = (d.ecommerce_deposit_percent as number) ?? null;
+		let price: number | null = null;
+		if (basePrice != null) {
+			const afterDiscount = discountPct != null ? basePrice * (1 - discountPct / 100) : basePrice;
+			if (depositPct != null) price = Math.round(afterDiscount * depositPct / 100 * 100) / 100;
+			else if (discountPct != null) price = Math.round(afterDiscount * 100) / 100;
+			else price = basePrice;
+		}
+		return { label: titleText ?? serviceUid, price };
 	} catch {
 		return { label: serviceUid, price: null };
 	}
