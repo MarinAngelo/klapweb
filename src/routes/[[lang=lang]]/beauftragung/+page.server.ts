@@ -15,5 +15,7 @@ export async function load({ url, parent }) {
 		invalid_feedback_text?: string | null;
 	}> = formSlice?.primary?.form_fields ?? [];
 
-	return { dienstleistung, extraFields };
+	const pageTitle: string = (settings.data as any).beauftragung_title?.trim() || 'Beauftragung';
+
+	return { dienstleistung, extraFields, pageTitle };
 }

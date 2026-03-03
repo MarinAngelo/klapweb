@@ -273,6 +273,13 @@
 			}
 		},
 		"E-Commerce": {
+			"beauftragung_title": {
+				"type": "Text",
+				"config": {
+					"label": "Beauftragungsseite Titel",
+					"placeholder": "Beauftragung"
+				}
+			},
 			"slices3": {
 				"type": "Slices",
 				"fieldset": "Checkout-Formular Zusatzfelder",

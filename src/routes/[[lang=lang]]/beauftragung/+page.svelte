@@ -8,6 +8,7 @@
 
 	export let data: {
 		dienstleistung: string;
+		pageTitle: string;
 		extraFields: Array<{
 			field_name: string | null;
 			field_type: string | null;
@@ -34,11 +35,21 @@
 	function extraFieldKey(f: typeof data.extraFields[0]): string {
 		return typeKeys[f.field_type ?? ''] || (f.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 	}
+	function extraFieldSpan(f: typeof data.extraFields[0]): number {
+		return f.field_type === 'Textbereich' ? 2 : 1;
+	}
+
+	$: hasTabs = data.extraFields.length > 0;
+	let activeTab: 'rechnung' | 'weitere' = 'rechnung';
 
 	let fieldErrors: Record<string, string> = {};
 	let isSubmitting = false;
 
-	function validate(): boolean {
+	$: invoiceKeys = new Set(invoiceFields.map(f => f.key));
+	$: hasInvoiceErrors = Object.keys(fieldErrors).some(k => invoiceKeys.has(k) && fieldErrors[k]);
+	$: hasExtraErrors = Object.keys(fieldErrors).some(k => !invoiceKeys.has(k) && fieldErrors[k]);
+
+	function validateInvoice(): boolean {
 		const errors: Record<string, string> = {};
 		for (const f of invoiceFields) {
 			if (f.required) {
@@ -46,11 +57,16 @@
 				if (!el?.value.trim()) errors[f.key] = 'Bitte ausfüllen';
 			}
 		}
-		// Basic email check
 		const emailEl = document.querySelector<HTMLInputElement>('[name="email"]');
 		if (emailEl?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
 			errors['email'] = 'Bitte gültige E-Mail eingeben';
 		}
+		fieldErrors = { ...fieldErrors, ...errors };
+		return Object.keys(errors).length === 0;
+	}
+
+	function validateExtra(): boolean {
+		const errors: Record<string, string> = {};
 		for (const f of data.extraFields) {
 			if (f.required) {
 				const key = extraFieldKey(f);
@@ -60,13 +76,26 @@
 				}
 			}
 		}
-		fieldErrors = errors;
+		fieldErrors = { ...fieldErrors, ...errors };
 		return Object.keys(errors).length === 0;
 	}
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		if (!validate()) return;
+
+		// Tab 1 → validate invoice fields only, then advance to Tab 2
+		if (hasTabs && activeTab === 'rechnung') {
+			if (!validateInvoice()) return;
+			activeTab = 'weitere';
+			return;
+		}
+
+		// Tab 2 or no tabs → validate everything
+		const invoiceOk = validateInvoice();
+		const extraOk = validateExtra();
+		if (!invoiceOk) { activeTab = 'rechnung'; return; }
+		if (!extraOk) return;
+
 		isSubmitting = true;
 
 		const form = e.target as HTMLFormElement;
@@ -106,20 +135,45 @@
 </script>
 
 <svelte:head>
-	<title>Beauftragung</title>
+	<title>{data.pageTitle}</title>
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
-	<Heading tag="h1">Beauftragung</Heading>
+	<Heading tag="h1">{data.pageTitle}</Heading>
 
 	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6">
-		<!-- Hardcoded invoice fields -->
-		<fieldset>
-			<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Rechnungsadresse</legend>
-			<div class="grid grid-cols-2 gap-4">
+
+		<!-- Tab navigation (only when extra fields exist) -->
+		{#if hasTabs}
+			<div class="flex border-b" style="border-color: {pageColor}33;">
+				<button
+					type="button"
+					on:click={() => (activeTab = 'rechnung')}
+					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
+					style="border-color: {activeTab === 'rechnung' ? pageColor : 'transparent'}; opacity: {activeTab === 'rechnung' ? 1 : 0.5};"
+				>
+					Rechnungsadresse{hasInvoiceErrors ? ' ●' : ''}
+				</button>
+				<button
+					type="button"
+					on:click={() => (activeTab = 'weitere')}
+					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
+					style="border-color: {activeTab === 'weitere' ? pageColor : 'transparent'}; opacity: {activeTab === 'weitere' ? 1 : 0.5};"
+				>
+					Weitere Angaben{hasExtraErrors ? ' ●' : ''}
+				</button>
+			</div>
+		{/if}
+
+		<!-- Rechnungsadresse -->
+		<fieldset class:hidden={hasTabs && activeTab !== 'rechnung'}>
+			{#if !hasTabs}
+				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Rechnungsadresse</legend>
+			{/if}
+			<div class="grid grid-cols-2 gap-x-8">
 				{#each invoiceFields as f}
-					<div class={f.span === 2 ? 'col-span-2' : ''}>
-						<label class="block text-sm font-semibold mb-1" for={f.key}>
+					<div class="mb-4 {f.span === 2 ? 'col-span-2' : ''}">
+						<label class="block text-base font-bold" for={f.key}>
 							{f.label}{f.required ? ' *' : ''}
 						</label>
 						<input
@@ -127,8 +181,8 @@
 							name={f.key}
 							type={f.type}
 							required={f.required}
-							class="w-full border px-3 py-2 bg-transparent focus:outline-none"
-							style="border-color: {pageColor}44; color: {pageColor};"
+							class="mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
+							style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
 						/>
 						{#if fieldErrors[f.key]}
 							<p class="text-red-500 text-xs mt-1">{fieldErrors[f.key]}</p>
@@ -138,15 +192,15 @@
 			</div>
 		</fieldset>
 
-		<!-- Extra fields from Settings -->
-		{#if data.extraFields.length > 0}
-			<fieldset>
-				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Weitere Angaben</legend>
-				<div class="grid grid-cols-2 gap-4">
+		<!-- Weitere Angaben (extra fields from Settings) -->
+		{#if hasTabs}
+			<fieldset class:hidden={activeTab !== 'weitere'}>
+				<div class="grid grid-cols-2 gap-x-8">
 					{#each data.extraFields as field}
 						{@const key = extraFieldKey(field)}
+						{@const span = extraFieldSpan(field)}
 						{#if key}
-							<div class="col-span-2">
+							<div class={span === 2 ? 'col-span-2' : ''}>
 								<InputField {field} />
 								{#if fieldErrors[key]}
 									<p class="text-red-500 text-xs mt-1">{fieldErrors[key]}</p>
@@ -166,7 +220,7 @@
 			class="button-prismic-link inline-block px-6 py-3 font-semibold rounded-full border transition duration-200 ease-in-out"
 			style="background-color: {get(theme).pageButtonBgColor}; color: {get(theme).pageButtonColor}; border-color: {get(theme).pageButtonColor};"
 		>
-			{isSubmitting ? 'Bitte warten…' : 'Weiter zur Übersicht'}
+			{isSubmitting ? 'Bitte warten…' : (hasTabs && activeTab === 'rechnung') ? 'Weiter' : 'Weiter zur Übersicht'}
 		</button>
 	</form>
 </Bounded>

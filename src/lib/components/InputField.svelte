@@ -11,6 +11,8 @@
 		'invalid_feedback-text'?: string | null;
 		invalid_feedback_text?: string | null;
 	};
+	// compact=true: full border + text-sm styling (matches hardcoded invoice fields)
+	export let compact = false;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
 	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
@@ -106,12 +108,13 @@
 </script>
 
 <div class="mb-4">
-	<!-- Hier Labels für alle Felder-->
+	<!-- Label -->
 	{#if htmlType !== 'checkbox'}
-		<label for={key} class="block text-base font-bold">
+		<label for={key} class={compact ? 'block text-sm font-semibold mb-1' : 'block text-base font-bold'}>
 			{field.field_name ?? ''}{field.required ? ' *' : ''}
 		</label>
 	{/if}
+
 	{#if htmlType === 'text' || htmlType === 'email'}
 		<input
 			type={htmlType}
@@ -119,62 +122,100 @@
 			name={key}
 			required={field.required}
 			placeholder={field.placeholder ?? ''}
-			class="input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
-				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			class={compact
+				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+				: 'input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact
+				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
+				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
 			on:blur
 		/>
 	{:else if htmlType === 'tel'}
-		<div
-			class="flex items-center mt-1 border-b-2"
-			style="border-bottom-color: {get(theme).pageColor};"
-		>
-			<select
-				bind:value={prefix}
-				class="input p-2 shrink-0 focus:outline-none focus:ring-0"
-				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
-			>
-				{#each countryPrefixes as cp}
-					<option value={cp.prefix}>{cp.label}</option>
-				{/each}
-			</select>
-			<input
-				type="tel"
-				id={key}
-				bind:value={localNumber}
-				required={field.required}
-				placeholder={field.placeholder ?? ""}
-				class="input p-2 flex-1 focus:outline-none focus:ring-0"
-				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
-				on:blur
-			/>
-		</div>
-		<!-- Kombinierter Wert für Formular-Übermittlung; leer wenn keine Nummer eingegeben -->
+		{#if compact}
+			<div class="flex items-center border" style="border-color: {get(theme).pageColor}44;">
+				<select
+					bind:value={prefix}
+					class="p-2 shrink-0 focus:outline-none bg-transparent"
+					style="color: {get(theme).pageColor}; border: none;"
+				>
+					{#each countryPrefixes as cp}
+						<option value={cp.prefix}>{cp.label}</option>
+					{/each}
+				</select>
+				<input
+					type="tel"
+					id={key}
+					bind:value={localNumber}
+					required={field.required}
+					placeholder={field.placeholder ?? ''}
+					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
+					style="color: {get(theme).pageColor}; border: none;"
+					on:blur
+				/>
+			</div>
+		{:else}
+			<div class="flex items-end mt-1 border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+				<select
+					bind:value={prefix}
+					class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
+					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+				>
+					{#each countryPrefixes as cp}
+						<option value={cp.prefix}>{cp.label}</option>
+					{/each}
+				</select>
+				<input
+					type="tel"
+					id={key}
+					bind:value={localNumber}
+					required={field.required}
+					placeholder={field.placeholder ?? ''}
+					class="input p-2 flex-1 focus:outline-none focus:ring-0"
+					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+					on:blur
+				/>
+			</div>
+		{/if}
 		<input type="hidden" name={key} value={localNumber ? `${prefix} ${localNumber}` : ''} />
 	{:else if htmlType === 'textarea'}
-		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+		{#if compact}
 			<textarea
 				id={key}
 				name={key}
 				required={field.required}
-				placeholder={field.placeholder ?? ""}
+				placeholder={field.placeholder ?? ''}
 				rows="4"
-				class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
-				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+				class="w-full border px-3 py-2 bg-transparent focus:outline-none"
+				style="border-color: {get(theme).pageColor}44; color: {get(theme).pageColor};"
 				on:blur
 			></textarea>
-		</div>
+		{:else}
+			<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+				<textarea
+					id={key}
+					name={key}
+					required={field.required}
+					placeholder={field.placeholder ?? ''}
+					rows="4"
+					class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
+					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+					on:blur
+				></textarea>
+			</div>
+		{/if}
 	{:else if htmlType === 'select'}
 		<select
 			id={key}
 			name={key}
 			required={field.required}
-			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
-			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
-				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			class={compact
+				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+			style={compact
+				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
+				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
 			on:blur
 		>
-			<!-- Leere Option hinzufügen -->
 			<option value="" disabled selected>Bitte auswählen</option>
 			{#each field.options?.split(',') || [] as option}
 				<option value={option?.trim() ?? ''}>{option?.trim() ?? ''}</option>
@@ -200,9 +241,12 @@
 			id={key}
 			name={key}
 			required={field.required}
-			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
-			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
-				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			class={compact
+				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+			style={compact
+				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
+				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
 			on:blur
 		>
 			<option value="" disabled selected>Bitte auswählen</option>
@@ -221,8 +265,7 @@
 					class="h-5 w-5 cursor-pointer"
 					style="width: 20px; height: 20px;"
 				/>
-				<!-- Sichtbarer Text bleibt nur im <span> -->
-				<span class="ml-2 text-base font-medium">{field.field_name ?? ''}</span>
+				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}">{field.field_name ?? ''}</span>
 			</label>
 		</div>
 	{/if}
@@ -235,5 +278,6 @@
 <style>
 	.input {
 		font-size: 18px;
+		line-height: 1.5;
 	}
 </style>
