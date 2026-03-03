@@ -157,8 +157,7 @@ async function generatePdf(
 	if (fullName) recipientLines.push({ text: fullName });
 
 	// Adresse
-	if (d['schtrassenr']) recipientLines.push({ text: d['schtrassenr'] });
-	if (d['adresszusatz']) recipientLines.push({ text: d['adresszusatz'] });
+	if (d['adresse']) recipientLines.push({ text: d['adresse'] });
 	const plzOrt = [d['plz'], d['ort']].filter(Boolean).join(' ');
 	if (plzOrt) recipientLines.push({ text: plzOrt });
 	if (d['land']) recipientLines.push({ text: d['land'] });
