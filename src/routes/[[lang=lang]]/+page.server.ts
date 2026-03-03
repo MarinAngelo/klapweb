@@ -5,7 +5,7 @@ import { asText } from '@prismicio/client'; // Importiere den Helper
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params, parent }) {
-	// throw redirect(302, '/temp_home');
+	throw redirect(302, '/temp_home');
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
 	const { lang } = await parent();
 	const client = createClient();
