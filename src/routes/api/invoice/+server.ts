@@ -152,9 +152,10 @@ async function generatePdf(
 	const d = data;
 	const recipientLines: Array<{ text: string; bold?: boolean }> = [];
 
-	// Name
+	// Name / Firma
 	const fullName = [d['vorname'], d['nachname']].filter(Boolean).join(' ');
 	if (fullName) recipientLines.push({ text: fullName });
+	if (d['firma']) recipientLines.push({ text: d['firma'] });
 
 	// Adresse
 	if (d['adresse']) recipientLines.push({ text: d['adresse'] });
@@ -327,17 +328,18 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		// E-Mail an Kunden
 		if (customerEmail) {
-			await resend.emails.send({
+			const { error: custErr } = await resend.emails.send({
 				from: fromEmail,
 				to: customerEmail,
 				subject: `Ihre Rechnung ${invoiceNumber}${co.name ? ` – ${co.name}` : ''}`,
 				text: `Sehr geehrte/r ${customerName}\n\nVielen Dank für Ihre Bestellung. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${co.name}`,
 				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
 			});
+			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);
 		}
 
 		// Benachrichtigung an Geschäft
-		await resend.emails.send({
+		const { error: bizErr } = await resend.emails.send({
 			from: fromEmail,
 			to: toEmail,
 			subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
@@ -347,6 +349,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				.join('\n')}`,
 			attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
 		});
+		if (bizErr) {
+			console.error('Geschäfts-E-Mail fehlgeschlagen:', bizErr);
+			return new Response(JSON.stringify({ error: 'E-Mail konnte nicht gesendet werden' }), {
+				status: 500
+			});
+		}
 	} catch (e) {
 		console.error('E-Mail-Versand fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'E-Mail konnte nicht gesendet werden' }), {
