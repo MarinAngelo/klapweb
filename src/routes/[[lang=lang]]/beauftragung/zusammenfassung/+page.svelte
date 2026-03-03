@@ -6,10 +6,10 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { formatPriceChf } from '$lib/pricing';
+	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
-	export let data: { product: ProductData | null; pageTitle: string };
+	export let data: { product: ProductData | null; pageTitle: string; currency: string };
 
 	interface CheckoutData {
 		data: Record<string, string>;
@@ -154,7 +154,7 @@
 			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
 			<p class="text-xl font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
 			{#if displayPrice !== null}
-				<p class="text-3xl font-bold mt-1">{formatPriceChf(displayPrice)}</p>
+				<p class="text-3xl font-bold mt-1">{formatPrice(displayPrice, data.currency)}</p>
 				<p class="text-sm opacity-60 mt-1">exkl. MwSt.</p>
 			{:else}
 				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>

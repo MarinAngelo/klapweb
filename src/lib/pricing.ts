@@ -10,11 +10,15 @@ export function calcDisplayPrice(
 	return basePrice;
 }
 
-export function formatPriceChf(chf: number): string {
+export function formatPrice(amount: number, currency: string): string {
 	return new Intl.NumberFormat('de-CH', {
 		style: 'currency',
-		currency: 'CHF',
+		currency,
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2
-	}).format(chf);
+	}).format(amount);
+}
+
+export function formatPriceChf(chf: number): string {
+	return formatPrice(chf, 'CHF');
 }

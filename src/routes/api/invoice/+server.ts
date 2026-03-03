@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { calcDisplayPrice, formatPriceChf } from '$lib/pricing';
+import { calcDisplayPrice, formatPrice } from '$lib/pricing';
 import { env } from '$env/dynamic/private';
 
 interface InvoiceRequest {
@@ -20,6 +20,7 @@ interface CompanyInfo {
 	bic: string;
 	paymentTermsDays: number;
 	vatRate: number | null;
+	currency: string;
 }
 
 async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
@@ -42,7 +43,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			bank: (d.invoice_bank as string) ?? '',
 			bic: (d.invoice_bic as string) ?? '',
 			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
-			vatRate: (d.invoice_vat_rate as number) ?? null
+			vatRate: (d.invoice_vat_rate as number) ?? null,
+			currency: (d.invoice_currency as string) || 'CHF'
 		};
 	} catch {
 		return {
@@ -54,7 +56,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			bank: '',
 			bic: '',
 			paymentTermsDays: 30,
-			vatRate: null
+			vatRate: null,
+			currency: 'CHF'
 		};
 	}
 }
@@ -189,7 +192,7 @@ async function generatePdf(
 		color: lightGray
 	});
 	page.drawText('Leistung', { x: marginL + 8, y: y + 4, size: 10, font: fontBold, color: black });
-	const totalLabel = 'Betrag CHF';
+	const totalLabel = `Betrag ${co.currency}`;
 	const totalLabelWidth = fontBold.widthOfTextAtSize(totalLabel, 10);
 	page.drawText(totalLabel, {
 		x: marginR - totalLabelWidth - 8,
@@ -205,7 +208,8 @@ async function generatePdf(
 		page.drawText(text, { x: marginR - w - 8, y: yPos, size: 10, font, color: black });
 	};
 
-	const priceStr = netPrice !== null ? formatPriceChf(netPrice) : '—';
+	const fmt = (n: number) => formatPrice(n, co.currency);
+	const priceStr = netPrice !== null ? fmt(netPrice) : '—';
 
 	if (co.vatRate && netPrice !== null) {
 		// Mit MWST: 3 Zeilen
@@ -213,18 +217,18 @@ async function generatePdf(
 		const total = netPrice + vatAmount;
 
 		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(formatPriceChf(netPrice), y);
+		drawRight(fmt(netPrice), y);
 		y -= 20;
 
 		page.drawText(`MwSt ${co.vatRate}%`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(formatPriceChf(vatAmount), y);
+		drawRight(fmt(vatAmount), y);
 		y -= 30;
 
 		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
 		y -= 16;
 
 		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
-		drawRight(formatPriceChf(total), y, fontBold);
+		drawRight(fmt(total), y, fontBold);
 	} else {
 		// Ohne MWST (oder Preis unbekannt)
 		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });

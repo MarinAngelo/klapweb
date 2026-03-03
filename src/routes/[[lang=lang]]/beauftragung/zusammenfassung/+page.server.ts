@@ -13,8 +13,9 @@ export interface ProductData {
 export async function load({ fetch, url, parent }) {
 	const { lang, settings } = await parent();
 	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || 'Bestellübersicht';
+	const currency: string = (settings.data as any).invoice_currency || 'CHF';
 	const serviceUid = url.searchParams.get('service') ?? '';
-	if (!serviceUid) return { product: null, pageTitle };
+	if (!serviceUid) return { product: null, pageTitle, currency };
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
@@ -33,10 +34,11 @@ export async function load({ fetch, url, parent }) {
 				displayAmount,
 				stripeUrl: stripeLink?.url ?? null
 			} satisfies ProductData,
-			pageTitle
+			pageTitle,
+			currency
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
-		return { product: null, pageTitle };
+		return { product: null, pageTitle, currency };
 	}
 }
