@@ -117,9 +117,41 @@
 	// --- VARIABLES / TOKEN MAP ---
 	// Nur updaten wenn sich der Inhalt wirklich geändert hat (verhindert Re-Render-Kaskade).
 	// Nach dem ersten Geo-Override wird dieser bei späteren Änderungen ebenfalls neu angewendet.
+	// Page-level tokens injected from E-Commerce fields:
+	//   {{Preis}}            – base price
+	//   {{Rabatt}}           – discount %
+	//   {{Anzahlung}}        – deposit %
+	//   {{PreisRabatt}}      – Preis × (1 − Rabatt/100)
+	//   {{AnzahlungBetrag}}  – PreisRabatt × Anzahlung/100
+	//   {{Restbetrag}}       – PreisRabatt − AnzahlungBetrag
+	function fmt(n: number) {
+		return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(n);
+	}
 	let _prevVarsStr = '{}';
 	$: {
-		const v = data.variables ?? {};
+		const base = data.variables ?? {};
+		const pd = $page.data?.page?.data ?? {};
+		const price: number | null = pd.ecommerce_price_chf ?? null;
+		const discountPct: number | null = pd.ecommerce_discount_percent ?? null;
+		const depositPct: number | null = pd.ecommerce_deposit_percent ?? null;
+
+		const pageTokens: Record<string, string> = {};
+		if (price != null) {
+			pageTokens['Preis'] = fmt(price);
+			const priceAfterDiscount = discountPct != null ? price * (1 - discountPct / 100) : price;
+			if (discountPct != null) {
+				pageTokens['Rabatt'] = String(discountPct);
+				pageTokens['PreisRabatt'] = fmt(priceAfterDiscount);
+			}
+			if (depositPct != null) {
+				pageTokens['Anzahlung'] = String(depositPct);
+				const depositAmount = priceAfterDiscount * depositPct / 100;
+				pageTokens['AnzahlungBetrag'] = fmt(depositAmount);
+				pageTokens['Restbetrag'] = fmt(priceAfterDiscount - depositAmount);
+			}
+		}
+
+		const v = Object.keys(pageTokens).length > 0 ? { ...base, ...pageTokens } : base;
 		const s = JSON.stringify(v);
 		if (s !== _prevVarsStr) {
 			_prevVarsStr = s;

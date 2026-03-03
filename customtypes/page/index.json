@@ -71,6 +71,9 @@
 						},
 						"text_with_image": {
 							"type": "SharedSlice"
+						},
+						"preisaufstellung": {
+							"type": "SharedSlice"
 						}
 					}
 				}
@@ -91,6 +94,20 @@
 				"config": {
 					"label": "Preis exkl. MwSt. (CHF)",
 					"placeholder": "1290"
+				}
+			},
+			"ecommerce_deposit_percent": {
+				"type": "Number",
+				"config": {
+					"label": "Anzahlung %",
+					"placeholder": "30"
+				}
+			},
+			"ecommerce_discount_percent": {
+				"type": "Number",
+				"config": {
+					"label": "Rabatt %",
+					"placeholder": "10"
 				}
 			},
 			"ecommerce_stripe_url": {

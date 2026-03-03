@@ -14,6 +14,7 @@ import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
 import ButtonSlice from './Button/index.svelte';
+import Preisaufstellung from './Preisaufstellung/index.svelte';
 import TextAndCta from './TextAndCta/index.svelte';
 
 export const components = {
@@ -31,5 +32,6 @@ export const components = {
 	quote: Zitat,
 	text: Text,
 	text_and_cta: TextAndCta,
+	preisaufstellung: Preisaufstellung,
 	text_with_image: TextMitBild
 };

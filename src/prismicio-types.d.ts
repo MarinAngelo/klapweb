@@ -269,7 +269,8 @@ type PageDocumentDataSlicesSlice =
 	| TextSlice
 	| ImageSlice
 	| ImageCardsSlice
-	| TextWithImageSlice;
+	| TextWithImageSlice
+	| PreisaufstellungSlice;
 
 /**
  * Content for Page documents
@@ -317,6 +318,28 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	ecommerce_price_chf: prismic.NumberField;
+
+	/**
+	 * Anzahlung % field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 30
+	 * - **API ID Path**: page.ecommerce_deposit_percent
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_deposit_percent: prismic.NumberField;
+
+	/**
+	 * Rabatt % field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 10
+	 * - **API ID Path**: page.ecommerce_discount_percent
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_discount_percent: prismic.NumberField;
 
 	/**
 	 * Stripe Payment Link field in *Page*
@@ -755,7 +778,18 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
-	 * Slice Zone field in *Einstellungen*
+	 * Beauftragungsseite Titel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Beauftragung
+	 * - **API ID Path**: settings.beauftragung_title
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	beauftragung_title: prismic.KeyTextField;
+
+	/**
+	 * Checkout-Formular Zusatzfelder field in *Einstellungen*
 	 *
 	 * - **Field Type**: Slice Zone
 	 * - **Placeholder**: *None*
@@ -1746,9 +1780,162 @@ export type ButtonSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Schaltfläche → Kauf-Schaltfläche → Primary*
+ */
+export interface ButtonSliceKaufPrimary {
+	/**
+	 * Beschriftung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Jetzt beauftragen
+	 * - **API ID Path**: button.kauf.primary.button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	button_text: prismic.KeyTextField;
+
+	/**
+	 * Grösse field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mittel
+	 * - **API ID Path**: button.kauf.primary.button_size
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
+
+	/**
+	 * Ausrichtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mitte
+	 * - **API ID Path**: button.kauf.primary.button_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Mobile: Volle Breite field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.kauf.primary.mobile_full_width
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_full_width: prismic.BooleanField;
+
+	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrundfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrund Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_hover_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_bg_color: prismic.ColorField;
+
+	/**
+	 * Vertikaler Abstand field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: button.kauf.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Animation aktivieren field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.kauf.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: button.kauf.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: button.kauf.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: button.kauf.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Kauf-Schaltfläche variation for Schaltfläche Slice
+ *
+ * - **API ID**: `kauf`
+ * - **Description**: Schaltfläche die direkt zur Beauftragungsseite führt. URL wird automatisch gesetzt.
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ButtonSliceKauf = prismic.SharedSliceVariation<
+	'kauf',
+	Simplify<ButtonSliceKaufPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Schaltfläche*
  */
-type ButtonSliceVariation = ButtonSliceDefault;
+type ButtonSliceVariation = ButtonSliceDefault | ButtonSliceKauf;
 
 /**
  * Schaltfläche Shared Slice
@@ -2173,6 +2360,81 @@ export interface FormSliceMitTextPrimaryFormFieldsItem {
 }
 
 /**
+ * Item in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+ */
+export interface FormSliceKaufPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	field_type: prismic.SelectField<
+		| 'Textfeld'
+		| 'E-Mail'
+		| 'Telefon'
+		| 'Textbereich'
+		| 'Auswahlliste'
+		| 'Ankreuzfeld'
+		| 'Einzelauswahl'
+		| 'Land'
+	>;
+
+	/**
+	 * Obligatorisch field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.kauf.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.kauf.primary.form_fields[].invalid_feedback_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invalid_feedback_text: prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.kauf.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	options: prismic.KeyTextField;
+
+	/**
+	 * Platzhalter field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].placeholder
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	placeholder: prismic.KeyTextField;
+}
+
+/**
  * Item in *Formular → Zwei Spalten → Primary → Formular Felder*
  */
 export interface FormSliceTwoColumnsPrimaryFormFieldsItem {
@@ -2263,16 +2525,6 @@ export interface FormSliceTwoColumnsPrimaryFormFieldsItem {
  */
 export interface FormSliceDefaultPrimary {
 	/**
-	 * Formular-Name (technisch, eindeutig) field in *Formular → Standard → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. kontakt oder bestellen
-	 * - **API ID Path**: form.default.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
-	/**
 	 * Formular Titel field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
@@ -2321,16 +2573,6 @@ export interface FormSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	submitted_text: prismic.RichTextField;
-
-	/**
-	 * Weiter-URL (leer = direkt absenden) field in *Formular → Standard → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: /beauftragung/zusammenfassung
-	 * - **API ID Path**: form.default.primary.checkout_url
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	checkout_url: prismic.KeyTextField;
 
 	/**
 	 * Formular Felder field in *Formular → Standard → Primary*
@@ -2658,19 +2900,37 @@ export type FormSliceMitText = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Formular → Kauf-Formular → Primary*
+ */
+export interface FormSliceKaufPrimary {
+	/**
+	 * Zusätzliche Formular-Felder field in *Formular → Kauf-Formular → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceKaufPrimaryFormFieldsItem>>;
+}
+
+/**
+ * Kauf-Formular variation for Formular Slice
+ *
+ * - **API ID**: `kauf`
+ * - **Description**: Zusatzfelder für den Kauf-Prozess (ergänzt die fixen Rechnungsfelder auf /beauftragung).
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type FormSliceKauf = prismic.SharedSliceVariation<
+	'kauf',
+	Simplify<FormSliceKaufPrimary>,
+	never
+>;
+
+/**
  * Primary content in *Formular → Zwei Spalten → Primary*
  */
 export interface FormSliceTwoColumnsPrimary {
-	/**
-	 * Formular-Name (technisch, eindeutig) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. kontakt oder bestellen
-	 * - **API ID Path**: form.twoColumns.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
 	/**
 	 * Formular Titel field in *Formular → Zwei Spalten → Primary*
 	 *
@@ -2720,16 +2980,6 @@ export interface FormSliceTwoColumnsPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	submitted_text: prismic.RichTextField;
-
-	/**
-	 * Weiter-URL (leer = direkt absenden) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: /beauftragung/zusammenfassung
-	 * - **API ID Path**: form.twoColumns.primary.checkout_url
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	checkout_url: prismic.KeyTextField;
 
 	/**
 	 * Formular Felder field in *Formular → Zwei Spalten → Primary*
@@ -2800,7 +3050,7 @@ export type FormSliceTwoColumns = prismic.SharedSliceVariation<
 /**
  * Slice variation for *Formular*
  */
-type FormSliceVariation = FormSliceDefault | FormSliceMitText | FormSliceTwoColumns;
+type FormSliceVariation = FormSliceDefault | FormSliceMitText | FormSliceKauf | FormSliceTwoColumns;
 
 /**
  * Formular Shared Slice
@@ -3803,6 +4053,123 @@ type ImageCardsSliceVariation = ImageCardsSliceDefault;
 export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSliceVariation>;
 
 /**
+ * Primary content in *Preisaufstellung → Standard → Primary*
+ */
+export interface PreisaufstellungSliceDefaultPrimary {
+	/**
+	 * Label Gesamtpreis field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Gesamtpreis
+	 * - **API ID Path**: preisaufstellung.default.primary.label_preis
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_preis: prismic.KeyTextField;
+
+	/**
+	 * Label Rabatt field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Rabatt
+	 * - **API ID Path**: preisaufstellung.default.primary.label_rabatt
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_rabatt: prismic.KeyTextField;
+
+	/**
+	 * Label Anzahlung field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Anzahlung nach Auftragserteilung
+	 * - **API ID Path**: preisaufstellung.default.primary.label_anzahlung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_anzahlung: prismic.KeyTextField;
+
+	/**
+	 * Label Restbetrag field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Restpreis nach Veröffentlichung
+	 * - **API ID Path**: preisaufstellung.default.primary.label_restbetrag
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_restbetrag: prismic.KeyTextField;
+
+	/**
+	 * Animation aktivieren field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: preisaufstellung.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: preisaufstellung.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: preisaufstellung.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: preisaufstellung.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Standard variation for Preisaufstellung Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Preisaufstellung
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PreisaufstellungSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<PreisaufstellungSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Preisaufstellung*
+ */
+type PreisaufstellungSliceVariation = PreisaufstellungSliceDefault;
+
+/**
+ * Preisaufstellung Shared Slice
+ *
+ * - **API ID**: `preisaufstellung`
+ * - **Description**: Preisübersicht mit automatischen Token-Berechnungen
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PreisaufstellungSlice = prismic.SharedSlice<
+	'preisaufstellung',
+	PreisaufstellungSliceVariation
+>;
+
+/**
  * Primary content in *Zitat → Standart → Primary*
  */
 export interface QuoteSliceDefaultPrimary {
@@ -4688,8 +5055,10 @@ declare module '@prismicio/client' {
 			AnleitungSliceDefault,
 			ButtonSlice,
 			ButtonSliceDefaultPrimary,
+			ButtonSliceKaufPrimary,
 			ButtonSliceVariation,
 			ButtonSliceDefault,
+			ButtonSliceKauf,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
@@ -4704,11 +5073,14 @@ declare module '@prismicio/client' {
 			FormSliceDefaultPrimary,
 			FormSliceMitTextPrimaryFormFieldsItem,
 			FormSliceMitTextPrimary,
+			FormSliceKaufPrimaryFormFieldsItem,
+			FormSliceKaufPrimary,
 			FormSliceTwoColumnsPrimaryFormFieldsItem,
 			FormSliceTwoColumnsPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
 			FormSliceMitText,
+			FormSliceKauf,
 			FormSliceTwoColumns,
 			GlobaleEventsSlice,
 			GlobaleEventsSliceDefaultPrimary,
@@ -4739,6 +5111,10 @@ declare module '@prismicio/client' {
 			ImageCardsSliceDefaultPrimary,
 			ImageCardsSliceVariation,
 			ImageCardsSliceDefault,
+			PreisaufstellungSlice,
+			PreisaufstellungSliceDefaultPrimary,
+			PreisaufstellungSliceVariation,
+			PreisaufstellungSliceDefault,
 			QuoteSlice,
 			QuoteSliceDefaultPrimary,
 			QuoteSliceVariation,

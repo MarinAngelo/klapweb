@@ -6,6 +6,7 @@
 	import { page } from '$app/stores';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
+	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: any;
 	export let slices: any;
@@ -45,6 +46,12 @@
 	$: buttonHoverColor = slice.primary.button_hover_color || get(theme).pageButtonHoverColor;
 	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
 	$: beauftragungHref = getBeauftragunHref(slice.primary.button_link, $page.params.uid);
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 </script>
 
 <Bounded
@@ -52,6 +59,8 @@
 	{yPadding}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
 >
 	<div class={alignClass}>
 		{#if slice.variation === 'kauf'}
