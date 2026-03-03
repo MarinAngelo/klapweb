@@ -20,13 +20,13 @@
 
 	// Hardcoded invoice fields (always required, always on invoice)
 	const invoiceFields = [
-		{ key: 'vorname',   label: 'Vorname',    type: 'text',  required: true },
-		{ key: 'nachname',  label: 'Nachname',   type: 'text',  required: true },
-		{ key: 'firma',     label: 'Firma',      type: 'text',  required: false },
-		{ key: 'email',     label: 'E-Mail',     type: 'email', required: true },
-		{ key: 'adresse',   label: 'Adresse',    type: 'text',  required: true },
-		{ key: 'plz',       label: 'PLZ',        type: 'text',  required: true },
-		{ key: 'ort',       label: 'Ort',        type: 'text',  required: true }
+		{ key: 'vorname',   label: 'Vorname',    type: 'text',  required: true,  span: 1 },
+		{ key: 'nachname',  label: 'Nachname',   type: 'text',  required: true,  span: 1 },
+		{ key: 'firma',     label: 'Firma',      type: 'text',  required: false, span: 1 },
+		{ key: 'email',     label: 'E-Mail',     type: 'email', required: true,  span: 1 },
+		{ key: 'adresse',   label: 'Adresse',    type: 'text',  required: true,  span: 2 },
+		{ key: 'plz',       label: 'PLZ',        type: 'text',  required: true,  span: 1 },
+		{ key: 'ort',       label: 'Ort',        type: 'text',  required: true,  span: 1 }
 	];
 
 	// Map extra fields (from Settings slices3) to InputField-compatible shape
@@ -112,45 +112,49 @@
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
 	<Heading tag="h1">Beauftragung</Heading>
 
-	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6 max-w-xl">
+	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6">
 		<!-- Hardcoded invoice fields -->
-		<fieldset class="space-y-4">
-			<legend class="text-sm uppercase tracking-wide opacity-60 mb-2">Rechnungsadresse</legend>
-			{#each invoiceFields as f}
-				<div>
-					<label class="block text-sm font-semibold mb-1" for={f.key}>
-						{f.label}{f.required ? ' *' : ''}
-					</label>
-					<input
-						id={f.key}
-						name={f.key}
-						type={f.type}
-						required={f.required}
-						class="w-full border px-3 py-2 bg-transparent focus:outline-none"
-						style="border-color: {pageColor}44; color: {pageColor};"
-					/>
-					{#if fieldErrors[f.key]}
-						<p class="text-red-500 text-xs mt-1">{fieldErrors[f.key]}</p>
-					{/if}
-				</div>
-			{/each}
+		<fieldset>
+			<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Rechnungsadresse</legend>
+			<div class="grid grid-cols-2 gap-4">
+				{#each invoiceFields as f}
+					<div class={f.span === 2 ? 'col-span-2' : ''}>
+						<label class="block text-sm font-semibold mb-1" for={f.key}>
+							{f.label}{f.required ? ' *' : ''}
+						</label>
+						<input
+							id={f.key}
+							name={f.key}
+							type={f.type}
+							required={f.required}
+							class="w-full border px-3 py-2 bg-transparent focus:outline-none"
+							style="border-color: {pageColor}44; color: {pageColor};"
+						/>
+						{#if fieldErrors[f.key]}
+							<p class="text-red-500 text-xs mt-1">{fieldErrors[f.key]}</p>
+						{/if}
+					</div>
+				{/each}
+			</div>
 		</fieldset>
 
 		<!-- Extra fields from Settings -->
 		{#if data.extraFields.length > 0}
-			<fieldset class="space-y-4">
-				<legend class="text-sm uppercase tracking-wide opacity-60 mb-2">Weitere Angaben</legend>
-				{#each data.extraFields as field}
-					{@const key = extraFieldKey(field)}
-					{#if key}
-						<div>
-							<InputField {field} />
-							{#if fieldErrors[key]}
-								<p class="text-red-500 text-xs mt-1">{fieldErrors[key]}</p>
-							{/if}
-						</div>
-					{/if}
-				{/each}
+			<fieldset>
+				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Weitere Angaben</legend>
+				<div class="grid grid-cols-2 gap-4">
+					{#each data.extraFields as field}
+						{@const key = extraFieldKey(field)}
+						{#if key}
+							<div class="col-span-2">
+								<InputField {field} />
+								{#if fieldErrors[key]}
+									<p class="text-red-500 text-xs mt-1">{fieldErrors[key]}</p>
+								{/if}
+							</div>
+						{/if}
+					{/each}
+				</div>
 			</fieldset>
 		{/if}
 

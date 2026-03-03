@@ -17,6 +17,8 @@
 	export let index: number = 0;
 	export let slices: any[] = [];
 
+	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
+	$: isKauf = (slice.variation as string) === 'kauf';
 	// Variation mitText: two-column layout
 	$: isTwoColumn = (slice.variation as string) === 'mitText';
 	$: isTwoColumns = (slice.variation as string) === 'twoColumns';
@@ -359,8 +361,11 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
+	<!-- kauf variation: only provides config data via Settings, renders nothing -->
+	{#if isKauf}
+		<!-- intentionally empty -->
 	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
-	{#if isTwoColumn}
+	{:else if isTwoColumn}
 		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12 overflow-x-hidden">
 			<!-- Formular-Spalte -->
 			<div class="{formCol} {formOrder} min-w-0">
