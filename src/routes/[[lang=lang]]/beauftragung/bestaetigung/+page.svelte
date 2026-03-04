@@ -2,11 +2,19 @@
 	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
+	import { isFilled } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+
+	export let data: {
+		confirmationTexts: { stripe: unknown; rechnung: unknown; bar: unknown };
+	};
+
 	$: isSimulated = $page.url.searchParams.get('simulated') === 'true';
 	$: method = $page.url.searchParams.get('method') ?? 'stripe';
 	$: serviceLabel = $page.url.searchParams.get('label') ?? '';
+	$: confirmationText = data.confirmationTexts[method as 'stripe' | 'rechnung' | 'bar'] ?? null;
 
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
@@ -36,11 +44,13 @@
 	<Heading tag="h1">Vielen Dank für Ihre Bestellung!</Heading>
 
 	<p class="text-lg mb-6">
-		Ihre Bestellung{#if serviceLabel} <strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
+		Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
 	</p>
 
 	<div class="mb-8 p-6 border" style="border-color: {borderColor};">
-		{#if method === 'rechnung'}
+		{#if isFilled.richText(confirmationText)}
+			<PrismicRichText field={confirmationText} />
+		{:else if method === 'rechnung'}
 			<p class="font-semibold mb-2">Zahlung gegen Rechnung</p>
 			<p>Ihre Rechnung wurde soeben per E-Mail versandt.</p>
 			<p class="mt-2 opacity-70 text-sm">
