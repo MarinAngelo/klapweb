@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { calcDisplayPrice, formatPrice, parseCurrencyCode } from '$lib/pricing';
+import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 
@@ -210,7 +210,16 @@ async function generatePdf(
 		page.drawText(text, { x: marginR - w - 8, y: yPos, size: 10, font, color: black });
 	};
 
-	const fmt = (n: number) => formatPrice(n, co.currency);
+	// pdf-lib StandardFonts only support WinAnsi (Latin-1). Currency symbols like ₹ (INR)
+	// are not in WinAnsi, so use currency code display (e.g. "INR 1'234.00") instead of symbol.
+	const fmt = (n: number) =>
+		new Intl.NumberFormat('de-CH', {
+			style: 'currency',
+			currency: co.currency,
+			currencyDisplay: 'code',
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}).format(n);
 	const priceStr = netPrice !== null ? fmt(netPrice) : '—';
 
 	if (co.vatRate && netPrice !== null) {
