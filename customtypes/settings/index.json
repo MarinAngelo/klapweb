@@ -229,11 +229,25 @@
 		},
 		"E-Commerce": {
 			"invoice_currency": {
-				"type": "Select",
+				"type": "Text",
 				"config": {
-					"label": "Währung",
-					"options": ["CHF", "EUR", "USD", "GBP"],
-					"default_value": "CHF"
+					"label": "Grundwährung (ISO-Code)",
+					"placeholder": "CHF"
+				}
+			},
+			"invoice_additional_currencies": {
+				"type": "Group",
+				"config": {
+					"label": "Weitere Währungen (Käufer-Auswahl)",
+					"fields": {
+						"waehrung": {
+							"type": "Text",
+							"config": {
+								"label": "Währungscode (ISO)",
+								"placeholder": "EUR"
+							}
+						}
+					}
 				}
 			},
 			"invoice_iban": {

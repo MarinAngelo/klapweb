@@ -9,7 +9,13 @@
 	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
-	export let data: { product: ProductData | null; pageTitle: string; currency: string };
+	export let data: {
+		product: ProductData | null;
+		pageTitle: string;
+		baseCurrency: string;
+		additionalCodes: string[];
+		rates: Record<string, number>;
+	};
 
 	interface CheckoutData {
 		data: Record<string, string>;
@@ -21,6 +27,7 @@
 	let selectedPayment: 'stripe' | 'rechnung' | 'bar' | null = null;
 	let isLoading = false;
 	let orderError: string | null = null;
+	let selectedCurrency: string = data.baseCurrency;
 
 	// Fields excluded from the summary display
 	const hiddenKeys = new Set(['form-name', 'bot-field', 'subject']);
@@ -40,7 +47,16 @@
 
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
 	$: displayLabel = data.product?.label ?? serviceKey;
-	$: displayPrice = data.product?.displayAmount ?? null;
+	$: baseDisplayPrice = data.product?.displayAmount ?? null;
+
+	// Convert base price to selected currency using pre-fetched rates
+	$: displayPrice = (() => {
+		if (baseDisplayPrice === null) return null;
+		if (selectedCurrency === data.baseCurrency) return baseDisplayPrice;
+		const rate = data.rates[selectedCurrency];
+		if (rate == null) return baseDisplayPrice;
+		return Math.round(baseDisplayPrice * rate * 100) / 100;
+	})();
 
 	$: stripeUrl =
 		data.product?.stripeUrl && checkoutData?.data['email']
@@ -84,7 +100,8 @@
 					body: JSON.stringify({
 						data: checkoutData.data,
 						labels: checkoutData.labels,
-						serviceKey
+						serviceKey,
+						selectedCurrency
 					})
 				});
 				if (!resp.ok) {
@@ -154,8 +171,26 @@
 			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
 			<p class="text-xl font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
 			{#if displayPrice !== null}
-				<p class="text-3xl font-bold mt-1">{formatPrice(displayPrice, data.currency)}</p>
+				<p class="text-3xl font-bold mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
 				<p class="text-sm opacity-60 mt-1">exkl. MwSt.</p>
+				{#if data.additionalCodes.length > 0}
+					<div class="mt-3 flex items-center gap-2">
+						<label for="currency-select" class="text-sm opacity-60">Währung:</label>
+						<select
+							id="currency-select"
+							bind:value={selectedCurrency}
+							class="text-sm px-2 py-1 border rounded-none"
+							style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44;"
+						>
+							<option value={data.baseCurrency}>{data.baseCurrency}</option>
+							{#each data.additionalCodes as code}
+								{#if data.rates[code] != null}
+									<option value={code}>{code}</option>
+								{/if}
+							{/each}
+						</select>
+					</div>
+				{/if}
 			{:else}
 				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>
 			{/if}

@@ -2,12 +2,14 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice, formatPrice } from '$lib/pricing';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
 	labels: Record<string, string>;
 	serviceKey: string;
+	selectedCurrency?: string;
 }
 
 interface CompanyInfo {
@@ -284,7 +286,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { data, labels, serviceKey } = body;
+	const { data, labels, serviceKey, selectedCurrency } = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
 	// Firmendaten + Produktdaten parallel laden
@@ -293,10 +295,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		fetchProductInfo(fetch, serviceKey)
 	]);
 
+	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
+	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
+	let invoicePrice = product.price;
+	if (invoicePrice !== null && invoiceCurrency !== co.currency) {
+		const rates = await fetchExchangeRates(co.currency, [invoiceCurrency]);
+		const rate = rates[invoiceCurrency];
+		if (rate != null) invoicePrice = Math.round(invoicePrice * rate * 100) / 100;
+	}
+
 	// PDF generieren
 	let pdfBytes: Uint8Array;
 	try {
-		pdfBytes = await generatePdf(invoiceNumber, data, product.label, product.price, co);
+		pdfBytes = await generatePdf(invoiceNumber, data, product.label, invoicePrice, {
+			...co,
+			currency: invoiceCurrency
+		});
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {

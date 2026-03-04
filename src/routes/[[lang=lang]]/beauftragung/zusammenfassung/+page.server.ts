@@ -1,5 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice } from '$lib/pricing';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 
 export const prerender = false;
 
@@ -13,9 +14,13 @@ export interface ProductData {
 export async function load({ fetch, url, parent }) {
 	const { lang, settings } = await parent();
 	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || 'Bestellübersicht';
-	const currency: string = (settings.data as any).invoice_currency || 'CHF';
+	const baseCurrency: string = ((settings.data as any).invoice_currency as string)?.trim() || 'CHF';
+	const additionalEntries: Array<{ waehrung?: string }> =
+		(settings.data as any).invoice_additional_currencies ?? [];
+	const additionalCodes = additionalEntries.map((e) => e.waehrung?.trim() ?? '').filter(Boolean);
+	const rates = await fetchExchangeRates(baseCurrency, additionalCodes);
 	const serviceUid = url.searchParams.get('service') ?? '';
-	if (!serviceUid) return { product: null, pageTitle, currency };
+	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates };
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
@@ -35,10 +40,12 @@ export async function load({ fetch, url, parent }) {
 				stripeUrl: stripeLink?.url ?? null
 			} satisfies ProductData,
 			pageTitle,
-			currency
+			baseCurrency,
+			additionalCodes,
+			rates
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
-		return { product: null, pageTitle, currency };
+		return { product: null, pageTitle, baseCurrency, additionalCodes, rates };
 	}
 }
