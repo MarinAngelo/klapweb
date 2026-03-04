@@ -117,12 +117,18 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 	}
 }
 
+interface AddonInfo {
+	label: string;
+	price: number | null;
+	billingType: string | null;
+}
+
 async function fetchProductInfo(
 	fetch: typeof globalThis.fetch,
 	serviceUid: string,
 	globalDepositPct: number | null
-): Promise<{ label: string; price: number | null; billingType: string | null }> {
-	if (!serviceUid) return { label: serviceUid, price: null, billingType: null };
+): Promise<{ label: string; price: number | null; billingType: string | null; addons: AddonInfo[] }> {
+	if (!serviceUid) return { label: serviceUid, price: null, billingType: null, addons: [] };
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid);
@@ -132,13 +138,41 @@ async function fetchProductInfo(
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
 		const billingType = (d.ecommerce_billing_type as string) || null;
+
+		// Resolve addon pages
+		const addonRefs =
+			(d.ecommerce_addons as Array<{ addon_page?: { uid?: string } }> | undefined) ?? [];
+		const addons: AddonInfo[] = (
+			await Promise.all(
+				addonRefs.map(async (ref) => {
+					const uid = ref.addon_page?.uid;
+					if (!uid) return null;
+					try {
+						const addonDoc = await client.getByUID('page', uid);
+						const ad = addonDoc.data as Record<string, unknown>;
+						const addonBase = (ad.ecommerce_price_chf as number) ?? null;
+						const addonDiscount = (ad.ecommerce_discount_percent as number) ?? null;
+						const addonDeposit = (ad.ecommerce_deposit_percent as number) ?? globalDepositPct;
+						return {
+							label: (addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
+							price: calcDisplayPrice(addonBase, addonDiscount, addonDeposit),
+							billingType: (ad.ecommerce_billing_type as string) || null
+						} satisfies AddonInfo;
+					} catch {
+						return null;
+					}
+				})
+			)
+		).filter((a): a is AddonInfo => a !== null);
+
 		return {
 			label: titleText ?? serviceUid,
 			price: calcDisplayPrice(basePrice, discountPct, depositPct),
-			billingType
+			billingType,
+			addons
 		};
 	} catch {
-		return { label: serviceUid, price: null, billingType: null };
+		return { label: serviceUid, price: null, billingType: null, addons: [] };
 	}
 }
 
@@ -148,7 +182,9 @@ async function generatePdf(
 	serviceLabel: string,
 	netPrice: number | null,
 	co: CompanyInfo,
-	codeDiscount: { code: string; pct: number } | null
+	codeDiscount: { code: string; pct: number } | null,
+	addons: Array<{ label: string; price: number | null; billingType: string | null }>,
+	mainBillingType: string | null
 ): Promise<Uint8Array> {
 	const pdfDoc = await PDFDocument.create();
 	const page = pdfDoc.addPage([595, 842]); // A4
@@ -277,63 +313,85 @@ async function generatePdf(
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2
 		}).format(n);
-	// Apply code discount
+	// Apply code discount to main service
 	const codeDiscountAmount =
 		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
 	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
-	const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
 
-	if (co.vatRate && netPrice !== null && discountedPrice !== null) {
-		// Mit MWST
-		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(fmt(netPrice), y);
+	const billingTypeSuffix: Record<string, string> = { Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
+
+	// --- Line items ---
+	// Main service
+	page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+	drawRight(netPrice !== null ? fmt(netPrice) : '—', y);
+	y -= 20;
+
+	// Code discount
+	if (codeDiscount && netPrice !== null) {
+		page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
+			x: marginL + 8, y, size: 10, font: fontRegular, color: gray
+		});
+		drawRight(fmt(-codeDiscountAmount), y);
 		y -= 20;
+	}
 
-		if (codeDiscount) {
-			page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
-				x: marginL + 8,
-				y,
-				size: 10,
-				font: fontRegular,
-				color: gray
-			});
-			drawRight(fmt(-codeDiscountAmount), y);
+	// Addon lines
+	for (const addon of addons) {
+		const addonSuffix = addon.billingType && billingTypeSuffix[addon.billingType]
+			? ` (${billingTypeSuffix[addon.billingType]})`
+			: '';
+		page.drawText(`${addon.label}${addonSuffix}`, {
+			x: marginL + 8, y, size: 10, font: fontRegular, color: black
+		});
+		drawRight(addon.price !== null ? fmt(addon.price) : '—', y);
+		y -= 20;
+	}
+
+	y -= 10;
+	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+	y -= 16;
+
+	// --- Totals ---
+	if (co.vatRate && discountedPrice !== null) {
+		// VAT: apply to sum of all items
+		const allItemsNet = [discountedPrice, ...addons.map((a) => a.price ?? 0)].reduce(
+			(s, p) => s + p, 0
+		);
+		const vatAmount = Math.round(allItemsNet * co.vatRate) / 100;
+		const grandTotal = allItemsNet + vatAmount;
+
+		if (addons.length > 0) {
+			page.drawText('Zwischensumme', { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+			drawRight(fmt(allItemsNet), y);
 			y -= 20;
 		}
-
-		const vatAmount = Math.round(discountedPrice * co.vatRate) / 100;
-		const total = discountedPrice + vatAmount;
 		page.drawText(`MwSt ${co.vatRate}%`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
 		drawRight(fmt(vatAmount), y);
-		y -= 30;
-
-		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
-		y -= 16;
-
-		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
-		drawRight(fmt(total), y, fontBold);
-	} else {
-		// Ohne MWST (oder Preis unbekannt)
-		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(netPrice !== null ? fmt(netPrice) : '—', y);
 		y -= 20;
-
-		if (codeDiscount && netPrice !== null) {
-			page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
-				x: marginL + 8,
-				y,
-				size: 10,
-				font: fontRegular,
-				color: gray
-			});
-			drawRight(fmt(-codeDiscountAmount), y);
-			y -= 20;
+		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+		drawRight(fmt(grandTotal), y, fontBold);
+	} else if (addons.length > 0) {
+		// No VAT, multiple items: grouped totals by billing type
+		const byType: Record<string, number> = {};
+		if (discountedPrice !== null) {
+			const t = mainBillingType ?? 'Einmalig';
+			byType[t] = (byType[t] ?? 0) + discountedPrice;
 		}
-
-		y -= 10;
-		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
-		y -= 16;
-
+		for (const addon of addons) {
+			if (addon.price === null) continue;
+			const t = addon.billingType ?? 'Einmalig';
+			byType[t] = (byType[t] ?? 0) + addon.price;
+		}
+		for (const [type, total] of Object.entries(byType)) {
+			page.drawText(`Total ${type} exkl. MwSt.`, {
+				x: marginL + 8, y, size: 10, font: fontBold, color: black
+			});
+			drawRight(fmt(total), y, fontBold);
+			y -= 18;
+		}
+	} else {
+		// No VAT, single item
+		const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
 		page.drawText('Total exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
 		drawRight(priceStr, y, fontBold);
 	}
@@ -390,11 +448,23 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
 	let invoicePrice = product.price;
-	if (invoicePrice !== null && invoiceCurrency !== co.currency) {
+	let conversionRate: number | null = null;
+	if (invoiceCurrency !== co.currency) {
 		const rates = await fetchExchangeRates(co.currency, [invoiceCurrency]);
-		const rate = rates[invoiceCurrency];
-		if (rate != null) invoicePrice = Math.round(invoicePrice * rate * 100) / 100;
+		conversionRate = rates[invoiceCurrency] ?? null;
+		if (invoicePrice !== null && conversionRate !== null) {
+			invoicePrice = Math.round(invoicePrice * conversionRate * 100) / 100;
+		}
 	}
+
+	// Convert addon prices to invoiceCurrency
+	const convertedAddons = product.addons.map((addon) => ({
+		...addon,
+		price:
+			addon.price !== null && conversionRate !== null
+				? Math.round(addon.price * conversionRate * 100) / 100
+				: addon.price
+	}));
 
 	// Rabatt-Code validieren
 	let codeDiscountInfo: { code: string; pct: number } | null = null;
@@ -424,7 +494,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		pdfBytes = await generatePdf(invoiceNumber, data, pdfServiceLabel, invoicePrice, {
 			...co,
 			currency: invoiceCurrency
-		}, codeDiscountInfo);
+		}, codeDiscountInfo, convertedAddons, product.billingType);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {

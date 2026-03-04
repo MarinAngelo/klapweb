@@ -114,6 +114,39 @@
 		return Math.round(displayPrice * (1 - codeDiscountPct / 100) * 100) / 100;
 	})();
 
+	// Convert addon prices to selected currency
+	$: addonDisplayPrices = (data.product?.addons ?? []).map((addon) => {
+		if (addon.displayAmount === null) return null;
+		if (selectedCurrency === data.baseCurrency) return addon.displayAmount;
+		const rate = data.rates[selectedCurrency];
+		if (rate == null) return addon.displayAmount;
+		return Math.round(addon.displayAmount * rate * 100) / 100;
+	});
+
+	// Totals grouped by billing type (main product + addons)
+	$: groupedTotals = (() => {
+		const totals: Record<string, number> = {};
+		const mainType = data.product?.billingType ?? 'Einmalig';
+		if (effectiveDisplayPrice !== null) {
+			totals[mainType] = (totals[mainType] ?? 0) + effectiveDisplayPrice;
+		}
+		(data.product?.addons ?? []).forEach((addon, i) => {
+			const price = addonDisplayPrices[i];
+			if (price === null) return;
+			const type = addon.billingType ?? 'Einmalig';
+			totals[type] = (totals[type] ?? 0) + price;
+		});
+		return Object.entries(totals);
+	})();
+
+	$: hasAddons = (data.product?.addons ?? []).length > 0;
+
+	$: grandTotal = (() => {
+		if (effectiveDisplayPrice === null) return null;
+		const addonSum = addonDisplayPrices.reduce((s, p) => s + (p ?? 0), 0);
+		return effectiveDisplayPrice + addonSum;
+	})();
+
 	$: stripeUrl =
 		data.product?.stripeUrl && checkoutData?.data['email']
 			? `${data.product.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
@@ -230,20 +263,68 @@
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
 			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
-			<p class="text-xl font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
-			{#if effectiveDisplayPrice !== null}
-				{#if codeDiscountPct > 0}
-					<p class="text-lg line-through opacity-40 mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
-				{/if}
-				<p class="text-3xl font-bold mt-1">
-					{formatPrice(effectiveDisplayPrice, selectedCurrency)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ Jahr{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ Monat{/if}
-				</p>
-				<div class="mt-1 flex items-center gap-4">
-					<p class="text-sm opacity-60">exkl. MwSt.</p>
-					{#if data.product?.billingType}
-						<p class="text-sm opacity-60">Abrechnungsart: <span class="font-medium" style="opacity: 1;">{data.product.billingType}</span></p>
+
+			{#if hasAddons}
+				<!-- Row layout: main product + addons side by side -->
+				<div class="flex items-baseline justify-between gap-4 mt-2">
+					<p class="text-lg font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
+					{#if effectiveDisplayPrice !== null}
+						<p class="text-lg font-semibold tabular-nums shrink-0">
+							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1">{formatPrice(displayPrice, selectedCurrency)}</span>{/if}{formatPrice(effectiveDisplayPrice, selectedCurrency)}
+						</p>
 					{/if}
 				</div>
+				<p class="text-sm opacity-60 mt-0.5">{data.product?.billingType ?? 'Einmalig'}</p>
+
+				{#each data.product?.addons ?? [] as addon, i}
+					<div class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t" style="border-color: {borderColor}44;">
+						<p class="text-base opacity-80">+ {addon.label}</p>
+						{#if addonDisplayPrices[i] !== null}
+							<p class="text-base tabular-nums shrink-0 opacity-80">{formatPrice(addonDisplayPrices[i], selectedCurrency)}</p>
+						{:else}
+							<p class="text-sm opacity-60">auf Anfrage</p>
+						{/if}
+					</div>
+					<p class="text-sm opacity-60 mt-0.5">{addon.billingType ?? 'Einmalig'}</p>
+				{/each}
+
+				<!-- Grouped totals + grand total -->
+				{#if effectiveDisplayPrice !== null}
+					<div class="mt-4 pt-3 border-t" style="border-color: {borderColor};">
+						{#each groupedTotals as [type, total]}
+							<div class="flex justify-between text-sm mt-1">
+								<span class="opacity-60">Total {type}:</span>
+								<span class="font-semibold tabular-nums">{formatPrice(total, selectedCurrency)}</span>
+							</div>
+						{/each}
+						{#if grandTotal !== null && groupedTotals.length > 1}
+							<div class="flex justify-between mt-2 pt-2 border-t" style="border-color: {borderColor}44;">
+								<span class="font-bold">Total</span>
+								<span class="font-bold tabular-nums">{formatPrice(grandTotal, selectedCurrency)}</span>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			{:else}
+				<!-- Simple single-product layout -->
+				<p class="text-xl font-semibold mt-2">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
+				{#if effectiveDisplayPrice !== null}
+					{#if codeDiscountPct > 0}
+						<p class="text-lg line-through opacity-40 mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
+					{/if}
+					<p class="text-3xl font-bold mt-1">
+						{formatPrice(effectiveDisplayPrice, selectedCurrency)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ Jahr{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ Monat{/if}
+					</p>
+				{/if}
+				{#if data.product?.billingType}
+					<p class="text-sm opacity-60 mt-0.5">Abrechnungsart: <span class="font-medium" style="opacity: 1;">{data.product.billingType}</span></p>
+				{/if}
+			{/if}
+
+			{#if effectiveDisplayPrice !== null}
+				<p class="text-sm opacity-60 mt-2">exkl. MwSt.</p>
+
+				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
 						<label for="currency-select" class="text-sm opacity-60">Währung:</label>
@@ -303,7 +384,7 @@
 						{/if}
 					{/if}
 				</div>
-			{:else}
+			{:else if !hasAddons}
 				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>
 			{/if}
 		</div>

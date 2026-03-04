@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
 	import { variables } from '$lib/stores/variables';
+	import { addonRows } from '$lib/stores/addonRows';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
@@ -19,16 +20,25 @@
 		slice.primary.anim_duration
 	);
 
+	const billingTypeSuffix: Record<string, string> = {
+		Einmalig: 'Einmalig',
+		Jährlich: 'pro Jahr',
+		Monatlich: 'pro Monat'
+	};
+
+	function withBillingType(base: string, bt: string | null | undefined): string {
+		if (!bt) return base;
+		const suffix = billingTypeSuffix[bt] ?? bt;
+		return `${base} (${suffix})`;
+	}
+
 	// Rows: only shown when their token is present in the store.
-	// Rabatt row shows the percent value with a "%" suffix.
-	$: rows = [
+	$: mainRows = [
 		{
-			label: slice.primary.label_abrechnungsart || 'Abrechnungsart',
-			value: $variables['Abrechnungsart'],
-			suffix: ''
-		},
-		{
-			label: slice.primary.label_preis || 'Gesamtpreis',
+			label: withBillingType(
+				slice.primary.label_preis || 'Gesamtpreis',
+				$variables['Abrechnungsart']
+			),
 			value: $variables['Preis'],
 			suffix: ''
 		},
@@ -48,9 +58,15 @@
 			suffix: ''
 		}
 	].filter((r) => r.value != null && r.value !== '');
+
+	$: addonRowsFormatted = $addonRows.map((a) => ({
+		label: withBillingType(a.label, a.billingType),
+		value: a.price,
+		suffix: ''
+	}));
 </script>
 
-{#if rows.length > 0}
+{#if mainRows.length > 0 || addonRowsFormatted.length > 0}
 	<Bounded
 		as="section"
 		style="color: {pageColor}; background-color: {pageBgColor};"
@@ -60,12 +76,24 @@
 		animationOptions={anim.options}
 	>
 		<table class="w-full border-collapse">
-			{#each rows as row}
+			{#each mainRows as row}
 				<tr class="border-b" style="border-color: {pageColor}22;">
 					<td class="py-2 pr-8">{row.label}</td>
 					<td class="py-2 text-right tabular-nums">{row.value}{row.suffix}</td>
 				</tr>
 			{/each}
+			{#each addonRowsFormatted as row}
+				<tr class="border-b" style="border-color: {pageColor}22;">
+					<td class="py-2 pr-8">{row.label}</td>
+					<td class="py-2 text-right tabular-nums">{row.value}</td>
+				</tr>
+			{/each}
+			{#if $variables['Total'] && addonRowsFormatted.length > 0}
+				<tr>
+					<td class="pt-3 pr-8 font-bold">{slice.primary.label_total || 'Total'}</td>
+					<td class="pt-3 text-right tabular-nums font-bold">{$variables['Total']}</td>
+				</tr>
+			{/if}
 		</table>
 	</Bounded>
 {/if}

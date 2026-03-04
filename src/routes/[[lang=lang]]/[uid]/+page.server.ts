@@ -2,11 +2,17 @@ import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { asText } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
-import { parseCurrencyCode } from '$lib/pricing';
+import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 
-export async function load({ params, parent }) {
+export interface AddonRow {
+	label: string;
+	displayAmount: number | null;
+	billingType: string | null;
+}
+
+export async function load({ params, parent, fetch }) {
 	const { lang, settings } = await parent();
-	const client = createClient();
+	const client = createClient({ fetch });
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
@@ -26,6 +32,33 @@ export async function load({ params, parent }) {
 				? await fetchExchangeRates(baseCurrency, additionalCodes)
 				: {};
 
+		// Resolve addon pages for ecommerce products
+		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
+		const addonRefs =
+			((page.data as any).ecommerce_addons as Array<{ addon_page?: { uid?: string } }> | undefined) ?? [];
+		const addonRows: AddonRow[] = (
+			await Promise.all(
+				addonRefs.map(async (ref) => {
+					const uid = ref.addon_page?.uid;
+					if (!uid) return null;
+					try {
+						const addonDoc = await client.getByUID('page', uid, { lang });
+						const ad = addonDoc.data as Record<string, unknown>;
+						const addonBase = (ad.ecommerce_price_chf as number) ?? null;
+						const addonDiscount = (ad.ecommerce_discount_percent as number) ?? null;
+						const addonDeposit = (ad.ecommerce_deposit_percent as number) ?? globalDepositPct;
+						return {
+							label: (addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
+							displayAmount: calcDisplayPrice(addonBase, addonDiscount, addonDeposit),
+							billingType: (ad.ecommerce_billing_type as string) || null
+						} satisfies AddonRow;
+					} catch {
+						return null;
+					}
+				})
+			)
+		).filter((a): a is AddonRow => a !== null);
+
 		return {
 			page,
 			title: asText(page.data.title) || '',
@@ -33,7 +66,8 @@ export async function load({ params, parent }) {
 			meta_description: page.data.meta_description,
 			baseCurrency,
 			additionalCodes,
-			rates
+			rates,
+			addonRows
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);

@@ -46,6 +46,13 @@
             "placeholder": "Abrechnungsart"
           }
         },
+        "label_total": {
+          "type": "Text",
+          "config": {
+            "label": "Label Total",
+            "placeholder": "Total"
+          }
+        },
         "animate": {
           "type": "Boolean",
           "config": {

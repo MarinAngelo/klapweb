@@ -118,6 +118,22 @@
 					"default_value": "Einmalig"
 				}
 			},
+			"ecommerce_addons": {
+				"type": "Group",
+				"config": {
+					"label": "Zusatzleistungen",
+					"fields": {
+						"addon_page": {
+							"type": "Link",
+							"config": {
+								"label": "Seite",
+								"select": "document",
+								"customtypes": ["page"]
+							}
+						}
+					}
+				}
+			},
 			"ecommerce_stripe_url": {
 				"type": "Link",
 				"config": {

@@ -4,12 +4,19 @@ import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 
 export const prerender = false;
 
+export interface AddonData {
+	label: string;
+	displayAmount: number | null;
+	billingType: string | null;
+}
+
 export interface ProductData {
 	label: string;
 	price: number | null;
 	displayAmount: number | null;
 	stripeUrl: string | null;
 	billingType: string | null;
+	addons: AddonData[];
 }
 
 export async function load({ fetch, url, parent }) {
@@ -43,6 +50,34 @@ export async function load({ fetch, url, parent }) {
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
 		const displayAmount = calcDisplayPrice(basePrice, discountPct, depositPct);
 		const billingType = (d.ecommerce_billing_type as string) || null;
+
+		// Resolve addon pages
+		const addonRefs =
+			(d.ecommerce_addons as Array<{ addon_page?: { uid?: string } }> | undefined) ?? [];
+		const addons: AddonData[] = (
+			await Promise.all(
+				addonRefs.map(async (ref) => {
+					const uid = ref.addon_page?.uid;
+					if (!uid) return null;
+					try {
+						const addonDoc = await client.getByUID('page', uid, { lang });
+						const ad = addonDoc.data as Record<string, unknown>;
+						const addonBase = (ad.ecommerce_price_chf as number) ?? null;
+						const addonDiscount = (ad.ecommerce_discount_percent as number) ?? null;
+						const addonDeposit = (ad.ecommerce_deposit_percent as number) ?? globalDepositPct;
+						return {
+							label:
+								(addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
+							displayAmount: calcDisplayPrice(addonBase, addonDiscount, addonDeposit),
+							billingType: (ad.ecommerce_billing_type as string) || null
+						} satisfies AddonData;
+					} catch {
+						return null;
+					}
+				})
+			)
+		).filter((a): a is AddonData => a !== null);
+
 		return {
 			product: {
 				label: pageDoc.data.title
@@ -51,7 +86,8 @@ export async function load({ fetch, url, parent }) {
 				price: basePrice,
 				displayAmount,
 				stripeUrl: stripeLink?.url ?? null,
-				billingType
+				billingType,
+				addons
 			} satisfies ProductData,
 			pageTitle,
 			baseCurrency,

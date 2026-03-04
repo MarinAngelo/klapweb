@@ -17,6 +17,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { variables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
+	import { addonRows } from '$lib/stores/addonRows';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 	import { parseCurrencyCode } from '$lib/pricing';
@@ -162,6 +163,12 @@
 				pageTokens['AnzahlungBetrag'] = fmt(depositAmount);
 				pageTokens['Restbetrag'] = fmt(priceAfterDiscount - depositAmount);
 			}
+			// Total = main price + all addon prices (only injected when addons exist)
+			const rawAddons: Array<{ displayAmount: number | null }> = $page.data?.addonRows ?? [];
+			if (rawAddons.length > 0) {
+				const addonSum = rawAddons.reduce((s, a) => s + (a.displayAmount ?? 0), 0);
+				pageTokens['Total'] = fmt(priceAfterDiscount + addonSum);
+			}
 		}
 
 		const v = Object.keys(pageTokens).length > 0 ? { ...base, ...pageTokens } : base;
@@ -170,6 +177,29 @@
 			_prevVarsStr = s;
 			variables.set(v);
 		}
+	}
+
+	// Addon rows for Preisaufstellung slice — populated from page server data
+	$: {
+		const raw: Array<{ label: string; displayAmount: number | null; billingType: string | null }> =
+			$page.data?.addonRows ?? [];
+		const sel = $currencySelection;
+		const baseCurrency =
+			parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';
+		const activeCurrency = sel?.code ?? baseCurrency;
+		const rate = sel && sel.code !== baseCurrency ? (sel.rates[sel.code] ?? 1) : 1;
+		addonRows.set(
+			raw
+				.filter((a) => a.displayAmount != null)
+				.map((a) => ({
+					label: a.label,
+					price: new Intl.NumberFormat('de-CH', {
+						style: 'currency',
+						currency: activeCurrency
+					}).format((a.displayAmount as number) * rate),
+					billingType: a.billingType
+				}))
+		);
 	}
 
 	// --- THEME & FONTS ---
