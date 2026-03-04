@@ -3,6 +3,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { isFilled } from '@prismicio/client';
+	import { variables } from '$lib/stores/variables';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -15,6 +16,9 @@
 	$: method = $page.url.searchParams.get('method') ?? 'stripe';
 	$: serviceLabel = $page.url.searchParams.get('label') ?? '';
 	$: confirmationText = data.confirmationTexts[method as 'stripe' | 'rechnung' | 'bar'] ?? null;
+
+	// Inject service label as token so {{Dienstleistung}} works in Prismic confirmation texts
+	$: variables.update((v) => ({ ...v, Dienstleistung: serviceLabel }));
 
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
