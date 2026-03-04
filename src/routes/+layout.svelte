@@ -16,6 +16,7 @@
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { variables } from '$lib/stores/variables';
+	import { currencySelection } from '$lib/stores/currency';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 
@@ -124,9 +125,6 @@
 	//   {{PreisRabatt}}      – Preis × (1 − Rabatt/100)
 	//   {{AnzahlungBetrag}}  – PreisRabatt × Anzahlung/100
 	//   {{Restbetrag}}       – PreisRabatt − AnzahlungBetrag
-	function fmt(n: number) {
-		return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(n);
-	}
 	let _prevVarsStr = '{}';
 	$: {
 		const base = data.variables ?? {};
@@ -134,6 +132,15 @@
 		const price: number | null = pd.ecommerce_price_chf ?? null;
 		const discountPct: number | null = pd.ecommerce_discount_percent ?? null;
 		const depositPct: number | null = pd.ecommerce_deposit_percent ?? null;
+
+		// Currency: use selected override if set, otherwise base currency from settings
+		const baseCurrency = ((data.settings?.data as any)?.invoice_currency as string)?.trim() || 'CHF';
+		const sel = $currencySelection;
+		const activeCurrency = sel?.code ?? baseCurrency;
+		const rate = sel && sel.code !== baseCurrency ? (sel.rates[sel.code] ?? 1) : 1;
+		function fmt(n: number) {
+			return new Intl.NumberFormat('de-CH', { style: 'currency', currency: activeCurrency }).format(n * rate);
+		}
 
 		const pageTokens: Record<string, string> = {};
 		if (price != null) {
@@ -145,7 +152,7 @@
 			}
 			if (depositPct != null) {
 				pageTokens['Anzahlung'] = String(depositPct);
-				const depositAmount = priceAfterDiscount * depositPct / 100;
+				const depositAmount = (priceAfterDiscount * depositPct) / 100;
 				pageTokens['AnzahlungBetrag'] = fmt(depositAmount);
 				pageTokens['Restbetrag'] = fmt(priceAfterDiscount - depositAmount);
 			}
@@ -194,7 +201,9 @@
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
 	onMount(() => {});
-	afterNavigate(() => {});
+	afterNavigate(() => {
+		currencySelection.set(null);
+	});
 </script>
 
 <svelte:head>

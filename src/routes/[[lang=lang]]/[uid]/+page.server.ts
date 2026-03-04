@@ -1,21 +1,38 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { asText } from '@prismicio/client'; // Importiere den Helper
+import { asText } from '@prismicio/client';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 
 export async function load({ params, parent }) {
-	// 1. WICHTIG: Sprache vom Layout holen
-	const { lang } = await parent();
+	const { lang, settings } = await parent();
 	const client = createClient();
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
 		const page = await client.getByUID('page', params.uid, { lang });
 
+		// Currency config (only relevant for ecommerce pages)
+		const hasPrice = (page.data as any).ecommerce_price_chf != null;
+		const baseCurrency: string =
+			((settings.data as any).invoice_currency as string)?.trim() || 'CHF';
+		const additionalEntries: Array<{ waehrung?: string }> =
+			(settings.data as any).invoice_additional_currencies ?? [];
+		const additionalCodes = additionalEntries
+			.map((e) => e.waehrung?.trim() ?? '')
+			.filter(Boolean);
+		const rates =
+			hasPrice && additionalCodes.length > 0
+				? await fetchExchangeRates(baseCurrency, additionalCodes)
+				: {};
+
 		return {
 			page,
-			title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
-			meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
-			meta_description: page.data.meta_description
+			title: asText(page.data.title) || '',
+			meta_title: page.data.meta_title || '',
+			meta_description: page.data.meta_description,
+			baseCurrency,
+			additionalCodes,
+			rates
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);

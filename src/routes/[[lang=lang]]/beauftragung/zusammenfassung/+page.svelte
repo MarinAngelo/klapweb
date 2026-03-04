@@ -43,6 +43,12 @@
 		} catch {
 			goto('/');
 		}
+
+		// Pre-select currency if the user chose one on the product page
+		const stored = sessionStorage.getItem('preferredCurrency');
+		if (stored && (stored === data.baseCurrency || data.additionalCodes.includes(stored))) {
+			selectedCurrency = stored;
+		}
 	});
 
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
@@ -88,6 +94,7 @@
 
 		if (selectedPayment === 'stripe') {
 			sessionStorage.removeItem('checkoutData');
+			sessionStorage.removeItem('preferredCurrency');
 			window.location.href = stripeTarget;
 			return;
 		}
@@ -111,6 +118,7 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
+			sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`);
 			} catch {
 				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
@@ -123,6 +131,7 @@
 			// Dev-Modus: Netlify-POST überspringen
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');
+			sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 				return;
 			}
@@ -143,6 +152,7 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
+			sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 			} catch {
 				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
