@@ -28,6 +28,8 @@ export async function load({ fetch, url, parent }) {
 		bar: (settings.data as any).payment_bar_enabled !== false
 	};
 
+	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
+
 	const serviceUid = url.searchParams.get('service') ?? '';
 	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates, paymentMethods };
 	try {
@@ -37,7 +39,7 @@ export async function load({ fetch, url, parent }) {
 		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
-		const depositPct = (d.ecommerce_deposit_percent as number) ?? null;
+		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
 		const displayAmount = calcDisplayPrice(basePrice, discountPct, depositPct);
 		return {
 			product: {

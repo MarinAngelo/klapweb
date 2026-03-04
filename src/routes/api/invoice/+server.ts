@@ -10,6 +10,7 @@ interface InvoiceRequest {
 	labels: Record<string, string>;
 	serviceKey: string;
 	selectedCurrency?: string;
+	discountCode?: string;
 }
 
 interface EmailTemplate {
@@ -28,6 +29,8 @@ interface CompanyInfo {
 	paymentTermsDays: number;
 	vatRate: number | null;
 	currency: string;
+	globalDepositPct: number | null;
+	discountCodes: Array<{ code: string; discount_percent: number | null }>;
 	emailTemplates: {
 		rechnung: EmailTemplate;
 		bar: EmailTemplate;
@@ -73,6 +76,12 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
 			vatRate: (d.invoice_vat_rate as number) ?? null,
 			currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF',
+			globalDepositPct: (d.global_deposit_percent as number) ?? null,
+			discountCodes: Array.isArray(d.discount_codes)
+				? (d.discount_codes as Array<{ code?: string; discount_percent?: number }>)
+						.filter((c) => c.code?.trim())
+						.map((c) => ({ code: c.code!.trim(), discount_percent: c.discount_percent ?? null }))
+				: [],
 			emailTemplates: {
 				rechnung: {
 					subject: (d.payment_rechnung_email_subject as string) || null,
@@ -101,6 +110,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			paymentTermsDays: 30,
 			vatRate: null,
 			currency: 'CHF',
+			globalDepositPct: null,
+			discountCodes: [],
 			emailTemplates: { rechnung: noTemplate, bar: noTemplate }
 		};
 	}
@@ -108,7 +119,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 
 async function fetchProductInfo(
 	fetch: typeof globalThis.fetch,
-	serviceUid: string
+	serviceUid: string,
+	globalDepositPct: number | null
 ): Promise<{ label: string; price: number | null }> {
 	if (!serviceUid) return { label: serviceUid, price: null };
 	try {
@@ -118,7 +130,7 @@ async function fetchProductInfo(
 		const titleText = (pageDoc.data.title as Array<{ text: string }> | undefined)?.[0]?.text;
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
-		const depositPct = (d.ecommerce_deposit_percent as number) ?? null;
+		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
 		return {
 			label: titleText ?? serviceUid,
 			price: calcDisplayPrice(basePrice, discountPct, depositPct)
@@ -133,7 +145,8 @@ async function generatePdf(
 	data: Record<string, string>,
 	serviceLabel: string,
 	netPrice: number | null,
-	co: CompanyInfo
+	co: CompanyInfo,
+	codeDiscount: { code: string; pct: number } | null
 ): Promise<Uint8Array> {
 	const pdfDoc = await PDFDocument.create();
 	const page = pdfDoc.addPage([595, 842]); // A4
@@ -262,17 +275,32 @@ async function generatePdf(
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2
 		}).format(n);
-	const priceStr = netPrice !== null ? fmt(netPrice) : '—';
+	// Apply code discount
+	const codeDiscountAmount =
+		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
+	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
+	const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
 
-	if (co.vatRate && netPrice !== null) {
-		// Mit MWST: 3 Zeilen
-		const vatAmount = Math.round(netPrice * co.vatRate) / 100;
-		const total = netPrice + vatAmount;
-
+	if (co.vatRate && netPrice !== null && discountedPrice !== null) {
+		// Mit MWST
 		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
 		drawRight(fmt(netPrice), y);
 		y -= 20;
 
+		if (codeDiscount) {
+			page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: fontRegular,
+				color: gray
+			});
+			drawRight(fmt(-codeDiscountAmount), y);
+			y -= 20;
+		}
+
+		const vatAmount = Math.round(discountedPrice * co.vatRate) / 100;
+		const total = discountedPrice + vatAmount;
 		page.drawText(`MwSt ${co.vatRate}%`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
 		drawRight(fmt(vatAmount), y);
 		y -= 30;
@@ -285,9 +313,22 @@ async function generatePdf(
 	} else {
 		// Ohne MWST (oder Preis unbekannt)
 		page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-		drawRight(priceStr, y);
-		y -= 30;
+		drawRight(netPrice !== null ? fmt(netPrice) : '—', y);
+		y -= 20;
 
+		if (codeDiscount && netPrice !== null) {
+			page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: fontRegular,
+				color: gray
+			});
+			drawRight(fmt(-codeDiscountAmount), y);
+			y -= 20;
+		}
+
+		y -= 10;
 		page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
 		y -= 16;
 
@@ -337,14 +378,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { data, labels, serviceKey, selectedCurrency } = body;
+	const { data, labels, serviceKey, selectedCurrency, discountCode } = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
-	// Firmendaten + Produktdaten parallel laden
-	const [co, product] = await Promise.all([
-		fetchCompanyInfo(fetch),
-		fetchProductInfo(fetch, serviceKey)
-	]);
+	// Firmendaten + Produktdaten laden
+	const co = await fetchCompanyInfo(fetch);
+	const product = await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
 
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
@@ -355,13 +394,29 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		if (rate != null) invoicePrice = Math.round(invoicePrice * rate * 100) / 100;
 	}
 
-	// PDF generieren
+	// Rabatt-Code validieren
+	let codeDiscountInfo: { code: string; pct: number } | null = null;
+	if (discountCode?.trim() && invoicePrice !== null) {
+		const match = co.discountCodes.find(
+			(c) => c.code.toLowerCase() === discountCode.trim().toLowerCase()
+		);
+		if (match?.discount_percent) {
+			codeDiscountInfo = { code: discountCode.trim(), pct: match.discount_percent };
+		}
+	}
+	// Final price (after code discount) — used for email tokens
+	const finalPrice =
+		codeDiscountInfo && invoicePrice !== null
+			? Math.round(invoicePrice * (1 - codeDiscountInfo.pct / 100) * 100) / 100
+			: invoicePrice;
+
+	// PDF generieren (generatePdf receives price before code discount; applies discount internally)
 	let pdfBytes: Uint8Array;
 	try {
 		pdfBytes = await generatePdf(invoiceNumber, data, product.label, invoicePrice, {
 			...co,
 			currency: invoiceCurrency
-		});
+		}, codeDiscountInfo);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {
@@ -410,7 +465,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		Nachname: data['nachname'] ?? '',
 		Email: customerEmail,
 		Dienstleistung: product.label,
-		Betrag: invoicePrice !== null ? emailFmt(invoicePrice) : '—',
+		Betrag: finalPrice !== null ? emailFmt(finalPrice) : '—',
 		Waehrung: invoiceCurrency,
 		Firma: co.name,
 		Zahlungsfrist: String(co.paymentTermsDays)

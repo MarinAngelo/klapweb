@@ -596,6 +596,36 @@
 					"placeholder": "8.1"
 				}
 			},
+			"global_deposit_percent": {
+				"type": "Number",
+				"config": {
+					"label": "Globale Anzahlung (%)",
+					"placeholder": "z.B. 50 — wird verwendet wenn beim Produkt kein Wert gesetzt ist"
+				}
+			},
+			"discount_codes": {
+				"type": "Group",
+				"config": {
+					"label": "Rabatt-Codes",
+					"repeat": true,
+					"fields": {
+						"code": {
+							"type": "Text",
+							"config": {
+								"label": "Code",
+								"placeholder": "z.B. SOMMER2025"
+							}
+						},
+						"discount_percent": {
+							"type": "Number",
+							"config": {
+								"label": "Rabatt (%)",
+								"placeholder": "z.B. 10"
+							}
+						}
+					}
+				}
+			},
 			"payment_stripe_enabled": {
 				"type": "Boolean",
 				"config": {

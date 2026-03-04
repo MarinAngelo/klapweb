@@ -132,7 +132,8 @@
 		const pd = $page.data?.page?.data ?? {};
 		const price: number | null = pd.ecommerce_price_chf ?? null;
 		const discountPct: number | null = pd.ecommerce_discount_percent ?? null;
-		const depositPct: number | null = pd.ecommerce_deposit_percent ?? null;
+		const globalDepositPct: number | null = (data.settings?.data as any)?.global_deposit_percent ?? null;
+		const depositPct: number | null = pd.ecommerce_deposit_percent ?? globalDepositPct;
 
 		// Currency: use selected override if set, otherwise base currency from settings
 		const baseCurrency = parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';

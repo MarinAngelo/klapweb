@@ -30,6 +30,48 @@
 	let orderError: string | null = null;
 	let selectedCurrency: string = data.baseCurrency;
 
+	// Discount code
+	let discountCodeInput = '';
+	let appliedCode = '';
+	let codeDiscountPct = 0;
+	let codeLoading = false;
+	let codeError: string | null = null;
+
+	async function applyDiscountCode() {
+		const code = discountCodeInput.trim();
+		if (!code) return;
+		codeLoading = true;
+		codeError = null;
+		try {
+			const resp = await fetch('/api/validate-code', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ code })
+			});
+			if (resp.ok) {
+				const result = await resp.json();
+				appliedCode = code;
+				codeDiscountPct = result.discount;
+				codeError = null;
+			} else {
+				appliedCode = '';
+				codeDiscountPct = 0;
+				codeError = 'Ungültiger Rabatt-Code.';
+			}
+		} catch {
+			codeError = 'Verbindungsfehler bei Code-Prüfung.';
+		} finally {
+			codeLoading = false;
+		}
+	}
+
+	function removeCode() {
+		appliedCode = '';
+		codeDiscountPct = 0;
+		discountCodeInput = '';
+		codeError = null;
+	}
+
 	// Fields excluded from the summary display
 	const hiddenKeys = new Set(['form-name', 'bot-field', 'subject']);
 
@@ -63,6 +105,13 @@
 		const rate = data.rates[selectedCurrency];
 		if (rate == null) return baseDisplayPrice;
 		return Math.round(baseDisplayPrice * rate * 100) / 100;
+	})();
+
+	// Price after applying discount code
+	$: effectiveDisplayPrice = (() => {
+		if (displayPrice === null) return null;
+		if (codeDiscountPct <= 0) return displayPrice;
+		return Math.round(displayPrice * (1 - codeDiscountPct / 100) * 100) / 100;
 	})();
 
 	$: stripeUrl =
@@ -109,7 +158,8 @@
 						data: checkoutData.data,
 						labels: checkoutData.labels,
 						serviceKey,
-						selectedCurrency
+						selectedCurrency,
+						discountCode: appliedCode || undefined
 					})
 				});
 				if (!resp.ok) {
@@ -181,8 +231,11 @@
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
 			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
 			<p class="text-xl font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
-			{#if displayPrice !== null}
-				<p class="text-3xl font-bold mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
+			{#if effectiveDisplayPrice !== null}
+				{#if codeDiscountPct > 0}
+					<p class="text-lg line-through opacity-40 mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
+				{/if}
+				<p class="text-3xl font-bold mt-1">{formatPrice(effectiveDisplayPrice, selectedCurrency)}</p>
 				<p class="text-sm opacity-60 mt-1">exkl. MwSt.</p>
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
@@ -202,6 +255,47 @@
 						</select>
 					</div>
 				{/if}
+
+				<!-- Rabatt-Code -->
+				<div class="mt-4">
+					{#if appliedCode}
+						<div class="flex items-center gap-3">
+							<span class="text-sm" style="color: {pageColor};">
+								Code «{appliedCode}» angewendet: -{codeDiscountPct}%
+							</span>
+							<button
+								type="button"
+								class="text-xs underline opacity-60 hover:opacity-100"
+								on:click={removeCode}
+							>
+								Entfernen
+							</button>
+						</div>
+					{:else}
+						<div class="flex items-center gap-2">
+							<input
+								type="text"
+								bind:value={discountCodeInput}
+								placeholder="Rabatt-Code"
+								class="text-sm px-2 py-1 border"
+								style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44; width: 160px;"
+								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
+							/>
+							<button
+								type="button"
+								class="text-sm px-3 py-1 border"
+								style="border-color: {pageColor}44;"
+								disabled={codeLoading || !discountCodeInput.trim()}
+								on:click={applyDiscountCode}
+							>
+								{codeLoading ? '…' : 'Anwenden'}
+							</button>
+						</div>
+						{#if codeError}
+							<p class="text-xs mt-1" style="color: #dc2626;">{codeError}</p>
+						{/if}
+					{/if}
+				</div>
 			{:else}
 				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>
 			{/if}
