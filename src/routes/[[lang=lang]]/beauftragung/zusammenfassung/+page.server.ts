@@ -20,8 +20,16 @@ export async function load({ fetch, url, parent }) {
 		(settings.data as any).invoice_additional_currencies ?? [];
 	const additionalCodes = additionalEntries.map((e) => parseCurrencyCode(e.waehrung)).filter(Boolean);
 	const rates = await fetchExchangeRates(baseCurrency, additionalCodes);
+
+	// Payment methods — default to true if not explicitly set to false
+	const paymentMethods = {
+		stripe: (settings.data as any).payment_stripe_enabled !== false,
+		rechnung: (settings.data as any).payment_rechnung_enabled !== false,
+		bar: (settings.data as any).payment_bar_enabled !== false
+	};
+
 	const serviceUid = url.searchParams.get('service') ?? '';
-	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates };
+	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates, paymentMethods };
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
@@ -43,10 +51,11 @@ export async function load({ fetch, url, parent }) {
 			pageTitle,
 			baseCurrency,
 			additionalCodes,
-			rates
+			rates,
+			paymentMethods
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
-		return { product: null, pageTitle, baseCurrency, additionalCodes, rates };
+		return { product: null, pageTitle, baseCurrency, additionalCodes, rates, paymentMethods };
 	}
 }

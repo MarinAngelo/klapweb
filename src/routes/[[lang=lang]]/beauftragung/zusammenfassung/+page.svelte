@@ -15,6 +15,7 @@
 		baseCurrency: string;
 		additionalCodes: string[];
 		rates: Record<string, number>;
+		paymentMethods: { stripe: boolean; rechnung: boolean; bar: boolean };
 	};
 
 	interface CheckoutData {
@@ -226,63 +227,69 @@
 			<Heading tag="h2">Zahlungsart</Heading>
 			<div class="flex flex-col gap-4 mt-4">
 				<!-- Kreditkarte / TWINT -->
-				<label
-					class="flex items-start gap-4 p-4 border cursor-pointer"
-					style="border-color: {selectedPayment === 'stripe' ? pageColor : pageColor + '44'};"
-				>
-					<input
-						type="radio"
-						name="payment"
-						value="stripe"
-						bind:group={selectedPayment}
-						class="mt-1 shrink-0"
-						style="accent-color: {pageColor};"
-					/>
-					<div>
-						<p class="font-semibold">Kreditkarte / TWINT</p>
-						<p class="text-sm opacity-60 mt-0.5">Sofortige, sichere Zahlung via Stripe.</p>
-					</div>
-				</label>
+				{#if data.paymentMethods.stripe}
+					<label
+						class="flex items-start gap-4 p-4 border cursor-pointer"
+						style="border-color: {selectedPayment === 'stripe' ? pageColor : pageColor + '44'};"
+					>
+						<input
+							type="radio"
+							name="payment"
+							value="stripe"
+							bind:group={selectedPayment}
+							class="mt-1 shrink-0"
+							style="accent-color: {pageColor};"
+						/>
+						<div>
+							<p class="font-semibold">Kreditkarte / TWINT</p>
+							<p class="text-sm opacity-60 mt-0.5">Sofortige, sichere Zahlung via Stripe.</p>
+						</div>
+					</label>
+				{/if}
 
 				<!-- Gegen Rechnung -->
-				<label
-					class="flex items-start gap-4 p-4 border cursor-pointer"
-					style="border-color: {selectedPayment === 'rechnung' ? pageColor : pageColor + '44'};"
-				>
-					<input
-						type="radio"
-						name="payment"
-						value="rechnung"
-						bind:group={selectedPayment}
-						class="mt-1 shrink-0"
-						style="accent-color: {pageColor};"
-					/>
-					<div>
-						<p class="font-semibold">Gegen Rechnung</p>
-						<p class="text-sm opacity-60 mt-0.5">
-							Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.
-						</p>
-					</div>
-				</label>
+				{#if data.paymentMethods.rechnung}
+					<label
+						class="flex items-start gap-4 p-4 border cursor-pointer"
+						style="border-color: {selectedPayment === 'rechnung' ? pageColor : pageColor + '44'};"
+					>
+						<input
+							type="radio"
+							name="payment"
+							value="rechnung"
+							bind:group={selectedPayment}
+							class="mt-1 shrink-0"
+							style="accent-color: {pageColor};"
+						/>
+						<div>
+							<p class="font-semibold">Gegen Rechnung</p>
+							<p class="text-sm opacity-60 mt-0.5">
+								Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.
+							</p>
+						</div>
+					</label>
+				{/if}
 
 				<!-- Gegen Bar -->
-				<label
-					class="flex items-start gap-4 p-4 border cursor-pointer"
-					style="border-color: {selectedPayment === 'bar' ? pageColor : pageColor + '44'};"
-				>
-					<input
-						type="radio"
-						name="payment"
-						value="bar"
-						bind:group={selectedPayment}
-						class="mt-1 shrink-0"
-						style="accent-color: {pageColor};"
-					/>
-					<div>
-						<p class="font-semibold">Gegen Bar</p>
-						<p class="text-sm opacity-60 mt-0.5">Wir melden uns zur Terminvereinbarung.</p>
-					</div>
-				</label>
+				{#if data.paymentMethods.bar}
+					<label
+						class="flex items-start gap-4 p-4 border cursor-pointer"
+						style="border-color: {selectedPayment === 'bar' ? pageColor : pageColor + '44'};"
+					>
+						<input
+							type="radio"
+							name="payment"
+							value="bar"
+							bind:group={selectedPayment}
+							class="mt-1 shrink-0"
+							style="accent-color: {pageColor};"
+						/>
+						<div>
+							<p class="font-semibold">Gegen Bar</p>
+							<p class="text-sm opacity-60 mt-0.5">Wir melden uns zur Terminvereinbarung.</p>
+						</div>
+					</label>
+				{/if}
 			</div>
 		</div>
 

@@ -596,6 +596,33 @@
 					"placeholder": "8.1"
 				}
 			},
+			"payment_stripe_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Zahlung: Kreditkarte / TWINT (Stripe)",
+					"placeholder_false": "Deaktiviert",
+					"placeholder_true": "Aktiv",
+					"default_value": true
+				}
+			},
+			"payment_rechnung_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Zahlung: Gegen Rechnung",
+					"placeholder_false": "Deaktiviert",
+					"placeholder_true": "Aktiv",
+					"default_value": true
+				}
+			},
+			"payment_bar_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Zahlung: Gegen Bar",
+					"placeholder_false": "Deaktiviert",
+					"placeholder_true": "Aktiv",
+					"default_value": true
+				}
+			},
 			"beauftragung_title": {
 				"type": "Text",
 				"config": {
