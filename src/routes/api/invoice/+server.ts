@@ -318,7 +318,7 @@ async function generatePdf(
 		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
 	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
 
-	const billingTypeSuffix: Record<string, string> = { Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
+	const billingTypeSuffix: Record<string, string> = { Einmalig: 'Einmalig', Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
 
 	// --- Line items ---
 	// Main service
@@ -483,7 +483,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			: invoicePrice;
 
 	// Build service label with billing type suffix for PDF
-	const billingTypeSuffix: Record<string, string> = { Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
+	const billingTypeSuffix: Record<string, string> = { Einmalig: 'Einmalig', Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
 	const pdfServiceLabel = product.billingType && billingTypeSuffix[product.billingType]
 		? `${product.label} (${billingTypeSuffix[product.billingType]})`
 		: product.label;
