@@ -110,6 +110,14 @@
 					"placeholder": "10"
 				}
 			},
+			"ecommerce_billing_type": {
+				"type": "Select",
+				"config": {
+					"label": "Abrechnungsart",
+					"options": ["Einmalig", "Jährlich", "Monatlich"],
+					"default_value": "Einmalig"
+				}
+			},
 			"ecommerce_stripe_url": {
 				"type": "Link",
 				"config": {

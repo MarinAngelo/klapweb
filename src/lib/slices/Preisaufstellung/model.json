@@ -39,6 +39,13 @@
             "placeholder": "Restpreis nach Veröffentlichung"
           }
         },
+        "label_abrechnungsart": {
+          "type": "Text",
+          "config": {
+            "label": "Label Abrechnungsart",
+            "placeholder": "Abrechnungsart"
+          }
+        },
         "animate": {
           "type": "Boolean",
           "config": {

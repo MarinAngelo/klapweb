@@ -9,6 +9,7 @@ export interface ProductData {
 	price: number | null;
 	displayAmount: number | null;
 	stripeUrl: string | null;
+	billingType: string | null;
 }
 
 export async function load({ fetch, url, parent }) {
@@ -41,6 +42,7 @@ export async function load({ fetch, url, parent }) {
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
 		const displayAmount = calcDisplayPrice(basePrice, discountPct, depositPct);
+		const billingType = (d.ecommerce_billing_type as string) || null;
 		return {
 			product: {
 				label: pageDoc.data.title
@@ -48,7 +50,8 @@ export async function load({ fetch, url, parent }) {
 					: serviceUid,
 				price: basePrice,
 				displayAmount,
-				stripeUrl: stripeLink?.url ?? null
+				stripeUrl: stripeLink?.url ?? null,
+				billingType
 			} satisfies ProductData,
 			pageTitle,
 			baseCurrency,

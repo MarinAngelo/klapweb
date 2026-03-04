@@ -121,8 +121,8 @@ async function fetchProductInfo(
 	fetch: typeof globalThis.fetch,
 	serviceUid: string,
 	globalDepositPct: number | null
-): Promise<{ label: string; price: number | null }> {
-	if (!serviceUid) return { label: serviceUid, price: null };
+): Promise<{ label: string; price: number | null; billingType: string | null }> {
+	if (!serviceUid) return { label: serviceUid, price: null, billingType: null };
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid);
@@ -131,12 +131,14 @@ async function fetchProductInfo(
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
+		const billingType = (d.ecommerce_billing_type as string) || null;
 		return {
 			label: titleText ?? serviceUid,
-			price: calcDisplayPrice(basePrice, discountPct, depositPct)
+			price: calcDisplayPrice(basePrice, discountPct, depositPct),
+			billingType
 		};
 	} catch {
-		return { label: serviceUid, price: null };
+		return { label: serviceUid, price: null, billingType: null };
 	}
 }
 
@@ -410,10 +412,16 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? Math.round(invoicePrice * (1 - codeDiscountInfo.pct / 100) * 100) / 100
 			: invoicePrice;
 
+	// Build service label with billing type suffix for PDF
+	const billingTypeSuffix: Record<string, string> = { Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
+	const pdfServiceLabel = product.billingType && billingTypeSuffix[product.billingType]
+		? `${product.label} (${billingTypeSuffix[product.billingType]})`
+		: product.label;
+
 	// PDF generieren (generatePdf receives price before code discount; applies discount internally)
 	let pdfBytes: Uint8Array;
 	try {
-		pdfBytes = await generatePdf(invoiceNumber, data, product.label, invoicePrice, {
+		pdfBytes = await generatePdf(invoiceNumber, data, pdfServiceLabel, invoicePrice, {
 			...co,
 			currency: invoiceCurrency
 		}, codeDiscountInfo);

@@ -134,6 +134,7 @@
 		const discountPct: number | null = pd.ecommerce_discount_percent ?? null;
 		const globalDepositPct: number | null = (data.settings?.data as any)?.global_deposit_percent ?? null;
 		const depositPct: number | null = pd.ecommerce_deposit_percent ?? globalDepositPct;
+		const billingType: string | null = pd.ecommerce_billing_type ?? null;
 
 		// Currency: use selected override if set, otherwise base currency from settings
 		const baseCurrency = parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';
@@ -145,6 +146,9 @@
 		}
 
 		const pageTokens: Record<string, string> = {};
+		if (billingType) {
+			pageTokens['Abrechnungsart'] = billingType;
+		}
 		if (price != null) {
 			pageTokens['Preis'] = fmt(price);
 			const priceAfterDiscount = discountPct != null ? price * (1 - discountPct / 100) : price;

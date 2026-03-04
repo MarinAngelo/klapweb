@@ -23,6 +23,11 @@
 	// Rabatt row shows the percent value with a "%" suffix.
 	$: rows = [
 		{
+			label: slice.primary.label_abrechnungsart || 'Abrechnungsart',
+			value: $variables['Abrechnungsart'],
+			suffix: ''
+		},
+		{
 			label: slice.primary.label_preis || 'Gesamtpreis',
 			value: $variables['Preis'],
 			suffix: ''

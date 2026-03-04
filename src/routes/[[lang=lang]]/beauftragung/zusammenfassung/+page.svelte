@@ -235,8 +235,15 @@
 				{#if codeDiscountPct > 0}
 					<p class="text-lg line-through opacity-40 mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
 				{/if}
-				<p class="text-3xl font-bold mt-1">{formatPrice(effectiveDisplayPrice, selectedCurrency)}</p>
-				<p class="text-sm opacity-60 mt-1">exkl. MwSt.</p>
+				<p class="text-3xl font-bold mt-1">
+					{formatPrice(effectiveDisplayPrice, selectedCurrency)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ Jahr{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ Monat{/if}
+				</p>
+				<div class="mt-1 flex items-center gap-4">
+					<p class="text-sm opacity-60">exkl. MwSt.</p>
+					{#if data.product?.billingType}
+						<p class="text-sm opacity-60">Abrechnungsart: <span class="font-medium" style="opacity: 1;">{data.product.billingType}</span></p>
+					{/if}
+				</div>
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
 						<label for="currency-select" class="text-sm opacity-60">Währung:</label>
