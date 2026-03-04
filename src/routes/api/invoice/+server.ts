@@ -12,6 +12,11 @@ interface InvoiceRequest {
 	selectedCurrency?: string;
 }
 
+interface EmailTemplate {
+	subject: string | null;
+	body: Array<{ text?: string }> | null;
+}
+
 interface CompanyInfo {
 	name: string;
 	address: string;
@@ -23,6 +28,27 @@ interface CompanyInfo {
 	paymentTermsDays: number;
 	vatRate: number | null;
 	currency: string;
+	emailTemplates: {
+		rechnung: EmailTemplate;
+		bar: EmailTemplate;
+	};
+}
+
+/** Replaces {{TOKEN}} placeholders in a plain string. */
+function applyTokens(str: string, tokens: Record<string, string>): string {
+	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+}
+
+/** Converts Prismic StructuredText blocks to a plain-text string with token replacement. */
+function richTextToEmail(
+	blocks: Array<{ text?: string }> | null | undefined,
+	tokens: Record<string, string>
+): string {
+	if (!blocks?.length) return '';
+	return blocks
+		.filter((b) => b.text)
+		.map((b) => applyTokens(b.text!, tokens))
+		.join('\n\n');
 }
 
 async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
@@ -46,9 +72,24 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			bic: (d.invoice_bic as string) ?? '',
 			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
 			vatRate: (d.invoice_vat_rate as number) ?? null,
-			currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF'
+			currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF',
+			emailTemplates: {
+				rechnung: {
+					subject: (d.payment_rechnung_email_subject as string) || null,
+					body: Array.isArray(d.payment_rechnung_email_body)
+						? (d.payment_rechnung_email_body as Array<{ text?: string }>)
+						: null
+				},
+				bar: {
+					subject: (d.payment_bar_email_subject as string) || null,
+					body: Array.isArray(d.payment_bar_email_body)
+						? (d.payment_bar_email_body as Array<{ text?: string }>)
+						: null
+				}
+			}
 		};
 	} catch {
+		const noTemplate: EmailTemplate = { subject: null, body: null };
 		return {
 			name: '',
 			address: '',
@@ -59,7 +100,8 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			bic: '',
 			paymentTermsDays: 30,
 			vatRate: null,
-			currency: 'CHF'
+			currency: 'CHF',
+			emailTemplates: { rechnung: noTemplate, bar: noTemplate }
 		};
 	}
 }
@@ -349,8 +391,37 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	}
 
 	const customerEmail = data['email'] ?? '';
-	const customerName = data['name'] ?? data['vorname'] ?? 'Kunde';
+	const customerName = [data['vorname'], data['nachname']].filter(Boolean).join(' ') || data['name'] || 'Kunde';
 	const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+
+	// Token map for email templates
+	const emailFmt = (n: number) =>
+		new Intl.NumberFormat('de-CH', {
+			style: 'currency',
+			currency: invoiceCurrency,
+			currencyDisplay: 'code',
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}).format(n);
+	const tokens: Record<string, string> = {
+		Rechnungsnummer: invoiceNumber,
+		Kundenname: customerName,
+		Vorname: data['vorname'] ?? '',
+		Nachname: data['nachname'] ?? '',
+		Email: customerEmail,
+		Dienstleistung: product.label,
+		Betrag: invoicePrice !== null ? emailFmt(invoicePrice) : '—',
+		Waehrung: invoiceCurrency,
+		Firma: co.name,
+		Zahlungsfrist: String(co.paymentTermsDays)
+	};
+
+	const custSubject = co.emailTemplates.rechnung.subject
+		? applyTokens(co.emailTemplates.rechnung.subject, tokens)
+		: `Ihre Rechnung ${invoiceNumber}${co.name ? ` – ${co.name}` : ''}`;
+	const custText =
+		richTextToEmail(co.emailTemplates.rechnung.body, tokens) ||
+		`Sehr geehrte/r ${customerName}\n\nVielen Dank für Ihre Bestellung. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${co.name}`;
 
 	try {
 		const { Resend } = await import('resend');
@@ -361,8 +432,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const { error: custErr } = await resend.emails.send({
 				from: fromEmail,
 				to: customerEmail,
-				subject: `Ihre Rechnung ${invoiceNumber}${co.name ? ` – ${co.name}` : ''}`,
-				text: `Sehr geehrte/r ${customerName}\n\nVielen Dank für Ihre Bestellung. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${co.name}`,
+				subject: custSubject,
+				text: custText,
 				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
 			});
 			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);

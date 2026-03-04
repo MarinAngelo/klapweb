@@ -623,6 +623,38 @@
 					"default_value": true
 				}
 			},
+			"payment_rechnung_email_subject": {
+				"type": "Text",
+				"config": {
+					"label": "Rechnung E-Mail: Betreff",
+					"placeholder": "Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}"
+				}
+			},
+			"payment_rechnung_email_body": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Rechnung E-Mail: Text",
+					"placeholder": "Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}",
+					"allowTargetBlank": false,
+					"multi": "paragraph,strong,em,list-item,o-list-item"
+				}
+			},
+			"payment_bar_email_subject": {
+				"type": "Text",
+				"config": {
+					"label": "Bar E-Mail: Betreff",
+					"placeholder": "Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}"
+				}
+			},
+			"payment_bar_email_body": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Bar E-Mail: Text",
+					"placeholder": "Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}",
+					"allowTargetBlank": false,
+					"multi": "paragraph,strong,em,list-item,o-list-item"
+				}
+			},
 			"payment_stripe_confirmation_text": {
 				"type": "StructuredText",
 				"config": {
