@@ -19,6 +19,7 @@
 	import { currencySelection } from '$lib/stores/currency';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
+	import { parseCurrencyCode } from '$lib/pricing';
 
 	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
@@ -134,7 +135,7 @@
 		const depositPct: number | null = pd.ecommerce_deposit_percent ?? null;
 
 		// Currency: use selected override if set, otherwise base currency from settings
-		const baseCurrency = ((data.settings?.data as any)?.invoice_currency as string)?.trim() || 'CHF';
+		const baseCurrency = parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';
 		const sel = $currencySelection;
 		const activeCurrency = sel?.code ?? baseCurrency;
 		const rate = sel && sel.code !== baseCurrency ? (sel.rates[sel.code] ?? 1) : 1;

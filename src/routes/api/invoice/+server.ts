@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { calcDisplayPrice, formatPrice } from '$lib/pricing';
+import { calcDisplayPrice, formatPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 
@@ -46,7 +46,7 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 			bic: (d.invoice_bic as string) ?? '',
 			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
 			vatRate: (d.invoice_vat_rate as number) ?? null,
-			currency: (d.invoice_currency as string) || 'CHF'
+			currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF'
 		};
 	} catch {
 		return {

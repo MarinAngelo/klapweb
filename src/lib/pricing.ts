@@ -1,3 +1,8 @@
+export function parseCurrencyCode(option: string | null | undefined): string {
+	if (!option) return '';
+	return option.split(' - ')[0].trim();
+}
+
 export function calcDisplayPrice(
 	basePrice: number | null,
 	discountPct: number | null,

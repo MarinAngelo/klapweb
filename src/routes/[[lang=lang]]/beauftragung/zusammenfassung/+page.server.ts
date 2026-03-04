@@ -1,5 +1,5 @@
 import { createClient } from '$lib/prismicio';
-import { calcDisplayPrice } from '$lib/pricing';
+import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 
 export const prerender = false;
@@ -14,10 +14,11 @@ export interface ProductData {
 export async function load({ fetch, url, parent }) {
 	const { lang, settings } = await parent();
 	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || 'Bestellübersicht';
-	const baseCurrency: string = ((settings.data as any).invoice_currency as string)?.trim() || 'CHF';
+	const baseCurrency: string =
+		parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 	const additionalEntries: Array<{ waehrung?: string }> =
 		(settings.data as any).invoice_additional_currencies ?? [];
-	const additionalCodes = additionalEntries.map((e) => e.waehrung?.trim() ?? '').filter(Boolean);
+	const additionalCodes = additionalEntries.map((e) => parseCurrencyCode(e.waehrung)).filter(Boolean);
 	const rates = await fetchExchangeRates(baseCurrency, additionalCodes);
 	const serviceUid = url.searchParams.get('service') ?? '';
 	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates };

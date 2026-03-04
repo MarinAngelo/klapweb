@@ -2,6 +2,7 @@ import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { asText } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
+import { parseCurrencyCode } from '$lib/pricing';
 
 export async function load({ params, parent }) {
 	const { lang, settings } = await parent();
@@ -14,11 +15,11 @@ export async function load({ params, parent }) {
 		// Currency config (only relevant for ecommerce pages)
 		const hasPrice = (page.data as any).ecommerce_price_chf != null;
 		const baseCurrency: string =
-			((settings.data as any).invoice_currency as string)?.trim() || 'CHF';
+			parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 		const additionalEntries: Array<{ waehrung?: string }> =
 			(settings.data as any).invoice_additional_currencies ?? [];
 		const additionalCodes = additionalEntries
-			.map((e) => e.waehrung?.trim() ?? '')
+			.map((e) => parseCurrencyCode(e.waehrung))
 			.filter(Boolean);
 		const rates =
 			hasPrice && additionalCodes.length > 0
