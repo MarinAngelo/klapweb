@@ -11,6 +11,8 @@
 		baseCurrency: string;
 		additionalCodes: string[];
 		rates: Record<string, number>;
+		globalDepositPct?: number | null;
+		plaeneData?: Record<string, Array<Array<{ label: string; wert: string | null }>>>;
 	};
 
 	$: hasPrice = data.page?.data?.ecommerce_price_chf != null;
@@ -56,4 +58,8 @@
 	</Bounded>
 {/if}
 
-<SliceZone slices={data.page.data.slices} {components} />
+<SliceZone
+	slices={data.page.data.slices}
+	{components}
+	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {} }}
+/>

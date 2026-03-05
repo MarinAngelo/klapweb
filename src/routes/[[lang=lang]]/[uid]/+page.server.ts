@@ -16,7 +16,17 @@ export async function load({ params, parent, fetch }) {
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
-		const page = await client.getByUID('page', params.uid, { lang });
+		const page = await client.getByUID('page', params.uid, {
+			lang,
+			fetchLinks: [
+				'page.title',
+				'page.ecommerce_price_chf',
+				'page.ecommerce_billing_type',
+				'page.ecommerce_discount_percent',
+				'page.ecommerce_deposit_percent',
+				'leistung.label'
+			]
+		});
 
 		// Currency config (only relevant for ecommerce pages)
 		const hasPrice = (page.data as any).ecommerce_price_chf != null;
@@ -31,6 +41,38 @@ export async function load({ params, parent, fetch }) {
 			hasPrice && additionalCodes.length > 0
 				? await fetchExchangeRates(baseCurrency, additionalCodes)
 				: {};
+
+		// Resolve plan leistungen for image_cards/plaene slices
+		type PlaeneFeature = { label: string; wert: string | null };
+		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
+		const plaeneSlices = ((page.data as any).slices ?? []).filter(
+			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
+		);
+		await Promise.all(
+			plaeneSlices.map(async (s: any) => {
+				const planDocs = await Promise.all(
+					(s.items as Array<{ plan: any }>).map(async (item) => {
+						const uid = item.plan?.uid;
+						if (!uid) return [];
+						try {
+							const planPage = await client.getByUID('page', uid, {
+								lang,
+								fetchLinks: ['leistung.label']
+							});
+							const leistungen: Array<{ leistung?: any; wert?: string }> =
+								(planPage.data as any).leistungen ?? [];
+							return leistungen.map((row) => ({
+								label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
+								wert: row.wert ?? null
+							})) as PlaeneFeature[];
+						} catch {
+							return [] as PlaeneFeature[];
+						}
+					})
+				);
+				plaeneData[s.id] = planDocs;
+			})
+		);
 
 		// Resolve addon pages for ecommerce products
 		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
@@ -67,7 +109,9 @@ export async function load({ params, parent, fetch }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			addonRows
+			addonRows,
+			globalDepositPct,
+			plaeneData
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);

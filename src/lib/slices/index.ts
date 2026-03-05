@@ -15,6 +15,7 @@ import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
 import ButtonSlice from './Button/index.svelte';
 import Preisaufstellung from './Preisaufstellung/index.svelte';
+import Preisvergleich from './Preisvergleich/index.svelte';
 import TextAndCta from './TextAndCta/index.svelte';
 
 export const components = {
@@ -33,5 +34,6 @@ export const components = {
 	text: Text,
 	text_and_cta: TextAndCta,
 	preisaufstellung: Preisaufstellung,
+	preisvergleich: Preisvergleich,
 	text_with_image: TextMitBild
 };

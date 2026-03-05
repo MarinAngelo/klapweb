@@ -156,6 +156,48 @@ export type FontDocument<Lang extends string = string> = prismic.PrismicDocument
 >;
 
 /**
+ * Content for Leistung documents
+ */
+interface LeistungDocumentData {
+	/**
+	 * Bezeichnung field in *Leistung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: E-Commerce
+	 * - **API ID Path**: leistung.label
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Leistung*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Kurze Beschreibung dieser Leistung...
+	 * - **API ID Path**: leistung.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
+}
+
+/**
+ * Leistung document from Prismic
+ *
+ * - **API ID**: `leistung`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type LeistungDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<LeistungDocumentData>,
+	'leistung',
+	Lang
+>;
+
+/**
  * Item in *Navigation → Links*
  */
 export interface NavigationDocumentDataLinksItem {
@@ -255,6 +297,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| PreisvergleichSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
@@ -271,6 +314,46 @@ type PageDocumentDataSlicesSlice =
 	| ImageCardsSlice
 	| TextWithImageSlice
 	| PreisaufstellungSlice;
+
+/**
+ * Item in *Page → Zusatzleistungen*
+ */
+export interface PageDocumentDataEcommerceAddonsItem {
+	/**
+	 * Seite field in *Page → Zusatzleistungen*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.ecommerce_addons[].addon_page
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	addon_page: prismic.ContentRelationshipField<'page'>;
+}
+
+/**
+ * Item in *Page → Leistungen*
+ */
+export interface PageDocumentDataLeistungenItem {
+	/**
+	 * Leistung field in *Page → Leistungen*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.leistungen[].leistung
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	leistung: prismic.ContentRelationshipField<'leistung'>;
+
+	/**
+	 * Wert (optional) field in *Page → Leistungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: ✓ oder bis 5 Produkte
+	 * - **API ID Path**: page.leistungen[].wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	wert: prismic.KeyTextField;
+}
 
 /**
  * Content for Page documents
@@ -342,6 +425,29 @@ interface PageDocumentData {
 	ecommerce_discount_percent: prismic.NumberField;
 
 	/**
+	 * Abrechnungsart field in *Page*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Einmalig
+	 * - **API ID Path**: page.ecommerce_billing_type
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	ecommerce_billing_type: prismic.SelectField<'Einmalig' | 'Jährlich' | 'Monatlich', 'filled'>;
+
+	/**
+	 * Zusatzleistungen field in *Page*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.ecommerce_addons[]
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	ecommerce_addons: prismic.GroupField<Simplify<PageDocumentDataEcommerceAddonsItem>>;
+
+	/**
 	 * Stripe Payment Link field in *Page*
 	 *
 	 * - **Field Type**: Link
@@ -350,7 +456,18 @@ interface PageDocumentData {
 	 * - **Tab**: E-Commerce
 	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>; /**
+	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Leistungen field in *Page*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.leistungen[]
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	leistungen: prismic.GroupField<Simplify<PageDocumentDataLeistungenItem>>; /**
 	 * Meta Titel field in *Page*
 	 *
 	 * - **Field Type**: Text
@@ -487,6 +604,201 @@ export interface SettingsDocumentDataContactsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	address: prismic.RichTextField;
+}
+
+/**
+ * Item in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
+ */
+export interface SettingsDocumentDataInvoiceAdditionalCurrenciesItem {
+	/**
+	 * Währung field in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.invoice_additional_currencies[].waehrung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	waehrung: prismic.SelectField<
+		| 'AED - Dirham der Vereinigten Arabischen Emirate'
+		| 'AFN - Afghani'
+		| 'ALL - Albanischer Lek'
+		| 'AMD - Armenischer Dram'
+		| 'ANG - Niederländisch-Antillianischer Gulden'
+		| 'AOA - Angolanischer Kwanza'
+		| 'ARS - Argentinischer Peso'
+		| 'AUD - Australischer Dollar'
+		| 'AWG - Arubischer Florin'
+		| 'AZN - Aserbaidschanischer Manat'
+		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
+		| 'BBD - Barbadischer Dollar'
+		| 'BDT - Bangladeschischer Taka'
+		| 'BGN - Bulgarischer Lew'
+		| 'BHD - Bahrainischer Dinar'
+		| 'BIF - Burundischer Franc'
+		| 'BMD - Bermudischer Dollar'
+		| 'BND - Bruneischer Dollar'
+		| 'BOB - Bolivianischer Boliviano'
+		| 'BRL - Brasilianischer Real'
+		| 'BSD - Bahamaischer Dollar'
+		| 'BTN - Bhutanischer Ngultrum'
+		| 'BWP - Botswanischer Pula'
+		| 'BYN - Belarussischer Rubel'
+		| 'BZD - Belizischer Dollar'
+		| 'CAD - Kanadischer Dollar'
+		| 'CDF - Kongoläsischer Franc'
+		| 'CHF - Schweizer Franken'
+		| 'CLP - Chilenischer Peso'
+		| 'CNY - Chinesischer Renminbi'
+		| 'COP - Kolumbianischer Peso'
+		| 'CRC - Costa-Ricanischer Colon'
+		| 'CUP - Kubanischer Peso'
+		| 'CVE - Kap-Verdischer Escudo'
+		| 'CZK - Tschechische Krone'
+		| 'DJF - Djiboutischer Franc'
+		| 'DKK - Dänische Krone'
+		| 'DOP - Dominikanischer Peso'
+		| 'DZD - Algerischer Dinar'
+		| 'EGP - Ägyptisches Pfund'
+		| 'ERN - Eritreischer Nakfa'
+		| 'ETB - Äthiopischer Birr'
+		| 'EUR - Euro'
+		| 'FJD - Fidschi-Dollar'
+		| 'FKP - Falkländisches Pfund'
+		| 'GBP - Britisches Pfund'
+		| 'GEL - Georgischer Lari'
+		| 'GHS - Ghanaischer Cedi'
+		| 'GIP - Gibraltarisches Pfund'
+		| 'GMD - Gambischer Dalasi'
+		| 'GNF - Guineischer Franc'
+		| 'GTQ - Guatemaltekischer Quetzal'
+		| 'GYD - Guyanischer Dollar'
+		| 'HKD - Hongkonger Dollar'
+		| 'HNL - Honduranischer Lempira'
+		| 'HTG - Haitianische Gourde'
+		| 'HUF - Ungarischer Forint'
+		| 'IDR - Indonesische Rupiah'
+		| 'ILS - Neuer Israelischer Schekel'
+		| 'INR - Indische Rupie'
+		| 'IQD - Irakischer Dinar'
+		| 'IRR - Iranischer Rial'
+		| 'ISK - Isländische Krone'
+		| 'JMD - Jamaikanischer Dollar'
+		| 'JOD - Jordanischer Dinar'
+		| 'JPY - Japanischer Yen'
+		| 'KES - Kenianischer Schilling'
+		| 'KGS - Kirgisischer Som'
+		| 'KHR - Kambodschanischer Riel'
+		| 'KMF - Komorischer Franc'
+		| 'KPW - Nordkoreanischer Won'
+		| 'KRW - Südkoreanischer Won'
+		| 'KWD - Kuwaitischer Dinar'
+		| 'KYD - Kaiman-Dollar'
+		| 'KZT - Kasachischer Tenge'
+		| 'LAK - Laotischer Kip'
+		| 'LBP - Libanesisches Pfund'
+		| 'LKR - Sri-Lankische Rupie'
+		| 'LRD - Liberianischer Dollar'
+		| 'LSL - Lesothischer Loti'
+		| 'LYD - Libyscher Dinar'
+		| 'MAD - Marokkanischer Dirham'
+		| 'MDL - Moldauischer Leu'
+		| 'MGA - Madagassischer Ariary'
+		| 'MKD - Nordmazedonischer Denar'
+		| 'MMK - Myanmarischer Kyat'
+		| 'MNT - Mongolischer Tögrög'
+		| 'MOP - Macao-Pataca'
+		| 'MRU - Mauretanischer Ouguiya'
+		| 'MUR - Mauritische Rupie'
+		| 'MVR - Maledivischer Rufiyaa'
+		| 'MWK - Malawischer Kwacha'
+		| 'MXN - Mexikanischer Peso'
+		| 'MYR - Malaysischer Ringgit'
+		| 'MZN - Mosambikanischer Metical'
+		| 'NAD - Namibischer Dollar'
+		| 'NGN - Nigerianische Naira'
+		| 'NIO - Nicaraguanischer Córdoba'
+		| 'NOK - Norwegische Krone'
+		| 'NPR - Nepalesische Rupie'
+		| 'NZD - Neuseeländischer Dollar'
+		| 'OMR - Omanischer Rial'
+		| 'PAB - Panamaischer Balboa'
+		| 'PEN - Peruanischer Sol'
+		| 'PGK - Papua-Neuguineischer Kina'
+		| 'PHP - Philippinischer Peso'
+		| 'PKR - Pakistanische Rupie'
+		| 'PLN - Polnischer Zloty'
+		| 'PYG - Paraguayischer Guaraní'
+		| 'QAR - Katarischer Riyal'
+		| 'RON - Rumänischer Leu'
+		| 'RSD - Serbischer Dinar'
+		| 'RUB - Russischer Rubel'
+		| 'RWF - Ruandischer Franc'
+		| 'SAR - Saudi-Arabischer Riyal'
+		| 'SBD - Salomonen-Dollar'
+		| 'SCR - Seychellische Rupie'
+		| 'SDG - Sudanesisches Pfund'
+		| 'SEK - Schwedische Krone'
+		| 'SGD - Singapurischer Dollar'
+		| 'SHP - St.-Helenisches Pfund'
+		| 'SLL - Sierraleonischer Leone'
+		| 'SOS - Somalischer Schilling'
+		| 'SRD - Surinamischer Dollar'
+		| 'STN - São-toménsische Dobra'
+		| 'SVC - El-Salvadorianischer Colón'
+		| 'SYP - Syrisches Pfund'
+		| 'SZL - Swasiland-Lilangeni'
+		| 'THB - Thailändischer Baht'
+		| 'TJS - Tadschikischer Somoni'
+		| 'TMT - Turkmenischer Manat'
+		| 'TND - Tunesischer Dinar'
+		| 'TOP - Tongaischer Paʻanga'
+		| 'TRY - Türkische Lira'
+		| 'TTD - Trinidad-und-Tobago-Dollar'
+		| 'TWD - Neuer Taiwanischer Dollar'
+		| 'TZS - Tansanischer Schilling'
+		| 'UAH - Ukrainische Hrywnja'
+		| 'UGX - Ugandischer Schilling'
+		| 'USD - US-Dollar'
+		| 'UYU - Uruguayischer Peso'
+		| 'UZS - Usbekischer Sum'
+		| 'VES - Venezolanischer Bolívar'
+		| 'VND - Vietnamesischer Dong'
+		| 'VUV - Vanuatuischer Vatu'
+		| 'WST - Samoanischer Tala'
+		| 'XAF - CFA-Franc BEAC'
+		| 'XCD - Ostkaribischer Dollar'
+		| 'XOF - CFA-Franc BCEAO'
+		| 'XPF - CFP-Franc'
+		| 'YER - Jemenitischer Rial'
+		| 'ZAR - Südafrikanischer Rand'
+		| 'ZMW - Sambischer Kwacha'
+		| 'ZWL - Simbabwischer Dollar'
+	>;
+}
+
+/**
+ * Item in *Einstellungen → Rabatt-Codes*
+ */
+export interface SettingsDocumentDataDiscountCodesItem {
+	/**
+	 * Code field in *Einstellungen → Rabatt-Codes*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. SOMMER2025
+	 * - **API ID Path**: settings.discount_codes[].code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	code: prismic.KeyTextField;
+
+	/**
+	 * Rabatt (%) field in *Einstellungen → Rabatt-Codes*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 10
+	 * - **API ID Path**: settings.discount_codes[].discount_percent
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	discount_percent: prismic.NumberField;
 }
 
 type SettingsDocumentDataSlices3Slice = FormSlice;
@@ -638,71 +950,6 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	show_language_switcher: prismic.BooleanField; /**
-	 * Währung field in *Einstellungen*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: CHF
-	 * - **API ID Path**: settings.invoice_currency
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	invoice_currency: prismic.SelectField<'CHF' | 'EUR' | 'USD' | 'GBP', 'filled'>;
-
-	/**
-	 * IBAN field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: CH00 0000 0000 0000 0000 0
-	 * - **API ID Path**: settings.invoice_iban
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_iban: prismic.KeyTextField;
-
-	/**
-	 * Bank field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Musterbank
-	 * - **API ID Path**: settings.invoice_bank
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_bank: prismic.KeyTextField;
-
-	/**
-	 * BIC / SWIFT field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: XXXXXXXX
-	 * - **API ID Path**: settings.invoice_bic
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_bic: prismic.KeyTextField;
-
-	/**
-	 * Zahlungsfrist (Tage) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: settings.invoice_payment_terms_days
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	invoice_payment_terms_days: prismic.NumberField;
-
-	/**
-	 * MWST-Satz (%) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 8.1
-	 * - **API ID Path**: settings.invoice_vat_rate
-	 * - **Tab**: Rechnung
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	invoice_vat_rate: prismic.NumberField; /**
 	 * Website Domain field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
@@ -778,6 +1025,377 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
+	 * Grundwährung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: CHF - Schweizer Franken
+	 * - **API ID Path**: settings.invoice_currency
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	invoice_currency: prismic.SelectField<
+		| 'AED - Dirham der Vereinigten Arabischen Emirate'
+		| 'AFN - Afghani'
+		| 'ALL - Albanischer Lek'
+		| 'AMD - Armenischer Dram'
+		| 'ANG - Niederländisch-Antillianischer Gulden'
+		| 'AOA - Angolanischer Kwanza'
+		| 'ARS - Argentinischer Peso'
+		| 'AUD - Australischer Dollar'
+		| 'AWG - Arubischer Florin'
+		| 'AZN - Aserbaidschanischer Manat'
+		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
+		| 'BBD - Barbadischer Dollar'
+		| 'BDT - Bangladeschischer Taka'
+		| 'BGN - Bulgarischer Lew'
+		| 'BHD - Bahrainischer Dinar'
+		| 'BIF - Burundischer Franc'
+		| 'BMD - Bermudischer Dollar'
+		| 'BND - Bruneischer Dollar'
+		| 'BOB - Bolivianischer Boliviano'
+		| 'BRL - Brasilianischer Real'
+		| 'BSD - Bahamaischer Dollar'
+		| 'BTN - Bhutanischer Ngultrum'
+		| 'BWP - Botswanischer Pula'
+		| 'BYN - Belarussischer Rubel'
+		| 'BZD - Belizischer Dollar'
+		| 'CAD - Kanadischer Dollar'
+		| 'CDF - Kongoläsischer Franc'
+		| 'CHF - Schweizer Franken'
+		| 'CLP - Chilenischer Peso'
+		| 'CNY - Chinesischer Renminbi'
+		| 'COP - Kolumbianischer Peso'
+		| 'CRC - Costa-Ricanischer Colon'
+		| 'CUP - Kubanischer Peso'
+		| 'CVE - Kap-Verdischer Escudo'
+		| 'CZK - Tschechische Krone'
+		| 'DJF - Djiboutischer Franc'
+		| 'DKK - Dänische Krone'
+		| 'DOP - Dominikanischer Peso'
+		| 'DZD - Algerischer Dinar'
+		| 'EGP - Ägyptisches Pfund'
+		| 'ERN - Eritreischer Nakfa'
+		| 'ETB - Äthiopischer Birr'
+		| 'EUR - Euro'
+		| 'FJD - Fidschi-Dollar'
+		| 'FKP - Falkländisches Pfund'
+		| 'GBP - Britisches Pfund'
+		| 'GEL - Georgischer Lari'
+		| 'GHS - Ghanaischer Cedi'
+		| 'GIP - Gibraltarisches Pfund'
+		| 'GMD - Gambischer Dalasi'
+		| 'GNF - Guineischer Franc'
+		| 'GTQ - Guatemaltekischer Quetzal'
+		| 'GYD - Guyanischer Dollar'
+		| 'HKD - Hongkonger Dollar'
+		| 'HNL - Honduranischer Lempira'
+		| 'HTG - Haitianische Gourde'
+		| 'HUF - Ungarischer Forint'
+		| 'IDR - Indonesische Rupiah'
+		| 'ILS - Neuer Israelischer Schekel'
+		| 'INR - Indische Rupie'
+		| 'IQD - Irakischer Dinar'
+		| 'IRR - Iranischer Rial'
+		| 'ISK - Isländische Krone'
+		| 'JMD - Jamaikanischer Dollar'
+		| 'JOD - Jordanischer Dinar'
+		| 'JPY - Japanischer Yen'
+		| 'KES - Kenianischer Schilling'
+		| 'KGS - Kirgisischer Som'
+		| 'KHR - Kambodschanischer Riel'
+		| 'KMF - Komorischer Franc'
+		| 'KPW - Nordkoreanischer Won'
+		| 'KRW - Südkoreanischer Won'
+		| 'KWD - Kuwaitischer Dinar'
+		| 'KYD - Kaiman-Dollar'
+		| 'KZT - Kasachischer Tenge'
+		| 'LAK - Laotischer Kip'
+		| 'LBP - Libanesisches Pfund'
+		| 'LKR - Sri-Lankische Rupie'
+		| 'LRD - Liberianischer Dollar'
+		| 'LSL - Lesothischer Loti'
+		| 'LYD - Libyscher Dinar'
+		| 'MAD - Marokkanischer Dirham'
+		| 'MDL - Moldauischer Leu'
+		| 'MGA - Madagassischer Ariary'
+		| 'MKD - Nordmazedonischer Denar'
+		| 'MMK - Myanmarischer Kyat'
+		| 'MNT - Mongolischer Tögrög'
+		| 'MOP - Macao-Pataca'
+		| 'MRU - Mauretanischer Ouguiya'
+		| 'MUR - Mauritische Rupie'
+		| 'MVR - Maledivischer Rufiyaa'
+		| 'MWK - Malawischer Kwacha'
+		| 'MXN - Mexikanischer Peso'
+		| 'MYR - Malaysischer Ringgit'
+		| 'MZN - Mosambikanischer Metical'
+		| 'NAD - Namibischer Dollar'
+		| 'NGN - Nigerianische Naira'
+		| 'NIO - Nicaraguanischer Córdoba'
+		| 'NOK - Norwegische Krone'
+		| 'NPR - Nepalesische Rupie'
+		| 'NZD - Neuseeländischer Dollar'
+		| 'OMR - Omanischer Rial'
+		| 'PAB - Panamaischer Balboa'
+		| 'PEN - Peruanischer Sol'
+		| 'PGK - Papua-Neuguineischer Kina'
+		| 'PHP - Philippinischer Peso'
+		| 'PKR - Pakistanische Rupie'
+		| 'PLN - Polnischer Zloty'
+		| 'PYG - Paraguayischer Guaraní'
+		| 'QAR - Katarischer Riyal'
+		| 'RON - Rumänischer Leu'
+		| 'RSD - Serbischer Dinar'
+		| 'RUB - Russischer Rubel'
+		| 'RWF - Ruandischer Franc'
+		| 'SAR - Saudi-Arabischer Riyal'
+		| 'SBD - Salomonen-Dollar'
+		| 'SCR - Seychellische Rupie'
+		| 'SDG - Sudanesisches Pfund'
+		| 'SEK - Schwedische Krone'
+		| 'SGD - Singapurischer Dollar'
+		| 'SHP - St.-Helenisches Pfund'
+		| 'SLL - Sierraleonischer Leone'
+		| 'SOS - Somalischer Schilling'
+		| 'SRD - Surinamischer Dollar'
+		| 'STN - São-toménsische Dobra'
+		| 'SVC - El-Salvadorianischer Colón'
+		| 'SYP - Syrisches Pfund'
+		| 'SZL - Swasiland-Lilangeni'
+		| 'THB - Thailändischer Baht'
+		| 'TJS - Tadschikischer Somoni'
+		| 'TMT - Turkmenischer Manat'
+		| 'TND - Tunesischer Dinar'
+		| 'TOP - Tongaischer Paʻanga'
+		| 'TRY - Türkische Lira'
+		| 'TTD - Trinidad-und-Tobago-Dollar'
+		| 'TWD - Neuer Taiwanischer Dollar'
+		| 'TZS - Tansanischer Schilling'
+		| 'UAH - Ukrainische Hrywnja'
+		| 'UGX - Ugandischer Schilling'
+		| 'USD - US-Dollar'
+		| 'UYU - Uruguayischer Peso'
+		| 'UZS - Usbekischer Sum'
+		| 'VES - Venezolanischer Bolívar'
+		| 'VND - Vietnamesischer Dong'
+		| 'VUV - Vanuatuischer Vatu'
+		| 'WST - Samoanischer Tala'
+		| 'XAF - CFA-Franc BEAC'
+		| 'XCD - Ostkaribischer Dollar'
+		| 'XOF - CFA-Franc BCEAO'
+		| 'XPF - CFP-Franc'
+		| 'YER - Jemenitischer Rial'
+		| 'ZAR - Südafrikanischer Rand'
+		| 'ZMW - Sambischer Kwacha'
+		| 'ZWL - Simbabwischer Dollar',
+		'filled'
+	>;
+
+	/**
+	 * Weitere Währungen (Käufer-Auswahl) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.invoice_additional_currencies[]
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	invoice_additional_currencies: prismic.GroupField<
+		Simplify<SettingsDocumentDataInvoiceAdditionalCurrenciesItem>
+	>;
+
+	/**
+	 * IBAN field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: CH00 0000 0000 0000 0000 0
+	 * - **API ID Path**: settings.invoice_iban
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_iban: prismic.KeyTextField;
+
+	/**
+	 * Bank field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Musterbank
+	 * - **API ID Path**: settings.invoice_bank
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_bank: prismic.KeyTextField;
+
+	/**
+	 * BIC / SWIFT field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: XXXXXXXX
+	 * - **API ID Path**: settings.invoice_bic
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_bic: prismic.KeyTextField;
+
+	/**
+	 * Zahlungsfrist (Tage) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 30
+	 * - **API ID Path**: settings.invoice_payment_terms_days
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	invoice_payment_terms_days: prismic.NumberField;
+
+	/**
+	 * MWST-Satz (%) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 8.1
+	 * - **API ID Path**: settings.invoice_vat_rate
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	invoice_vat_rate: prismic.NumberField;
+
+	/**
+	 * Globale Anzahlung (%) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 50 — wird verwendet wenn beim Produkt kein Wert gesetzt ist
+	 * - **API ID Path**: settings.global_deposit_percent
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	global_deposit_percent: prismic.NumberField;
+
+	/**
+	 * Rabatt-Codes field in *Einstellungen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.discount_codes[]
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	discount_codes: prismic.GroupField<Simplify<SettingsDocumentDataDiscountCodesItem>>;
+
+	/**
+	 * Zahlung: Kreditkarte / TWINT (Stripe) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_stripe_enabled
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_stripe_enabled: prismic.BooleanField;
+
+	/**
+	 * Zahlung: Gegen Rechnung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_rechnung_enabled
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_rechnung_enabled: prismic.BooleanField;
+
+	/**
+	 * Zahlung: Gegen Bar field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_bar_enabled
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_bar_enabled: prismic.BooleanField;
+
+	/**
+	 * Rechnung E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
+	 * - **API ID Path**: settings.payment_rechnung_email_subject
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	payment_rechnung_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Rechnung E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
+	 * - **API ID Path**: settings.payment_rechnung_email_body
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_rechnung_email_body: prismic.RichTextField;
+
+	/**
+	 * Bar E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
+	 * - **API ID Path**: settings.payment_bar_email_subject
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	payment_bar_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Bar E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
+	 * - **API ID Path**: settings.payment_bar_email_body
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_bar_email_body: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Kreditkarte / TWINT field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Stripe-Zahlung
+	 * - **API ID Path**: settings.payment_stripe_confirmation_text
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_stripe_confirmation_text: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Gegen Rechnung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Rechnung-Bestellung
+	 * - **API ID Path**: settings.payment_rechnung_confirmation_text
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_rechnung_confirmation_text: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Gegen Bar field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Bar-Bestellung
+	 * - **API ID Path**: settings.payment_bar_confirmation_text
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_bar_confirmation_text: prismic.RichTextField;
+
+	/**
 	 * Beauftragungsseite Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
@@ -787,6 +1405,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	beauftragung_title: prismic.KeyTextField;
+
+	/**
+	 * Bestellübersicht Titel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bestellübersicht
+	 * - **API ID Path**: settings.zusammenfassung_title
+	 * - **Tab**: E-Commerce
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	zusammenfassung_title: prismic.KeyTextField;
 
 	/**
 	 * Checkout-Formular Zusatzfelder field in *Einstellungen*
@@ -1238,6 +1867,7 @@ export type VariablenDocument<Lang extends string = string> = prismic.PrismicDoc
 export type AllDocumentTypes =
 	| EventDocument
 	| FontDocument
+	| LeistungDocument
 	| NavigationDocument
 	| PageDocument
 	| SettingsDocument
@@ -4097,6 +4727,26 @@ export interface PreisaufstellungSliceDefaultPrimary {
 	label_restbetrag: prismic.KeyTextField;
 
 	/**
+	 * Label Abrechnungsart field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Abrechnungsart
+	 * - **API ID Path**: preisaufstellung.default.primary.label_abrechnungsart
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_abrechnungsart: prismic.KeyTextField;
+
+	/**
+	 * Label Total field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Total
+	 * - **API ID Path**: preisaufstellung.default.primary.label_total
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label_total: prismic.KeyTextField;
+
+	/**
 	 * Animation aktivieren field in *Preisaufstellung → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4167,6 +4817,189 @@ type PreisaufstellungSliceVariation = PreisaufstellungSliceDefault;
 export type PreisaufstellungSlice = prismic.SharedSlice<
 	'preisaufstellung',
 	PreisaufstellungSliceVariation
+>;
+
+/**
+ * Primary content in *Preisvergleich → Standard → Primary*
+ */
+export interface PreisvergleichSliceDefaultPrimary {
+	/**
+	 * Titel field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Unsere Pakete
+	 * - **API ID Path**: preisvergleich.default.primary.titel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	titel: prismic.RichTextField;
+
+	/**
+	 * Plan 1 field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: preisvergleich.default.primary.plan_1
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	plan_1: prismic.ContentRelationshipField<'page'>;
+
+	/**
+	 * Plan 2 field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: preisvergleich.default.primary.plan_2
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	plan_2: prismic.ContentRelationshipField<'page'>;
+
+	/**
+	 * Plan 3 field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: preisvergleich.default.primary.plan_3
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	plan_3: prismic.ContentRelationshipField<'page'>;
+
+	/**
+	 * Hervorgehobener Plan field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Keiner
+	 * - **API ID Path**: preisvergleich.default.primary.hervorhebung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	hervorhebung: prismic.SelectField<'Keiner' | 'Plan 1' | 'Plan 2' | 'Plan 3', 'filled'>;
+
+	/**
+	 * CTA-Beschriftung field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Jetzt bestellen
+	 * - **API ID Path**: preisvergleich.default.primary.cta_label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	cta_label: prismic.KeyTextField;
+
+	/**
+	 * Animation aktivieren field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: preisvergleich.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: preisvergleich.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: preisvergleich.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: preisvergleich.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Primary content in *Preisvergleich → Items*
+ */
+export interface PreisvergleichSliceDefaultItem {
+	/**
+	 * Leistung field in *Preisvergleich → Items*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: preisvergleich.items[].leistung
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	leistung: prismic.ContentRelationshipField<'leistung'>;
+
+	/**
+	 * Plan 1 Wert field in *Preisvergleich → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: ✓
+	 * - **API ID Path**: preisvergleich.items[].plan_1_wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	plan_1_wert: prismic.KeyTextField;
+
+	/**
+	 * Plan 2 Wert field in *Preisvergleich → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: ✓
+	 * - **API ID Path**: preisvergleich.items[].plan_2_wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	plan_2_wert: prismic.KeyTextField;
+
+	/**
+	 * Plan 3 Wert field in *Preisvergleich → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: –
+	 * - **API ID Path**: preisvergleich.items[].plan_3_wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	plan_3_wert: prismic.KeyTextField;
+}
+
+/**
+ * Standard variation for Preisvergleich Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Preisvergleich
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PreisvergleichSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<PreisvergleichSliceDefaultPrimary>,
+	Simplify<PreisvergleichSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Preisvergleich*
+ */
+type PreisvergleichSliceVariation = PreisvergleichSliceDefault;
+
+/**
+ * Preisvergleich Shared Slice
+ *
+ * - **API ID**: `preisvergleich`
+ * - **Description**: Vergleichstabelle für bis zu 3 Dienstleistungs-Pakete
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PreisvergleichSlice = prismic.SharedSlice<
+	'preisvergleich',
+	PreisvergleichSliceVariation
 >;
 
 /**
@@ -5024,15 +5857,21 @@ declare module '@prismicio/client' {
 			EventDocumentDataSlicesSlice,
 			FontDocument,
 			FontDocumentData,
+			LeistungDocument,
+			LeistungDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
 			PageDocument,
 			PageDocumentData,
 			PageDocumentDataSlicesSlice,
+			PageDocumentDataEcommerceAddonsItem,
+			PageDocumentDataLeistungenItem,
 			SettingsDocument,
 			SettingsDocumentData,
 			SettingsDocumentDataContactsItem,
+			SettingsDocumentDataInvoiceAdditionalCurrenciesItem,
+			SettingsDocumentDataDiscountCodesItem,
 			SettingsDocumentDataSlices3Slice,
 			ThemeDocument,
 			ThemeDocumentData,
@@ -5115,6 +5954,11 @@ declare module '@prismicio/client' {
 			PreisaufstellungSliceDefaultPrimary,
 			PreisaufstellungSliceVariation,
 			PreisaufstellungSliceDefault,
+			PreisvergleichSlice,
+			PreisvergleichSliceDefaultPrimary,
+			PreisvergleichSliceDefaultItem,
+			PreisvergleichSliceVariation,
+			PreisvergleichSliceDefault,
 			QuoteSlice,
 			QuoteSliceDefaultPrimary,
 			QuoteSliceVariation,

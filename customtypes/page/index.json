@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"preisvergleich": {
+							"type": "SharedSlice"
+						},
 						"text_and_cta": {
 							"type": "SharedSlice"
 						},
@@ -141,6 +144,29 @@
 					"placeholder": "https://buy.stripe.com/...",
 					"select": null,
 					"allowTargetBlank": true
+				}
+			},
+			"leistungen": {
+				"type": "Group",
+				"config": {
+					"label": "Leistungen",
+					"fields": {
+						"leistung": {
+							"type": "Link",
+							"config": {
+								"label": "Leistung",
+								"select": "document",
+								"customtypes": ["leistung"]
+							}
+						},
+						"wert": {
+							"type": "Text",
+							"config": {
+								"label": "Wert (optional)",
+								"placeholder": "✓ oder bis 5 Produkte"
+							}
+						}
+					}
 				}
 			}
 		},
