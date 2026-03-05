@@ -25,11 +25,11 @@
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 
 	// --- STANDARDWERTE ---
-	$: logoHeight = prismicTheme?.data?.logo_height || get(theme).logoHeight;
+	$: logoHeight = prismicTheme?.data?.logo_height || $theme.logoHeight;
 	$: logoColor = prismicTheme?.data?.logo_color || null;
 	$: isSvgLogo = !!prismicTheme?.data?.logo?.url?.toLowerCase().includes('.svg');
-	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
-	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || get(theme).siteTitleFont;
+	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || $theme.siteTitleFontSize;
+	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
 	$: headerLinkFontSize =
