@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 
 	export let field: {
 		field_name: string | null;
@@ -42,19 +41,18 @@
 			name={key}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
-				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border-bottom-color: {$theme.pageColor};"
 			on:blur
 		/>
 	{:else if htmlType === 'textarea'}
-		<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+		<div class="border-b-2" style="border-bottom-color: {$theme.pageColor};">
 			<textarea
 				id={key}
 				name={key}
 				required={field.required}
 				rows="4"
 				class="input mt-1 p-2 block w-full rounded-md"
-				style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 				on:blur
 			></textarea>
 		</div>
@@ -64,8 +62,7 @@
 			name={key}
 			required={field.required}
 			class="input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0"
-			style="background-color: {get(theme).pageBgColor}; color: {get(theme)
-				.pageColor}; border-bottom-color: {get(theme).pageColor};"
+			style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border-bottom-color: {$theme.pageColor};"
 			on:blur
 		>
 			<!-- Leere Option hinzufügen -->

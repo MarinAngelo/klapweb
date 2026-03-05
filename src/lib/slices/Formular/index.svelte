@@ -2,27 +2,19 @@
 	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../prismicio-types';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	// Zählt nur Formular-Slices bis einschließlich dem aktuellen → form_1, form_2 ...
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
@@ -50,6 +42,9 @@
 
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
+
+	// Fehlerausgabe für Sende-Fehler (ersetzt alert())
+	let submitError: string | null = null;
 
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
 		if (!field || !effectiveKey(field)) return '';
@@ -186,13 +181,12 @@
 				showModal = true;
 				form.reset();
 				fieldErrors = {};
+				submitError = null;
 			} else {
-				console.error('Fehler beim Senden des Formulars:', response);
-				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
+				submitError = 'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.';
 			}
 		} catch (error) {
-			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+			submitError = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
 		}
 	}
 
@@ -209,7 +203,7 @@
 
 <Bounded
 	as="section"
-	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+	style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -250,6 +244,12 @@
 				{#if linkError}
 					<p id="form-error" class="mt-3 text-sm text-red-600">
 						{linkError}
+					</p>
+				{/if}
+
+				{#if submitError}
+					<p class="mt-3 text-sm text-red-600" role="alert">
+						{submitError}
 					</p>
 				{/if}
 

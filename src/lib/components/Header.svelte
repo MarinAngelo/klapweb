@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content, PrismicDocument } from '@prismicio/client';
 	import { onMount } from 'svelte';
@@ -19,7 +18,6 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let mainLang: string | undefined;
-	console.log('MainLang in Header:', mainLang);
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -27,16 +25,16 @@
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 
 	// --- STANDARDWERTE ---
-	$: logoHeight = prismicTheme?.data?.logo_height || get(theme).logoHeight;
-	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || get(theme).siteTitleFontSize;
-	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || get(theme).siteTitleFont;
+	$: logoHeight = prismicTheme?.data?.logo_height || $theme.logoHeight;
+	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || $theme.siteTitleFontSize;
+	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
 	$: siteSubtitleFontSize =
-		prismicTheme?.data?.site_sub_title_font_size || get(theme).siteSubtitleFontSize;
+		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
 	$: headerLinkFontSize =
-		prismicTheme?.data?.header_link_font_size || get(theme).headerLinkFontSize;
-	$: headerLinkColor = prismicTheme?.data?.header_link_color || get(theme).headerLinkColor;
+		prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
+	$: headerLinkColor = prismicTheme?.data?.header_link_color || $theme.headerLinkColor;
 	$: headerLinkHoverColor =
-		prismicTheme?.data?.header_link_hover_color || get(theme).headerLinkHoverColor;
+		prismicTheme?.data?.header_link_hover_color || $theme.headerLinkHoverColor;
 
 	// bannerTop direkt aus den Seitendaten lesen, nicht aus dem Store
 	$: bannerTop = (() => {
@@ -49,7 +47,7 @@
 
 	$: headerColor = $theme.headerColor;
 
-	const headerBgColor = prismicTheme?.data?.header_bg_color ?? get(theme).headerBgColor;
+	$: headerBgColor = prismicTheme?.data?.header_bg_color ?? $theme.headerBgColor;
 	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
 	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status

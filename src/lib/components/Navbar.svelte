@@ -5,7 +5,6 @@
     import SvgIcon from './SvgIcons.svelte';
     import LanguageSwitcher from './LanguageSwitcher.svelte'; 
     import { theme } from '../stores/theme';
-    import { get } from 'svelte/store';
     import { isMenuOpen } from '../stores/isMenuOpen';
     import { onMount, onDestroy } from 'svelte';
 
@@ -21,7 +20,6 @@
     export let showSwitcher: boolean | undefined; 
     export let allAlternates: any[] = []; 
 
-    const { headerLinkFont } = get(theme);
 
     // 1. REAKTIVER FIX FÜR DAS SCHLIESSEN
     // Sobald sich der Pfad ändert (z.B. durch Sprachwechsel), schließt das Menü.
@@ -75,7 +73,7 @@
     }
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {headerLinkFont};">
+<nav class="flex items-center justify-between flex-wrap p-6" style="font-family: {$theme.headerLinkFont};">
     <div class="block lg:hidden h-full flex items-center">
         <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
             {#if $isMenuOpen}

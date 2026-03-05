@@ -123,7 +123,7 @@ a[data-type="prismic-link"]:hover {
   --button-padding-x: 1rem;
   --hover-text-color: var(--page-button-color);
   --focus-ring-color: var(--hover-text-color);
-  --hover-bg-color: var(--page--button-hover-bg-color);
+  --hover-bg-color: var(--page-button-hover-bg-color);
 
 }
 
