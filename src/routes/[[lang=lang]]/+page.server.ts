@@ -1,7 +1,7 @@
 import { redirect, error } from '@sveltejs/kit';
 import { readFileSync } from 'fs';
 import { createClient } from '$lib/prismicio';
-import { asText, asLink } from '@prismicio/client'; // Importiere den Helper
+import { asText, asLink, isFilled } from '@prismicio/client'; // Importiere den Helper
 
 function localRedirectDisabled(): boolean {
 	try {
@@ -20,8 +20,8 @@ export async function load({ params, parent }) {
 	// CMS-controlled home redirect (local override via slicemachine.config.json: home_redirect_disabled)
 	const sd = settings?.data as Record<string, unknown>;
 	const redirectActive = sd?.home_redirect_active === true;
-	const redirectLink = sd?.home_redirect_url;
-	const redirectUrl = redirectLink ? asLink(redirectLink as Parameters<typeof asLink>[0]) : null;
+	const redirectLink = sd?.home_redirect_url as import('@prismicio/client').LinkField | null | undefined;
+	const redirectUrl = isFilled.link(redirectLink) ? asLink(redirectLink) : null;
 	if (redirectActive && redirectUrl && !localRedirectDisabled()) {
 		throw redirect(302, redirectUrl);
 	}
