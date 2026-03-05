@@ -46,7 +46,6 @@ interface ThemeUpdateData {
 	prismicTheme?: {
 		data?: PrismicThemeData;
 	};
-	// Füge hier weitere Daten hinzu, die für die Theme-Aktualisierung benötigt werden
 }
 
 // Funktion zum Auslesen einer CSS-Variable

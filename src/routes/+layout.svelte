@@ -206,7 +206,14 @@
 	$: {
 		updateTheme(data);
 	}
-	$: bodyFontStyle = $theme.pageFont ? `font-family: '${$theme.pageFont}';` : '';
+	$: pageFontName =
+		prismicTheme?.data?.page_font?.data?.name ||
+		fonts?.find((f: any) => f.id === prismicTheme?.data?.page_font?.id)?.data?.name ||
+		$theme.pageFont ||
+		'';
+	$: if (typeof document !== 'undefined') {
+		document.body.style.fontFamily = pageFontName ? `'${pageFontName}', sans-serif` : '';
+	}
 	$: cssMobileSize = getFontSize(prismicTheme?.data?.base_font_size_mobile);
 	$: cssDesktopSize = getFontSize(prismicTheme?.data?.base_font_size_desktop);
 
@@ -287,7 +294,7 @@
 		/>
 	{/if}
 
-	<main style={bodyFontStyle}>
+	<main>
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
 				as="section"

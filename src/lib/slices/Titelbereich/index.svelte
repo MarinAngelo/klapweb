@@ -157,7 +157,7 @@
 		font-family: {('font' in slice.primary &&
 		isFilled.contentRelationship(slice.primary.font) &&
 		slice.primary.font.data?.name) ||
-		'sans-serif'};
+		'inherit'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
