@@ -11,13 +11,6 @@
       "version": "initial",
       "description": "P5Grafik",
       "primary": {
-        "hoehe": {
-          "type": "Number",
-          "config": {
-            "label": "Höhe (px)",
-            "placeholder": "500"
-          }
-        },
         "hintergrundfarbe": {
           "type": "Color",
           "config": {

@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
-	import Bounded from '$lib/components/Bounded.svelte';
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
 	import type p5Type from 'p5';
 
 	export let slice: any;
@@ -12,14 +10,6 @@
 	export let index: number = 0;
 
 	const bgColor = slice.primary.hintergrundfarbe || get(theme).pageBgColor;
-	const heightPx: number = slice.primary.hoehe || 500;
-
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
 
 	// ---------------------------------------------------------------------------
 	// Sketch definieren — hier den p5-Code eintragen
@@ -28,7 +18,7 @@
 	// ---------------------------------------------------------------------------
 	function sketch(p: p5Type, el: HTMLDivElement) {
 		p.setup = () => {
-			p.createCanvas(el.offsetWidth, heightPx);
+			p.createCanvas(el.offsetWidth, el.offsetHeight);
 			p.colorMode(p.HSB, 360, 100, 100, 100);
 			p.noStroke();
 		};
@@ -47,14 +37,10 @@
 	}
 </script>
 
-<Bounded
-	as="section"
-	yPadding="none"
-	style="background-color: {bgColor};"
+<section
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
-	animate={anim.animate}
-	animationOptions={anim.options}
+	style="background-color: {bgColor}; width: 100vw; height: 100vh; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; overflow: hidden;"
 >
-	<P5Canvas {sketch} width="100%" height="{heightPx}px" />
-</Bounded>
+	<P5Canvas {sketch} width="100%" height="100%" />
+</section>

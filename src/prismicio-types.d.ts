@@ -255,6 +255,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| P5GrafikSlice
 	| AnleitungSlice
 	| GlobaleEventsSlice
 	| EventSlice
@@ -1749,16 +1750,6 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
  */
 export interface FormSliceDefaultPrimary {
 	/**
-	 * Formular Name z.B. Kontakt field in *Formular → Standard → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Kontakt
-	 * - **API ID Path**: form.default.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
-	/**
 	 * Formular Titel field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
@@ -2870,6 +2861,100 @@ type ImageCardsSliceVariation = ImageCardsSliceDefault;
 export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSliceVariation>;
 
 /**
+ * Primary content in *P5Grafik → Standard → Primary*
+ */
+export interface P5GrafikSliceDefaultPrimary {
+	/**
+	 * Höhe (px) field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: p5_grafik.default.primary.hoehe
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	hoehe: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe Bereich field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: p5_grafik.default.primary.hintergrundfarbe
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	hintergrundfarbe: prismic.ColorField;
+
+	/**
+	 * Animation aktivieren field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: p5_grafik.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: p5_grafik.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: p5_grafik.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *P5Grafik → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: p5_grafik.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Standard variation for P5Grafik Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: P5Grafik
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type P5GrafikSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<P5GrafikSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *P5Grafik*
+ */
+type P5GrafikSliceVariation = P5GrafikSliceDefault;
+
+/**
+ * P5Grafik Shared Slice
+ *
+ * - **API ID**: `p5_grafik`
+ * - **Description**: Interaktive p5.js Grafik / Animation
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type P5GrafikSlice = prismic.SharedSlice<'p5_grafik', P5GrafikSliceVariation>;
+
+/**
  * Primary content in *Zitat → Standart → Primary*
  */
 export interface QuoteSliceDefaultPrimary {
@@ -3595,6 +3680,10 @@ declare module '@prismicio/client' {
 			ImageCardsSliceDefaultPrimary,
 			ImageCardsSliceVariation,
 			ImageCardsSliceDefault,
+			P5GrafikSlice,
+			P5GrafikSliceDefaultPrimary,
+			P5GrafikSliceVariation,
+			P5GrafikSliceDefault,
 			QuoteSlice,
 			QuoteSliceDefaultPrimary,
 			QuoteSliceVariation,
