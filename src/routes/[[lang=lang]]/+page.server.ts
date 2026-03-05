@@ -1,11 +1,19 @@
+import { redirect, error } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
-import { error } from '@sveltejs/kit';
 import { asText } from '@prismicio/client'; // Importiere den Helper
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params, parent }) {
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
-	const { lang } = await parent();
+	const { lang, settings } = await parent();
+
+	// CMS-controlled home redirect
+	const sd = settings?.data as Record<string, unknown>;
+	const redirectActive = sd?.home_redirect_active === true;
+	const redirectUrl = sd?.home_redirect_url as string | undefined;
+	if (redirectActive && redirectUrl) {
+		throw redirect(302, redirectUrl);
+	}
 	const client = createClient();
 
 	try {
