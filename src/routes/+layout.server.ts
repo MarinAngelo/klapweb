@@ -66,10 +66,27 @@ export async function load({ params, fetch, cookies, url }) {
 
 		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
 
+		// Resolve font content relationships server-side so font names are always available
+		// without relying on fetchLinks or CSS variable state.
+		function resolveFontLink(link: any) {
+			if (!link?.id) return link;
+			const doc = fonts.find((f: any) => f.id === link.id);
+			return doc ? { ...link, data: doc.data } : link;
+		}
+		const prismicTheme = theme && {
+			...theme,
+			data: {
+				...theme.data,
+				page_font: resolveFontLink(theme.data?.page_font),
+				site_title_font: resolveFontLink(theme.data?.site_title_font),
+				header_link_font: resolveFontLink(theme.data?.header_link_font)
+			}
+		};
+
 		return {
 			settings,
 			navigation,
-			prismicTheme: theme,
+			prismicTheme,
 			fonts,
 			lang,
 			mainLang,

@@ -10,6 +10,8 @@ export function createBannerHeight(
 		const clean = raw.replace(/\s/g, '');
 		const bannerTop = $slice.primary.banner_overlap ?? $theme.bannerTop;
 
+		// When header height is not yet measured (SSR / landing page), use 'auto'
+		// so the template can apply min-height fallback instead of a wrong calc value.
 		if (!bannerTop && (!$headerHeight || $headerHeight === 0)) {
 			return 'auto';
 		}

@@ -152,6 +152,10 @@ html {
   font-size: var(--global-size-mobile);
 }
 
+body {
+  font-family: var(--page-font, sans-serif);
+}
+
 @media (min-width: 1024px) { /* Ab Tailwind "lg" Breakpoint oder deinem gewünschten */
   html {
     font-size: var(--global-size-desktop);
