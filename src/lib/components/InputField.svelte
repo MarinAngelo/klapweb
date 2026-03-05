@@ -125,17 +125,17 @@
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
 				: 'input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact
-				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
-				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
+				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
 			on:blur
 		/>
 	{:else if htmlType === 'tel'}
 		{#if compact}
-			<div class="flex items-center border" style="border-color: {get(theme).pageColor}44;">
+			<div class="flex items-center border" style="border-color: {$theme.pageColor}44;">
 				<select
 					bind:value={prefix}
 					class="p-2 shrink-0 focus:outline-none bg-transparent"
-					style="color: {get(theme).pageColor}; border: none;"
+					style="color: {$theme.pageColor}; border: none;"
 				>
 					{#each countryPrefixes as cp}
 						<option value={cp.prefix}>{cp.label}</option>
@@ -148,16 +148,16 @@
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
 					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
-					style="color: {get(theme).pageColor}; border: none;"
+					style="color: {$theme.pageColor}; border: none;"
 					on:blur
 				/>
 			</div>
 		{:else}
-			<div class="flex items-end mt-1 border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+			<div class="flex items-end mt-1 border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<select
 					bind:value={prefix}
 					class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
-					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+					style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border: none;"
 				>
 					{#each countryPrefixes as cp}
 						<option value={cp.prefix}>{cp.label}</option>
@@ -170,7 +170,7 @@
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
 					class="input p-2 flex-1 focus:outline-none focus:ring-0"
-					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor}; border: none;"
+					style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border: none;"
 					on:blur
 				/>
 			</div>
@@ -185,11 +185,11 @@
 				placeholder={field.placeholder ?? ''}
 				rows="4"
 				class="w-full border px-3 py-2 bg-transparent focus:outline-none"
-				style="border-color: {get(theme).pageColor}44; color: {get(theme).pageColor};"
+				style="border-color: {$theme.pageColor}44; color: {$theme.pageColor};"
 				on:blur
 			></textarea>
 		{:else}
-			<div class="border-b-2" style="border-bottom-color: {get(theme).pageColor};">
+			<div class="border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<textarea
 					id={key}
 					name={key}
@@ -197,7 +197,7 @@
 					placeholder={field.placeholder ?? ''}
 					rows="4"
 					class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
-					style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
+					style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 					on:blur
 				></textarea>
 			</div>
@@ -211,8 +211,8 @@
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
 				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
-				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
-				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
+				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
 			on:blur
 		>
 			<option value="" disabled selected>Bitte auswählen</option>
@@ -244,8 +244,8 @@
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
 				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
-				? `border-color: ${get(theme).pageColor}44; color: ${get(theme).pageColor};`
-				: `background-color: ${get(theme).pageBgColor}; color: ${get(theme).pageColor}; border-bottom-color: ${get(theme).pageColor};`}
+				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
 			on:blur
 		>
 			<option value="" disabled selected>Bitte auswählen</option>
