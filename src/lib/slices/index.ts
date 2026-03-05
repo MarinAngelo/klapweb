@@ -13,6 +13,7 @@ import Kacheln from './Kacheln/index.svelte';
 import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
+import P5Grafik from './P5Grafik/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -27,5 +28,6 @@ export const components = {
 	image_cards: Kacheln,
 	quote: Zitat,
 	text: Text,
-	text_with_image: TextMitBild
+	text_with_image: TextMitBild,
+	p5_grafik: P5Grafik
 };
