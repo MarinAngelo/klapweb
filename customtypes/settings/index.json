@@ -175,10 +175,11 @@
 				}
 			},
 			"home_redirect_url": {
-				"type": "Text",
+				"type": "Link",
 				"config": {
-					"label": "Umleitungs-URL",
-					"placeholder": "/temp_home"
+					"label": "Umleitungs-Seite",
+					"select": "document",
+					"customtypes": ["page"]
 				}
 			}
 		},
