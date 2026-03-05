@@ -2,67 +2,228 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
+	import { currencySelection } from '$lib/stores/currency';
+	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
-	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 
 	export let slice: Content.ImageCardsSlice;
-	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export let slices: unknown[] | undefined = undefined; // Initialize with an empty object and provide a type
-	export let context: unknown = undefined; // Initialize with an empty object and provide a type
-	export let index: number | undefined = undefined; // Initialize with a default value and specify the type
+	export let slices: any = {};
+	export let context: any = {};
+	export let index: number = 0;
 
-	$: componentBodyBgColor = slice.primary.component_body_bg_color || $theme.pageBgColor;
-	$: componentBodyColor = slice.primary.component_body_color || $theme.pageColor;
+	const componentBodyBgColor = slice.primary.component_body_bg_color || get(theme).pageBgColor;
+	const componentBodyColor = slice.primary.component_body_color || get(theme).pageColor;
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
 	const gridColumns = String(slice.primary.grid_columns).includes('3') ? 3 : 2;
 
-	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: anim = mapAnimation(
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
+	);
 
 	// Stagger-Intervall zwischen den Kacheln (ms)
 	const STAGGER_MS = 150;
+
+	// --- Pläne variation ---
+
+	const billingTypeSuffix: Record<string, string> = {
+		Einmalig: 'Einmalig',
+		Jährlich: 'pro Jahr',
+		Monatlich: 'pro Monat'
+	};
+
+	$: activeCurrency = (() => {
+		const sel = $currencySelection;
+		const base: string = context?.baseCurrency ?? 'CHF';
+		return sel?.code ?? base;
+	})();
+
+	$: conversionRate = (() => {
+		const sel = $currencySelection;
+		const base: string = context?.baseCurrency ?? 'CHF';
+		if (!sel || sel.code === base) return 1;
+		return sel.rates[sel.code] ?? 1;
+	})();
+
+	$: globalDepositPct = context?.globalDepositPct ?? null;
+
+	// plaeneData: keyed by slice.id → array of feature rows per plan
+	// shape: Array<Array<{ label: string; wert: string | null }>>
+	$: plaeneData = (context?.plaeneData?.[slice.id] ?? []) as Array<
+		Array<{ label: string; wert: string | null }>
+	>;
+
+	$: planItems = (() => {
+		if (slice.variation !== 'plaene') return [];
+		return (slice.items as Array<{ plan: any }>).map((item, i) => {
+			const planDoc = item.plan;
+			const d = planDoc?.data ?? {};
+			const titleField = d.title;
+			const name: string =
+				Array.isArray(titleField) && titleField[0]?.text
+					? titleField[0].text
+					: (planDoc?.uid ?? '');
+			const base: number | null = d.ecommerce_price_chf ?? null;
+			const discount: number | null = d.ecommerce_discount_percent ?? null;
+			const deposit: number | null = d.ecommerce_deposit_percent ?? globalDepositPct;
+			const displayAmount = calcDisplayPrice(base, discount, deposit);
+			const converted =
+				displayAmount !== null ? Math.round(displayAmount * conversionRate * 100) / 100 : null;
+			const billingType: string | null = d.ecommerce_billing_type ?? null;
+			const suffix = billingType ? (billingTypeSuffix[billingType] ?? null) : null;
+			const hervorhebung = (slice.primary as any).hervorhebung ?? 'Keiner';
+			const highlight = hervorhebung === `Plan ${i + 1}`;
+			const uid = planDoc?.uid as string | undefined;
+			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
+			const features: Array<{ label: string; wert: string | null }> = plaeneData[i] ?? [];
+			return { name, price: converted, suffix, billingType, highlight, href, features };
+		});
+	})();
+
+	$: cardColor = (slice.primary as any).body_color || get(theme).pageColor;
+	$: cardBgColor = (slice.primary as any).body_bg_color || get(theme).pageBgColor;
+	$: btnColor = (slice.primary as any).button_color || get(theme).pageColor;
+	$: btnBgColor = (slice.primary as any).button_bg_color || 'transparent';
+	$: borderColor = (slice.primary as any).border_color || get(theme).pageColor;
+	$: roundCorners = (slice.primary as any).round_corners !== false;
+	$: ctaLabel = (slice.primary as any).cta_label || 'Jetzt bestellen';
 </script>
 
-<Bounded
-	tag="section"
-	specialLayout={true}
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
-	class={hasCustomBgColor ? 'pb-16 md:pb-20' : ''}
-	style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
->
-	<div class="grid gap-12">
+{#if slice.variation === 'plaene'}
+	<Bounded
+		as="section"
+		style="color: {componentBodyColor}; background-color: {componentBodyBgColor};"
+		data-slice-type={slice.slice_type}
+		data-slice-variation={slice.variation}
+		animate={anim.animate}
+		animationOptions={anim.options}
+	>
 		{#if isFilled.richText(slice.primary.heading)}
-			<h2 class="text-center custom-color">
+			<h2 class="text-2xl font-bold mb-8 custom-color">
 				<PrismicText field={slice.primary.heading} />
 			</h2>
 		{/if}
-		<ul
-			class="grid grid-cols-1 gap-8 {gridColumns === 3
-				? 'md:grid-cols-3'
-				: 'md:grid-cols-2'}"
+
+		<div
+			class="grid grid-cols-1 gap-6"
+			style="grid-template-columns: repeat({planItems.length}, minmax(0, 1fr));"
 		>
-			{#each slice.primary.cards as card, i}
-				<ImageCard
-					{card}
-					roundCorners={slice.primary.round_corners}
-					bodyBgColor={slice.primary.body_bg_color}
-					bodyColor={slice.primary.body_color}
-					buttonColor={slice.primary.button_color}
-					buttonBgColor={slice.primary.button_bg_color}
-					buttonHoverColor={slice.primary.button_hover_color}
-					buttonHoverBgColor={slice.primary.button_hover_bg_color}
-					borderColor={slice.primary.border_color}
-					revealOptions={anim.animate
-						? { ...anim.options, delay: anim.options.delay + i * STAGGER_MS }
-						: { direction: 'none' }}
-				/>
+			{#each planItems as plan, i}
+				<div
+					class="flex flex-col p-6 border"
+					class:border-2={plan.highlight}
+					style="
+						color: {cardColor};
+						background-color: {plan.highlight ? `${cardBgColor}` : cardBgColor};
+						border-color: {plan.highlight ? borderColor : `${borderColor}44`};
+						border-radius: {roundCorners ? '0.5rem' : '0'};
+						{plan.highlight ? `box-shadow: 0 4px 24px ${borderColor}22;` : ''}
+					"
+				>
+					<!-- Plan name + price -->
+					<div class="mb-4">
+						<div class="font-bold text-lg">{plan.name}</div>
+						{#if plan.price !== null}
+							<div class="text-2xl font-bold mt-1 tabular-nums">
+								{formatPrice(plan.price, activeCurrency)}
+							</div>
+							{#if plan.suffix}
+								<div class="text-sm opacity-60">{plan.suffix}</div>
+							{/if}
+						{/if}
+					</div>
+
+					<!-- Feature list -->
+					{#if plan.features.length > 0}
+						<ul class="flex-1 mb-6 space-y-2 text-sm">
+							{#if i > 0}
+								<li class="text-sm opacity-60 italic pb-1">
+									Alles von {planItems[i - 1].name} und:
+								</li>
+							{/if}
+							{#each plan.features as feat}
+								<li class="flex items-start gap-2">
+									{#if feat.wert === '✓' || (!feat.wert && feat.label)}
+										<span style="color: {cardColor};">✓</span>
+									{:else if feat.wert === '–' || feat.wert === null}
+										<span style="opacity: 0.3;">–</span>
+									{:else}
+										<span style="color: {cardColor};">{feat.wert}</span>
+									{/if}
+									<span class:opacity-40={feat.wert === '–' || feat.wert === null}>
+										{feat.label}
+									</span>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+
+					<!-- CTA -->
+					{#if plan.href}
+						<a
+							href={plan.href}
+							class="mt-auto block text-center px-4 py-2 text-sm border transition-opacity hover:opacity-70"
+							style="
+								color: {btnColor};
+								background-color: {btnBgColor};
+								border-color: {btnColor};
+								border-radius: {roundCorners ? '0.25rem' : '0'};
+							"
+						>
+							{ctaLabel}
+						</a>
+					{/if}
+				</div>
 			{/each}
-		</ul>
-	</div>
-</Bounded>
+		</div>
+	</Bounded>
+{:else}
+	<Bounded
+		tag="section"
+		specialLayout={true}
+		data-slice-type={slice.slice_type}
+		data-slice-variation={slice.variation}
+		class={hasCustomBgColor ? 'pb-16 md:pb-20' : ''}
+		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
+	>
+		<div class="grid gap-12">
+			{#if isFilled.richText(slice.primary.heading)}
+				<h2 class="text-center custom-color">
+					<PrismicText field={slice.primary.heading} />
+				</h2>
+			{/if}
+			<ul
+				class="grid grid-cols-1 gap-8 {gridColumns === 3
+					? 'md:grid-cols-3'
+					: 'md:grid-cols-2'}"
+			>
+				{#each slice.primary.cards as card, i}
+					<ImageCard
+						{card}
+						roundCorners={slice.primary.round_corners}
+						bodyBgColor={slice.primary.body_bg_color}
+						bodyColor={slice.primary.body_color}
+						buttonColor={slice.primary.button_color}
+						buttonBgColor={slice.primary.button_bg_color}
+						buttonHoverColor={slice.primary.button_hover_color}
+						buttonHoverBgColor={slice.primary.button_hover_bg_color}
+						borderColor={slice.primary.border_color}
+						revealOptions={anim.animate
+							? { ...anim.options, delay: anim.options.delay + i * STAGGER_MS }
+							: { direction: 'none' }}
+					/>
+				{/each}
+			</ul>
+		</div>
+	</Bounded>
+{/if}
 
 <style>
 	.custom-color {

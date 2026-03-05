@@ -13,10 +13,15 @@ import Kacheln from './Kacheln/index.svelte';
 import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
+import ButtonSlice from './Button/index.svelte';
+import Preisaufstellung from './Preisaufstellung/index.svelte';
+import Preisvergleich from './Preisvergleich/index.svelte';
+import TextAndCta from './TextAndCta/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
 	anleitung: Anleitung,
+	button: ButtonSlice,
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,
@@ -27,5 +32,8 @@ export const components = {
 	image_cards: Kacheln,
 	quote: Zitat,
 	text: Text,
+	text_and_cta: TextAndCta,
+	preisaufstellung: Preisaufstellung,
+	preisvergleich: Preisvergleich,
 	text_with_image: TextMitBild
 };

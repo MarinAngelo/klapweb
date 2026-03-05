@@ -6,16 +6,47 @@
 	export let tag = 'section';
 	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' =
 		'base-top';
+	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
+	export let paddingTop: string | undefined = undefined;
+	export let paddingBottom: string | undefined = undefined;
 	export let collapsible = true;
 	export let specialLayout = false;
 
 	export let animate: boolean = false;
 	export let animationOptions: RevealOptions = {};
 
+	export let fullWidth: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
-	// Wir bereiten die Optionen vor: Wenn animate false ist,
-	// zwingen wir die direction auf 'none'.
+	// CMS-Label → Tailwind-Klassen
+	const ptMap: Record<string, string> = {
+		Kein: 'pt-0',
+		Klein: 'pt-8 md:pt-10',
+		Mittel: 'pt-20 md:pt-28',
+		Gross: 'pt-32 md:pt-48'
+	};
+	const pbMap: Record<string, string> = {
+		Kein: 'pb-0',
+		Klein: 'pb-8 md:pb-10',
+		Mittel: 'pb-20 md:pb-28',
+		Gross: 'pb-32 md:pb-48'
+	};
+
+	// yPadding → Einzelachsen (Rückwärtskompatibilität)
+	const yTop: Record<string, string> = {
+		none: '', sm: 'pt-8 md:pt-10', 'sm-top': 'pt-8 md:pt-10',
+		base: 'pt-20 md:pt-28', 'base-top': 'pt-20 md:pt-28',
+		lg: 'pt-32 md:pt-48', 'lg-top': 'pt-32 md:pt-48'
+	};
+	const yBottom: Record<string, string> = {
+		none: '', sm: 'pb-8 md:pb-10', 'sm-top': '',
+		base: 'pb-20 md:pb-28', 'base-top': '',
+		lg: 'pb-32 md:pb-48', 'lg-top': ''
+	};
+
+	$: topClass = paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? '');
+	$: bottomClass = paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? '');
+
 	$: finalOptions = animate
 		? { duration: 2000, delay: 500, ...animationOptions }
 		: { direction: 'none' as const };
@@ -30,17 +61,12 @@
 	class={clsx(
 		'px-6',
 		specialLayout && isMobile && 'px-0',
-		yPadding === 'none' && 'py-0',
-		yPadding === 'sm' && 'py-8 md:py-10',
-		yPadding === 'base' && 'py-20 md:py-28',
-		yPadding === 'lg' && 'py-32 md:py-48',
-		yPadding === 'sm-top' && 'pt-8 md:pt-10',
-		yPadding === 'base-top' && 'pt-20 md:pt-28',
-		yPadding === 'lg-top' && 'pt-32 md:pt-48',
+		topClass,
+		bottomClass,
 		$$props.class
 	)}
 >
-	<div class="mx-auto w-full max-w-6xl relative overflow-visible">
+	<div class={clsx('mx-auto w-full relative overflow-visible', !fullWidth && 'max-w-6xl')}>
 		<slot />
 	</div>
 </svelte:element>

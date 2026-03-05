@@ -115,6 +115,15 @@
 			}
 		},
 		"Kopfzeile": {
+			"full_screen_width": {
+				"type": "Boolean",
+				"config": {
+					"label": "Volle Bildschirmbreite nutzen",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"site_title_font_size": {
 				"type": "Number",
 				"config": {
@@ -156,6 +165,13 @@
 				"config": {
 					"label": "Logo Grösse",
 					"placeholder": "1 - 8"
+				}
+			},
+			"logo_color": {
+				"type": "Color",
+				"config": {
+					"label": "Logo Farbe (nur SVG)",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
 			"header_bg_color": {
