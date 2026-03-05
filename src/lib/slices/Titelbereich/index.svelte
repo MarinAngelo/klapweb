@@ -201,8 +201,7 @@
 		<div
 			class="relative flex flex-col items-center justify-center"
 			style="
-				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 80vh;'}
-				{bannerTop === true ? `padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;` : ''}
+				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 100vh;'}
 			"
 		>
 			<div class="relative w-full flex items-center justify-center">
