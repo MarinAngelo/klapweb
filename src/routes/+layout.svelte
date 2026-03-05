@@ -145,7 +145,9 @@
 	$: hasBannerOverlap =
 		$page.data?.page?.data?.slices?.find((s: any) => s.slice_type === 'hero')?.primary
 			?.banner_overlap === true;
-	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
+	$: isLandingPage =
+		$page.data?.page?.data?.landing_page === true ||
+		$page.url.pathname.startsWith('/klap-studio');
 
 	onMount(() => {});
 	afterNavigate(() => {});

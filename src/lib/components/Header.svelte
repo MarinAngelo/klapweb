@@ -43,8 +43,12 @@
 		const slices = $page.data?.page?.data?.slices;
 		if (!Array.isArray(slices)) return false;
 
-		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
-		return titelbereichSlice?.primary?.banner_overlap === true;
+		const overlappingSlice = slices.find(
+			(s: any) =>
+				(s.slice_type === 'hero' || (s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				s.primary?.banner_overlap === true
+		);
+		return overlappingSlice !== undefined;
 	})();
 
 	$: headerColor = $theme.headerColor;
