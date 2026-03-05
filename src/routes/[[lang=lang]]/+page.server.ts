@@ -1,13 +1,30 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
+import { readFileSync } from 'fs';
 import { createClient } from '$lib/prismicio';
-import { error } from '@sveltejs/kit';
-import { asText } from '@prismicio/client'; // Importiere den Helper
+import { asText, asLink, isFilled } from '@prismicio/client'; // Importiere den Helper
+
+function localRedirectDisabled(): boolean {
+	try {
+		const cfg = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
+		return cfg.home_redirect_disabled === true;
+	} catch {
+		return false;
+	}
+}
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params, parent }) {
-	throw redirect(302, '/temp_home');
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
-	const { lang } = await parent();
+	const { lang, settings } = await parent();
+
+	// CMS-controlled home redirect (local override via slicemachine.config.json: home_redirect_disabled)
+	const sd = settings?.data as Record<string, unknown>;
+	const redirectActive = sd?.home_redirect_active === true;
+	const redirectLink = sd?.home_redirect_url as import('@prismicio/client').LinkField | null | undefined;
+	const redirectUrl = isFilled.link(redirectLink) ? asLink(redirectLink) : null;
+	if (redirectActive && redirectUrl && !localRedirectDisabled()) {
+		throw redirect(302, redirectUrl);
+	}
 	const client = createClient();
 
 	try {

@@ -164,6 +164,23 @@
 					"placeholder_true": "Ja",
 					"default_value": false
 				}
+			},
+			"home_redirect_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Startseite umleiten",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"home_redirect_url": {
+				"type": "Link",
+				"config": {
+					"label": "Umleitungs-Seite",
+					"select": "document",
+					"customtypes": ["page"]
+				}
 			}
 		},
 		"SEO": {
