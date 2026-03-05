@@ -13,12 +13,16 @@
 	let textColor = '#000000';
 	let sectionBgActive = false;
 	let sketchActive = false;
+	let sketchMode: 'dark' | 'light' = 'light';
 
-	const sketch = textBgColorSketch((bg, text) => {
-		bgColor = bg;
-		textColor = text;
-		if (sectionBgActive) setSectionBgStyle(bg);
-	});
+	const sketch = textBgColorSketch(
+		(bg, text) => {
+			bgColor = bg;
+			textColor = text;
+			if (sectionBgActive) setSectionBgStyle(bg);
+		},
+		() => sketchMode
+	);
 
 	onMount(() => {
 		bgColor = getCssVar('--page-bg-color');
@@ -68,6 +72,13 @@
 		else clearSectionBgStyle();
 	}
 
+	let copiedField: 'bg' | 'text' | null = null;
+	function copy(value: string, field: 'bg' | 'text') {
+		navigator.clipboard.writeText(value);
+		copiedField = field;
+		setTimeout(() => (copiedField = null), 1200);
+	}
+
 	// Clean up on panel close or component destroy
 	$: if (!open) clearSectionBgStyle();
 	onDestroy(clearSectionBgStyle);
@@ -84,6 +95,10 @@
 		</div>
 
 		{#if sketchActive}
+			<div class="row-header">
+				<button class="mode-btn" class:on={sketchMode === 'dark'} on:click={() => (sketchMode = 'dark')}>◼ Dunkel</button>
+				<button class="mode-btn" class:on={sketchMode === 'light'} on:click={() => (sketchMode = 'light')}>◻ Hell</button>
+			</div>
 			<div class="sketch-wrap">
 				<P5Canvas {sketch} width="100%" height="100%" />
 			</div>
@@ -95,6 +110,9 @@
 			<div class="color-wrap">
 				<input type="color" value={bgColor} on:input={setBg} />
 				<code>{bgColor}</code>
+				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title="Kopieren">
+					{copiedField === 'bg' ? '✓' : '⧉'}
+				</button>
 			</div>
 		</label>
 
@@ -103,6 +121,9 @@
 			<div class="color-wrap">
 				<input type="color" value={textColor} on:input={setText} />
 				<code>{textColor}</code>
+				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title="Kopieren">
+					{copiedField === 'text' ? '✓' : '⧉'}
+				</button>
 			</div>
 		</label>
 
@@ -211,7 +232,21 @@
 	code {
 		font-size: 0.75rem;
 		opacity: 0.6;
+		flex: 1;
 	}
+
+	.copy-btn {
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.3);
+		cursor: pointer;
+		font-size: 0.8rem;
+		padding: 0;
+		line-height: 1;
+		transition: color 0.15s;
+	}
+
+	.copy-btn:hover { color: #fff; }
 
 	.row-header {
 		display: flex;
@@ -233,6 +268,26 @@
 	}
 
 	.toggle.on {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
+		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+	.mode-btn {
+		flex: 1;
+		font-family: inherit;
+		font-size: 0.6rem;
+		font-weight: 700;
+		padding: 0.2rem 0;
+		border-radius: 0.25rem;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.05);
+		color: rgba(255, 255, 255, 0.35);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+
+	.mode-btn.on {
 		background: rgba(255, 255, 255, 0.15);
 		color: #fff;
 		border-color: rgba(255, 255, 255, 0.5);
