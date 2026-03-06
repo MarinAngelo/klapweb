@@ -1,9 +1,9 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
+import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 
 export const prerender = 'auto';
 
-/** @type {import('./$types').LayoutServerLoad} */
 export async function load({ params, fetch, cookies, url }) {
 	const client = createClient({ fetch, cookies });
 
@@ -11,7 +11,7 @@ export async function load({ params, fetch, cookies, url }) {
 		// 1. Repo-Infos (Master-Ermittlung)
 		const repo = await client.getRepository();
 		const technicalMaster =
-			repo.languages.find((l) => l.isMaster === true)?.id || repo.languages[0].id;
+			repo.languages.find((l) => l.is_master === true)?.id || repo.languages[0].id;
 		const allLocales = repo.languages.map((l) => l.id);
 		const mainLang = technicalMaster;
 
@@ -39,7 +39,7 @@ export async function load({ params, fetch, cookies, url }) {
 		}
 
 		// 6. Paralleles Laden der globalen Daten mit klaren Fehlermeldungen
-		const [settings, navigation, theme, fonts] = await Promise.all([
+		const [settings, navigation, theme, fonts, variablenDoc] = await Promise.all([
 			// Aktuelle Settings (müssen für jede Sprache existieren)
 			client.getSingle('settings', { lang }).catch(() => {
 				throw error(
@@ -58,18 +58,41 @@ export async function load({ params, fetch, cookies, url }) {
 
 			// Theme & Fonts (Global)
 			client.getSingle('theme', { lang: '*' }).catch(() => null),
-			client.getAllByType('font').catch(() => [])
+			client.getAllByType('font').catch(() => []),
+
+			// Variablen & Preise (Global, optional) — cast: type generated after Prismic push
+			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null)
 		]);
+
+		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
+
+		// Resolve font content relationships server-side so font names are always available
+		// without relying on fetchLinks or CSS variable state.
+		function resolveFontLink(link: any) {
+			if (!link?.id) return link;
+			const doc = fonts.find((f: any) => f.id === link.id);
+			return doc ? { ...link, data: doc.data } : link;
+		}
+		const prismicTheme = theme && {
+			...theme,
+			data: {
+				...theme.data,
+				page_font: resolveFontLink(theme.data?.page_font),
+				site_title_font: resolveFontLink(theme.data?.site_title_font),
+				header_link_font: resolveFontLink(theme.data?.header_link_font)
+			}
+		};
 
 		return {
 			settings,
 			navigation,
-			prismicTheme: theme,
+			prismicTheme,
 			fonts,
 			lang,
 			mainLang,
 			isMultilangActive,
-			locales: allLocales
+			locales: allLocales,
+			variables
 		};
 	} catch (e: any) {
 		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter

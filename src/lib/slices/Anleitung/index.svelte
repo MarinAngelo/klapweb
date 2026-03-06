@@ -3,20 +3,13 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section">
@@ -44,11 +37,6 @@
 				{/if}
 			</div>
 		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url && !slice.primary.youtube_video.embed_url.startsWith('http')}
-			<div class="text-xs text-gray-500">
-				Debug: embed_url = {slice.primary.youtube_video.embed_url}
-			</div>
-		{/if}
 		{#if slice.primary.steps && slice.primary.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
 				{#each slice.primary.steps as step, i}
@@ -68,11 +56,6 @@
 										Ungültige Video-URL: {step.youtube_video.embed_url}
 									</div>
 								{/if}
-							</div>
-						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url && !step.youtube_video.embed_url.startsWith('http')}
-							<div class="text-xs text-gray-500">
-								Debug: embed_url = {step.youtube_video.embed_url}
 							</div>
 						{/if}
 					</li>

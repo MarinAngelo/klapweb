@@ -3,31 +3,21 @@
 	import { PrismicText } from '@prismicio/svelte';
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.QuoteSlice;
+	export let slices: unknown[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 
-	const { pageBgColor, pageColor } = get(theme);
-
-	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export let slices;
-	export let context;
-	export let index;
-
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
 
 <Bounded
 	as="section"
-	style="background-color: {pageBgColor}; color: {pageColor};"
+	style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}

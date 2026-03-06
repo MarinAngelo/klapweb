@@ -18,7 +18,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
-						"labels": ["highlight", "note", "quote"]
+						"labels": ["highlight", "note", "quote", "h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"animate": {
@@ -65,7 +65,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
-						"labels": ["highlight", "note", "quote"]
+						"labels": ["highlight", "note", "quote", "h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"animate": {

@@ -1,21 +1,117 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { asText } from '@prismicio/client'; // Importiere den Helper
+import { asText } from '@prismicio/client';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
+import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 
-export async function load({ params, parent }) {
-	// 1. WICHTIG: Sprache vom Layout holen
-	const { lang } = await parent();
-	const client = createClient();
+export interface AddonRow {
+	label: string;
+	displayAmount: number | null;
+	billingType: string | null;
+}
+
+export async function load({ params, parent, fetch }) {
+	const { lang, settings } = await parent();
+	const client = createClient({ fetch });
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
-		const page = await client.getByUID('page', params.uid, { lang });
+		const page = await client.getByUID('page', params.uid, {
+			lang,
+			fetchLinks: [
+				'page.title',
+				'page.ecommerce_price_chf',
+				'page.ecommerce_billing_type',
+				'page.ecommerce_discount_percent',
+				'page.ecommerce_deposit_percent',
+				'leistung.label'
+			]
+		});
+
+		// Currency config (only relevant for ecommerce pages)
+		const hasPrice = (page.data as any).ecommerce_price_chf != null;
+		const baseCurrency: string =
+			parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
+		const additionalEntries: Array<{ waehrung?: string }> =
+			(settings.data as any).invoice_additional_currencies ?? [];
+		const additionalCodes = additionalEntries
+			.map((e) => parseCurrencyCode(e.waehrung))
+			.filter(Boolean);
+		const rates =
+			hasPrice && additionalCodes.length > 0
+				? await fetchExchangeRates(baseCurrency, additionalCodes)
+				: {};
+
+		// Resolve plan leistungen for image_cards/plaene slices
+		type PlaeneFeature = { label: string; wert: string | null };
+		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
+		const plaeneSlices = ((page.data as any).slices ?? []).filter(
+			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
+		);
+		await Promise.all(
+			plaeneSlices.map(async (s: any) => {
+				const planDocs = await Promise.all(
+					(s.items as Array<{ plan: any }>).map(async (item) => {
+						const uid = item.plan?.uid;
+						if (!uid) return [];
+						try {
+							const planPage = await client.getByUID('page', uid, {
+								lang,
+								fetchLinks: ['leistung.label']
+							});
+							const leistungen: Array<{ leistung?: any; wert?: string }> =
+								(planPage.data as any).leistungen ?? [];
+							return leistungen.map((row) => ({
+								label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
+								wert: row.wert ?? null
+							})) as PlaeneFeature[];
+						} catch {
+							return [] as PlaeneFeature[];
+						}
+					})
+				);
+				plaeneData[s.id] = planDocs;
+			})
+		);
+
+		// Resolve addon pages for ecommerce products
+		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
+		const addonRefs =
+			((page.data as any).ecommerce_addons as Array<{ addon_page?: { uid?: string } }> | undefined) ?? [];
+		const addonRows: AddonRow[] = (
+			await Promise.all(
+				addonRefs.map(async (ref) => {
+					const uid = ref.addon_page?.uid;
+					if (!uid) return null;
+					try {
+						const addonDoc = await client.getByUID('page', uid, { lang });
+						const ad = addonDoc.data as Record<string, unknown>;
+						const addonBase = (ad.ecommerce_price_chf as number) ?? null;
+						const addonDiscount = (ad.ecommerce_discount_percent as number) ?? null;
+						const addonDeposit = (ad.ecommerce_deposit_percent as number) ?? globalDepositPct;
+						return {
+							label: (addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
+							displayAmount: calcDisplayPrice(addonBase, addonDiscount, addonDeposit),
+							billingType: (ad.ecommerce_billing_type as string) || null
+						} satisfies AddonRow;
+					} catch {
+						return null;
+					}
+				})
+			)
+		).filter((a): a is AddonRow => a !== null);
 
 		return {
 			page,
-			title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
-			meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
-			meta_description: page.data.meta_description
+			title: asText(page.data.title) || '',
+			meta_title: page.data.meta_title || '',
+			meta_description: page.data.meta_description,
+			baseCurrency,
+			additionalCodes,
+			rates,
+			addonRows,
+			globalDepositPct,
+			plaeneData
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);
@@ -32,6 +128,7 @@ export async function entries() {
 	return pages
 		.map((page) => {
 			if (page.uid === 'home') return null;
+			if (page.uid === 'beauftragung') return null; // static route
 			return {
 				lang: page.lang,
 				uid: page.uid
