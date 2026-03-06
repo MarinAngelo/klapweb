@@ -82,7 +82,7 @@
 				}
 			}
 		},
-		"E-Commerce": {
+		"Online-Handel": {
 			"ecommerce_active": {
 				"type": "Boolean",
 				"config": {

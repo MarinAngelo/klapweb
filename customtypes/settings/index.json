@@ -244,7 +244,7 @@
 				}
 			}
 		},
-		"E-Commerce": {
+		"Online-Handel": {
 			"invoice_currency": {
 				"type": "Select",
 				"config": {
