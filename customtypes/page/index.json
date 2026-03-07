@@ -27,9 +27,6 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
-						"p5_grafik": {
-							"type": "SharedSlice"
-						},
 						"text_and_cta": {
 							"type": "SharedSlice"
 						},
@@ -80,6 +77,9 @@
 						},
 						"preisaufstellung": {
 							"type": "SharedSlice"
+						},
+						"p5_grafik": {
+							"type": "SharedSlice"
 						}
 					}
 				}
@@ -120,7 +120,11 @@
 				"type": "Select",
 				"config": {
 					"label": "Abrechnungsart",
-					"options": ["Einmalig", "Jährlich", "Monatlich"],
+					"options": [
+						"Einmalig",
+						"Jährlich",
+						"Monatlich"
+					],
 					"default_value": "Einmalig"
 				}
 			},
@@ -134,7 +138,9 @@
 							"config": {
 								"label": "Seite",
 								"select": "document",
-								"customtypes": ["page"]
+								"customtypes": [
+									"page"
+								]
 							}
 						}
 					}
@@ -159,7 +165,9 @@
 							"config": {
 								"label": "Leistung",
 								"select": "document",
-								"customtypes": ["leistung"]
+								"customtypes": [
+									"leistung"
+								]
 							}
 						},
 						"wert": {

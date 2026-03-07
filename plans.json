@@ -5,6 +5,6 @@
 	},
 	"professional": {
 		"label": "Professional",
-		"features": ["ecommerce"]
+		"features": ["ecommerce", "p5js"]
 	}
 }
