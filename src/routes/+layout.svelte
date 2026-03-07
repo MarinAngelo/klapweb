@@ -12,6 +12,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import KlapStudio from '$lib/components/KlapStudio.svelte';
 
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
@@ -243,7 +244,18 @@
 			?.banner_overlap === true;
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
-	onMount(() => {});
+	let studioOpen = false;
+
+	onMount(() => {
+		function onKeydown(e: KeyboardEvent) {
+			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+				e.preventDefault();
+				studioOpen = !studioOpen;
+			}
+		}
+		window.addEventListener('keydown', onKeydown);
+		return () => window.removeEventListener('keydown', onKeydown);
+	});
 	afterNavigate(() => {
 		currencySelection.set(null);
 	});
@@ -318,3 +330,4 @@
 </div>
 
 <PrismicPreview {repositoryName} />
+<KlapStudio bind:open={studioOpen} />

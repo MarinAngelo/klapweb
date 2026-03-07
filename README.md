@@ -1,4 +1,8 @@
-# Features Clients Handling
+# KlapStudio
+
+ctrl+shift+K
+
+# Feature-Flag-Problem für Multi-Client-Monorepos
 
 Funktioniert. Zusammenfassung der Änderungen:
 
