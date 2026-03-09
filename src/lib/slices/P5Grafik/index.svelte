@@ -150,7 +150,7 @@
 			background-color: {canvasBg};
 			color: {color};
 			height: {$bannerHeight};
-			font-family: {isFilled.contentRelationship(p.font) && p.font.data?.name ? p.font.data.name : 'sans-serif'};
+			font-family: {isFilled.contentRelationship(p.font) && p.font.data?.name ? p.font.data.name : 'inherit'};
 		"
 	>
 		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
