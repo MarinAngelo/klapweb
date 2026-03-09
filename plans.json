@@ -1,0 +1,10 @@
+{
+	"starter": {
+		"label": "Starter",
+		"features": []
+	},
+	"professional": {
+		"label": "Professional",
+		"features": ["ecommerce", "p5js", "variablen"]
+	}
+}

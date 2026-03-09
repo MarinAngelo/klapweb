@@ -1,0 +1,203 @@
+{
+  "id": "p5_grafik",
+  "type": "SharedSlice",
+  "name": "P5Grafik",
+  "description": "Interaktive p5.js Grafik / Animation",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard (Vollbild)",
+      "docURL": "...",
+      "version": "initial",
+      "description": "P5Grafik als Vollbild-Hintergrund ohne Text",
+      "primary": {
+        "hintergrundfarbe": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Canvas",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": { "label": "Verzögerung (ms)", "placeholder": "500" }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+        }
+      },
+      "items": {}
+    },
+    {
+      "id": "mitTitelbereich",
+      "name": "Mit Titelbereich",
+      "docURL": "...",
+      "version": "initial",
+      "description": "P5Grafik als Hintergrund mit Titel, Text und Schaltfläche",
+      "primary": {
+        "banner_overlap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Überlappend mit Kopfzeile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "header_bg_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz der Kopfzeile",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "banner_height": {
+          "type": "Select",
+          "config": {
+            "label": "Titelbild Höhe",
+            "options": ["100 %", "50 %", "33 %"],
+            "default_value": "100 %"
+          }
+        },
+        "hintergrundfarbe": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Canvas",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Überlagerungsfarbe (über Canvas)",
+            "placeholder": ""
+          }
+        },
+        "overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz der Überlagerung",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Text",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "multi": "paragraph,strong,em",
+            "labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+          }
+        },
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Textfarbe",
+            "placeholder": ""
+          }
+        },
+        "font": {
+          "type": "Link",
+          "config": {
+            "label": "Schriftart",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [{ "id": "font", "fields": ["name", "provider", "variants", "adobeFontId"] }]
+          }
+        },
+        "button_link": {
+          "type": "Link",
+          "config": {
+            "label": "Schaltflächenlink",
+            "placeholder": "",
+            "select": null,
+            "customtypes": ["page"]
+          }
+        },
+        "button_text": {
+          "type": "Text",
+          "config": {
+            "label": "Schaltflächentext",
+            "placeholder": ""
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrund Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "text_overlay_color": {
+          "type": "Color",
+          "config": {
+            "label": "Text Überlagerungsfarbe",
+            "placeholder": ""
+          }
+        },
+        "text_overlay_opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz Text Überlagerungsfarbe",
+            "placeholder": "0 - 100 %"
+          }
+        },
+        "switch_off_text_overlay": {
+          "type": "Boolean",
+          "config": {
+            "label": "Text Hintergrund in Mobile aus",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "text_overlay_padding": {
+          "type": "Select",
+          "config": {
+            "label": "Text Überlagerungsfeld Grösse",
+            "options": ["klein", "mittel", "gross"]
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import ButtonSlice from './Button/index.svelte';
 import Preisaufstellung from './Preisaufstellung/index.svelte';
 import Preisvergleich from './Preisvergleich/index.svelte';
 import TextAndCta from './TextAndCta/index.svelte';
+import P5Grafik from './P5Grafik/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -35,5 +36,6 @@ export const components = {
 	text_and_cta: TextAndCta,
 	preisaufstellung: Preisaufstellung,
 	preisvergleich: Preisvergleich,
-	text_with_image: TextMitBild
+	text_with_image: TextMitBild,
+	p5_grafik: P5Grafik
 };

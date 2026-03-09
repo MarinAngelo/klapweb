@@ -3,15 +3,16 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
+		"dev": "node scripts/build-customtypes.js && concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
 		"vite:dev": "vite dev",
-		"build": "vite build",
+		"build": "node scripts/build-customtypes.js && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"slicemachine": "start-slicemachine",
+		"build-customtypes": "node scripts/build-customtypes.js",
 		"clean": "rimraf .svelte-kit",
 		"rebuild": "npm run clean && npm run build"
 	},
