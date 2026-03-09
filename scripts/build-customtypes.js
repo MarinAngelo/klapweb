@@ -22,8 +22,8 @@
  *     Full custom type definition — copied to customtypes/<typeName>/index.json (gitignored)
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -32,7 +32,9 @@ function read(path) {
 }
 
 function write(path, data) {
-	writeFileSync(join(ROOT, path), JSON.stringify(data, null, '\t') + '\n');
+	const fullPath = join(ROOT, path);
+	mkdirSync(dirname(fullPath), { recursive: true });
+	writeFileSync(fullPath, JSON.stringify(data, null, '\t') + '\n');
 }
 
 const config = read('slicemachine.config.json');
