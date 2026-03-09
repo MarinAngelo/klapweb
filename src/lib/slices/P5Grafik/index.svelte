@@ -78,8 +78,8 @@
 
 			const t = p5.frameCount * 0.02;
 			for (let i = 0; i < 5; i++) {
-				const x = p5.width / 2 + p5.cos(t + (i * p5.TWO_PI) / 5) * (p5.width * 0.3);
-				const y = p5.height / 2 + p5.sin(t * 0.7 + (i * p5.TWO_PI) / 5) * (p5.height * 0.3);
+				const x = p5.width / 2 + p5.cos(t + (i * p5.TWO_PI) / 5) * (p5.width * 0.45);
+				const y = p5.height / 2 + p5.sin(t * 0.7 + (i * p5.TWO_PI) / 5) * (p5.height * 0.45);
 				p5.fill((i * 60 + p5.frameCount) % 360, 80, 100, 60);
 				p5.circle(x, y, 80 + p5.sin(t + i) * 30);
 			}
@@ -119,6 +119,9 @@
 	const paddingMap: Record<string, string> = { klein: '1rem 2rem', mittel: '2rem 4rem', gross: '4rem 6rem' };
 	$: textOverlayPadding = p.text_overlay_padding in paddingMap ? paddingMap[p.text_overlay_padding] : paddingMap['mittel'];
 
+	const mobileTextScaleMap: Record<string, number> = { Klein: 0.8, Kleiner: 0.65, 'Sehr klein': 0.5 };
+	$: mobileFontScale = mobileTextScaleMap[p.mobile_text_scale as string] ?? 1.0;
+
 	$: buttonColor = p.button_color || null;
 	$: buttonHoverColor = p.button_hover_color || null;
 	$: buttonBgColor = p.button_bg_color || null;
@@ -155,7 +158,7 @@
 	>
 		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<P5Canvas {sketch} width="100%" height="100%" />
+			<P5Canvas {sketch} width="100%" height={$bannerHeight !== 'auto' ? $bannerHeight : '100vh'} />
 		</div>
 
 		<!-- Farb-Overlay über Canvas -->
@@ -167,12 +170,12 @@
 		{/if}
 
 		<!-- Titelbereich-Inhalt -->
-		<Bounded tag="div" yPadding="lg" class="relative z-10">
+		<Bounded tag="div" yPadding="none" class="relative z-10">
 			<div
-				class="relative flex flex-col items-center justify-center min-h-[80vh] sm:min-h-[60vh]"
-				style={bannerTop
-					? `margin-top: -${$headerHeight}px; padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;`
-					: ''}
+				class="relative flex flex-col items-center justify-center"
+				style="min-height: {$bannerHeight !== 'auto' ? $bannerHeight : '100vh'};{bannerTop
+					? ` margin-top: -${$headerHeight}px;`
+					: ''}"
 			>
 				<div class="relative w-full flex items-center justify-center">
 					{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
@@ -186,7 +189,7 @@
 						<style>
 							@media (max-width: 640px) { .relative.z-10.text-center { padding: 0 !important; } }
 						</style>
-						<div class="leading-loose tracking-wider-all">
+						<div class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
 							{#if p.text}
 								<div style="--page-color: {color};">
 									<PrismicRichText field={p.text} />

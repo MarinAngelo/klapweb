@@ -195,6 +195,14 @@
             "label": "Text Überlagerungsfeld Grösse",
             "options": ["klein", "mittel", "gross"]
           }
+        },
+        "mobile_text_scale": {
+          "type": "Select",
+          "config": {
+            "label": "Textgrösse Mobile",
+            "placeholder": "",
+            "options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
+          }
         }
       },
       "items": {}
