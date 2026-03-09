@@ -18,9 +18,11 @@
  *     }
  *   slices.json:
  *     { "<SliceName>": ["variationId", ...] }  // variations to add to slice model
+ *   customtypes/<typeName>/index.json:
+ *     Full custom type definition — copied to customtypes/<typeName>/index.json (gitignored)
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -128,7 +130,6 @@ for (const feature of features) {
 }
 
 // Find all slices that have a base.json (managed slices)
-import { readdirSync } from 'fs';
 const slicesDir = join(ROOT, 'src/lib/slices');
 const allSlices = readdirSync(slicesDir, { withFileTypes: true })
 	.filter((d) => d.isDirectory())
@@ -173,6 +174,25 @@ for (const sliceName of allSlices) {
 	console.log(
 		`✓ slices/${sliceName}/model.json (+${[...additionalVariationIds].join(', ')})`
 	);
+}
+
+// ── 3. Feature-only Custom Types ───────────────────────────────────────────────
+
+for (const feature of features) {
+	const ctDir = join(ROOT, `customtypes/_features/${feature}/customtypes`);
+	if (!existsSync(ctDir)) continue;
+
+	const typeNames = readdirSync(ctDir, { withFileTypes: true })
+		.filter((d) => d.isDirectory())
+		.map((d) => d.name);
+
+	for (const typeName of typeNames) {
+		const src = join(ctDir, typeName, 'index.json');
+		if (!existsSync(src)) continue;
+		const def = JSON.parse(readFileSync(src, 'utf-8'));
+		write(`customtypes/${typeName}/index.json`, def);
+		console.log(`✓ customtypes/${typeName}/index.json (feature: ${feature})`);
+	}
 }
 
 console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
