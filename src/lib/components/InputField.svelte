@@ -123,7 +123,7 @@
 			placeholder={field.placeholder ?? ''}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+				: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
@@ -153,7 +153,7 @@
 				/>
 			</div>
 		{:else}
-			<div class="flex items-end mt-1 border-b-2" style="border-bottom-color: {$theme.pageColor};">
+			<div class="flex items-end mt-1 border-b focus-within:border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<select
 					bind:value={prefix}
 					class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
@@ -189,7 +189,7 @@
 				on:blur
 			></textarea>
 		{:else}
-			<div class="border-b-2" style="border-bottom-color: {$theme.pageColor};">
+			<div class="border-b focus-within:border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<textarea
 					id={key}
 					name={key}
@@ -209,7 +209,7 @@
 			required={field.required}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
@@ -242,7 +242,7 @@
 			required={field.required}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
