@@ -11,6 +11,22 @@
       "version": "sktwi1xtmkfgx8626",
       "description": "Text&Aktion",
       "primary": {
+        "label": {
+          "type": "Text",
+          "config": {
+            "label": "Label",
+            "placeholder": "z.B. Über uns"
+          }
+        },
+        "text_align": {
+          "type": "Select",
+          "config": {
+            "label": "Textausrichtung",
+            "placeholder": "",
+            "options": ["Links", "Mitte", "Rechts"],
+            "default_value": "Links"
+          }
+        },
         "text": {
           "type": "StructuredText",
           "config": {
