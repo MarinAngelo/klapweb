@@ -120,10 +120,10 @@
 	style:color={headerColor}
 >
 	<Bounded tag="div" yPadding="none" tMargin="lg" fullWidth={prismicTheme?.data?.full_screen_width === true}>
-		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
-			<div class="logo m-0">
+		<div class="flex items-stretch justify-between w-full">
+			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-2 mb-2">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5">
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div

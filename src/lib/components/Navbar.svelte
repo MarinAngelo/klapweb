@@ -75,7 +75,7 @@
     }
 </script>
 
-<nav class="flex items-center justify-between flex-wrap p-6 pr-0 lg:pr-6" style="font-family: {headerLinkFont};">
+<nav class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6" style="font-family: {headerLinkFont};">
     <div class="block lg:hidden h-full flex items-center">
         <button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
             {#if $isMenuOpen}
@@ -147,3 +147,10 @@
         </ul>
     </div>
 </nav>
+
+<style>
+    /* Override global li { mb-4 } — nav li must have no bottom margin for correct flex centering */
+    nav :global(li) {
+        margin-bottom: 0;
+    }
+</style>
