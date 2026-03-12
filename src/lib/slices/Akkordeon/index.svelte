@@ -16,6 +16,8 @@
 	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	const STAGGER_MS = 150;
+
+	$: leistungenItems = ((slice.primary as any).leistungen_items ?? []) as Array<{ leistung: any }>;
 </script>
 
 <Bounded
@@ -37,6 +39,41 @@
 			</div>
 		{/if}
 
+		{#if slice.variation === 'leistungen'}
+		{#each leistungenItems as item, index}
+			{@const leistung = item.leistung?.data ?? {}}
+			<div
+				use:reveal={anim.animate
+					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
+					: { direction: 'none' }}
+				class="border-b pb-4"
+				style="border-color: {$theme.pageColor}"
+			>
+				<button
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
+					aria-haspopup="true"
+					aria-expanded={$openIndex === index}
+					on:click={() => toggleItem(index)}
+				>
+					{leistung.label ?? ''}
+					<svg
+						class="w-4 h-4 ml-1 fill-current transform transition-transform"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 20 20"
+						class:rotate-180={$openIndex === index}
+					>
+						<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+					</svg>
+				</button>
+
+				{#if $openIndex === index}
+					<div class="mt-2 transition-all">
+						<PrismicRichText field={leistung.beschreibung} />
+					</div>
+				{/if}
+			</div>
+		{/each}
+	{:else}
 		{#each slice.primary.accordion_items as item, index}
 			<div
 				use:reveal={anim.animate
@@ -78,6 +115,7 @@
 				{/if}
 			</div>
 		{/each}
+	{/if}
 	</div>
 </Bounded>
 

@@ -24,7 +24,8 @@ export async function load({ params, parent, fetch }) {
 				'page.ecommerce_billing_type',
 				'page.ecommerce_discount_percent',
 				'page.ecommerce_deposit_percent',
-				'leistung.label'
+				'leistung.label',
+				'leistung.beschreibung'
 			]
 		});
 
