@@ -2,7 +2,10 @@
 	import type { PageData } from './$types';
 	export let data: PageData;
 
-	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Dienstleistung', 'Betrag', 'Zahlung'];
+	import { page } from '$app/stores';
+
+	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Dienstleistung', 'Betrag', 'Zahlung', ''];
+	$: secret = $page.url.searchParams.get('secret') ?? '';
 
 	function fmt(c: (typeof data.customers)[0]) {
 		const name = [c.vorname, c.nachname].filter(Boolean).join(' ') || '–';
@@ -56,6 +59,18 @@
 									background: {r.method === 'rechnung' ? '#dbeafe' : r.method === 'bar' ? '#dcfce7' : '#f3e8ff'};
 									color: {r.method === 'rechnung' ? '#1e40af' : r.method === 'bar' ? '#166534' : '#6b21a8'};
 								">{r.method}</span>
+							</td>
+							<td style="padding: 0.5rem 0.75rem;">
+								<form
+									method="POST"
+									action="?/delete&secret={secret}"
+									on:submit|preventDefault={(e) => { if (confirm(`${r.name} wirklich löschen?`)) (e.target as HTMLFormElement).submit(); }}
+								>
+									<input type="hidden" name="id" value={c.id} />
+									<button type="submit" style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+										Löschen
+									</button>
+								</form>
 							</td>
 						</tr>
 					{/each}

@@ -59,6 +59,11 @@ export async function saveCustomer(record: Omit<CustomerRecord, 'id'>): Promise<
 	return id;
 }
 
+export async function deleteCustomer(id: string): Promise<void> {
+	const store = getCustomerStore();
+	await store.delete(id);
+}
+
 export async function listCustomers(): Promise<CustomerRecord[]> {
 	const store = getCustomerStore();
 	const { blobs } = await store.list();
