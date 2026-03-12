@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import { env } from '$env/dynamic/private';
 
 export interface CustomerRecord {
 	id: string;
@@ -22,7 +23,14 @@ export interface CustomerRecord {
 }
 
 function getCustomerStore() {
-	return getStore('kunden');
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'kunden', siteID, token });
 }
 
 export async function saveCustomer(record: Omit<CustomerRecord, 'id'>): Promise<string> {
