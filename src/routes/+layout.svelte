@@ -239,9 +239,12 @@
 	$: adobeFontUrl = settings?.data?.adobe_font_id
 		? `https://use.typekit.net/${settings.data.adobe_font_id}.css`
 		: null;
-	$: hasBannerOverlap =
-		$page.data?.page?.data?.slices?.find((s: any) => s.slice_type === 'hero')?.primary
-			?.banner_overlap === true;
+	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
+		(s: any) =>
+			(s.slice_type === 'hero' ||
+				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+			s.primary?.banner_overlap === true
+	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
 	let studioOpen = false;

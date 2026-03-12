@@ -27,7 +27,7 @@ export function particleFlowSketch(
 		}
 
 		p5.setup = () => {
-			p5.createCanvas(el.offsetWidth, el.offsetHeight);
+			p5.createCanvas(el.offsetWidth || window.innerWidth, window.innerHeight);
 			p5.colorMode(p5.HSB, 360, 100, 100, 100);
 			p5.noStroke();
 			for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(spawnParticle());

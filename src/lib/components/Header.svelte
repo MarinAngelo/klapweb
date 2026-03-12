@@ -39,12 +39,18 @@
 		prismicTheme?.data?.header_link_hover_color || $theme.headerLinkHoverColor;
 
 	// bannerTop direkt aus den Seitendaten lesen, nicht aus dem Store
+	// Alle Slice-Typen berücksichtigen, die als Vollbild-Banner fungieren können
 	$: bannerTop = (() => {
 		const slices = $page.data?.page?.data?.slices;
 		if (!Array.isArray(slices)) return false;
 
-		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
-		return titelbereichSlice?.primary?.banner_overlap === true;
+		const bannerSlice = slices.find(
+			(s: any) =>
+				(s.slice_type === 'hero' ||
+					(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				s.primary?.banner_overlap === true
+		);
+		return !!bannerSlice;
 	})();
 
 	$: headerColor = $theme.headerColor;
@@ -97,6 +103,7 @@
 			window.removeEventListener('resize', updateHeaderHeight);
 			if (landscapeQuery) landscapeQuery.removeEventListener('change', updateHeaderHeight);
 			if (observer) observer.disconnect();
+			headerHeight.set(0);
 		};
 	});
 

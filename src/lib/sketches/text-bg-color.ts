@@ -37,7 +37,7 @@ export function textBgColorSketch(
 		let frozen = false;
 
 		p5.setup = () => {
-			p5.createCanvas(el.offsetWidth, el.offsetHeight);
+			p5.createCanvas(el.offsetWidth || window.innerWidth, window.innerHeight);
 			p5.colorMode(p5.HSB, 360, 100, 100, 100);
 			p5.textAlign(p5.CENTER, p5.CENTER);
 			p5.noStroke();
