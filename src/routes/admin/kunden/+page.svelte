@@ -7,6 +7,11 @@
 	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Dienstleistung', 'Betrag', 'Zahlung', ''];
 	$: secret = $page.url.searchParams.get('secret') ?? '';
 
+	function confirmDelete(e: SubmitEvent, name: string) {
+		if (!confirm(`${name} wirklich löschen?`)) return;
+		(e.currentTarget as HTMLFormElement).submit();
+	}
+
 	function fmt(c: (typeof data.customers)[0]) {
 		const name = [c.vorname, c.nachname].filter(Boolean).join(' ') || '–';
 		const date = new Date(c.date).toLocaleString('de-CH', {
@@ -64,7 +69,7 @@
 								<form
 									method="POST"
 									action="?/delete&secret={secret}"
-									on:submit|preventDefault={(e) => { if (confirm(`${r.name} wirklich löschen?`)) (e.target as HTMLFormElement).submit(); }}
+									on:submit|preventDefault={(e) => confirmDelete(e, r.name)}
 								>
 									<input type="hidden" name="id" value={c.id} />
 									<button type="submit" style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
