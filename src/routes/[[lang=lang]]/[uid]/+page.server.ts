@@ -56,22 +56,25 @@ export async function load({ params, parent, fetch }) {
 						const uid = item.plan?.uid;
 						if (!uid) return [];
 						try {
-							const planPage = await client.getByUID('page', uid, {
-								lang,
-								fetchLinks: ['leistung.label', 'leistung.beschreibung']
-							});
+							const planPage = await client.getByUID('page', uid, { lang });
 							const leistungen: Array<{ leistung?: any; wert?: string }> =
 								(planPage.data as any).leistungen ?? [];
-							return leistungen.map((row) => {
-								const beschreibungBlocks = row.leistung?.data?.beschreibung ?? [];
-							const beschreibung =
-								beschreibungBlocks.length ? (asHTML(beschreibungBlocks) ?? undefined) : undefined;
-								return {
-									label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
-									wert: row.wert ?? null,
-									beschreibung
-								};
-							}) as PlaeneFeature[];
+							return await Promise.all(
+								leistungen.map(async (row) => {
+									const lUid = row.leistung?.uid;
+									let beschreibung: string | undefined;
+									let label = row.leistung?.uid ?? '';
+									if (lUid) {
+										try {
+											const doc = await client.getByUID('leistung', lUid, { lang });
+											label = (doc.data as any).label ?? label;
+											const blocks = (doc.data as any).beschreibung ?? [];
+											beschreibung = blocks.length ? (asHTML(blocks) ?? undefined) : undefined;
+										} catch { /* ignore */ }
+									}
+									return { label, wert: row.wert ?? null, beschreibung } as PlaeneFeature;
+								})
+							);
 						} catch {
 							return [] as PlaeneFeature[];
 						}
@@ -80,6 +83,22 @@ export async function load({ params, parent, fetch }) {
 				plaeneData[s.id] = planDocs;
 			})
 		);
+
+		// Resolve page's own leistungen with full beschreibung (fetchLinks only returns first block)
+		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
+			(page.data as any).leistungen ?? [];
+		const pageLeistungen = await Promise.all(
+			leistungenRefs.map(async (row) => {
+				const uid = row.leistung?.uid;
+				if (!uid) return null;
+				try {
+					const doc = await client.getByUID('leistung', uid, { lang });
+					return { leistung: doc, wert: row.wert ?? null };
+				} catch {
+					return null;
+				}
+			})
+		).then((rows) => rows.filter(Boolean));
 
 		// Resolve addon pages for ecommerce products
 		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
@@ -118,7 +137,8 @@ export async function load({ params, parent, fetch }) {
 			rates,
 			addonRows,
 			globalDepositPct,
-			plaeneData
+			plaeneData,
+			pageLeistungen
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);
