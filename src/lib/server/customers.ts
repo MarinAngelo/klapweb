@@ -1,3 +1,22 @@
+/**
+ * Customer storage via Netlify Blobs.
+ *
+ * Each purchase creates one blob (key = `${Date.now()}_${uuid}`).
+ * Never store all customers in a single blob — race conditions on concurrent writes.
+ *
+ * Required Netlify environment variables:
+ *   NETLIFY_SITE_ID  — Site Settings → General → Site ID
+ *   NETLIFY_TOKEN    — User Settings → Applications → Personal access tokens (expiry: never)
+ *
+ * NOTE: @netlify/blobs auto-detection does NOT work with adapter-auto on Netlify.
+ * siteID + token must always be passed explicitly via $env/dynamic/private.
+ *
+ * Admin view: /admin/kunden?secret=<ADMIN_SECRET>
+ *
+ * Called from:
+ *   - src/routes/api/invoice/+server.ts      (Rechnung, fire-and-forget after email)
+ *   - src/routes/api/save-customer/+server.ts (Bar, called from zusammenfassung page)
+ */
 import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
 
