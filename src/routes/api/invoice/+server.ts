@@ -4,6 +4,7 @@ import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
+import { saveCustomer } from '$lib/server/customers';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -512,6 +513,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			headers: { 'Content-Type': 'application/json' }
 		});
 	}
+
+	// Kundendaten speichern (fire-and-forget — Fehler sollen die Response nicht blockieren)
+	saveCustomer({
+		date: new Date().toISOString(),
+		paymentMethod: 'rechnung',
+		service: product.label,
+		amount: finalPrice,
+		currency: invoiceCurrency,
+		discountCode: codeDiscountInfo?.code,
+		vorname: data['vorname'],
+		nachname: data['nachname'],
+		firma: data['firma'],
+		email: data['email'],
+		adresse: data['adresse'],
+		plz: data['plz'],
+		ort: data['ort'],
+		land: data['land']
+	}).catch((e) => console.error('Kunde konnte nicht gespeichert werden:', e));
 
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;

@@ -113,7 +113,7 @@
 
 		<div
 			class="grid grid-cols-1 gap-6"
-			style="grid-template-columns: repeat({planItems.length}, minmax(0, 1fr));"
+			style="--plan-cols: {planItems.length};"
 		>
 			{#each planItems as plan, i}
 				<div
@@ -228,5 +228,11 @@
 <style>
 	.custom-color {
 		color: var(--custom-component-color) !important;
+	}
+
+	@media (min-width: 768px) {
+		div[style*='--plan-cols'] {
+			grid-template-columns: repeat(var(--plan-cols), minmax(0, 1fr));
+		}
 	}
 </style>

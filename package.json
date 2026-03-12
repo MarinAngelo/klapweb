@@ -45,6 +45,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@netlify/blobs": "^10.7.1",
 		"@prismicio/client": "^7.17.1",
 		"@prismicio/helpers": "^2.3.9",
 		"@prismicio/svelte": "^1.5.0",
