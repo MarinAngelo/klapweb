@@ -100,7 +100,7 @@
 		animationOptions={anim.options}
 	>
 		{#if titel}
-			<h2 class="text-2xl font-bold mb-8">{titel}</h2>
+			<h2 class="font-bold mb-8">{titel}</h2>
 		{/if}
 
 		<div class="overflow-x-auto">

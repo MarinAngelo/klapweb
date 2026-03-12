@@ -8,6 +8,7 @@
 	import ImageCard from './ImageCard.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
+	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
 
 	export let slice: Content.ImageCardsSlice;
 	export let slices: any = {};
@@ -55,9 +56,9 @@
 	$: globalDepositPct = context?.globalDepositPct ?? null;
 
 	// plaeneData: keyed by slice.id → array of feature rows per plan
-	// shape: Array<Array<{ label: string; wert: string | null }>>
+	// shape: Array<Array<{ label: string; wert: string | null; beschreibung?: string }>>
 	$: plaeneData = (context?.plaeneData?.[slice.id] ?? []) as Array<
-		Array<{ label: string; wert: string | null }>
+		Array<{ label: string; wert: string | null; beschreibung?: string }>
 	>;
 
 	$: planItems = (() => {
@@ -82,8 +83,9 @@
 			const highlight = hervorhebung === `Plan ${i + 1}`;
 			const uid = planDoc?.uid as string | undefined;
 			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
-			const features: Array<{ label: string; wert: string | null }> = plaeneData[i] ?? [];
-			return { name, price: converted, suffix, billingType, highlight, href, features };
+			const pageHref = uid ? `/${uid}` : null;
+			const features: Array<{ label: string; wert: string | null; beschreibung?: string }> = plaeneData[i] ?? [];
+			return { name, price: converted, suffix, billingType, highlight, href, pageHref, features };
 		});
 	})();
 
@@ -106,7 +108,7 @@
 		animationOptions={anim.options}
 	>
 		{#if isFilled.richText(slice.primary.heading)}
-			<h2 class="text-2xl font-bold mb-8 custom-color">
+			<h2 class="font-bold mb-8 custom-color">
 				<PrismicText field={slice.primary.heading} />
 			</h2>
 		{/if}
@@ -117,7 +119,7 @@
 		>
 			{#each planItems as plan, i}
 				<div
-					class="flex flex-col p-6 border"
+					class="relative flex flex-col p-6 border"
 					class:border-2={plan.highlight}
 					style="
 						color: {cardColor};
@@ -129,7 +131,17 @@
 				>
 					<!-- Plan name + price -->
 					<div class="mb-4">
-						<div class="font-bold text-lg">{plan.name}</div>
+						<h4 class="font-bold">
+							{#if plan.pageHref}
+								<a
+									href={plan.pageHref}
+									class="hover:opacity-70 transition-opacity"
+									style="color: {cardColor};"
+								>{plan.name} <span style="font-size: 0.75em; opacity: 0.6;">↗</span></a>
+							{:else}
+								{plan.name}
+							{/if}
+						</h4>
 						{#if plan.price !== null}
 							<div class="text-2xl font-bold mt-1 tabular-nums">
 								{formatPrice(plan.price, activeCurrency)}
@@ -142,7 +154,7 @@
 
 					<!-- Feature list -->
 					{#if plan.features.length > 0}
-						<ul class="flex-1 mb-6 space-y-2 text-sm">
+						<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
 							{#if i > 0}
 								<li class="text-sm opacity-60 italic pb-1">
 									Alles von {planItems[i - 1].name} und:
@@ -157,8 +169,8 @@
 									{:else}
 										<span style="color: {cardColor};">{feat.wert}</span>
 									{/if}
-									<span class:opacity-40={feat.wert === '–' || feat.wert === null}>
-										{feat.label}
+									<span>
+										{feat.label}{#if feat.beschreibung}&thinsp;<InfoTooltip html={feat.beschreibung} />{/if}
 									</span>
 								</li>
 							{/each}
@@ -235,4 +247,5 @@
 			grid-template-columns: repeat(var(--plan-cols), minmax(0, 1fr));
 		}
 	}
+
 </style>

@@ -1,6 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { asText } from '@prismicio/client';
+import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 
@@ -43,7 +43,7 @@ export async function load({ params, parent, fetch }) {
 				: {};
 
 		// Resolve plan leistungen for image_cards/plaene slices
-		type PlaeneFeature = { label: string; wert: string | null };
+		type PlaeneFeature = { label: string; wert: string | null; beschreibung?: string };
 		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
 		const plaeneSlices = ((page.data as any).slices ?? []).filter(
 			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
@@ -57,14 +57,20 @@ export async function load({ params, parent, fetch }) {
 						try {
 							const planPage = await client.getByUID('page', uid, {
 								lang,
-								fetchLinks: ['leistung.label']
+								fetchLinks: ['leistung.label', 'leistung.beschreibung']
 							});
 							const leistungen: Array<{ leistung?: any; wert?: string }> =
 								(planPage.data as any).leistungen ?? [];
-							return leistungen.map((row) => ({
-								label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
-								wert: row.wert ?? null
-							})) as PlaeneFeature[];
+							return leistungen.map((row) => {
+								const beschreibungBlocks = row.leistung?.data?.beschreibung ?? [];
+							const beschreibung =
+								beschreibungBlocks.length ? (asHTML(beschreibungBlocks) ?? undefined) : undefined;
+								return {
+									label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
+									wert: row.wert ?? null,
+									beschreibung
+								};
+							}) as PlaeneFeature[];
 						} catch {
 							return [] as PlaeneFeature[];
 						}

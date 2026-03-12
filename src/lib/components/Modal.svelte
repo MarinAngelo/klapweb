@@ -19,7 +19,7 @@
 		class="rounded-lg shadow-lg p-8 max-w-md w-full mx-4"
 		style="background-color: var(--page-bg-color); color: var(--page-color);"
 	>
-		<h3 class="text-xl font-bold mb-4">{title}</h3>
+		<p class="text-xl font-bold mb-4">{title}</p>
 		<div class="mb-6">
 			<PrismicRichText field={message} />
 		</div>
