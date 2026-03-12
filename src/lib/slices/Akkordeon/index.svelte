@@ -9,6 +9,7 @@
 	import { reveal } from '$lib/actions/reveal';
 
 	export let slice: Content.AccordionSlice;
+	export let context: any = {};
 
 	const { openIndex, toggleItem } = useOpenIndex(0);
 
@@ -17,7 +18,7 @@
 
 	const STAGGER_MS = 150;
 
-	$: leistungenItems = ((slice.primary as any).leistungen_items ?? []) as Array<{ leistung: any }>;
+	$: leistungenItems = (context?.pageLeistungen ?? []) as Array<{ leistung: any }>;
 </script>
 
 <Bounded
@@ -68,7 +69,9 @@
 
 				{#if $openIndex === index}
 					<div class="mt-2 transition-all">
-						<PrismicRichText field={leistung.beschreibung} />
+						{#if leistung.beschreibung?.length}
+							<PrismicRichText field={leistung.beschreibung} />
+						{/if}
 					</div>
 				{/if}
 			</div>
