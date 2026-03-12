@@ -14,10 +14,12 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 
 	let customers: Awaited<ReturnType<typeof listCustomers>> = [];
+	let blobError: string | null = null;
 	try {
 		customers = await listCustomers();
 	} catch (e) {
+		blobError = e instanceof Error ? e.message : String(e);
 		console.error('listCustomers fehlgeschlagen:', e);
 	}
-	return { customers };
+	return { customers, blobError };
 };

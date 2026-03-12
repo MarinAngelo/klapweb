@@ -22,6 +22,10 @@
 		Kunden ({data.customers.length})
 	</h1>
 
+	{#if data.blobError}
+		<p style="color: red; font-family: monospace; font-size: 0.8rem;">Fehler: {data.blobError}</p>
+	{/if}
+
 	{#if data.customers.length === 0}
 		<p style="opacity: 0.5;">Noch keine Einträge.</p>
 	{:else}
