@@ -13,6 +13,11 @@ export const load: PageServerLoad = async ({ url }) => {
 		throw error(403, 'Kein Zugriff');
 	}
 
-	const customers = await listCustomers();
+	let customers: Awaited<ReturnType<typeof listCustomers>> = [];
+	try {
+		customers = await listCustomers();
+	} catch (e) {
+		console.error('listCustomers fehlgeschlagen:', e);
+	}
 	return { customers };
 };
