@@ -49,6 +49,17 @@
 				"default_value": "Einmalig"
 			}
 		},
+		"ecommerce_stripe_url": {
+			"type": "Link",
+			"config": {
+				"label": "Stripe Payment Link",
+				"placeholder": "https://buy.stripe.com/...",
+				"select": null,
+				"allowTargetBlank": true
+			}
+		}
+	},
+	"Leistungen": {
 		"ecommerce_addons": {
 			"type": "Group",
 			"config": {
@@ -65,15 +76,6 @@
 						}
 					}
 				}
-			}
-		},
-		"ecommerce_stripe_url": {
-			"type": "Link",
-			"config": {
-				"label": "Stripe Payment Link",
-				"placeholder": "https://buy.stripe.com/...",
-				"select": null,
-				"allowTargetBlank": true
 			}
 		},
 		"leistungen": {
