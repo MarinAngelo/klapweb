@@ -74,7 +74,8 @@
 										"Ankreuzfeld",
 										"Einzelauswahl",
 										"Land",
-										"Termin"
+										"Termin",
+										"Zeitzone"
 									]
 								}
 							},
@@ -340,7 +341,8 @@
 										"Ankreuzfeld",
 										"Einzelauswahl",
 										"Land",
-										"Termin"
+										"Termin",
+										"Zeitzone"
 									]
 								}
 							},
@@ -485,7 +487,8 @@
 										"Ankreuzfeld",
 										"Einzelauswahl",
 										"Land",
-										"Termin"
+										"Termin",
+										"Zeitzone"
 									]
 								}
 							},
@@ -605,7 +608,8 @@
 										"Ankreuzfeld",
 										"Einzelauswahl",
 										"Land",
-										"Termin"
+										"Termin",
+										"Zeitzone"
 									]
 								}
 							},
