@@ -5,6 +5,10 @@
 	},
 	"professional": {
 		"label": "Professional",
+		"features": ["terminbuchung"]
+	},
+	"individuell": {
+		"label": "Individuell",
 		"features": ["ecommerce", "p5js", "variablen", "terminbuchung"]
 	}
 }
