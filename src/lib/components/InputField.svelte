@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
-	import { onMount } from 'svelte';
 
 	export let field: {
 		field_name: string | null;
@@ -32,10 +31,12 @@
 	};
 
 	// Termin-Auswahl: verfügbare Slots laden
+	export let refreshKey: number = 0;
 	interface AvailableTermin { id: string; label: string; }
 	let termine: AvailableTermin[] = [];
 	let termineLoading = false;
 	let termineError = false;
+	let selectedTermin = '';
 
 	const countries = [
 		'Afghanistan', 'Ägypten', 'Albanien', 'Algerien', 'Andorra', 'Angola',
@@ -78,16 +79,21 @@
 	// HTML-Typ basierend auf dem Mapping (reaktiv: aktualisiert sich wenn field.field_type ändert)
 	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
 
-	onMount(() => {
-		if (field.field_type === 'Termin') {
-			termineLoading = true;
-			fetch('/api/termine')
-				.then((r) => r.json())
-				.then((data: AvailableTermin[]) => { termine = data; })
-				.catch(() => { termineError = true; })
-				.finally(() => { termineLoading = false; });
+	async function loadTermine(_key: number) {
+		termineLoading = true;
+		termineError = false;
+		selectedTermin = '';
+		try {
+			const r = await fetch('/api/termine');
+			termine = await r.json();
+		} catch {
+			termineError = true;
+		} finally {
+			termineLoading = false;
 		}
-	});
+	}
+
+	$: if (field.field_type === 'Termin' && typeof window !== 'undefined') loadTermine(refreshKey);
 
 	// Telefon: Vorwahl + Nummer
 	const countryPrefixes = [
@@ -298,6 +304,7 @@
 				id={key}
 				name={key}
 				required={field.required}
+				bind:value={selectedTermin}
 				class={compact
 					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
 					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
@@ -306,7 +313,7 @@
 					: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
 				on:blur
 			>
-				<option value="" disabled selected>Termin auswählen</option>
+				<option value="">Termin auswählen</option>
 				{#each termine as t}
 					<option value={t.id}>{t.label}</option>
 				{/each}

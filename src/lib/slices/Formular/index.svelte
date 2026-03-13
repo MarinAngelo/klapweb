@@ -111,6 +111,9 @@
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
 
+	// Termin-Feld: nach Submit neu laden (gebuchter Termin verschwindet aus Liste)
+	let termineRefreshKey = 0;
+
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
 		if (!field || !effectiveKey(field)) return '';
 		const val = String(value ?? '').trim();
@@ -302,6 +305,7 @@
 				showModal = true;
 				form.reset();
 				fieldErrors = {};
+				termineRefreshKey++;
 			} else {
 				console.error('Fehler beim Senden des Formulars:', response);
 				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
@@ -423,7 +427,7 @@
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
-							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+							<InputField {field} refreshKey={termineRefreshKey} on:blur={(e) => onFieldBlur(e, field)} />
 							{#if fieldErrors[effectiveKey(field)]}
 								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
 							{/if}
@@ -497,7 +501,7 @@
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
 							<div class="{fieldColumn(field) === 'Rechts' ? 'sm:col-start-2' : ''}">
-								<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+								<InputField {field} refreshKey={termineRefreshKey} on:blur={(e) => onFieldBlur(e, field)} />
 								{#if fieldErrors[effectiveKey(field)]}
 									<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
 								{/if}
@@ -548,7 +552,7 @@
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					{#each formFields as field}
 						{#if field && effectiveKey(field)}
-							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
+							<InputField {field} refreshKey={termineRefreshKey} on:blur={(e) => onFieldBlur(e, field)} />
 							{#if fieldErrors[effectiveKey(field)]}
 								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
 							{/if}
