@@ -61,17 +61,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
 
+	// Recurring slots use ID format "<uid>_YYYY-MM-DD"; non-recurring use plain uid
+	const recurringMatch = terminId.match(/^(.+)_(\d{4}-\d{2}-\d{2})$/);
+	const baseUid = recurringMatch ? recurringMatch[1] : terminId;
+	const occurrenceDate = recurringMatch ? recurringMatch[2] : null;
+
 	try {
 		const client = createClient({ fetch });
 		const [doc, settings] = await Promise.all([
-			client.getByUID('terminplanung', terminId),
+			client.getByUID('terminplanung', baseUid),
 			client.getSingle('settings').catch(() => null)
 		]);
 
 		const d = doc.data as any;
-		datum = d.datum ?? '';
+		datum = occurrenceDate ?? (d.datum ?? '');
 		uhrzeit = d.uhrzeit ?? '';
-		titel = d.titel ?? terminId;
+		titel = d.titel ?? baseUid;
 		sessionLaenge = d.session_laenge ?? null;
 
 		if (settings) {

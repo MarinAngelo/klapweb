@@ -23,7 +23,7 @@
 			"datum": {
 				"type": "Date",
 				"config": {
-					"label": "Datum"
+					"label": "Startdatum"
 				}
 			},
 			"uhrzeit": {
@@ -54,6 +54,33 @@
 						"Asia/Tokyo"
 					],
 					"default_value": "Europe/Zurich"
+				}
+			},
+			"wiederholung": {
+				"type": "Select",
+				"config": {
+					"label": "Wiederholung",
+					"options": [
+						"Keine",
+						"Täglich",
+						"Wöchentlich",
+						"Zweiwöchentlich",
+						"Monatlich"
+					],
+					"default_value": "Keine"
+				}
+			},
+			"wiederholung_bis": {
+				"type": "Date",
+				"config": {
+					"label": "Wiederholen bis (Datum)"
+				}
+			},
+			"wiederholung_anzahl": {
+				"type": "Number",
+				"config": {
+					"label": "Anzahl Wiederholungen",
+					"placeholder": "z.B. 10"
 				}
 			}
 		}
