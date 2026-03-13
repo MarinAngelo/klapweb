@@ -216,6 +216,15 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
 			: [];
 
+		// Provider ICS includes customer name in title
+		const providerTitel = name ? `${titel} – ${name}` : titel;
+		const providerGcalUrl = googleCalendarUrl(providerTitel, datum, uhrzeit, sessionLaenge);
+		const providerCalendarLine = providerGcalUrl ? `\nZum Kalender hinzufügen: ${providerGcalUrl}` : '';
+		const providerIcsContent = generateICS(terminId, providerTitel, datum, uhrzeit, sessionLaenge);
+		const providerIcsAttachment = providerIcsContent
+			? [{ filename: 'termin.ics', content: Buffer.from(providerIcsContent).toString('base64') }]
+			: [];
+
 		import('resend').then(({ Resend }) => {
 			const resend = new Resend(resendKey);
 
@@ -242,7 +251,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					``,
 					`Termin: ${terminLine}`,
 					`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
-				].join('\n')
+				].join('\n') + providerCalendarLine,
+				attachments: providerIcsAttachment
 			}).then(({ error: e }) => {
 				if (e) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', e);
 			});
