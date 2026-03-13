@@ -45,13 +45,30 @@
 				"config": {
 					"label": "Zeitzone",
 					"options": [
+						"Pacific/Honolulu",
+						"America/Los_Angeles",
+						"America/Denver",
+						"America/Chicago",
+						"America/New_York",
+						"America/Sao_Paulo",
+						"Atlantic/Azores",
+						"Europe/London",
+						"Europe/Paris",
 						"Europe/Zurich",
 						"Europe/Berlin",
 						"Europe/Vienna",
-						"Europe/London",
-						"America/New_York",
-						"America/Los_Angeles",
-						"Asia/Tokyo"
+						"Europe/Athens",
+						"Europe/Moscow",
+						"Asia/Dubai",
+						"Asia/Kolkata",
+						"Asia/Dhaka",
+						"Asia/Bangkok",
+						"Asia/Singapore",
+						"Asia/Shanghai",
+						"Asia/Tokyo",
+						"Australia/Sydney",
+						"Pacific/Auckland",
+						"Africa/Johannesburg"
 					],
 					"default_value": "Europe/Zurich"
 				}
