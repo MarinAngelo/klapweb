@@ -28,6 +28,70 @@ function richTextToPlain(blocks: Array<{ text?: string }> | null | undefined, to
 		.join('\n\n');
 }
 
+function buildDatetimeStr(datum: string, uhrzeit: string): string {
+	// Returns floating local datetime string: YYYYMMDDTHHMMSS
+	const base = datum.replace(/-/g, '');
+	if (!uhrzeit) return base; // all-day fallback
+	const time = uhrzeit.replace(':', '') + '00';
+	return `${base}T${time}`;
+}
+
+function addMinutes(datum: string, uhrzeit: string, minutes: number): string {
+	const [h, m] = uhrzeit.split(':').map(Number);
+	const total = h * 60 + m + minutes;
+	const eh = Math.floor(total / 60) % 24;
+	const em = total % 60;
+	const time = `${String(eh).padStart(2, '0')}${String(em).padStart(2, '0')}00`;
+	return `${datum.replace(/-/g, '')}T${time}`;
+}
+
+function generateICS(terminId: string, titel: string, datum: string, uhrzeit: string, sessionLaenge: number | null): string {
+	if (!datum) return '';
+	const now = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
+	const uid = `${terminId}@klapweb`;
+
+	let dtStart: string;
+	let dtEnd: string;
+	if (uhrzeit) {
+		dtStart = `DTSTART:${buildDatetimeStr(datum, uhrzeit)}`;
+		dtEnd = `DTEND:${addMinutes(datum, uhrzeit, sessionLaenge ?? 60)}`;
+	} else {
+		const d = datum.replace(/-/g, '');
+		dtStart = `DTSTART;VALUE=DATE:${d}`;
+		dtEnd = `DTEND;VALUE=DATE:${d}`;
+	}
+
+	return [
+		'BEGIN:VCALENDAR',
+		'VERSION:2.0',
+		'PRODID:-//klapweb//Terminbuchung//DE',
+		'CALSCALE:GREGORIAN',
+		'METHOD:PUBLISH',
+		'BEGIN:VEVENT',
+		`UID:${uid}`,
+		`DTSTAMP:${now}`,
+		dtStart,
+		dtEnd,
+		`SUMMARY:${titel.replace(/[\\,;]/g, (c) => '\\' + c)}`,
+		'END:VEVENT',
+		'END:VCALENDAR'
+	].join('\r\n');
+}
+
+function googleCalendarUrl(titel: string, datum: string, uhrzeit: string, sessionLaenge: number | null): string {
+	if (!datum) return '';
+	let dates: string;
+	if (uhrzeit) {
+		const start = buildDatetimeStr(datum, uhrzeit);
+		const end = addMinutes(datum, uhrzeit, sessionLaenge ?? 60);
+		dates = `${start}/${end}`;
+	} else {
+		const d = datum.replace(/-/g, '');
+		dates = `${d}/${d}`;
+	}
+	return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dates}`;
+}
+
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: { terminId?: string; name?: string; email?: string };
 	try {
@@ -131,6 +195,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
+		const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
+		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
+
 		const bodyText = richTextToPlain(custEmailBody, tokens) || [
 			`Guten Tag${name ? ' ' + name : ''}`,
 			``,
@@ -144,6 +211,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			companyName
 		].join('\n');
 
+		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
+		const icsAttachment = icsContent
+			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
+			: [];
+
 		import('resend').then(({ Resend }) => {
 			const resend = new Resend(resendKey);
 
@@ -153,7 +225,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					from: fromEmail,
 					to: email,
 					subject,
-					text: bodyText
+					text: bodyText + calendarLine,
+					attachments: icsAttachment
 				}).then(({ error: e }) => {
 					if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
 				});
