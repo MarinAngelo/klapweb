@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
+	import { TIMEZONES } from '$lib/utils/timezones';
 
 	export let field: {
 		field_name: string | null;
@@ -14,7 +15,7 @@
 	export let compact = false;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin', Zeitzone: 'zeitzone' };
 	$: key = typeKeys[field.field_type ?? ''] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
@@ -27,7 +28,8 @@
 		Textbereich: 'textarea',
 		Telefon: 'tel',
 		Land: 'select-country',
-		Termin: 'select-termin'
+		Termin: 'select-termin',
+		Zeitzone: 'select-zeitzone'
 	};
 
 	// Termin-Auswahl: verfügbare Slots laden
@@ -320,6 +322,24 @@
 			</select>
 		{/if}
 	{/if}
+	{:else if htmlType === 'select-zeitzone'}
+		<select
+			id={key}
+			name={key}
+			required={field.required}
+			class={compact
+				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
+			style={compact
+				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
+			on:blur
+		>
+			<option value="">Zeitzone wählen</option>
+			{#each TIMEZONES as tz}
+				<option value={tz.value}>{tz.label}</option>
+			{/each}
+		</select>
 	{#if field['invalid_feedback-text']}
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>
 	{/if}

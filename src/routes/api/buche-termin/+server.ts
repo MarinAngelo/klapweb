@@ -92,15 +92,33 @@ function googleCalendarUrl(titel: string, datum: string, uhrzeit: string, sessio
 	return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dates}`;
 }
 
+function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz: string): string {
+	if (!datum || !uhrzeit || fromTz === toTz) return '';
+	const [y, mo, d] = datum.split('-').map(Number);
+	const [h, mi] = uhrzeit.split(':').map(Number);
+	const utcGuess = Date.UTC(y, mo - 1, d, h, mi);
+	const parts = new Intl.DateTimeFormat('en-US', {
+		timeZone: fromTz, year: 'numeric', month: '2-digit',
+		day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+	}).formatToParts(new Date(utcGuess));
+	const get = (t: string) => parseInt(parts.find((p) => p.type === t)?.value ?? '0');
+	const fromTzUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') === 24 ? 0 : get('hour'), get('minute'));
+	const actualUtc = utcGuess + (utcGuess - fromTzUtc);
+	return new Intl.DateTimeFormat('de-CH', {
+		timeZone: toTz, weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
+		hour: '2-digit', minute: '2-digit'
+	}).format(new Date(actualUtc)) + ' Uhr';
+}
+
 export const POST: RequestHandler = async ({ request, fetch }) => {
-	let body: { terminId?: string; name?: string; email?: string };
+	let body: { terminId?: string; name?: string; email?: string; customerTimezone?: string };
 	try {
 		body = await request.json();
 	} catch {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email } = body;
+	const { terminId, name, email, customerTimezone } = body;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
 	}
@@ -119,6 +137,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let uhrzeit = '';
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
+	let zeitzone = 'Europe/Zurich';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -142,6 +161,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		uhrzeit = d.uhrzeit ?? '';
 		titel = d.titel ?? baseUid;
 		sessionLaenge = d.session_laenge ?? null;
+		zeitzone = d.zeitzone ?? 'Europe/Zurich';
 
 		if (settings) {
 			const s = settings.data as any;
@@ -198,6 +218,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
 		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
 
+		const convertedTime = customerTimezone
+			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
+			: '';
+		const customerTzLine = convertedTime
+			? `\nDer Termin in Ihrer Zeitzone (${customerTimezone}): ${convertedTime}`
+			: '';
+
 		const bodyText = richTextToPlain(custEmailBody, tokens) || [
 			`Guten Tag${name ? ' ' + name : ''}`,
 			``,
@@ -234,7 +261,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					from: fromEmail,
 					to: email,
 					subject,
-					text: bodyText + calendarLine,
+					text: bodyText + customerTzLine + calendarLine,
 					attachments: icsAttachment
 				}).then(({ error: e }) => {
 					if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);

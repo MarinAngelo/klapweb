@@ -229,6 +229,8 @@
 			if (terminId) {
 				const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
 				const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+				const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
+				const customerTimezone = zeitzoneField ? (formData.get('zeitzone') as string) || undefined : undefined;
 				try {
 					const resp = await fetch('/api/buche-termin', {
 						method: 'POST',
@@ -236,7 +238,8 @@
 						body: JSON.stringify({
 							terminId,
 							name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
-							email: emailField ? String(formData.get('email') ?? '') : undefined
+							email: emailField ? String(formData.get('email') ?? '') : undefined,
+							customerTimezone
 						})
 					});
 					if (resp.status === 409) {
