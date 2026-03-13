@@ -50,11 +50,18 @@ if (Array.isArray(config.features)) {
 		process.exit(1);
 	}
 	const plans = JSON.parse(readFileSync(plansPath, 'utf-8'));
-	if (!plans[config.plan]) {
-		console.error(`✗ Plan "${config.plan}" not found in plans.json`);
-		process.exit(1);
+	function resolveFeatures(planKey) {
+		const plan = plans[planKey];
+		if (!plan) {
+			console.error(`✗ Plan "${planKey}" not found in plans.json`);
+			process.exit(1);
+		}
+		const inherited = plan.extends ? resolveFeatures(plan.extends) : [];
+		const own = plan.features ?? [];
+		return [...inherited, ...own.filter((f) => !inherited.includes(f))];
 	}
-	features = plans[config.plan].features ?? [];
+
+	features = resolveFeatures(config.plan);
 	console.log(`Plan: ${config.plan} (${plans[config.plan].label}) → features: [${features.join(', ') || 'none'}]`);
 }
 

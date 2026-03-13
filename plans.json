@@ -9,6 +9,6 @@
 	},
 	"individuell": {
 		"label": "Individuell",
-		"features": ["ecommerce", "p5js", "variablen", "terminbuchung"]
+		"features": ["ecommerce", "p5js", "variablen"]
 	}
 }
