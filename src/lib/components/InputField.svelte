@@ -321,7 +321,6 @@
 				{/each}
 			</select>
 		{/if}
-	{/if}
 	{:else if htmlType === 'select-zeitzone'}
 		<select
 			id={key}
@@ -340,6 +339,7 @@
 				<option value={tz.value}>{tz.label}</option>
 			{/each}
 		</select>
+	{/if}
 	{#if field['invalid_feedback-text']}
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>
 	{/if}
