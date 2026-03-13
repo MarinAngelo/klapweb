@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
@@ -254,6 +254,10 @@
 			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
+			}
+			if (e.altKey && e.shiftKey && e.key === 'A') {
+				e.preventDefault();
+				goto('/admin');
 			}
 		}
 		window.addEventListener('keydown', onKeydown);

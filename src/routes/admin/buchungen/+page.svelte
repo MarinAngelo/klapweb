@@ -33,6 +33,7 @@
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1100px; margin: 0 auto;">
 	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 2rem;">
+		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">← Dashboard</a>
 		<h1 style="font-size: 1.5rem; font-weight: bold;">Terminverwaltung</h1>
 		<a href="/admin/kunden?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">→ Kunden</a>
 	</div>

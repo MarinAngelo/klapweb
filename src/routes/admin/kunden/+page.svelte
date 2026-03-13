@@ -26,9 +26,10 @@
 <svelte:head><title>Kundenliste</title></svelte:head>
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1200px; margin: 0 auto;">
-	<h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">
-		Kunden ({data.customers.length})
-	</h1>
+	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 1.5rem;">
+		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">← Dashboard</a>
+		<h1 style="font-size: 1.5rem; font-weight: bold;">Kunden ({data.customers.length})</h1>
+	</div>
 
 	{#if data.blobError}
 		<p style="color: red; font-family: monospace; font-size: 0.8rem;">Fehler: {data.blobError}</p>
