@@ -5,6 +5,6 @@
 	},
 	"professional": {
 		"label": "Professional",
-		"features": ["ecommerce", "p5js", "variablen"]
+		"features": ["ecommerce", "p5js", "variablen", "terminbuchung"]
 	}
 }

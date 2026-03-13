@@ -45,6 +45,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let sessionLaenge: number | null = null;
 	let companyName = '';
 	let companyEmail = '';
+	let bookingFromEmail = '';
 
 	try {
 		const client = createClient({ fetch });
@@ -63,6 +64,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const s = settings.data as any;
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
+			bookingFromEmail = (s.booking_from_email as string) ?? '';
 		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
@@ -80,7 +82,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const fromEmail = bookingFromEmail || env.INVOICE_FROM_EMAIL;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
 
 	if (resendKey && fromEmail && toEmail) {

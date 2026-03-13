@@ -757,6 +757,15 @@
 					}
 				}
 			}
+		},
+		"Terminbuchung": {
+			"booking_from_email": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail",
+					"placeholder": "termine@beispiel.ch"
+				}
+			}
 		}
 	}
 }
