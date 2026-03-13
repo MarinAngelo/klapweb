@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
+	import { onMount } from 'svelte';
 
 	export let field: {
 		field_name: string | null;
@@ -14,7 +15,7 @@
 	export let compact = false;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin' };
 	$: key = typeKeys[field.field_type ?? ''] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
@@ -26,8 +27,15 @@
 		'E-Mail': 'email',
 		Textbereich: 'textarea',
 		Telefon: 'tel',
-		Land: 'select-country'
+		Land: 'select-country',
+		Termin: 'select-termin'
 	};
+
+	// Termin-Auswahl: verfügbare Slots laden
+	interface AvailableTermin { id: string; label: string; }
+	let termine: AvailableTermin[] = [];
+	let termineLoading = false;
+	let termineError = false;
 
 	const countries = [
 		'Afghanistan', 'Ägypten', 'Albanien', 'Algerien', 'Andorra', 'Angola',
@@ -69,6 +77,17 @@
 
 	// HTML-Typ basierend auf dem Mapping (reaktiv: aktualisiert sich wenn field.field_type ändert)
 	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
+
+	onMount(() => {
+		if (field.field_type === 'Termin') {
+			termineLoading = true;
+			fetch('/api/termine')
+				.then((r) => r.json())
+				.then((data: AvailableTermin[]) => { termine = data; })
+				.catch(() => { termineError = true; })
+				.finally(() => { termineLoading = false; });
+		}
+	});
 
 	// Telefon: Vorwahl + Nummer
 	const countryPrefixes = [
@@ -267,6 +286,32 @@
 				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}">{field.field_name ?? ''}</span>
 			</label>
 		</div>
+	{:else if htmlType === 'select-termin'}
+		{#if termineLoading}
+			<p class="text-sm opacity-60">Termine werden geladen…</p>
+		{:else if termineError}
+			<p class="text-sm text-red-500">Termine konnten nicht geladen werden.</p>
+		{:else if termine.length === 0}
+			<p class="text-sm opacity-60">Keine verfügbaren Termine.</p>
+		{:else}
+			<select
+				id={key}
+				name={key}
+				required={field.required}
+				class={compact
+					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
+				style={compact
+					? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+					: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
+				on:blur
+			>
+				<option value="" disabled selected>Termin auswählen</option>
+				{#each termine as t}
+					<option value={t.id}>{t.label}</option>
+				{/each}
+			</select>
+		{/if}
 	{/if}
 	{#if field['invalid_feedback-text']}
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>

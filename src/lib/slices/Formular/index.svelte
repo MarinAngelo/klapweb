@@ -87,7 +87,7 @@
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin' };
 	function fieldColumn(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (field as any).column ?? 'Links';
 	}
@@ -218,6 +218,39 @@
 			return;
 		}
 		linkError = null;
+
+		// Termin-Buchung: Slot reservieren bevor Formular abgesendet wird
+		const terminField = formFields.find((f) => (f as any).field_type === 'Termin');
+		if (terminField) {
+			const terminId = formData.get('termin') as string;
+			if (terminId) {
+				const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
+				const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+				try {
+					const resp = await fetch('/api/buche-termin', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							terminId,
+							name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
+							email: emailField ? String(formData.get('email') ?? '') : undefined
+						})
+					});
+					if (resp.status === 409) {
+						const data = await resp.json();
+						linkError = data.error ?? 'Dieser Termin ist leider nicht mehr verfügbar.';
+						return;
+					}
+					if (!resp.ok) {
+						linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+						return;
+					}
+				} catch {
+					linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+					return;
+				}
+			}
+		}
 
 		// Checkout-Modus: Daten in sessionStorage speichern und zur Zusammenfassung navigieren
 		if (checkoutUrl) {

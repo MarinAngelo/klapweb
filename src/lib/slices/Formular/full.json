@@ -73,7 +73,8 @@
                     "Auswahlliste",
                     "Ankreuzfeld",
                     "Einzelauswahl",
-                    "Land"
+                    "Land",
+                    "Termin"
                   ]
                 }
               },
@@ -338,7 +339,8 @@
                     "Auswahlliste",
                     "Ankreuzfeld",
                     "Einzelauswahl",
-                    "Land"
+                    "Land",
+                    "Termin"
                   ]
                 }
               },
@@ -446,7 +448,8 @@
                     "Auswahlliste",
                     "Ankreuzfeld",
                     "Einzelauswahl",
-                    "Land"
+                    "Land",
+                    "Termin"
                   ]
                 }
               },
@@ -555,7 +558,8 @@
                     "Auswahlliste",
                     "Ankreuzfeld",
                     "Einzelauswahl",
-                    "Land"
+                    "Land",
+                    "Termin"
                   ]
                 }
               },

@@ -19,6 +19,7 @@
 	const STAGGER_MS = 150;
 
 	$: leistungenItems = (context?.pageLeistungen ?? []) as Array<{ leistung: any }>;
+	$: isLeistungen = (slice.variation as string) === 'leistungen';
 </script>
 
 <Bounded
@@ -40,7 +41,7 @@
 			</div>
 		{/if}
 
-		{#if slice.variation === 'leistungen'}
+		{#if isLeistungen}
 		{#each leistungenItems as item, index}
 			{@const leistung = item.leistung?.data ?? {}}
 			<div
