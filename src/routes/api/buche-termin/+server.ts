@@ -16,6 +16,18 @@ function fmtDate(datum: string, uhrzeit: string): string {
 	return uhrzeit ? `${formatted}, ${uhrzeit} Uhr` : formatted;
 }
 
+function applyTokens(str: string, tokens: Record<string, string>): string {
+	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+}
+
+function richTextToPlain(blocks: Array<{ text?: string }> | null | undefined, tokens: Record<string, string>): string {
+	if (!blocks?.length) return '';
+	return blocks
+		.filter((b) => b.text)
+		.map((b) => applyTokens(b.text!, tokens))
+		.join('\n\n');
+}
+
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: { terminId?: string; name?: string; email?: string };
 	try {
@@ -46,6 +58,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
+	let custEmailSubject: string | null = null;
+	let custEmailBody: Array<{ text?: string }> | null = null;
 
 	try {
 		const client = createClient({ fetch });
@@ -65,6 +79,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
 			bookingFromEmail = (s.booking_from_email as string) ?? '';
+			custEmailSubject = (s.booking_customer_email_subject as string) || null;
+			custEmailBody = Array.isArray(s.booking_customer_email_body)
+				? s.booking_customer_email_body
+				: null;
 		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
@@ -91,6 +109,36 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const terminLine = `${titel}${durationLine}\n${dateLabel}`;
 		const customerName = name || 'Kunde/Kundin';
 
+		const tokens: Record<string, string> = {
+			Titel: titel,
+			Datum: datum
+				? new Date(datum + 'T12:00:00Z').toLocaleDateString('de-CH', {
+						weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
+					})
+				: '–',
+			Uhrzeit: uhrzeit || '–',
+			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
+			Name: name || '',
+			Firma: companyName
+		};
+
+		const subject = custEmailSubject
+			? applyTokens(custEmailSubject, tokens)
+			: `Terminbestätigung: ${titel}`;
+
+		const bodyText = richTextToPlain(custEmailBody, tokens) || [
+			`Guten Tag${name ? ' ' + name : ''}`,
+			``,
+			`Ihr Termin wurde erfolgreich gebucht.`,
+			``,
+			`Termin: ${terminLine}`,
+			``,
+			`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
+			``,
+			`Freundliche Grüsse`,
+			companyName
+		].join('\n');
+
 		import('resend').then(({ Resend }) => {
 			const resend = new Resend(resendKey);
 
@@ -99,19 +147,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				resend.emails.send({
 					from: fromEmail,
 					to: email,
-					subject: `Terminbestätigung: ${titel}`,
-					text: [
-						`Guten Tag${name ? ' ' + name : ''}`,
-						``,
-						`Ihr Termin wurde erfolgreich gebucht.`,
-						``,
-						`Termin: ${terminLine}`,
-						``,
-						`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
-						``,
-						`Freundliche Grüsse`,
-						companyName
-					].join('\n')
+					subject,
+					text: bodyText
 				}).then(({ error: e }) => {
 					if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
 				});
@@ -126,7 +163,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					`Neue Buchung eingegangen.`,
 					``,
 					`Termin: ${terminLine}`,
-					`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`,
+					`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
 				].join('\n')
 			}).then(({ error: e }) => {
 				if (e) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', e);
