@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
-import { isBooked } from '$lib/server/bookings';
+import { isBooked, isCancelled } from '$lib/server/bookings';
 import { expandDoc } from '$lib/server/terminSlots';
 
 export type { TerminSlot as AvailableTermin } from '$lib/server/terminSlots';
@@ -15,8 +15,8 @@ export const GET: RequestHandler = async ({ fetch }) => {
 
 		const withAvailability = await Promise.all(
 			allSlots.map(async (slot) => {
-				const booked = await isBooked(slot.id);
-				return booked ? null : slot;
+				const [booked, cancelled] = await Promise.all([isBooked(slot.id), isCancelled(slot.id)]);
+				return booked || cancelled ? null : slot;
 			})
 		);
 

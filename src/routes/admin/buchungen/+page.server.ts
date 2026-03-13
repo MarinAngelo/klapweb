@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
-import { listBookings, deleteBooking } from '$lib/server/bookings';
+import { listBookings, deleteBooking, cancelSlot, uncancelSlot, listCancelled } from '$lib/server/bookings';
 import { expandDoc } from '$lib/server/terminSlots';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
@@ -14,13 +14,14 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 
 	const today = new Date().toISOString().slice(0, 10);
 
-	const [bookingsResult, slotsResult] = await Promise.allSettled([
+	const [bookingsResult, slotsResult, cancelledResult] = await Promise.allSettled([
 		listBookings(),
 		(async () => {
 			const client = createClient({ fetch });
 			const docs = await client.getAllByType('terminplanung');
 			return docs.flatMap((doc) => expandDoc(doc, today));
-		})()
+		})(),
+		listCancelled()
 	]);
 
 	const bookings = bookingsResult.status === 'fulfilled' ? bookingsResult.value : [];
@@ -29,13 +30,18 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		: null;
 
 	const allSlots = slotsResult.status === 'fulfilled' ? slotsResult.value : [];
+	const cancelledIds = new Set(cancelledResult.status === 'fulfilled' ? cancelledResult.value : []);
 	const bookedIds = new Set(bookings.map((b) => b.terminId));
 
 	const freeSlots = allSlots
-		.filter((s) => !bookedIds.has(s.id))
+		.filter((s) => !bookedIds.has(s.id) && !cancelledIds.has(s.id))
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
-	return { bookings, freeSlots, blobError };
+	const cancelledSlots = allSlots
+		.filter((s) => cancelledIds.has(s.id))
+		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
+
+	return { bookings, freeSlots, cancelledSlots, blobError };
 };
 
 export const actions: Actions = {
@@ -48,6 +54,30 @@ export const actions: Actions = {
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
 			await deleteBooking(id);
+		}
+	},
+
+	cancel: async ({ request, url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+
+		const form = await request.formData();
+		const id = form.get('id');
+		if (typeof id === 'string' && id) {
+			await cancelSlot(id);
+		}
+	},
+
+	uncancel: async ({ request, url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+
+		const form = await request.formData();
+		const id = form.get('id');
+		if (typeof id === 'string' && id) {
+			await uncancelSlot(id);
 		}
 	}
 };

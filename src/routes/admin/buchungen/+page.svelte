@@ -11,6 +11,11 @@
 		(e.currentTarget as HTMLFormElement).submit();
 	}
 
+	function confirmCancel(e: SubmitEvent, titel: string) {
+		if (!confirm(`Termin "${titel}" sperren (wird nicht mehr buchbar)?`)) return;
+		(e.currentTarget as HTMLFormElement).submit();
+	}
+
 	function fmtDate(datum: string, uhrzeit: string) {
 		if (!datum) return '–';
 		const d = new Date(datum + 'T12:00:00Z');
@@ -88,13 +93,13 @@
 	</h2>
 
 	{#if data.freeSlots.length === 0}
-		<p style="opacity: 0.5;">Keine freien Termine.</p>
+		<p style="opacity: 0.5; margin-bottom: 2rem;">Keine freien Termine.</p>
 	{:else}
-		<div style="overflow-x: auto;">
+		<div style="overflow-x: auto; margin-bottom: 2.5rem;">
 			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 				<thead>
 					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each ['Termin', 'Titel', 'Dauer', 'Zeitzone'] as col}
+						{#each ['Termin', 'Titel', 'Dauer', 'Zeitzone', ''] as col}
 							<th style={tdNowrap}>{col}</th>
 						{/each}
 					</tr>
@@ -106,6 +111,53 @@
 							<td style={tdStyle}>{s.titel}</td>
 							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
 							<td style="{tdStyle} opacity: 0.6;">{s.zeitzone}</td>
+							<td style={tdStyle}>
+								<form
+									method="POST"
+									action="?/cancel&secret={secret}"
+									on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
+								>
+									<input type="hidden" name="id" value={s.id} />
+									<button type="submit" style="color: #d97706; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+										Sperren
+									</button>
+								</form>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
+
+	<!-- Gesperrte Termine -->
+	{#if data.cancelledSlots.length > 0}
+		<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; opacity: 0.6;">
+			Gesperrte Termine ({data.cancelledSlots.length})
+		</h2>
+		<div style="overflow-x: auto;">
+			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; opacity: 0.7;">
+				<thead>
+					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
+						{#each ['Termin', 'Titel', 'Dauer', ''] as col}
+							<th style={tdNowrap}>{col}</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#each data.cancelledSlots as s}
+						<tr style="border-bottom: 1px solid #e5e7eb;">
+							<td style="{tdNowrap} text-decoration: line-through;">{fmtDate(s.datum, s.uhrzeit)}</td>
+							<td style="{tdStyle} text-decoration: line-through;">{s.titel}</td>
+							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+							<td style={tdStyle}>
+								<form method="POST" action="?/uncancel&secret={secret}">
+									<input type="hidden" name="id" value={s.id} />
+									<button type="submit" style="color: #059669; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+										Freigeben
+									</button>
+								</form>
+							</td>
 						</tr>
 					{/each}
 				</tbody>
