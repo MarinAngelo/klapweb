@@ -10,8 +10,9 @@
 
 	export let slice: Content.AccordionSlice;
 	export let context: any = {};
+	const p = slice.primary as any;
 
-	const { openIndex, toggleItem } = useOpenIndex(0);
+	const { openIndex, toggleItem } = useOpenIndex(p?.erstes_item_ausgeklappt === false ? null : 0);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
