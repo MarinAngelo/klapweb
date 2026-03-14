@@ -148,7 +148,7 @@ for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue; // not managed, skip
 
-	const base = read(basePath);
+	const { _meta: _baseMeta, ...base } = read(basePath);
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 
 	const additionalVariationIds = sliceVariationsToAdd[sliceName] ?? new Set();
