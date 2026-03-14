@@ -55,6 +55,15 @@
 						}
 					}
 				},
+				"erstes_item_ausgeklappt": {
+					"type": "Boolean",
+					"config": {
+						"label": "Erstes Item ausgeklappt",
+						"placeholder_false": "Eingeklappt",
+						"placeholder_true": "Ausgeklappt",
+						"default_value": true
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -159,6 +168,15 @@
 								}
 							}
 						}
+					}
+				},
+				"erstes_item_ausgeklappt": {
+					"type": "Boolean",
+					"config": {
+						"label": "Erstes Item ausgeklappt",
+						"placeholder_false": "Eingeklappt",
+						"placeholder_true": "Ausgeklappt",
+						"default_value": true
 					}
 				},
 				"animate": {
