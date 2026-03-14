@@ -32,26 +32,22 @@
 		gross: 'lg-top'
 	};
 
-	$: sizeClass = sizeMap[slice.primary.button_size] ?? sizeMap['Mittel'];
-	$: alignClass = alignMap[slice.primary.button_align] ?? alignMap['Mitte'];
-	$: mobileFullWidth = slice.primary.mobile_full_width ?? false;
-	$: yPadding = (yPaddingMap[slice.primary.y_padding] ?? 'base-top') as
+	$: p = slice.primary ?? {};
+	$: sizeClass = sizeMap[p.button_size] ?? sizeMap['Mittel'];
+	$: alignClass = alignMap[p.button_align] ?? alignMap['Mitte'];
+	$: mobileFullWidth = p.mobile_full_width ?? false;
+	$: yPadding = (yPaddingMap[p.y_padding] ?? 'base-top') as
 		| 'none'
 		| 'sm-top'
 		| 'base-top'
 		| 'lg-top';
 
-	$: buttonColor = slice.primary.button_color || get(theme).pageButtonColor;
-	$: buttonBgColor = slice.primary.button_bg_color || get(theme).pageButtonBgColor;
-	$: buttonHoverColor = slice.primary.button_hover_color || get(theme).pageButtonHoverColor;
-	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
-	$: beauftragungHref = getBeauftragunHref(slice.primary.button_link, $page.params.uid);
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: buttonColor = p.button_color || get(theme).pageButtonColor;
+	$: buttonBgColor = p.button_bg_color || get(theme).pageButtonBgColor;
+	$: buttonHoverColor = p.button_hover_color || get(theme).pageButtonHoverColor;
+	$: buttonHoverBgColor = p.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
+	$: beauftragungHref = getBeauftragunHref(p.button_link, $page.params.uid);
+	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 </script>
 
 <Bounded
@@ -78,9 +74,9 @@
 					--focus-ring-color: {buttonColor};
 				"
 			>
-				{slice.primary.button_text || 'Jetzt beauftragen'}
+				{p.button_text || 'Jetzt beauftragen'}
 			</a>
-		{:else if isFilled.link(slice.primary.button_link)}
+		{:else if isFilled.link(p.button_link)}
 			{#if beauftragungHref}
 				<a
 					href={beauftragungHref}
@@ -96,11 +92,11 @@
 						--focus-ring-color: {buttonColor};
 					"
 				>
-					{slice.primary.button_text || 'Mehr erfahren'}
+					{p.button_text || 'Mehr erfahren'}
 				</a>
 			{:else}
 				<PrismicLink
-					field={slice.primary.button_link}
+					field={p.button_link}
 					class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 						? 'block w-full text-center sm:inline-block sm:w-auto'
 						: 'inline-block'}"
@@ -113,7 +109,7 @@
 						--focus-ring-color: {buttonColor};
 					"
 				>
-					{slice.primary.button_text || 'Mehr erfahren'}
+					{p.button_text || 'Mehr erfahren'}
 				</PrismicLink>
 			{/if}
 		{/if}
