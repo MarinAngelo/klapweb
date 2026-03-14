@@ -21,8 +21,9 @@
 	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let slice: Content.HeroSlice;
+	const p = slice.primary ?? ({} as any);
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
-	$: image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
+	$: image = 'backgroundImage' in p ? p.backgroundImage : null;
 	const sliceStore = writable(slice);
 
 	// Wenn sich slice ändert, aktualisiere den Store
@@ -31,19 +32,19 @@
 	// === PrismicRichText: margin-bottom nur wenn letztes Element h1-h6 ===
 	let richTextDiv: HTMLDivElement;
 
-	const switchOffTextOverlay = (slice.primary as any).switch_off_text_overlay ?? false;
-	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
+	const switchOffTextOverlay = p.switch_off_text_overlay ?? false;
+	const overlayColor = p.overlay_color || 'var(--overlay-color)';
 
 	const overlayOpacity = (() => {
-		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
+		if (!('overlay_opacity' in p) || p.overlay_opacity === null) {
 			return 0.2; // Default wenn nicht gesetzt
 		}
-		return convertNumber(slice.primary.overlay_opacity);
+		return convertNumber(p.overlay_opacity);
 	})();
 
-	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
-	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
-	const bannerTop = slice.primary.banner_overlap ?? false;
+	const headerBgOpacity = convertNumber(p.header_bg_opacity ?? 0) || 0;
+	const color = 'color' in p ? p.color : 'var(--text-color)';
+	const bannerTop = p.banner_overlap ?? false;
 
 	// bannerTop und headerBgOpacity im Theme-Store aktualisieren - beide reaktiv
 	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity }));
@@ -58,13 +59,13 @@
 
 	// Button-Farben aus Slice (Type-safe)
 	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
-	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
+	$: buttonColor = 'button_color' in p ? p.button_color : null;
 	$: buttonHoverColor =
-		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
+		'button_hover_color' in p ? p.button_hover_color : null;
 	$: buttonBgColor =
-		'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
+		'button_bg_color' in p ? p.button_bg_color : null;
 	$: buttonHoverBgColor =
-		'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
+		'button_hover_bg_color' in p ? p.button_hover_bg_color : null;
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -79,24 +80,24 @@
 		Kleiner: 0.65,
 		'Sehr klein': 0.5
 	};
-	$: mobileFontScale = mobileTextScaleMap[(slice.primary as any).mobile_text_scale as string] ?? 1.0;
+	$: mobileFontScale = mobileTextScaleMap[p.mobile_text_scale as string] ?? 1.0;
 
 	// Padding-Wert aus dem Slice holen und mappen
 	$: textOverlayPadding =
-		'text_overlay_padding' in slice.primary &&
-		(slice.primary.text_overlay_padding ?? '') in paddingMap
-			? paddingMap[slice.primary.text_overlay_padding ?? '']
+		'text_overlay_padding' in p &&
+		(p.text_overlay_padding ?? '') in paddingMap
+			? paddingMap[p.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
 	const textOverlayColor =
-		'text_overlay_color' in slice.primary
-			? slice.primary.text_overlay_color || 'var(--text-color)'
+		'text_overlay_color' in p
+			? p.text_overlay_color || 'var(--text-color)'
 			: 'var(--text-color)';
 	const textOverlayOpacity = (() => {
-		if (!('text_overlay_opacity' in slice.primary) || slice.primary.text_overlay_opacity === null) {
+		if (!('text_overlay_opacity' in p) || p.text_overlay_opacity === null) {
 			return 0.2; // Default wenn nicht gesetzt
 		}
-		const result = convertNumber(slice.primary.text_overlay_opacity);
+		const result = convertNumber(p.text_overlay_opacity);
 		return result;
 	})();
 
@@ -154,9 +155,9 @@
 	style="background-color: {isMobile ? textOverlayColor : overlayColor};
 		color: {color};
 		height: {$bannerHeight};
-		font-family: {('font' in slice.primary &&
-		isFilled.contentRelationship(slice.primary.font) &&
-		slice.primary.font.data?.name) ||
+		font-family: {('font' in p &&
+		isFilled.contentRelationship(p.font) &&
+		p.font.data?.name) ||
 		'inherit'};
 	"
 >
@@ -186,10 +187,10 @@
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
 		{#if $isMobile}
-			<ImageCarouselMobile images={slice.primary.imageMerryGoRound} />
+			<ImageCarouselMobile images={p.imageMerryGoRound} />
 		{:else}
 			<ImageCarousel
-				images={slice.primary.imageMerryGoRound}
+				images={p.imageMerryGoRound}
 				mode="background"
 				autoplay={true}
 				intervalMs={5000}
@@ -230,16 +231,16 @@
 						}
 					</style>
 					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
-						{#if 'text' in slice.primary}
+						{#if 'text' in p}
 							<div style="--page-color: {color};">
-								<PrismicRichText field={slice.primary.text} {components} />
+								<PrismicRichText field={p.text} {components} />
 							</div>
 						{/if}
 					</div>
-					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
+					{#if 'button_link' in p && isFilled.link(p.button_link)}
 						<Button
-							link={slice.primary.button_link}
-							text={slice.primary.button_text || 'Mehr erfahren'}
+							link={p.button_link}
+							text={p.button_text || 'Mehr erfahren'}
 							color={buttonColor || $theme.pageButtonColor}
 							bgColor={buttonBgColor || $theme.pageButtonBgColor}
 							hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}

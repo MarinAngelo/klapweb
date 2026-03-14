@@ -10,6 +10,7 @@
 
 	export let slice: Content.AccordionSlice;
 	export let context: any = {};
+	const p = slice.primary ?? ({} as any);
 
 	const { openIndex, toggleItem } = useOpenIndex(0);
 
@@ -31,13 +32,13 @@
 	animationOptions={anim.options}
 >
 	<div class="flex flex-col gap-4" style="color: {$theme.pageColor}">
-		{#if slice.primary.heading}
-			<PrismicRichText field={slice.primary.heading} />
+		{#if p.heading}
+			<PrismicRichText field={p.heading} />
 		{/if}
 
-		{#if slice.primary.description}
+		{#if p.description}
 			<div class="mb-4">
-				<PrismicRichText field={slice.primary.description} />
+				<PrismicRichText field={p.description} />
 			</div>
 		{/if}
 
@@ -78,7 +79,7 @@
 			</div>
 		{/each}
 	{:else}
-		{#each slice.primary.accordion_items as item, index}
+		{#each (p.accordion_items ?? []) as item, index}
 			<div
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }

@@ -8,11 +8,12 @@
 	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.CodeEinbettenSlice;
+	const p = slice.primary ?? ({} as any);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
 
-	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
+	const opacity = convertNumberInverse(p.opacity ?? 0) || 0.5;
 </script>
 
 <Bounded
@@ -24,7 +25,7 @@
 >
 	<!-- HTML-Code rendern -->
 	<div class="relative w-full">
-		{#each slice.primary.html_code as code}
+		{#each (p.html_code ?? []) as code}
 			<div class="relative">
 				<!-- Gerenderter HTML-Code -->
 				<div>

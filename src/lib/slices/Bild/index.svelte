@@ -12,6 +12,7 @@
 	export let index: number | undefined = undefined;
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
+	const p = slice.primary ?? ({} as any);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 </script>
@@ -25,14 +26,14 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	{#if isFilled.image(slice.primary.image)}
+	{#if isFilled.image(p.image)}
 		<div style="background-color: {$theme.pageBgColor};">
-			<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
+			<PrismicImage field={p.image} sizes="100vw" class="w-full" />
 		</div>
 	{/if}
 	{#if slice.variation === 'carousel'}
 		<Carousel
-			images={slice.primary.images.map((item) => item.image)}
+			images={p.images.map((item) => item.image)}
 			animate={anim.animate}
 			animationOptions={anim.options}
 		/>

@@ -15,26 +15,27 @@
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
+	const p = slice.primary ?? ({} as any);
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
-	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && (slice.primary as any).zwei_spalten === true;
+	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && p.zwei_spalten === true;
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
+		p.animate,
+		p.anim_direction,
+		p.anim_delay,
+		p.anim_duration
 	);
 
 	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
-	const formName = (slice.primary as any).form_name?.trim() || `form_${formIndex}`;
-	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
+	const formName = p.form_name?.trim() || `form_${formIndex}`;
+	const formFields = (p.form_fields ?? []) as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
-	$: checkoutUrl = ((slice.primary as any).checkout_url as string | null | undefined)?.trim() || null;
+	$: checkoutUrl = (p.checkout_url as string | null | undefined)?.trim() || null;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
@@ -50,8 +51,8 @@
 
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
-	const formSubmittetTitle = slice.primary.submitted_title;
-	const formSubmittetText = slice.primary.submitted_text;
+	const formSubmittetTitle = p.submitted_title;
+	const formSubmittetText = p.submitted_text;
 
 	// Zustand für das modale Fenster
 	let showModal = false;
@@ -308,11 +309,11 @@
 		<!-- Standard: einspaltig -->
 		<div class="grid grid-cols-1 items-center gap-8">
 			<div>
-				{#if slice.primary.form_title}
-					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
+				{#if p.form_title}
+					<Heading tag="h2" class="mt-0">{p.form_title}</Heading>
 				{/if}
-				{#if slice.primary.form_instructions}
-					<PrismicRichText field={slice.primary.form_instructions} />
+				{#if p.form_instructions}
+					<PrismicRichText field={p.form_instructions} />
 				{/if}
 			</div>
 			<div>
@@ -348,7 +349,7 @@
 					{/if}
 					<div class="mt-8 flex justify-end">
 						<Button
-							text={slice.primary.submitt_button_text || 'Absenden'}
+							text={p.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
 							link={undefined}
 							color={undefined}

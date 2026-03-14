@@ -10,14 +10,15 @@
 	export let slices: any;
 	export let context: any;
 	export let index: any;
+	const p = slice.primary ?? ({} as any);
 
 	const { pageColor, pageBgColor } = get(theme);
 
 	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
+		p.animate,
+		p.anim_direction,
+		p.anim_delay,
+		p.anim_duration
 	);
 
 	const billingTypeSuffix: Record<string, string> = {
@@ -36,24 +37,24 @@
 	$: mainRows = [
 		{
 			label: withBillingType(
-				slice.primary.label_preis || 'Gesamtpreis',
+				p.label_preis || 'Gesamtpreis',
 				$variables['Abrechnungsart']
 			),
 			value: $variables['Preis'],
 			suffix: ''
 		},
 		{
-			label: slice.primary.label_rabatt || 'Rabatt',
+			label: p.label_rabatt || 'Rabatt',
 			value: $variables['Rabatt'],
 			suffix: ' %'
 		},
 		{
-			label: slice.primary.label_anzahlung || 'Anzahlung nach Auftragserteilung',
+			label: p.label_anzahlung || 'Anzahlung nach Auftragserteilung',
 			value: $variables['AnzahlungBetrag'],
 			suffix: ''
 		},
 		{
-			label: slice.primary.label_restbetrag || 'Restpreis nach Veröffentlichung',
+			label: p.label_restbetrag || 'Restpreis nach Veröffentlichung',
 			value: $variables['Restbetrag'],
 			suffix: ''
 		}
@@ -90,7 +91,7 @@
 			{/each}
 			{#if $variables['Total'] && addonRowsFormatted.length > 0}
 				<tr>
-					<td class="pt-3 pr-8 font-bold">{slice.primary.label_total || 'Total'}</td>
+					<td class="pt-3 pr-8 font-bold">{p.label_total || 'Total'}</td>
 					<td class="pt-3 text-right tabular-nums font-bold">{$variables['Total']}</td>
 				</tr>
 			{/if}
