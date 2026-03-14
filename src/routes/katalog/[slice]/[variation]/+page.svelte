@@ -1,24 +1,27 @@
 <script lang="ts">
 	import { components } from '$lib/slices';
+	import { theme } from '$lib/stores/theme';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	$: Component = components[data.sliceId as keyof typeof components];
+
+	$: bg = $theme.headerBgColor || '#1f2937';
+	$: fg = $theme.headerLinkColor || '#e5e7eb';
+	$: fgMuted = $theme.headerColor || '#9ca3af';
 </script>
 
 <svelte:head><title>{data.sliceName} / {data.variationName} – Katalog</title></svelte:head>
 
 <!-- Info-Leiste -->
 <div
-	class="sticky top-0 z-20 flex items-center gap-3 px-5 py-2.5 bg-white/95 backdrop-blur border-b border-gray-200 text-sm"
+	class="sticky top-0 z-20 flex items-center gap-3 px-5 py-2.5 border-b"
+	style="background-color: {bg}; border-color: {fgMuted}33;"
 >
-	<span class="font-semibold text-gray-900">{data.sliceName}</span>
-	<span class="text-gray-300">/</span>
-	<span class="text-gray-600">{data.variationName}</span>
-	<span class="ml-auto font-mono text-xs text-gray-400"
-		>{data.sliceId} · {data.variationId}</span
-	>
+	<span class="font-semibold" style="color: {fg}; font-size: 16px;">{data.sliceName}</span>
+	<span style="color: {fgMuted}; opacity: 0.4;">/</span>
+	<span style="color: {fgMuted}; font-size: 16px;">{data.variationName}</span>
 </div>
 
 <!-- Slice Preview -->
