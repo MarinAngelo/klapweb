@@ -150,7 +150,8 @@ export async function load({ params, parent, fetch, cookies }) {
 			plaeneData,
 			pageLeistungen
 		};
-	} catch (e) {
+	} catch (e: any) {
+		if (e?.status === 303) throw e; // redirect durchlassen
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);
 		throw error(404, { message: 'Seite nicht gefunden' });
 	}
