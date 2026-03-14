@@ -1,5 +1,6 @@
 {
 	"Formular": ["kauf"],
 	"Kacheln": ["plaene"],
-	"Button": ["kauf"]
+	"Button": ["kauf"],
+	"Akkordeon": ["leistungen"]
 }

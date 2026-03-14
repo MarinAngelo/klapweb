@@ -22,8 +22,8 @@
  *     Full custom type definition — copied to customtypes/<typeName>/index.json (gitignored)
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -32,7 +32,9 @@ function read(path) {
 }
 
 function write(path, data) {
-	writeFileSync(join(ROOT, path), JSON.stringify(data, null, '\t') + '\n');
+	const fullPath = join(ROOT, path);
+	mkdirSync(dirname(fullPath), { recursive: true });
+	writeFileSync(fullPath, JSON.stringify(data, null, '\t') + '\n');
 }
 
 const config = read('slicemachine.config.json');
@@ -48,11 +50,18 @@ if (Array.isArray(config.features)) {
 		process.exit(1);
 	}
 	const plans = JSON.parse(readFileSync(plansPath, 'utf-8'));
-	if (!plans[config.plan]) {
-		console.error(`✗ Plan "${config.plan}" not found in plans.json`);
-		process.exit(1);
+	function resolveFeatures(planKey) {
+		const plan = plans[planKey];
+		if (!plan) {
+			console.error(`✗ Plan "${planKey}" not found in plans.json`);
+			process.exit(1);
+		}
+		const inherited = plan.extends ? resolveFeatures(plan.extends) : [];
+		const own = plan.features ?? [];
+		return [...inherited, ...own.filter((f) => !inherited.includes(f))];
 	}
-	features = plans[config.plan].features ?? [];
+
+	features = resolveFeatures(config.plan);
 	console.log(`Plan: ${config.plan} (${plans[config.plan].label}) → features: [${features.join(', ') || 'none'}]`);
 }
 

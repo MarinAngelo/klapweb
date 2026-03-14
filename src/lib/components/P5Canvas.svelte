@@ -27,13 +27,24 @@
 	onMount(async () => {
 		const p5 = (await import('p5')).default;
 
+		// Wait for the next animation frame: by then all Svelte reactive updates
+		// (e.g. $bannerHeight derived from $headerHeight measured by Header onMount)
+		// have been applied to the DOM and the browser has calculated final layout,
+		// so container.offsetHeight returns the correct value for createCanvas().
+		await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+		if (!container) return;
+
 		// Instance mode: canvas is appended into `container`
 		instance = new p5((p: p5Type) => sketch(p, container), container) as p5Type;
 
 		// Responsive: resize canvas when container changes size
 		ro = new ResizeObserver(() => {
 			if (instance && container) {
-				(instance as any).resizeCanvas(container.offsetWidth, container.offsetHeight);
+				(instance as p5Type & { resizeCanvas(w: number, h: number): void }).resizeCanvas(
+					container.offsetWidth,
+					container.offsetHeight
+				);
 			}
 		});
 		ro.observe(container);

@@ -39,12 +39,18 @@
 		prismicTheme?.data?.header_link_hover_color || $theme.headerLinkHoverColor;
 
 	// bannerTop direkt aus den Seitendaten lesen, nicht aus dem Store
+	// Alle Slice-Typen berücksichtigen, die als Vollbild-Banner fungieren können
 	$: bannerTop = (() => {
 		const slices = $page.data?.page?.data?.slices;
 		if (!Array.isArray(slices)) return false;
 
-		const titelbereichSlice = slices.find((s: any) => s.slice_type === 'hero');
-		return titelbereichSlice?.primary?.banner_overlap === true;
+		const bannerSlice = slices.find(
+			(s: any) =>
+				(s.slice_type === 'hero' ||
+					(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				s.primary?.banner_overlap === true
+		);
+		return !!bannerSlice;
 	})();
 
 	$: headerColor = $theme.headerColor;
@@ -97,6 +103,7 @@
 			window.removeEventListener('resize', updateHeaderHeight);
 			if (landscapeQuery) landscapeQuery.removeEventListener('change', updateHeaderHeight);
 			if (observer) observer.disconnect();
+			headerHeight.set(0);
 		};
 	});
 
@@ -120,10 +127,10 @@
 	style:color={headerColor}
 >
 	<Bounded tag="div" yPadding="none" tMargin="lg" fullWidth={prismicTheme?.data?.full_screen_width === true}>
-		<div class="flex {$isMenuOpen ? '' : 'items-center'} justify-between w-full">
-			<div class="logo m-0">
+		<div class="flex items-stretch justify-between w-full">
+			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-2 mb-2">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5">
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div

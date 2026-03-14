@@ -212,6 +212,28 @@
 		}
 
 		if (selectedPayment === 'bar') {
+			// Kundendaten speichern (fire-and-forget)
+			fetch('/api/save-customer', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					date: new Date().toISOString(),
+					paymentMethod: 'bar',
+					service: data.product?.label ?? serviceParam,
+					amount: grandTotal,
+					currency: selectedCurrency,
+					discountCode: appliedCode || undefined,
+					vorname: checkoutData.data['vorname'],
+					nachname: checkoutData.data['nachname'],
+					firma: checkoutData.data['firma'],
+					email: checkoutData.data['email'],
+					adresse: checkoutData.data['adresse'],
+					plz: checkoutData.data['plz'],
+					ort: checkoutData.data['ort'],
+					land: checkoutData.data['land']
+				})
+			}).catch(() => {});
+
 			// Dev-Modus: Netlify-POST überspringen
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');

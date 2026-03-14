@@ -9,6 +9,7 @@
 		return getComputedStyle(document.documentElement).getPropertyValue(key).trim() || '#000000';
 	}
 
+	// ── Page-level colors ──────────────────────────────────────────────────────
 	let bgColor = '#000000';
 	let textColor = '#000000';
 	let sectionBgActive = false;
@@ -17,9 +18,22 @@
 
 	const sketch = textBgColorSketch(
 		(bg, text) => {
-			bgColor = bg;
-			textColor = text;
-			if (sectionBgActive) setSectionBgStyle(bg);
+			if (activeSlice) {
+				// Slice-Modus: Sketch-Farben gehen auf das ausgewählte Element,
+				// Seiten-CSS-Variablen werden sofort zurückgesetzt
+				document.documentElement.style.setProperty('--page-bg-color', bgColor);
+				document.documentElement.style.setProperty('--page-color', textColor);
+				sliceBgColor = bg;
+				sliceTextColor = text;
+				activeSlice.el.style.setProperty('background-color', bg, 'important');
+				activeSlice.el.style.setProperty('color', text, 'important');
+				activeSlice.el.style.setProperty('--page-color', text, 'important');
+			} else {
+				// Seiten-Modus: wie bisher
+				bgColor = bg;
+				textColor = text;
+				if (sectionBgActive) setSectionBgStyle(bg);
+			}
 		},
 		() => sketchMode
 	);
@@ -29,13 +43,12 @@
 		textColor = getCssVar('--page-color');
 	});
 
-	// Re-read values each time panel is opened
 	$: if (open) {
 		bgColor = getCssVar('--page-bg-color');
 		textColor = getCssVar('--page-color');
+		buildSliceList();
 	}
 
-	// Direct inline style override for slice backgrounds
 	const savedBgColors = new Map<HTMLElement, string>();
 
 	function setSectionBgStyle(color: string) {
@@ -72,16 +85,148 @@
 		else clearSectionBgStyle();
 	}
 
-	let copiedField: 'bg' | 'text' | null = null;
-	function copy(value: string, field: 'bg' | 'text') {
+	// ── Slice-level colors ─────────────────────────────────────────────────────
+	type SliceEntry = {
+		el: HTMLElement;
+		label: string;
+		origStyle: string;
+		btnEl: HTMLElement | null;
+		origBtnStyle: string;
+	};
+
+	let sliceList: SliceEntry[] = [];
+	let activeSlice: SliceEntry | null = null;
+	let sliceBgColor = '#000000';
+	let sliceTextColor = '#000000';
+	let btnColor = '#000000';
+	let btnBgColor = '#000000';
+	let btnHoverColor = '#000000';
+	let btnHoverBgColor = '#000000';
+
+	function formatSliceType(type: string): string {
+		return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
+	function buildSliceList() {
+		const els = Array.from(document.querySelectorAll<HTMLElement>('[data-slice-type]'));
+		const counts: Record<string, number> = {};
+		sliceList = els.map((el) => {
+			const type = el.dataset.sliceType ?? '?';
+			counts[type] = (counts[type] ?? 0) + 1;
+			const suffix = counts[type] > 1 ? ` #${counts[type]}` : '';
+			return {
+				el,
+				label: formatSliceType(type) + suffix,
+				origStyle: '',
+				btnEl: el.querySelector<HTMLElement>('.button-prismic-link'),
+				origBtnStyle: ''
+			};
+		});
+		// If the previously active slice is no longer in DOM, reset
+		if (activeSlice && !sliceList.find((s) => s.el === activeSlice!.el)) {
+			activeSlice = null;
+		}
+	}
+
+	function rgbToHex(rgb: string): string | null {
+		if (!rgb || rgb === 'transparent') return null;
+		const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+		if (!m) return null;
+		return '#' + [m[1], m[2], m[3]].map((n) => parseInt(n).toString(16).padStart(2, '0')).join('');
+	}
+
+	function selectSlice(entry: SliceEntry) {
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = entry;
+		sketchActive = false; // hide sketch to keep panel compact
+		entry.origStyle = entry.el.style.cssText;
+
+		const computed = getComputedStyle(entry.el);
+		sliceBgColor = rgbToHex(computed.backgroundColor) ?? bgColor;
+		sliceTextColor = rgbToHex(computed.color) ?? textColor;
+
+		if (entry.btnEl) {
+			entry.origBtnStyle = entry.btnEl.style.cssText;
+			const bc = getComputedStyle(entry.btnEl);
+			btnColor = rgbToHex(bc.color) ?? '#000000';
+			btnBgColor = rgbToHex(bc.backgroundColor) ?? '#000000';
+			// CSS vars are not readable via getComputedStyle — read from inline style directly
+			const rawHoverColor = entry.btnEl.style.getPropertyValue('--hover-text-color').trim();
+			const rawHoverBg = entry.btnEl.style.getPropertyValue('--hover-bg-color').trim();
+			btnHoverColor = rawHoverColor || btnColor;
+			btnHoverBgColor = rawHoverBg || btnBgColor;
+		}
+	}
+
+	function deselectSlice() {
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+	}
+
+	function restoreSlice(entry: SliceEntry) {
+		entry.el.style.cssText = entry.origStyle;
+		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
+	}
+
+	function setSliceBg(e: Event) {
+		sliceBgColor = (e.target as HTMLInputElement).value;
+		if (activeSlice) activeSlice.el.style.setProperty('background-color', sliceBgColor, 'important');
+	}
+
+	function setSliceText(e: Event) {
+		sliceTextColor = (e.target as HTMLInputElement).value;
+		if (activeSlice) {
+			activeSlice.el.style.setProperty('color', sliceTextColor, 'important');
+			activeSlice.el.style.setProperty('--page-color', sliceTextColor, 'important');
+		}
+	}
+
+	function setBtnColor(e: Event) {
+		btnColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('color', btnColor, 'important');
+			activeSlice.btnEl.style.setProperty('border-color', btnColor, 'important');
+			activeSlice.btnEl.style.setProperty('--focus-ring-color', btnColor, 'important');
+		}
+	}
+
+	function setBtnBgColor(e: Event) {
+		btnBgColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('background-color', btnBgColor, 'important');
+		}
+	}
+
+	function setBtnHoverColor(e: Event) {
+		btnHoverColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('--hover-text-color', btnHoverColor);
+		}
+	}
+
+	function setBtnHoverBgColor(e: Event) {
+		btnHoverBgColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('--hover-bg-color', btnHoverBgColor);
+		}
+	}
+
+	function clearSliceStyles() {
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+	}
+
+	// ── Copy helper ────────────────────────────────────────────────────────────
+	let copiedField: string | null = null;
+	function copy(value: string, field: string) {
 		navigator.clipboard.writeText(value);
 		copiedField = field;
 		setTimeout(() => (copiedField = null), 1200);
 	}
 
-	// Clean up on panel close or component destroy
-	$: if (!open) clearSectionBgStyle();
-	onDestroy(clearSectionBgStyle);
+	// ── Cleanup ────────────────────────────────────────────────────────────────
+	$: if (!open) { clearSectionBgStyle(); clearSliceStyles(); }
+	onDestroy(() => { clearSectionBgStyle(); clearSliceStyles(); });
 </script>
 
 {#if open}
@@ -105,6 +250,7 @@
 			<p class="hint-sketch">Maus X = Hintergrund · Maus Y = Schrift</p>
 		{/if}
 
+		<!-- Page-level colors -->
 		<label class="row">
 			<span>Hintergrundfarbe (Page)</span>
 			<div class="color-wrap">
@@ -135,6 +281,97 @@
 				</button>
 			</div>
 		</div>
+
+		<!-- Divider -->
+		<div class="divider"></div>
+
+		<!-- Slice-level colors -->
+		<div class="section-label">Slice-Farben</div>
+
+		<div class="slice-list">
+			{#each sliceList as entry}
+				<button
+					class="slice-btn"
+					class:active={activeSlice === entry}
+					on:click={() => activeSlice === entry ? deselectSlice() : selectSlice(entry)}
+				>
+					{entry.label}
+				</button>
+			{/each}
+			{#if sliceList.length === 0}
+				<span class="hint-sketch">Keine Slices gefunden</span>
+			{/if}
+		</div>
+
+		{#if activeSlice}
+			<label class="row">
+				<span>Hintergrundfarbe</span>
+				<div class="color-wrap">
+					<input type="color" value={sliceBgColor} on:input={setSliceBg} />
+					<code>{sliceBgColor}</code>
+					<button class="copy-btn" on:click={() => copy(sliceBgColor, 'slice-bg')} title="Kopieren">
+						{copiedField === 'slice-bg' ? '✓' : '⧉'}
+					</button>
+				</div>
+			</label>
+
+			<label class="row">
+				<span>Schriftfarbe</span>
+				<div class="color-wrap">
+					<input type="color" value={sliceTextColor} on:input={setSliceText} />
+					<code>{sliceTextColor}</code>
+					<button class="copy-btn" on:click={() => copy(sliceTextColor, 'slice-text')} title="Kopieren">
+						{copiedField === 'slice-text' ? '✓' : '⧉'}
+					</button>
+				</div>
+			</label>
+
+			{#if activeSlice.btnEl}
+				<label class="row">
+					<span>Schaltfläche Farbe</span>
+					<div class="color-wrap">
+						<input type="color" value={btnColor} on:input={setBtnColor} />
+						<code>{btnColor}</code>
+						<button class="copy-btn" on:click={() => copy(btnColor, 'btn-color')} title="Kopieren">
+							{copiedField === 'btn-color' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>Schaltfläche Hintergrund</span>
+					<div class="color-wrap">
+						<input type="color" value={btnBgColor} on:input={setBtnBgColor} />
+						<code>{btnBgColor}</code>
+						<button class="copy-btn" on:click={() => copy(btnBgColor, 'btn-bg')} title="Kopieren">
+							{copiedField === 'btn-bg' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>Schaltfläche Hover Farbe</span>
+					<div class="color-wrap">
+						<input type="color" value={btnHoverColor} on:input={setBtnHoverColor} />
+						<code>{btnHoverColor}</code>
+						<button class="copy-btn" on:click={() => copy(btnHoverColor, 'btn-hover-color')} title="Kopieren">
+							{copiedField === 'btn-hover-color' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>Schaltfläche Hover Hintergrund</span>
+					<div class="color-wrap">
+						<input type="color" value={btnHoverBgColor} on:input={setBtnHoverBgColor} />
+						<code>{btnHoverBgColor}</code>
+						<button class="copy-btn" on:click={() => copy(btnHoverBgColor, 'btn-hover-bg')} title="Kopieren">
+							{copiedField === 'btn-hover-bg' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+			{/if}
+		{/if}
 	</aside>
 {/if}
 
@@ -156,6 +393,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.875rem;
+		max-height: 90vh;
+		overflow-y: auto;
 	}
 
 	.header {
@@ -172,7 +411,8 @@
 
 	.sketch-wrap {
 		width: 100%;
-		aspect-ratio: 1;
+		height: 220px;
+		flex-shrink: 0;
 		border-radius: 0.375rem;
 		overflow: hidden;
 	}
@@ -291,5 +531,48 @@
 		background: rgba(255, 255, 255, 0.15);
 		color: #fff;
 		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+	.divider {
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		margin: -0.25rem 0;
+	}
+
+	.section-label {
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		opacity: 0.45;
+	}
+
+	.slice-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.slice-btn {
+		font-family: inherit;
+		font-size: 0.7rem;
+		text-align: left;
+		padding: 0.3rem 0.5rem;
+		border-radius: 0.3rem;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: rgba(255, 255, 255, 0.04);
+		color: rgba(255, 255, 255, 0.5);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+
+	.slice-btn:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	.slice-btn.active {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+		border-color: rgba(255, 255, 255, 0.4);
 	}
 </style>

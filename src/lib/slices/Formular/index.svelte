@@ -11,63 +11,14 @@
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount, onDestroy } from 'svelte';
-	import { _ } from '$lib/stores/i18n';
+	import { onMount } from 'svelte';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
-	// Variation mitText: two-column layout
-	$: isTwoColumn = (slice.variation as string) === 'mitText';
-	$: isTwoColumns = (slice.variation as string) === 'twoColumns';
-	$: p = slice.primary as any; // mitText-specific fields (spalten_verhaeltnis, formular_seite, text)
-
-	// Vollständige Klassennamen damit Tailwind sie erkennt:
-	// 'col-span-12' 'md:col-span-4' 'md:col-span-6' 'md:col-span-8' 'md:order-1' 'md:order-2'
-	$: formCol = isTwoColumn
-		? p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
-			? 'col-span-12 md:col-span-8'
-			: p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
-				? 'col-span-12 md:col-span-4'
-				: 'col-span-12 md:col-span-6'
-		: '';
-	$: textCol = isTwoColumn
-		? p.spalten_verhaeltnis === 'Breit Text (1/3 + 2/3)'
-			? 'col-span-12 md:col-span-8'
-			: p.spalten_verhaeltnis === 'Breit Formular (2/3 + 1/3)'
-				? 'col-span-12 md:col-span-4'
-				: 'col-span-12 md:col-span-6'
-		: '';
-	$: formOrder = isTwoColumn ? (p.formular_seite === 'Rechts' ? 'md:order-2' : 'md:order-1') : '';
-	$: textOrder = isTwoColumn ? (p.formular_seite === 'Rechts' ? 'md:order-1' : 'md:order-2') : '';
-
-	// Text-Spalte Ausrichtung
-	// 'self-start' 'self-center' 'self-end'
-	// 'w-full' 'w-fit mx-auto' 'w-fit ml-auto'
-	// 'text-left' 'text-center' 'text-right'
-	$: textSelf = isTwoColumn
-		? p.text_ausrichtung_v === 'Mitte'
-			? 'self-center'
-			: p.text_ausrichtung_v === 'Unten'
-				? 'self-end'
-				: 'self-start'
-		: '';
-	$: textItems = isTwoColumn
-		? p.text_ausrichtung_h === 'Mitte'
-			? 'w-fit mx-auto'
-			: p.text_ausrichtung_h === 'Rechts'
-				? 'w-fit ml-auto'
-				: 'w-full'
-		: '';
-	$: textTextAlign = isTwoColumn
-		? p.text_textausrichtung === 'Mitte'
-			? 'text-center'
-			: p.text_textausrichtung === 'Rechts'
-				? 'text-right'
-				: 'text-left'
-		: '';
+	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && (slice.primary as any).zwei_spalten === true;
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
@@ -87,10 +38,7 @@
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
-	function fieldColumn(field: FormSliceDefaultPrimaryFormFieldsItem): string {
-		return (field as any).column ?? 'Links';
-	}
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin' };
 
 	function effectiveKey(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (
@@ -110,6 +58,9 @@
 
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
+
+	// Termin-Feld: nach Submit neu laden (gebuchter Termin verschwindet aus Liste)
+	let termineRefreshKey = 0;
 
 	function validateField(field: FormSliceDefaultPrimaryFormFieldsItem, value: unknown): string {
 		if (!field || !effectiveKey(field)) return '';
@@ -219,6 +170,42 @@
 		}
 		linkError = null;
 
+		// Termin-Buchung: Slot reservieren bevor Formular abgesendet wird
+		const terminField = formFields.find((f) => (f as any).field_type === 'Termin');
+		if (terminField) {
+			const terminId = formData.get('termin') as string;
+			if (terminId) {
+				const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
+				const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+				const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
+				const customerTimezone = zeitzoneField ? (formData.get('zeitzone') as string) || undefined : undefined;
+				try {
+					const resp = await fetch('/api/buche-termin', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							terminId,
+							name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
+							email: emailField ? String(formData.get('email') ?? '') : undefined,
+							customerTimezone
+						})
+					});
+					if (resp.status === 409) {
+						const data = await resp.json();
+						linkError = data.error ?? 'Dieser Termin ist leider nicht mehr verfügbar.';
+						return;
+					}
+					if (!resp.ok) {
+						linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+						return;
+					}
+				} catch {
+					linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+					return;
+				}
+			}
+		}
+
 		// Checkout-Modus: Daten in sessionStorage speichern und zur Zusammenfassung navigieren
 		if (checkoutUrl) {
 			const data: Record<string, string> = {};
@@ -269,6 +256,7 @@
 				showModal = true;
 				form.reset();
 				fieldErrors = {};
+				termineRefreshKey++;
 			} else {
 				console.error('Fehler beim Senden des Formulars:', response);
 				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
@@ -279,56 +267,10 @@
 		}
 	}
 
-	// HTML-Embed: Script-Tags entfernen (analog zu HtmlCode-Slice)
-	function sanitizeHtml(html: string): string {
-		return html.replace(/<script[\s\S]*?<\/script>/gi, '');
-	}
-	$: htmlEmbed = (p.html_embed?.[0] as { text: string } | undefined)?.text ?? '';
-	$: sanitizedHtmlEmbed = sanitizeHtml(htmlEmbed);
-	// Wenn ein Embed vorhanden ist, immer oben ausrichten (unabhängig von CMS-Einstellung)
-	$: effectiveTextSelf = sanitizedHtmlEmbed ? 'self-start' : textSelf;
-	// Overlay: CMS-Farbe oder Fallback auf pageColor; Transparenz 0–100 → 100=unsichtbar, 0=volle Deckkraft
-	$: overlayColor = p.html_embed_overlay_color || get(theme).pageColor;
-	$: overlayOpacity = p.html_embed_overlay_opacity != null ? (100 - p.html_embed_overlay_opacity) / 100 : 0;
-
-	// Clock: current time/date in the map's timezone
-	let clockTime = '';
-	let clockDate = '';
-	let clockInterval: ReturnType<typeof setInterval> | undefined;
-
-	function updateClock(tz: string) {
-		const now = new Date();
-		clockTime = new Intl.DateTimeFormat('de-CH', {
-			timeZone: tz,
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit',
-			hour12: false
-		}).format(now);
-		// UTC offset: "GMT+5:30" → "UTC+5:30"
-		const offsetStr = new Intl.DateTimeFormat('en', {
-			timeZone: tz,
-			timeZoneName: 'shortOffset'
-		}).formatToParts(now).find((p) => p.type === 'timeZoneName')?.value ?? '';
-		clockDate = new Intl.DateTimeFormat('de-CH', {
-			timeZone: tz,
-			weekday: 'long',
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		}).format(now) + '  ' + offsetStr.replace('GMT', 'UTC');
-	}
-
 	// URL-Parameter → wird als verstecktes Feld mitgesendet (z.B. ?dienst=DienstleistungA)
 	let urlParams: Record<string, string> = {};
 
 	onMount(() => {
-		const tz = p.map_timezone;
-		if (p.map_show_clock && tz) {
-			updateClock(tz);
-			clockInterval = setInterval(() => updateClock(tz), 1000);
-		}
-
 		const search = new URLSearchParams(window.location.search);
 		search.forEach((value, key) => {
 			urlParams = { ...urlParams, [key]: value };
@@ -339,8 +281,6 @@
 			if (uid) urlParams = { ...urlParams, dienstleistung: uid };
 		}
 	});
-
-	onDestroy(() => clearInterval(clockInterval));
 
 	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
 	function onFormInput(e: Event) {
@@ -364,130 +304,6 @@
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
-	<!-- Formular-Block (wiederverwendet in beiden Layout-Varianten) -->
-	{:else if isTwoColumn}
-		<div class="grid grid-cols-12 items-start gap-y-8 md:gap-12 overflow-x-hidden">
-			<!-- Formular-Spalte -->
-			<div class="{formCol} {formOrder} min-w-0">
-				{#if slice.primary.form_title}
-					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
-				{/if}
-				{#if slice.primary.form_instructions}
-					<PrismicRichText field={slice.primary.form_instructions} />
-				{/if}
-				<form
-					class="mt-16"
-					name={formName}
-					method="POST"
-					data-netlify="true"
-					on:submit={handleSubmit}
-					on:input={onFormInput}
-					aria-describedby="form-error"
-					novalidate
-				>
-					<input type="hidden" name="form-name" value={formName} />
-					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
-					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
-					{#each formFields as field}
-						{#if field && effectiveKey(field)}
-							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
-							{#if fieldErrors[effectiveKey(field)]}
-								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
-							{/if}
-						{/if}
-					{/each}
-					{#if linkError}
-						<p id="form-error" class="mt-3 text-sm text-red-600">{linkError}</p>
-					{/if}
-					<div class="mt-8 flex justify-end">
-						<Button
-							text={slice.primary.submitt_button_text || 'Absenden'}
-							disabled={!!linkError}
-							link={undefined}
-							color={undefined}
-							bgColor={undefined}
-							hoverColor={undefined}
-							hoverBgColor={undefined}
-						/>
-					</div>
-				</form>
-			</div>
-			<!-- Text-Spalte -->
-			<div class="{textCol} {textOrder} {effectiveTextSelf} min-w-0">
-				<div class="{textItems} {textTextAlign} max-w-full">
-					<PrismicRichText field={p.text} />
-				</div>
-			{#if sanitizedHtmlEmbed}
-					<div class="w-full mt-6">
-						<div class="relative">
-							{@html sanitizedHtmlEmbed}
-							<div
-								class="absolute inset-0 pointer-events-none"
-								style="background-color: {overlayColor}; opacity: {overlayOpacity};"
-							></div>
-						</div>
-						{#if p.map_show_clock && p.map_timezone}
-							<div class="mt-2">
-								<Heading tag="h3">{$_('Meine Zeit')}</Heading>
-								<div class="text-sm">{clockDate}</div>
-								<div class="font-mono">{clockTime}</div>
-							</div>
-						{/if}
-					</div>
-				{/if}
-			</div>
-		</div>
-	{:else if isTwoColumns}
-		<!-- Zwei Spalten: Felder in 2 Spalten, mobile einspaltig -->
-		<div>
-			{#if slice.primary.form_title}
-				<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
-			{/if}
-			{#if slice.primary.form_instructions}
-				<PrismicRichText field={slice.primary.form_instructions} />
-			{/if}
-			<form
-				class="mt-16"
-				name={formName}
-				method="POST"
-				data-netlify="true"
-				on:submit={handleSubmit}
-				on:input={onFormInput}
-				aria-describedby="form-error"
-				novalidate
-			>
-				<input type="hidden" name="form-name" value={formName} />
-				<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
-				<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
-				<!-- Tailwind-Safelist: sm:col-start-2 -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-					{#each formFields as field}
-						{#if field && effectiveKey(field)}
-							<div class="{fieldColumn(field) === 'Rechts' ? 'sm:col-start-2' : ''}">
-								<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
-								{#if fieldErrors[effectiveKey(field)]}
-									<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
-								{/if}
-							</div>
-						{/if}
-					{/each}
-				</div>
-				{#if linkError}
-					<p id="form-error" class="mt-3 text-sm text-red-600">{linkError}</p>
-				{/if}
-				<div class="mt-8 flex justify-end">
-					<Button
-						text={slice.primary.submitt_button_text || 'Absenden'}
-						disabled={!!linkError}
-						link={undefined}
-						color={undefined}
-						bgColor={undefined}
-						hoverColor={undefined}
-						hoverBgColor={undefined}
-					/>
-				</div>
-			</form>
-		</div>
 	{:else}
 		<!-- Standard: einspaltig -->
 		<div class="grid grid-cols-1 items-center gap-8">
@@ -513,14 +329,18 @@
 					<input type="hidden" name="form-name" value={formName} />
 					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
-					{#each formFields as field}
-						{#if field && effectiveKey(field)}
-							<InputField {field} on:blur={(e) => onFieldBlur(e, field)} />
-							{#if fieldErrors[effectiveKey(field)]}
-								<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
+						{#each formFields as field}
+							{#if field && effectiveKey(field)}
+								<div>
+									<InputField {field} refreshKey={termineRefreshKey} on:blur={(e) => onFieldBlur(e, field)} />
+									{#if fieldErrors[effectiveKey(field)]}
+										<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+									{/if}
+								</div>
 							{/if}
-						{/if}
-					{/each}
+						{/each}
+					</div>
 					{#if linkError}
 						<p id="form-error" class="mt-3 text-sm text-red-600">
 							{linkError}

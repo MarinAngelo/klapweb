@@ -19,7 +19,7 @@
 		data-slice-variation={slice.variation}
 	>
 		{#if slice.primary.title}
-			<h2 class="mb-4 font-bold text-2xl md:text-3xl">{slice.primary.title}</h2>
+			<h2 class="mb-4 font-bold">{slice.primary.title}</h2>
 		{/if}
 		{#if slice.primary.description}
 			<div class="mb-6">

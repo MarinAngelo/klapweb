@@ -61,5 +61,5 @@
 <SliceZone
 	slices={data.page.data.slices}
 	{components}
-	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {} }}
+	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {}, pageLeistungen: data.pageLeistungen ?? [] }}
 />

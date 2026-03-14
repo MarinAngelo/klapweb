@@ -41,7 +41,7 @@
 	<div class="mt-8">
 		<h2>{$_('Quellenangaben & Realisierung')}</h2>
 
-		<h3 class="text-lg font-semibold">{$_('Webentwicklung')}</h3>
+		<h3 class="font-semibold">{$_('Webentwicklung')}</h3>
 		<p>
 			Marinus Angelo Klap<br />
 			<strong>Website:</strong>
@@ -56,7 +56,7 @@
 			{#each contacts as contact, i (contact)}
 				<div class={i < contacts.length - 1 ? 'mb-6' : ''}>
 					{#if contact.title}
-						<h2 class="text-lg font-semibold">{contact.title}</h2>
+						<p class="font-semibold">{contact.title}</p>
 					{/if}
 					<AddressBlock
 						responsible_person_company={contact.name ?? ''}

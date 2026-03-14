@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
@@ -239,9 +239,12 @@
 	$: adobeFontUrl = settings?.data?.adobe_font_id
 		? `https://use.typekit.net/${settings.data.adobe_font_id}.css`
 		: null;
-	$: hasBannerOverlap =
-		$page.data?.page?.data?.slices?.find((s: any) => s.slice_type === 'hero')?.primary
-			?.banner_overlap === true;
+	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
+		(s: any) =>
+			(s.slice_type === 'hero' ||
+				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+			s.primary?.banner_overlap === true
+	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 
 	let studioOpen = false;
@@ -251,6 +254,10 @@
 			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
+			}
+			if (e.altKey && e.shiftKey && e.key === 'A') {
+				e.preventDefault();
+				goto('/admin');
 			}
 		}
 		window.addEventListener('keydown', onKeydown);

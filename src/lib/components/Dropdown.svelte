@@ -51,7 +51,7 @@
 
 	{#if isOpen}
 		<ul
-			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded py-1"
+			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded pt-1 pb-4"
 			style="background-color: {headerBgColor}; min-width: 14rem;"
 		>
 			{#each subItems as dropdownItem, index}

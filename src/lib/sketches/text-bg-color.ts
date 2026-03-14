@@ -37,7 +37,7 @@ export function textBgColorSketch(
 		let frozen = false;
 
 		p5.setup = () => {
-			p5.createCanvas(el.offsetWidth, el.offsetHeight);
+			p5.createCanvas(el.offsetWidth || window.innerWidth, window.innerHeight);
 			p5.colorMode(p5.HSB, 360, 100, 100, 100);
 			p5.textAlign(p5.CENTER, p5.CENTER);
 			p5.noStroke();
@@ -49,9 +49,10 @@ export function textBgColorSketch(
 		};
 
 		p5.draw = () => {
+			if (p5.width <= 0 || p5.height <= 0) return;
 			const s = p5.min(p5.width, p5.height);
-			const bgHue = p5.map(p5.mouseX, 0, p5.width, 0, 360);
-			const textHue = p5.map(p5.mouseY, 0, p5.height, 0, 360);
+			const bgHue = p5.constrain(p5.map(p5.mouseX, 0, p5.width, 0, 360), 0, 360);
+			const textHue = p5.constrain(p5.map(p5.mouseY, 0, p5.height, 0, 360), 0, 360);
 			const dark = getMode() === 'dark';
 
 			const bgCol = dark ? p5.color(bgHue, 70, 20) : p5.color(bgHue, 30, 95);

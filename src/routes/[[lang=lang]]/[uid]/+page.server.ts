@@ -1,6 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { asText } from '@prismicio/client';
+import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 
@@ -24,7 +24,8 @@ export async function load({ params, parent, fetch }) {
 				'page.ecommerce_billing_type',
 				'page.ecommerce_discount_percent',
 				'page.ecommerce_deposit_percent',
-				'leistung.label'
+				'leistung.label',
+				'leistung.beschreibung'
 			]
 		});
 
@@ -43,7 +44,7 @@ export async function load({ params, parent, fetch }) {
 				: {};
 
 		// Resolve plan leistungen for image_cards/plaene slices
-		type PlaeneFeature = { label: string; wert: string | null };
+		type PlaeneFeature = { label: string; wert: string | null; beschreibung?: string };
 		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
 		const plaeneSlices = ((page.data as any).slices ?? []).filter(
 			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
@@ -55,16 +56,25 @@ export async function load({ params, parent, fetch }) {
 						const uid = item.plan?.uid;
 						if (!uid) return [];
 						try {
-							const planPage = await client.getByUID('page', uid, {
-								lang,
-								fetchLinks: ['leistung.label']
-							});
+							const planPage = await client.getByUID('page', uid, { lang });
 							const leistungen: Array<{ leistung?: any; wert?: string }> =
 								(planPage.data as any).leistungen ?? [];
-							return leistungen.map((row) => ({
-								label: row.leistung?.data?.label ?? row.leistung?.uid ?? '',
-								wert: row.wert ?? null
-							})) as PlaeneFeature[];
+							return await Promise.all(
+								leistungen.map(async (row) => {
+									const lUid = row.leistung?.uid;
+									let beschreibung: string | undefined;
+									let label = row.leistung?.uid ?? '';
+									if (lUid) {
+										try {
+											const doc = await client.getByUID('leistung', lUid, { lang });
+											label = (doc.data as any).label ?? label;
+											const blocks = (doc.data as any).beschreibung ?? [];
+											beschreibung = blocks.length ? (asHTML(blocks) ?? undefined) : undefined;
+										} catch { /* ignore */ }
+									}
+									return { label, wert: row.wert ?? null, beschreibung } as PlaeneFeature;
+								})
+							);
 						} catch {
 							return [] as PlaeneFeature[];
 						}
@@ -73,6 +83,22 @@ export async function load({ params, parent, fetch }) {
 				plaeneData[s.id] = planDocs;
 			})
 		);
+
+		// Resolve page's own leistungen with full beschreibung (fetchLinks only returns first block)
+		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
+			(page.data as any).leistungen ?? [];
+		const pageLeistungen = await Promise.all(
+			leistungenRefs.map(async (row) => {
+				const uid = row.leistung?.uid;
+				if (!uid) return null;
+				try {
+					const doc = await client.getByUID('leistung', uid, { lang });
+					return { leistung: doc, wert: row.wert ?? null };
+				} catch {
+					return null;
+				}
+			})
+		).then((rows) => rows.filter(Boolean));
 
 		// Resolve addon pages for ecommerce products
 		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
@@ -111,7 +137,8 @@ export async function load({ params, parent, fetch }) {
 			rates,
 			addonRows,
 			globalDepositPct,
-			plaeneData
+			plaeneData,
+			pageLeistungen
 		};
 	} catch (e) {
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);

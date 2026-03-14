@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
+	import { TIMEZONES } from '$lib/utils/timezones';
 
 	export let field: {
 		field_name: string | null;
@@ -14,7 +15,7 @@
 	export let compact = false;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
+	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin', Zeitzone: 'zeitzone' };
 	$: key = typeKeys[field.field_type ?? ''] || (field.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
 
 	// Mapping von benutzerfreundlichen Typen zu HTML-Typen
@@ -26,8 +27,18 @@
 		'E-Mail': 'email',
 		Textbereich: 'textarea',
 		Telefon: 'tel',
-		Land: 'select-country'
+		Land: 'select-country',
+		Termin: 'select-termin',
+		Zeitzone: 'select-zeitzone'
 	};
+
+	// Termin-Auswahl: verfügbare Slots laden
+	export let refreshKey: number = 0;
+	interface AvailableTermin { id: string; label: string; }
+	let termine: AvailableTermin[] = [];
+	let termineLoading = false;
+	let termineError = false;
+	let selectedTermin = '';
 
 	const countries = [
 		'Afghanistan', 'Ägypten', 'Albanien', 'Algerien', 'Andorra', 'Angola',
@@ -69,6 +80,22 @@
 
 	// HTML-Typ basierend auf dem Mapping (reaktiv: aktualisiert sich wenn field.field_type ändert)
 	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
+
+	async function loadTermine(_key: number) {
+		termineLoading = true;
+		termineError = false;
+		selectedTermin = '';
+		try {
+			const r = await fetch('/api/termine');
+			termine = await r.json();
+		} catch {
+			termineError = true;
+		} finally {
+			termineLoading = false;
+		}
+	}
+
+	$: if (field.field_type === 'Termin' && typeof window !== 'undefined') loadTermine(refreshKey);
 
 	// Telefon: Vorwahl + Nummer
 	const countryPrefixes = [
@@ -123,7 +150,7 @@
 			placeholder={field.placeholder ?? ''}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+				: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
@@ -153,7 +180,7 @@
 				/>
 			</div>
 		{:else}
-			<div class="flex items-end mt-1 border-b-2" style="border-bottom-color: {$theme.pageColor};">
+			<div class="flex items-end mt-1 border-b focus-within:border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<select
 					bind:value={prefix}
 					class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
@@ -189,7 +216,7 @@
 				on:blur
 			></textarea>
 		{:else}
-			<div class="border-b-2" style="border-bottom-color: {$theme.pageColor};">
+			<div class="border-b focus-within:border-b-2" style="border-bottom-color: {$theme.pageColor};">
 				<textarea
 					id={key}
 					name={key}
@@ -209,7 +236,7 @@
 			required={field.required}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
@@ -242,7 +269,7 @@
 			required={field.required}
 			class={compact
 				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-md border-b-2 focus:outline-none focus:ring-0'}
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
 			style={compact
 				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
 				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
@@ -267,6 +294,51 @@
 				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}">{field.field_name ?? ''}</span>
 			</label>
 		</div>
+	{:else if htmlType === 'select-termin'}
+		{#if termineLoading}
+			<p class="text-sm opacity-60">Termine werden geladen…</p>
+		{:else if termineError}
+			<p class="text-sm text-red-500">Termine konnten nicht geladen werden.</p>
+		{:else if termine.length === 0}
+			<p class="text-sm opacity-60">Keine verfügbaren Termine.</p>
+		{:else}
+			<select
+				id={key}
+				name={key}
+				required={field.required}
+				bind:value={selectedTermin}
+				class={compact
+					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
+				style={compact
+					? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+					: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
+				on:blur
+			>
+				<option value="">Termin auswählen</option>
+				{#each termine as t}
+					<option value={t.id}>{t.label}</option>
+				{/each}
+			</select>
+		{/if}
+	{:else if htmlType === 'select-zeitzone'}
+		<select
+			id={key}
+			name={key}
+			required={field.required}
+			class={compact
+				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+				: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
+			style={compact
+				? `border-color: ${$theme.pageColor}44; color: ${$theme.pageColor};`
+				: `background-color: ${$theme.pageBgColor}; color: ${$theme.pageColor}; border-bottom-color: ${$theme.pageColor};`}
+			on:blur
+		>
+			<option value="">Zeitzone wählen</option>
+			{#each TIMEZONES as tz}
+				<option value={tz.value}>{tz.label}</option>
+			{/each}
+		</select>
 	{/if}
 	{#if field['invalid_feedback-text']}
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>

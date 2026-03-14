@@ -11,6 +11,14 @@
       "version": "initial",
       "description": "P5Grafik als Vollbild-Hintergrund ohne Text",
       "primary": {
+        "sketch_name": {
+          "type": "Select",
+          "config": {
+            "label": "Sketch",
+            "options": ["Orbital Circles", "Particle Flow"],
+            "default_value": "Orbital Circles"
+          }
+        },
         "hintergrundfarbe": {
           "type": "Color",
           "config": {
@@ -51,6 +59,14 @@
       "version": "initial",
       "description": "P5Grafik als Hintergrund mit Titel, Text und Schaltfläche",
       "primary": {
+        "sketch_name": {
+          "type": "Select",
+          "config": {
+            "label": "Sketch",
+            "options": ["Orbital Circles", "Particle Flow"],
+            "default_value": "Orbital Circles"
+          }
+        },
         "banner_overlap": {
           "type": "Boolean",
           "config": {
@@ -194,6 +210,14 @@
           "config": {
             "label": "Text Überlagerungsfeld Grösse",
             "options": ["klein", "mittel", "gross"]
+          }
+        },
+        "mobile_text_scale": {
+          "type": "Select",
+          "config": {
+            "label": "Textgrösse Mobile",
+            "placeholder": "",
+            "options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
           }
         }
       },

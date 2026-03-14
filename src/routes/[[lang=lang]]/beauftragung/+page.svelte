@@ -170,9 +170,9 @@
 			{#if !hasTabs}
 				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Rechnungsadresse</legend>
 			{/if}
-			<div class="grid grid-cols-2 gap-x-8">
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 				{#each invoiceFields as f}
-					<div class="mb-4 {f.span === 2 ? 'col-span-2' : ''}">
+					<div class="mb-4 {f.span === 2 ? 'sm:col-span-2' : ''}">
 						<label class="block text-base font-bold" for={f.key}>
 							{f.label}{f.required ? ' *' : ''}
 						</label>
@@ -181,7 +181,7 @@
 							name={f.key}
 							type={f.type}
 							required={f.required}
-							class="mt-1 p-2 block w-full rounded-none border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
+							class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
 							style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
 						/>
 						{#if fieldErrors[f.key]}
@@ -195,7 +195,7 @@
 		<!-- Weitere Angaben (extra fields from Settings) -->
 		{#if hasTabs}
 			<fieldset class:hidden={activeTab !== 'weitere'}>
-				<div class="grid grid-cols-2 gap-x-8">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 					{#each data.extraFields as field}
 						{@const key = extraFieldKey(field)}
 						{@const span = extraFieldSpan(field)}

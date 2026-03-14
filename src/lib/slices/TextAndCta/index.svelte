@@ -26,21 +26,28 @@
 		Rechts: 'flex justify-end'
 	};
 
+	const textAlignMap: Record<string, string> = {
+		Links: 'text-left',
+		Mitte: 'text-center',
+		Rechts: 'text-right'
+	};
+
 	$: sizeClass = sizeMap[slice.primary.button_size] ?? sizeMap['Mittel'];
 	$: alignClass = alignMap[slice.primary.button_align] ?? alignMap['Mitte'];
 	$: mobileFullWidth = slice.primary.mobile_full_width ?? false;
 	$: fullscreenHeight = slice.primary.fullscreen_height ?? false;
 	$: scrollSnap = slice.primary.scroll_snap ?? false;
+	$: textAlignClass = textAlignMap[slice.primary.text_align] ?? textAlignMap['Links'];
 
 	$: bgColor = slice.primary.bg_color || null;
 	$: textColor = slice.primary.text_color || null;
 	$: textZoomDesktop = ((slice.primary.text_zoom_desktop ?? 100) / 100);
 	$: textZoomMobile = ((slice.primary.text_zoom_mobile ?? 100) / 100);
 
-	$: buttonColor = slice.primary.button_color || get(theme).pageButtonColor;
+	$: buttonColor = slice.primary.button_color || textColor || get(theme).pageButtonColor;
 	$: buttonBgColor = slice.primary.button_bg_color || get(theme).pageButtonBgColor;
-	$: buttonHoverColor = slice.primary.button_hover_color || get(theme).pageButtonHoverColor;
-	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
+	$: buttonHoverColor = slice.primary.button_hover_color || bgColor || get(theme).pageButtonHoverColor;
+	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || textColor || get(theme).pageButtonHoverBgColor;
 	$: beauftragungHref = getBeauftragunHref(slice.primary.button_link, $page.params.uid);
 
 	// Scroll-Snap: scroll-snap-type auf html setzen wenn aktiviert
@@ -67,7 +74,7 @@
 >
 	<Bounded tag="div" yPadding="base" class="!pt-12 md:!pt-28">
 		<div
-			class="text-and-cta-content space-y-14"
+			class="text-and-cta-content space-y-14 {textAlignClass}"
 			style="--text-zoom-desktop: {textZoomDesktop}; --text-zoom-mobile: {textZoomMobile};"
 		>
 			{#if 'text' in slice.primary}

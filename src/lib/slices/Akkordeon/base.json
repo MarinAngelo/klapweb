@@ -1,0 +1,203 @@
+{
+	"id": "accordion",
+	"type": "SharedSlice",
+	"name": "Akkordeon",
+	"description": "Akkordeon",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+					}
+				},
+				"description": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Beschreibung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+					}
+				},
+				"accordion_items": {
+					"type": "Group",
+					"config": {
+						"label": "Akkordeon Elemente",
+						"repeat": true,
+						"fields": {
+							"label": {
+								"type": "Text",
+								"config": {
+									"label": "Titel",
+									"placeholder": ""
+								}
+							},
+							"content": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text",
+									"placeholder": "",
+									"allowTargetBlank": true,
+									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+								}
+							}
+						}
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "bildUndText",
+			"name": "Bild und Text",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+					}
+				},
+				"description": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Beschreibung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+					}
+				},
+				"accordion_items": {
+					"type": "Group",
+					"config": {
+						"label": "Akkordeon Elemente",
+						"repeat": true,
+						"fields": {
+							"label": {
+								"type": "Text",
+								"config": {
+									"label": "Titel",
+									"placeholder": ""
+								}
+							},
+							"content": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text",
+									"placeholder": "",
+									"allowTargetBlank": true,
+									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+								}
+							},
+							"image": {
+								"type": "Image",
+								"config": {
+									"label": "Bild",
+									"constraint": {},
+									"thumbnails": []
+								}
+							},
+							"standardBildLinks": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild Links",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
+							}
+						}
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}
