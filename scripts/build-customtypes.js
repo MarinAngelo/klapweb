@@ -148,41 +148,46 @@ for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue; // not managed, skip
 
-	const base = read(basePath);
+	const { _meta: _baseMeta, ...base } = read(basePath);
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 
 	const additionalVariationIds = sliceVariationsToAdd[sliceName] ?? new Set();
+
+	const fullPath = `src/lib/slices/${sliceName}/full.json`;
+	const fullExists = existsSync(join(ROOT, fullPath));
 
 	if (additionalVariationIds.size === 0) {
 		// No features add variations → use base as-is
 		write(fullModelPath, base);
 		console.log(`✓ slices/${sliceName}/model.json (base only)`);
-		continue;
+	} else {
+		if (!fullExists) {
+			console.warn(`⚠ ${sliceName}/full.json missing — run npm run build-customtypes:init first`);
+			continue;
+		}
+		const full = read(fullPath);
+		const variationsToAdd = full.variations.filter((v) => additionalVariationIds.has(v.id));
+		const model = { ...base, variations: [...base.variations, ...variationsToAdd] };
+		write(fullModelPath, model);
+		console.log(`✓ slices/${sliceName}/model.json (+${[...additionalVariationIds].join(', ')})`);
 	}
 
-	// Read the full model to get the variation definitions
-	// We stored the full model as model.json before; now we need the variation objects.
-	// They're stored in the feature's slices.json? No — the variation objects are complex.
-	// We kept them in the original model.json before gitignoring it.
-	// Solution: read from a "full.json" that we create once.
-	const fullPath = `src/lib/slices/${sliceName}/full.json`;
-	if (!existsSync(join(ROOT, fullPath))) {
-		console.warn(`⚠ ${sliceName}/full.json missing — run npm run build-customtypes:init first`);
-		continue;
+	// Sync base variation primaries into full.json (for all managed slices with full.json)
+	if (fullExists) {
+		const full = read(fullPath);
+		let fullChanged = false;
+		for (const baseVariation of base.variations) {
+			const fullVariation = full.variations.find((v) => v.id === baseVariation.id);
+			if (fullVariation && JSON.stringify(fullVariation.primary) !== JSON.stringify(baseVariation.primary)) {
+				fullVariation.primary = baseVariation.primary;
+				fullChanged = true;
+			}
+		}
+		if (fullChanged) {
+			write(fullPath, full);
+			console.log(`  ↺ slices/${sliceName}/full.json synced from base.json`);
+		}
 	}
-
-	const full = read(fullPath);
-	const variationsToAdd = full.variations.filter((v) => additionalVariationIds.has(v.id));
-
-	const model = {
-		...base,
-		variations: [...base.variations, ...variationsToAdd]
-	};
-
-	write(fullModelPath, model);
-	console.log(
-		`✓ slices/${sliceName}/model.json (+${[...additionalVariationIds].join(', ')})`
-	);
 }
 
 // ── 3. Feature-only Custom Types ───────────────────────────────────────────────
