@@ -71,113 +71,6 @@
 						},
 						"text_with_image": {
 							"type": "SharedSlice"
-						},
-						"preisvergleich": {
-							"type": "SharedSlice"
-						},
-						"preisaufstellung": {
-							"type": "SharedSlice"
-						},
-						"p5_grafik": {
-							"type": "SharedSlice"
-						}
-					}
-				}
-			}
-		},
-		"Online-Handel": {
-			"ecommerce_active": {
-				"type": "Boolean",
-				"config": {
-					"label": "E-Commerce aktiv",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"ecommerce_price_chf": {
-				"type": "Number",
-				"config": {
-					"label": "Preis exkl. MwSt. (CHF)",
-					"placeholder": "1290"
-				}
-			},
-			"ecommerce_deposit_percent": {
-				"type": "Number",
-				"config": {
-					"label": "Anzahlung %",
-					"placeholder": "30"
-				}
-			},
-			"ecommerce_discount_percent": {
-				"type": "Number",
-				"config": {
-					"label": "Rabatt %",
-					"placeholder": "10"
-				}
-			},
-			"ecommerce_billing_type": {
-				"type": "Select",
-				"config": {
-					"label": "Abrechnungsart",
-					"options": [
-						"Einmalig",
-						"Jährlich",
-						"Monatlich"
-					],
-					"default_value": "Einmalig"
-				}
-			},
-			"ecommerce_stripe_url": {
-				"type": "Link",
-				"config": {
-					"label": "Stripe Payment Link",
-					"placeholder": "https://buy.stripe.com/...",
-					"select": null,
-					"allowTargetBlank": true
-				}
-			}
-		},
-		"Leistungen": {
-			"ecommerce_addons": {
-				"type": "Group",
-				"config": {
-					"label": "Zusatzleistungen",
-					"fields": {
-						"addon_page": {
-							"type": "Link",
-							"config": {
-								"label": "Seite",
-								"select": "document",
-								"customtypes": [
-									"page"
-								]
-							}
-						}
-					}
-				}
-			},
-			"leistungen": {
-				"type": "Group",
-				"config": {
-					"label": "Leistungen",
-					"fields": {
-						"leistung": {
-							"type": "Link",
-							"config": {
-								"label": "Leistung",
-								"select": "document",
-								"customtypes": [
-									"leistung"
-								]
-							}
-						},
-						"wert": {
-							"type": "Text",
-							"config": {
-								"label": "Wert (optional)",
-								"placeholder": "✓ oder bis 5 Produkte"
-							}
 						}
 					}
 				}
@@ -225,6 +118,15 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
+				}
+			},
+			"password_protected": {
+				"type": "Boolean",
+				"config": {
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false,
+					"label": "Passwortgeschützt"
 				}
 			}
 		}

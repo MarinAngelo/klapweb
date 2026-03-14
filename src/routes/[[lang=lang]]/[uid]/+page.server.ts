@@ -1,5 +1,5 @@
 import { createClient } from '$lib/prismicio';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
@@ -10,7 +10,7 @@ export interface AddonRow {
 	billingType: string | null;
 }
 
-export async function load({ params, parent, fetch }) {
+export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
 	const client = createClient({ fetch });
 
@@ -28,6 +28,16 @@ export async function load({ params, parent, fetch }) {
 				'leistung.beschreibung'
 			]
 		});
+
+		// Password protection
+		if ((page.data as any).password_protected === true) {
+			const pagePassword = (settings.data as any).page_password as string | null;
+			const authCookie = cookies.get('klap_auth');
+			if (!pagePassword || authCookie !== pagePassword) {
+				const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
+				throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+			}
+		}
 
 		// Currency config (only relevant for ecommerce pages)
 		const hasPrice = (page.data as any).ecommerce_price_chf != null;
@@ -140,7 +150,8 @@ export async function load({ params, parent, fetch }) {
 			plaeneData,
 			pageLeistungen
 		};
-	} catch (e) {
+	} catch (e: any) {
+		if (e?.status === 303) throw e; // redirect durchlassen
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);
 		throw error(404, { message: 'Seite nicht gefunden' });
 	}
