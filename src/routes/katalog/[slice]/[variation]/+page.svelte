@@ -23,7 +23,7 @@
 		<span style="color: {pageColor}; opacity: 0.4;">/</span>
 		<span style="color: {pageColor}; font-size: 16px;">{data.variationName}</span>
 		{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung') as [key, value]}
-			<span class="ml-2 px-2 py-0.5 rounded font-medium" style="font-size: 18px; background-color: {pageColor}22; color: {pageColor};">
+			<span class="ml-2 px-2 py-0.5 rounded font-medium" style="font-size: 14px; background-color: {pageColor}22; color: {pageColor};">
 				{key}: {value}
 			</span>
 		{/each}

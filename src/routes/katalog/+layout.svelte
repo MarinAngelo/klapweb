@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { theme } from '$lib/stores/theme';
 	import type { LayoutData } from './$types';
 
@@ -13,6 +14,11 @@
 	$: fgHover = $theme.headerLinkHoverColor || '#ffffff';
 	$: fgMuted = $theme.headerColor || '#9ca3af';
 	$: activeBg = fgHover + '22';
+
+	function onSelectChange(e: Event) {
+		const val = (e.target as HTMLSelectElement).value;
+		if (val) goto(val);
+	}
 </script>
 
 <div>
@@ -29,14 +35,33 @@
 			</a>
 		</div>
 		<div class="py-5 px-6">
-			<h1 class="font-bold tracking-tight m-0" style="color: {fg}; font-size: 36px;">Inhalts-Elemente</h1>
+			<h1 class="katalog-title font-bold tracking-tight m-0" style="color: {fg};">Inhalts-Elemente</h1>
 		</div>
 	</div>
 
+	<!-- Mobile: Dropdown-Nav (ausserhalb sticky, damit nativer Select korrekt öffnet) -->
+	<div class="md:hidden px-4 py-3" style="background-color: {bg}; border-bottom: 1px solid {fgMuted}22;">
+		<select
+			on:change={onSelectChange}
+			class="w-full rounded px-3 py-2"
+			style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 16px;"
+		>
+			<option value="" disabled selected>Elemente auswählen</option>
+			{#each data.katalogSlices as slice}
+				<optgroup label={slice.name}>
+					{#each slice.variations as variation}
+						{@const path = `/katalog/${slice.dirName}/${variation.id}`}
+						<option value={path}>{slice.name} – {variation.name}</option>
+					{/each}
+				</optgroup>
+			{/each}
+		</select>
+	</div>
+
 	<div class="flex w-full" style="min-height: calc(100vh - 4rem);">
-	<!-- Sidebar -->
+	<!-- Sidebar: nur Desktop -->
 	<nav
-		class="w-64 shrink-0 overflow-y-auto"
+		class="hidden md:block w-64 shrink-0 overflow-y-auto"
 		style="position: sticky; top: 0; height: 100vh; background-color: {bg}; border-right: 1px solid {fgMuted}22;"
 	>
 		<a
@@ -75,3 +100,14 @@
 	</div>
 </div>
 </div>
+
+<style>
+	.katalog-title {
+		font-size: 36px;
+	}
+	@media (max-width: 767px) {
+		.katalog-title {
+			font-size: 24px;
+		}
+	}
+</style>
