@@ -10,18 +10,27 @@
 	$: bg = $theme.headerBgColor || '#1f2937';
 	$: fg = $theme.headerLinkColor || '#e5e7eb';
 	$: fgMuted = $theme.headerColor || '#9ca3af';
+	$: pageBg = $theme.pageBgColor || '#ffffff';
+	$: pageColor = $theme.pageColor || '#111827';
 </script>
 
 <svelte:head><title>{data.sliceName} / {data.variationName} – Katalog</title></svelte:head>
 
 <!-- Info-Leiste -->
-<div
-	class="sticky top-0 z-20 flex items-center gap-3 px-5 py-2.5 border-b"
-	style="background-color: {bg}; border-color: {fgMuted}33;"
->
-	<span class="font-semibold" style="color: {fg}; font-size: 16px;">{data.sliceName}</span>
-	<span style="color: {fgMuted}; opacity: 0.4;">/</span>
-	<span style="color: {fgMuted}; font-size: 16px;">{data.variationName}</span>
+<div class="sticky top-0 z-20 border-b" style="background-color: {pageColor}11; border-color: {pageColor}22;">
+	<div class="flex items-center gap-3 px-5 py-2.5">
+		<span class="font-semibold" style="color: {pageColor}; font-size: 16px;">{data.sliceName}</span>
+		<span style="color: {pageColor}; opacity: 0.4;">/</span>
+		<span style="color: {pageColor}; font-size: 16px;">{data.variationName}</span>
+		{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung') as [key, value]}
+			<span class="ml-2 px-2 py-0.5 rounded font-medium" style="font-size: 18px; background-color: {pageColor}22; color: {pageColor};">
+				{key}: {value}
+			</span>
+		{/each}
+	</div>
+	{#if data.meta?.Beschreibung}
+		<div class="px-5 py-2.5" style="background-color: {pageColor}11; color: {pageColor}; font-size: 18px;">{data.meta.Beschreibung}</div>
+	{/if}
 </div>
 
 <!-- Slice Preview -->

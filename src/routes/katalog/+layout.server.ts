@@ -2,6 +2,7 @@
 export const prerender = false;
 
 const models = import.meta.glob('/src/lib/slices/*/model.json', { eager: true });
+const bases = import.meta.glob('/src/lib/slices/*/base.json', { eager: true });
 
 const SKIP = new Set(['form/kauf', 'image_cards/plaene']);
 
@@ -9,10 +10,12 @@ export const load = async () => {
 	const katalogSlices = Object.entries(models)
 		.map(([path, model]: [string, any]) => {
 			const dirName = path.match(/\/slices\/([^/]+)\/model\.json/)?.[1] ?? '';
+			const basePath = `/src/lib/slices/${dirName}/base.json`;
+			const meta = { Paket: 'Basis', ...((bases[basePath] as any)?._meta ?? {}) };
 			const variations = (model.variations ?? [])
 				.filter((v: any) => !SKIP.has(`${model.id}/${v.id}`))
 				.map((v: any) => ({ id: v.id as string, name: v.name as string }));
-			return { id: model.id as string, name: model.name as string, dirName, variations };
+			return { id: model.id as string, name: model.name as string, dirName, variations, meta };
 		})
 		.filter((s) => s.id && s.dirName && s.variations.length > 0)
 		.sort((a, b) => a.name.localeCompare(b.name, 'de'));

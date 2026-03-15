@@ -21,12 +21,15 @@
 		<div class="px-6 py-2 flex justify-start" style="border-bottom: 1px solid {fgMuted}22;">
 			<a
 				href="/"
-				class="transition-opacity hover:opacity-80"
-				style="color: {fgMuted}; font-size: 14px;"
-			>← Zurück</a>
+				class="flex items-center gap-1.5 transition-opacity hover:opacity-80"
+				style="color: {fgMuted}; font-size: 16px;"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+				Zurück
+			</a>
 		</div>
-		<div class="py-5 text-center">
-			<h1 class="font-bold tracking-tight m-0" style="color: {fg}; font-size: 48px;">Inhalts-Elemente</h1>
+		<div class="py-5 px-6">
+			<h1 class="font-bold tracking-tight m-0" style="color: {fg}; font-size: 36px;">Inhalts-Elemente</h1>
 		</div>
 	</div>
 

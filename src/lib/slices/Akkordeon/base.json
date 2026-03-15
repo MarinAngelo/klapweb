@@ -1,4 +1,7 @@
-{
+{	
+	"_meta": {
+		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält. Optional kann auch ein Bild hinzugefügt werden."
+	},
 	"id": "accordion",
 	"type": "SharedSlice",
 	"name": "Akkordeon",
