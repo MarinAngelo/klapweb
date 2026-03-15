@@ -297,7 +297,6 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
-	| P5GrafikSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
@@ -314,7 +313,8 @@ type PageDocumentDataSlicesSlice =
 	| ImageCardsSlice
 	| TextWithImageSlice
 	| PreisvergleichSlice
-	| PreisaufstellungSlice;
+	| PreisaufstellungSlice
+	| P5GrafikSlice;
 
 /**
  * Item in *Page → Zusatzleistungen*
@@ -438,17 +438,6 @@ interface PageDocumentData {
 	ecommerce_billing_type: prismic.SelectField<'Einmalig' | 'Jährlich' | 'Monatlich', 'filled'>;
 
 	/**
-	 * Zusatzleistungen field in *Page*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.ecommerce_addons[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	ecommerce_addons: prismic.GroupField<Simplify<PageDocumentDataEcommerceAddonsItem>>;
-
-	/**
 	 * Stripe Payment Link field in *Page*
 	 *
 	 * - **Field Type**: Link
@@ -457,7 +446,16 @@ interface PageDocumentData {
 	 * - **Tab**: Online-Handel
 	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>; /**
+	 * Zusatzleistungen field in *Page*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.ecommerce_addons[]
+	 * - **Tab**: Leistungen
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	ecommerce_addons: prismic.GroupField<Simplify<PageDocumentDataEcommerceAddonsItem>>;
 
 	/**
 	 * Leistungen field in *Page*
@@ -465,7 +463,7 @@ interface PageDocumentData {
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: page.leistungen[]
-	 * - **Tab**: Online-Handel
+	 * - **Tab**: Leistungen
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	leistungen: prismic.GroupField<Simplify<PageDocumentDataLeistungenItem>>; /**
@@ -524,6 +522,18 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	landing_page: prismic.BooleanField;
+
+	/**
+	 * Passwortgeschützt field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.password_protected
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	password_protected: prismic.BooleanField;
 }
 
 /**
@@ -941,6 +951,17 @@ interface SettingsDocumentData {
 	agb: prismic.RichTextField;
 
 	/**
+	 * Seiten-Passwort field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Passwort für passwortgeschützte Seiten
+	 * - **API ID Path**: settings.page_password
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	page_password: prismic.KeyTextField;
+
+	/**
 	 * Mehrere Sprachen verwenden field in *Einstellungen*
 	 *
 	 * - **Field Type**: Boolean
@@ -1049,6 +1070,37 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	favicon: prismic.ImageField<never>; /**
+	 * Absender-E-Mail field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: termine@beispiel.ch
+	 * - **API ID Path**: settings.booking_from_email
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	booking_from_email: prismic.KeyTextField;
+
+	/**
+	 * Kunden-E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}
+	 * - **API ID Path**: settings.booking_customer_email_subject
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	booking_customer_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Kunden-E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}
+	 * - **API ID Path**: settings.booking_customer_email_body
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	booking_customer_email_body: prismic.RichTextField; /**
 	 * Grundwährung field in *Einstellungen*
 	 *
 	 * - **Field Type**: Select
@@ -1465,6 +1517,145 @@ interface SettingsDocumentData {
 export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<
 	Simplify<SettingsDocumentData>,
 	'settings',
+	Lang
+>;
+
+/**
+ * Content for Terminplanung documents
+ */
+interface TerminplanungDocumentData {
+	/**
+	 * Bezeichnung field in *Terminplanung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Erstgespräch
+	 * - **API ID Path**: terminplanung.titel
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	titel: prismic.KeyTextField;
+
+	/**
+	 * Startdatum field in *Terminplanung*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: terminplanung.datum
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	datum: prismic.DateField;
+
+	/**
+	 * Uhrzeit (HH:MM) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: 14:00
+	 * - **API ID Path**: terminplanung.uhrzeit
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	uhrzeit: prismic.KeyTextField;
+
+	/**
+	 * Dauer (Minuten) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 60
+	 * - **API ID Path**: terminplanung.session_laenge
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	session_laenge: prismic.NumberField;
+
+	/**
+	 * Zeitzone field in *Terminplanung*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Europe/Zurich
+	 * - **API ID Path**: terminplanung.zeitzone
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	zeitzone: prismic.SelectField<
+		| 'Pacific/Honolulu'
+		| 'America/Los_Angeles'
+		| 'America/Denver'
+		| 'America/Chicago'
+		| 'America/New_York'
+		| 'America/Sao_Paulo'
+		| 'Atlantic/Azores'
+		| 'Europe/London'
+		| 'Europe/Paris'
+		| 'Europe/Zurich'
+		| 'Europe/Berlin'
+		| 'Europe/Vienna'
+		| 'Europe/Athens'
+		| 'Europe/Moscow'
+		| 'Asia/Dubai'
+		| 'Asia/Kolkata'
+		| 'Asia/Dhaka'
+		| 'Asia/Bangkok'
+		| 'Asia/Singapore'
+		| 'Asia/Shanghai'
+		| 'Asia/Tokyo'
+		| 'Australia/Sydney'
+		| 'Pacific/Auckland'
+		| 'Africa/Johannesburg',
+		'filled'
+	>;
+
+	/**
+	 * Wiederholung field in *Terminplanung*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Keine
+	 * - **API ID Path**: terminplanung.wiederholung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	wiederholung: prismic.SelectField<
+		'Keine' | 'Täglich' | 'Wöchentlich' | 'Zweiwöchentlich' | 'Monatlich',
+		'filled'
+	>;
+
+	/**
+	 * Wiederholen bis (Datum) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: terminplanung.wiederholung_bis
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	wiederholung_bis: prismic.DateField;
+
+	/**
+	 * Anzahl Wiederholungen field in *Terminplanung*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 10
+	 * - **API ID Path**: terminplanung.wiederholung_anzahl
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	wiederholung_anzahl: prismic.NumberField;
+}
+
+/**
+ * Terminplanung document from Prismic
+ *
+ * - **API ID**: `terminplanung`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type TerminplanungDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<TerminplanungDocumentData>,
+	'terminplanung',
 	Lang
 >;
 
@@ -1895,6 +2086,7 @@ export type AllDocumentTypes =
 	| NavigationDocument
 	| PageDocument
 	| SettingsDocument
+	| TerminplanungDocument
 	| ThemeDocument
 	| VariablenDocument;
 
@@ -1977,7 +2169,7 @@ export interface AccordionSliceDefaultPrimary {
 	 * Überschrift field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Überschrift des gesamten Akkordeon-Bereichs
 	 * - **API ID Path**: accordion.default.primary.heading
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
@@ -1987,7 +2179,7 @@ export interface AccordionSliceDefaultPrimary {
 	 * Beschreibung field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Fakultativer Text, der die Inhalte des Akkordeons beschreibt
 	 * - **API ID Path**: accordion.default.primary.description
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
@@ -2002,6 +2194,17 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceDefaultPrimaryAccordionItemsItem>>;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.default.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Akkordeon → Standard → Primary*
@@ -2067,7 +2270,7 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * Überschrift field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Überschrift des gesamten Akkordeon-Bereichs
 	 * - **API ID Path**: accordion.bildUndText.primary.heading
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
@@ -2077,7 +2280,7 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * Beschreibung field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
+	 * - **Placeholder**: Fakultativer Text, der die Inhalte des Akkordeons beschreibt
 	 * - **API ID Path**: accordion.bildUndText.primary.description
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
@@ -2092,6 +2295,17 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceBildUndTextPrimaryAccordionItemsItem>>;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.bildUndText.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Akkordeon → Bild und Text → Primary*
@@ -2150,9 +2364,103 @@ export type AccordionSliceBildUndText = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Akkordeon → Leistungen → Primary*
+ */
+export interface AccordionSliceLeistungenPrimary {
+	/**
+	 * Überschrift field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Überschrift des gesamten Akkordeon-Bereichs
+	 * - **API ID Path**: accordion.leistungen.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Beschreibung field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Fakultativer Text, der die Inhalte des Akkordeons beschreibt
+	 * - **API ID Path**: accordion.leistungen.primary.description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.leistungen.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.leistungen.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: accordion.leistungen.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: accordion.leistungen.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: accordion.leistungen.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Leistungen variation for Akkordeon Slice
+ *
+ * - **API ID**: `leistungen`
+ * - **Description**: Leistungs-Dokumente als Akkordeon
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AccordionSliceLeistungen = prismic.SharedSliceVariation<
+	'leistungen',
+	Simplify<AccordionSliceLeistungenPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Akkordeon*
  */
-type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText;
+type AccordionSliceVariation =
+	| AccordionSliceDefault
+	| AccordionSliceBildUndText
+	| AccordionSliceLeistungen;
 
 /**
  * Akkordeon Shared Slice
@@ -2939,25 +3247,25 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 }
 
 /**
- * Item in *Formular → Mit Text → Primary → Formular Felder*
+ * Item in *Formular → Mit Termin → Primary → Formular Felder*
  */
-export interface FormSliceMitTextPrimaryFormFieldsItem {
+export interface FormSliceMitTerminPrimaryFormFieldsItem {
 	/**
-	 * Formularfeld Label field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Formularfeld Label field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].field_name
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].field_name
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	field_name: prismic.KeyTextField;
 
 	/**
-	 * Feld Typ field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Feld Typ field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].field_type
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].field_type
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	field_type: prismic.SelectField<
@@ -2969,134 +3277,50 @@ export interface FormSliceMitTextPrimaryFormFieldsItem {
 		| 'Ankreuzfeld'
 		| 'Einzelauswahl'
 		| 'Land'
+		| 'Termin'
+		| 'Zeitzone'
 	>;
 
 	/**
-	 * Obligatorisch field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Obligatorisch field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: true
-	 * - **API ID Path**: form.mitText.primary.form_fields[].required
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].required
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	required: prismic.BooleanField;
 
 	/**
-	 * Fehlermeldung field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Fehlermeldung field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: Bitte ausfüllen
-	 * - **API ID Path**: form.mitText.primary.form_fields[].invalid_feedback_text
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].invalid_feedback_text
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	invalid_feedback_text: prismic.KeyTextField;
 
 	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Optionen bei Auswahlfeldern field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: mit Komma getrennt
-	 * - **API ID Path**: form.mitText.primary.form_fields[].options
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].options
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	options: prismic.KeyTextField;
 
 	/**
-	 * Platzhalter field in *Formular → Mit Text → Primary → Formular Felder*
+	 * Platzhalter field in *Formular → Mit Termin → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].placeholder
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].placeholder
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	placeholder: prismic.KeyTextField;
-}
-
-/**
- * Item in *Formular → Zwei Spalten → Primary → Formular Felder*
- */
-export interface FormSliceTwoColumnsPrimaryFormFieldsItem {
-	/**
-	 * Formularfeld Label field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].field_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	field_name: prismic.KeyTextField;
-
-	/**
-	 * Feld Typ field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].field_type
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	field_type: prismic.SelectField<
-		| 'Textfeld'
-		| 'E-Mail'
-		| 'Telefon'
-		| 'Textbereich'
-		| 'Auswahlliste'
-		| 'Ankreuzfeld'
-		| 'Einzelauswahl'
-		| 'Land'
-	>;
-
-	/**
-	 * Obligatorisch field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].required
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	required: prismic.BooleanField;
-
-	/**
-	 * Fehlermeldung field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Bitte ausfüllen
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].invalid_feedback_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invalid_feedback_text: prismic.KeyTextField;
-
-	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: mit Komma getrennt
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].options
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	options: prismic.KeyTextField;
-
-	/**
-	 * Platzhalter field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].placeholder
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	placeholder: prismic.KeyTextField;
-
-	/**
-	 * Spalte field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].column
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	column: prismic.SelectField<'Links' | 'Rechts', 'filled'>;
 }
 
 /**
@@ -3130,6 +3354,8 @@ export interface FormSliceKaufPrimaryFormFieldsItem {
 		| 'Ankreuzfeld'
 		| 'Einzelauswahl'
 		| 'Land'
+		| 'Termin'
+		| 'Zeitzone'
 	>;
 
 	/**
@@ -3207,6 +3433,17 @@ export interface FormSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	submitt_button_text: prismic.KeyTextField;
+
+	/**
+	 * 2 Spalten field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.default.primary.zwei_spalten
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	zwei_spalten: prismic.BooleanField;
 
 	/**
 	 * Gesendet Titel field in *Formular → Standard → Primary*
@@ -3295,381 +3532,133 @@ export type FormSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Formular → Mit Text → Primary*
+ * Primary content in *Formular → Mit Termin → Primary*
  */
-export interface FormSliceMitTextPrimary {
+export interface FormSliceMitTerminPrimary {
 	/**
-	 * Spalten-Verhältnis field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Gleich (50/50)
-	 * - **API ID Path**: form.mitText.primary.spalten_verhaeltnis
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	spalten_verhaeltnis: prismic.SelectField<
-		'Gleich (50/50)' | 'Breit Formular (2/3 + 1/3)' | 'Breit Text (1/3 + 2/3)',
-		'filled'
-	>;
-
-	/**
-	 * Formular in Spalte field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.formular_seite
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	formular_seite: prismic.SelectField<'Links' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text - Vertikale Ausrichtung field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_v
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_ausrichtung_v: prismic.SelectField<'Oben' | 'Mitte' | 'Unten', 'filled'>;
-
-	/**
-	 * Text - Container horizontal field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_h
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_ausrichtung_h: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text - Textausrichtung field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.text_textausrichtung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_textausrichtung: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	text: prismic.RichTextField;
-
-	/**
-	 * HTML Embed (z.B. Google Maps) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: <iframe src="..." ...></iframe>
-	 * - **API ID Path**: form.mitText.primary.html_embed
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	html_embed: prismic.RichTextField;
-
-	/**
-	 * Map Overlay Farbe field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	html_embed_overlay_color: prismic.ColorField;
-
-	/**
-	 * Überlagerungs-Transparenz (0–100) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_opacity
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	html_embed_overlay_opacity: prismic.NumberField;
-
-	/**
-	 * Uhrzeit anzeigen field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: form.mitText.primary.map_show_clock
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	map_show_clock: prismic.BooleanField;
-
-	/**
-	 * Zeitzone (IANA, z.B. America/New_York) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Europe/Zurich
-	 * - **API ID Path**: form.mitText.primary.map_timezone
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	map_timezone: prismic.KeyTextField;
-
-	/**
-	 * Formular-Name (technisch, eindeutig) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. kontakt oder bestellen
-	 * - **API ID Path**: form.mitText.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
-	/**
-	 * Formular Titel field in *Formular → Mit Text → Primary*
+	 * Formular Titel field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_title
+	 * - **API ID Path**: form.mitTermin.primary.form_title
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	form_title: prismic.KeyTextField;
 
 	/**
-	 * Formular Instruktionen field in *Formular → Mit Text → Primary*
+	 * Formular Instruktionen field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_instructions
+	 * - **API ID Path**: form.mitTermin.primary.form_instructions
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	form_instructions: prismic.RichTextField;
 
 	/**
-	 * Senden-Schaltflächen-Text field in *Formular → Mit Text → Primary*
+	 * Senden-Schaltflächen-Text field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitt_button_text
+	 * - **API ID Path**: form.mitTermin.primary.submitt_button_text
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	submitt_button_text: prismic.KeyTextField;
 
 	/**
-	 * Gesendet Titel field in *Formular → Mit Text → Primary*
+	 * 2 Spalten field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.mitTermin.primary.zwei_spalten
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	zwei_spalten: prismic.BooleanField;
+
+	/**
+	 * Gesendet Titel field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitted_title
+	 * - **API ID Path**: form.mitTermin.primary.submitted_title
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	submitted_title: prismic.KeyTextField;
 
 	/**
-	 * Gesendet Text field in *Formular → Mit Text → Primary*
+	 * Gesendet Text field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitted_text
+	 * - **API ID Path**: form.mitTermin.primary.submitted_text
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	submitted_text: prismic.RichTextField;
 
 	/**
-	 * Weiter-URL (leer = direkt absenden) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: /beauftragung/zusammenfassung
-	 * - **API ID Path**: form.mitText.primary.checkout_url
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	checkout_url: prismic.KeyTextField;
-
-	/**
-	 * Formular Felder field in *Formular → Mit Text → Primary*
+	 * Formular Felder field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[]
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[]
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	form_fields: prismic.GroupField<Simplify<FormSliceMitTextPrimaryFormFieldsItem>>;
+	form_fields: prismic.GroupField<Simplify<FormSliceMitTerminPrimaryFormFieldsItem>>;
 
 	/**
-	 * Animation aktivieren field in *Formular → Mit Text → Primary*
+	 * Animation aktivieren field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: form.mitText.primary.animate
+	 * - **API ID Path**: form.mitTermin.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	animate: prismic.BooleanField;
 
 	/**
-	 * Animations-Richtung field in *Formular → Mit Text → Primary*
+	 * Animations-Richtung field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.mitText.primary.anim_direction
+	 * - **API ID Path**: form.mitTermin.primary.anim_direction
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
 
 	/**
-	 * Verzögerung (ms) field in *Formular → Mit Text → Primary*
+	 * Verzögerung (ms) field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 500
-	 * - **API ID Path**: form.mitText.primary.anim_delay
+	 * - **API ID Path**: form.mitTermin.primary.anim_delay
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_delay: prismic.NumberField;
 
 	/**
-	 * Animationsdauer (ms) field in *Formular → Mit Text → Primary*
+	 * Animationsdauer (ms) field in *Formular → Mit Termin → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 2000
-	 * - **API ID Path**: form.mitText.primary.anim_duration
+	 * - **API ID Path**: form.mitTermin.primary.anim_duration
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
 }
 
 /**
- * Mit Text variation for Formular Slice
+ * Mit Termin variation for Formular Slice
  *
- * - **API ID**: `mitText`
- * - **Description**: Formular neben Rich-Text in zwei Spalten
+ * - **API ID**: `mitTermin`
+ * - **Description**: Standard-Formular mit Termin- und Zeitzone-Feld
  * - **Documentation**: https://prismic.io/docs/slices
  */
-export type FormSliceMitText = prismic.SharedSliceVariation<
-	'mitText',
-	Simplify<FormSliceMitTextPrimary>,
-	never
->;
-
-/**
- * Primary content in *Formular → Zwei Spalten → Primary*
- */
-export interface FormSliceTwoColumnsPrimary {
-	/**
-	 * Formular Titel field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_title: prismic.KeyTextField;
-
-	/**
-	 * Formular Instruktionen field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_instructions
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	form_instructions: prismic.RichTextField;
-
-	/**
-	 * Senden-Schaltflächen-Text field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitt_button_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitt_button_text: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Titel field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitted_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitted_title: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Text field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitted_text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	submitted_text: prismic.RichTextField;
-
-	/**
-	 * Formular Felder field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[]
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	form_fields: prismic.GroupField<Simplify<FormSliceTwoColumnsPrimaryFormFieldsItem>>;
-
-	/**
-	 * Animation aktivieren field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: form.twoColumns.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.twoColumns.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: form.twoColumns.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: form.twoColumns.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Zwei Spalten variation for Formular Slice
- *
- * - **API ID**: `twoColumns`
- * - **Description**: Formularfelder in zwei Spalten
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type FormSliceTwoColumns = prismic.SharedSliceVariation<
-	'twoColumns',
-	Simplify<FormSliceTwoColumnsPrimary>,
+export type FormSliceMitTermin = prismic.SharedSliceVariation<
+	'mitTermin',
+	Simplify<FormSliceMitTerminPrimary>,
 	never
 >;
 
@@ -3704,7 +3693,7 @@ export type FormSliceKauf = prismic.SharedSliceVariation<
 /**
  * Slice variation for *Formular*
  */
-type FormSliceVariation = FormSliceDefault | FormSliceMitText | FormSliceTwoColumns | FormSliceKauf;
+type FormSliceVariation = FormSliceDefault | FormSliceMitTermin | FormSliceKauf;
 
 /**
  * Formular Shared Slice
@@ -4898,6 +4887,17 @@ export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSlice
  */
 export interface P5GrafikSliceDefaultPrimary {
 	/**
+	 * Sketch field in *P5Grafik → Standard (Vollbild) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Orbital Circles
+	 * - **API ID Path**: p5_grafik.default.primary.sketch_name
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow', 'filled'>;
+
+	/**
 	 * Hintergrundfarbe Canvas field in *P5Grafik → Standard (Vollbild) → Primary*
 	 *
 	 * - **Field Type**: Color
@@ -4967,6 +4967,17 @@ export type P5GrafikSliceDefault = prismic.SharedSliceVariation<
  * Primary content in *P5Grafik → Mit Titelbereich → Primary*
  */
 export interface P5GrafikSliceMitTitelbereichPrimary {
+	/**
+	 * Sketch field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Orbital Circles
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.sketch_name
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow', 'filled'>;
+
 	/**
 	 * Überlappend mit Kopfzeile field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
@@ -5161,6 +5172,16 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
+
+	/**
+	 * Textgrösse Mobile field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.mobile_text_scale
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	mobile_text_scale: prismic.SelectField<'Normal' | 'Klein' | 'Kleiner' | 'Sehr klein'>;
 }
 
 /**
@@ -5762,6 +5783,27 @@ export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
  * Primary content in *Text&Aktion → Standard → Primary*
  */
 export interface TextAndCtaSliceDefaultPrimary {
+	/**
+	 * Label field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Über uns
+	 * - **API ID Path**: text_and_cta.default.primary.label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Textausrichtung field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Links
+	 * - **API ID Path**: text_and_cta.default.primary.text_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
 	/**
 	 * Text field in *Text&Aktion → Standard → Primary*
 	 *
@@ -6381,6 +6423,8 @@ declare module '@prismicio/client' {
 			SettingsDocumentDataInvoiceAdditionalCurrenciesItem,
 			SettingsDocumentDataDiscountCodesItem,
 			SettingsDocumentDataSlices3Slice,
+			TerminplanungDocument,
+			TerminplanungDocumentData,
 			ThemeDocument,
 			ThemeDocumentData,
 			VariablenDocument,
@@ -6392,9 +6436,11 @@ declare module '@prismicio/client' {
 			AccordionSliceDefaultPrimary,
 			AccordionSliceBildUndTextPrimaryAccordionItemsItem,
 			AccordionSliceBildUndTextPrimary,
+			AccordionSliceLeistungenPrimary,
 			AccordionSliceVariation,
 			AccordionSliceDefault,
 			AccordionSliceBildUndText,
+			AccordionSliceLeistungen,
 			AnleitungSlice,
 			AnleitungSliceDefaultPrimaryStepsItem,
 			AnleitungSliceDefaultPrimary,
@@ -6418,16 +6464,13 @@ declare module '@prismicio/client' {
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
-			FormSliceMitTextPrimaryFormFieldsItem,
-			FormSliceMitTextPrimary,
-			FormSliceTwoColumnsPrimaryFormFieldsItem,
-			FormSliceTwoColumnsPrimary,
+			FormSliceMitTerminPrimaryFormFieldsItem,
+			FormSliceMitTerminPrimary,
 			FormSliceKaufPrimaryFormFieldsItem,
 			FormSliceKaufPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
-			FormSliceMitText,
-			FormSliceTwoColumns,
+			FormSliceMitTermin,
 			FormSliceKauf,
 			GlobaleEventsSlice,
 			GlobaleEventsSliceDefaultPrimary,

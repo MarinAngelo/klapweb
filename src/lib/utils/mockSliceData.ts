@@ -56,23 +56,23 @@ function mockField(key: string, fieldDef: any, index = 0): any {
 		}
 
 		case 'StructuredText': {
+			const placeholder = config?.placeholder || '';
 			const singleMatch = (config?.single ?? '').match(/heading(\d)/);
 			if (singleMatch) {
-				return [{ type: `heading${singleMatch[1]}`, text: 'Beispiel-Überschrift', spans: [] }];
+				return [{ type: `heading${singleMatch[1]}`, text: placeholder || 'Beispiel-Überschrift', spans: [] }];
 			}
 			const multiFirst = (config?.multi ?? '').split(',')[0];
 			if (multiFirst.startsWith('heading')) {
 				const tag = multiFirst.replace('-', '');
 				return [
-					{ type: tag, text: 'Beispiel-Überschrift', spans: [] },
-					{ type: 'paragraph', text: LOREM, spans: [] },
-					{ type: 'paragraph', text: LOREM2, spans: [] }
+					{ type: tag, text: placeholder || 'Beispiel-Überschrift', spans: [] },
+					...(placeholder ? [] : [
+						{ type: 'paragraph' as const, text: LOREM, spans: [] },
+						{ type: 'paragraph' as const, text: LOREM2, spans: [] }
+					])
 				];
 			}
-			return [
-				{ type: 'paragraph', text: LOREM, spans: [] },
-				{ type: 'paragraph', text: LOREM2, spans: [] }
-			];
+			return [{ type: 'paragraph', text: placeholder || LOREM, spans: [] }];
 		}
 
 		case 'Boolean':
