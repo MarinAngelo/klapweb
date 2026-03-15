@@ -1,4 +1,4 @@
-{	
+{
 	"_meta": {
 		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält. Optional kann auch ein Bild hinzugefügt werden."
 	},
@@ -100,6 +100,37 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
 					}
 				}
 			},
@@ -215,6 +246,37 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
 					}
 				}
 			},

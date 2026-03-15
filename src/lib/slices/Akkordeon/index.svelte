@@ -7,6 +7,7 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { reveal } from '$lib/actions/reveal';
+	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: Content.AccordionSlice;
 	export let context: any = {};
@@ -21,17 +22,64 @@
 
 	$: leistungenItems = (context?.pageLeistungen ?? []) as Array<{ leistung: any }>;
 	$: isLeistungen = (slice.variation as string) === 'leistungen';
+
+	/**
+	 * Farb-Override-System: CMS-Felder überschreiben Page-Theme-Farben wenn gesetzt.
+	 * Alle Felder sind optional (leer = Fallback auf globale Seitenfarbe).
+	 *
+	 * bg_color      → Hintergrund des inneren Content-Divs (nicht Bounded-Section).
+	 *                 Auto-Padding + border-radius wenn gesetzt, damit Schrift nicht am Rand klebt.
+	 *                 Angewendet auf: flex-col-Gap-Div (background-color)
+	 *
+	 * text_color    → Schriftfarbe für den gesamten Slice (Titel, Beschreibung, Labels, Body).
+	 *                 Gesetzt via color: + --page-color: (nötig weil app.css h1–h4, p, li auf var(--page-color) zeigen).
+	 *                 Angewendet auf: flex-col-Gap-Div
+	 *
+	 * link_color    → Linkfarbe via --page-link-color CSS-Variable.
+	 *                 Angewendet auf: flex-col-Gap-Div
+	 *
+	 * border_color  → Rahmenfarbe der Akkordeon-Rows + dezenter 11%-Tint als Zeilen-Hintergrund.
+	 *                 Fallback: effectiveTextColor (passt automatisch zur Schriftfarbe).
+	 *                 Angewendet auf: jeden Row-Wrapper (border-color + background-color)
+	 *
+	 * contrast_amount → Offset für itemTextColor im geöffneten Panel (siehe unten).
+	 */
+	$: effectiveBgColor = p.bg_color || $theme.pageBgColor;
+	$: effectiveTextColor = p.text_color || $theme.pageColor;
+	$: effectiveLinkColor = p.link_color || $theme.pageLinkColor;
+	$: effectiveBorderColor = p.border_color || effectiveTextColor;
+
+	/**
+	 * Steuert die Textfarbe im aufgeklappten Content-Bereich.
+	 *
+	 * contrast_amount im CMS (oder contrastAmount-Prop) = 0 (Standard):
+	 *   automatische Richtung basierend auf Hintergrundhelligkeit
+	 *   - heller Hintergrund (Luminanz > 0.5) → Text wird um 50 Stufen dunkler
+	 *   - dunkler Hintergrund                 → Text wird um 50 Stufen heller
+	 *
+	 * contrast_amount ≠ 0: manueller Override
+	 *   - negativer Wert (z.B. -40) → Text dunkler
+	 *   - positiver Wert (z.B. +40) → Text heller
+	 *
+	 * Hinweis: wirkt via CSS-Variable --page-color, da p/li in app.css
+	 * explizit color: var(--page-color) setzen (überschreibt normale Vererbung).
+	 */
+	export let contrastAmount: number = 0;
+	$: resolvedContrastAmount = p.contrast_amount ?? contrastAmount;
+	$: itemTextColor = shadeColor(
+		effectiveTextColor || '#000000',
+		resolvedContrastAmount || (hexLuminance(effectiveBgColor || '#ffffff') > 0.5 ? -50 : 50)
+	);
 </script>
 
 <Bounded
 	tag="section"
-	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class="flex flex-col gap-4" style="color: {$theme.pageColor}">
+	<div class="flex flex-col gap-4" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ? 'padding: 1.5rem; border-radius: 0.5rem;' : ''}">
 		{#if p.heading}
 			<PrismicRichText field={p.heading} />
 		{/if}
@@ -49,18 +97,19 @@
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4"
-				style="border-color: {$theme.pageColor}"
+				class="border-b pb-4 px-3 rounded-t"
+				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1"
 					aria-haspopup="true"
 					aria-expanded={$openIndex === index}
 					on:click={() => toggleItem(index)}
 				>
 					{leistung.label ?? ''}
 					<svg
-						class="w-4 h-4 ml-1 fill-current transform transition-transform"
+						class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
+					style="color: var(--page-link-color);"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 20 20"
 						class:rotate-180={$openIndex === index}
@@ -70,7 +119,7 @@
 				</button>
 
 				{#if $openIndex === index}
-					<div class="mt-2 transition-all">
+					<div class="mt-2 transition-all px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
 						{#if leistung.beschreibung?.length}
 							<PrismicRichText field={leistung.beschreibung} />
 						{/if}
@@ -84,18 +133,19 @@
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4"
-				style="border-color: {$theme.pageColor}"
+				class="border-b pb-4 px-3 rounded-t"
+				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1"
 					aria-haspopup="true"
 					aria-expanded={$openIndex === index}
 					on:click={() => toggleItem(index)}
 				>
 					{item.label}
 					<svg
-						class="w-4 h-4 ml-1 fill-current transform transition-transform"
+						class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
+					style="color: var(--page-link-color);"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 20 20"
 						class:rotate-180={$openIndex === index}
@@ -105,7 +155,7 @@
 				</button>
 
 				{#if $openIndex === index}
-					<div class="mt-2 transition-all">
+					<div class="mt-2 transition-all px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
 						{#if slice.variation === 'bildUndText'}
 							<ImageTextGrid
 								image={'image' in item ? item.image : null}

@@ -98,6 +98,37 @@
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
 					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
 				}
 			},
 			"items": {}
@@ -213,6 +244,37 @@
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
 					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
 				}
 			},
 			"items": {}
@@ -285,6 +347,37 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
 					}
 				}
 			},

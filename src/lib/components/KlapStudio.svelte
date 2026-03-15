@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
 	import { textBgColorSketch } from '$lib/sketches/text-bg-color';
+	import { theme } from '$lib/stores/theme';
 
 	export let open = false;
 
@@ -32,6 +33,7 @@
 				// Seiten-Modus: wie bisher
 				bgColor = bg;
 				textColor = text;
+				theme.update((t) => ({ ...t, pageBgColor: bg, pageColor: text }));
 				if (sectionBgActive) setSectionBgStyle(bg);
 			}
 		},
@@ -39,13 +41,13 @@
 	);
 
 	onMount(() => {
-		bgColor = getCssVar('--page-bg-color');
-		textColor = getCssVar('--page-color');
+		bgColor = $theme.pageBgColor || getCssVar('--page-bg-color');
+		textColor = $theme.pageColor || getCssVar('--page-color');
 	});
 
 	$: if (open) {
-		bgColor = getCssVar('--page-bg-color');
-		textColor = getCssVar('--page-color');
+		bgColor = $theme.pageBgColor || getCssVar('--page-bg-color');
+		textColor = $theme.pageColor || getCssVar('--page-color');
 		buildSliceList();
 	}
 
@@ -71,12 +73,14 @@
 	function setBg(e: Event) {
 		bgColor = (e.target as HTMLInputElement).value;
 		document.documentElement.style.setProperty('--page-bg-color', bgColor);
+		theme.update((t) => ({ ...t, pageBgColor: bgColor }));
 		if (sectionBgActive) setSectionBgStyle(bgColor);
 	}
 
 	function setText(e: Event) {
 		textColor = (e.target as HTMLInputElement).value;
 		document.documentElement.style.setProperty('--page-color', textColor);
+		theme.update((t) => ({ ...t, pageColor: textColor }));
 	}
 
 	function toggleSectionBg() {

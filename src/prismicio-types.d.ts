@@ -2044,6 +2044,36 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **API ID Path**: accordion.default.primary.bg_color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **API ID Path**: accordion.default.primary.text_color
+	 */
+	text_color: prismic.ColorField;
+
+	/**
+	 * Kontrast-Offset field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **API ID Path**: accordion.default.primary.contrast_amount
+	 */
+	contrast_amount: prismic.NumberField;
+
+	/** Link-Farbe field in *Akkordeon → Standard → Primary* */
+	link_color: prismic.ColorField;
+
+	/** Rahmen-Farbe field in *Akkordeon → Standard → Primary* */
+	border_color: prismic.ColorField;
 }
 
 /**
@@ -2134,6 +2164,36 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **API ID Path**: accordion.bildUndText.primary.bg_color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **API ID Path**: accordion.bildUndText.primary.text_color
+	 */
+	text_color: prismic.ColorField;
+
+	/**
+	 * Kontrast-Offset field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **API ID Path**: accordion.bildUndText.primary.contrast_amount
+	 */
+	contrast_amount: prismic.NumberField;
+
+	/** Link-Farbe field in *Akkordeon → Bild und Text → Primary* */
+	link_color: prismic.ColorField;
+
+	/** Rahmen-Farbe field in *Akkordeon → Bild und Text → Primary* */
+	border_color: prismic.ColorField;
 }
 
 /**
