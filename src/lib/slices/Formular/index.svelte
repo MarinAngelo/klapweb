@@ -12,9 +12,12 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { t } from '$lib/i18n/translations';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
+
+	$: lang = $page.data.lang || 'de-ch';
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
@@ -66,13 +69,13 @@
 		if (!field || !effectiveKey(field)) return '';
 		const val = String(value ?? '').trim();
 		if (field.required && !val) {
-			return field.invalid_feedback_text || 'Bitte Feld ausfüllen';
+			return field.invalid_feedback_text || t('Bitte Feld ausfüllen', lang);
 		}
 		// E-Mail-Validierung
 		if (field.field_type === 'E-Mail' && val) {
 			// sehr einfache Prüfung, wie in isEmail
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-				return 'Bitte eine gültige E-Mail-Adresse eingeben';
+				return t('Bitte eine gültige E-Mail-Adresse eingeben', lang);
 			}
 		}
 		return '';
@@ -165,7 +168,7 @@
 		if (offenders.length > 0) {
 			// Feldnamen schön darstellen (kommagetrennt)
 			const list = offenders.map((n) => `„${n}”`).join(', ');
-			linkError = `Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus: ${list}.`;
+			linkError = `${t('Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:', lang)} ${list}.`;
 			return;
 		}
 		linkError = null;
@@ -192,15 +195,15 @@
 					});
 					if (resp.status === 409) {
 						const data = await resp.json();
-						linkError = data.error ?? 'Dieser Termin ist leider nicht mehr verfügbar.';
+						linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
 						return;
 					}
 					if (!resp.ok) {
-						linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 						return;
 					}
 				} catch {
-					linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+					linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 					return;
 				}
 			}
@@ -259,11 +262,11 @@
 				termineRefreshKey++;
 			} else {
 				console.error('Fehler beim Senden des Formulars:', response);
-				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
+				alert(t('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.', lang));
 			}
 		} catch (error) {
 			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+			alert(t('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.', lang));
 		}
 	}
 
