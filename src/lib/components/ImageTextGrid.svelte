@@ -13,6 +13,8 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	export let overlayColor: string = '';
 	export let overlayTransparency: number = 100;
 	export let mobilePadding: string = '';
+	export let desktopPadding: string = '';
+	export let noRoundMobile: boolean = false;
 
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
@@ -20,42 +22,42 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 <div class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
-		<div class="md:h-full" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
+		<div class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
 				<div class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
-						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : (noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl')}"
 					/>
 					{#if overlayColor && overlayOpacity > 0}
 						<div
-							class="absolute inset-0 {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+							class="absolute inset-0 {imageRound ? 'rounded-full' : (noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl')}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
 				</div>
 			{/if}
 		</div>
-		<div class="text-col" style="--mob-pad: {mobilePadding};">
+		<div class="text-col" style="--mob-pad: {mobilePadding}; --desk-pad: {desktopPadding};">
 			<PrismicRichText field={text} />
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
-		<div class="text-col" style="--mob-pad: {mobilePadding};">
+		<div class="text-col" style="--mob-pad: {mobilePadding}; --desk-pad: {desktopPadding};">
 			<PrismicRichText field={text} />
 		</div>
-		<div class="md:h-full" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
+		<div class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
 				<div class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
-						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : (noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl')}"
 					/>
 					{#if overlayColor && overlayOpacity > 0}
 						<div
-							class="absolute inset-0 {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+							class="absolute inset-0 {imageRound ? 'rounded-full' : (noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl')}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
@@ -70,6 +72,13 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 		.text-col {
 			padding-left: var(--mob-pad, 0);
 			padding-right: var(--mob-pad, 0);
+		}
+	}
+
+	@media (min-width: 768px) {
+		.text-col {
+			padding-left: var(--desk-pad, 0);
+			padding-right: var(--desk-pad, 0);
 		}
 	}
 </style>

@@ -97,7 +97,7 @@
 	animationOptions={anim.options}
 	class="{p.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
-	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? '-mx-6 md:mx-0' : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
+	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? (slice.variation === 'bildUndText' ? 'vollbreite-bild-text' : '-mx-6 md:mx-0') : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
 		{#if p.heading || p.description || p.mit_suche}
 			<div class="{p.bg_color ? '' : (p.mobile_vollbreite ? 'px-6 md:px-0' : '')} flex flex-col gap-4">
 				{#if p.heading}
@@ -196,6 +196,8 @@
 									overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 									overlayTransparency={'bild_overlay_transparenz' in item ? (item.bild_overlay_transparenz ?? 100) : 100}
 									mobilePadding={p.mobile_vollbreite ? '1.5rem' : ''}
+									desktopPadding={p.mobile_vollbreite ? '0.75rem' : ''}
+									noRoundMobile={p.mobile_vollbreite}
 									{theme}
 								/>
 							{:else}
@@ -216,6 +218,13 @@
 		min-width: 0;
 		overflow-wrap: break-word;
 		word-break: break-word;
+	}
+
+	@media (max-width: 767px) {
+		.vollbreite-bild-text {
+			margin-left: -3rem;
+			margin-right: -3rem;
+		}
 	}
 
 	.accordion-body {
