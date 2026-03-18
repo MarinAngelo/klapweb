@@ -18,7 +18,7 @@
 
 <Bounded
 	as="section"
-	class="leading-relaxed {mobileVollbreite ? 'overflow-x-hidden' : ''}"
+	class="leading-relaxed {mobileVollbreite ? 'overflow-x-clip' : ''}"
 	style="color: {$theme.pageColor}; background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}

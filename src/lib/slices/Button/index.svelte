@@ -61,7 +61,7 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{slice.primary.mobile_vollbreite ? 'overflow-x-hidden' : ''}"
+	class="{slice.primary.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class="{alignClass} {slice.primary.mobile_vollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if slice.variation === 'kauf'}

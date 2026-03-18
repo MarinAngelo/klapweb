@@ -95,7 +95,7 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{p.mobile_vollbreite ? 'overflow-x-hidden' : ''}"
+	class="{p.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? '-mx-6 md:mx-0' : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ? 'padding: 1.5rem;' : ''}">
 		{#if p.heading || p.description || p.mit_suche}
@@ -146,13 +146,15 @@
 					</svg>
 				</button>
 
-				{#if $openIndex === index}
-					<div class="mt-2 transition-all px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
-						{#if leistung.beschreibung?.length}
-							<PrismicRichText field={leistung.beschreibung} />
-						{/if}
+				<div class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
+					<div class="overflow-hidden">
+						<div class="mt-2 px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
+							{#if leistung.beschreibung?.length}
+								<PrismicRichText field={leistung.beschreibung} />
+							{/if}
+						</div>
 					</div>
-				{/if}
+				</div>
 			</div>
 		{/each}
 	{:else}
@@ -182,20 +184,22 @@
 					</svg>
 				</button>
 
-				{#if $openIndex === index}
-					<div class="mt-2 transition-all px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
-						{#if slice.variation === 'bildUndText'}
-							<ImageTextGrid
-								image={'image' in item ? item.image : null}
-								text={item.content}
-								imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
-								{theme}
-							/>
-						{:else}
-							<PrismicRichText field={item.content} />
-						{/if}
+				<div class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
+					<div class="overflow-hidden">
+						<div class="mt-2 px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
+							{#if slice.variation === 'bildUndText'}
+								<ImageTextGrid
+									image={'image' in item ? item.image : null}
+									text={item.content}
+									imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
+									{theme}
+								/>
+							{:else}
+								<PrismicRichText field={item.content} />
+							{/if}
+						</div>
 					</div>
-				{/if}
+				</div>
 			</div>
 		{/each}
 	{/if}
@@ -208,6 +212,11 @@
 		min-width: 0;
 		overflow-wrap: break-word;
 		word-break: break-word;
+	}
+
+	.accordion-body {
+		display: grid;
+		transition: grid-template-rows 300ms ease-out;
 	}
 
 	.search-input::placeholder {

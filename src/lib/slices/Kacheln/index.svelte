@@ -107,7 +107,7 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
+		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 	>
 		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if isFilled.richText(slice.primary.heading)}
@@ -206,7 +206,7 @@
 		specialLayout={true}
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-hidden' : ''}"
+		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-clip' : ''}"
 		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
 	>
 		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">

@@ -12,7 +12,7 @@
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
-<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-hidden' : ''}">
+<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">
 	<div
 		class="prose max-w-3xl mx-auto {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 		data-slice-type="{slice.slice_type}EmbedFieldHandler"

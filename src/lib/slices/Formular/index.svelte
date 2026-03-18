@@ -304,7 +304,7 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}

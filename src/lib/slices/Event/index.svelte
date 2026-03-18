@@ -130,7 +130,7 @@ END:VCALENDAR`;
 	animate={anim.animate}
 	animationOptions={anim.options}
 	style="color: {$theme.pageColor}"
-	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	{#if primary.title}

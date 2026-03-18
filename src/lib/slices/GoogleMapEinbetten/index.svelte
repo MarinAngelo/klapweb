@@ -22,7 +22,7 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<!-- HTML-Code rendern -->
 	<div class="relative w-full {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">

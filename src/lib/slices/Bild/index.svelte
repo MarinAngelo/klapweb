@@ -19,7 +19,7 @@
 
 <Bounded
 	tag="section"
-	class="{clsx(index === 0 && 'pt-0 md:pt-0')} {mobileVollbreite ? 'overflow-x-hidden' : ''}"
+	class="{clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}"
 	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
