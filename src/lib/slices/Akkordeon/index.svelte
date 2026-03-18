@@ -23,6 +23,23 @@
 	$: leistungenItems = (context?.pageLeistungen ?? []) as Array<{ leistung: any }>;
 	$: isLeistungen = (slice.variation as string) === 'leistungen';
 
+	let searchQuery = '';
+
+	function richTextToPlain(field: { text?: string }[]): string {
+		if (!Array.isArray(field)) return '';
+		return field.map((b) => b.text ?? '').join(' ');
+	}
+
+	$: filteredItems = p.mit_suche && searchQuery.trim()
+		? (p.accordion_items ?? []).filter((item: { label?: string; content?: { text?: string }[] }) => {
+				const q = searchQuery.toLowerCase();
+				return (
+					(item.label ?? '').toLowerCase().includes(q) ||
+					richTextToPlain(item.content).toLowerCase().includes(q)
+				);
+			})
+		: (p.accordion_items ?? []);
+
 	/**
 	 * Farb-Override-System: CMS-Felder überschreiben Page-Theme-Farben wenn gesetzt.
 	 * Alle Felder sind optional (leer = Fallback auf globale Seitenfarbe).
@@ -90,6 +107,16 @@
 			</div>
 		{/if}
 
+		{#if p.mit_suche}
+			<input
+				type="search"
+				bind:value={searchQuery}
+				placeholder={p.suchfeld_platzhalter || 'Suchen...'}
+				class="search-input w-full px-4 py-2 rounded border"
+				style="border-color: {effectiveBorderColor}; background-color: {effectiveBgColor}; color: {effectiveTextColor};"
+			/>
+		{/if}
+
 		{#if isLeistungen}
 		{#each leistungenItems as item, index}
 			{@const leistung = item.leistung?.data ?? {}}
@@ -128,7 +155,7 @@
 			</div>
 		{/each}
 	{:else}
-		{#each (p.accordion_items ?? []) as item, index}
+		{#each filteredItems as item, index}
 			<div
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
@@ -177,6 +204,15 @@
 <style>
 	button {
 		text-align: left;
+	}
+
+	.search-input::placeholder {
+		opacity: 0.5;
+	}
+
+	.search-input:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px currentColor;
 	}
 
 	/* Zwingt Listen-Stile zurück */

@@ -64,6 +64,22 @@
 						"default_value": true
 					}
 				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -210,6 +226,22 @@
 						"default_value": true
 					}
 				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -312,6 +344,22 @@
 						"placeholder_false": "Eingeklappt",
 						"placeholder_true": "Ausgeklappt",
 						"default_value": true
+					}
+				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
 					}
 				},
 				"animate": {

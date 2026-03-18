@@ -2002,16 +2002,9 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceDefaultPrimaryAccordionItemsItem>>;
-
-	/**
-	 * Animation aktivieren field in *Akkordeon → Standard → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: accordion.default.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
+	mit_suche: prismic.BooleanField;
+	suchfeld_platzhalter: prismic.KeyTextField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2122,16 +2115,9 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceBildUndTextPrimaryAccordionItemsItem>>;
-
-	/**
-	 * Animation aktivieren field in *Akkordeon → Bild und Text → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: accordion.bildUndText.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
+	mit_suche: prismic.BooleanField;
+	suchfeld_platzhalter: prismic.KeyTextField;
 	animate: prismic.BooleanField;
 
 	/**

@@ -39,17 +39,24 @@ function write(path, data) {
 
 const config = read('slicemachine.config.json');
 
+// Load plans.json once (needed for feature + plan-chain resolution)
+let plans = {};
+if (config.plan || existsSync(join(ROOT, 'plans.json'))) {
+	const plansPath = join(ROOT, 'plans.json');
+	if (existsSync(plansPath)) {
+		plans = JSON.parse(readFileSync(plansPath, 'utf-8'));
+	}
+}
+
 // Resolve features: direct "features" array takes precedence, otherwise resolve from "plan"
 let features = [];
 if (Array.isArray(config.features)) {
 	features = config.features;
 } else if (config.plan) {
-	const plansPath = join(ROOT, 'plans.json');
-	if (!existsSync(plansPath)) {
+	if (!plans[config.plan]) {
 		console.error('✗ plans.json not found but "plan" is set in slicemachine.config.json');
 		process.exit(1);
 	}
-	const plans = JSON.parse(readFileSync(plansPath, 'utf-8'));
 	function resolveFeatures(planKey) {
 		const plan = plans[planKey];
 		if (!plan) {
@@ -64,6 +71,14 @@ if (Array.isArray(config.features)) {
 	features = resolveFeatures(config.plan);
 	console.log(`Plan: ${config.plan} (${plans[config.plan].label}) → features: [${features.join(', ') || 'none'}]`);
 }
+
+// Resolve plan chain (current plan + all ancestors) for plan-level gating (_meta.Plan)
+function resolvePlanChain(planKey) {
+	if (!planKey || !plans[planKey]) return [planKey].filter(Boolean);
+	const ancestors = plans[planKey].extends ? resolvePlanChain(plans[planKey].extends) : [];
+	return [planKey, ...ancestors];
+}
+const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
 
 // ── 1. Custom Types ────────────────────────────────────────────────────────────
 
@@ -149,6 +164,12 @@ for (const sliceName of allSlices) {
 	if (!existsSync(join(ROOT, basePath))) continue; // not managed, skip
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
+
+	// Plan-level gate: skip slice if _meta.Plan is set and not in active plan chain
+	if (_baseMeta?.Plan && !activePlanChain.includes(_baseMeta.Plan)) {
+		console.log(`⊘ slices/${sliceName}/model.json skipped (requires plan: ${_baseMeta.Plan})`);
+		continue;
+	}
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 
 	const additionalVariationIds = sliceVariationsToAdd[sliceName] ?? new Set();
