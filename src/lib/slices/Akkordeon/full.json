@@ -231,6 +231,19 @@
 									"placeholder_true": "Ja",
 									"default_value": false
 								}
+							},
+							"bild_hintergrund": {
+								"type": "Color",
+								"config": {
+									"label": "Bild-Hintergrundfarbe"
+								}
+							},
+							"bild_overlay_transparenz": {
+								"type": "Number",
+								"config": {
+									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
+									"placeholder": "100"
+								}
 							}
 						}
 					}

@@ -1967,6 +1967,12 @@ export interface AccordionSliceBildUndTextPrimaryAccordionItemsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	standardBildLinks: prismic.BooleanField;
+
+	/** Bild-Hintergrundfarbe field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente* */
+	bild_hintergrund: prismic.ColorField;
+
+	/** Overlay-Transparenz field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente* */
+	bild_overlay_transparenz: prismic.NumberField;
 }
 
 /**

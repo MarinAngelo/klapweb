@@ -10,40 +10,66 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	export let imageBgColor: string = '';
 	export let imageRound: boolean = false;
 	export let theme: any;
+	export let overlayColor: string = '';
+	export let overlayTransparency: number = 100;
+	export let mobilePadding: string = '';
+
+	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
 
-<div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+<div class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
-		<div>
+		<div class="md:h-full" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
-				<div style="background-color: {imageBgColor};">
+				<div class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
-						class="w-full {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : 'rounded-3xl'}"
 					/>
+					{#if overlayColor && overlayOpacity > 0}
+						<div
+							class="absolute inset-0 {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+						></div>
+					{/if}
 				</div>
 			{/if}
 		</div>
-		<div>
+		<div class="text-col" style="--mob-pad: {mobilePadding};">
 			<PrismicRichText field={text} />
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
-		<div>
+		<div class="text-col" style="--mob-pad: {mobilePadding};">
 			<PrismicRichText field={text} />
 		</div>
-		<div>
+		<div class="md:h-full" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
-				<div style="background-color: {imageBgColor};">
+				<div class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
-						class="w-full {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+						class="w-full md:h-full md:object-cover {imageRound ? 'rounded-full' : 'rounded-3xl'}"
 					/>
+					{#if overlayColor && overlayOpacity > 0}
+						<div
+							class="absolute inset-0 {imageRound ? 'rounded-full' : 'rounded-3xl'}"
+							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+						></div>
+					{/if}
 				</div>
 			{/if}
 		</div>
 	{/if}
 </div>
+
+<style>
+	@media (max-width: 767px) {
+		.text-col {
+			padding-left: var(--mob-pad, 0);
+			padding-right: var(--mob-pad, 0);
+		}
+	}
+</style>
