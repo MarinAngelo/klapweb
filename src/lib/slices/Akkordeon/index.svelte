@@ -97,7 +97,7 @@
 	animationOptions={anim.options}
 	class="{p.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
-	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? (slice.variation === 'bildUndText' ? 'vollbreite-bild-text' : '-mx-6 md:mx-0') : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
+	<div id="0" class="flex flex-col gap-4 {p.mobile_vollbreite ? (slice.variation === 'bildUndText' ? 'vollbreite-bild-text' : '-mx-6 md:mx-0') : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
 		{#if p.heading || p.description || p.mit_suche}
 			<div class="{p.bg_color ? '' : (p.mobile_vollbreite ? 'px-6 md:px-0' : '')} flex flex-col gap-4">
 				{#if p.heading}
@@ -146,7 +146,7 @@
 					</svg>
 				</button>
 
-				<div class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
+				<div id="2" class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
 					<div class="overflow-hidden">
 						<div class="mt-2 px-3 py-2 rounded" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
 							{#if leistung.beschreibung?.length}
@@ -160,14 +160,15 @@
 	{:else}
 		{#each filteredItems as item, index}
 			<div
+				id="1"
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite ? 'px-6 md:px-3' : 'px-3')}"
+				class="border-b {slice.variation === 'bildUndText' ? 'pb-0 md:pb-4' : 'pb-4'} md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite ? 'px-0 md:px-3' : 'px-3')}"
 				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 {!p.bg_color && p.mobile_vollbreite && slice.variation === 'bildUndText' ? 'px-6 md:px-0' : ''}"
+					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 {slice.variation === 'bildUndText' ? 'pb-5 md:pb-1' : ''} {!p.bg_color && p.mobile_vollbreite && slice.variation === 'bildUndText' ? 'px-6 md:px-0' : ''}"
 					aria-haspopup="true"
 					aria-expanded={$openIndex === index}
 					on:click={() => toggleItem(index)}
@@ -184,9 +185,9 @@
 					</svg>
 				</button>
 
-				<div class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
-					<div class="overflow-hidden">
-						<div class="mt-2 py-2 {slice.variation === 'bildUndText' ? 'md:py-0' : ''} {slice.variation === 'bildUndText' ? 'rounded md:rounded-3xl' : 'rounded'} {slice.variation === 'bildUndText' ? 'px-2 md:px-0' : 'px-3'}" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
+				<div id="2" class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
+					<div id="3" class="overflow-hidden">
+						<div id="4" class="mt-2 {slice.variation === 'bildUndText' ? 'pt-2 md:pt-0' : 'py-2'} {slice.variation === 'bildUndText' ? 'rounded md:rounded-3xl' : 'rounded'} {slice.variation === 'bildUndText' ? 'md:px-0' : 'px-3'}" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
 							{#if slice.variation === 'bildUndText'}
 								<ImageTextGrid
 									image={'image' in item ? item.image : null}
@@ -195,7 +196,8 @@
 									imageBgColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 									overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 									overlayTransparency={'bild_overlay_transparenz' in item ? (item.bild_overlay_transparenz ?? 100) : 100}
-									mobilePadding={p.mobile_vollbreite ? '1.5rem' : ''}
+									mobilePadding={p.mobile_vollbreite ? '2rem' : ''}
+									mobilePaddingTop={p.mobile_vollbreite ? '1.5rem' : ''}
 									desktopPadding={p.mobile_vollbreite ? '1.5rem' : ''}
 									desktopPaddingY="1.5rem"
 									noRoundMobile={p.mobile_vollbreite}

@@ -13,6 +13,7 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	export let overlayColor: string = '';
 	export let overlayTransparency: number = 100;
 	export let mobilePadding: string = '';
+	export let mobilePaddingTop: string = '';
 	export let desktopPadding: string = '';
 	export let desktopPaddingY: string = '';
 	export let noRoundMobile: boolean = false;
@@ -20,12 +21,12 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
 
-<div class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
+<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
-		<div class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
+		<div id="6" class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div id="7" class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
@@ -40,17 +41,17 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 				</div>
 			{/if}
 		</div>
-		<div class="text-col" style="--mob-pad: {mobilePadding}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};">
+		<div id="8" class="text-col" style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};">
 			<PrismicRichText field={text} />
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
-		<div class="text-col" style="--mob-pad: {mobilePadding}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};">
+		<div id="6" class="text-col" style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};">
 			<PrismicRichText field={text} />
 		</div>
-		<div class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="{imageBgColor ? `background-color: ${imageBgColor};` : ''}">
+		<div id="7" class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden" style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}">
 			{#if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div id="8" class="relative md:h-full" style="background-color: {imageBgColor};">
 					<PrismicImage
 						field={image}
 						sizes="100vw"
@@ -73,6 +74,7 @@ import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 		.text-col {
 			padding-left: var(--mob-pad, 0);
 			padding-right: var(--mob-pad, 0);
+			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
 		}
 	}
 
