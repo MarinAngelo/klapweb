@@ -97,7 +97,7 @@
 	animationOptions={anim.options}
 	class="{p.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
-	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? '-mx-6 md:mx-0' : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ? 'padding: 1.5rem;' : ''}">
+	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? '-mx-6 md:mx-0' : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
 		{#if p.heading || p.description || p.mit_suche}
 			<div class="{p.bg_color ? '' : (p.mobile_vollbreite ? 'px-6 md:px-0' : '')} flex flex-col gap-4">
 				{#if p.heading}
@@ -217,6 +217,14 @@
 	.accordion-body {
 		display: grid;
 		transition: grid-template-rows 300ms ease-out;
+	}
+
+	@media (min-width: 768px) {
+		.sektion-rahmen {
+			border-width: 1px;
+			border-style: solid;
+			border-radius: 0.5rem;
+		}
 	}
 
 	.search-input::placeholder {

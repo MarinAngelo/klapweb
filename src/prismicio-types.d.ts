@@ -2068,6 +2068,9 @@ export interface AccordionSliceDefaultPrimary {
 
 	/** Rahmen-Farbe field in *Akkordeon → Standard → Primary* */
 	border_color: prismic.ColorField;
+
+	/** Sektion-Rahmen field in *Akkordeon → Standard → Primary* */
+	sektion_rahmen: prismic.BooleanField;
 }
 
 /**
@@ -2182,6 +2185,9 @@ export interface AccordionSliceBildUndTextPrimary {
 
 	/** Rahmen-Farbe field in *Akkordeon → Bild und Text → Primary* */
 	border_color: prismic.ColorField;
+
+	/** Sektion-Rahmen field in *Akkordeon → Bild und Text → Primary* */
+	sektion_rahmen: prismic.BooleanField;
 }
 
 /**

@@ -158,6 +158,15 @@
 					"config": {
 						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
 					}
+				},
+				"sektion_rahmen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Rahmen um die Sektion (Desktop)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
 				}
 			},
 			"items": {}
@@ -328,6 +337,15 @@
 					"type": "Color",
 					"config": {
 						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
+				},
+				"sektion_rahmen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Rahmen um die Sektion (Desktop)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				}
 			},
