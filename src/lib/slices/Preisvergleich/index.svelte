@@ -19,6 +19,7 @@
 		slice.primary.anim_delay,
 		slice.primary.anim_duration
 	);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	const billingTypeSuffix: Record<string, string> = {
 		Jährlich: 'pro Jahr',
@@ -98,7 +99,9 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
+		class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 	>
+		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if titel}
 			<h2 class="font-bold mb-8">{titel}</h2>
 		{/if}
@@ -173,6 +176,7 @@
 					{/if}
 				</tbody>
 			</table>
+		</div>
 		</div>
 	</Bounded>
 {/if}

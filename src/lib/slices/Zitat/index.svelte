@@ -13,6 +13,7 @@
 	export let index: number | undefined = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
@@ -22,7 +23,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 >
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	{#if isFilled.richText(slice.primary.quote)}
 		<figure class="grid gap-6">
 			<blockquote>
@@ -44,4 +47,5 @@
 			{/if}
 		</figure>
 	{/if}
+	</div>
 </Bounded>

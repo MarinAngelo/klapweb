@@ -38,6 +38,7 @@
 
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
 	$: checkoutUrl = ((slice.primary as any).checkout_url as string | null | undefined)?.trim() || null;
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
@@ -303,13 +304,14 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 >
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
 	{:else}
 		<!-- Standard: einspaltig -->
-		<div class="grid grid-cols-1 items-center gap-8">
+		<div class="grid grid-cols-1 items-center gap-8 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 			<div>
 				{#if slice.primary.form_title}
 					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>

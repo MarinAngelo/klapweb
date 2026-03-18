@@ -102,6 +102,8 @@ END:VCALENDAR`;
 		icsUrl = URL.createObjectURL(blob);
 	}
 
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+
 	// Array mit allen Daten: start_date_time + additional_dates, nur zukünftige oder heutige
 	let allDates: string[] = [];
 	$: {
@@ -128,7 +130,9 @@ END:VCALENDAR`;
 	animate={anim.animate}
 	animationOptions={anim.options}
 	style="color: {$theme.pageColor}"
+	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 >
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	{#if primary.title}
 		<h2>{primary.title}</h2>
 	{/if}
@@ -224,5 +228,6 @@ END:VCALENDAR`;
 				{/if}
 			{/if}
 		</div>
+	</div>
 	</div>
 </Bounded>

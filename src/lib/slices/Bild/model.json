@@ -19,6 +19,15 @@
 						"thumbnails": []
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -30,7 +39,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -43,7 +58,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -67,6 +85,15 @@
 						"thumbnails": []
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -78,7 +105,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -91,7 +124,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -121,6 +157,15 @@
 						}
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -132,7 +177,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -145,7 +196,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},

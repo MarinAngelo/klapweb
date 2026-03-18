@@ -11,6 +11,7 @@
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
@@ -19,8 +20,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 >
-	<div class="html-code-container" style="--hr-color: {$theme.pageColor};">
+	<div class="html-code-container {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}" style="--hr-color: {$theme.pageColor};">
 		{@html sanitizedHtmlCode}
 	</div>
 </Bounded>

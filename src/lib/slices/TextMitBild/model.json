@@ -59,13 +59,27 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"image_round": {
 					"type": "Boolean",
 					"config": {
 						"label": "Bild als Kreis",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -82,7 +96,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -95,7 +115,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -123,7 +146,9 @@
 						"label": "Button Link",
 						"placeholder": "",
 						"select": null,
-						"customtypes": ["page"]
+						"customtypes": [
+							"page"
+						]
 					}
 				},
 				"buttonText": {
@@ -141,6 +166,15 @@
 						"thumbnails": []
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -152,7 +186,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -165,7 +205,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -226,13 +269,27 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"image_round": {
 					"type": "Boolean",
 					"config": {
 						"label": "Bild als Kreis",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -249,7 +306,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -262,7 +325,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},

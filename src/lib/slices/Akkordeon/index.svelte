@@ -95,26 +95,27 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{p.mobile_vollbreite ? 'overflow-x-hidden' : ''}"
 >
-	<div class="flex flex-col gap-4" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ? 'padding: 1.5rem; border-radius: 0.5rem;' : ''}">
-		{#if p.heading}
-			<PrismicRichText field={p.heading} />
-		{/if}
-
-		{#if p.description}
-			<div class="mb-4">
-				<PrismicRichText field={p.description} />
+	<div class="flex flex-col gap-4 {p.mobile_vollbreite ? '-mx-6 md:mx-0' : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ? 'padding: 1.5rem;' : ''}">
+		{#if p.heading || p.description || p.mit_suche}
+			<div class="{p.bg_color ? '' : (p.mobile_vollbreite ? 'px-6 md:px-0' : '')} flex flex-col gap-4">
+				{#if p.heading}
+					<PrismicRichText field={p.heading} />
+				{/if}
+				{#if p.description}
+					<PrismicRichText field={p.description} />
+				{/if}
+				{#if p.mit_suche}
+					<input
+						type="search"
+						bind:value={searchQuery}
+						placeholder={p.suchfeld_platzhalter || 'Suchen...'}
+						class="search-input w-full px-4 py-2 rounded border"
+						style="border-color: {effectiveBorderColor}; background-color: {effectiveBgColor}; color: {effectiveTextColor};"
+					/>
+				{/if}
 			</div>
-		{/if}
-
-		{#if p.mit_suche}
-			<input
-				type="search"
-				bind:value={searchQuery}
-				placeholder={p.suchfeld_platzhalter || 'Suchen...'}
-				class="search-input w-full px-4 py-2 rounded border"
-				style="border-color: {effectiveBorderColor}; background-color: {effectiveBgColor}; color: {effectiveTextColor};"
-			/>
 		{/if}
 
 		{#if isLeistungen}
@@ -124,7 +125,7 @@
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4 px-3 rounded-t"
+				class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite ? 'px-6 md:px-3' : 'px-3')}"
 				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
@@ -160,7 +161,7 @@
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4 px-3 rounded-t"
+				class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite ? 'px-6 md:px-3' : 'px-3')}"
 				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
@@ -204,6 +205,9 @@
 <style>
 	button {
 		text-align: left;
+		min-width: 0;
+		overflow-wrap: break-word;
+		word-break: break-word;
 	}
 
 	.search-input::placeholder {

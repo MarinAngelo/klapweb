@@ -2005,6 +2005,7 @@ export interface AccordionSliceDefaultPrimary {
 	erstes_item_ausgeklappt: prismic.BooleanField;
 	mit_suche: prismic.BooleanField;
 	suchfeld_platzhalter: prismic.KeyTextField;
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2118,6 +2119,7 @@ export interface AccordionSliceBildUndTextPrimary {
 	erstes_item_ausgeklappt: prismic.BooleanField;
 	mit_suche: prismic.BooleanField;
 	suchfeld_platzhalter: prismic.KeyTextField;
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2297,6 +2299,7 @@ export interface AnleitungSliceDefaultPrimary {
 	 * - **API ID Path**: anleitung.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2464,6 +2467,7 @@ export interface ButtonSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+	mobile_vollbreite: prismic.BooleanField;
 }
 
 /**
@@ -2585,6 +2589,7 @@ export interface ButtonSliceKaufPrimary {
 	 * - **API ID Path**: button.kauf.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2679,6 +2684,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	 * - **API ID Path**: code_einbetten.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2848,6 +2854,7 @@ export interface EventSliceDefaultPrimary {
 	 * - **API ID Path**: event.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -3293,6 +3300,7 @@ export interface FormSliceDefaultPrimary {
 	 * - **API ID Path**: form.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -3552,6 +3560,7 @@ export interface FormSliceMitTextPrimary {
 	 * - **API ID Path**: form.mitText.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -3672,6 +3681,7 @@ export interface FormSliceTwoColumnsPrimary {
 	 * - **API ID Path**: form.twoColumns.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4181,6 +4191,7 @@ export interface HtmlCodeSliceDefaultPrimary {
 	 * - **API ID Path**: html_code.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4280,6 +4291,7 @@ export interface ImageSliceDefaultPrimary {
 	 * - **API ID Path**: image.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4350,6 +4362,7 @@ export interface ImageSliceBannerPrimary {
 	 * - **API ID Path**: image.banner.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4420,6 +4433,7 @@ export interface ImageSliceCarouselPrimary {
 	 * - **API ID Path**: image.carousel.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4691,6 +4705,7 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * - **API ID Path**: image_cards.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4863,6 +4878,7 @@ export interface ImageCardsSlicePlaenePrimary {
 	 * - **API ID Path**: image_cards.plaene.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5309,6 +5325,7 @@ export interface PreisaufstellungSliceDefaultPrimary {
 	 * - **API ID Path**: preisaufstellung.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5447,6 +5464,7 @@ export interface PreisvergleichSliceDefaultPrimary {
 	 * - **API ID Path**: preisvergleich.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5589,6 +5607,7 @@ export interface QuoteSliceDefaultPrimary {
 	 * - **API ID Path**: quote.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5673,6 +5692,7 @@ export interface TextSliceDefaultPrimary {
 	 * - **API ID Path**: text.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5743,6 +5763,7 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **API ID Path**: text.twoColumns.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6086,6 +6107,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **API ID Path**: text_with_image.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6186,6 +6208,7 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **API ID Path**: text_with_image.withButton.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6318,6 +6341,7 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * - **API ID Path**: text_with_image.standardBildLinks.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
+	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**

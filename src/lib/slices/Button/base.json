@@ -104,6 +104,15 @@
 							"gross"
 						]
 					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
 				}
 			},
 			"items": {},

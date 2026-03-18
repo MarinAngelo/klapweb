@@ -96,6 +96,7 @@
 	$: borderColor = (slice.primary as any).border_color || get(theme).pageColor;
 	$: roundCorners = (slice.primary as any).round_corners !== false;
 	$: ctaLabel = (slice.primary as any).cta_label || 'Jetzt bestellen';
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 {#if slice.variation === 'plaene'}
@@ -106,7 +107,9 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
+		class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 	>
+		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if isFilled.richText(slice.primary.heading)}
 			<h2 class="font-bold mb-8 custom-color">
 				<PrismicText field={slice.primary.heading} />
@@ -195,6 +198,7 @@
 				</div>
 			{/each}
 		</div>
+		</div>
 	</Bounded>
 {:else}
 	<Bounded
@@ -202,10 +206,10 @@
 		specialLayout={true}
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		class={hasCustomBgColor ? 'pb-16 md:pb-20' : ''}
+		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-hidden' : ''}"
 		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
 	>
-		<div class="grid gap-12">
+		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 			{#if isFilled.richText(slice.primary.heading)}
 				<h2 class="text-center custom-color">
 					<PrismicText field={slice.primary.heading} />

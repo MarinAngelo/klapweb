@@ -11,6 +11,7 @@
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
 </script>
@@ -21,9 +22,10 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-hidden' : ''}"
 >
 	<!-- HTML-Code rendern -->
-	<div class="relative w-full">
+	<div class="relative w-full {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#each slice.primary.html_code as code}
 			<div class="relative">
 				<!-- Gerenderter HTML-Code -->

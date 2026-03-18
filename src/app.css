@@ -211,6 +211,8 @@ body {
     @apply text-lg leading-relaxed mb-4;
     /* text-lg = 1.125rem (18px) - ähnlich wie deine 1.2rem */
     color: var(--page-color);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
 /* Wende Styles nur an, wenn der ul/ol Tag KEINE CSS-Klasse hat.
