@@ -125,7 +125,7 @@
 				use:reveal={anim.animate
 					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
 					: { direction: 'none' }}
-				class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite ? 'px-6 md:px-3' : 'px-3')}"
+				class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color ? 'px-3' : (p.mobile_vollbreite && slice.variation === 'bildUndText' ? 'md:px-3' : (p.mobile_vollbreite ? 'px-6 md:px-3' : 'px-3'))}"
 				style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 			>
 				<button
@@ -185,8 +185,8 @@
 				</button>
 
 				<div class="accordion-body" style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};">
-					<div class="overflow-x-visible overflow-y-clip">
-						<div class="mt-2 py-2 rounded {slice.variation === 'bildUndText' ? (p.mobile_vollbreite ? 'bildtext-fullwidth' : 'px-3') : 'px-3'}" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
+					<div class="overflow-hidden">
+						<div class="mt-2 py-2 {slice.variation === 'bildUndText' ? 'md:py-0' : ''} {slice.variation === 'bildUndText' ? 'rounded md:rounded-3xl' : 'rounded'} {slice.variation === 'bildUndText' ? 'px-2 md:px-0' : 'px-3'}" style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};">
 							{#if slice.variation === 'bildUndText'}
 								<ImageTextGrid
 									image={'image' in item ? item.image : null}
@@ -196,7 +196,8 @@
 									overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 									overlayTransparency={'bild_overlay_transparenz' in item ? (item.bild_overlay_transparenz ?? 100) : 100}
 									mobilePadding={p.mobile_vollbreite ? '1.5rem' : ''}
-									desktopPadding={p.mobile_vollbreite ? '0.75rem' : ''}
+									desktopPadding={p.mobile_vollbreite ? '1.5rem' : ''}
+									desktopPaddingY="1.5rem"
 									noRoundMobile={p.mobile_vollbreite}
 									{theme}
 								/>
