@@ -95,9 +95,6 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
-					},
-					"_meta": {
-						"Plan": "professional"
 					}
 				},
 				"suchfeld_platzhalter": {
@@ -105,9 +102,6 @@
 					"config": {
 						"label": "Suchfeld-Platzhalter",
 						"placeholder": "Suchen..."
-					},
-					"_meta": {
-						"Plan": "professional"
 					}
 				},
 				"mobile_vollbreite": {
@@ -318,9 +312,6 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
-					},
-					"_meta": {
-						"Plan": "professional"
 					}
 				},
 				"suchfeld_platzhalter": {
@@ -328,9 +319,6 @@
 					"config": {
 						"label": "Suchfeld-Platzhalter",
 						"placeholder": "Suchen..."
-					},
-					"_meta": {
-						"Plan": "professional"
 					}
 				},
 				"mobile_vollbreite": {

@@ -27,6 +27,75 @@
 
 ## Feature-Flag-System
 
-- `slicemachine.config.json` → `plan` bestimmt aktive Features
-- `scripts/build-customtypes.js` läuft bei `dev` + `build` und generiert `model.json` + Custom Type `index.json`
-- `model.json` und `customtypes/*/index.json` sind gitignored (generiert)
+### Übersicht
+
+| Datei                          | Zweck                                                        | Committed |
+| ------------------------------ | ------------------------------------------------------------ | --------- |
+| `gating.json`                  | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln | Ja        |
+| `slicemachine.config.json`     | Wählt den aktiven Plan (`"plan": "starter"`)                 | Ja        |
+| `scripts/build-customtypes.js` | Liest `gating.json` + `base.json` → generiert Output         | Ja        |
+| `src/lib/slices/*/base.json`   | Slice-Quelldatei (kein `_meta` mehr nötig)                   | Ja        |
+| `src/lib/slices/*/full.json`   | Slice mit Extra-Variationen (für Features)                   | Ja        |
+| `src/lib/slices/*/model.json`  | Generiert — gitignored                                       | Nein      |
+| `customtypes/*/index.json`     | Generiert — gitignored                                       | Nein      |
+
+### gating.json — Struktur
+
+```json
+{
+	"plans": {
+		"starter": { "label": "Basis" },
+		"professional": { "label": "Professionell", "extends": "starter" },
+		"individuell": { "label": "Individuell", "extends": "professional" }
+	},
+	"features": {
+		"ecommerce": { "label": "E-Commerce", "plans": ["individuell"] }
+	},
+	"customTypes": {
+		"leistung": { "feature": "ecommerce" }
+	},
+	"slices": {
+		"Akkordeon": {
+			"plan": "professional", // Slice-Ebene: ganzer Slice gesperrt
+			"fields": {
+				"mit_suche": { "plan": "professional" } // Feld-Ebene
+			},
+			"variations": {
+				"leistungen": { "feature": "ecommerce" } // Variations-Ebene
+			}
+		}
+	}
+}
+```
+
+### Plan-Hierarchie & Features
+
+- Pläne sind hierarchisch via `extends`: `individuell → professional → starter`
+- `activePlanChain` = aktueller Plan + alle Eltern, z.B. `["individuell", "professional", "starter"]`
+- Ein Feature ist aktiv wenn mindestens ein Eintrag aus `feature.plans` in `activePlanChain` vorkommt
+- **Gating-Regel**: `{ plan: "professional" }` → aktiv bei professional + individuell (nicht starter)
+
+### Gating-Ebenen in gating.json.slices
+
+| Ebene     | Schlüssel                                    | Effekt wenn inaktiv                       |
+| --------- | -------------------------------------------- | ----------------------------------------- |
+| Slice     | direkt `plan`/`feature` auf dem Slice-Objekt | `model.json` wird nicht generiert         |
+| Variation | `variations.{id}.plan/feature`               | Variation erscheint nicht in `model.json` |
+| Feld      | `fields.{key}.plan/feature`                  | Feld fehlt in allen Variationen           |
+
+### Variationen aus full.json
+
+Extra-Variationen (die nicht in `base.json` stehen) werden in `full.json` definiert.
+`gating.json slices.{Name}.variations` steuert welche davon aktiv sind — ersetzt die alten `customtypes/_features/*/slices.json`.
+
+### Tab-Overlays für Custom Types (page/settings)
+
+Inhalt bleibt in `customtypes/_features/{feature}/page.json` bzw. `settings.json`.
+Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
+
+### Workflow bei Planänderung
+
+1. `slicemachine.config.json` → `plan` ändern
+2. `npm run dev` → Script generiert neue `model.json` + `index.json`
+3. `git diff` → `slicemachine.config.json` + evtl. `full.json` committen
+4. `slicemachine push`
