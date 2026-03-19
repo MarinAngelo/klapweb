@@ -145,7 +145,8 @@
 		sketchActive = false; // hide sketch to keep panel compact
 		entry.origStyle = entry.el.style.cssText;
 
-		const computed = getComputedStyle(entry.el);
+		const innerStyled = entry.el.querySelector<HTMLElement>('[style*="background-color"]');
+		const computed = getComputedStyle(innerStyled ?? entry.el);
 		sliceBgColor = rgbToHex(computed.backgroundColor) ?? bgColor;
 		sliceTextColor = rgbToHex(computed.color) ?? textColor;
 
