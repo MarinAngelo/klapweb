@@ -105,14 +105,9 @@
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
-	// Responsive: Prüfen, ob mobile (<= 640px)
 	let mounted = false;
 	onMount(() => {
-		const check = () => isMobile.set(window.innerWidth <= 640);
-		check();
 		mounted = true;
-		window.addEventListener('resize', check);
-		return () => window.removeEventListener('resize', check);
 	});
 
 	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,

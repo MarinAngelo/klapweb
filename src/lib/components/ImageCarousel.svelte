@@ -159,10 +159,6 @@
 			class="carousel-container relative w-full h-full overflow-hidden"
 			role="region"
 			aria-label="Image carousel"
-			style="touch-action: pan-y;"
-			on:pointerdown={onPointerDown}
-			on:pointerup={onPointerUp}
-			on:pointercancel={() => { swiping = false; }}
 		>
 			{#key currentKey}
 				<div
@@ -205,6 +201,14 @@
 			>
 				{current + 1} / {len()}
 			</div>
+
+			<div
+				class="swipe-overlay absolute inset-0 z-[60]"
+				style="touch-action: pan-y;"
+				on:pointerdown={onPointerDown}
+				on:pointerup={onPointerUp}
+				on:pointercancel={() => { swiping = false; }}
+			/>
 		</div>
 	</div>
 {:else}
@@ -216,6 +220,16 @@
 	@media (pointer: coarse) {
 		.nav-arrow {
 			display: none !important;
+		}
+	}
+
+	/* Swipe-Overlay nur auf Touch aktiv */
+	.swipe-overlay {
+		pointer-events: none;
+	}
+	@media (pointer: coarse) {
+		.swipe-overlay {
+			pointer-events: auto;
 		}
 	}
 
