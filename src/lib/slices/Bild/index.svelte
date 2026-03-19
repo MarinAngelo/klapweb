@@ -19,14 +19,14 @@
 
 <Bounded
 	tag="section"
-	class="{clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}"
+	class={clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}
 	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 		{#if isFilled.image(slice.primary.image)}
 			<div style="background-color: {$theme.pageBgColor};">
 				<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
@@ -34,7 +34,7 @@
 		{/if}
 		{#if slice.variation === 'carousel'}
 			<Carousel
-				images={slice.primary.images.map((item) => item.image)}
+				images={slice.items.map((item) => item.image)}
 				animate={anim.animate}
 				animationOptions={anim.options}
 			/>
