@@ -251,3 +251,11 @@
 		</div>
 	</Bounded>
 </section>
+
+<style>
+	@media (pointer: coarse) and (orientation: landscape) {
+		section {
+			scroll-snap-align: start;
+		}
+	}
+</style>

@@ -167,6 +167,13 @@ html {
   font-size: var(--global-size-mobile);
 }
 
+/* Scroll-Snap: Mobile Landscape – Fullscreen-Bereiche rasten ein */
+@media (pointer: coarse) and (orientation: landscape) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
 body {
   font-family: var(--page-font, sans-serif);
 }
