@@ -134,17 +134,21 @@
 		const pd = $page.data?.page?.data ?? {};
 		const price: number | null = pd.ecommerce_price_chf ?? null;
 		const discountPct: number | null = pd.ecommerce_discount_percent ?? null;
-		const globalDepositPct: number | null = (data.settings?.data as any)?.global_deposit_percent ?? null;
+		const globalDepositPct: number | null =
+			(data.settings?.data as any)?.global_deposit_percent ?? null;
 		const depositPct: number | null = pd.ecommerce_deposit_percent ?? globalDepositPct;
 		const billingType: string | null = pd.ecommerce_billing_type ?? null;
 
 		// Currency: use selected override if set, otherwise base currency from settings
-		const baseCurrency = parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';
+		const baseCurrency =
+			parseCurrencyCode((data.settings?.data as any)?.invoice_currency as string) || 'CHF';
 		const sel = $currencySelection;
 		const activeCurrency = sel?.code ?? baseCurrency;
 		const rate = sel && sel.code !== baseCurrency ? (sel.rates[sel.code] ?? 1) : 1;
 		function fmt(n: number) {
-			return new Intl.NumberFormat('de-CH', { style: 'currency', currency: activeCurrency }).format(n * rate);
+			return new Intl.NumberFormat('de-CH', { style: 'currency', currency: activeCurrency }).format(
+				n * rate
+			);
 		}
 
 		const pageTokens: Record<string, string> = {};
@@ -246,6 +250,7 @@
 			s.primary?.banner_overlap === true
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
+	$: isPreview = $page.url.pathname.startsWith('/preview/');
 
 	let studioOpen = false;
 
@@ -284,7 +289,8 @@
 			<link
 				rel="alternate"
 				hreflang="x-default"
-				href={cleanBaseUrl + (allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
+				href={cleanBaseUrl +
+					(allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
 			/>
 		{/if}
 	{/if}
@@ -300,7 +306,7 @@
 </svelte:head>
 
 <div style="background-color: {$theme.pageBgColor}; min-height: 100vh;">
-	{#if !isLandingPage}
+	{#if !isLandingPage && !isPreview}
 		<Header
 			{navigation}
 			{settings}
@@ -331,7 +337,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage}
+	{#if !isLandingPage && !isPreview}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
