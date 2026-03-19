@@ -12,30 +12,32 @@
 	export let index: number | undefined = undefined;
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
-	const p = slice.primary ?? ({} as any);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
 	tag="section"
-	class={clsx(index === 0 && 'pt-0 md:pt-0')}
+	class="{clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}"
 	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	{#if isFilled.image(p.image)}
-		<div style="background-color: {$theme.pageBgColor};">
-			<PrismicImage field={p.image} sizes="100vw" class="w-full" />
-		</div>
-	{/if}
-	{#if slice.variation === 'carousel'}
-		<Carousel
-			images={p.images.map((item) => item.image)}
-			animate={anim.animate}
-			animationOptions={anim.options}
-		/>
-	{/if}
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		{#if isFilled.image(slice.primary.image)}
+			<div style="background-color: {$theme.pageBgColor};">
+				<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
+			</div>
+		{/if}
+		{#if slice.variation === 'carousel'}
+			<Carousel
+				images={slice.primary.images.map((item) => item.image)}
+				animate={anim.animate}
+				animationOptions={anim.options}
+			/>
+		{/if}
+	</div>
 </Bounded>

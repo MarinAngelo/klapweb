@@ -11,9 +11,9 @@
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
-	const p = slice.primary ?? ({} as any);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
@@ -23,26 +23,29 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
-	{#if isFilled.richText(p.quote)}
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	{#if isFilled.richText(slice.primary.quote)}
 		<figure class="grid gap-6">
 			<blockquote>
 				<p
 					class={clsx(
 						'text-xl font-medium leading-tight md:text-xl md:leading-tight',
-						!isFilled.keyText(p.source) && 'text-center'
+						!isFilled.keyText(slice.primary.source) && 'text-center'
 					)}
 				>
 					<span class="-ml-3.5 select-none md:-ml-5"> &ldquo; </span>
-					<PrismicText field={p.quote} />
+					<PrismicText field={slice.primary.quote} />
 					<span class="select-none">&rdquo;</span>
 				</p>
 			</blockquote>
-			{#if isFilled.keyText(p.source)}
+			{#if isFilled.keyText(slice.primary.source)}
 				<figcaption class="text-right">
-					&mdash; {p.source}
+					&mdash; {slice.primary.source}
 				</figcaption>
 			{/if}
 		</figure>
 	{/if}
+	</div>
 </Bounded>

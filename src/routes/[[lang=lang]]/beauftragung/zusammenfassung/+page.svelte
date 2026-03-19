@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
+	import { t } from '$lib/i18n/translations';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -56,10 +58,10 @@
 			} else {
 				appliedCode = '';
 				codeDiscountPct = 0;
-				codeError = 'Ungültiger Rabatt-Code.';
+				codeError = t('Ungültiger Rabatt-Code.', lang);
 			}
 		} catch {
-			codeError = 'Verbindungsfehler bei Code-Prüfung.';
+			codeError = t('Verbindungsfehler bei Code-Prüfung.', lang);
 		} finally {
 			codeLoading = false;
 		}
@@ -158,12 +160,12 @@
 
 	$: buttonText =
 		selectedPayment === 'stripe'
-			? 'Kostenpflichtig bestellen'
+			? t('Kostenpflichtig bestellen', lang)
 			: selectedPayment === 'rechnung'
-				? 'Rechnung anfordern'
+				? t('Rechnung anfordern', lang)
 				: selectedPayment === 'bar'
-					? 'Bestellung absenden'
-					: 'Bitte Zahlungsart wählen';
+					? t('Bestellung absenden', lang)
+					: t('Bitte Zahlungsart wählen', lang);
 
 	$: canOrder = agbAccepted && selectedPayment !== null && !isLoading;
 
@@ -197,7 +199,7 @@
 				});
 				if (!resp.ok) {
 					const err = await resp.json().catch(() => ({}));
-					orderError = (err as { error?: string }).error ?? 'Ein Fehler ist aufgetreten.';
+					orderError = (err as { error?: string }).error ?? t('Ein Fehler ist aufgetreten.', lang);
 					isLoading = false;
 					return;
 				}
@@ -205,7 +207,7 @@
 			sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`);
 			} catch {
-				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
+				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;
 			}
 			return;
@@ -253,7 +255,7 @@
 					body: params.toString()
 				});
 				if (!resp.ok) {
-					orderError = 'Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+					orderError = t('Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 					isLoading = false;
 					return;
 				}
@@ -261,12 +263,13 @@
 			sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 			} catch {
-				orderError = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
+				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;
 			}
 		}
 	}
 
+	$: lang = $page.data.lang || 'de-ch';
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
 	$: borderColor = get(theme).pageColor;
@@ -278,13 +281,13 @@
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
 	{#if !checkoutData}
-		<p>Laden…</p>
+		<p>{t('Laden…', lang)}</p>
 	{:else}
 		<Heading tag="h1">{data.pageTitle}</Heading>
 
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
-			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">Ihre Bestellung</p>
+			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">{t('Ihre Bestellung', lang)}</p>
 
 			{#if hasAddons}
 				<!-- Row layout: main product + addons side by side -->
@@ -349,7 +352,7 @@
 				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
-						<label for="currency-select" class="text-sm opacity-60">Währung:</label>
+						<label for="currency-select" class="text-sm opacity-60">{t('Währung:', lang)}</label>
 						<select
 							id="currency-select"
 							bind:value={selectedCurrency}
@@ -378,7 +381,7 @@
 								class="text-xs underline opacity-60 hover:opacity-100"
 								on:click={removeCode}
 							>
-								Entfernen
+								{t('Entfernen', lang)}
 							</button>
 						</div>
 					{:else}
@@ -386,7 +389,7 @@
 							<input
 								type="text"
 								bind:value={discountCodeInput}
-								placeholder="Rabatt-Code"
+								placeholder={t('Rabatt-Code', lang)}
 								class="text-sm px-2 py-1 border"
 								style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44; width: 160px;"
 								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
@@ -398,7 +401,7 @@
 								disabled={codeLoading || !discountCodeInput.trim()}
 								on:click={applyDiscountCode}
 							>
-								{codeLoading ? '…' : 'Anwenden'}
+								{codeLoading ? '…' : t('Anwenden', lang)}
 							</button>
 						</div>
 						{#if codeError}
@@ -407,13 +410,13 @@
 					{/if}
 				</div>
 			{:else if !hasAddons}
-				<p class="text-sm opacity-60 mt-1">Preis wird bei Rückfrage mitgeteilt.</p>
+				<p class="text-sm opacity-60 mt-1">{t('Preis wird bei Rückfrage mitgeteilt.', lang)}</p>
 			{/if}
 		</div>
 
 		<!-- Ihre Angaben -->
 		<div class="mb-10">
-			<Heading tag="h2">Ihre Angaben</Heading>
+			<Heading tag="h2">{t('Ihre Angaben', lang)}</Heading>
 			<dl class="divide-y" style="border-color: {borderColor}; opacity: 0.8;">
 				{#each Object.entries(checkoutData.data) as [key, value]}
 					{#if value && !hiddenKeys.has(key) && key !== 'dienstleistung'}
@@ -428,7 +431,7 @@
 
 		<!-- Zahlungsart wählen -->
 		<div class="mb-10">
-			<Heading tag="h2">Zahlungsart</Heading>
+			<Heading tag="h2">{t('Zahlungsart', lang)}</Heading>
 			<div class="flex flex-col gap-4 mt-4">
 				<!-- Kreditkarte / TWINT -->
 				{#if data.paymentMethods.stripe}
@@ -445,8 +448,8 @@
 							style="accent-color: {pageColor};"
 						/>
 						<div>
-							<p class="font-semibold">Kreditkarte / TWINT</p>
-							<p class="text-sm opacity-60 mt-0.5">Sofortige, sichere Zahlung via Stripe.</p>
+							<p class="font-semibold">{t('Kreditkarte / TWINT', lang)}</p>
+							<p class="text-sm opacity-60 mt-0.5">{t('Sofortige, sichere Zahlung via Stripe.', lang)}</p>
 						</div>
 					</label>
 				{/if}
@@ -466,9 +469,9 @@
 							style="accent-color: {pageColor};"
 						/>
 						<div>
-							<p class="font-semibold">Gegen Rechnung</p>
+							<p class="font-semibold">{t('Gegen Rechnung', lang)}</p>
 							<p class="text-sm opacity-60 mt-0.5">
-								Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.
+								{t('Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.', lang)}
 							</p>
 						</div>
 					</label>
@@ -489,8 +492,8 @@
 							style="accent-color: {pageColor};"
 						/>
 						<div>
-							<p class="font-semibold">Gegen Bar</p>
-							<p class="text-sm opacity-60 mt-0.5">Wir melden uns zur Terminvereinbarung.</p>
+							<p class="font-semibold">{t('Gegen Bar', lang)}</p>
+							<p class="text-sm opacity-60 mt-0.5">{t('Wir melden uns zur Terminvereinbarung.', lang)}</p>
 						</div>
 					</label>
 				{/if}
@@ -531,7 +534,7 @@
 		<!-- Buttons -->
 		<div class="flex flex-col sm:flex-row gap-4 items-start">
 			<Button
-				text={isLoading ? 'Bitte warten…' : buttonText}
+				text={isLoading ? t('Bitte warten…', lang) : buttonText}
 				link={undefined}
 				disabled={!canOrder}
 				color={undefined}
@@ -545,7 +548,7 @@
 				class="text-sm underline opacity-60 hover:opacity-100"
 				on:click={() => history.back()}
 			>
-				Zurück zum Formular
+				{t('Weiter zum Formular', lang)}
 			</button>
 		</div>
 	{/if}

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import InputField from '$lib/components/InputField.svelte';
+	import { t } from '$lib/i18n/translations';
 
 	export let data: {
 		dienstleistung: string;
@@ -54,12 +56,12 @@
 		for (const f of invoiceFields) {
 			if (f.required) {
 				const el = document.querySelector<HTMLInputElement>(`[name="${f.key}"]`);
-				if (!el?.value.trim()) errors[f.key] = 'Bitte ausfüllen';
+				if (!el?.value.trim()) errors[f.key] = t('Bitte ausfüllen', lang);
 			}
 		}
 		const emailEl = document.querySelector<HTMLInputElement>('[name="email"]');
 		if (emailEl?.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
-			errors['email'] = 'Bitte gültige E-Mail eingeben';
+			errors['email'] = t('Bitte gültige E-Mail eingeben', lang);
 		}
 		fieldErrors = { ...fieldErrors, ...errors };
 		return Object.keys(errors).length === 0;
@@ -72,7 +74,7 @@
 				const key = extraFieldKey(f);
 				if (key) {
 					const el = document.querySelector<HTMLInputElement>(`[name="${key}"]`);
-					if (!el?.value.trim()) errors[key] = f.invalid_feedback_text || 'Bitte ausfüllen';
+					if (!el?.value.trim()) errors[key] = f.invalid_feedback_text || t('Bitte ausfüllen', lang);
 				}
 			}
 		}
@@ -130,6 +132,7 @@
 		goto(`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}`);
 	}
 
+	$: lang = $page.data.lang || 'de-ch';
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
 </script>
@@ -152,7 +155,7 @@
 					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
 					style="border-color: {activeTab === 'rechnung' ? pageColor : 'transparent'}; opacity: {activeTab === 'rechnung' ? 1 : 0.5};"
 				>
-					Rechnungsadresse{hasInvoiceErrors ? ' ●' : ''}
+					{t('Rechnungsadresse', lang)}{hasInvoiceErrors ? ' ●' : ''}
 				</button>
 				<button
 					type="button"
@@ -160,7 +163,7 @@
 					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
 					style="border-color: {activeTab === 'weitere' ? pageColor : 'transparent'}; opacity: {activeTab === 'weitere' ? 1 : 0.5};"
 				>
-					Weitere Angaben{hasExtraErrors ? ' ●' : ''}
+					{t('Weitere Angaben', lang)}{hasExtraErrors ? ' ●' : ''}
 				</button>
 			</div>
 		{/if}
@@ -168,7 +171,7 @@
 		<!-- Rechnungsadresse -->
 		<fieldset class:hidden={hasTabs && activeTab !== 'rechnung'}>
 			{#if !hasTabs}
-				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">Rechnungsadresse</legend>
+				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">{t('Rechnungsadresse', lang)}</legend>
 			{/if}
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 				{#each invoiceFields as f}
@@ -220,7 +223,7 @@
 			class="button-prismic-link inline-block px-6 py-3 font-semibold rounded-full border transition duration-200 ease-in-out"
 			style="background-color: {get(theme).pageButtonBgColor}; color: {get(theme).pageButtonColor}; border-color: {get(theme).pageButtonColor};"
 		>
-			{isSubmitting ? 'Bitte warten…' : (hasTabs && activeTab === 'rechnung') ? 'Weiter' : 'Weiter zur Übersicht'}
+			{isSubmitting ? t('Bitte warten…', lang) : (hasTabs && activeTab === 'rechnung') ? t('Weiter', lang) : t('Weiter zur Übersicht', lang)}
 		</button>
 	</form>
 </Bounded>

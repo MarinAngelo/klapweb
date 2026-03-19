@@ -1,0 +1,48 @@
+{
+	"plans": {
+		"starter": { "label": "Basis" },
+		"professional": { "label": "Professionell", "extends": "starter" },
+		"individuell": { "label": "Individuell", "extends": "professional" }
+	},
+
+	"features": {
+		"terminbuchung": { "label": "Terminbuchung", "plans": ["professional"] },
+		"ecommerce": { "label": "E-Commerce", "plans": ["individuell"] },
+		"p5js": { "label": "P5.js", "plans": ["individuell"] },
+		"variablen": { "label": "Variablen", "plans": ["individuell"] }
+	},
+
+	"customTypes": {
+		"terminplanung": { "feature": "terminbuchung" },
+		"leistung": { "feature": "ecommerce" },
+		"variablen": { "feature": "variablen" }
+	},
+
+	"slices": {
+		"Akkordeon": {
+			"fields": {
+				"mit_suche": { "plan": "professional" },
+				"suchfeld_platzhalter": { "plan": "professional" }
+			},
+			"variations": {
+				"leistungen": { "feature": "ecommerce" }
+			}
+		},
+		"Button": {
+			"variations": {
+				"kauf": { "feature": "ecommerce" }
+			}
+		},
+		"Formular": {
+			"variations": {
+				"mitTermin": { "feature": "terminbuchung" },
+				"kauf": { "feature": "ecommerce" }
+			}
+		},
+		"Kacheln": {
+			"variations": {
+				"plaene": { "feature": "ecommerce" }
+			}
+		}
+	}
+}

@@ -8,12 +8,12 @@
 	import { isMobile } from '$lib/stores/isMobile';
 
 	export let slice: Content.CodeEinbettenSlice;
-	const p = slice.primary ?? ({} as any);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
-	const opacity = convertNumberInverse(p.opacity ?? 0) || 0.5;
+	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
 </script>
 
 <Bounded
@@ -22,10 +22,11 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<!-- HTML-Code rendern -->
-	<div class="relative w-full">
-		{#each (p.html_code ?? []) as code}
+	<div class="relative w-full {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		{#each slice.primary.html_code as code}
 			<div class="relative">
 				<!-- Gerenderter HTML-Code -->
 				<div>

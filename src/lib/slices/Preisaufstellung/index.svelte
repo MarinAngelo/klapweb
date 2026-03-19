@@ -20,6 +20,7 @@
 		p.anim_delay,
 		p.anim_duration
 	);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	const billingTypeSuffix: Record<string, string> = {
 		Einmalig: 'Einmalig',
@@ -75,7 +76,9 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
+		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 	>
+		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		<table class="w-full border-collapse">
 			{#each mainRows as row}
 				<tr class="border-b" style="border-color: {pageColor}22;">
@@ -96,5 +99,6 @@
 				</tr>
 			{/if}
 		</table>
+		</div>
 	</Bounded>
 {/if}

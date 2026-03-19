@@ -34,6 +34,7 @@
 	const isBildLinks = slice.variation === 'standardBildLinks';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
@@ -44,7 +45,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	<ImageTextGrid
 		image={isFilled.image(p.image) ? p.image : null}
 		text={p.text}
@@ -53,4 +56,5 @@
 		imageRound={p.image_round}
 		{theme}
 	/>
+	</div>
 </Bounded>

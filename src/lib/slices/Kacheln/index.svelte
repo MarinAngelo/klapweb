@@ -15,20 +15,18 @@
 	export let context: any = {};
 	export let index: number = 0;
 
-	const p = slice.primary ?? ({} as any);
-
-	const componentBodyBgColor = p.component_body_bg_color || get(theme).pageBgColor;
-	const componentBodyColor = p.component_body_color || get(theme).pageColor;
+	const componentBodyBgColor = slice.primary.component_body_bg_color || get(theme).pageBgColor;
+	const componentBodyColor = slice.primary.component_body_color || get(theme).pageColor;
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
-	const hasCustomBgColor = !!p.component_body_bg_color;
+	const hasCustomBgColor = !!slice.primary.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
-	const gridColumns = String(p.grid_columns).includes('3') ? 3 : 2;
+	const gridColumns = String(slice.primary.grid_columns).includes('3') ? 3 : 2;
 
 	$: anim = mapAnimation(
-		p.animate,
-		p.anim_direction,
-		p.anim_delay,
-		p.anim_duration
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
 	);
 
 	// Stagger-Intervall zwischen den Kacheln (ms)
@@ -81,7 +79,7 @@
 				displayAmount !== null ? Math.round(displayAmount * conversionRate * 100) / 100 : null;
 			const billingType: string | null = d.ecommerce_billing_type ?? null;
 			const suffix = billingType ? (billingTypeSuffix[billingType] ?? null) : null;
-			const hervorhebung = p.hervorhebung ?? 'Keiner';
+			const hervorhebung = (slice.primary as any).hervorhebung ?? 'Keiner';
 			const highlight = hervorhebung === `Plan ${i + 1}`;
 			const uid = planDoc?.uid as string | undefined;
 			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
@@ -91,13 +89,14 @@
 		});
 	})();
 
-	$: cardColor = p.body_color || get(theme).pageColor;
-	$: cardBgColor = p.body_bg_color || get(theme).pageBgColor;
-	$: btnColor = p.button_color || get(theme).pageColor;
-	$: btnBgColor = p.button_bg_color || 'transparent';
-	$: borderColor = p.border_color || get(theme).pageColor;
-	$: roundCorners = p.round_corners !== false;
-	$: ctaLabel = p.cta_label || 'Jetzt bestellen';
+	$: cardColor = (slice.primary as any).body_color || get(theme).pageColor;
+	$: cardBgColor = (slice.primary as any).body_bg_color || get(theme).pageBgColor;
+	$: btnColor = (slice.primary as any).button_color || get(theme).pageColor;
+	$: btnBgColor = (slice.primary as any).button_bg_color || 'transparent';
+	$: borderColor = (slice.primary as any).border_color || get(theme).pageColor;
+	$: roundCorners = (slice.primary as any).round_corners !== false;
+	$: ctaLabel = (slice.primary as any).cta_label || 'Jetzt bestellen';
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 {#if slice.variation === 'plaene'}
@@ -108,10 +107,12 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
+		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 	>
-		{#if isFilled.richText(p.heading)}
+		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		{#if isFilled.richText(slice.primary.heading)}
 			<h2 class="font-bold mb-8 custom-color">
-				<PrismicText field={p.heading} />
+				<PrismicText field={slice.primary.heading} />
 			</h2>
 		{/if}
 
@@ -197,6 +198,7 @@
 				</div>
 			{/each}
 		</div>
+		</div>
 	</Bounded>
 {:else}
 	<Bounded
@@ -204,13 +206,13 @@
 		specialLayout={true}
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		class={hasCustomBgColor ? 'pb-16 md:pb-20' : ''}
+		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-clip' : ''}"
 		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
 	>
-		<div class="grid gap-12">
-			{#if isFilled.richText(p.heading)}
+		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+			{#if isFilled.richText(slice.primary.heading)}
 				<h2 class="text-center custom-color">
-					<PrismicText field={p.heading} />
+					<PrismicText field={slice.primary.heading} />
 				</h2>
 			{/if}
 			<ul
@@ -218,17 +220,17 @@
 					? 'md:grid-cols-3'
 					: 'md:grid-cols-2'}"
 			>
-				{#each (p.cards ?? []) as card, i}
+				{#each slice.primary.cards as card, i}
 					<ImageCard
 						{card}
-						roundCorners={p.round_corners}
-						bodyBgColor={p.body_bg_color}
-						bodyColor={p.body_color}
-						buttonColor={p.button_color}
-						buttonBgColor={p.button_bg_color}
-						buttonHoverColor={p.button_hover_color}
-						buttonHoverBgColor={p.button_hover_bg_color}
-						borderColor={p.border_color}
+						roundCorners={slice.primary.round_corners}
+						bodyBgColor={slice.primary.body_bg_color}
+						bodyColor={slice.primary.body_color}
+						buttonColor={slice.primary.button_color}
+						buttonBgColor={slice.primary.button_bg_color}
+						buttonHoverColor={slice.primary.button_hover_color}
+						buttonHoverBgColor={slice.primary.button_hover_bg_color}
+						borderColor={slice.primary.border_color}
 						revealOptions={anim.animate
 							? { ...anim.options, delay: anim.options.delay + i * STAGGER_MS }
 							: { direction: 'none' }}

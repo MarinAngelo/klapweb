@@ -1,4 +1,4 @@
-{	
+{
 	"_meta": {
 		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält. Optional kann auch ein Bild hinzugefügt werden."
 	},
@@ -21,7 +21,15 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"description": {
@@ -30,7 +38,15 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"accordion_items": {
@@ -52,7 +68,15 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+									"labels": [
+										"h1",
+										"h2",
+										"h3",
+										"h4",
+										"h5",
+										"h6"
+									]
 								}
 							}
 						}
@@ -65,6 +89,31 @@
 						"placeholder_false": "Eingeklappt",
 						"placeholder_true": "Ausgeklappt",
 						"default_value": true
+					}
+				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -100,6 +149,46 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
+				},
+				"sektion_rahmen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Rahmen um die Sektion",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				}
 			},
@@ -119,7 +208,15 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"description": {
@@ -128,7 +225,15 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"accordion_items": {
@@ -150,7 +255,15 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"labels": [
+										"h1",
+										"h2",
+										"h3",
+										"h4",
+										"h5",
+										"h6"
+									]
 								}
 							},
 							"image": {
@@ -169,6 +282,19 @@
 									"placeholder_true": "Ja",
 									"default_value": false
 								}
+							},
+							"bild_hintergrund": {
+								"type": "Color",
+								"config": {
+									"label": "Bild-Hintergrundfarbe"
+								}
+							},
+							"bild_overlay_transparenz": {
+								"type": "Number",
+								"config": {
+									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
+									"placeholder": "100"
+								}
 							}
 						}
 					}
@@ -180,6 +306,31 @@
 						"placeholder_false": "Eingeklappt",
 						"placeholder_true": "Ausgeklappt",
 						"default_value": true
+					}
+				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -215,6 +366,46 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
+				},
+				"sektion_rahmen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Rahmen um die Sektion",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				}
 			},

@@ -12,30 +12,33 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { t } from '$lib/i18n/translations';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
-	const p = slice.primary ?? ({} as any);
+
+	$: lang = $page.data.lang || 'de-ch';
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
-	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && p.zwei_spalten === true;
+	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && (slice.primary as any).zwei_spalten === true;
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
-		p.animate,
-		p.anim_direction,
-		p.anim_delay,
-		p.anim_duration
+		slice.primary.animate,
+		slice.primary.anim_direction,
+		slice.primary.anim_delay,
+		slice.primary.anim_duration
 	);
 
 	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
-	const formName = p.form_name?.trim() || `form_${formIndex}`;
-	const formFields = (p.form_fields ?? []) as FormSliceDefaultPrimaryFormFieldsItem[];
+	const formName = (slice.primary as any).form_name?.trim() || `form_${formIndex}`;
+	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
-	$: checkoutUrl = (p.checkout_url as string | null | undefined)?.trim() || null;
+	$: checkoutUrl = ((slice.primary as any).checkout_url as string | null | undefined)?.trim() || null;
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
@@ -51,8 +54,8 @@
 
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
-	const formSubmittetTitle = p.submitted_title;
-	const formSubmittetText = p.submitted_text;
+	const formSubmittetTitle = slice.primary.submitted_title;
+	const formSubmittetText = slice.primary.submitted_text;
 
 	// Zustand für das modale Fenster
 	let showModal = false;
@@ -67,13 +70,13 @@
 		if (!field || !effectiveKey(field)) return '';
 		const val = String(value ?? '').trim();
 		if (field.required && !val) {
-			return field.invalid_feedback_text || 'Bitte Feld ausfüllen';
+			return field.invalid_feedback_text || t('Bitte Feld ausfüllen', lang);
 		}
 		// E-Mail-Validierung
 		if (field.field_type === 'E-Mail' && val) {
 			// sehr einfache Prüfung, wie in isEmail
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-				return 'Bitte eine gültige E-Mail-Adresse eingeben';
+				return t('Bitte eine gültige E-Mail-Adresse eingeben', lang);
 			}
 		}
 		return '';
@@ -166,7 +169,7 @@
 		if (offenders.length > 0) {
 			// Feldnamen schön darstellen (kommagetrennt)
 			const list = offenders.map((n) => `„${n}”`).join(', ');
-			linkError = `Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus: ${list}.`;
+			linkError = `${t('Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:', lang)} ${list}.`;
 			return;
 		}
 		linkError = null;
@@ -193,15 +196,15 @@
 					});
 					if (resp.status === 409) {
 						const data = await resp.json();
-						linkError = data.error ?? 'Dieser Termin ist leider nicht mehr verfügbar.';
+						linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
 						return;
 					}
 					if (!resp.ok) {
-						linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 						return;
 					}
 				} catch {
-					linkError = 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+					linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 					return;
 				}
 			}
@@ -260,11 +263,11 @@
 				termineRefreshKey++;
 			} else {
 				console.error('Fehler beim Senden des Formulars:', response);
-				alert('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.');
+				alert(t('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.', lang));
 			}
 		} catch (error) {
 			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+			alert(t('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.', lang));
 		}
 	}
 
@@ -301,19 +304,20 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
 	{:else}
 		<!-- Standard: einspaltig -->
-		<div class="grid grid-cols-1 items-center gap-8">
+		<div class="grid grid-cols-1 items-center gap-8 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 			<div>
-				{#if p.form_title}
-					<Heading tag="h2" class="mt-0">{p.form_title}</Heading>
+				{#if slice.primary.form_title}
+					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
 				{/if}
-				{#if p.form_instructions}
-					<PrismicRichText field={p.form_instructions} />
+				{#if slice.primary.form_instructions}
+					<PrismicRichText field={slice.primary.form_instructions} />
 				{/if}
 			</div>
 			<div>
@@ -349,7 +353,7 @@
 					{/if}
 					<div class="mt-8 flex justify-end">
 						<Button
-							text={p.submitt_button_text || 'Absenden'}
+							text={slice.primary.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
 							link={undefined}
 							color={undefined}

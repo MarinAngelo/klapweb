@@ -136,6 +136,212 @@ export const translations: Record<string, Record<string, string>> = {
     'Meine Zeit': {
         'de-ch': 'Meine lokale Zeit',
         'en-us': 'Local Time'
+    },
+
+    // Form validation
+    'Bitte Feld ausfüllen': {
+        'de-ch': 'Bitte Feld ausfüllen',
+        'en-us': 'Please fill in this field'
+    },
+    'Bitte eine gültige E-Mail-Adresse eingeben': {
+        'de-ch': 'Bitte eine gültige E-Mail-Adresse eingeben',
+        'en-us': 'Please enter a valid email address'
+    },
+    'Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:': {
+        'de-ch': 'Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:',
+        'en-us': 'Links are not allowed in the contact form. Please remove links from:'
+    },
+    'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.': {
+        'de-ch': 'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+        'en-us': 'Booking failed. Please try again.'
+    },
+    'Dieser Termin ist leider nicht mehr verfügbar.': {
+        'de-ch': 'Dieser Termin ist leider nicht mehr verfügbar.',
+        'en-us': 'This appointment is no longer available.'
+    },
+    'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.': {
+        'de-ch': 'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.',
+        'en-us': 'Sending failed. Please try again.'
+    },
+    'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.': {
+        'de-ch': 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+        'en-us': 'An error occurred. Please try again.'
+    },
+    'Bitte ausfüllen': {
+        'de-ch': 'Bitte ausfüllen',
+        'en-us': 'Please fill in'
+    },
+    'Bitte gültige E-Mail eingeben': {
+        'de-ch': 'Bitte gültige E-Mail eingeben',
+        'en-us': 'Please enter a valid email'
+    },
+
+    // Checkout flow
+    'Bitte Zahlungsart wählen': {
+        'de-ch': 'Bitte Zahlungsart wählen',
+        'en-us': 'Please select a payment method'
+    },
+    'Kostenpflichtig bestellen': {
+        'de-ch': 'Kostenpflichtig bestellen',
+        'en-us': 'Order (chargeable)'
+    },
+    'Rechnung anfordern': {
+        'de-ch': 'Rechnung anfordern',
+        'en-us': 'Request invoice'
+    },
+    'Bestellung absenden': {
+        'de-ch': 'Bestellung absenden',
+        'en-us': 'Submit order'
+    },
+    'Bitte warten…': {
+        'de-ch': 'Bitte warten…',
+        'en-us': 'Please wait…'
+    },
+    'Ungültiger Rabatt-Code.': {
+        'de-ch': 'Ungültiger Rabatt-Code.',
+        'en-us': 'Invalid discount code.'
+    },
+    'Verbindungsfehler bei Code-Prüfung.': {
+        'de-ch': 'Verbindungsfehler bei Code-Prüfung.',
+        'en-us': 'Connection error during code verification.'
+    },
+    'Ein Fehler ist aufgetreten.': {
+        'de-ch': 'Ein Fehler ist aufgetreten.',
+        'en-us': 'An error occurred.'
+    },
+    'Verbindungsfehler. Bitte versuchen Sie es erneut.': {
+        'de-ch': 'Verbindungsfehler. Bitte versuchen Sie es erneut.',
+        'en-us': 'Connection error. Please try again.'
+    },
+    'Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.': {
+        'de-ch': 'Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+        'en-us': 'Submission failed. Please try again.'
+    },
+    'Ihre Bestellung': {
+        'de-ch': 'Ihre Bestellung',
+        'en-us': 'Your order'
+    },
+    'Ihre Angaben': {
+        'de-ch': 'Ihre Angaben',
+        'en-us': 'Your details'
+    },
+    'Zahlungsart': {
+        'de-ch': 'Zahlungsart',
+        'en-us': 'Payment method'
+    },
+    'Kreditkarte / TWINT': {
+        'de-ch': 'Kreditkarte / TWINT',
+        'en-us': 'Credit card / TWINT'
+    },
+    'Sofortige, sichere Zahlung via Stripe.': {
+        'de-ch': 'Sofortige, sichere Zahlung via Stripe.',
+        'en-us': 'Immediate, secure payment via Stripe.'
+    },
+    'Gegen Rechnung': {
+        'de-ch': 'Gegen Rechnung',
+        'en-us': 'By invoice'
+    },
+    'Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.': {
+        'de-ch': 'Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.',
+        'en-us': 'You will receive a PDF invoice by email. Payment term 30 days.'
+    },
+    'Gegen Bar': {
+        'de-ch': 'Gegen Bar',
+        'en-us': 'Cash'
+    },
+    'Wir melden uns zur Terminvereinbarung.': {
+        'de-ch': 'Wir melden uns zur Terminvereinbarung.',
+        'en-us': 'We will contact you to arrange an appointment.'
+    },
+    'Ich habe die AGB und die Datenschutzerklärung gelesen und akzeptiere diese.': {
+        'de-ch': 'Ich habe die AGB und die Datenschutzerklärung gelesen und akzeptiere diese.',
+        'en-us': 'I have read and accept the terms and conditions and privacy policy.'
+    },
+    'Laden…': {
+        'de-ch': 'Laden…',
+        'en-us': 'Loading…'
+    },
+    'Anwenden': {
+        'de-ch': 'Anwenden',
+        'en-us': 'Apply'
+    },
+    'Entfernen': {
+        'de-ch': 'Entfernen',
+        'en-us': 'Remove'
+    },
+    'Weiter zum Formular': {
+        'de-ch': 'Weiter zum Formular',
+        'en-us': 'Continue to form'
+    },
+    'Rechnungsadresse': {
+        'de-ch': 'Rechnungsadresse',
+        'en-us': 'Billing address'
+    },
+    'Weitere Angaben': {
+        'de-ch': 'Weitere Angaben',
+        'en-us': 'Additional information'
+    },
+    'Weiter': {
+        'de-ch': 'Weiter',
+        'en-us': 'Continue'
+    },
+    'Weiter zur Übersicht': {
+        'de-ch': 'Weiter zur Übersicht',
+        'en-us': 'Continue to summary'
+    },
+    'Preis wird bei Rückfrage mitgeteilt.': {
+        'de-ch': 'Preis wird bei Rückfrage mitgeteilt.',
+        'en-us': 'Price will be communicated upon request.'
+    },
+    'Rabatt-Code': {
+        'de-ch': 'Rabatt-Code',
+        'en-us': 'Discount code'
+    },
+    'Währung:': {
+        'de-ch': 'Währung:',
+        'en-us': 'Currency:'
+    },
+
+    // Confirmation page
+    'Vielen Dank für Ihre Bestellung!': {
+        'de-ch': 'Vielen Dank für Ihre Bestellung!',
+        'en-us': 'Thank you for your order!'
+    },
+    'Zahlung gegen Rechnung': {
+        'de-ch': 'Zahlung gegen Rechnung',
+        'en-us': 'Payment by invoice'
+    },
+    'Ihre Rechnung wurde soeben per E-Mail versandt.': {
+        'de-ch': 'Ihre Rechnung wurde soeben per E-Mail versandt.',
+        'en-us': 'Your invoice has just been sent by email.'
+    },
+    'Bitte überweisen Sie den Betrag innerhalb von 30 Tagen.': {
+        'de-ch': 'Bitte überweisen Sie den Betrag innerhalb von 30 Tagen.',
+        'en-us': 'Please transfer the amount within 30 days.'
+    },
+    'Zahlung gegen Bar': {
+        'de-ch': 'Zahlung gegen Bar',
+        'en-us': 'Cash payment'
+    },
+    'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.': {
+        'de-ch': 'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.',
+        'en-us': 'We have received your order and will contact you shortly to arrange an appointment.'
+    },
+    'Die Zahlung erfolgt bei persönlicher Übergabe.': {
+        'de-ch': 'Die Zahlung erfolgt bei persönlicher Übergabe.',
+        'en-us': 'Payment will be made upon personal handover.'
+    },
+    'Sie erhalten in Kürze eine Bestätigungs-E-Mail.': {
+        'de-ch': 'Sie erhalten in Kürze eine Bestätigungs-E-Mail.',
+        'en-us': 'You will receive a confirmation email shortly.'
+    },
+    'Bei Fragen stehen wir Ihnen gerne zur Verfügung.': {
+        'de-ch': 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.',
+        'en-us': 'If you have any questions, we are happy to help.'
+    },
+    'Zurück zur Startseite': {
+        'de-ch': 'Zurück zur Startseite',
+        'en-us': 'Back to home'
     }
 
 };

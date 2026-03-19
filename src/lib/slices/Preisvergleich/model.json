@@ -17,7 +17,15 @@
             "label": "Titel",
             "placeholder": "Unsere Pakete",
             "allowTargetBlank": false,
-            "single": "heading2"
+            "single": "heading2",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
           }
         },
         "plan_1": {
@@ -25,7 +33,9 @@
           "config": {
             "label": "Plan 1",
             "select": "document",
-            "customtypes": ["page"]
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "plan_2": {
@@ -33,7 +43,9 @@
           "config": {
             "label": "Plan 2",
             "select": "document",
-            "customtypes": ["page"]
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "plan_3": {
@@ -41,14 +53,21 @@
           "config": {
             "label": "Plan 3",
             "select": "document",
-            "customtypes": ["page"]
+            "customtypes": [
+              "page"
+            ]
           }
         },
         "hervorhebung": {
           "type": "Select",
           "config": {
             "label": "Hervorgehobener Plan",
-            "options": ["Keiner", "Plan 1", "Plan 2", "Plan 3"],
+            "options": [
+              "Keiner",
+              "Plan 1",
+              "Plan 2",
+              "Plan 3"
+            ],
             "default_value": "Keiner"
           }
         },
@@ -57,6 +76,15 @@
           "config": {
             "label": "CTA-Beschriftung",
             "placeholder": "Jetzt bestellen"
+          }
+        },
+        "mobile_vollbreite": {
+          "type": "Boolean",
+          "config": {
+            "label": "Vollbreite auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "animate": {
@@ -70,7 +98,13 @@
           "type": "Select",
           "config": {
             "label": "Animations-Richtung",
-            "options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
             "default_value": "Oben"
           }
         },
@@ -83,7 +117,10 @@
         },
         "anim_duration": {
           "type": "Number",
-          "config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
+          }
         }
       },
       "items": {
@@ -92,7 +129,9 @@
           "config": {
             "label": "Leistung",
             "select": "document",
-            "customtypes": ["leistung"]
+            "customtypes": [
+              "leistung"
+            ]
           }
         },
         "plan_1_wert": {

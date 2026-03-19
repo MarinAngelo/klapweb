@@ -17,7 +17,15 @@
 						"label": "Titel",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"single": "heading2"
+						"single": "heading2",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"grid_columns": {
@@ -147,7 +155,15 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"labels": [
+										"h1",
+										"h2",
+										"h3",
+										"h4",
+										"h5",
+										"h6"
+									]
 								}
 							},
 							"buttonLink": {
@@ -170,6 +186,15 @@
 								}
 							}
 						}
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -224,7 +249,15 @@
 						"label": "Titel",
 						"placeholder": "Unsere Pakete",
 						"allowTargetBlank": false,
-						"single": "heading2"
+						"single": "heading2",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"hervorhebung": {

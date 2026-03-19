@@ -18,7 +18,15 @@
             "label": "HTML Code",
             "placeholder": "",
             "allowTargetBlank": false,
-            "single": "embed"
+            "single": "embed",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
           }
         },
         "opacity": {
@@ -26,6 +34,15 @@
           "config": {
             "label": "Transparenz",
             "placeholder": "Zahl zwischen 0 und 80 %"
+          }
+        },
+        "mobile_vollbreite": {
+          "type": "Boolean",
+          "config": {
+            "label": "Vollbreite auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "animate": {

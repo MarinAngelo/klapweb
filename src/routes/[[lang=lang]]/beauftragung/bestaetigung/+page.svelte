@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
+	import { t } from '$lib/i18n/translations';
 	import { get } from 'svelte/store';
 	import { isFilled } from '@prismicio/client';
 	import { variables } from '$lib/stores/variables';
@@ -20,6 +21,7 @@
 	// Inject service label as token so {{Dienstleistung}} works in Prismic confirmation texts
 	$: variables.update((v) => ({ ...v, Dienstleistung: serviceLabel }));
 
+	$: lang = $page.data.lang || 'de-ch';
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
 	$: borderColor = get(theme).pageColor;
@@ -45,7 +47,7 @@
 		</div>
 	{/if}
 
-	<Heading tag="h1">Vielen Dank für Ihre Bestellung!</Heading>
+	<Heading tag="h1">{t('Vielen Dank für Ihre Bestellung!', lang)}</Heading>
 
 	<p class="text-lg mb-6">
 		Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
@@ -55,22 +57,21 @@
 		{#if isFilled.richText(confirmationText)}
 			<PrismicRichText field={confirmationText} />
 		{:else if method === 'rechnung'}
-			<p class="font-semibold mb-2">Zahlung gegen Rechnung</p>
-			<p>Ihre Rechnung wurde soeben per E-Mail versandt.</p>
+			<p class="font-semibold mb-2">{t('Zahlung gegen Rechnung', lang)}</p>
+			<p>{t('Ihre Rechnung wurde soeben per E-Mail versandt.', lang)}</p>
 			<p class="mt-2 opacity-70 text-sm">
-				Bitte überweisen Sie den Betrag innerhalb von 30 Tagen auf das angegebene Konto
-				und verwenden Sie die Rechnungsnummer als Zahlungsreferenz.
+				{t('Bitte überweisen Sie den Betrag innerhalb von 30 Tagen.', lang)}
 			</p>
 		{:else if method === 'bar'}
-			<p class="font-semibold mb-2">Zahlung gegen Bar</p>
-			<p>Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.</p>
-			<p class="mt-2 opacity-70 text-sm">Die Zahlung erfolgt bei persönlicher Übergabe.</p>
+			<p class="font-semibold mb-2">{t('Zahlung gegen Bar', lang)}</p>
+			<p>{t('Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.', lang)}</p>
+			<p class="mt-2 opacity-70 text-sm">{t('Die Zahlung erfolgt bei persönlicher Übergabe.', lang)}</p>
 		{:else}
-			<p>Sie erhalten in Kürze eine Bestätigungs-E-Mail.</p>
-			<p class="mt-2 opacity-70 text-sm">Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
+			<p>{t('Sie erhalten in Kürze eine Bestätigungs-E-Mail.', lang)}</p>
+			<p class="mt-2 opacity-70 text-sm">{t('Bei Fragen stehen wir Ihnen gerne zur Verfügung.', lang)}</p>
 		{/if}
 	</div>
 
-	<a href="/" class="underline text-sm opacity-70 hover:opacity-100">Zurück zur Startseite</a>
+	<a href="/" class="underline text-sm opacity-70 hover:opacity-100">{t('Zurück zur Startseite', lang)}</a>
 
 </Bounded>
