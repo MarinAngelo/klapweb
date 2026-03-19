@@ -97,7 +97,7 @@
 	animationOptions={anim.options}
 	class="{p.mobile_vollbreite ? 'overflow-x-clip' : ''}"
 >
-	<div id="0" class="flex flex-col gap-4 {p.mobile_vollbreite ? (slice.variation === 'bildUndText' ? 'vollbreite-bild-text' : '-mx-6 md:mx-0') : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
+	<div id="0" class="flex flex-col gap-4 {p.mobile_vollbreite ? (slice.variation === 'bildUndText' ? 'vollbreite-bild-text' : (p.sektion_rahmen ? '-mx-5 md:mx-0' : '-mx-6 md:mx-0')) : ''} {p.bg_color ? (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg') : ''} {p.sektion_rahmen ? 'sektion-rahmen' : ''}" style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color || p.sektion_rahmen ? 'padding: 1.5rem;' : ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}">
 		{#if p.heading || p.description || p.mit_suche}
 			<div class="{p.bg_color ? '' : (p.mobile_vollbreite ? 'px-6 md:px-0' : '')} flex flex-col gap-4">
 				{#if p.heading}
