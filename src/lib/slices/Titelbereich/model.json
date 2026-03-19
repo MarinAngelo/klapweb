@@ -250,7 +250,13 @@
                 "config": {
                   "label": "Bild",
                   "constraint": {},
-                  "thumbnails": []
+                  "thumbnails": [
+                    {
+                      "name": "mobile",
+                      "width": 1080,
+                      "height": 1920
+                    }
+                  ]
                 }
               }
             }
