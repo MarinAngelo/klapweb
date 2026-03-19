@@ -235,12 +235,10 @@
 		transition: grid-template-rows 300ms ease-out;
 	}
 
-	@media (min-width: 768px) {
-		.sektion-rahmen {
-			border-width: 1px;
-			border-style: solid;
-			border-radius: 0.5rem;
-		}
+	.sektion-rahmen {
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 0.5rem;
 	}
 
 	@media (max-width: 767px) {

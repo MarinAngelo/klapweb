@@ -186,7 +186,7 @@
         "sektion_rahmen": {
           "type": "Boolean",
           "config": {
-            "label": "Rahmen um die Sektion (Desktop)",
+            "label": "Rahmen um die Sektion",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
@@ -403,7 +403,7 @@
         "sektion_rahmen": {
           "type": "Boolean",
           "config": {
-            "label": "Rahmen um die Sektion (Desktop)",
+            "label": "Rahmen um die Sektion",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
