@@ -3,6 +3,7 @@
     import { theme } from '$lib/stores/theme';
     import { page } from '$app/stores';
     import { t } from '$lib/i18n/translations';
+    import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
 
     export let link: any;
     
@@ -19,6 +20,8 @@
     $: lang = $page.data.lang || 'de-ch';
     $: finalText = text || t('Mehr erfahren', lang);
 
+    $: beauftragungHref = getBeauftragunHref(link, $page.params.uid);
+
     $: resolvedColor = color ?? $theme.pageButtonColor;
     $: resolvedBgColor = bgColor ?? $theme.pageButtonBgColor;
     $: resolvedHoverColor = hoverColor ?? $theme.pageButtonHoverColor;
@@ -26,24 +29,41 @@
 </script>
 
 {#if link}
-    <PrismicLink
-        field={link}
-        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out"
-        style={`
-            background-color: ${resolvedBgColor};
-            color: ${resolvedColor};
-            border-color: ${resolvedColor};
-            --hover-text-color: ${resolvedHoverColor};
-            --hover-bg-color: ${resolvedHoverBgColor};
-            --focus-ring-color: ${resolvedColor};
-        `}
-    >
-        {finalText}
-    </PrismicLink>
+    {#if beauftragungHref}
+        <a
+            href={beauftragungHref}
+            class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
+            style={`
+                background-color: ${resolvedBgColor};
+                color: ${resolvedColor};
+                border-color: ${resolvedColor};
+                --hover-text-color: ${resolvedHoverColor};
+                --hover-bg-color: ${resolvedHoverBgColor};
+                --focus-ring-color: ${resolvedColor};
+            `}
+        >
+            {finalText}
+        </a>
+    {:else}
+        <PrismicLink
+            field={link}
+            class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
+            style={`
+                background-color: ${resolvedBgColor};
+                color: ${resolvedColor};
+                border-color: ${resolvedColor};
+                --hover-text-color: ${resolvedHoverColor};
+                --hover-bg-color: ${resolvedHoverBgColor};
+                --focus-ring-color: ${resolvedColor};
+            `}
+        >
+            {finalText}
+        </PrismicLink>
+    {/if}
 {:else}
     <button
         type="submit"
-        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out"
+        class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
         style={`
             background-color: ${resolvedBgColor};
             color: ${resolvedColor};

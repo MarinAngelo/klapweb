@@ -3,30 +3,23 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
 
-	const { openIndex, toggleItem } = useOpenIndex();
-
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
-<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section">
+<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">
 	<div
-		class="prose max-w-3xl mx-auto"
+		class="prose max-w-3xl mx-auto {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 		data-slice-type="{slice.slice_type}EmbedFieldHandler"
 		data-slice-variation={slice.variation}
 	>
 		{#if slice.primary.title}
-			<h2 class="mb-4 font-bold text-2xl md:text-3xl">{slice.primary.title}</h2>
+			<h2 class="mb-4 font-bold">{slice.primary.title}</h2>
 		{/if}
 		{#if slice.primary.description}
 			<div class="mb-6">
@@ -42,11 +35,6 @@
 						Ungültige Video-URL: {slice.primary.youtube_video.embed_url}
 					</div>
 				{/if}
-			</div>
-		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url && !slice.primary.youtube_video.embed_url.startsWith('http')}
-			<div class="text-xs text-gray-500">
-				Debug: embed_url = {slice.primary.youtube_video.embed_url}
 			</div>
 		{/if}
 		{#if slice.primary.steps && slice.primary.steps.length > 0}
@@ -68,11 +56,6 @@
 										Ungültige Video-URL: {step.youtube_video.embed_url}
 									</div>
 								{/if}
-							</div>
-						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url && !step.youtube_video.embed_url.startsWith('http')}
-							<div class="text-xs text-gray-500">
-								Debug: embed_url = {step.youtube_video.embed_url}
 							</div>
 						{/if}
 					</li>

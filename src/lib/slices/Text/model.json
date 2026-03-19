@@ -1,16 +1,16 @@
 {
-  "id": "text",
-  "type": "SharedSlice",
-  "name": "Text",
-  "description": "Text",
-  "variations": [
-    {
-      "id": "default",
-      "name": "Standard",
-      "docURL": "...",
-      "version": "sktwi1xtmkfgx8626",
-      "description": "Text",
-      "primary": {
+	"id": "text",
+	"type": "SharedSlice",
+	"name": "Text",
+	"description": "Text",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Text",
+			"primary": {
 				"text": {
 					"type": "StructuredText",
 					"config": {
@@ -18,7 +18,26 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
-						"labels": ["highlight", "note", "quote"]
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -32,7 +51,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -45,19 +70,22 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
-      "items": {},
-      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
-    },
-    {
-      "id": "twoColumns",
-      "name": "Zwei Spalten",
-      "docURL": "...",
-      "version": "sktwi1xtmkfgx8626",
-      "description": "Text",
-      "primary": {
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		},
+		{
+			"id": "twoColumns",
+			"name": "Zwei Spalten",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Text",
+			"primary": {
 				"text": {
 					"type": "StructuredText",
 					"config": {
@@ -65,7 +93,26 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
-						"labels": ["highlight", "note", "quote"]
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -79,7 +126,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -92,11 +145,14 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
-      "items": {},
-      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
-    }
-  ]
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		}
+	]
 }

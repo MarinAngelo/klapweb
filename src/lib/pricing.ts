@@ -1,0 +1,29 @@
+export function parseCurrencyCode(option: string | null | undefined): string {
+	if (!option) return '';
+	return option.split(' - ')[0].trim();
+}
+
+export function calcDisplayPrice(
+	basePrice: number | null,
+	discountPct: number | null,
+	depositPct: number | null
+): number | null {
+	if (basePrice == null) return null;
+	const afterDiscount = discountPct != null ? basePrice * (1 - discountPct / 100) : basePrice;
+	if (depositPct != null) return Math.round((afterDiscount * depositPct) / 100 * 100) / 100;
+	if (discountPct != null) return Math.round(afterDiscount * 100) / 100;
+	return basePrice;
+}
+
+export function formatPrice(amount: number, currency: string): string {
+	return new Intl.NumberFormat('de-CH', {
+		style: 'currency',
+		currency,
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	}).format(amount);
+}
+
+export function formatPriceChf(chf: number): string {
+	return formatPrice(chf, 'CHF');
+}

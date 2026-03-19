@@ -1,0 +1,162 @@
+{
+  "id": "text_and_cta",
+  "type": "SharedSlice",
+  "name": "Text&Aktion",
+  "description": "Text&Aktion",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Text&Aktion",
+      "primary": {
+        "label": {
+          "type": "Text",
+          "config": {
+            "label": "Label",
+            "placeholder": "z.B. Über uns"
+          }
+        },
+        "text_align": {
+          "type": "Select",
+          "config": {
+            "label": "Textausrichtung",
+            "placeholder": "",
+            "options": ["Links", "Mitte", "Rechts"],
+            "default_value": "Links"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Text",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
+            "labels": []
+          }
+        },
+        "fullscreen_height": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bildschirmhoch",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "scroll_snap": {
+          "type": "Boolean",
+          "config": {
+            "label": "Scrollen einrasten",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "text_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "text_zoom_desktop": {
+          "type": "Number",
+          "config": {
+            "label": "Schriftgrösse Desktop (%)",
+            "placeholder": "100"
+          }
+        },
+        "text_zoom_mobile": {
+          "type": "Number",
+          "config": {
+            "label": "Schriftgrösse Mobile (%)",
+            "placeholder": "100"
+          }
+        },
+        "button_link": {
+          "type": "Link",
+          "config": {
+            "label": "Schaltfläche Link",
+            "placeholder": "",
+            "select": null,
+            "customtypes": ["page"]
+          }
+        },
+        "button_text": {
+          "type": "Text",
+          "config": {
+            "label": "Schaltfläche Beschriftung",
+            "placeholder": "Mehr erfahren"
+          }
+        },
+        "button_size": {
+          "type": "Select",
+          "config": {
+            "label": "Schaltfläche Grösse",
+            "placeholder": "",
+            "options": ["Klein", "Mittel", "Gross"],
+            "default_value": "Mittel"
+          }
+        },
+        "button_align": {
+          "type": "Select",
+          "config": {
+            "label": "Schaltfläche Ausrichtung",
+            "placeholder": "",
+            "options": ["Links", "Mitte", "Rechts"],
+            "default_value": "Mitte"
+          }
+        },
+        "mobile_full_width": {
+          "type": "Boolean",
+          "config": {
+            "label": "Mobile: Volle Breite",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Text- und Rahmenfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche T & R Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfläche Hintergrund Mouseover",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    }
+  ]
+}

@@ -19,6 +19,15 @@
 						"thumbnails": []
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -43,7 +52,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -67,6 +79,15 @@
 						"thumbnails": []
 					}
 				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -91,7 +112,10 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {},
@@ -104,21 +128,13 @@
 			"version": "sktwi1xtmkfgx8626",
 			"description": "Image",
 			"primary": {
-				"images": {
-					"type": "Group",
+				"mobile_vollbreite": {
+					"type": "Boolean",
 					"config": {
-						"label": "Bilder",
-						"repeat": true,
-						"fields": {
-							"image": {
-								"type": "Image",
-								"config": {
-									"label": "Bild",
-									"constraint": {},
-									"thumbnails": []
-								}
-							}
-						}
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -145,10 +161,22 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
-			"items": {},
+			"items": {
+				"image": {
+					"type": "Image",
+					"config": {
+						"label": "Bild",
+						"constraint": {},
+						"thumbnails": []
+					}
+				}
+			},
 			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
 		}
 	]

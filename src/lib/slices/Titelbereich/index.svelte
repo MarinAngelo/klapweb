@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { convertNumber, convertNumberInverse } from '$lib/utils/convertNumber';
+	import { convertNumber } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -73,6 +72,14 @@
 		mittel: '2rem 4rem',
 		gross: '4rem 6rem'
 	};
+
+	// Mobile Text-Skalierung
+	const mobileTextScaleMap: Record<string, number> = {
+		Klein: 0.8,
+		Kleiner: 0.65,
+		'Sehr klein': 0.5
+	};
+	$: mobileFontScale = mobileTextScaleMap[(slice.primary as any).mobile_text_scale as string] ?? 1.0;
 
 	// Padding-Wert aus dem Slice holen und mappen
 	$: textOverlayPadding =
@@ -150,7 +157,7 @@
 		font-family: {('font' in slice.primary &&
 		isFilled.contentRelationship(slice.primary.font) &&
 		slice.primary.font.data?.name) ||
-		'sans-serif'};
+		'inherit'};
 	"
 >
 	{#if image && typeof image.url === 'string' && image.url}
@@ -190,12 +197,12 @@
 			/>
 		{/if}
 	{/if}
-	<Bounded tag="div" yPadding="lg" class="relative z-10">
+	<Bounded tag="div" yPadding="none" class="relative z-10">
 		<div
-			class="relative flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[60vh] min-h-[80vh]"
-			style={bannerTop === true
-				? `margin-top: -${$headerHeight}px; padding-top: ${$isMobile ? $headerHeight : $headerHeight * 2}px;`
-				: ''}
+			class="relative flex flex-col items-center justify-center"
+			style="
+				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 100vh;'}
+			"
 		>
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
@@ -222,7 +229,7 @@
 							}
 						}
 					</style>
-					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all">
+					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
 						{#if 'text' in slice.primary}
 							<div style="--page-color: {color};">
 								<PrismicRichText field={slice.primary.text} {components} />
@@ -233,10 +240,10 @@
 						<Button
 							link={slice.primary.button_link}
 							text={slice.primary.button_text || 'Mehr erfahren'}
-							color={buttonColor || get(theme).pageButtonColor}
-							bgColor={buttonBgColor || get(theme).pageButtonBgColor}
-							hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
-							hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
+							color={buttonColor || $theme.pageButtonColor}
+							bgColor={buttonBgColor || $theme.pageButtonBgColor}
+							hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
+							hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
 						/>
 					{/if}
 				</div>

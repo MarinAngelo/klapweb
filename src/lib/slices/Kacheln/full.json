@@ -1,0 +1,392 @@
+{
+  "id": "image_cards",
+  "type": "SharedSlice",
+  "name": "Kacheln",
+  "description": "ImageCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "ImageCards",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titel",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "heading2",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
+          }
+        },
+        "grid_columns": {
+          "type": "Select",
+          "config": {
+            "label": "Spalten je Reihe",
+            "placeholder": "2",
+            "options": [
+              "2",
+              "3"
+            ],
+            "default_value": "2"
+          }
+        },
+        "component_body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Kacheln",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Schriftfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Schriftfarbe Maus drüber",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_hover_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltfl. Hintergrundf. Maus drüber",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "border_color": {
+          "type": "Color",
+          "config": {
+            "label": "Farbe der Umrandung",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "round_corners": {
+          "type": "Boolean",
+          "config": {
+            "label": "Runde Ecken",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
+          }
+        },
+        "cards": {
+          "type": "Group",
+          "config": {
+            "label": "Kacheln",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Bild",
+                  "constraint": {
+                    "width": 2200,
+                    "height": 1200
+                  },
+                  "thumbnails": [
+                    {
+                      "name": "Quadrat",
+                      "width": 1200,
+                      "height": 1200
+                    }
+                  ]
+                }
+              },
+              "image_overlay_color": {
+                "type": "Color",
+                "config": {
+                  "label": "Bild Überlagerungsfarbe",
+                  "placeholder": "Hex-Farbcode (#RRGGBB)"
+                }
+              },
+              "image_overlay_opacity": {
+                "type": "Number",
+                "config": {
+                  "label": "Transparenz der Überlagerungsfarbe",
+                  "placeholder": "0 - 100 %"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Text",
+                  "placeholder": "",
+                  "allowTargetBlank": true,
+                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+                  "labels": [
+                    "h1",
+                    "h2",
+                    "h3",
+                    "h4",
+                    "h5",
+                    "h6"
+                  ]
+                }
+              },
+              "buttonLink": {
+                "type": "Link",
+                "config": {
+                  "label": "Schaltflächen-Link",
+                  "placeholder": "",
+                  "select": null,
+                  "allowTargetBlank": true,
+                  "customtypes": [
+                    "page"
+                  ]
+                }
+              },
+              "buttonText": {
+                "type": "Text",
+                "config": {
+                  "label": "Schaltflächen-Text",
+                  "placeholder": ""
+                }
+              }
+            }
+          }
+        },
+        "mobile_vollbreite": {
+          "type": "Boolean",
+          "config": {
+            "label": "Vollbreite auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "500"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "plaene",
+      "name": "Pläne",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Mobile-freundliche Plan-Karten mit Leistungsübersicht",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titel",
+            "placeholder": "Unsere Pakete",
+            "allowTargetBlank": false,
+            "single": "heading2",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
+          }
+        },
+        "hervorhebung": {
+          "type": "Select",
+          "config": {
+            "label": "Hervorgehobener Plan",
+            "options": [
+              "Keiner",
+              "Plan 1",
+              "Plan 2",
+              "Plan 3",
+              "Plan 4"
+            ],
+            "default_value": "Keiner"
+          }
+        },
+        "cta_label": {
+          "type": "Text",
+          "config": {
+            "label": "CTA-Beschriftung",
+            "placeholder": "Jetzt bestellen"
+          }
+        },
+        "body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Karten",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Karten",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schriftfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "component_body_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe Bereich",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Schriftfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "button_bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Schaltflächen Hintergrundfarbe",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "border_color": {
+          "type": "Color",
+          "config": {
+            "label": "Farbe der Umrandung",
+            "placeholder": "Hex-Farbcode (#RRGGBB)"
+          }
+        },
+        "round_corners": {
+          "type": "Boolean",
+          "config": {
+            "label": "Runde Ecken",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": true
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "500"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
+          }
+        }
+      },
+      "items": {
+        "plan": {
+          "type": "Link",
+          "config": {
+            "label": "Plan (Seite)",
+            "select": "document",
+            "customtypes": [
+              "page"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
