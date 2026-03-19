@@ -1,79 +1,87 @@
 {
-	"id": "code_einbetten",
-	"type": "SharedSlice",
-	"name": "GoogleMapEinbetten",
-	"description": "CodeEinbetten",
-	"variations": [
-		{
-			"id": "default",
-			"name": "Standard",
-			"docURL": "...",
-			"version": "initial",
-			"description": "Default",
-			"imageUrl": "",
-			"primary": {
-				"html_code": {
-					"type": "StructuredText",
-					"config": {
-						"label": "HTML Code",
-						"placeholder": "",
-						"allowTargetBlank": false,
-						"single": "embed"
-					}
-				},
-				"opacity": {
-					"type": "Number",
-					"config": {
-						"label": "Transparenz",
-						"placeholder": "Zahl zwischen 0 und 80 %"
-					}
-				},
-				"mobile_vollbreite": {
-					"type": "Boolean",
-					"config": {
-						"label": "Vollbreite auf Mobile",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				}
-			},
-			"items": {}
-		}
-	]
+  "id": "code_einbetten",
+  "type": "SharedSlice",
+  "name": "GoogleMapEinbetten",
+  "description": "CodeEinbetten",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "html_code": {
+          "type": "StructuredText",
+          "config": {
+            "label": "HTML Code",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "embed",
+            "labels": [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6"
+            ]
+          }
+        },
+        "opacity": {
+          "type": "Number",
+          "config": {
+            "label": "Transparenz",
+            "placeholder": "Zahl zwischen 0 und 80 %"
+          }
+        },
+        "mobile_vollbreite": {
+          "type": "Boolean",
+          "config": {
+            "label": "Vollbreite auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": [
+              "Oben",
+              "Unten",
+              "Links",
+              "Rechts",
+              "Keine"
+            ],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "500"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
 }

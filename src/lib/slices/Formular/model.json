@@ -24,7 +24,15 @@
 					"config": {
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 						"allowTargetBlank": true,
-						"label": "Formular Instruktionen"
+						"label": "Formular Instruktionen",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"submitt_button_text": {
@@ -54,7 +62,15 @@
 					"config": {
 						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 						"allowTargetBlank": true,
-						"label": "Gesendet Text"
+						"label": "Gesendet Text",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"form_fields": {
@@ -186,7 +202,15 @@
 					"config": {
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 						"allowTargetBlank": true,
-						"label": "Formular Instruktionen"
+						"label": "Formular Instruktionen",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"submitt_button_text": {
@@ -216,7 +240,15 @@
 					"config": {
 						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 						"allowTargetBlank": true,
-						"label": "Gesendet Text"
+						"label": "Gesendet Text",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6"
+						]
 					}
 				},
 				"form_fields": {
