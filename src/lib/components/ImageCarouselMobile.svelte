@@ -42,6 +42,9 @@
 	// Safety bei dynamischem Nachladen
 	$: if (len() > 0 && current >= len()) current = len() - 1;
 
+	// Mobile-Thumbnail bevorzugen (Hochformat-Crop), Fallback auf Hauptbild
+	$: currentImage = (images?.[current]?.image as any)?.mobile ?? images?.[current]?.image;
+
 	// Layout-Klassen
 	const outerClass =
 		mode === 'background'
@@ -151,7 +154,7 @@
 					{#if has(current)}
 						<PrismicImage
 							key={currentKey}
-							field={images[current].image}
+							field={currentImage}
 							sizes="100vw"
 							class="w-full h-full object-cover select-none"
 						/>
