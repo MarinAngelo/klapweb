@@ -79,7 +79,8 @@
 		Kleiner: 0.65,
 		'Sehr klein': 0.5
 	};
-	$: mobileFontScale = mobileTextScaleMap[(slice.primary as any).mobile_text_scale as string] ?? 1.0;
+	$: mobileFontScale =
+		mobileTextScaleMap[(slice.primary as any).mobile_text_scale as string] ?? 1.0;
 
 	// Padding-Wert aus dem Slice holen und mappen
 	$: textOverlayPadding =
@@ -104,14 +105,9 @@
 
 	onMount(() => addMarginIfLastIsHeading(richTextDiv));
 	afterUpdate(() => addMarginIfLastIsHeading(richTextDiv));
-	// Responsive: Prüfen, ob mobile (<= 640px)
 	let mounted = false;
 	onMount(() => {
-		const check = () => isMobile.set(window.innerWidth <= 640);
-		check();
 		mounted = true;
-		window.addEventListener('resize', check);
-		return () => window.removeEventListener('resize', check);
 	});
 
 	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,
@@ -162,11 +158,7 @@
 >
 	{#if image && typeof image.url === 'string' && image.url}
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<div
-				bind:this={parallaxInner}
-				class="absolute inset-x-0"
-				style="height: 120%; top: -10%;"
-			>
+			<div bind:this={parallaxInner} class="absolute inset-x-0" style="height: 120%; top: -10%;">
 				<ResponsivePrismicImage
 					{image}
 					sizes="100vw"
@@ -191,7 +183,7 @@
 			<ImageCarousel
 				images={slice.primary.imageMerryGoRound}
 				mode="background"
-				autoplay={true}
+				autoplay={!$isMobile}
 				intervalMs={5000}
 				transitionMs={8000}
 			/>
@@ -220,7 +212,11 @@
 				{/if}
 
 				<!-- Inhalt mit dynamischem Padding -->
-				<div use:reveal={fadeIn} class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+				<div
+					use:reveal={fadeIn}
+					class="relative z-10 text-center"
+					style="padding: {textOverlayPadding};"
+				>
 					<!-- Responsive Anpassung des Paddings -->
 					<style>
 						@media (max-width: 640px) {
@@ -229,7 +225,11 @@
 							}
 						}
 					</style>
-					<div bind:this={richTextDiv} class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
+					<div
+						bind:this={richTextDiv}
+						class="leading-loose tracking-wider-all"
+						style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
+					>
 						{#if 'text' in slice.primary}
 							<div style="--page-color: {color};">
 								<PrismicRichText field={slice.primary.text} {components} />
@@ -251,3 +251,11 @@
 		</div>
 	</Bounded>
 </section>
+
+<style>
+	@media (pointer: coarse) and (orientation: landscape) {
+		section {
+			scroll-snap-align: start;
+		}
+	}
+</style>

@@ -156,48 +156,6 @@ export type FontDocument<Lang extends string = string> = prismic.PrismicDocument
 >;
 
 /**
- * Content for Leistung documents
- */
-interface LeistungDocumentData {
-	/**
-	 * Bezeichnung field in *Leistung*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: E-Commerce
-	 * - **API ID Path**: leistung.label
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	label: prismic.KeyTextField;
-
-	/**
-	 * Beschreibung field in *Leistung*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Kurze Beschreibung dieser Leistung...
-	 * - **API ID Path**: leistung.beschreibung
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	beschreibung: prismic.RichTextField;
-}
-
-/**
- * Leistung document from Prismic
- *
- * - **API ID**: `leistung`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type LeistungDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
-	Simplify<LeistungDocumentData>,
-	'leistung',
-	Lang
->;
-
-/**
  * Item in *Navigation → Links*
  */
 export interface NavigationDocumentDataLinksItem {
@@ -297,7 +255,6 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
-	| P5GrafikSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
@@ -312,49 +269,7 @@ type PageDocumentDataSlicesSlice =
 	| TextSlice
 	| ImageSlice
 	| ImageCardsSlice
-	| TextWithImageSlice
-	| PreisvergleichSlice
-	| PreisaufstellungSlice;
-
-/**
- * Item in *Page → Zusatzleistungen*
- */
-export interface PageDocumentDataEcommerceAddonsItem {
-	/**
-	 * Seite field in *Page → Zusatzleistungen*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.ecommerce_addons[].addon_page
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	addon_page: prismic.ContentRelationshipField<'page'>;
-}
-
-/**
- * Item in *Page → Leistungen*
- */
-export interface PageDocumentDataLeistungenItem {
-	/**
-	 * Leistung field in *Page → Leistungen*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.leistungen[].leistung
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	leistung: prismic.ContentRelationshipField<'leistung'>;
-
-	/**
-	 * Wert (optional) field in *Page → Leistungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: ✓ oder bis 5 Produkte
-	 * - **API ID Path**: page.leistungen[].wert
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	wert: prismic.KeyTextField;
-}
+	| TextWithImageSlice;
 
 /**
  * Content for Page documents
@@ -381,94 +296,6 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
 	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
-	 * E-Commerce aktiv field in *Page*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: page.ecommerce_active
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	ecommerce_active: prismic.BooleanField;
-
-	/**
-	 * Preis exkl. MwSt. (CHF) field in *Page*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 1290
-	 * - **API ID Path**: page.ecommerce_price_chf
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	ecommerce_price_chf: prismic.NumberField;
-
-	/**
-	 * Anzahlung % field in *Page*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: page.ecommerce_deposit_percent
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	ecommerce_deposit_percent: prismic.NumberField;
-
-	/**
-	 * Rabatt % field in *Page*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 10
-	 * - **API ID Path**: page.ecommerce_discount_percent
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	ecommerce_discount_percent: prismic.NumberField;
-
-	/**
-	 * Abrechnungsart field in *Page*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Einmalig
-	 * - **API ID Path**: page.ecommerce_billing_type
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	ecommerce_billing_type: prismic.SelectField<'Einmalig' | 'Jährlich' | 'Monatlich', 'filled'>;
-
-	/**
-	 * Zusatzleistungen field in *Page*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.ecommerce_addons[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	ecommerce_addons: prismic.GroupField<Simplify<PageDocumentDataEcommerceAddonsItem>>;
-
-	/**
-	 * Stripe Payment Link field in *Page*
-	 *
-	 * - **Field Type**: Link
-	 * - **Placeholder**: https://buy.stripe.com/...
-	 * - **API ID Path**: page.ecommerce_stripe_url
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/link
-	 */
-	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
-
-	/**
-	 * Leistungen field in *Page*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: page.leistungen[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	leistungen: prismic.GroupField<Simplify<PageDocumentDataLeistungenItem>>; /**
 	 * Meta Titel field in *Page*
 	 *
 	 * - **Field Type**: Text
@@ -524,6 +351,18 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	landing_page: prismic.BooleanField;
+
+	/**
+	 * Passwortgeschützt field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.password_protected
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	password_protected: prismic.BooleanField;
 }
 
 /**
@@ -606,203 +445,6 @@ export interface SettingsDocumentDataContactsItem {
 	 */
 	address: prismic.RichTextField;
 }
-
-/**
- * Item in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
- */
-export interface SettingsDocumentDataInvoiceAdditionalCurrenciesItem {
-	/**
-	 * Währung field in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.invoice_additional_currencies[].waehrung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	waehrung: prismic.SelectField<
-		| 'AED - Dirham der Vereinigten Arabischen Emirate'
-		| 'AFN - Afghani'
-		| 'ALL - Albanischer Lek'
-		| 'AMD - Armenischer Dram'
-		| 'ANG - Niederländisch-Antillianischer Gulden'
-		| 'AOA - Angolanischer Kwanza'
-		| 'ARS - Argentinischer Peso'
-		| 'AUD - Australischer Dollar'
-		| 'AWG - Arubischer Florin'
-		| 'AZN - Aserbaidschanischer Manat'
-		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
-		| 'BBD - Barbadischer Dollar'
-		| 'BDT - Bangladeschischer Taka'
-		| 'BGN - Bulgarischer Lew'
-		| 'BHD - Bahrainischer Dinar'
-		| 'BIF - Burundischer Franc'
-		| 'BMD - Bermudischer Dollar'
-		| 'BND - Bruneischer Dollar'
-		| 'BOB - Bolivianischer Boliviano'
-		| 'BRL - Brasilianischer Real'
-		| 'BSD - Bahamaischer Dollar'
-		| 'BTN - Bhutanischer Ngultrum'
-		| 'BWP - Botswanischer Pula'
-		| 'BYN - Belarussischer Rubel'
-		| 'BZD - Belizischer Dollar'
-		| 'CAD - Kanadischer Dollar'
-		| 'CDF - Kongoläsischer Franc'
-		| 'CHF - Schweizer Franken'
-		| 'CLP - Chilenischer Peso'
-		| 'CNY - Chinesischer Renminbi'
-		| 'COP - Kolumbianischer Peso'
-		| 'CRC - Costa-Ricanischer Colon'
-		| 'CUP - Kubanischer Peso'
-		| 'CVE - Kap-Verdischer Escudo'
-		| 'CZK - Tschechische Krone'
-		| 'DJF - Djiboutischer Franc'
-		| 'DKK - Dänische Krone'
-		| 'DOP - Dominikanischer Peso'
-		| 'DZD - Algerischer Dinar'
-		| 'EGP - Ägyptisches Pfund'
-		| 'ERN - Eritreischer Nakfa'
-		| 'ETB - Äthiopischer Birr'
-		| 'EUR - Euro'
-		| 'FJD - Fidschi-Dollar'
-		| 'FKP - Falkländisches Pfund'
-		| 'GBP - Britisches Pfund'
-		| 'GEL - Georgischer Lari'
-		| 'GHS - Ghanaischer Cedi'
-		| 'GIP - Gibraltarisches Pfund'
-		| 'GMD - Gambischer Dalasi'
-		| 'GNF - Guineischer Franc'
-		| 'GTQ - Guatemaltekischer Quetzal'
-		| 'GYD - Guyanischer Dollar'
-		| 'HKD - Hongkonger Dollar'
-		| 'HNL - Honduranischer Lempira'
-		| 'HTG - Haitianische Gourde'
-		| 'HUF - Ungarischer Forint'
-		| 'IDR - Indonesische Rupiah'
-		| 'ILS - Neuer Israelischer Schekel'
-		| 'INR - Indische Rupie'
-		| 'IQD - Irakischer Dinar'
-		| 'IRR - Iranischer Rial'
-		| 'ISK - Isländische Krone'
-		| 'JMD - Jamaikanischer Dollar'
-		| 'JOD - Jordanischer Dinar'
-		| 'JPY - Japanischer Yen'
-		| 'KES - Kenianischer Schilling'
-		| 'KGS - Kirgisischer Som'
-		| 'KHR - Kambodschanischer Riel'
-		| 'KMF - Komorischer Franc'
-		| 'KPW - Nordkoreanischer Won'
-		| 'KRW - Südkoreanischer Won'
-		| 'KWD - Kuwaitischer Dinar'
-		| 'KYD - Kaiman-Dollar'
-		| 'KZT - Kasachischer Tenge'
-		| 'LAK - Laotischer Kip'
-		| 'LBP - Libanesisches Pfund'
-		| 'LKR - Sri-Lankische Rupie'
-		| 'LRD - Liberianischer Dollar'
-		| 'LSL - Lesothischer Loti'
-		| 'LYD - Libyscher Dinar'
-		| 'MAD - Marokkanischer Dirham'
-		| 'MDL - Moldauischer Leu'
-		| 'MGA - Madagassischer Ariary'
-		| 'MKD - Nordmazedonischer Denar'
-		| 'MMK - Myanmarischer Kyat'
-		| 'MNT - Mongolischer Tögrög'
-		| 'MOP - Macao-Pataca'
-		| 'MRU - Mauretanischer Ouguiya'
-		| 'MUR - Mauritische Rupie'
-		| 'MVR - Maledivischer Rufiyaa'
-		| 'MWK - Malawischer Kwacha'
-		| 'MXN - Mexikanischer Peso'
-		| 'MYR - Malaysischer Ringgit'
-		| 'MZN - Mosambikanischer Metical'
-		| 'NAD - Namibischer Dollar'
-		| 'NGN - Nigerianische Naira'
-		| 'NIO - Nicaraguanischer Córdoba'
-		| 'NOK - Norwegische Krone'
-		| 'NPR - Nepalesische Rupie'
-		| 'NZD - Neuseeländischer Dollar'
-		| 'OMR - Omanischer Rial'
-		| 'PAB - Panamaischer Balboa'
-		| 'PEN - Peruanischer Sol'
-		| 'PGK - Papua-Neuguineischer Kina'
-		| 'PHP - Philippinischer Peso'
-		| 'PKR - Pakistanische Rupie'
-		| 'PLN - Polnischer Zloty'
-		| 'PYG - Paraguayischer Guaraní'
-		| 'QAR - Katarischer Riyal'
-		| 'RON - Rumänischer Leu'
-		| 'RSD - Serbischer Dinar'
-		| 'RUB - Russischer Rubel'
-		| 'RWF - Ruandischer Franc'
-		| 'SAR - Saudi-Arabischer Riyal'
-		| 'SBD - Salomonen-Dollar'
-		| 'SCR - Seychellische Rupie'
-		| 'SDG - Sudanesisches Pfund'
-		| 'SEK - Schwedische Krone'
-		| 'SGD - Singapurischer Dollar'
-		| 'SHP - St.-Helenisches Pfund'
-		| 'SLL - Sierraleonischer Leone'
-		| 'SOS - Somalischer Schilling'
-		| 'SRD - Surinamischer Dollar'
-		| 'STN - São-toménsische Dobra'
-		| 'SVC - El-Salvadorianischer Colón'
-		| 'SYP - Syrisches Pfund'
-		| 'SZL - Swasiland-Lilangeni'
-		| 'THB - Thailändischer Baht'
-		| 'TJS - Tadschikischer Somoni'
-		| 'TMT - Turkmenischer Manat'
-		| 'TND - Tunesischer Dinar'
-		| 'TOP - Tongaischer Paʻanga'
-		| 'TRY - Türkische Lira'
-		| 'TTD - Trinidad-und-Tobago-Dollar'
-		| 'TWD - Neuer Taiwanischer Dollar'
-		| 'TZS - Tansanischer Schilling'
-		| 'UAH - Ukrainische Hrywnja'
-		| 'UGX - Ugandischer Schilling'
-		| 'USD - US-Dollar'
-		| 'UYU - Uruguayischer Peso'
-		| 'UZS - Usbekischer Sum'
-		| 'VES - Venezolanischer Bolívar'
-		| 'VND - Vietnamesischer Dong'
-		| 'VUV - Vanuatuischer Vatu'
-		| 'WST - Samoanischer Tala'
-		| 'XAF - CFA-Franc BEAC'
-		| 'XCD - Ostkaribischer Dollar'
-		| 'XOF - CFA-Franc BCEAO'
-		| 'XPF - CFP-Franc'
-		| 'YER - Jemenitischer Rial'
-		| 'ZAR - Südafrikanischer Rand'
-		| 'ZMW - Sambischer Kwacha'
-		| 'ZWL - Simbabwischer Dollar'
-	>;
-}
-
-/**
- * Item in *Einstellungen → Rabatt-Codes*
- */
-export interface SettingsDocumentDataDiscountCodesItem {
-	/**
-	 * Code field in *Einstellungen → Rabatt-Codes*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. SOMMER2025
-	 * - **API ID Path**: settings.discount_codes[].code
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	code: prismic.KeyTextField;
-
-	/**
-	 * Rabatt (%) field in *Einstellungen → Rabatt-Codes*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: z.B. 10
-	 * - **API ID Path**: settings.discount_codes[].discount_percent
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	discount_percent: prismic.NumberField;
-}
-
-type SettingsDocumentDataSlices3Slice = FormSlice;
 
 /**
  * Content for Einstellungen documents
@@ -941,6 +583,17 @@ interface SettingsDocumentData {
 	agb: prismic.RichTextField;
 
 	/**
+	 * Seiten-Passwort field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Passwort für passwortgeschützte Seiten
+	 * - **API ID Path**: settings.page_password
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	page_password: prismic.KeyTextField;
+
+	/**
 	 * Mehrere Sprachen verwenden field in *Einstellungen*
 	 *
 	 * - **Field Type**: Boolean
@@ -1048,409 +701,7 @@ interface SettingsDocumentData {
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	favicon: prismic.ImageField<never>; /**
-	 * Grundwährung field in *Einstellungen*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: CHF - Schweizer Franken
-	 * - **API ID Path**: settings.invoice_currency
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	invoice_currency: prismic.SelectField<
-		| 'AED - Dirham der Vereinigten Arabischen Emirate'
-		| 'AFN - Afghani'
-		| 'ALL - Albanischer Lek'
-		| 'AMD - Armenischer Dram'
-		| 'ANG - Niederländisch-Antillianischer Gulden'
-		| 'AOA - Angolanischer Kwanza'
-		| 'ARS - Argentinischer Peso'
-		| 'AUD - Australischer Dollar'
-		| 'AWG - Arubischer Florin'
-		| 'AZN - Aserbaidschanischer Manat'
-		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
-		| 'BBD - Barbadischer Dollar'
-		| 'BDT - Bangladeschischer Taka'
-		| 'BGN - Bulgarischer Lew'
-		| 'BHD - Bahrainischer Dinar'
-		| 'BIF - Burundischer Franc'
-		| 'BMD - Bermudischer Dollar'
-		| 'BND - Bruneischer Dollar'
-		| 'BOB - Bolivianischer Boliviano'
-		| 'BRL - Brasilianischer Real'
-		| 'BSD - Bahamaischer Dollar'
-		| 'BTN - Bhutanischer Ngultrum'
-		| 'BWP - Botswanischer Pula'
-		| 'BYN - Belarussischer Rubel'
-		| 'BZD - Belizischer Dollar'
-		| 'CAD - Kanadischer Dollar'
-		| 'CDF - Kongoläsischer Franc'
-		| 'CHF - Schweizer Franken'
-		| 'CLP - Chilenischer Peso'
-		| 'CNY - Chinesischer Renminbi'
-		| 'COP - Kolumbianischer Peso'
-		| 'CRC - Costa-Ricanischer Colon'
-		| 'CUP - Kubanischer Peso'
-		| 'CVE - Kap-Verdischer Escudo'
-		| 'CZK - Tschechische Krone'
-		| 'DJF - Djiboutischer Franc'
-		| 'DKK - Dänische Krone'
-		| 'DOP - Dominikanischer Peso'
-		| 'DZD - Algerischer Dinar'
-		| 'EGP - Ägyptisches Pfund'
-		| 'ERN - Eritreischer Nakfa'
-		| 'ETB - Äthiopischer Birr'
-		| 'EUR - Euro'
-		| 'FJD - Fidschi-Dollar'
-		| 'FKP - Falkländisches Pfund'
-		| 'GBP - Britisches Pfund'
-		| 'GEL - Georgischer Lari'
-		| 'GHS - Ghanaischer Cedi'
-		| 'GIP - Gibraltarisches Pfund'
-		| 'GMD - Gambischer Dalasi'
-		| 'GNF - Guineischer Franc'
-		| 'GTQ - Guatemaltekischer Quetzal'
-		| 'GYD - Guyanischer Dollar'
-		| 'HKD - Hongkonger Dollar'
-		| 'HNL - Honduranischer Lempira'
-		| 'HTG - Haitianische Gourde'
-		| 'HUF - Ungarischer Forint'
-		| 'IDR - Indonesische Rupiah'
-		| 'ILS - Neuer Israelischer Schekel'
-		| 'INR - Indische Rupie'
-		| 'IQD - Irakischer Dinar'
-		| 'IRR - Iranischer Rial'
-		| 'ISK - Isländische Krone'
-		| 'JMD - Jamaikanischer Dollar'
-		| 'JOD - Jordanischer Dinar'
-		| 'JPY - Japanischer Yen'
-		| 'KES - Kenianischer Schilling'
-		| 'KGS - Kirgisischer Som'
-		| 'KHR - Kambodschanischer Riel'
-		| 'KMF - Komorischer Franc'
-		| 'KPW - Nordkoreanischer Won'
-		| 'KRW - Südkoreanischer Won'
-		| 'KWD - Kuwaitischer Dinar'
-		| 'KYD - Kaiman-Dollar'
-		| 'KZT - Kasachischer Tenge'
-		| 'LAK - Laotischer Kip'
-		| 'LBP - Libanesisches Pfund'
-		| 'LKR - Sri-Lankische Rupie'
-		| 'LRD - Liberianischer Dollar'
-		| 'LSL - Lesothischer Loti'
-		| 'LYD - Libyscher Dinar'
-		| 'MAD - Marokkanischer Dirham'
-		| 'MDL - Moldauischer Leu'
-		| 'MGA - Madagassischer Ariary'
-		| 'MKD - Nordmazedonischer Denar'
-		| 'MMK - Myanmarischer Kyat'
-		| 'MNT - Mongolischer Tögrög'
-		| 'MOP - Macao-Pataca'
-		| 'MRU - Mauretanischer Ouguiya'
-		| 'MUR - Mauritische Rupie'
-		| 'MVR - Maledivischer Rufiyaa'
-		| 'MWK - Malawischer Kwacha'
-		| 'MXN - Mexikanischer Peso'
-		| 'MYR - Malaysischer Ringgit'
-		| 'MZN - Mosambikanischer Metical'
-		| 'NAD - Namibischer Dollar'
-		| 'NGN - Nigerianische Naira'
-		| 'NIO - Nicaraguanischer Córdoba'
-		| 'NOK - Norwegische Krone'
-		| 'NPR - Nepalesische Rupie'
-		| 'NZD - Neuseeländischer Dollar'
-		| 'OMR - Omanischer Rial'
-		| 'PAB - Panamaischer Balboa'
-		| 'PEN - Peruanischer Sol'
-		| 'PGK - Papua-Neuguineischer Kina'
-		| 'PHP - Philippinischer Peso'
-		| 'PKR - Pakistanische Rupie'
-		| 'PLN - Polnischer Zloty'
-		| 'PYG - Paraguayischer Guaraní'
-		| 'QAR - Katarischer Riyal'
-		| 'RON - Rumänischer Leu'
-		| 'RSD - Serbischer Dinar'
-		| 'RUB - Russischer Rubel'
-		| 'RWF - Ruandischer Franc'
-		| 'SAR - Saudi-Arabischer Riyal'
-		| 'SBD - Salomonen-Dollar'
-		| 'SCR - Seychellische Rupie'
-		| 'SDG - Sudanesisches Pfund'
-		| 'SEK - Schwedische Krone'
-		| 'SGD - Singapurischer Dollar'
-		| 'SHP - St.-Helenisches Pfund'
-		| 'SLL - Sierraleonischer Leone'
-		| 'SOS - Somalischer Schilling'
-		| 'SRD - Surinamischer Dollar'
-		| 'STN - São-toménsische Dobra'
-		| 'SVC - El-Salvadorianischer Colón'
-		| 'SYP - Syrisches Pfund'
-		| 'SZL - Swasiland-Lilangeni'
-		| 'THB - Thailändischer Baht'
-		| 'TJS - Tadschikischer Somoni'
-		| 'TMT - Turkmenischer Manat'
-		| 'TND - Tunesischer Dinar'
-		| 'TOP - Tongaischer Paʻanga'
-		| 'TRY - Türkische Lira'
-		| 'TTD - Trinidad-und-Tobago-Dollar'
-		| 'TWD - Neuer Taiwanischer Dollar'
-		| 'TZS - Tansanischer Schilling'
-		| 'UAH - Ukrainische Hrywnja'
-		| 'UGX - Ugandischer Schilling'
-		| 'USD - US-Dollar'
-		| 'UYU - Uruguayischer Peso'
-		| 'UZS - Usbekischer Sum'
-		| 'VES - Venezolanischer Bolívar'
-		| 'VND - Vietnamesischer Dong'
-		| 'VUV - Vanuatuischer Vatu'
-		| 'WST - Samoanischer Tala'
-		| 'XAF - CFA-Franc BEAC'
-		| 'XCD - Ostkaribischer Dollar'
-		| 'XOF - CFA-Franc BCEAO'
-		| 'XPF - CFP-Franc'
-		| 'YER - Jemenitischer Rial'
-		| 'ZAR - Südafrikanischer Rand'
-		| 'ZMW - Sambischer Kwacha'
-		| 'ZWL - Simbabwischer Dollar',
-		'filled'
-	>;
-
-	/**
-	 * Weitere Währungen (Käufer-Auswahl) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.invoice_additional_currencies[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	invoice_additional_currencies: prismic.GroupField<
-		Simplify<SettingsDocumentDataInvoiceAdditionalCurrenciesItem>
-	>;
-
-	/**
-	 * IBAN field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: CH00 0000 0000 0000 0000 0
-	 * - **API ID Path**: settings.invoice_iban
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_iban: prismic.KeyTextField;
-
-	/**
-	 * Bank field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Musterbank
-	 * - **API ID Path**: settings.invoice_bank
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_bank: prismic.KeyTextField;
-
-	/**
-	 * BIC / SWIFT field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: XXXXXXXX
-	 * - **API ID Path**: settings.invoice_bic
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invoice_bic: prismic.KeyTextField;
-
-	/**
-	 * Zahlungsfrist (Tage) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: settings.invoice_payment_terms_days
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	invoice_payment_terms_days: prismic.NumberField;
-
-	/**
-	 * MWST-Satz (%) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 8.1
-	 * - **API ID Path**: settings.invoice_vat_rate
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	invoice_vat_rate: prismic.NumberField;
-
-	/**
-	 * Globale Anzahlung (%) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: z.B. 50 — wird verwendet wenn beim Produkt kein Wert gesetzt ist
-	 * - **API ID Path**: settings.global_deposit_percent
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	global_deposit_percent: prismic.NumberField;
-
-	/**
-	 * Rabatt-Codes field in *Einstellungen*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.discount_codes[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	discount_codes: prismic.GroupField<Simplify<SettingsDocumentDataDiscountCodesItem>>;
-
-	/**
-	 * Zahlung: Kreditkarte / TWINT (Stripe) field in *Einstellungen*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: settings.payment_stripe_enabled
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	payment_stripe_enabled: prismic.BooleanField;
-
-	/**
-	 * Zahlung: Gegen Rechnung field in *Einstellungen*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: settings.payment_rechnung_enabled
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	payment_rechnung_enabled: prismic.BooleanField;
-
-	/**
-	 * Zahlung: Gegen Bar field in *Einstellungen*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: settings.payment_bar_enabled
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	payment_bar_enabled: prismic.BooleanField;
-
-	/**
-	 * Rechnung E-Mail: Betreff field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
-	 * - **API ID Path**: settings.payment_rechnung_email_subject
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	payment_rechnung_email_subject: prismic.KeyTextField;
-
-	/**
-	 * Rechnung E-Mail: Text field in *Einstellungen*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
-	 * - **API ID Path**: settings.payment_rechnung_email_body
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	payment_rechnung_email_body: prismic.RichTextField;
-
-	/**
-	 * Bar E-Mail: Betreff field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
-	 * - **API ID Path**: settings.payment_bar_email_subject
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	payment_bar_email_subject: prismic.KeyTextField;
-
-	/**
-	 * Bar E-Mail: Text field in *Einstellungen*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
-	 * - **API ID Path**: settings.payment_bar_email_body
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	payment_bar_email_body: prismic.RichTextField;
-
-	/**
-	 * Bestätigungstext: Kreditkarte / TWINT field in *Einstellungen*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Text auf der Bestätigungsseite nach Stripe-Zahlung
-	 * - **API ID Path**: settings.payment_stripe_confirmation_text
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	payment_stripe_confirmation_text: prismic.RichTextField;
-
-	/**
-	 * Bestätigungstext: Gegen Rechnung field in *Einstellungen*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Text auf der Bestätigungsseite nach Rechnung-Bestellung
-	 * - **API ID Path**: settings.payment_rechnung_confirmation_text
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	payment_rechnung_confirmation_text: prismic.RichTextField;
-
-	/**
-	 * Bestätigungstext: Gegen Bar field in *Einstellungen*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Text auf der Bestätigungsseite nach Bar-Bestellung
-	 * - **API ID Path**: settings.payment_bar_confirmation_text
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	payment_bar_confirmation_text: prismic.RichTextField;
-
-	/**
-	 * Beauftragungsseite Titel field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Beauftragung
-	 * - **API ID Path**: settings.beauftragung_title
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	beauftragung_title: prismic.KeyTextField;
-
-	/**
-	 * Bestellübersicht Titel field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Bestellübersicht
-	 * - **API ID Path**: settings.zusammenfassung_title
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	zusammenfassung_title: prismic.KeyTextField;
-
-	/**
-	 * Checkout-Formular Zusatzfelder field in *Einstellungen*
-	 *
-	 * - **Field Type**: Slice Zone
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: settings.slices3[]
-	 * - **Tab**: Online-Handel
-	 * - **Documentation**: https://prismic.io/docs/slices
-	 */
-	slices3: prismic.SliceZone<SettingsDocumentDataSlices3Slice>;
+	favicon: prismic.ImageField<never>;
 }
 
 /**
@@ -1832,71 +1083,13 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 	Lang
 >;
 
-/**
- * Item in *Variablen → Einträge (Token → Wert)*
- */
-export interface VariablenDocumentDataEintraegeItem {
-	/**
-	 * Token-Name field in *Variablen → Einträge (Token → Wert)*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. Firmename oder Telefon
-	 * - **API ID Path**: variablen.eintraege[].schluessel
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	schluessel: prismic.KeyTextField;
-
-	/**
-	 * Wert field in *Variablen → Einträge (Token → Wert)*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. Klap GmbH oder +41 44 123 45 67
-	 * - **API ID Path**: variablen.eintraege[].wert
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	wert: prismic.KeyTextField;
-}
-
-/**
- * Content for Variablen documents
- */
-interface VariablenDocumentData {
-	/**
-	 * Einträge (Token → Wert) field in *Variablen*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: variablen.eintraege[]
-	 * - **Tab**: Variablen
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	eintraege: prismic.GroupField<Simplify<VariablenDocumentDataEintraegeItem>>;
-}
-
-/**
- * Variablen document from Prismic
- *
- * - **API ID**: `variablen`
- * - **Repeatable**: `false`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type VariablenDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<
-	Simplify<VariablenDocumentData>,
-	'variablen',
-	Lang
->;
-
 export type AllDocumentTypes =
 	| EventDocument
 	| FontDocument
-	| LeistungDocument
 	| NavigationDocument
 	| PageDocument
 	| SettingsDocument
-	| ThemeDocument
-	| VariablenDocument;
+	| ThemeDocument;
 
 /**
  * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
@@ -1968,10 +1161,24 @@ export interface AccordionSliceBildUndTextPrimaryAccordionItemsItem {
 	 */
 	standardBildLinks: prismic.BooleanField;
 
-	/** Bild-Hintergrundfarbe field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente* */
+	/**
+	 * Bild-Hintergrundfarbe field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].bild_hintergrund
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
 	bild_hintergrund: prismic.ColorField;
 
-	/** Overlay-Transparenz field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente* */
+	/**
+	 * Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar) field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].bild_overlay_transparenz
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
 	bild_overlay_transparenz: prismic.NumberField;
 }
 
@@ -2008,10 +1215,38 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceDefaultPrimaryAccordionItemsItem>>;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.default.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	erstes_item_ausgeklappt: prismic.BooleanField;
-	mit_suche: prismic.BooleanField;
-	suchfeld_platzhalter: prismic.KeyTextField;
+
+	/**
+	 * Vollbreite auf Mobile field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	animate: prismic.BooleanField;
 
 	/**
@@ -2046,36 +1281,64 @@ export interface AccordionSliceDefaultPrimary {
 	anim_duration: prismic.NumberField;
 
 	/**
-	 * Hintergrundfarbe field in *Akkordeon → Standard → Primary*
+	 * Hintergrundfarbe (leer = Seitenfarbe) field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: accordion.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	bg_color: prismic.ColorField;
 
 	/**
-	 * Schriftfarbe field in *Akkordeon → Standard → Primary*
+	 * Schriftfarbe (leer = Seitenfarbe) field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: accordion.default.primary.text_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	text_color: prismic.ColorField;
 
 	/**
-	 * Kontrast-Offset field in *Akkordeon → Standard → Primary*
+	 * Kontrast-Offset (leer = automatisch) field in *Akkordeon → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
 	 * - **API ID Path**: accordion.default.primary.contrast_amount
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	contrast_amount: prismic.NumberField;
 
-	/** Link-Farbe field in *Akkordeon → Standard → Primary* */
+	/**
+	 * Link-Farbe (leer = Seitenfarbe) field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.link_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
 	link_color: prismic.ColorField;
 
-	/** Rahmen-Farbe field in *Akkordeon → Standard → Primary* */
+	/**
+	 * Rahmen-Farbe (leer = Schriftfarbe) field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.default.primary.border_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
 	border_color: prismic.ColorField;
 
-	/** Sektion-Rahmen field in *Akkordeon → Standard → Primary* */
+	/**
+	 * Rahmen um die Sektion field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.default.primary.sektion_rahmen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	sektion_rahmen: prismic.BooleanField;
 }
 
@@ -2125,10 +1388,38 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	accordion_items: prismic.GroupField<Simplify<AccordionSliceBildUndTextPrimaryAccordionItemsItem>>;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.bildUndText.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	erstes_item_ausgeklappt: prismic.BooleanField;
-	mit_suche: prismic.BooleanField;
-	suchfeld_platzhalter: prismic.KeyTextField;
+
+	/**
+	 * Vollbreite auf Mobile field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	animate: prismic.BooleanField;
 
 	/**
@@ -2163,36 +1454,64 @@ export interface AccordionSliceBildUndTextPrimary {
 	anim_duration: prismic.NumberField;
 
 	/**
-	 * Hintergrundfarbe field in *Akkordeon → Bild und Text → Primary*
+	 * Hintergrundfarbe (leer = Seitenfarbe) field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: accordion.bildUndText.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	bg_color: prismic.ColorField;
 
 	/**
-	 * Schriftfarbe field in *Akkordeon → Bild und Text → Primary*
+	 * Schriftfarbe (leer = Seitenfarbe) field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
 	 * - **API ID Path**: accordion.bildUndText.primary.text_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	text_color: prismic.ColorField;
 
 	/**
-	 * Kontrast-Offset field in *Akkordeon → Bild und Text → Primary*
+	 * Kontrast-Offset (leer = automatisch) field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
 	 * - **API ID Path**: accordion.bildUndText.primary.contrast_amount
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	contrast_amount: prismic.NumberField;
 
-	/** Link-Farbe field in *Akkordeon → Bild und Text → Primary* */
+	/**
+	 * Link-Farbe (leer = Seitenfarbe) field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.link_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
 	link_color: prismic.ColorField;
 
-	/** Rahmen-Farbe field in *Akkordeon → Bild und Text → Primary* */
+	/**
+	 * Rahmen-Farbe (leer = Schriftfarbe) field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.bildUndText.primary.border_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
 	border_color: prismic.ColorField;
 
-	/** Sektion-Rahmen field in *Akkordeon → Bild und Text → Primary* */
+	/**
+	 * Rahmen um die Sektion field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.sektion_rahmen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	sektion_rahmen: prismic.BooleanField;
 }
 
@@ -2303,6 +1622,17 @@ export interface AnleitungSliceDefaultPrimary {
 	steps: prismic.GroupField<Simplify<AnleitungSliceDefaultPrimaryStepsItem>>;
 
 	/**
+	 * Vollbreite auf Mobile field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: anleitung.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Anleitung → Default → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -2311,7 +1641,6 @@ export interface AnleitungSliceDefaultPrimary {
 	 * - **API ID Path**: anleitung.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2479,6 +1808,16 @@ export interface ButtonSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Vollbreite auf Mobile field in *Schaltfläche → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
 	mobile_vollbreite: prismic.BooleanField;
 }
 
@@ -2496,163 +1835,9 @@ export type ButtonSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Schaltfläche → Kauf-Schaltfläche → Primary*
- */
-export interface ButtonSliceKaufPrimary {
-	/**
-	 * Beschriftung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Jetzt beauftragen
-	 * - **API ID Path**: button.kauf.primary.button_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	button_text: prismic.KeyTextField;
-
-	/**
-	 * Grösse field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Mittel
-	 * - **API ID Path**: button.kauf.primary.button_size
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
-
-	/**
-	 * Ausrichtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Mitte
-	 * - **API ID Path**: button.kauf.primary.button_align
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
-
-	/**
-	 * Mobile: Volle Breite field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: button.kauf.primary.mobile_full_width
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_full_width: prismic.BooleanField;
-
-	/**
-	 * Schaltfläche Text- und Rahmenfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: button.kauf.primary.button_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche T & R Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: button.kauf.primary.button_hover_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_hover_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche Hintergrundfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: button.kauf.primary.button_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_bg_color: prismic.ColorField;
-
-	/**
-	 * Schaltfläche Hintergrund Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: button.kauf.primary.button_hover_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_hover_bg_color: prismic.ColorField;
-
-	/**
-	 * Vertikaler Abstand field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: button.kauf.primary.y_padding
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
-
-	/**
-	 * Animation aktivieren field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: button.kauf.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_vollbreite: prismic.BooleanField;
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: button.kauf.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: button.kauf.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: button.kauf.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Kauf-Schaltfläche variation for Schaltfläche Slice
- *
- * - **API ID**: `kauf`
- * - **Description**: Schaltfläche die direkt zur Beauftragungsseite führt. URL wird automatisch gesetzt.
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type ButtonSliceKauf = prismic.SharedSliceVariation<
-	'kauf',
-	Simplify<ButtonSliceKaufPrimary>,
-	never
->;
-
-/**
  * Slice variation for *Schaltfläche*
  */
-type ButtonSliceVariation = ButtonSliceDefault | ButtonSliceKauf;
+type ButtonSliceVariation = ButtonSliceDefault;
 
 /**
  * Schaltfläche Shared Slice
@@ -2688,6 +1873,17 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	opacity: prismic.NumberField;
 
 	/**
+	 * Vollbreite auf Mobile field in *GoogleMapEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: code_einbetten.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *GoogleMapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -2696,7 +1892,6 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	 * - **API ID Path**: code_einbetten.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -2858,6 +2053,17 @@ export interface EventSliceDefaultPrimary {
 	additional_dates: prismic.GroupField<Simplify<EventSliceDefaultPrimaryAdditionalDatesItem>>;
 
 	/**
+	 * Vollbreite auf Mobile field in *Event → Standart → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: event.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Event → Standart → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -2866,7 +2072,6 @@ export interface EventSliceDefaultPrimary {
 	 * - **API ID Path**: event.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -3004,242 +2209,6 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 }
 
 /**
- * Item in *Formular → Mit Text → Primary → Formular Felder*
- */
-export interface FormSliceMitTextPrimaryFormFieldsItem {
-	/**
-	 * Formularfeld Label field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].field_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	field_name: prismic.KeyTextField;
-
-	/**
-	 * Feld Typ field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].field_type
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	field_type: prismic.SelectField<
-		| 'Textfeld'
-		| 'E-Mail'
-		| 'Telefon'
-		| 'Textbereich'
-		| 'Auswahlliste'
-		| 'Ankreuzfeld'
-		| 'Einzelauswahl'
-		| 'Land'
-	>;
-
-	/**
-	 * Obligatorisch field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: form.mitText.primary.form_fields[].required
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	required: prismic.BooleanField;
-
-	/**
-	 * Fehlermeldung field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Bitte ausfüllen
-	 * - **API ID Path**: form.mitText.primary.form_fields[].invalid_feedback_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invalid_feedback_text: prismic.KeyTextField;
-
-	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: mit Komma getrennt
-	 * - **API ID Path**: form.mitText.primary.form_fields[].options
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	options: prismic.KeyTextField;
-
-	/**
-	 * Platzhalter field in *Formular → Mit Text → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[].placeholder
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	placeholder: prismic.KeyTextField;
-}
-
-/**
- * Item in *Formular → Zwei Spalten → Primary → Formular Felder*
- */
-export interface FormSliceTwoColumnsPrimaryFormFieldsItem {
-	/**
-	 * Formularfeld Label field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].field_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	field_name: prismic.KeyTextField;
-
-	/**
-	 * Feld Typ field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].field_type
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	field_type: prismic.SelectField<
-		| 'Textfeld'
-		| 'E-Mail'
-		| 'Telefon'
-		| 'Textbereich'
-		| 'Auswahlliste'
-		| 'Ankreuzfeld'
-		| 'Einzelauswahl'
-		| 'Land'
-	>;
-
-	/**
-	 * Obligatorisch field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].required
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	required: prismic.BooleanField;
-
-	/**
-	 * Fehlermeldung field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Bitte ausfüllen
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].invalid_feedback_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invalid_feedback_text: prismic.KeyTextField;
-
-	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: mit Komma getrennt
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].options
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	options: prismic.KeyTextField;
-
-	/**
-	 * Platzhalter field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].placeholder
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	placeholder: prismic.KeyTextField;
-
-	/**
-	 * Spalte field in *Formular → Zwei Spalten → Primary → Formular Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[].column
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	column: prismic.SelectField<'Links' | 'Rechts', 'filled'>;
-}
-
-/**
- * Item in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
- */
-export interface FormSliceKaufPrimaryFormFieldsItem {
-	/**
-	 * Formularfeld Label field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.kauf.primary.form_fields[].field_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	field_name: prismic.KeyTextField;
-
-	/**
-	 * Feld Typ field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.kauf.primary.form_fields[].field_type
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	field_type: prismic.SelectField<
-		| 'Textfeld'
-		| 'E-Mail'
-		| 'Telefon'
-		| 'Textbereich'
-		| 'Auswahlliste'
-		| 'Ankreuzfeld'
-		| 'Einzelauswahl'
-		| 'Land'
-	>;
-
-	/**
-	 * Obligatorisch field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: form.kauf.primary.form_fields[].required
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	required: prismic.BooleanField;
-
-	/**
-	 * Fehlermeldung field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Bitte ausfüllen
-	 * - **API ID Path**: form.kauf.primary.form_fields[].invalid_feedback_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	invalid_feedback_text: prismic.KeyTextField;
-
-	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: mit Komma getrennt
-	 * - **API ID Path**: form.kauf.primary.form_fields[].options
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	options: prismic.KeyTextField;
-
-	/**
-	 * Platzhalter field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.kauf.primary.form_fields[].placeholder
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	placeholder: prismic.KeyTextField;
-}
-
-/**
  * Primary content in *Formular → Standard → Primary*
  */
 export interface FormSliceDefaultPrimary {
@@ -3274,6 +2243,17 @@ export interface FormSliceDefaultPrimary {
 	submitt_button_text: prismic.KeyTextField;
 
 	/**
+	 * 2 Spalten field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.default.primary.zwei_spalten
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	zwei_spalten: prismic.BooleanField;
+
+	/**
 	 * Gesendet Titel field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
@@ -3304,6 +2284,17 @@ export interface FormSliceDefaultPrimary {
 	form_fields: prismic.GroupField<Simplify<FormSliceDefaultPrimaryFormFieldsItem>>;
 
 	/**
+	 * Vollbreite auf Mobile field in *Formular → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Formular → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -3312,7 +2303,6 @@ export interface FormSliceDefaultPrimary {
 	 * - **API ID Path**: form.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -3361,418 +2351,9 @@ export type FormSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Formular → Mit Text → Primary*
- */
-export interface FormSliceMitTextPrimary {
-	/**
-	 * Spalten-Verhältnis field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Gleich (50/50)
-	 * - **API ID Path**: form.mitText.primary.spalten_verhaeltnis
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	spalten_verhaeltnis: prismic.SelectField<
-		'Gleich (50/50)' | 'Breit Formular (2/3 + 1/3)' | 'Breit Text (1/3 + 2/3)',
-		'filled'
-	>;
-
-	/**
-	 * Formular in Spalte field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.formular_seite
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	formular_seite: prismic.SelectField<'Links' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text - Vertikale Ausrichtung field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_v
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_ausrichtung_v: prismic.SelectField<'Oben' | 'Mitte' | 'Unten', 'filled'>;
-
-	/**
-	 * Text - Container horizontal field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.text_ausrichtung_h
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_ausrichtung_h: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text - Textausrichtung field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Links
-	 * - **API ID Path**: form.mitText.primary.text_textausrichtung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	text_textausrichtung: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
-
-	/**
-	 * Text field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	text: prismic.RichTextField;
-
-	/**
-	 * HTML Embed (z.B. Google Maps) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: <iframe src="..." ...></iframe>
-	 * - **API ID Path**: form.mitText.primary.html_embed
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	html_embed: prismic.RichTextField;
-
-	/**
-	 * Map Overlay Farbe field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	html_embed_overlay_color: prismic.ColorField;
-
-	/**
-	 * Überlagerungs-Transparenz (0–100) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 30
-	 * - **API ID Path**: form.mitText.primary.html_embed_overlay_opacity
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	html_embed_overlay_opacity: prismic.NumberField;
-
-	/**
-	 * Uhrzeit anzeigen field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: form.mitText.primary.map_show_clock
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	map_show_clock: prismic.BooleanField;
-
-	/**
-	 * Zeitzone (IANA, z.B. America/New_York) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Europe/Zurich
-	 * - **API ID Path**: form.mitText.primary.map_timezone
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	map_timezone: prismic.KeyTextField;
-
-	/**
-	 * Formular-Name (technisch, eindeutig) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. kontakt oder bestellen
-	 * - **API ID Path**: form.mitText.primary.form_name
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_name: prismic.KeyTextField;
-
-	/**
-	 * Formular Titel field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_title: prismic.KeyTextField;
-
-	/**
-	 * Formular Instruktionen field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_instructions
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	form_instructions: prismic.RichTextField;
-
-	/**
-	 * Senden-Schaltflächen-Text field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitt_button_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitt_button_text: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Titel field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitted_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitted_title: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Text field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.submitted_text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	submitted_text: prismic.RichTextField;
-
-	/**
-	 * Weiter-URL (leer = direkt absenden) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: /beauftragung/zusammenfassung
-	 * - **API ID Path**: form.mitText.primary.checkout_url
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	checkout_url: prismic.KeyTextField;
-
-	/**
-	 * Formular Felder field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.mitText.primary.form_fields[]
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	form_fields: prismic.GroupField<Simplify<FormSliceMitTextPrimaryFormFieldsItem>>;
-
-	/**
-	 * Animation aktivieren field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: form.mitText.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_vollbreite: prismic.BooleanField;
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.mitText.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: form.mitText.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *Formular → Mit Text → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: form.mitText.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Mit Text variation for Formular Slice
- *
- * - **API ID**: `mitText`
- * - **Description**: Formular neben Rich-Text in zwei Spalten
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type FormSliceMitText = prismic.SharedSliceVariation<
-	'mitText',
-	Simplify<FormSliceMitTextPrimary>,
-	never
->;
-
-/**
- * Primary content in *Formular → Zwei Spalten → Primary*
- */
-export interface FormSliceTwoColumnsPrimary {
-	/**
-	 * Formular Titel field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	form_title: prismic.KeyTextField;
-
-	/**
-	 * Formular Instruktionen field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_instructions
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	form_instructions: prismic.RichTextField;
-
-	/**
-	 * Senden-Schaltflächen-Text field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitt_button_text
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitt_button_text: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Titel field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitted_title
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	submitted_title: prismic.KeyTextField;
-
-	/**
-	 * Gesendet Text field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.submitted_text
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	submitted_text: prismic.RichTextField;
-
-	/**
-	 * Formular Felder field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.twoColumns.primary.form_fields[]
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	form_fields: prismic.GroupField<Simplify<FormSliceTwoColumnsPrimaryFormFieldsItem>>;
-
-	/**
-	 * Animation aktivieren field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: form.twoColumns.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_vollbreite: prismic.BooleanField;
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: form.twoColumns.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: form.twoColumns.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *Formular → Zwei Spalten → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: form.twoColumns.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Zwei Spalten variation for Formular Slice
- *
- * - **API ID**: `twoColumns`
- * - **Description**: Formularfelder in zwei Spalten
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type FormSliceTwoColumns = prismic.SharedSliceVariation<
-	'twoColumns',
-	Simplify<FormSliceTwoColumnsPrimary>,
-	never
->;
-
-/**
- * Primary content in *Formular → Kauf-Formular → Primary*
- */
-export interface FormSliceKaufPrimary {
-	/**
-	 * Zusätzliche Formular-Felder field in *Formular → Kauf-Formular → Primary*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: form.kauf.primary.form_fields[]
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	form_fields: prismic.GroupField<Simplify<FormSliceKaufPrimaryFormFieldsItem>>;
-}
-
-/**
- * Kauf-Formular variation for Formular Slice
- *
- * - **API ID**: `kauf`
- * - **Description**: Zusatzfelder für den Kauf-Prozess (ergänzt die fixen Rechnungsfelder auf /beauftragung).
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type FormSliceKauf = prismic.SharedSliceVariation<
-	'kauf',
-	Simplify<FormSliceKaufPrimary>,
-	never
->;
-
-/**
  * Slice variation for *Formular*
  */
-type FormSliceVariation = FormSliceDefault | FormSliceMitText | FormSliceTwoColumns | FormSliceKauf;
+type FormSliceVariation = FormSliceDefault;
 
 /**
  * Formular Shared Slice
@@ -3879,7 +2460,7 @@ export interface HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem {
 	 * - **API ID Path**: hero.mitBildKarusell.primary.imageMerryGoRound[].image
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	image: prismic.ImageField<never>;
+	image: prismic.ImageField<'mobile'>;
 }
 
 /**
@@ -4195,6 +2776,17 @@ export interface HtmlCodeSliceDefaultPrimary {
 	html_code: prismic.RichTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *HtmlCode → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: html_code.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *HtmlCode → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4203,7 +2795,6 @@ export interface HtmlCodeSliceDefaultPrimary {
 	 * - **API ID Path**: html_code.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4266,21 +2857,6 @@ type HtmlCodeSliceVariation = HtmlCodeSliceDefault;
 export type HtmlCodeSlice = prismic.SharedSlice<'html_code', HtmlCodeSliceVariation>;
 
 /**
- * Item in *Bild → Karussell → Primary → Bilder*
- */
-export interface ImageSliceCarouselPrimaryImagesItem {
-	/**
-	 * Bild field in *Bild → Karussell → Primary → Bilder*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: image.carousel.primary.images[].image
-	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */
-	image: prismic.ImageField<never>;
-}
-
-/**
  * Primary content in *Bild → Standard → Primary*
  */
 export interface ImageSliceDefaultPrimary {
@@ -4292,7 +2868,18 @@ export interface ImageSliceDefaultPrimary {
 	 * - **API ID Path**: image.default.primary.image
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	image: prismic.ImageField<never>;
+	image: prismic.ImageField<'mobile'>;
+
+	/**
+	 * Vollbreite auf Mobile field in *Bild → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: image.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Standard → Primary*
@@ -4303,7 +2890,6 @@ export interface ImageSliceDefaultPrimary {
 	 * - **API ID Path**: image.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4363,7 +2949,18 @@ export interface ImageSliceBannerPrimary {
 	 * - **API ID Path**: image.banner.primary.image
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	image: prismic.ImageField<never>;
+	image: prismic.ImageField<'mobile'>;
+
+	/**
+	 * Vollbreite auf Mobile field in *Bild → Banner → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: image.banner.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Banner → Primary*
@@ -4374,7 +2971,6 @@ export interface ImageSliceBannerPrimary {
 	 * - **API ID Path**: image.banner.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4427,14 +3023,15 @@ export type ImageSliceBanner = prismic.SharedSliceVariation<
  */
 export interface ImageSliceCarouselPrimary {
 	/**
-	 * Bilder field in *Bild → Karussell → Primary*
+	 * Vollbreite auf Mobile field in *Bild → Karussell → Primary*
 	 *
-	 * - **Field Type**: Group
+	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: image.carousel.primary.images[]
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 * - **Default Value**: false
+	 * - **API ID Path**: image.carousel.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	images: prismic.GroupField<Simplify<ImageSliceCarouselPrimaryImagesItem>>;
+	mobile_vollbreite: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Karussell → Primary*
@@ -4445,7 +3042,6 @@ export interface ImageSliceCarouselPrimary {
 	 * - **API ID Path**: image.carousel.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4481,6 +3077,21 @@ export interface ImageSliceCarouselPrimary {
 }
 
 /**
+ * Primary content in *Bild → Items*
+ */
+export interface ImageSliceCarouselItem {
+	/**
+	 * Bild field in *Bild → Items*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image.items[].image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<'mobile'>;
+}
+
+/**
  * Karussell variation for Bild Slice
  *
  * - **API ID**: `carousel`
@@ -4490,7 +3101,7 @@ export interface ImageSliceCarouselPrimary {
 export type ImageSliceCarousel = prismic.SharedSliceVariation<
 	'carousel',
 	Simplify<ImageSliceCarouselPrimary>,
-	never
+	Simplify<ImageSliceCarouselItem>
 >;
 
 /**
@@ -4709,6 +3320,17 @@ export interface ImageCardsSliceDefaultPrimary {
 	cards: prismic.GroupField<Simplify<ImageCardsSliceDefaultPrimaryCardsItem>>;
 
 	/**
+	 * Vollbreite auf Mobile field in *Kacheln → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: image_cards.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Kacheln → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4717,7 +3339,6 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * - **API ID Path**: image_cards.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -4766,197 +3387,9 @@ export type ImageCardsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Primary content in *Kacheln → Pläne → Primary*
- */
-export interface ImageCardsSlicePlaenePrimary {
-	/**
-	 * Titel field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Unsere Pakete
-	 * - **API ID Path**: image_cards.plaene.primary.heading
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	heading: prismic.RichTextField;
-
-	/**
-	 * Hervorgehobener Plan field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Keiner
-	 * - **API ID Path**: image_cards.plaene.primary.hervorhebung
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	hervorhebung: prismic.SelectField<'Keiner' | 'Plan 1' | 'Plan 2' | 'Plan 3' | 'Plan 4', 'filled'>;
-
-	/**
-	 * CTA-Beschriftung field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Jetzt bestellen
-	 * - **API ID Path**: image_cards.plaene.primary.cta_label
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	cta_label: prismic.KeyTextField;
-
-	/**
-	 * Schriftfarbe Karten field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.body_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	body_color: prismic.ColorField;
-
-	/**
-	 * Hintergrundfarbe Karten field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.body_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	body_bg_color: prismic.ColorField;
-
-	/**
-	 * Schriftfarbe Bereich field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.component_body_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	component_body_color: prismic.ColorField;
-
-	/**
-	 * Hintergrundfarbe Bereich field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.component_body_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	component_body_bg_color: prismic.ColorField;
-
-	/**
-	 * Schaltflächen Schriftfarbe field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.button_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_color: prismic.ColorField;
-
-	/**
-	 * Schaltflächen Hintergrundfarbe field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.button_bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	button_bg_color: prismic.ColorField;
-
-	/**
-	 * Farbe der Umrandung field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: image_cards.plaene.primary.border_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
-	 */
-	border_color: prismic.ColorField;
-
-	/**
-	 * Runde Ecken field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: image_cards.plaene.primary.round_corners
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	round_corners: prismic.BooleanField;
-
-	/**
-	 * Animation aktivieren field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: image_cards.plaene.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_vollbreite: prismic.BooleanField;
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: image_cards.plaene.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: image_cards.plaene.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *Kacheln → Pläne → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: image_cards.plaene.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Primary content in *Kacheln → Items*
- */
-export interface ImageCardsSlicePlaeneItem {
-	/**
-	 * Plan (Seite) field in *Kacheln → Items*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: image_cards.items[].plan
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	plan: prismic.ContentRelationshipField<'page'>;
-}
-
-/**
- * Pläne variation for Kacheln Slice
- *
- * - **API ID**: `plaene`
- * - **Description**: Mobile-freundliche Plan-Karten mit Leistungsübersicht
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type ImageCardsSlicePlaene = prismic.SharedSliceVariation<
-	'plaene',
-	Simplify<ImageCardsSlicePlaenePrimary>,
-	Simplify<ImageCardsSlicePlaeneItem>
->;
-
-/**
  * Slice variation for *Kacheln*
  */
-type ImageCardsSliceVariation = ImageCardsSliceDefault | ImageCardsSlicePlaene;
+type ImageCardsSliceVariation = ImageCardsSliceDefault;
 
 /**
  * Kacheln Shared Slice
@@ -4971,6 +3404,17 @@ export type ImageCardsSlice = prismic.SharedSlice<'image_cards', ImageCardsSlice
  * Primary content in *P5Grafik → Standard (Vollbild) → Primary*
  */
 export interface P5GrafikSliceDefaultPrimary {
+	/**
+	 * Sketch field in *P5Grafik → Standard (Vollbild) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Orbital Circles
+	 * - **API ID Path**: p5_grafik.default.primary.sketch_name
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow', 'filled'>;
+
 	/**
 	 * Hintergrundfarbe Canvas field in *P5Grafik → Standard (Vollbild) → Primary*
 	 *
@@ -5041,6 +3485,17 @@ export type P5GrafikSliceDefault = prismic.SharedSliceVariation<
  * Primary content in *P5Grafik → Mit Titelbereich → Primary*
  */
 export interface P5GrafikSliceMitTitelbereichPrimary {
+	/**
+	 * Sketch field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Orbital Circles
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.sketch_name
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow', 'filled'>;
+
 	/**
 	 * Überlappend mit Kopfzeile field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
@@ -5235,6 +3690,16 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	text_overlay_padding: prismic.SelectField<'klein' | 'mittel' | 'gross'>;
+
+	/**
+	 * Textgrösse Mobile field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.mobile_text_scale
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	mobile_text_scale: prismic.SelectField<'Normal' | 'Klein' | 'Kleiner' | 'Sehr klein'>;
 }
 
 /**
@@ -5329,6 +3794,17 @@ export interface PreisaufstellungSliceDefaultPrimary {
 	label_total: prismic.KeyTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *Preisaufstellung → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: preisaufstellung.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Preisaufstellung → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5337,7 +3813,6 @@ export interface PreisaufstellungSliceDefaultPrimary {
 	 * - **API ID Path**: preisaufstellung.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5468,6 +3943,17 @@ export interface PreisvergleichSliceDefaultPrimary {
 	cta_label: prismic.KeyTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *Preisvergleich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: preisvergleich.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Preisvergleich → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5476,7 +3962,6 @@ export interface PreisvergleichSliceDefaultPrimary {
 	 * - **API ID Path**: preisvergleich.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5611,6 +4096,17 @@ export interface QuoteSliceDefaultPrimary {
 	source: prismic.KeyTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *Zitat → Standart → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: quote.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Zitat → Standart → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5619,7 +4115,6 @@ export interface QuoteSliceDefaultPrimary {
 	 * - **API ID Path**: quote.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5696,6 +4191,17 @@ export interface TextSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5704,7 +4210,6 @@ export interface TextSliceDefaultPrimary {
 	 * - **API ID Path**: text.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5767,6 +4272,17 @@ export interface TextSliceTwoColumnsPrimary {
 	text: prismic.RichTextField;
 
 	/**
+	 * Vollbreite auf Mobile field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text.twoColumns.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *Text → Zwei Spalten → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5775,7 +4291,6 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **API ID Path**: text.twoColumns.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -5841,6 +4356,27 @@ export type TextSlice = prismic.SharedSlice<'text', TextSliceVariation>;
  * Primary content in *Text&Aktion → Standard → Primary*
  */
 export interface TextAndCtaSliceDefaultPrimary {
+	/**
+	 * Label field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Über uns
+	 * - **API ID Path**: text_and_cta.default.primary.label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Textausrichtung field in *Text&Aktion → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Links
+	 * - **API ID Path**: text_and_cta.default.primary.text_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
 	/**
 	 * Text field in *Text&Aktion → Standard → Primary*
 	 *
@@ -6111,6 +4647,17 @@ export interface TextWithImageSliceDefaultPrimary {
 	image_round: prismic.BooleanField;
 
 	/**
+	 * Vollbreite auf Mobile field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -6119,7 +4666,6 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **API ID Path**: text_with_image.default.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6212,6 +4758,17 @@ export interface TextWithImageSliceWithButtonPrimary {
 	image: prismic.ImageField<never>;
 
 	/**
+	 * Vollbreite auf Mobile field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -6220,7 +4777,6 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **API ID Path**: text_with_image.withButton.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6345,6 +4901,17 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	image_round: prismic.BooleanField;
 
 	/**
+	 * Vollbreite auf Mobile field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild links → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -6353,7 +4920,6 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * - **API ID Path**: text_with_image.standardBildLinks.primary.animate
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
 	animate: prismic.BooleanField;
 
 	/**
@@ -6447,27 +5013,17 @@ declare module '@prismicio/client' {
 			EventDocumentDataSlicesSlice,
 			FontDocument,
 			FontDocumentData,
-			LeistungDocument,
-			LeistungDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
 			PageDocument,
 			PageDocumentData,
 			PageDocumentDataSlicesSlice,
-			PageDocumentDataEcommerceAddonsItem,
-			PageDocumentDataLeistungenItem,
 			SettingsDocument,
 			SettingsDocumentData,
 			SettingsDocumentDataContactsItem,
-			SettingsDocumentDataInvoiceAdditionalCurrenciesItem,
-			SettingsDocumentDataDiscountCodesItem,
-			SettingsDocumentDataSlices3Slice,
 			ThemeDocument,
 			ThemeDocumentData,
-			VariablenDocument,
-			VariablenDocumentData,
-			VariablenDocumentDataEintraegeItem,
 			AllDocumentTypes,
 			AccordionSlice,
 			AccordionSliceDefaultPrimaryAccordionItemsItem,
@@ -6484,10 +5040,8 @@ declare module '@prismicio/client' {
 			AnleitungSliceDefault,
 			ButtonSlice,
 			ButtonSliceDefaultPrimary,
-			ButtonSliceKaufPrimary,
 			ButtonSliceVariation,
 			ButtonSliceDefault,
-			ButtonSliceKauf,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
@@ -6500,17 +5054,8 @@ declare module '@prismicio/client' {
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
-			FormSliceMitTextPrimaryFormFieldsItem,
-			FormSliceMitTextPrimary,
-			FormSliceTwoColumnsPrimaryFormFieldsItem,
-			FormSliceTwoColumnsPrimary,
-			FormSliceKaufPrimaryFormFieldsItem,
-			FormSliceKaufPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
-			FormSliceMitText,
-			FormSliceTwoColumns,
-			FormSliceKauf,
 			GlobaleEventsSlice,
 			GlobaleEventsSliceDefaultPrimary,
 			GlobaleEventsSliceVariation,
@@ -6529,8 +5074,8 @@ declare module '@prismicio/client' {
 			ImageSlice,
 			ImageSliceDefaultPrimary,
 			ImageSliceBannerPrimary,
-			ImageSliceCarouselPrimaryImagesItem,
 			ImageSliceCarouselPrimary,
+			ImageSliceCarouselItem,
 			ImageSliceVariation,
 			ImageSliceDefault,
 			ImageSliceBanner,
@@ -6538,11 +5083,8 @@ declare module '@prismicio/client' {
 			ImageCardsSlice,
 			ImageCardsSliceDefaultPrimaryCardsItem,
 			ImageCardsSliceDefaultPrimary,
-			ImageCardsSlicePlaenePrimary,
-			ImageCardsSlicePlaeneItem,
 			ImageCardsSliceVariation,
 			ImageCardsSliceDefault,
-			ImageCardsSlicePlaene,
 			P5GrafikSlice,
 			P5GrafikSliceDefaultPrimary,
 			P5GrafikSliceMitTitelbereichPrimary,
