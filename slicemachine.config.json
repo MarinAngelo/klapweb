@@ -2,5 +2,7 @@
 	"repositoryName": "campelli2",
 	"adapter": "@slicemachine/adapter-sveltekit",
 	"libraries": ["./src/lib/slices"],
-	"localSliceSimulatorURL": "http://localhost:5173/slice-simulator"
+	"localSliceSimulatorURL": "http://localhost:5173/slice-simulator",
+	"home_redirect_disabled": false,
+	"plan": "starter"
 }
