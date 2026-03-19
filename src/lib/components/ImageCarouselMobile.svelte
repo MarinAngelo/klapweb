@@ -66,7 +66,6 @@
 	const SPEED_THRESHOLD = 0.4;
 
 	function onPointerDown(e: PointerEvent) {
-
 		if (!browser || len() <= 1) return;
 
 		dragging = true;
@@ -117,7 +116,6 @@
 		const isFar = Math.abs(deltaX) > SWIPE_THRESHOLD;
 
 		if (wasHorizontal && isFar) {
-
 			const direction = deltaX < 0 ? 1 : -1;
 
 			let newIndex = (current + direction + len()) % len();
@@ -139,7 +137,7 @@
 {#if len() > 0}
 	<div class={outerClass}>
 		<div
-			class="relative w-full h-full overflow-hidden select-none"
+			class="carousel-inner relative w-full h-full overflow-hidden select-none"
 			role="region"
 			aria-label="Image carousel"
 			style="touch-action: pan-y;"
@@ -182,3 +180,17 @@
 {:else}
 	<p class="sr-only">Keine Bilder vorhanden</p>
 {/if}
+
+<style>
+	@media (pointer: coarse) and (orientation: landscape) {
+		.carousel-inner {
+			position: absolute !important;
+			top: 0 !important;
+			left: 50% !important;
+			right: auto !important;
+			margin-left: -50vw !important;
+			width: 100vw !important;
+			height: 100dvh !important;
+		}
+	}
+</style>

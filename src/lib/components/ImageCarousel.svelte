@@ -100,6 +100,29 @@
 		}
 	}
 
+	// --- SWIPE (Touch) ---
+	let swipeStartX = 0;
+	let swipeStartY = 0;
+	let swiping = false;
+
+	function onPointerDown(e: PointerEvent) {
+		if (len() <= 1) return;
+		swiping = true;
+		swipeStartX = e.clientX;
+		swipeStartY = e.clientY;
+		(e.currentTarget as HTMLElement)?.setPointerCapture?.(e.pointerId);
+	}
+
+	function onPointerUp(e: PointerEvent) {
+		if (!swiping) return;
+		swiping = false;
+		const dx = e.clientX - swipeStartX;
+		const dy = e.clientY - swipeStartY;
+		if (Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 40) {
+			dx < 0 ? next() : prev();
+		}
+	}
+
 	// --- LIFECYCLE ---
 	onMount(() => {
 		if (browser) {
@@ -136,6 +159,10 @@
 			class="carousel-container relative w-full h-full overflow-hidden"
 			role="region"
 			aria-label="Image carousel"
+			style="touch-action: pan-y;"
+			on:pointerdown={onPointerDown}
+			on:pointerup={onPointerUp}
+			on:pointercancel={() => { swiping = false; }}
 		>
 			{#key currentKey}
 				<div
