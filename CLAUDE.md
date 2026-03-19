@@ -15,6 +15,10 @@
 ## Wichtige Konventionen
 
 - JS/TS-Variablen immer auf Englisch
+- **Prismic API-IDs immer auf Englisch** (`snake_case`), Labels immer auf Deutsch
+  - Richtig: `section_border`, `mobile_full_width`, `search_enabled`
+  - Falsch: `sektion_rahmen`, `mobile_vollbreite`, `mit_suche`
+  - **Achtung:** API-ID nur umbenennen wenn das Feld noch keinen Inhalt hat — sonst gehen Daten verloren
 - TypeScript-Casts (`as any`) nie im Svelte-Template — immer im `<script>`-Block
 - Scroll-Animationen: kein reaktiver State, nur `bind:this` + direktes `element.style` im RAF
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
