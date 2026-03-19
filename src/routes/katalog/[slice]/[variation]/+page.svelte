@@ -57,7 +57,7 @@
 				<span class="font-semibold" style="color: {fg}; font-size: 16px;">{data.sliceName}</span>
 				<span style="color: {fgMuted}; opacity: 0.4;">/</span>
 				<span style="color: {fg}; font-size: 16px;">{data.variationName}</span>
-				{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung') as [key, value]}
+				{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung' && k !== 'Paket') as [key, value]}
 					<span class="px-2 py-0.5 rounded font-medium" style="font-size: 13px; background-color: {fgMuted}22; color: {fgMuted};">
 						{key}: {value}
 					</span>

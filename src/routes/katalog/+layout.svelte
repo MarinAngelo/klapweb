@@ -15,6 +15,32 @@
 	$: fgMuted = $theme.headerColor || '#9ca3af';
 	$: activeBg = fgHover + '22';
 
+	let selectedPlan = 'individuell';
+
+	$: plansMap = Object.fromEntries(data.plans.map((p) => [p.id, p]));
+
+	function getPlanChain(planId: string): string[] {
+		const chain: string[] = [planId];
+		let current = plansMap[planId];
+		while (current?.extends) {
+			chain.push(current.extends);
+			current = plansMap[current.extends];
+		}
+		return chain;
+	}
+
+	$: planChain = getPlanChain(selectedPlan);
+
+	$: filteredSlices = data.katalogSlices
+		.map((slice) => ({
+			...slice,
+			variations: slice.variations.filter(
+				(v: { id: string; name: string; requiredPlan: string | null }) =>
+					!v.requiredPlan || planChain.includes(v.requiredPlan)
+			)
+		}))
+		.filter((slice) => slice.variations.length > 0);
+
 	function onSelectChange(e: Event) {
 		const val = (e.target as HTMLSelectElement).value;
 		if (val) goto(val);
@@ -51,17 +77,27 @@
 		class="md:hidden px-4 py-3"
 		style="background-color: {bg}; border-bottom: 1px solid {fgMuted}22;"
 	>
+		<!-- Plan-Auswahl Mobile -->
+		<select
+			bind:value={selectedPlan}
+			class="w-full rounded px-3 py-2 mb-2"
+			style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 16px;"
+		>
+			{#each data.plans as plan}
+				<option value={plan.id} style="background-color: {fg}; color: {bg};">{plan.label}</option>
+			{/each}
+		</select>
 		<select
 			on:change={onSelectChange}
 			class="w-full rounded px-3 py-2"
 			style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 16px;"
 		>
-			<option value="" disabled selected>Elemente auswählen</option>
-			{#each data.katalogSlices as slice}
-				<optgroup label={slice.name}>
+			<option value="" disabled selected style="background-color: {fg}; color: {bg};">Elemente auswählen</option>
+			{#each filteredSlices as slice}
+				<optgroup label={slice.name} style="background-color: {fg}; color: {bg};">
 					{#each slice.variations as variation}
 						{@const path = `/katalog/${slice.dirName}/${variation.id}`}
-						<option value={path}>{slice.name} – {variation.name}</option>
+						<option value={path} style="background-color: {fg}; color: {bg};">{slice.name} – {variation.name}</option>
 					{/each}
 				</optgroup>
 			{/each}
@@ -84,8 +120,24 @@
 				>
 			</a>
 
+			<!-- Plan-Auswahl -->
+			<div class="px-4 py-3" style="border-bottom: 1px solid {fgMuted}22;">
+				<div class="flex flex-col gap-1">
+					<span style="color: {fgMuted}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;">Plan</span>
+					<select
+						bind:value={selectedPlan}
+						class="w-full rounded px-2 py-1.5"
+						style="background-color: {fgMuted}18; color: {fg}; border: 1px solid {fgMuted}33; font-size: 14px;"
+					>
+						{#each data.plans as plan}
+							<option value={plan.id} style="background-color: {fg}; color: {bg};">{plan.label}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
 			<div class="pb-8">
-				{#each data.katalogSlices as slice}
+				{#each filteredSlices as slice}
 					<div class="mt-3">
 						<div
 							class="px-4 py-1 font-semibold tracking-wide"
