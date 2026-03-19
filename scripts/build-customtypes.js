@@ -21,7 +21,7 @@
  * slicemachine.config.json: "plan" wählt den aktiven Plan.
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -260,3 +260,15 @@ for (const feature of features) {
 }
 
 console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
+
+// ── 4. Gated Custom Types aufräumen ──────────────────────────────────────────────
+
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (isActive(gate)) continue;
+	const indexPath = join(ROOT, `customtypes/${typeId}/index.json`);
+	if (existsSync(indexPath)) {
+		rmSync(indexPath);
+		const reason = gate.feature ? `feature: ${gate.feature}` : `plan: ${gate.plan}`;
+		console.log(`⊘ customtypes/${typeId}/index.json removed (requires ${reason})`);
+	}
+}
