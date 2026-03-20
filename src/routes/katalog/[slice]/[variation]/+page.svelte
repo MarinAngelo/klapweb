@@ -3,6 +3,7 @@
 	import { components } from '$lib/slices';
 	import { theme } from '$lib/stores/theme';
 	import { isMobile } from '$lib/stores/isMobile';
+	import { _ } from '$lib/stores/i18n';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -44,8 +45,8 @@
 
 <svelte:head><title>{data.sliceName} / {data.variationName} – Katalog</title></svelte:head>
 
-<!-- Äusserer Flex: Content-Spalte + Panel nebeneinander (wie Layout-Sidebar) -->
-<div class="flex">
+<!-- Äusserer Flex: Mobile vertikal, Desktop horizontal -->
+<div class="flex flex-col md:flex-row">
 
 	<!-- Linke Spalte: Tabs, Info, Preview -->
 	<div class="flex-1 min-w-0">
@@ -63,8 +64,8 @@
 					</span>
 				{/each}
 			</div>
-			<!-- Rechts: Device-Toggle -->
-			<div class="flex items-center gap-1">
+			<!-- Rechts: Device-Toggle (nur Desktop) -->
+			<div class="hidden md:flex items-center gap-1">
 				<button
 					on:click={() => (viewMode = 'desktop')}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
@@ -86,13 +87,32 @@
 
 		<!-- Info-Leiste: nur Beschreibung (falls vorhanden) -->
 		{#if beschreibung}
-			<div class="border-b px-5 py-2.5" style="background-color: {bg}; border-color: {fgMuted}22; color: {fgMuted}; font-size: 18px;">
-				{beschreibung}
-			</div>
+			<details class="border-b group" style="background-color: {bg}; border-color: {fgMuted}22;">
+				<summary class="px-5 py-2.5 cursor-pointer list-none flex items-center gap-2" style="color: {fgMuted}; font-size: 14px;">
+					<svg class="shrink-0 transition-transform group-open:rotate-90" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+					{$_('Beschreibung')}
+				</summary>
+				<div class="px-5 pb-3 pt-1" style="color: {fgMuted}; font-size: 16px;">
+					{beschreibung}
+				</div>
+			</details>
 		{/if}
 
-		<!-- Preview -->
-		<div class="py-8 px-4" style="background-color: {pageColor}08;">
+		<!-- Preview Mobile: Slice direkt, ohne Attrappe -->
+		<div class="md:hidden" style="background-color: {pageColor}08;">
+			{#key mockSlice}
+				{#if Component}
+					<svelte:component this={Component} slice={mockSlice} index={0} slices={[mockSlice]} context={{}} />
+				{:else}
+					<div class="p-12 text-center text-gray-400 text-sm">
+						{$_('Kein Component registriert für')} <code class="font-mono">{data.sliceId}</code>
+					</div>
+				{/if}
+			{/key}
+		</div>
+
+		<!-- Preview Desktop: mit Attrappen -->
+		<div class="hidden md:block py-8 px-4" style="background-color: {pageColor}08;">
 			{#if viewMode === 'mobile'}
 				<div class="phone-wrap">
 					<div class="phone-frame mx-auto">
@@ -132,16 +152,16 @@
 
 	</div><!-- /Content-Spalte -->
 
-	<!-- Funktions-Panel: gleiche Ebene wie Sidebar im Layout -->
+	<!-- Funktions-Panel: Mobile unter Slice, Desktop als Sidebar -->
 	{#if hasPanel}
 		<div
-			class="w-56 shrink-0 overflow-y-auto"
-			style="position: sticky; top: 0; height: 100vh; background-color: {bg}; border-left: 1px solid {fgMuted}22;"
+			class="shrink-0 overflow-y-auto md:w-56 md:sticky md:top-0 md:h-screen mt-8 md:mt-0 border-t md:border-t-0 md:border-l"
+			style="background-color: {bg}; border-color: {fgMuted}22;"
 		>
 			<div class="px-4 py-3" style="border-bottom: 1px solid {fgMuted}22;">
 				<span class="font-semibold tracking-wide" style="color: {fgMuted}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;">Funktionen</span>
 			</div>
-			<div class="px-4 py-4 flex flex-col gap-5">
+			<div class="px-4 py-4 flex flex-col gap-5 md:flex-col sm:flex-row sm:flex-wrap">
 				{#each data.functionalFields as field}
 					{#if field.type === 'Boolean'}
 						<label class="flex items-center gap-2.5 cursor-pointer select-none">

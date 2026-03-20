@@ -47,11 +47,15 @@ export const load = async ({ params }) => {
 
 	const sliceMeta = (bases[basePath] as any)?._meta ?? (fulls[fullPath] as any)?._meta ?? {};
 
+	const sliceBeschreibung = sliceMeta.Beschreibung as string | undefined;
+	const varBeschreibung = varMeta.Beschreibung as string | undefined;
+	const beschreibung = [sliceBeschreibung, varBeschreibung].filter(Boolean).join(' — ') || undefined;
+
 	const meta = {
 		Paket: 'Basis',
 		...sliceMeta,
 		...(gateLabel ? { Paket: gateLabel } : {}),
-		...(varMeta.Beschreibung ? { Beschreibung: varMeta.Beschreibung } : {})
+		...(beschreibung ? { Beschreibung: beschreibung } : {})
 	};
 
 	const FUNCTIONAL_TYPES = new Set(['Boolean', 'Select', 'Number']);

@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { theme } from '$lib/stores/theme';
+	import { _ } from '$lib/stores/i18n';
 	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;
@@ -15,7 +16,7 @@
 	$: fgMuted = $theme.headerColor || '#9ca3af';
 	$: activeBg = fgHover + '22';
 
-	let selectedPlan = 'individuell';
+	let selectedPlan = '';
 
 	$: plansMap = Object.fromEntries(data.plans.map((p) => [p.id, p]));
 
@@ -36,7 +37,7 @@
 			...slice,
 			variations: slice.variations.filter(
 				(v: { id: string; name: string; requiredPlan: string | null }) =>
-					!v.requiredPlan || planChain.includes(v.requiredPlan)
+					!selectedPlan || !v.requiredPlan || planChain.includes(v.requiredPlan)
 			)
 		}))
 		.filter((slice) => slice.variations.length > 0);
@@ -83,6 +84,7 @@
 			class="w-full rounded px-3 py-2 mb-2"
 			style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 16px;"
 		>
+			<option value="" style="background-color: {fg}; color: {bg};">{$_('Paket auswählen')}</option>
 			{#each data.plans as plan}
 				<option value={plan.id} style="background-color: {fg}; color: {bg};">{plan.label}</option>
 			{/each}
@@ -129,6 +131,7 @@
 						class="w-full rounded px-2 py-1.5"
 						style="background-color: {fgMuted}18; color: {fg}; border: 1px solid {fgMuted}33; font-size: 14px;"
 					>
+						<option value="" style="background-color: {fg}; color: {bg};">{$_('Paket auswählen')}</option>
 						{#each data.plans as plan}
 							<option value={plan.id} style="background-color: {fg}; color: {bg};">{plan.label}</option>
 						{/each}

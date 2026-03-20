@@ -22,14 +22,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"description": {
@@ -39,14 +32,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"accordion_items": {
@@ -69,14 +55,7 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6"
-									]
+									"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 								}
 							}
 						}
@@ -127,13 +106,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
