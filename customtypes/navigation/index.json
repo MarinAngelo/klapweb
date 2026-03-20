@@ -26,10 +26,7 @@
 								"placeholder": "",
 								"allowTargetBlank": true,
 								"allowText": false,
-								"select": "document",
-								"customtypes": [
-									"page"
-								]
+								"select": null
 							}
 						},
 						"sub_link": {
