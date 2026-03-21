@@ -2,40 +2,38 @@
 
 import Akkordeon from './Akkordeon/index.svelte';
 import Anleitung from './Anleitung/index.svelte';
+import Button from './Button/index.svelte';
 import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
-import GlobaleEvents from './GlobaleEvents/index.svelte';
 import Titelbereich from './Titelbereich/index.svelte';
 import HtmlCode from './HtmlCode/index.svelte';
 import Bild from './Bild/index.svelte';
 import Kacheln from './Kacheln/index.svelte';
-import Zitat from './Zitat/index.svelte';
-import Text from './Text/index.svelte';
-import TextMitBild from './TextMitBild/index.svelte';
-import ButtonSlice from './Button/index.svelte';
+import P5Grafik from './P5Grafik/index.svelte';
 import Preisaufstellung from './Preisaufstellung/index.svelte';
 import Preisvergleich from './Preisvergleich/index.svelte';
+import Zitat from './Zitat/index.svelte';
+import Text from './Text/index.svelte';
 import TextAndCta from './TextAndCta/index.svelte';
-import P5Grafik from './P5Grafik/index.svelte';
+import TextMitBild from './TextMitBild/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
 	anleitung: Anleitung,
-	button: ButtonSlice,
+	button: Button,
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,
-	globale_events: GlobaleEvents,
 	hero: Titelbereich,
 	html_code: HtmlCode,
 	image: Bild,
 	image_cards: Kacheln,
+	p5_grafik: P5Grafik,
+	preisaufstellung: Preisaufstellung,
+	preisvergleich: Preisvergleich,
 	quote: Zitat,
 	text: Text,
 	text_and_cta: TextAndCta,
-	preisaufstellung: Preisaufstellung,
-	preisvergleich: Preisvergleich,
-	text_with_image: TextMitBild,
-	p5_grafik: P5Grafik
+	text_with_image: TextMitBild
 };

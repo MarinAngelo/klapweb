@@ -36,12 +36,6 @@
 						"anleitung": {
 							"type": "SharedSlice"
 						},
-						"globale_events": {
-							"type": "SharedSlice"
-						},
-						"event": {
-							"type": "SharedSlice"
-						},
 						"html_code": {
 							"type": "SharedSlice"
 						},

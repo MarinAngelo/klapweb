@@ -57,39 +57,6 @@ type ContentRelationshipFieldWithData<
 	>;
 }[Exclude<TCustomType[number], string>['id']];
 
-type EventDocumentDataSlicesSlice = EventSlice;
-
-/**
- * Content for Event documents
- */
-interface EventDocumentData {
-	/**
-	 * Slice Zone field in *Event*
-	 *
-	 * - **Field Type**: Slice Zone
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.slices[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/slices
-	 */
-	slices: prismic.SliceZone<EventDocumentDataSlicesSlice>;
-}
-
-/**
- * Event document from Prismic
- *
- * - **API ID**: `event`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
-	Simplify<EventDocumentData>,
-	'event',
-	Lang
->;
-
 /**
  * Content for Schrift documents
  */
@@ -172,12 +139,12 @@ export interface NavigationDocumentDataLinksItem {
 	/**
 	 * Link field in *Navigation → Links*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	link: prismic.ContentRelationshipField<'page'>;
+	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Sub-Link von field in *Navigation → Links*
@@ -255,11 +222,10 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| EventSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
-	| GlobaleEventsSlice
-	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
 	| AccordionSlice
@@ -1084,7 +1050,6 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 export type AllDocumentTypes =
-	| EventDocument
 	| FontDocument
 	| NavigationDocument
 	| PageDocument
@@ -2363,90 +2328,6 @@ type FormSliceVariation = FormSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
-
-/**
- * Primary content in *GlobaleEvents → Standart → Primary*
- */
-export interface GlobaleEventsSliceDefaultPrimary {
-	/**
-	 * Events field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: globale_events.default.primary.events
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	events: prismic.ContentRelationshipField<'event'>;
-
-	/**
-	 * Animation aktivieren field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: globale_events.default.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: globale_events.default.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: globale_events.default.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: globale_events.default.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Standart variation for GlobaleEvents Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
-	'default',
-	Simplify<GlobaleEventsSliceDefaultPrimary>,
-	never
->;
-
-/**
- * Slice variation for *GlobaleEvents*
- */
-type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
-
-/**
- * GlobaleEvents Shared Slice
- *
- * - **API ID**: `globale_events`
- * - **Description**: GlobaleEvents
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
 
 /**
  * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
@@ -5008,9 +4889,6 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
-			EventDocument,
-			EventDocumentData,
-			EventDocumentDataSlicesSlice,
 			FontDocument,
 			FontDocumentData,
 			NavigationDocument,
@@ -5056,10 +4934,6 @@ declare module '@prismicio/client' {
 			FormSliceDefaultPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
-			GlobaleEventsSlice,
-			GlobaleEventsSliceDefaultPrimary,
-			GlobaleEventsSliceVariation,
-			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,
