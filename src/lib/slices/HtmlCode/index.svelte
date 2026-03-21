@@ -6,8 +6,9 @@
 	import { sanitizeHtml } from '$lib/utils/sanitizeHtml';
 
 	export let slice: Content.HtmlCodeSlice;
+	const p = slice.primary ?? ({} as any);
 
-	const htmlCode = (slice.primary.html_code?.[0] as { text: string })?.text || '';
+	const htmlCode = (p.html_code?.[0] as { text: string })?.text || '';
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);

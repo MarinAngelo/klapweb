@@ -44,6 +44,7 @@ export function mapAnimationFromPrimary(primary: {
 	anim_delay?: number | null;
 	anim_duration?: number | null;
 	[key: string]: unknown;
-}): { animate: boolean; options: RevealOptions } {
+} | null | undefined): { animate: boolean; options: RevealOptions } {
+	if (!primary) return mapAnimation(false, null, null, null);
 	return mapAnimation(primary.animate, primary.anim_direction, primary.anim_delay, primary.anim_duration);
 }

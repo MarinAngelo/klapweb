@@ -6,6 +6,7 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
+	const p = slice.primary ?? ({} as any);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
@@ -18,28 +19,28 @@
 		data-slice-type="{slice.slice_type}EmbedFieldHandler"
 		data-slice-variation={slice.variation}
 	>
-		{#if slice.primary.title}
-			<h2 class="mb-4 font-bold">{slice.primary.title}</h2>
+		{#if p.title}
+			<h2 class="mb-4 font-bold">{p.title}</h2>
 		{/if}
-		{#if slice.primary.description}
+		{#if p.description}
 			<div class="mb-6">
-				<PrismicRichText field={slice.primary.description} />
+				<PrismicRichText field={p.description} />
 			</div>
 		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url}
+		{#if p.youtube_video && p.youtube_video.embed_url}
 			<div class="mb-8 flex justify-center">
-				{#if slice.primary.youtube_video.embed_url.startsWith('http')}
-					<EmbedFieldHandler embed={slice.primary.youtube_video} />
+				{#if p.youtube_video.embed_url.startsWith('http')}
+					<EmbedFieldHandler embed={p.youtube_video} />
 				{:else}
 					<div class="text-red-600 text-sm">
-						Ungültige Video-URL: {slice.primary.youtube_video.embed_url}
+						Ungültige Video-URL: {p.youtube_video.embed_url}
 					</div>
 				{/if}
 			</div>
 		{/if}
-		{#if slice.primary.steps && slice.primary.steps.length > 0}
+		{#if p.steps && p.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
-				{#each slice.primary.steps as step, i}
+				{#each (p.steps ?? []) as step, i}
 					<li>
 						{#if step.step_title}
 							<div class="font-semibold text-lg mb-1">{step.step_title}</div>

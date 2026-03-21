@@ -1,7 +1,7 @@
 {
 	"plans": {
-		"starter": { "label": "Basis" },
-		"professional": { "label": "Professionell", "extends": "starter" },
+		"basis": { "label": "Basis" },
+		"professional": { "label": "Professionell", "extends": "basis" },
 		"individuell": { "label": "Individuell", "extends": "professional" }
 	},
 

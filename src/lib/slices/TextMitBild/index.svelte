@@ -10,22 +10,23 @@
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
+	const p = slice.primary ?? ({} as any);
 
-	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
+	let yPadding = p.y_padding_same ? 'base' : 'base-top';
 
-	if (slice.primary.y_padding) {
-		switch (slice.primary.y_padding) {
+	if (p.y_padding) {
+		switch (p.y_padding) {
 			case 'kein Abstand':
 				yPadding = 'none';
 				break;
 			case 'wenig':
-				yPadding = slice.primary.y_padding_same ? 'sm' : 'sm-top';
+				yPadding = p.y_padding_same ? 'sm' : 'sm-top';
 				break;
 			case 'mittel':
-				yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
+				yPadding = p.y_padding_same ? 'base' : 'base-top';
 				break;
 			case 'gross':
-				yPadding = slice.primary.y_padding_same ? 'lg' : 'lg-top';
+				yPadding = p.y_padding_same ? 'lg' : 'lg-top';
 				break;
 		}
 	}
@@ -39,7 +40,7 @@
 <Bounded
 	as="section"
 	{yPadding}
-	style="background-color: {slice.primary.bg_color || $theme.pageBgColor}; color: {slice.primary.color || $theme.pageColor};"
+	style="background-color: {p.bg_color || $theme.pageBgColor}; color: {p.color || $theme.pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -48,11 +49,11 @@
 >
 	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	<ImageTextGrid
-		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}
-		text={slice.primary.text}
+		image={isFilled.image(p.image) ? p.image : null}
+		text={p.text}
 		imageLeft={isBildLinks}
-		imageBgColor={slice.primary.bg_color || $theme.pageBgColor}
-		imageRound={slice.primary.image_round}
+		imageBgColor={p.bg_color || $theme.pageBgColor}
+		imageRound={p.image_round}
 		{theme}
 	/>
 	</div>

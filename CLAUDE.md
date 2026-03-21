@@ -24,6 +24,13 @@
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 
+## i18n
+
+- **Niemals UI-Text hardcodieren** — jeden sichtbaren String über den `$_`-Store ausgeben
+- Import im Template: `import { _ } from '$lib/stores/i18n'` → Verwendung: `{$_('Schlüssel')}`
+- Neuen Key zuerst in `src/lib/i18n/translations.ts` eintragen (Key = deutscher Text, mind. `de-ch` + `en-us`)
+- Gilt auch für interne Tools wie den Katalog
+
 ## Netlify Blobs
 
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
