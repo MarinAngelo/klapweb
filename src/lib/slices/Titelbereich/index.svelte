@@ -33,6 +33,7 @@
 
 	const switchOffTextOverlay = (slice.primary as any).switch_off_text_overlay ?? false;
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
+	$: bgColor = 'bg_color' in slice.primary ? (slice.primary as any).bg_color || null : null;
 
 	const overlayOpacity = (() => {
 		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
@@ -147,7 +148,7 @@
 <section
 	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
-	style="background-color: {isMobile ? textOverlayColor : overlayColor};
+	style="background-color: {bgColor || ($isMobile ? textOverlayColor : overlayColor)};
 		color: {color};
 		height: {$bannerHeight};
 		font-family: {('font' in slice.primary &&

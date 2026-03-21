@@ -57,39 +57,6 @@ type ContentRelationshipFieldWithData<
 	>;
 }[Exclude<TCustomType[number], string>['id']];
 
-type EventDocumentDataSlicesSlice = EventSlice;
-
-/**
- * Content for Event documents
- */
-interface EventDocumentData {
-	/**
-	 * Slice Zone field in *Event*
-	 *
-	 * - **Field Type**: Slice Zone
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.slices[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/slices
-	 */
-	slices: prismic.SliceZone<EventDocumentDataSlicesSlice>;
-}
-
-/**
- * Event document from Prismic
- *
- * - **API ID**: `event`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
-	Simplify<EventDocumentData>,
-	'event',
-	Lang
->;
-
 /**
  * Content for Schrift documents
  */
@@ -172,12 +139,12 @@ export interface NavigationDocumentDataLinksItem {
 	/**
 	 * Link field in *Navigation → Links*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	link: prismic.ContentRelationshipField<'page'>;
+	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Sub-Link von field in *Navigation → Links*
@@ -454,7 +421,7 @@ interface SettingsDocumentData {
 	 * Website Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Title of the site
+	 * - **Placeholder**: Titel der Website
 	 * - **API ID Path**: settings.site_title
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
@@ -1084,7 +1051,6 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 export type AllDocumentTypes =
-	| EventDocument
 	| FontDocument
 	| NavigationDocument
 	| PageDocument
@@ -2507,6 +2473,16 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
 
 	/**
 	 * Schriftart field in *Titelbereich → Standard → Primary*
@@ -5008,9 +4984,6 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
-			EventDocument,
-			EventDocumentData,
-			EventDocumentDataSlicesSlice,
 			FontDocument,
 			FontDocumentData,
 			NavigationDocument,

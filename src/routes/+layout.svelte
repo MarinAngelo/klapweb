@@ -16,6 +16,7 @@
 
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
+	import { headerHeight } from '$lib/stores/headerHeight';
 	import { variables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
 	import { addonRows } from '$lib/stores/addonRows';
@@ -251,6 +252,7 @@
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
+	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -319,7 +321,7 @@
 		/>
 	{/if}
 
-	<main>
+	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
 				as="section"

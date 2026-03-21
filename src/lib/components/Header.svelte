@@ -23,6 +23,16 @@
 	let headerEl: HTMLElement | undefined;
 	let observer: ResizeObserver;
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
+	let revealRafId: number;
+
+	function handleRevealScroll() {
+		cancelAnimationFrame(revealRafId);
+		revealRafId = requestAnimationFrame(() => {
+			if (!headerEl) return;
+			headerEl.style.transition = 'opacity 1.2s ease';
+			headerEl.style.opacity = '1';
+		});
+	}
 
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || $theme.logoHeight;
@@ -32,8 +42,7 @@
 	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
-	$: headerLinkFontSize =
-		prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
+	$: headerLinkFontSize = prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
 	$: headerLinkColor = prismicTheme?.data?.header_link_color || $theme.headerLinkColor;
 	$: headerLinkHoverColor =
 		prismicTheme?.data?.header_link_hover_color || $theme.headerLinkHoverColor;
@@ -69,17 +78,8 @@
 			return;
 		}
 
-		// 2. Ansonsten: Messen
-		if (headerEl) {
-			// Wenn das Element per CSS (display: none) versteckt ist, ist offsetParent null
-			if (headerEl.offsetParent === null) {
-				headerHeight.set(0);
-			} else {
-				headerHeight.set(headerEl.offsetHeight);
-			}
-		} else {
-			headerHeight.set(0);
-		}
+		// 2. Ansonsten: Messen (offsetHeight = 0 bei display:none, klappt auch bei position:fixed)
+		headerHeight.set(headerEl ? headerEl.offsetHeight : 0);
 	}
 
 	onMount(() => {
@@ -99,11 +99,24 @@
 		// Zusätzlicher Resize Listener für Desktop
 		window.addEventListener('resize', updateHeaderHeight);
 
+		// Kopfzeile beim Laden ausblenden, erst beim Scrollen einblenden
+		if (hideHeaderOnLoad && headerEl) {
+			// transition-all sofort deaktivieren, damit opacity snap ohne Animation
+			headerEl.style.transition = 'none';
+			headerEl.style.opacity = '0';
+			requestAnimationFrame(() => {
+				if (headerEl) headerEl.style.transition = '';
+			});
+			window.addEventListener('scroll', handleRevealScroll, { passive: true, once: true });
+		}
+
 		return () => {
 			window.removeEventListener('resize', updateHeaderHeight);
 			if (landscapeQuery) landscapeQuery.removeEventListener('change', updateHeaderHeight);
 			if (observer) observer.disconnect();
 			headerHeight.set(0);
+			window.removeEventListener('scroll', handleRevealScroll);
+			cancelAnimationFrame(revealRafId);
 		};
 	});
 
@@ -114,19 +127,26 @@
 	}
 
 	$: currentPath = $page.url.pathname;
+	$: hideHeaderOnLoad = prismicTheme?.data?.hide_header_on_load ?? false;
+	$: stickyHeader = prismicTheme?.data?.sticky_header ?? false;
 </script>
 
 <header
 	bind:this={headerEl}
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
-	style:position={bannerTop ? 'absolute' : 'relative'}
+	style:position={stickyHeader ? 'fixed' : bannerTop ? 'absolute' : 'relative'}
 	style:top="0"
 	style:left="0"
 	style:z-index="9999"
 	style:background-color={computedBgColor}
 	style:color={headerColor}
 >
-	<Bounded tag="div" yPadding="none" tMargin="lg" fullWidth={prismicTheme?.data?.full_screen_width === true}>
+	<Bounded
+		tag="div"
+		yPadding="none"
+		tMargin="lg"
+		fullWidth={prismicTheme?.data?.full_screen_width === true}
+	>
 		<div class="flex items-stretch justify-between w-full">
 			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
@@ -134,7 +154,11 @@
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
-								style="height: {logoHeight}rem; {dims ? `aspect-ratio: ${dims.width} / ${dims.height};` : 'width: auto;'} background-color: {logoColor}; -webkit-mask-image: url('{prismicTheme.data.logo.url}'); mask-image: url('{prismicTheme.data.logo.url}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center left; mask-position: center left;"
+								style="height: {logoHeight}rem; {dims
+									? `aspect-ratio: ${dims.width} / ${dims.height};`
+									: 'width: auto;'} background-color: {logoColor}; -webkit-mask-image: url('{prismicTheme
+									.data.logo.url}'); mask-image: url('{prismicTheme.data.logo
+									.url}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center left; mask-position: center left;"
 							></div>
 						{:else}
 							<PrismicImage
@@ -146,7 +170,11 @@
 						{/if}
 					</a>
 				{:else if settings?.data}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="mt-6 mb-6 inline-block" style="color: {headerLinkColor};">
+					<a
+						href={lang === mainLang ? '/' : `/${lang}`}
+						class="mt-6 mb-6 inline-block"
+						style="color: {headerLinkColor};"
+					>
 						<span
 							class="text-xl font-semibold tracking-tight"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
@@ -172,7 +200,7 @@
 					{lang}
 					{locales}
 					{showSwitcher}
-					allAlternates={allAlternates}
+					{allAlternates}
 				/>
 			{/if}
 		</div>
