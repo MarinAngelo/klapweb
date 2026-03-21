@@ -5,6 +5,11 @@ import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url }) {
+	// Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
+	if (url.pathname.startsWith('/preview/')) {
+		return {};
+	}
+
 	const client = createClient({ fetch, cookies });
 
 	try {
