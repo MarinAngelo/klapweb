@@ -43,23 +43,29 @@
 	$: beschreibung = (data.meta as any)?.Beschreibung as string | undefined;
 </script>
 
-<svelte:head><title>{data.sliceName} / {data.variationName} – Katalog</title></svelte:head>
+<svelte:head
+	><title>{$_(data.sliceName)} / {$_(data.variationName)} – {$_('Slice-Katalog')}</title></svelte:head
+>
 
 <!-- Äusserer Flex: Mobile vertikal, Desktop horizontal -->
 <div class="flex flex-col md:flex-row">
-
 	<!-- Linke Spalte: Tabs, Info, Preview -->
 	<div class="flex-1 min-w-0">
-
 		<!-- Tabs + Slice-Info -->
-		<div class="flex items-center justify-between px-5 py-2 border-b" style="background-color: {bg}; border-color: {fgMuted}22;">
+		<div
+			class="flex items-center justify-between px-5 py-2 border-b"
+			style="background-color: {bg}; border-color: {fgMuted}22;"
+		>
 			<!-- Links: Slice / Variation / Badge -->
 			<div class="flex items-center gap-3">
-				<span class="font-semibold" style="color: {fg}; font-size: 16px;">{data.sliceName}</span>
+				<span class="font-semibold" style="color: {fg}; font-size: 16px;">{$_(data.sliceName)}</span>
 				<span style="color: {fgMuted}; opacity: 0.4;">/</span>
-				<span style="color: {fg}; font-size: 16px;">{data.variationName}</span>
-				{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung' && k !== 'Paket') as [key, value]}
-					<span class="px-2 py-0.5 rounded font-medium" style="font-size: 13px; background-color: {fgMuted}22; color: {fgMuted};">
+				<span style="color: {fg}; font-size: 16px;">{$_(data.variationName)}</span>
+				{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung' && k !== 'BeschreibungEn' && k !== 'Paket') as [key, value]}
+					<span
+						class="px-2 py-0.5 rounded font-medium"
+						style="font-size: 13px; background-color: {fgMuted}22; color: {fgMuted};"
+					>
 						{key}: {value}
 					</span>
 				{/each}
@@ -69,18 +75,48 @@
 				<button
 					on:click={() => (viewMode = 'desktop')}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
-					style="font-size: 13px; background-color: {viewMode === 'desktop' ? fgMuted + '33' : 'transparent'}; color: {viewMode === 'desktop' ? fg : fgMuted};"
+					style="font-size: 13px; background-color: {viewMode === 'desktop'
+						? fgMuted + '33'
+						: 'transparent'}; color: {viewMode === 'desktop' ? fg : fgMuted};"
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M0 21h24"/></svg>
-					Laptop
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M0 21h24" /></svg
+					>
+					{$_('Laptop')}
 				</button>
 				<button
 					on:click={() => (viewMode = 'mobile')}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
-					style="font-size: 13px; background-color: {viewMode === 'mobile' ? fgMuted + '33' : 'transparent'}; color: {viewMode === 'mobile' ? fg : fgMuted};"
+					style="font-size: 13px; background-color: {viewMode === 'mobile'
+						? fgMuted + '33'
+						: 'transparent'}; color: {viewMode === 'mobile' ? fg : fgMuted};"
 				>
-					<svg width="14" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
-					Telefon
+					<svg
+						width="14"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><rect x="5" y="2" width="14" height="20" rx="2" /><circle
+							cx="12"
+							cy="18"
+							r="1"
+							fill="currentColor"
+							stroke="none"
+						/></svg
+					>
+					{$_('Telefon')}
 				</button>
 			</div>
 		</div>
@@ -88,8 +124,21 @@
 		<!-- Info-Leiste: nur Beschreibung (falls vorhanden) -->
 		{#if beschreibung}
 			<details class="border-b group" style="background-color: {bg}; border-color: {fgMuted}22;">
-				<summary class="px-5 py-2.5 cursor-pointer list-none flex items-center gap-2" style="color: {fgMuted}; font-size: 14px;">
-					<svg class="shrink-0 transition-transform group-open:rotate-90" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+				<summary
+					class="px-5 py-2.5 cursor-pointer list-none flex items-center gap-2"
+					style="color: {fgMuted}; font-size: 14px;"
+				>
+					<svg
+						class="shrink-0 transition-transform group-open:rotate-90"
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg
+					>
 					{$_('Beschreibung')}
 				</summary>
 				<div class="px-5 pb-3 pt-1" style="color: {fgMuted}; font-size: 16px;">
@@ -102,7 +151,13 @@
 		<div class="md:hidden" style="background-color: {pageColor}08;">
 			{#key mockSlice}
 				{#if Component}
-					<svelte:component this={Component} slice={mockSlice} index={0} slices={[mockSlice]} context={{}} />
+					<svelte:component
+						this={Component}
+						slice={mockSlice}
+						index={0}
+						slices={[mockSlice]}
+						context={{}}
+					/>
 				{:else}
 					<div class="p-12 text-center text-gray-400 text-sm">
 						{$_('Kein Component registriert für')} <code class="font-mono">{data.sliceId}</code>
@@ -134,7 +189,13 @@
 						<div class="laptop-screen" style="--screen-bg: {pageBg}">
 							{#key mockSlice}
 								{#if Component}
-									<svelte:component this={Component} slice={mockSlice} index={0} slices={[mockSlice]} context={{}} />
+									<svelte:component
+										this={Component}
+										slice={mockSlice}
+										index={0}
+										slices={[mockSlice]}
+										context={{}}
+									/>
 								{/if}
 							{/key}
 						</div>
@@ -145,12 +206,12 @@
 			{/if}
 			{#if !Component}
 				<div class="p-12 text-center text-gray-400 text-sm">
-					Kein Component registriert für <code class="font-mono">{data.sliceId}</code>
+					{$_('Kein Component registriert für')} <code class="font-mono">{data.sliceId}</code>
 				</div>
 			{/if}
 		</div>
-
-	</div><!-- /Content-Spalte -->
+	</div>
+	<!-- /Content-Spalte -->
 
 	<!-- Funktions-Panel: Mobile unter Slice, Desktop als Sidebar -->
 	{#if hasPanel}
@@ -159,7 +220,11 @@
 			style="background-color: {bg}; border-color: {fgMuted}22;"
 		>
 			<div class="px-4 py-3" style="border-bottom: 1px solid {fgMuted}22;">
-				<span class="font-semibold tracking-wide" style="color: {fgMuted}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;">Funktionen</span>
+				<span
+					class="font-semibold tracking-wide"
+					style="color: {fgMuted}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;"
+					>{$_('Funktionen')}</span
+				>
 			</div>
 			<div class="px-4 py-4 flex flex-col gap-5 md:flex-col sm:flex-row sm:flex-wrap">
 				{#each data.functionalFields as field}
@@ -171,23 +236,25 @@
 								on:change={(e) => updateField(field.key, e.currentTarget.checked)}
 								class="w-4 h-4 cursor-pointer"
 							/>
-							<span style="color: {fg}; font-size: 14px;">{field.label}</span>
+							<span style="color: {fg}; font-size: 14px;">{$_(field.label)}</span>
 						</label>
 					{:else if field.type === 'Select'}
 						<div class="flex flex-col gap-1.5">
-							<span style="color: {fgMuted}; font-size: 12px;">{field.label}</span>
+							<span style="color: {fgMuted}; font-size: 12px;">{$_(field.label)}</span>
 							<select
 								on:change={(e) => updateField(field.key, e.currentTarget.value)}
 								style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 14px; padding: 4px 8px; border-radius: 4px; width: 100%;"
 							>
 								{#each field.options ?? [] as option}
-									<option value={option} selected={mockSlice.primary[field.key] === option}>{option}</option>
+									<option value={option} selected={mockSlice.primary[field.key] === option}
+										>{$_(option)}</option
+									>
 								{/each}
 							</select>
 						</div>
 					{:else if field.type === 'Number'}
 						<div class="flex flex-col gap-1.5">
-							<span style="color: {fgMuted}; font-size: 12px;">{field.label}</span>
+							<span style="color: {fgMuted}; font-size: 12px;">{$_(field.label)}</span>
 							<input
 								type="number"
 								value={mockSlice.primary[field.key] ?? field.default_value ?? ''}
@@ -201,91 +268,90 @@
 			</div>
 		</div>
 	{/if}
-
 </div>
 
 <style>
-/* ── Phone Frame ──────────────────────────────────────────────── */
-.phone-wrap {
-	max-height: 828px;
-	overflow-y: auto;
-}
-.phone-frame {
-	width: 390px;
-	background: #1c1c1e;
-	border-radius: 50px;
-	padding: 16px;
-	overflow: hidden;
-	box-shadow:
-		0 0 0 1.5px #3a3a3c,
-		0 0 0 3px rgba(255,255,255,0.04),
-		0 40px 80px rgba(0,0,0,0.55),
-		0 8px 24px rgba(0,0,0,0.3);
-	position: relative;
-}
-.phone-notch {
-	position: absolute;
-	top: 26px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 120px;
-	height: 30px;
-	background: #1c1c1e;
-	border-radius: 20px;
-	z-index: 10;
-}
-.phone-screen {
-	background: var(--screen-bg, white);
-	border-radius: 36px;
-	overflow: hidden;
-	aspect-ratio: 9 / 19.5;
-}
-.phone-home {
-	width: 140px;
-	height: 5px;
-	background: #4a4a4c;
-	border-radius: 3px;
-	margin: 12px auto 0;
-}
+	/* ── Phone Frame ──────────────────────────────────────────────── */
+	.phone-wrap {
+		max-height: 828px;
+		overflow-y: auto;
+	}
+	.phone-frame {
+		width: 390px;
+		background: #1c1c1e;
+		border-radius: 50px;
+		padding: 16px;
+		overflow: hidden;
+		box-shadow:
+			0 0 0 1.5px #3a3a3c,
+			0 0 0 3px rgba(255, 255, 255, 0.04),
+			0 40px 80px rgba(0, 0, 0, 0.55),
+			0 8px 24px rgba(0, 0, 0, 0.3);
+		position: relative;
+	}
+	.phone-notch {
+		position: absolute;
+		top: 26px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 120px;
+		height: 30px;
+		background: #1c1c1e;
+		border-radius: 20px;
+		z-index: 10;
+	}
+	.phone-screen {
+		background: var(--screen-bg, white);
+		border-radius: 36px;
+		overflow: hidden;
+		aspect-ratio: 9 / 19.5;
+	}
+	.phone-home {
+		width: 140px;
+		height: 5px;
+		background: #4a4a4c;
+		border-radius: 3px;
+		margin: 12px auto 0;
+	}
 
-/* ── Laptop Frame ─────────────────────────────────────────────── */
-.laptop-wrap {
-	max-width: 900px;
-	width: 100%;
-}
-.laptop-screen-bezel {
-	background: #1a1a1c;
-	border-radius: 12px 12px 0 0;
-	padding: 22px 16px 0;
-	position: relative;
-	box-shadow:
-		0 0 0 1.5px #3a3a3c,
-		inset 0 0 0 1px rgba(255,255,255,0.04);
-}
-.laptop-cam {
-	width: 8px;
-	height: 8px;
-	background: #3a3a3c;
-	border-radius: 50%;
-	margin: 0 auto 10px;
-}
-.laptop-screen {
-	background: var(--screen-bg, white);
-	border-radius: 4px 4px 0 0;
-	overflow: hidden;
-	aspect-ratio: 16 / 10;
-	overflow-y: auto;
-}
-.laptop-chin {
-	height: 22px;
-	background: #1a1a1c;
-	border-bottom: 1px solid #2c2c2e;
-}
-.laptop-base {
-	height: 14px;
-	background: linear-gradient(to bottom, #2c2c2e, #222224);
-	border-radius: 0 0 6px 6px;
-	margin: 0 -40px;
-	box-shadow: 0 6px 20px rgba(0,0,0,0.45);
-}
+	/* ── Laptop Frame ─────────────────────────────────────────────── */
+	.laptop-wrap {
+		max-width: 900px;
+		width: 100%;
+	}
+	.laptop-screen-bezel {
+		background: #1a1a1c;
+		border-radius: 12px 12px 0 0;
+		padding: 22px 16px 0;
+		position: relative;
+		box-shadow:
+			0 0 0 1.5px #3a3a3c,
+			inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+	}
+	.laptop-cam {
+		width: 8px;
+		height: 8px;
+		background: #3a3a3c;
+		border-radius: 50%;
+		margin: 0 auto 10px;
+	}
+	.laptop-screen {
+		background: var(--screen-bg, white);
+		border-radius: 4px 4px 0 0;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+		overflow-y: auto;
+	}
+	.laptop-chin {
+		height: 22px;
+		background: #1a1a1c;
+		border-bottom: 1px solid #2c2c2e;
+	}
+	.laptop-base {
+		height: 14px;
+		background: linear-gradient(to bottom, #2c2c2e, #222224);
+		border-radius: 0 0 6px 6px;
+		margin: 0 -40px;
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+	}
 </style>

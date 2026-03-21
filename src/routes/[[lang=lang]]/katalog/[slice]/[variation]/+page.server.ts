@@ -19,7 +19,10 @@ function resolveGateLabel(gate: any): string | null {
 	return null;
 }
 
-export const load = async ({ params }) => {
+export const load = async ({ params, parent }) => {
+	const { lang } = await parent();
+	const isEn = (lang as string).startsWith('en');
+
 	const entry = Object.entries(models).find(([path]) =>
 		path.includes(`/${params.slice}/model.json`)
 	);
@@ -47,9 +50,13 @@ export const load = async ({ params }) => {
 
 	const sliceMeta = (bases[basePath] as any)?._meta ?? (fulls[fullPath] as any)?._meta ?? {};
 
-	const sliceBeschreibung = sliceMeta.Beschreibung as string | undefined;
-	const varBeschreibung = varMeta.Beschreibung as string | undefined;
-	const beschreibung = [sliceBeschreibung, varBeschreibung].filter(Boolean).join(' — ') || undefined;
+	const beschreibungKey = isEn ? 'BeschreibungEn' : 'Beschreibung';
+	const sliceBeschreibung = (sliceMeta[beschreibungKey] ?? sliceMeta.Beschreibung) as
+		| string
+		| undefined;
+	const varBeschreibung = (varMeta[beschreibungKey] ?? varMeta.Beschreibung) as string | undefined;
+	const beschreibung =
+		[sliceBeschreibung, varBeschreibung].filter(Boolean).join(' — ') || undefined;
 
 	const meta = {
 		Paket: 'Basis',
@@ -77,7 +84,7 @@ export const load = async ({ params }) => {
 		sliceName: model.name as string,
 		variationId: variation.id as string,
 		variationName: variation.name as string,
-		mockSlice: generateMockSlice(model.id, variation),
+		mockSlice: generateMockSlice(model.id, variation, lang as string, model.name as string),
 		meta,
 		functionalFields
 	};
