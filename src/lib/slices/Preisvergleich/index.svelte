@@ -10,14 +10,15 @@
 	export let slices: any;
 	export let context: any;
 	export let index: any;
+	const p = slice.primary ?? ({} as any);
 
 	const { pageColor, pageBgColor } = get(theme);
 
 	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
+		p.animate,
+		p.anim_direction,
+		p.anim_delay,
+		p.anim_duration
 	);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
@@ -28,9 +29,9 @@
 
 	// Resolve up to 3 plan columns from linked page docs
 	$: rawPlans = [
-		{ field: slice.primary.plan_1, highlight: slice.primary.hervorhebung === 'Plan 1' },
-		{ field: slice.primary.plan_2, highlight: slice.primary.hervorhebung === 'Plan 2' },
-		{ field: slice.primary.plan_3, highlight: slice.primary.hervorhebung === 'Plan 3' }
+		{ field: p.plan_1, highlight: p.hervorhebung === 'Plan 1' },
+		{ field: p.plan_2, highlight: p.hervorhebung === 'Plan 2' },
+		{ field: p.plan_3, highlight: p.hervorhebung === 'Plan 3' }
 	].filter((p) => p.field?.uid);
 
 	$: activeCurrency = (() => {
@@ -81,8 +82,8 @@
 	const wertKeys = ['plan_1_wert', 'plan_2_wert', 'plan_3_wert'] as const;
 	$: planCount = rawPlans.length;
 
-	const ctaLabel = slice.primary.cta_label || 'Jetzt bestellen';
-	const titel = slice.primary.titel?.[0]?.text ?? null;
+	const ctaLabel = p.cta_label || 'Jetzt bestellen';
+	const titel = p.titel?.[0]?.text ?? null;
 
 	function wertStyle(wert: string | null | undefined): string {
 		if (!wert || wert === '–') return 'opacity: 0.3;';

@@ -1,5 +1,5 @@
 import { createClient } from '$lib/prismicio';
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, isRedirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
@@ -151,7 +151,7 @@ export async function load({ params, parent, fetch, cookies }) {
 			pageLeistungen
 		};
 	} catch (e: any) {
-		if (e?.status === 303) throw e; // redirect durchlassen
+		if (isRedirect(e)) throw e;
 		console.error(`[404] UID: ${params.uid} nicht gefunden für Sprache: ${lang}`);
 		throw error(404, { message: 'Seite nicht gefunden' });
 	}

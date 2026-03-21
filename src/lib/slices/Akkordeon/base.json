@@ -1,6 +1,7 @@
 {
 	"_meta": {
-		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält. Optional kann auch ein Bild hinzugefügt werden."
+		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält.",
+		"BeschreibungEn": "Collapsible elements, ideal for FAQs or similar content. Any number of elements can be created, each containing a heading and a text."
 	},
 	"id": "accordion",
 	"type": "SharedSlice",
@@ -22,14 +23,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"description": {
@@ -39,14 +33,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"accordion_items": {
@@ -69,14 +56,7 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6"
-									]
+									"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 								}
 							}
 						}
@@ -127,13 +107,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -195,6 +169,10 @@
 			"items": {}
 		},
 		{
+			"_meta": {
+				"Beschreibung": "Die Variante Bild und Text bietet die Möglichkeit, ein Bild neben einem Textblock anzuzeigen.",
+				"BeschreibungEn": "The Image and Text variant offers the option to display an image next to a text block."
+			},
 			"id": "bildUndText",
 			"name": "Bild und Text",
 			"docURL": "...",
@@ -209,14 +187,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"description": {
@@ -226,14 +197,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 					}
 				},
 				"accordion_items": {
@@ -256,14 +220,7 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6"
-									]
+									"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
 								}
 							},
 							"image": {
@@ -344,13 +301,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

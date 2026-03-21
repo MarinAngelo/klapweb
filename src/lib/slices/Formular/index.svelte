@@ -21,28 +21,36 @@
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
-	$: isDefaultZweiSpalten = ((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') && (slice.primary as any).zwei_spalten === true;
+	$: isDefaultZweiSpalten =
+		((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') &&
+		(slice.primary as any)?.zwei_spalten === true;
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
+		slice.primary?.animate,
+		slice.primary?.anim_direction,
+		slice.primary?.anim_delay,
+		slice.primary?.anim_duration
 	);
 
 	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
-	const formName = (slice.primary as any).form_name?.trim() || `form_${formIndex}`;
-	const formFields = slice.primary.form_fields as FormSliceDefaultPrimaryFormFieldsItem[];
+	const formName = (slice.primary as any)?.form_name?.trim() || `form_${formIndex}`;
+	const formFields = (slice.primary?.form_fields ?? []) as FormSliceDefaultPrimaryFormFieldsItem[];
 
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
-	$: checkoutUrl = ((slice.primary as any).checkout_url as string | null | undefined)?.trim() || null;
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: checkoutUrl =
+		((slice.primary as any)?.checkout_url as string | null | undefined)?.trim() || null;
+	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land', Termin: 'termin' };
+	const typeKeys: Record<string, string> = {
+		'E-Mail': 'email',
+		Textbereich: 'message',
+		Land: 'land',
+		Termin: 'termin'
+	};
 
 	function effectiveKey(field: FormSliceDefaultPrimaryFormFieldsItem): string {
 		return (
@@ -54,8 +62,8 @@
 
 	// Fehlerstatus für jedes Feld
 	let fieldErrors: Record<string, string> = {};
-	const formSubmittetTitle = slice.primary.submitted_title;
-	const formSubmittetText = slice.primary.submitted_text;
+	const formSubmittetTitle = slice.primary?.submitted_title;
+	const formSubmittetText = slice.primary?.submitted_text;
 
 	// Zustand für das modale Fenster
 	let showModal = false;
@@ -182,7 +190,9 @@
 				const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
 				const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
 				const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
-				const customerTimezone = zeitzoneField ? (formData.get('zeitzone') as string) || undefined : undefined;
+				const customerTimezone = zeitzoneField
+					? (formData.get('zeitzone') as string) || undefined
+					: undefined;
 				try {
 					const resp = await fetch('/api/buche-termin', {
 						method: 'POST',
@@ -304,20 +314,24 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
 	{:else}
 		<!-- Standard: einspaltig -->
-		<div class="grid grid-cols-1 items-center gap-8 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		<div
+			class="grid grid-cols-1 items-center gap-8 {mobileVollbreite
+				? '-mx-6 md:mx-0 px-6 md:px-0'
+				: ''}"
+		>
 			<div>
-				{#if slice.primary.form_title}
-					<Heading tag="h2" class="mt-0">{slice.primary.form_title}</Heading>
+				{#if slice.primary?.form_title}
+					<Heading tag="h2" class="mt-0">{slice.primary?.form_title}</Heading>
 				{/if}
-				{#if slice.primary.form_instructions}
-					<PrismicRichText field={slice.primary.form_instructions} />
+				{#if slice.primary?.form_instructions}
+					<PrismicRichText field={slice.primary?.form_instructions} />
 				{/if}
 			</div>
 			<div>
@@ -338,7 +352,11 @@
 						{#each formFields as field}
 							{#if field && effectiveKey(field)}
 								<div>
-									<InputField {field} refreshKey={termineRefreshKey} on:blur={(e) => onFieldBlur(e, field)} />
+									<InputField
+										{field}
+										refreshKey={termineRefreshKey}
+										on:blur={(e) => onFieldBlur(e, field)}
+									/>
 									{#if fieldErrors[effectiveKey(field)]}
 										<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
 									{/if}
@@ -353,7 +371,7 @@
 					{/if}
 					<div class="mt-8 flex justify-end">
 						<Button
-							text={slice.primary.submitt_button_text || 'Absenden'}
+							text={slice.primary?.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
 							link={undefined}
 							color={undefined}
@@ -370,7 +388,9 @@
 	{#if showModal}
 		<Modal
 			title={formSubmittetTitle || 'Vielen Dank!'}
-			message={formSubmittetText?.length ? formSubmittetText : [{ type: 'paragraph', text: 'Ihre Nachricht wurde erfolgreich gesendet.', spans: [] }]}
+			message={formSubmittetText?.length
+				? formSubmittetText
+				: [{ type: 'paragraph', text: 'Ihre Nachricht wurde erfolgreich gesendet.', spans: [] }]}
 			onClose={() => (showModal = false)}
 		/>
 	{/if}

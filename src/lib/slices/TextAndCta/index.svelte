@@ -32,23 +32,24 @@
 		Rechts: 'text-right'
 	};
 
-	$: sizeClass = sizeMap[slice.primary.button_size] ?? sizeMap['Mittel'];
-	$: alignClass = alignMap[slice.primary.button_align] ?? alignMap['Mitte'];
-	$: mobileFullWidth = slice.primary.mobile_full_width ?? false;
-	$: fullscreenHeight = slice.primary.fullscreen_height ?? false;
-	$: scrollSnap = slice.primary.scroll_snap ?? false;
-	$: textAlignClass = textAlignMap[slice.primary.text_align] ?? textAlignMap['Links'];
+	$: p = slice.primary ?? {};
+	$: sizeClass = sizeMap[p.button_size] ?? sizeMap['Mittel'];
+	$: alignClass = alignMap[p.button_align] ?? alignMap['Mitte'];
+	$: mobileFullWidth = p.mobile_full_width ?? false;
+	$: fullscreenHeight = p.fullscreen_height ?? false;
+	$: scrollSnap = p.scroll_snap ?? false;
+	$: textAlignClass = textAlignMap[p.text_align] ?? textAlignMap['Links'];
 
-	$: bgColor = slice.primary.bg_color || null;
-	$: textColor = slice.primary.text_color || null;
-	$: textZoomDesktop = ((slice.primary.text_zoom_desktop ?? 100) / 100);
-	$: textZoomMobile = ((slice.primary.text_zoom_mobile ?? 100) / 100);
+	$: bgColor = p.bg_color || null;
+	$: textColor = p.text_color || null;
+	$: textZoomDesktop = ((p.text_zoom_desktop ?? 100) / 100);
+	$: textZoomMobile = ((p.text_zoom_mobile ?? 100) / 100);
 
-	$: buttonColor = slice.primary.button_color || textColor || get(theme).pageButtonColor;
-	$: buttonBgColor = slice.primary.button_bg_color || get(theme).pageButtonBgColor;
-	$: buttonHoverColor = slice.primary.button_hover_color || bgColor || get(theme).pageButtonHoverColor;
-	$: buttonHoverBgColor = slice.primary.button_hover_bg_color || textColor || get(theme).pageButtonHoverBgColor;
-	$: beauftragungHref = getBeauftragunHref(slice.primary.button_link, $page.params.uid);
+	$: buttonColor = p.button_color || textColor || get(theme).pageButtonColor;
+	$: buttonBgColor = p.button_bg_color || get(theme).pageButtonBgColor;
+	$: buttonHoverColor = p.button_hover_color || bgColor || get(theme).pageButtonHoverColor;
+	$: buttonHoverBgColor = p.button_hover_bg_color || textColor || get(theme).pageButtonHoverBgColor;
+	$: beauftragungHref = getBeauftragunHref(p.button_link, $page.params.uid);
 
 	// Scroll-Snap: scroll-snap-type auf html setzen wenn aktiviert
 	onMount(() => {
@@ -77,11 +78,11 @@
 			class="text-and-cta-content space-y-14 {textAlignClass}"
 			style="--text-zoom-desktop: {textZoomDesktop}; --text-zoom-mobile: {textZoomMobile};"
 		>
-			{#if 'text' in slice.primary}
-				<PrismicRichText field={slice.primary.text} />
+			{#if 'text' in p}
+				<PrismicRichText field={p.text} />
 			{/if}
 
-			{#if isFilled.link(slice.primary.button_link)}
+			{#if isFilled.link(p.button_link)}
 				<div class={alignClass}>
 					{#if beauftragungHref}
 						<a
@@ -98,11 +99,11 @@
 								--focus-ring-color: {buttonColor};
 							"
 						>
-							{slice.primary.button_text || 'Mehr erfahren'}
+							{p.button_text || 'Mehr erfahren'}
 						</a>
 					{:else}
 						<PrismicLink
-							field={slice.primary.button_link}
+							field={p.button_link}
 							class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 								? 'block w-full text-center sm:inline-block sm:w-auto'
 								: 'inline-block'}"
@@ -115,7 +116,7 @@
 								--focus-ring-color: {buttonColor};
 							"
 						>
-							{slice.primary.button_text || 'Mehr erfahren'}
+							{p.button_text || 'Mehr erfahren'}
 						</PrismicLink>
 					{/if}
 				</div>

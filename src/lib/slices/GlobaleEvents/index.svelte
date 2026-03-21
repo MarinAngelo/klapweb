@@ -11,6 +11,7 @@
     import { reveal } from '$lib/actions/reveal'; // Action direkt importieren
 
     export let slice: Content.GlobaleEventsSlice;
+	const p = slice.primary ?? ({} as any);
 
     // Zentrales Mapping der Animation aus den CMS-Feldern
     $: anim = mapAnimationFromPrimary(slice.primary);
@@ -19,10 +20,10 @@
     let loading = true;
 
     onMount(async () => {
-        if (isFilled.contentRelationship(slice.primary.events)) {
+        if (isFilled.contentRelationship(p.events)) {
             try {
                 const client = createClient();
-                const eventDoc = await client.getByID(slice.primary.events.id, {
+                const eventDoc = await client.getByID(p.events.id, {
                     lang: $page.data.lang
                 });
 
