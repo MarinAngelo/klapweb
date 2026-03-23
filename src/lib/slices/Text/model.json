@@ -71,6 +71,20 @@
 						]
 					}
 				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
 				"mobile_vollbreite": {
 					"type": "Boolean",
 					"config": {
@@ -184,6 +198,20 @@
 							"kicker",
 							"overline"
 						]
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
 				"mobile_vollbreite": {

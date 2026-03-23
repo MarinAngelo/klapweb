@@ -14,18 +14,24 @@
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
+	$: textColor = (slice.primary as any).color || $theme.pageColor;
 </script>
 
 <Bounded
 	as="section"
 	class="leading-relaxed {mobileVollbreite ? 'overflow-x-clip' : ''}"
-	style="color: {$theme.pageColor}; background-color: {$theme.pageBgColor};"
+	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class="{clsx(slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-6')} {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	<div
+		class="{clsx(
+			slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-6'
+		)} {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
+	>
 		<PrismicRichText field={slice.primary.text} />
 	</div>
 </Bounded>
