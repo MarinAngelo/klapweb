@@ -28,6 +28,15 @@
 						"placeholder": "0 - 100 %"
 					}
 				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"text": {
 					"type": "StructuredText",
 					"config": {
@@ -380,6 +389,15 @@
 					"config": {
 						"label": "Transparenz überlagerter Kopfzeile",
 						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"overlay_color": {

@@ -60,17 +60,19 @@
 	})();
 
 	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
+	const hideHeaderOnLoad = (slice.primary as any).hide_header_on_load ?? false;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop und headerBgOpacity im Theme-Store aktualisieren - beide reaktiv
-	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity }));
+	// bannerTop, headerBgOpacity und hideHeaderOnLoad im Theme-Store aktualisieren
+	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity, hideHeaderOnLoad }));
 
 	onDestroy(() => {
 		theme.update((t) => ({
 			...t,
 			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
-			bannerTop: THEME_DEFAULTS.bannerTop
+			bannerTop: THEME_DEFAULTS.bannerTop,
+			hideHeaderOnLoad: THEME_DEFAULTS.hideHeaderOnLoad
 		}));
 	});
 

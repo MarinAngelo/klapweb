@@ -225,7 +225,6 @@ type PageDocumentDataSlicesSlice =
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
-	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
@@ -735,6 +734,39 @@ interface ThemeDocumentData {
 	page_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
 
 	/**
+	 * Vorinstallierte Hauptschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: theme.preset_font
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
+
+	/**
 	 * Mobile Basis-Schriftgrösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Select
@@ -759,6 +791,17 @@ interface ThemeDocumentData {
 	base_font_size_desktop: prismic.SelectField<
 		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
 	>;
+
+	/**
+	 * Container-Breite field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: Standard (72rem)
+	 * - **API ID Path**: theme.container_width
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	container_width: prismic.SelectField<'Schmal' | 'Normal' | 'Standard' | 'Weit' | 'Sehr weit'>;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
@@ -927,6 +970,17 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
+	 * Textfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -969,18 +1023,6 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
-
-	/**
-	 * Kopfzeile beim Laden ausblenden field in *Design Vorlage*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: theme.hide_header_on_load
-	 * - **Tab**: Kopfzeile
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	hide_header_on_load: prismic.BooleanField;
 
 	/**
 	 * Kopfzeile fixiert (Sticky) field in *Design Vorlage*
@@ -2355,90 +2397,6 @@ type FormSliceVariation = FormSliceDefault;
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
 
 /**
- * Primary content in *GlobaleEvents → Standart → Primary*
- */
-export interface GlobaleEventsSliceDefaultPrimary {
-	/**
-	 * Events field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: globale_events.default.primary.events
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	events: prismic.ContentRelationshipField<'event'>;
-
-	/**
-	 * Animation aktivieren field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: globale_events.default.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: globale_events.default.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: globale_events.default.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: globale_events.default.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Standart variation for GlobaleEvents Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
-	'default',
-	Simplify<GlobaleEventsSliceDefaultPrimary>,
-	never
->;
-
-/**
- * Slice variation for *GlobaleEvents*
- */
-type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
-
-/**
- * GlobaleEvents Shared Slice
- *
- * - **API ID**: `globale_events`
- * - **Description**: GlobaleEvents
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
-
-/**
  * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
  */
 export interface HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem {
@@ -2477,6 +2435,17 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	header_bg_opacity: prismic.NumberField;
+
+	/**
+	 * Kopfzeile beim Laden ausblenden field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.default.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
 
 	/**
 	 * Text field in *Titelbereich → Standard → Primary*
@@ -2827,6 +2796,17 @@ export interface HeroSliceMitBildKarusellPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	header_bg_opacity: prismic.NumberField;
+
+	/**
+	 * Kopfzeile beim Laden ausblenden field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.mitBildKarusell.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
 
 	/**
 	 * Bild Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
@@ -3635,6 +3615,17 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	header_bg_opacity: prismic.NumberField;
 
 	/**
+	 * Kopfzeile beim Laden ausblenden field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
+
+	/**
 	 * Titelbild Höhe field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Select
@@ -4340,6 +4331,26 @@ export interface TextSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
+	 * Hintergrundfarbe field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
 	 * Vollbreite auf Mobile field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4419,6 +4430,26 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	text: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.twoColumns.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.twoColumns.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
 
 	/**
 	 * Vollbreite auf Mobile field in *Text → Zwei Spalten → Primary*
@@ -4907,6 +4938,26 @@ export interface TextWithImageSliceWithButtonPrimary {
 	image: prismic.ImageField<never>;
 
 	/**
+	 * Hintergrundfarbe field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.withButton.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.withButton.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
 	 * Vollbreite auf Mobile field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5202,10 +5253,6 @@ declare module '@prismicio/client' {
 			FormSliceDefaultPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
-			GlobaleEventsSlice,
-			GlobaleEventsSliceDefaultPrimary,
-			GlobaleEventsSliceVariation,
-			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,

@@ -32,6 +32,15 @@
 						"placeholder": "0 - 100 %"
 					}
 				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"text": {
 					"type": "StructuredText",
 					"config": {
@@ -40,18 +49,52 @@
 						"allowTargetBlank": false,
 						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
 						"labels": [
-							"h1", "h2", "h3", "h4", "h5", "h6",
-							"size-xs", "size-sm", "size-lg", "size-xl", "size-2xl", "size-3xl", "size-4xl", "size-5xl", "size-6xl",
-							"weight-thin", "weight-light", "weight-medium", "weight-semibold", "weight-black",
-							"tracking-tight", "tracking-wide", "tracking-wider", "tracking-widest",
-							"leading-tight", "leading-loose",
-							"uppercase", "lowercase", "capitalize",
-							"underline", "block", "muted",
-							"display-thin",  "display-light", "display-bold",  "display-black",
-							"giant-thin",    "giant-light",   "giant-bold",
-							"hero-thin",     "hero-light",    "hero-bold",
-							"subtitle",      "subtitle-bold",
-							"kicker",        "overline"
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
 						]
 					}
 				},
@@ -67,7 +110,29 @@
 					"config": {
 						"label": "Schriftart",
 						"placeholder": "— Keine —",
-						"options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
+						"options": [
+							"Inter",
+							"Roboto",
+							"Open Sans",
+							"Montserrat",
+							"Poppins",
+							"Lato",
+							"Raleway",
+							"Oswald",
+							"Nunito",
+							"DM Sans",
+							"Outfit",
+							"Plus Jakarta Sans",
+							"Josefin Sans",
+							"Quicksand",
+							"Cabin",
+							"Playfair Display",
+							"Merriweather",
+							"Lora",
+							"Cormorant Garamond",
+							"Crimson Pro",
+							"Nunito Sans"
+						]
 					}
 				},
 				"font": {
@@ -79,7 +144,12 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": ["name", "provider", "variants", "adobeFontId"]
+								"fields": [
+									"name",
+									"provider",
+									"variants",
+									"adobeFontId"
+								]
 							}
 						]
 					}
@@ -90,7 +160,9 @@
 						"label": "Schaltflächenlink",
 						"placeholder": "",
 						"select": null,
-						"customtypes": ["page"]
+						"customtypes": [
+							"page"
+						]
 					}
 				},
 				"button_text": {
@@ -196,7 +268,10 @@
 					"config": {
 						"label": "Verlauf Form",
 						"placeholder": "",
-						"options": ["Linear", "Radial"],
+						"options": [
+							"Linear",
+							"Radial"
+						],
 						"default_value": "Linear"
 					}
 				},
@@ -205,7 +280,16 @@
 					"config": {
 						"label": "Verlauf Richtung (nur Linear)",
 						"placeholder": "",
-						"options": ["0°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"],
+						"options": [
+							"0°",
+							"45°",
+							"90°",
+							"135°",
+							"180°",
+							"225°",
+							"270°",
+							"315°"
+						],
 						"default_value": "180°"
 					}
 				},
@@ -228,7 +312,11 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
-						"options": ["100 %", "50 %", "33 %"],
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
 						"default_value": "100 %"
 					}
 				},
@@ -260,7 +348,11 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
 						"placeholder": "",
-						"options": ["klein", "mittel", "gross"]
+						"options": [
+							"klein",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"mobile_text_scale": {
@@ -268,7 +360,12 @@
 					"config": {
 						"label": "Textgrösse Mobile",
 						"placeholder": "",
-						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
+						"options": [
+							"Normal",
+							"Klein",
+							"Kleiner",
+							"Sehr klein"
+						]
 					}
 				}
 			},
@@ -296,6 +393,15 @@
 					"config": {
 						"label": "Transparenz überlagerter Kopfzeile",
 						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"overlay_color": {

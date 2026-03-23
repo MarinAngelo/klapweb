@@ -156,7 +156,7 @@
 	}
 
 	$: currentPath = $page.url.pathname;
-	$: hideHeaderOnLoad = prismicTheme?.data?.hide_header_on_load ?? false;
+	$: hideHeaderOnLoad = $theme.hideHeaderOnLoad;
 	$: stickyHeader = prismicTheme?.data?.sticky_header ?? false;
 </script>
 

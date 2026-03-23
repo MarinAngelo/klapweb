@@ -239,15 +239,6 @@
 					]
 				}
 			},
-			"hide_header_on_load": {
-				"type": "Boolean",
-				"config": {
-					"label": "Kopfzeile beim Laden ausblenden",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
 			"sticky_header": {
 				"type": "Boolean",
 				"config": {
