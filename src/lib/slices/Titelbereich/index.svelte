@@ -215,13 +215,8 @@
 			/>
 		{/if}
 	{/if}
-	<Bounded tag="div" yPadding="none" class="relative z-10">
-		<div
-			class="relative flex flex-col items-center justify-center"
-			style="
-				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 100vh;'}
-			"
-		>
+	<div class="absolute inset-0 z-10 flex items-center justify-center">
+		<Bounded tag="div" yPadding="none" class="w-full">
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
 				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
@@ -250,6 +245,9 @@
 								padding: 0 !important;
 							}
 						}
+						.leading-loose.tracking-wider-all * {
+							margin-bottom: 0 !important;
+						}
 					</style>
 					<div
 						bind:this={richTextDiv}
@@ -274,8 +272,8 @@
 					{/if}
 				</div>
 			</div>
-		</div>
-	</Bounded>
+		</Bounded>
+	</div>
 </section>
 
 <style>
