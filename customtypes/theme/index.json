@@ -63,6 +63,14 @@
 					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
 				}
 			},
+			"container_width": {
+				"type": "Select",
+				"config": {
+					"label": "Container-Breite",
+					"placeholder": "Standard (72rem)",
+					"options": ["Schmal", "Normal", "Standard", "Weit", "Sehr weit"]
+				}
+			},
 			"page_link_color": {
 				"type": "Color",
 				"config": {
