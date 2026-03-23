@@ -56,7 +56,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Schriftart",
-						"placeholder": "",
+						"placeholder": "— Keine —",
 						"options": [
 							"Inter",
 							"Roboto",

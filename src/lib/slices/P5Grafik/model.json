@@ -133,7 +133,7 @@
           "type": "Select",
           "config": {
             "label": "Schriftart",
-            "placeholder": "",
+            "placeholder": "— Keine —",
             "options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
           }
         },
