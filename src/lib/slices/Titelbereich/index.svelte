@@ -162,6 +162,7 @@
 <section
 	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
+	data-slice-type={slice.slice_type}
 	style="color: {color};
 		height: {$bannerHeight};
 		font-family: {('font' in slice.primary &&

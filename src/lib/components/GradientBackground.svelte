@@ -27,4 +27,4 @@
 			: fallback;
 </script>
 
-<div class="absolute inset-0" style="background: {value};" aria-hidden="true"></div>
+<div class="absolute inset-0" data-gradient-bg style="background: {value};" aria-hidden="true"></div>
