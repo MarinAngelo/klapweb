@@ -968,7 +968,31 @@ interface ThemeDocumentData {
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>; /**
+	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
+
+	/**
+	 * Kopfzeile beim Laden ausblenden field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.hide_header_on_load
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
+
+	/**
+	 * Kopfzeile fixiert (Sticky) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.sticky_header
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	sticky_header: prismic.BooleanField; /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -2475,17 +2499,39 @@ export interface HeroSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Hintergrundfarbe field in *Titelbereich → Standard → Primary*
+	 * Schriftart field in *Titelbereich → Standard → Primary*
 	 *
-	 * - **Field Type**: Color
-	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
-	 * - **API ID Path**: hero.default.primary.bg_color
-	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: hero.default.primary.preset_font
+	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
-	bg_color: prismic.ColorField;
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
 
 	/**
-	 * Schriftart field in *Titelbereich → Standard → Primary*
+	 * Eigene Schriftart field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
@@ -2565,6 +2611,101 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	backgroundImage: prismic.ImageField<'mobile'>;
+
+	/**
+	 * Hintergrundfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Verlauf Startfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.gradient_color_1
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	gradient_color_1: prismic.ColorField;
+
+	/**
+	 * Startfarbe Position (%) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: hero.default.primary.gradient_stop_1
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_stop_1: prismic.NumberField;
+
+	/**
+	 * Startfarbe Transparenz (0–1) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1
+	 * - **API ID Path**: hero.default.primary.gradient_opacity_1
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_opacity_1: prismic.NumberField;
+
+	/**
+	 * Verlauf Endfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.gradient_color_2
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	gradient_color_2: prismic.ColorField;
+
+	/**
+	 * Endfarbe Position (%) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: hero.default.primary.gradient_stop_2
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_stop_2: prismic.NumberField;
+
+	/**
+	 * Endfarbe Transparenz (0–1) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1
+	 * - **API ID Path**: hero.default.primary.gradient_opacity_2
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_opacity_2: prismic.NumberField;
+
+	/**
+	 * Verlauf Form field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Linear
+	 * - **API ID Path**: hero.default.primary.gradient_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	gradient_type: prismic.SelectField<'Linear' | 'Radial', 'filled'>;
+
+	/**
+	 * Verlauf Richtung (nur Linear) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: 180°
+	 * - **API ID Path**: hero.default.primary.gradient_angle
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	gradient_angle: prismic.SelectField<
+		'0°' | '45°' | '90°' | '135°' | '180°' | '225°' | '270°' | '315°',
+		'filled'
+	>;
 
 	/**
 	 * Bild Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
@@ -3556,6 +3697,38 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 
 	/**
 	 * Schriftart field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.preset_font
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
+
+	/**
+	 * Eigene Schriftart field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*

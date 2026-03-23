@@ -81,6 +81,64 @@ span.rt-h4 { @apply block text-xl font-semibold mb-2 mt-4; color: var(--page-col
 span.rt-h5 { @apply block text-lg font-semibold mb-2 mt-3; color: var(--page-color); }
 span.rt-h6 { @apply block text-base font-semibold mb-1 mt-2; color: var(--page-color); }
 
+/* Multi-Label-System: kombinierbare Einzeleigenschaften */
+span.rt-size-xs     { font-size: clamp(0.55rem, 1.2vw,  0.65rem); }
+span.rt-size-sm     { font-size: clamp(0.7rem,  1.8vw,  0.85rem); }
+span.rt-size-lg     { font-size: clamp(1rem,    2.5vw,  1.35rem); }
+span.rt-size-xl     { font-size: clamp(1.1rem,  3vw,    1.75rem); }
+span.rt-size-2xl    { font-size: clamp(1.35rem, 3.5vw,  2.25rem); }
+span.rt-size-3xl    { font-size: clamp(1.6rem,  4.5vw,  3rem);    }
+span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);     }
+span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
+span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
+
+/* Kombinations-Labels */
+/* Display — 4rem desktop, 3rem mobil */
+span.rt-display-thin  { font-size: clamp(3rem, 6vw, 4rem); font-weight: 100; }
+span.rt-display-light { font-size: clamp(3rem, 6vw, 4rem); font-weight: 300; }
+span.rt-display-bold  { font-size: clamp(3rem, 6vw, 4rem); font-weight: 700; }
+span.rt-display-black { font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; }
+
+/* Giant — 5.5rem desktop, 2.25rem mobil */
+span.rt-giant-thin    { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 100; }
+span.rt-giant-light   { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 300; }
+span.rt-giant-bold    { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 700; }
+
+/* Hero — 7rem desktop, 2.75rem mobil */
+span.rt-hero-thin     { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 100; }
+span.rt-hero-light    { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 300; }
+span.rt-hero-bold     { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 700; }
+
+/* Subtitle */
+span.rt-subtitle      { font-size: clamp(1.1rem, 3vw, 1.75rem); font-weight: 300; letter-spacing: 0.05em; }
+span.rt-subtitle-bold { font-size: clamp(1.1rem, 3vw, 1.75rem); font-weight: 600; }
+
+/* Kicker / Overline */
+span.rt-kicker        { font-size: clamp(0.7rem, 1.8vw, 0.85rem); font-weight: 500; text-transform: uppercase; letter-spacing: 0.25em; }
+span.rt-overline      { font-size: clamp(0.7rem, 1.8vw, 0.85rem); font-weight: 300; text-transform: uppercase; letter-spacing: 0.15em; }
+
+span.rt-weight-thin     { font-weight: 100; }
+span.rt-weight-light    { font-weight: 300; }
+span.rt-weight-medium   { font-weight: 500; }
+span.rt-weight-semibold { font-weight: 600; }
+span.rt-weight-black    { font-weight: 900; }
+
+span.rt-tracking-tight   { letter-spacing: -0.04em; }
+span.rt-tracking-wide    { letter-spacing: 0.1em; }
+span.rt-tracking-wider   { letter-spacing: 0.2em; }
+span.rt-tracking-widest  { letter-spacing: 0.4em; }
+
+span.rt-leading-tight { line-height: 1; }
+span.rt-leading-loose { line-height: 2; }
+
+span.rt-uppercase  { text-transform: uppercase; }
+span.rt-lowercase  { text-transform: lowercase; }
+span.rt-capitalize { text-transform: capitalize; }
+
+span.rt-underline { text-decoration: underline; }
+span.rt-block     { display: block; }
+span.rt-muted     { opacity: 0.55; }
+
 /* Label "kompakt": Paragraf-Abstand entfernen (z.B. für Adressen) */
 p:has(span.rt-kompakt) {
   margin-bottom: 0 !important;

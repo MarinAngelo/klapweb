@@ -14,7 +14,6 @@
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
-	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
 	import { reveal } from '$lib/actions/reveal';
 	import GradientBackground from '$lib/components/GradientBackground.svelte';
 	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
@@ -129,11 +128,6 @@
 		mounted = true;
 	});
 
-	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,
-	// soll unsere RichTextLabel Komponente genutzt werden.
-	const components = {
-		label: RichTextLabels
-	};
 
 	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
 	let sectionEl: HTMLElement;
@@ -266,7 +260,7 @@
 					>
 						{#if 'text' in slice.primary}
 							<div style="--page-color: {color};">
-								<PrismicRichText field={slice.primary.text} {components} />
+								<PrismicRichText field={slice.primary.text} />
 							</div>
 						{/if}
 					</div>
