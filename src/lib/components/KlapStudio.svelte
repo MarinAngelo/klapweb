@@ -28,9 +28,17 @@
 				document.documentElement.style.setProperty('--page-color', textColor);
 				sliceBgColor = bg;
 				sliceTextColor = text;
-				activeSlice.el.style.setProperty('background-color', bg, 'important');
+				const bgTarget = activeSlice.innerEl ?? activeSlice.el;
+				bgTarget.style.setProperty('background-color', bg, 'important');
 				activeSlice.el.style.setProperty('color', text, 'important');
 				activeSlice.el.style.setProperty('--page-color', text, 'important');
+				if (activeSlice.innerEl) {
+					activeSlice.innerEl.style.setProperty('color', text, 'important');
+					activeSlice.innerEl.style.setProperty('--page-color', text, 'important');
+				}
+				for (const { el } of activeSlice.pageColorEls) {
+					el.style.setProperty('--page-color', text, 'important');
+				}
 			} else {
 				// Seiten-Modus: wie bisher
 				bgColor = bg;
@@ -97,8 +105,11 @@
 		label: string;
 		origStyle: string;
 		origGradientStyle: string;
+		innerEl: HTMLElement | null;
+		origInnerStyle: string;
 		btnEl: HTMLElement | null;
 		origBtnStyle: string;
+		pageColorEls: Array<{ el: HTMLElement; origCss: string }>;
 	};
 
 	let sliceList: SliceEntry[] = [];
@@ -217,8 +228,11 @@
 				label: formatSliceType(type) + suffix,
 				origStyle: '',
 				origGradientStyle: '',
+				innerEl: null,
+				origInnerStyle: '',
 				btnEl: el.querySelector<HTMLElement>('.button-prismic-link'),
-				origBtnStyle: ''
+				origBtnStyle: '',
+				pageColorEls: []
 			};
 		});
 		// If the previously active slice is no longer in DOM, reset
@@ -241,6 +255,11 @@
 		entry.origStyle = entry.el.style.cssText;
 
 		const innerStyled = entry.el.querySelector<HTMLElement>('[style*="background-color"]');
+		entry.innerEl = innerStyled ?? null;
+		entry.origInnerStyle = entry.innerEl?.style.cssText ?? '';
+		entry.pageColorEls = Array.from(
+			entry.el.querySelectorAll<HTMLElement>('[style*="--page-color"]')
+		).map((el) => ({ el, origCss: el.style.cssText }));
 		const computed = getComputedStyle(innerStyled ?? entry.el);
 		sliceBgColor = rgbToHex(computed.backgroundColor) ?? bgColor;
 		sliceTextColor = rgbToHex(computed.color) ?? textColor;
@@ -275,7 +294,11 @@
 
 	function restoreSlice(entry: SliceEntry) {
 		entry.el.style.cssText = entry.origStyle;
+		if (entry.innerEl) entry.innerEl.style.cssText = entry.origInnerStyle;
 		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
+		for (const { el, origCss } of entry.pageColorEls) {
+			el.style.cssText = origCss;
+		}
 		const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 		if (gEl) gEl.style.cssText = entry.origGradientStyle;
 		gradientEl = null;
@@ -284,15 +307,22 @@
 
 	function setSliceBg(e: Event) {
 		sliceBgColor = (e.target as HTMLInputElement).value;
-		if (activeSlice)
-			activeSlice.el.style.setProperty('background-color', sliceBgColor, 'important');
+		if (!activeSlice) return;
+		const bgTarget = activeSlice.innerEl ?? activeSlice.el;
+		bgTarget.style.setProperty('background-color', sliceBgColor, 'important');
 	}
 
 	function setSliceText(e: Event) {
 		sliceTextColor = (e.target as HTMLInputElement).value;
-		if (activeSlice) {
-			activeSlice.el.style.setProperty('color', sliceTextColor, 'important');
-			activeSlice.el.style.setProperty('--page-color', sliceTextColor, 'important');
+		if (!activeSlice) return;
+		activeSlice.el.style.setProperty('color', sliceTextColor, 'important');
+		activeSlice.el.style.setProperty('--page-color', sliceTextColor, 'important');
+		if (activeSlice.innerEl) {
+			activeSlice.innerEl.style.setProperty('color', sliceTextColor, 'important');
+			activeSlice.innerEl.style.setProperty('--page-color', sliceTextColor, 'important');
+		}
+		for (const { el } of activeSlice.pageColorEls) {
+			el.style.setProperty('--page-color', sliceTextColor, 'important');
 		}
 	}
 
