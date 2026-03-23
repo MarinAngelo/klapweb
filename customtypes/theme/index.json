@@ -181,6 +181,13 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"header_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"header_link_color": {
 				"type": "Color",
 				"config": {

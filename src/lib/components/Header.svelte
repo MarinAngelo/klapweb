@@ -24,6 +24,7 @@
 	let observer: ResizeObserver;
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 	let revealRafId: number;
+	let bgFadeRafId: number;
 
 	function handleRevealScroll() {
 		cancelAnimationFrame(revealRafId);
@@ -31,6 +32,29 @@
 			if (!headerEl) return;
 			headerEl.style.transition = 'opacity 1.2s ease';
 			headerEl.style.opacity = '1';
+		});
+	}
+
+	function handleBgFadeScroll() {
+		cancelAnimationFrame(bgFadeRafId);
+		bgFadeRafId = requestAnimationFrame(() => {
+			if (!headerEl || !stickyHeader || $isMenuOpen) return;
+			const heroEl = document.querySelector(
+				'[data-slice-type="hero"], [data-slice-type="p5_grafik"]'
+			) as HTMLElement | null;
+			const scrollY = window.scrollY;
+			const delay = window.innerHeight * 0.5;
+			let opacity: number;
+			if (scrollY < delay) {
+				opacity = headerBgOpacity;
+			} else {
+				const heroBottom = heroEl
+					? heroEl.offsetTop + heroEl.offsetHeight
+					: window.innerHeight;
+				const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
+				opacity = headerBgOpacity + (1 - headerBgOpacity) * progress;
+			}
+			headerEl.style.backgroundColor = hexToRgba(headerBgColor, opacity);
 		});
 	}
 
@@ -99,6 +123,9 @@
 		// Zusätzlicher Resize Listener für Desktop
 		window.addEventListener('resize', updateHeaderHeight);
 
+		// Hintergrund-Opacity beim Scrollen einblenden (nur sticky)
+		window.addEventListener('scroll', handleBgFadeScroll, { passive: true });
+
 		// Kopfzeile beim Laden ausblenden, erst beim Scrollen einblenden
 		if (hideHeaderOnLoad && headerEl) {
 			// transition-all sofort deaktivieren, damit opacity snap ohne Animation
@@ -116,7 +143,9 @@
 			if (observer) observer.disconnect();
 			headerHeight.set(0);
 			window.removeEventListener('scroll', handleRevealScroll);
+			window.removeEventListener('scroll', handleBgFadeScroll);
 			cancelAnimationFrame(revealRafId);
+			cancelAnimationFrame(bgFadeRafId);
 		};
 	});
 
