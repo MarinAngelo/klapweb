@@ -138,6 +138,78 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
+				"gradient_color_1": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Startfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Position (%)",
+						"placeholder": "0"
+					}
+				},
+				"gradient_opacity_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_color_2": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Endfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Position (%)",
+						"placeholder": "100"
+					}
+				},
+				"gradient_opacity_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_type": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Form",
+						"placeholder": "",
+						"options": [
+							"Linear",
+							"Radial"
+						],
+						"default_value": "Linear"
+					}
+				},
+				"gradient_angle": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Richtung (nur Linear)",
+						"placeholder": "",
+						"options": [
+							"0°",
+							"45°",
+							"90°",
+							"135°",
+							"180°",
+							"225°",
+							"270°",
+							"315°"
+						],
+						"default_value": "180°"
+					}
+				},
 				"overlay_color": {
 					"type": "Color",
 					"config": {
