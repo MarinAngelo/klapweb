@@ -120,6 +120,33 @@
 	let gradType = 'Linear';
 	let gradAngle = '180deg';
 
+	// Schriftart-Cycle (nur Titelbereich / hero)
+	const studioFontNames = ['Inter', 'Roboto', 'Open Sans', 'Montserrat', 'Poppins', 'Lato', 'Raleway', 'Oswald', 'Nunito', 'DM Sans', 'Outfit', 'Plus Jakarta Sans', 'Josefin Sans', 'Quicksand', 'Cabin', 'Playfair Display', 'Merriweather', 'Lora', 'Cormorant Garamond', 'Crimson Pro', 'Nunito Sans'];
+	const studioFontUrls: Record<string, string> = {
+		'Inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap',
+		'Roboto': 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap',
+		'Open Sans': 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..700&display=swap',
+		'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300..700&display=swap',
+		'Poppins': 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap',
+		'Lato': 'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
+		'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@300..700&display=swap',
+		'Oswald': 'https://fonts.googleapis.com/css2?family=Oswald:wght@300..700&display=swap',
+		'Nunito': 'https://fonts.googleapis.com/css2?family=Nunito:wght@300..700&display=swap',
+		'DM Sans': 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300..700&display=swap',
+		'Outfit': 'https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&display=swap',
+		'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..700&display=swap',
+		'Josefin Sans': 'https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&display=swap',
+		'Quicksand': 'https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap',
+		'Cabin': 'https://fonts.googleapis.com/css2?family=Cabin:wght@400;700&display=swap',
+		'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap',
+		'Merriweather': 'https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap',
+		'Lora': 'https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap',
+		'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&display=swap',
+		'Crimson Pro': 'https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300..700&display=swap',
+		'Nunito Sans': 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300..700&display=swap'
+	};
+	let currentFontIndex = -1;
+
 	$: isHeroSlice = activeSlice?.el.dataset.sliceType === 'hero';
 
 	function parseRgba(str: string): { hex: string; opacity: number } | null {
@@ -182,6 +209,20 @@
 				: `linear-gradient(${gradAngle}, ${r1} ${gradStop1}%, ${r2} ${gradStop2}%)`;
 	}
 
+	function cycleFont(dir: number) {
+		if (!activeSlice) return;
+		currentFontIndex = (currentFontIndex + dir + studioFontNames.length) % studioFontNames.length;
+		const name = studioFontNames[currentFontIndex];
+		const url = studioFontUrls[name];
+		if (url && !document.querySelector(`link[href="${url}"]`)) {
+			const link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = url;
+			document.head.appendChild(link);
+		}
+		activeSlice.el.style.fontFamily = `'${name}'`;
+	}
+
 	function formatSliceType(type: string): string {
 		return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 	}
@@ -230,6 +271,8 @@
 			const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 			entry.origGradientStyle = gEl?.style.cssText ?? '';
 			initGradientFromEl(entry.el);
+			const cf = entry.el.style.fontFamily.replace(/['"]/g, '').trim();
+			currentFontIndex = studioFontNames.indexOf(cf);
 		}
 
 		if (entry.btnEl) {
@@ -256,6 +299,7 @@
 		const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 		if (gEl) gEl.style.cssText = entry.origGradientStyle;
 		gradientEl = null;
+		currentFontIndex = -1;
 	}
 
 	function setSliceBg(e: Event) {
@@ -497,6 +541,14 @@
 			{/if}
 
 		{#if isHeroSlice}
+			<div class="divider"></div>
+			<div class="section-label">Schriftart</div>
+			<div class="row font-cycle-row">
+				<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
+				<span class="font-cycle-name">{currentFontIndex >= 0 ? studioFontNames[currentFontIndex] : '—'}</span>
+				<button class="font-cycle-btn" on:click={() => cycleFont(1)}>&#8594;</button>
+			</div>
+
 			<div class="divider"></div>
 			<div class="section-label">Verlauf</div>
 
@@ -787,5 +839,35 @@
 	.studio-select option {
 		background: #1a1a20;
 		color: #fff;
+	}
+
+	.font-cycle-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 6px;
+	}
+	.font-cycle-btn {
+		background: #2a2a32;
+		border: 1px solid #444;
+		color: #e0e0e0;
+		border-radius: 4px;
+		padding: 2px 8px;
+		cursor: pointer;
+		font-size: 14px;
+		line-height: 1.6;
+		flex-shrink: 0;
+	}
+	.font-cycle-btn:hover {
+		background: #3a3a44;
+	}
+	.font-cycle-name {
+		flex: 1;
+		text-align: center;
+		color: #fff;
+		font-size: 12px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>

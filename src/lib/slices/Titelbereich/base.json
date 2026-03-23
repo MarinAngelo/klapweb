@@ -49,10 +49,18 @@
 						"placeholder": ""
 					}
 				},
+				"preset_font": {
+					"type": "Select",
+					"config": {
+						"label": "Schriftart",
+						"placeholder": "",
+						"options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
+					}
+				},
 				"font": {
 					"type": "Link",
 					"config": {
-						"label": "Schriftart",
+						"label": "Eigene Schriftart",
 						"select": "document",
 						"repeat": false,
 						"customtypes": [
