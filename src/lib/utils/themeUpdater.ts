@@ -1,5 +1,6 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
+import { presetFontUrls } from '$lib/utils/presetFonts';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -41,6 +42,7 @@ interface PrismicThemeData {
 	button_padding_y?: number;
 	button_padding_x?: number;
 	container_width?: string;
+	preset_font?: string;
 }
 
 interface ThemeUpdateData {
@@ -70,7 +72,10 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
-	const pageFont = prismicThemeData.page_font?.data?.name || getCssVar('--page-font');
+	const pageFont =
+		prismicThemeData.page_font?.data?.name ||
+		prismicThemeData.preset_font ||
+		getCssVar('--page-font');
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColor =
 		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
@@ -197,5 +202,18 @@ export function updateTheme(data: ThemeUpdateData): void {
 		};
 		const containerWidth = containerWidthMap[prismicThemeData.container_width ?? ''] ?? '72rem';
 		root.style.setProperty('--container-max-width', containerWidth);
+
+		const presetFontUrl = prismicThemeData.preset_font
+			? (presetFontUrls[prismicThemeData.preset_font] ?? null)
+			: null;
+		const existingLink = document.querySelector('link[data-theme-preset-font]');
+		if (existingLink) existingLink.remove();
+		if (presetFontUrl && !prismicThemeData.page_font?.data?.name) {
+			const link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = presetFontUrl;
+			link.dataset.themePresetFont = '1';
+			document.head.appendChild(link);
+		}
 	}
 }

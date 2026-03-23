@@ -47,6 +47,14 @@
 					]
 				}
 			},
+			"preset_font": {
+				"type": "Select",
+				"config": {
+					"label": "Vorinstallierte Hauptschrift",
+					"placeholder": "— Keine —",
+					"options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
+				}
+			},
 			"base_font_size_mobile": {
 				"type": "Select",
 				"config": {
