@@ -4,6 +4,7 @@
 	import { textBgColorSketch } from '$lib/sketches/text-bg-color';
 	import { theme } from '$lib/stores/theme';
 	import { hexToRgba } from '$lib/utils/hexToRgba';
+	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
 
 	export let open = false;
 
@@ -121,33 +122,10 @@
 	let gradAngle = '180deg';
 
 	// Schriftart-Cycle (nur Titelbereich / hero)
-	const studioFontNames = ['Inter', 'Roboto', 'Open Sans', 'Montserrat', 'Poppins', 'Lato', 'Raleway', 'Oswald', 'Nunito', 'DM Sans', 'Outfit', 'Plus Jakarta Sans', 'Josefin Sans', 'Quicksand', 'Cabin', 'Playfair Display', 'Merriweather', 'Lora', 'Cormorant Garamond', 'Crimson Pro', 'Nunito Sans'];
-	const studioFontUrls: Record<string, string> = {
-		'Inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap',
-		'Roboto': 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap',
-		'Open Sans': 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..700&display=swap',
-		'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300..700&display=swap',
-		'Poppins': 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap',
-		'Lato': 'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
-		'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@300..700&display=swap',
-		'Oswald': 'https://fonts.googleapis.com/css2?family=Oswald:wght@300..700&display=swap',
-		'Nunito': 'https://fonts.googleapis.com/css2?family=Nunito:wght@300..700&display=swap',
-		'DM Sans': 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300..700&display=swap',
-		'Outfit': 'https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&display=swap',
-		'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..700&display=swap',
-		'Josefin Sans': 'https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&display=swap',
-		'Quicksand': 'https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap',
-		'Cabin': 'https://fonts.googleapis.com/css2?family=Cabin:wght@400;700&display=swap',
-		'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap',
-		'Merriweather': 'https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap',
-		'Lora': 'https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap',
-		'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;700&display=swap',
-		'Crimson Pro': 'https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300..700&display=swap',
-		'Nunito Sans': 'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300..700&display=swap'
-	};
 	let currentFontIndex = -1;
 
 	$: isHeroSlice = activeSlice?.el.dataset.sliceType === 'hero';
+	$: hasPresetFont = ['hero', 'p5_grafik'].includes(activeSlice?.el.dataset.sliceType ?? '');
 
 	function parseRgba(str: string): { hex: string; opacity: number } | null {
 		const m = str.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
@@ -211,9 +189,9 @@
 
 	function cycleFont(dir: number) {
 		if (!activeSlice) return;
-		currentFontIndex = (currentFontIndex + dir + studioFontNames.length) % studioFontNames.length;
-		const name = studioFontNames[currentFontIndex];
-		const url = studioFontUrls[name];
+		currentFontIndex = (currentFontIndex + dir + presetFontNames.length) % presetFontNames.length;
+		const name = presetFontNames[currentFontIndex];
+		const url = presetFontUrls[name];
 		if (url && !document.querySelector(`link[href="${url}"]`)) {
 			const link = document.createElement('link');
 			link.rel = 'stylesheet';
@@ -267,12 +245,14 @@
 		sliceBgColor = rgbToHex(computed.backgroundColor) ?? bgColor;
 		sliceTextColor = rgbToHex(computed.color) ?? textColor;
 
+		if (['hero', 'p5_grafik'].includes(entry.el.dataset.sliceType ?? '')) {
+			const cf = entry.el.style.fontFamily.replace(/['"]/g, '').trim();
+			currentFontIndex = presetFontNames.indexOf(cf);
+		}
 		if (entry.el.dataset.sliceType === 'hero') {
 			const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 			entry.origGradientStyle = gEl?.style.cssText ?? '';
 			initGradientFromEl(entry.el);
-			const cf = entry.el.style.fontFamily.replace(/['"]/g, '').trim();
-			currentFontIndex = studioFontNames.indexOf(cf);
 		}
 
 		if (entry.btnEl) {
@@ -540,15 +520,17 @@
 				</label>
 			{/if}
 
-		{#if isHeroSlice}
+		{#if hasPresetFont}
 			<div class="divider"></div>
 			<div class="section-label">Schriftart</div>
 			<div class="row font-cycle-row">
 				<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
-				<span class="font-cycle-name">{currentFontIndex >= 0 ? studioFontNames[currentFontIndex] : '—'}</span>
+				<span class="font-cycle-name">{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}</span>
 				<button class="font-cycle-btn" on:click={() => cycleFont(1)}>&#8594;</button>
 			</div>
+		{/if}
 
+		{#if isHeroSlice}
 			<div class="divider"></div>
 			<div class="section-label">Verlauf</div>
 

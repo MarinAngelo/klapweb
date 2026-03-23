@@ -15,6 +15,7 @@
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { getSketch } from '$lib/sketches';
+	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
 
 	export let slice: any;
 	export let slices: any = {};
@@ -23,6 +24,9 @@
 
 	const isTitelbereich = slice.variation === 'mitTitelbereich';
 	const p = slice.primary;
+
+	$: presetFont = (p.preset_font as string | null) || null;
+	$: presetFontUrl = presetFont ? presetFontUrls[presetFont] ?? null : null;
 
 	// sketchParams wird reaktiv aktualisiert (Svelte $:).
 	// Da es ein Objekt ist, liest der Sketch in draw() immer die neusten Werte —
@@ -106,6 +110,12 @@
 	});
 </script>
 
+<svelte:head>
+	{#if presetFontUrl}
+		<link rel="stylesheet" href={presetFontUrl} />
+	{/if}
+</svelte:head>
+
 {#if isTitelbereich}
 	<!-- ── Titelbereich-Variation ── -->
 	<!-- overflow-visible: identisch zu Titelbereich, damit margin-top-Trick für banner_overlap funktioniert -->
@@ -117,7 +127,7 @@
 			background-color: {canvasBg};
 			color: {color};
 			height: {$bannerHeight};
-			font-family: {isFilled.contentRelationship(p.font) && p.font.data?.name ? p.font.data.name : 'inherit'};
+			font-family: {presetFont ? `'${presetFont}'` : (isFilled.contentRelationship(p.font) && p.font.data?.name ? p.font.data.name : 'inherit')};
 		"
 	>
 		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
