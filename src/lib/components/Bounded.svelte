@@ -16,6 +16,7 @@
 	export let animationOptions: RevealOptions = {};
 
 	export let fullWidth: boolean = false;
+	export let fullHeight: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
 	// CMS-Label → Tailwind-Klassen
@@ -66,10 +67,13 @@
 	use:reveal={finalOptions}
 	data-collapsible={collapsible}
 	{...$$restProps}
-	class={clsx('px-6', specialLayout && isMobile && 'px-0', topClass, bottomClass, $$props.class)}
+	class={clsx('px-6', specialLayout && isMobile && 'px-0', topClass, bottomClass, fullHeight && 'flex flex-col', $$props.class)}
 >
 	<div
 		class="mx-auto w-full relative overflow-visible"
+		class:flex-1={fullHeight}
+		class:flex={fullHeight}
+		class:flex-col={fullHeight}
 		style:max-width={!fullWidth ? 'var(--container-max-width, 72rem)' : undefined}
 	>
 		<slot />

@@ -19,11 +19,12 @@
 	export let noRoundMobile: boolean = false;
 	export let textCenterV: boolean = false;
 	export let textCenterH: boolean = false;
+	export let fullscreen: boolean = false;
 
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
 
-<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2">
+<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 {fullscreen ? 'h-full' : ''}">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div

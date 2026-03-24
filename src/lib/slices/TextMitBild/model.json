@@ -146,6 +146,15 @@
 						"default_value": false
 					}
 				},
+				"fullscreen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbild (100vh)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -303,6 +312,15 @@
 					"type": "Boolean",
 					"config": {
 						"label": "Schrift horizontal zentrieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"fullscreen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbild (100vh)",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -478,6 +496,15 @@
 					"type": "Boolean",
 					"config": {
 						"label": "Schrift horizontal zentrieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"fullscreen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbild (100vh)",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
