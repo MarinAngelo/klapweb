@@ -110,6 +110,8 @@
 		btnEl: HTMLElement | null;
 		origBtnStyle: string;
 		pageColorEls: Array<{ el: HTMLElement; origCss: string }>;
+		textColEl: HTMLElement | null;
+		origTextColStyle: string;
 	};
 
 	let sliceList: SliceEntry[] = [];
@@ -137,6 +139,11 @@
 
 	$: isHeroSlice = activeSlice?.el.dataset.sliceType === 'hero';
 	$: hasPresetFont = ['hero', 'p5_grafik'].includes(activeSlice?.el.dataset.sliceType ?? '');
+	$: isAdresseUndMap = activeSlice?.el.dataset.sliceType === 'adresse_und_map';
+
+	// Zoom-State (nur AdresseUndMap)
+	let zoomDesktop = 100;
+	let zoomMobile = 100;
 
 	function parseRgba(str: string): { hex: string; opacity: number } | null {
 		const m = str.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
@@ -232,7 +239,9 @@
 				origInnerStyle: '',
 				btnEl: el.querySelector<HTMLElement>('.button-prismic-link'),
 				origBtnStyle: '',
-				pageColorEls: []
+				pageColorEls: [],
+				textColEl: null,
+				origTextColStyle: ''
 			};
 		});
 		// If the previously active slice is no longer in DOM, reset
@@ -274,6 +283,15 @@
 			initGradientFromEl(entry.el);
 		}
 
+		if (entry.el.dataset.sliceType === 'adresse_und_map') {
+			entry.textColEl = entry.el.querySelector<HTMLElement>('.text-col');
+			entry.origTextColStyle = entry.textColEl?.style.cssText ?? '';
+			const d = parseFloat(entry.textColEl?.style.getPropertyValue('--text-zoom-desktop') ?? '1');
+			const m = parseFloat(entry.textColEl?.style.getPropertyValue('--text-zoom-mobile') ?? '1');
+			zoomDesktop = Math.round((isNaN(d) ? 1 : d) * 100);
+			zoomMobile = Math.round((isNaN(m) ? 1 : m) * 100);
+		}
+
 		if (entry.btnEl) {
 			entry.origBtnStyle = entry.btnEl.style.cssText;
 			const bc = getComputedStyle(entry.btnEl);
@@ -296,6 +314,7 @@
 		entry.el.style.cssText = entry.origStyle;
 		if (entry.innerEl) entry.innerEl.style.cssText = entry.origInnerStyle;
 		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
+		if (entry.textColEl) entry.textColEl.style.cssText = entry.origTextColStyle;
 		for (const { el, origCss } of entry.pageColorEls) {
 			el.style.cssText = origCss;
 		}
@@ -324,6 +343,18 @@
 		for (const { el } of activeSlice.pageColorEls) {
 			el.style.setProperty('--page-color', sliceTextColor, 'important');
 		}
+	}
+
+	function setZoomDesktop(e: Event) {
+		zoomDesktop = parseInt((e.target as HTMLInputElement).value);
+		if (activeSlice?.textColEl)
+			activeSlice.textColEl.style.setProperty('--text-zoom-desktop', String(zoomDesktop / 100));
+	}
+
+	function setZoomMobile(e: Event) {
+		zoomMobile = parseInt((e.target as HTMLInputElement).value);
+		if (activeSlice?.textColEl)
+			activeSlice.textColEl.style.setProperty('--text-zoom-mobile', String(zoomMobile / 100));
 	}
 
 	function setBtnColor(e: Event) {
@@ -621,6 +652,19 @@
 				<input type="range" min="0" max="100" step="1" bind:value={gradStop2} on:input={reapplyGradient} />
 			</label>
 		{/if}
+	{/if}
+
+	{#if isAdresseUndMap}
+		<div class="divider"></div>
+		<div class="section-label">Schriftgrösse</div>
+		<label class="row">
+			<span>Desktop ({zoomDesktop}%)</span>
+			<input type="range" min="50" max="300" step="5" value={zoomDesktop} on:input={setZoomDesktop} />
+		</label>
+		<label class="row">
+			<span>Mobile ({zoomMobile}%)</span>
+			<input type="range" min="50" max="300" step="5" value={zoomMobile} on:input={setZoomMobile} />
+		</label>
 	{/if}
 	</aside>
 {/if}

@@ -222,6 +222,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
@@ -701,7 +702,7 @@ interface ThemeDocumentData {
 	theme_name: prismic.KeyTextField;
 
 	/**
-	 * Textfarbe field in *Design Vorlage*
+	 * Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -970,7 +971,7 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
-	 * Textfarbe field in *Design Vorlage*
+	 * Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -1046,7 +1047,7 @@ interface ThemeDocumentData {
 	footer_bg_color: prismic.ColorField;
 
 	/**
-	 * Textfarbe field in *Design Vorlage*
+	 * Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -1573,6 +1574,176 @@ type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
+
+/**
+ * Primary content in *AdresseUndMap → Standard → Primary*
+ */
+export interface AdresseUndMapSliceDefaultPrimary {
+	/**
+	 * Adresse / Text field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: adresse_und_map.default.primary.text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Google Maps Embed-URL field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: https://www.google.com/maps/embed?pb=...
+	 * - **API ID Path**: adresse_und_map.default.primary.map_url
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	map_url: prismic.KeyTextField;
+
+	/**
+	 * Kartenhöhe (px) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 400
+	 * - **API ID Path**: adresse_und_map.default.primary.map_height
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	map_height: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: adresse_und_map.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: adresse_und_map.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Abstand oben / unten gleich field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: adresse_und_map.default.primary.y_padding_same
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	y_padding_same: prismic.BooleanField;
+
+	/**
+	 * Vertikaler Abstand field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: adresse_und_map.default.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Karte links field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.map_left
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	map_left: prismic.BooleanField;
+
+	/**
+	 * Vollbreite auf Mobile field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Standard variation for AdresseUndMap Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AdresseUndMapSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AdresseUndMapSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *AdresseUndMap*
+ */
+type AdresseUndMapSliceVariation = AdresseUndMapSliceDefault;
+
+/**
+ * AdresseUndMap Shared Slice
+ *
+ * - **API ID**: `adresse_und_map`
+ * - **Description**: AdresseUndMap
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AdresseUndMapSlice = prismic.SharedSlice<
+	'adresse_und_map',
+	AdresseUndMapSliceVariation
+>;
 
 /**
  * Item in *Anleitung → Default → Primary → Schritte*
@@ -2458,7 +2629,7 @@ export interface HeroSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Textfarbe field in *Titelbereich → Standard → Primary*
+	 * Schriftfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -3677,7 +3848,7 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Textfarbe field in *P5Grafik → Mit Titelbereich → Primary*
+	 * Schriftfarbe field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -4838,6 +5009,28 @@ export interface TextWithImageSliceDefaultPrimary {
 	mobile_vollbreite: prismic.BooleanField;
 
 	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4967,6 +5160,28 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *TextMitBild → Mit Schaltfläche → Primary*
@@ -5112,6 +5327,28 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	mobile_vollbreite: prismic.BooleanField;
 
 	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild links → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5230,6 +5467,10 @@ declare module '@prismicio/client' {
 			AccordionSliceVariation,
 			AccordionSliceDefault,
 			AccordionSliceBildUndText,
+			AdresseUndMapSlice,
+			AdresseUndMapSliceDefaultPrimary,
+			AdresseUndMapSliceVariation,
+			AdresseUndMapSliceDefault,
 			AnleitungSlice,
 			AnleitungSliceDefaultPrimaryStepsItem,
 			AnleitungSliceDefaultPrimary,
