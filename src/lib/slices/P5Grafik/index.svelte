@@ -201,7 +201,7 @@
 							style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
 						>
 							{#if p.text}
-								<div style="--page-color: {color};">
+								<div style="--page-color: {color}; color: {color};">
 									<PrismicRichText field={p.text} />
 								</div>
 							{/if}

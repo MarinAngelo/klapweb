@@ -261,7 +261,7 @@
 						style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
 					>
 						{#if 'text' in slice.primary}
-							<div style="--page-color: {color};">
+							<div style="--page-color: {color}; color: {color};">
 								<PrismicRichText field={slice.primary.text} />
 							</div>
 						{/if}

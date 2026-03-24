@@ -21,7 +21,7 @@
 <Bounded
 	as="section"
 	class="leading-relaxed {mobileVollbreite ? 'overflow-x-clip' : ''}"
-	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor};"
+	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
