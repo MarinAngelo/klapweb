@@ -35,6 +35,8 @@
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: textCenterV = (slice.primary as any).text_center_v ?? false;
+	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 </script>
 
 <Bounded
@@ -56,6 +58,8 @@
 			imageBgColor={p.bg_color || $theme.pageBgColor}
 			imageRound={p.image_round}
 			{theme}
+			textCenterV={textCenterV}
+			textCenterH={textCenterH}
 		/>
 	</div>
 </Bounded>

@@ -207,7 +207,7 @@
 					<a
 						href={lang === mainLang ? '/' : `/${lang}`}
 						class="mt-6 mb-6 inline-block"
-						style="color: {headerLinkColor};"
+						style="color: {headerColor};"
 					>
 						<span
 							class="text-xl font-semibold tracking-tight"
