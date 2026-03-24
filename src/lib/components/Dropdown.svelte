@@ -13,11 +13,23 @@
 
 	const dispatch = createEventDispatcher();
 	let isOpen = false;
+	let dropdownBg = '';
+
+	function resolveHeaderBg(el: HTMLElement): string {
+		const header = el.closest('header');
+		if (header) {
+			const c = getComputedStyle(header).backgroundColor;
+			if (c && c !== 'rgba(0, 0, 0, 0)') return c;
+		}
+		return headerBgColor;
+	}
+
+	let containerEl: HTMLElement;
 
 	function toggleDropdown() {
 		if (!isOpen && typeof window !== 'undefined') {
-			// Alle anderen Dropdowns schließen
 			window.dispatchEvent(new CustomEvent('close-dropdown'));
+			dropdownBg = resolveHeaderBg(containerEl);
 		}
 		isOpen = !isOpen;
 	}
@@ -43,6 +55,7 @@
 </script>
 
 <div
+	bind:this={containerEl}
 	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 	on:mouseleave={closeDropdown}
@@ -52,7 +65,7 @@
 	{#if isOpen}
 		<ul
 			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded pt-1 pb-4"
-			style="background-color: {headerBgColor}; min-width: 14rem;"
+			style="background-color: {dropdownBg || headerBgColor}; min-width: 14rem;"
 		>
 			{#each subItems as dropdownItem, index}
 				<li

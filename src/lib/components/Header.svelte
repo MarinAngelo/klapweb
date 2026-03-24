@@ -38,7 +38,7 @@
 	function handleBgFadeScroll() {
 		cancelAnimationFrame(bgFadeRafId);
 		bgFadeRafId = requestAnimationFrame(() => {
-			if (!headerEl || !stickyHeader || $isMenuOpen) return;
+			if (!headerEl || $isMenuOpen) return;
 			const heroEl = document.querySelector(
 				'[data-slice-type="hero"], [data-slice-type="p5_grafik"]'
 			) as HTMLElement | null;
@@ -54,7 +54,11 @@
 				const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
 				opacity = headerBgOpacity + (1 - headerBgOpacity) * progress;
 			}
-			headerEl.style.backgroundColor = hexToRgba(headerBgColor, opacity);
+			const bg = hexToRgba(headerBgColor, opacity);
+			headerEl.style.setProperty('--navbar-current-bg', bg);
+			if (stickyHeader) {
+				headerEl.style.backgroundColor = bg;
+			}
 		});
 	}
 
@@ -88,11 +92,12 @@
 
 	$: headerColor = $theme.headerColor;
 
-	$: headerBgColor = prismicTheme?.data?.header_bg_color ?? $theme.headerBgColor;
+	$: headerBgColor = prismicTheme?.data?.header_bg_color || $theme.headerBgColor;
 	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
 	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
 	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
+	$: if (headerEl) headerEl.style.setProperty('--navbar-current-bg', computedBgColor);
 
 	function updateHeaderHeight() {
 		// 1. ZUERST PRÜFEN: Mobile Landscape?
