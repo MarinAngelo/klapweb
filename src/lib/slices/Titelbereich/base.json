@@ -101,7 +101,7 @@
 				"color": {
 					"type": "Color",
 					"config": {
-						"label": "Textfarbe",
+						"label": "Schriftfarbe",
 						"placeholder": ""
 					}
 				},

@@ -22,7 +22,7 @@
 			"page_color": {
 				"type": "Color",
 				"config": {
-					"label": "Textfarbe",
+					"label": "Schriftfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -200,7 +200,7 @@
 			"header_color": {
 				"type": "Color",
 				"config": {
-					"label": "Textfarbe",
+					"label": "Schriftfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -260,7 +260,7 @@
 			"footer_color": {
 				"type": "Color",
 				"config": {
-					"label": "Textfarbe",
+					"label": "Schriftfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
