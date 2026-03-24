@@ -24,7 +24,7 @@
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
 
-<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 {fullscreen ? 'h-full' : ''}">
+<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 {fullscreen ? 'md:h-full' : ''}">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
