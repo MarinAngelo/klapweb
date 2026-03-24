@@ -67,7 +67,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"invisible"
 						]
 					}
 				},
@@ -105,13 +106,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -196,7 +191,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"invisible"
 						]
 					}
 				},
@@ -234,13 +230,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

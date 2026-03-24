@@ -40,4 +40,7 @@
 	:global(.two-col > *:first-child) {
 		margin-top: 0;
 	}
+	:global(.rt-invisible) {
+		color: var(--page-bg-color) !important;
+	}
 </style>
