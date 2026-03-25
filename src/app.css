@@ -1,3 +1,6 @@
+:root, html, body {
+  font-family: var(--page-font);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
