@@ -23,11 +23,7 @@
 					"config": {
 						"label": "Textausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Links"
 					}
 				},
@@ -39,12 +35,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -140,9 +130,7 @@
 						"label": "Schaltfläche Link",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
@@ -157,11 +145,7 @@
 					"config": {
 						"label": "Schaltfläche Grösse",
 						"placeholder": "",
-						"options": [
-							"Klein",
-							"Mittel",
-							"Gross"
-						],
+						"options": ["Klein", "Mittel", "Gross"],
 						"default_value": "Mittel"
 					}
 				},
@@ -170,11 +154,7 @@
 					"config": {
 						"label": "Schaltfläche Ausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Mitte"
 					}
 				},

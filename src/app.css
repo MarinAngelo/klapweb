@@ -74,12 +74,9 @@ select:-webkit-autofill:focus {
 }
 
 /* Labels h1–h6: Heading-Styles auf inline-Spans im RichText */
-span.rt-h1 { @apply block text-4xl md:text-5xl font-bold leading-tight mb-6 mt-0; color: var(--page-color); }
-span.rt-h2 { @apply block text-3xl md:text-4xl font-semibold leading-snug mb-4 mt-8; color: var(--page-color); }
-span.rt-h3 { @apply block text-2xl md:text-3xl font-semibold mb-3 mt-6; color: var(--page-color); }
-span.rt-h4 { @apply block text-xl font-semibold mb-2 mt-4; color: var(--page-color); }
-span.rt-h5 { @apply block text-lg font-semibold mb-2 mt-3; color: var(--page-color); }
-span.rt-h6 { @apply block text-base font-semibold mb-1 mt-2; color: var(--page-color); }
+
+/* Spezial-Label für große, nicht-semantische Titel */
+.rt-title { @apply text-3xl tracking-tight font-bold; color: var(--page-color); }
 
 /* Multi-Label-System: kombinierbare Einzeleigenschaften */
 span.rt-size-xs     { font-size: clamp(0.55rem, 1.2vw,  0.65rem); }
@@ -255,9 +252,19 @@ p {
 
 
 @layer base {
+    h5 {
+      @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+      color: var(--page-color);
+    }
+
+    h6 {
+      @apply text-base tracking-tight font-semibold mb-1 mt-2;
+      color: var(--page-color);
+    }
   /* Hier definieren wir die globale Hierarchie. 
     Prismic RichText und harte HTML-Tags nutzen nun diese Basis.
   */
+
 
 
   h1 {
@@ -280,6 +287,16 @@ p {
 
   h4 {
     @apply text-xl tracking-tight font-semibold mb-2;
+    color: var(--page-color);
+  }
+
+  h5 {
+    @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+    color: var(--page-color);
+  }
+
+  h6 {
+    @apply text-base tracking-tight font-semibold mb-1 mt-2;
     color: var(--page-color);
   }
 
