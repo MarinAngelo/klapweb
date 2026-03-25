@@ -11,7 +11,7 @@
 <svelte:element
 	this={tag}
 	class={clsx(
-		'font-semibold leading-tight md:leading-tight',
+		'font-semibold leading-tight tracking-tight md:leading-tight',
 		/* Nur wenn size explizit gesetzt ist, überschreiben wir das CSS */
 		size === 'xl' && 'text-5xl md:text-7xl',
 		size === 'lg' && 'text-4xl md:text-5xl',

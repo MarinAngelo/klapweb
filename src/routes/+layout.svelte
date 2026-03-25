@@ -335,7 +335,7 @@
 				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 			>
 				<!--Seiten Titel Page Title-->
-				<h1 use:reveal={titleFadeIn} class="mt-12 mb-4 first:mt-0">
+				<h1 use:reveal={titleFadeIn} class="tracking-tight mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
 				</h1>
 			</Bounded>
