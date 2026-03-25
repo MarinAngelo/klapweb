@@ -351,7 +351,7 @@
 					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
 						{#each formFields as field}
 							{#if field && effectiveKey(field)}
-								<div>
+								<div class={isDefaultZweiSpalten && field.field_type === 'Textbereich' ? 'sm:col-span-2' : ''}>
 									<InputField
 										{field}
 										refreshKey={termineRefreshKey}

@@ -57,39 +57,6 @@ type ContentRelationshipFieldWithData<
 	>;
 }[Exclude<TCustomType[number], string>['id']];
 
-type EventDocumentDataSlicesSlice = EventSlice;
-
-/**
- * Content for Event documents
- */
-interface EventDocumentData {
-	/**
-	 * Slice Zone field in *Event*
-	 *
-	 * - **Field Type**: Slice Zone
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: event.slices[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/slices
-	 */
-	slices: prismic.SliceZone<EventDocumentDataSlicesSlice>;
-}
-
-/**
- * Event document from Prismic
- *
- * - **API ID**: `event`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
-	Simplify<EventDocumentData>,
-	'event',
-	Lang
->;
-
 /**
  * Content for Schrift documents
  */
@@ -172,12 +139,12 @@ export interface NavigationDocumentDataLinksItem {
 	/**
 	 * Link field in *Navigation → Links*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Link
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	link: prismic.ContentRelationshipField<'page'>;
+	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
 
 	/**
 	 * Sub-Link von field in *Navigation → Links*
@@ -255,10 +222,10 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
-	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
@@ -454,7 +421,7 @@ interface SettingsDocumentData {
 	 * Website Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: Title of the site
+	 * - **Placeholder**: Titel der Website
 	 * - **API ID Path**: settings.site_title
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
@@ -735,7 +702,7 @@ interface ThemeDocumentData {
 	theme_name: prismic.KeyTextField;
 
 	/**
-	 * Textfarbe field in *Design Vorlage*
+	 * Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -768,6 +735,39 @@ interface ThemeDocumentData {
 	page_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
 
 	/**
+	 * Vorinstallierte Hauptschrift field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: theme.preset_font
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
+
+	/**
 	 * Mobile Basis-Schriftgrösse field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Select
@@ -792,6 +792,17 @@ interface ThemeDocumentData {
 	base_font_size_desktop: prismic.SelectField<
 		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
 	>;
+
+	/**
+	 * Container-Breite field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: Standard (72rem)
+	 * - **API ID Path**: theme.container_width
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	container_width: prismic.SelectField<'Schmal' | 'Normal' | 'Standard' | 'Weit' | 'Sehr weit'>;
 
 	/**
 	 * Linkfarbe field in *Design Vorlage*
@@ -960,6 +971,17 @@ interface ThemeDocumentData {
 	header_bg_color: prismic.ColorField;
 
 	/**
+	 * Schriftfarbe field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: theme.header_color
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	header_color: prismic.ColorField;
+
+	/**
 	 * Linkfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1001,7 +1023,19 @@ interface ThemeDocumentData {
 	 * - **Tab**: Kopfzeile
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>; /**
+	header_link_font: ContentRelationshipFieldWithData<[{ id: 'font'; fields: ['name'] }]>;
+
+	/**
+	 * Kopfzeile fixiert (Sticky) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.sticky_header
+	 * - **Tab**: Kopfzeile
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	sticky_header: prismic.BooleanField; /**
 	 * Hintergrundfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
@@ -1013,7 +1047,7 @@ interface ThemeDocumentData {
 	footer_bg_color: prismic.ColorField;
 
 	/**
-	 * Textfarbe field in *Design Vorlage*
+	 * Schriftfarbe field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
@@ -1084,7 +1118,6 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 >;
 
 export type AllDocumentTypes =
-	| EventDocument
 	| FontDocument
 	| NavigationDocument
 	| PageDocument
@@ -1541,6 +1574,176 @@ type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type AccordionSlice = prismic.SharedSlice<'accordion', AccordionSliceVariation>;
+
+/**
+ * Primary content in *AdresseUndMap → Standard → Primary*
+ */
+export interface AdresseUndMapSliceDefaultPrimary {
+	/**
+	 * Adresse / Text field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: adresse_und_map.default.primary.text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Google Maps Embed-URL field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: https://www.google.com/maps/embed?pb=...
+	 * - **API ID Path**: adresse_und_map.default.primary.map_url
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	map_url: prismic.KeyTextField;
+
+	/**
+	 * Kartenhöhe (px) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 400
+	 * - **API ID Path**: adresse_und_map.default.primary.map_height
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	map_height: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: adresse_und_map.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: adresse_und_map.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Abstand oben / unten gleich field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: adresse_und_map.default.primary.y_padding_same
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	y_padding_same: prismic.BooleanField;
+
+	/**
+	 * Vertikaler Abstand field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: adresse_und_map.default.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Karte links field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.map_left
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	map_left: prismic.BooleanField;
+
+	/**
+	 * Vollbreite auf Mobile field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: adresse_und_map.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Standard variation for AdresseUndMap Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AdresseUndMapSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AdresseUndMapSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *AdresseUndMap*
+ */
+type AdresseUndMapSliceVariation = AdresseUndMapSliceDefault;
+
+/**
+ * AdresseUndMap Shared Slice
+ *
+ * - **API ID**: `adresse_und_map`
+ * - **Description**: AdresseUndMap
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AdresseUndMapSlice = prismic.SharedSlice<
+	'adresse_und_map',
+	AdresseUndMapSliceVariation
+>;
 
 /**
  * Item in *Anleitung → Default → Primary → Schritte*
@@ -2365,90 +2568,6 @@ type FormSliceVariation = FormSliceDefault;
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
 
 /**
- * Primary content in *GlobaleEvents → Standart → Primary*
- */
-export interface GlobaleEventsSliceDefaultPrimary {
-	/**
-	 * Events field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: globale_events.default.primary.events
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	events: prismic.ContentRelationshipField<'event'>;
-
-	/**
-	 * Animation aktivieren field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: globale_events.default.primary.animate
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	animate: prismic.BooleanField;
-
-	/**
-	 * Animations-Richtung field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: Oben
-	 * - **API ID Path**: globale_events.default.primary.anim_direction
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
-
-	/**
-	 * Verzögerung (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 500
-	 * - **API ID Path**: globale_events.default.primary.anim_delay
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_delay: prismic.NumberField;
-
-	/**
-	 * Animationsdauer (ms) field in *GlobaleEvents → Standart → Primary*
-	 *
-	 * - **Field Type**: Number
-	 * - **Placeholder**: 2000
-	 * - **API ID Path**: globale_events.default.primary.anim_duration
-	 * - **Documentation**: https://prismic.io/docs/fields/number
-	 */
-	anim_duration: prismic.NumberField;
-}
-
-/**
- * Standart variation for GlobaleEvents Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
-	'default',
-	Simplify<GlobaleEventsSliceDefaultPrimary>,
-	never
->;
-
-/**
- * Slice variation for *GlobaleEvents*
- */
-type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
-
-/**
- * GlobaleEvents Shared Slice
- *
- * - **API ID**: `globale_events`
- * - **Description**: GlobaleEvents
- * - **Documentation**: https://prismic.io/docs/slices
- */
-export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
-
-/**
  * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
  */
 export interface HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem {
@@ -2489,6 +2608,17 @@ export interface HeroSliceDefaultPrimary {
 	header_bg_opacity: prismic.NumberField;
 
 	/**
+	 * Kopfzeile beim Laden ausblenden field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.default.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
+
+	/**
 	 * Text field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
@@ -2499,7 +2629,7 @@ export interface HeroSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Textfarbe field in *Titelbereich → Standard → Primary*
+	 * Schriftfarbe field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -2510,6 +2640,38 @@ export interface HeroSliceDefaultPrimary {
 
 	/**
 	 * Schriftart field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: hero.default.primary.preset_font
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
+
+	/**
+	 * Eigene Schriftart field in *Titelbereich → Standard → Primary*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
@@ -2589,6 +2751,101 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
 	backgroundImage: prismic.ImageField<'mobile'>;
+
+	/**
+	 * Hintergrundfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Verlauf Startfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.gradient_color_1
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	gradient_color_1: prismic.ColorField;
+
+	/**
+	 * Startfarbe Position (%) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: hero.default.primary.gradient_stop_1
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_stop_1: prismic.NumberField;
+
+	/**
+	 * Startfarbe Transparenz (0–1) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1
+	 * - **API ID Path**: hero.default.primary.gradient_opacity_1
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_opacity_1: prismic.NumberField;
+
+	/**
+	 * Verlauf Endfarbe field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: hero.default.primary.gradient_color_2
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	gradient_color_2: prismic.ColorField;
+
+	/**
+	 * Endfarbe Position (%) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: hero.default.primary.gradient_stop_2
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_stop_2: prismic.NumberField;
+
+	/**
+	 * Endfarbe Transparenz (0–1) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1
+	 * - **API ID Path**: hero.default.primary.gradient_opacity_2
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	gradient_opacity_2: prismic.NumberField;
+
+	/**
+	 * Verlauf Form field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Linear
+	 * - **API ID Path**: hero.default.primary.gradient_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	gradient_type: prismic.SelectField<'Linear' | 'Radial', 'filled'>;
+
+	/**
+	 * Verlauf Richtung (nur Linear) field in *Titelbereich → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: 180°
+	 * - **API ID Path**: hero.default.primary.gradient_angle
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	gradient_angle: prismic.SelectField<
+		'0°' | '45°' | '90°' | '135°' | '180°' | '225°' | '270°' | '315°',
+		'filled'
+	>;
 
 	/**
 	 * Bild Überlagerungsfarbe field in *Titelbereich → Standard → Primary*
@@ -2710,6 +2967,17 @@ export interface HeroSliceMitBildKarusellPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	header_bg_opacity: prismic.NumberField;
+
+	/**
+	 * Kopfzeile beim Laden ausblenden field in *Titelbereich → Mit Bild Karusell → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: hero.mitBildKarusell.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
 
 	/**
 	 * Bild Überlagerungsfarbe field in *Titelbereich → Mit Bild Karusell → Primary*
@@ -3518,6 +3786,17 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	header_bg_opacity: prismic.NumberField;
 
 	/**
+	 * Kopfzeile beim Laden ausblenden field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.hide_header_on_load
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	hide_header_on_load: prismic.BooleanField;
+
+	/**
 	 * Titelbild Höhe field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Select
@@ -3569,7 +3848,7 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Textfarbe field in *P5Grafik → Mit Titelbereich → Primary*
+	 * Schriftfarbe field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Color
 	 * - **Placeholder**: *None*
@@ -3580,6 +3859,38 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 
 	/**
 	 * Schriftart field in *P5Grafik → Mit Titelbereich → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: — Keine —
+	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.preset_font
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	preset_font: prismic.SelectField<
+		| 'Inter'
+		| 'Roboto'
+		| 'Open Sans'
+		| 'Montserrat'
+		| 'Poppins'
+		| 'Lato'
+		| 'Raleway'
+		| 'Oswald'
+		| 'Nunito'
+		| 'DM Sans'
+		| 'Outfit'
+		| 'Plus Jakarta Sans'
+		| 'Josefin Sans'
+		| 'Quicksand'
+		| 'Cabin'
+		| 'Playfair Display'
+		| 'Merriweather'
+		| 'Lora'
+		| 'Cormorant Garamond'
+		| 'Crimson Pro'
+		| 'Nunito Sans'
+	>;
+
+	/**
+	 * Eigene Schriftart field in *P5Grafik → Mit Titelbereich → Primary*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
@@ -4191,6 +4502,26 @@ export interface TextSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
+	 * Hintergrundfarbe field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
 	 * Vollbreite auf Mobile field in *Text → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4270,6 +4601,26 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	text: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.twoColumns.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text.twoColumns.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
 
 	/**
 	 * Vollbreite auf Mobile field in *Text → Zwei Spalten → Primary*
@@ -4658,6 +5009,28 @@ export interface TextWithImageSliceDefaultPrimary {
 	mobile_vollbreite: prismic.BooleanField;
 
 	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4758,6 +5131,26 @@ export interface TextWithImageSliceWithButtonPrimary {
 	image: prismic.ImageField<never>;
 
 	/**
+	 * Hintergrundfarbe field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.withButton.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.withButton.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
 	 * Vollbreite auf Mobile field in *TextMitBild → Mit Schaltfläche → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -4767,6 +5160,28 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *TextMitBild → Mit Schaltfläche → Primary*
@@ -4912,6 +5327,28 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	mobile_vollbreite: prismic.BooleanField;
 
 	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild links → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5008,9 +5445,6 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
-			EventDocument,
-			EventDocumentData,
-			EventDocumentDataSlicesSlice,
 			FontDocument,
 			FontDocumentData,
 			NavigationDocument,
@@ -5033,6 +5467,10 @@ declare module '@prismicio/client' {
 			AccordionSliceVariation,
 			AccordionSliceDefault,
 			AccordionSliceBildUndText,
+			AdresseUndMapSlice,
+			AdresseUndMapSliceDefaultPrimary,
+			AdresseUndMapSliceVariation,
+			AdresseUndMapSliceDefault,
 			AnleitungSlice,
 			AnleitungSliceDefaultPrimaryStepsItem,
 			AnleitungSliceDefaultPrimary,
@@ -5056,10 +5494,6 @@ declare module '@prismicio/client' {
 			FormSliceDefaultPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
-			GlobaleEventsSlice,
-			GlobaleEventsSliceDefaultPrimary,
-			GlobaleEventsSliceVariation,
-			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,

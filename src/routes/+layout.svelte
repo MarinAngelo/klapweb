@@ -16,6 +16,7 @@
 
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
+	import { headerHeight } from '$lib/stores/headerHeight';
 	import { variables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
 	import { addonRows } from '$lib/stores/addonRows';
@@ -227,6 +228,13 @@
 		document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
 	}
 
+	$: pOffsetMobile = prismicTheme?.data?.p_font_offset_mobile ?? 0;
+	$: pOffsetDesktop = prismicTheme?.data?.p_font_offset_desktop ?? 0;
+	$: if (typeof document !== 'undefined') {
+		document.documentElement.style.setProperty('--p-font-offset-mobile', `${pOffsetMobile}px`);
+		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
+	}
+
 	$: googleFontsUrl = (() => {
 		if (!Array.isArray(fonts)) return null;
 		const families = fonts
@@ -251,6 +259,7 @@
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
+	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -319,14 +328,14 @@
 		/>
 	{/if}
 
-	<main>
+	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
 				as="section"
 				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
 			>
 				<!--Seiten Titel Page Title-->
-				<h1 use:reveal={titleFadeIn} class="tracking-tight mt-12 mb-4 first:mt-0">
+				<h1 use:reveal={titleFadeIn} class="mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
 				</h1>
 			</Bounded>

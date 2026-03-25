@@ -1,90 +1,21 @@
 {
-	"id": "p5_grafik",
+	"_meta": {
+		"Beschreibung": "Grosser Titelbereich mit Bild, Text und optionaler Schaltfläche.",
+		"BeschreibungEn": "Large hero section with image, text, and optional button."
+	},
+	"id": "hero",
 	"type": "SharedSlice",
-	"name": "P5Grafik",
-	"description": "Interaktive p5.js Grafik / Animation",
+	"name": "Titelbereich",
+	"description": "Hero",
 	"variations": [
 		{
 			"id": "default",
-			"name": "Standard (Vollbild)",
+			"name": "Standard",
 			"docURL": "...",
-			"version": "initial",
-			"description": "P5Grafik als Vollbild-Hintergrund ohne Text",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Hero",
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
 			"primary": {
-				"sketch_name": {
-					"type": "Select",
-					"config": {
-						"label": "Sketch",
-						"options": [
-							"Orbital Circles",
-							"Particle Flow"
-						],
-						"default_value": "Orbital Circles"
-					}
-				},
-				"hintergrundfarbe": {
-					"type": "Color",
-					"config": {
-						"label": "Hintergrundfarbe Canvas",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				}
-			},
-			"items": {}
-		},
-		{
-			"id": "mitTitelbereich",
-			"name": "Mit Titelbereich",
-			"docURL": "...",
-			"version": "initial",
-			"description": "P5Grafik als Hintergrund mit Titel, Text und Schaltfläche",
-			"primary": {
-				"sketch_name": {
-					"type": "Select",
-					"config": {
-						"label": "Sketch",
-						"options": [
-							"Orbital Circles",
-							"Particle Flow"
-						],
-						"default_value": "Orbital Circles"
-					}
-				},
 				"banner_overlap": {
 					"type": "Boolean",
 					"config": {
@@ -110,46 +41,13 @@
 						"default_value": false
 					}
 				},
-				"banner_height": {
-					"type": "Select",
-					"config": {
-						"label": "Titelbild Höhe",
-						"options": [
-							"100 %",
-							"50 %",
-							"33 %"
-						],
-						"default_value": "100 %"
-					}
-				},
-				"hintergrundfarbe": {
-					"type": "Color",
-					"config": {
-						"label": "Hintergrundfarbe Canvas",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"overlay_color": {
-					"type": "Color",
-					"config": {
-						"label": "Überlagerungsfarbe (über Canvas)",
-						"placeholder": ""
-					}
-				},
-				"overlay_opacity": {
-					"type": "Number",
-					"config": {
-						"label": "Transparenz der Überlagerung",
-						"placeholder": "0 - 100 %"
-					}
-				},
 				"text": {
 					"type": "StructuredText",
 					"config": {
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
 						"labels": [
 							"h1",
 							"h2",
@@ -302,6 +200,126 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
+				"backgroundImage": {
+					"type": "Image",
+					"config": {
+						"label": "Hintergrundbild",
+						"constraint": {},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_color_1": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Startfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Position (%)",
+						"placeholder": "0"
+					}
+				},
+				"gradient_opacity_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_color_2": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Endfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Position (%)",
+						"placeholder": "100"
+					}
+				},
+				"gradient_opacity_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_type": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Form",
+						"placeholder": "",
+						"options": [
+							"Linear",
+							"Radial"
+						],
+						"default_value": "Linear"
+					}
+				},
+				"gradient_angle": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Richtung (nur Linear)",
+						"placeholder": "",
+						"options": [
+							"0°",
+							"45°",
+							"90°",
+							"135°",
+							"180°",
+							"225°",
+							"270°",
+							"315°"
+						],
+						"default_value": "180°"
+					}
+				},
+				"overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"banner_height": {
+					"type": "Select",
+					"config": {
+						"label": "Titelbild Höhe",
+						"placeholder": "",
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
+						"default_value": "100 %"
+					}
+				},
 				"text_overlay_color": {
 					"type": "Color",
 					"config": {
@@ -329,6 +347,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
+						"placeholder": "",
 						"options": [
 							"klein",
 							"mittel",
@@ -347,6 +366,72 @@
 							"Kleiner",
 							"Sehr klein"
 						]
+					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "mitBildKarusell",
+			"name": "Mit Bild Karusell",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Hero",
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
+			"primary": {
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz überlagerter Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"imageMerryGoRound": {
+					"type": "Group",
+					"config": {
+						"label": "Bilder Karusell",
+						"repeat": true,
+						"fields": {
+							"image": {
+								"type": "Image",
+								"config": {
+									"label": "Bild",
+									"constraint": {},
+									"thumbnails": [
+										{
+											"name": "mobile",
+											"width": 1080,
+											"height": 1920
+										}
+									]
+								}
+							}
+						}
 					}
 				}
 			},

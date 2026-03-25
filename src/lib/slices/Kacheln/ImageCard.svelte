@@ -26,7 +26,9 @@
 
 <li
 	use:reveal={revealOptions}
-	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners ? 'rounded-2xl' : ''}"
+	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners
+		? 'rounded-2xl'
+		: ''}"
 	style="
 		background-color: {bodyBgColor || $theme.pageBgColor};
 		--custom-card-color: {bodyColor || $theme.pageColor};
@@ -57,7 +59,11 @@
 			/>
 		</div>
 	{/if}
-	<div class="leading-relaxed custom-card-color pl-6 pr-6 pb-6 grow">
+	<div
+		class="leading-relaxed custom-card-color px-6 pb-6 {!isFilled.image(card.image)
+			? 'pt-6'
+			: ''} grow"
+	>
 		<PrismicRichText field={card.text} />
 	</div>
 	{#if isFilled.link(card.buttonLink)}

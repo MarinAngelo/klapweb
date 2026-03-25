@@ -2,6 +2,7 @@
 
 import Akkordeon from './Akkordeon/index.svelte';
 import Anleitung from './Anleitung/index.svelte';
+import AdresseUndMap from './AdresseUndMap/index.svelte';
 import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
@@ -21,6 +22,7 @@ import P5Grafik from './P5Grafik/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
+	adresse_und_map: AdresseUndMap,
 	anleitung: Anleitung,
 	button: ButtonSlice,
 	code_einbetten: GoogleMapEinbetten,

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme } from '$lib/stores/theme';
+	import { headerHeight } from '$lib/stores/headerHeight';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
@@ -35,26 +36,36 @@
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: textCenterV = (slice.primary as any).text_center_v ?? false;
+	$: textCenterH = (slice.primary as any).text_center_h ?? false;
+	$: fullscreen = (slice.primary as any).fullscreen ?? false;
 </script>
 
 <Bounded
 	as="section"
-	{yPadding}
-	style="background-color: {p.bg_color || $theme.pageBgColor}; color: {p.color || $theme.pageColor};"
+	yPadding={fullscreen ? 'none' : yPadding}
+	fullHeight={fullscreen}
+	style="background-color: {p.bg_color || $theme.pageBgColor}; color: {p.color ||
+		$theme.pageColor}; --page-color: {p.color || $theme.pageColor};{fullscreen
+		? ` min-height: calc(100vh - ${$headerHeight}px);`
+		: ''}"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
-	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
-	<ImageTextGrid
-		image={isFilled.image(p.image) ? p.image : null}
-		text={p.text}
-		imageLeft={isBildLinks}
-		imageBgColor={p.bg_color || $theme.pageBgColor}
-		imageRound={p.image_round}
-		{theme}
-	/>
+	<div class="{fullscreen ? 'flex-1 flex items-center' : ''} {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		<ImageTextGrid
+			image={isFilled.image(p.image) ? p.image : null}
+			text={p.text}
+			imageLeft={isBildLinks}
+			imageBgColor={p.bg_color || $theme.pageBgColor}
+			imageRound={p.image_round}
+			{theme}
+			textCenterV={textCenterV}
+			textCenterH={textCenterH}
+			{fullscreen}
+		/>
 	</div>
 </Bounded>

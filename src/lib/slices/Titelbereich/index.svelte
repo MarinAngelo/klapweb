@@ -14,8 +14,9 @@
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
 	import { isMobile } from '$lib/stores/isMobile';
-	import RichTextLabels from '$lib/components/PrismicRichText/RichTextLabels.svelte';
 	import { reveal } from '$lib/actions/reveal';
+	import GradientBackground from '$lib/components/GradientBackground.svelte';
+	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
 
 	// Reines Fade-in ohne Bewegung (distance: '0px')
 	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
@@ -33,6 +34,23 @@
 
 	const switchOffTextOverlay = (slice.primary as any).switch_off_text_overlay ?? false;
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
+	$: bgColor = 'bg_color' in slice.primary ? (slice.primary as any).bg_color || null : null;
+	$: gradientFallback = bgColor ?? ($isMobile ? textOverlayColor : overlayColor);
+	$: gradient = 'gradient_color_1' in slice.primary
+		? {
+				color1: (slice.primary as any).gradient_color_1 || null,
+				color2: (slice.primary as any).gradient_color_2 || null,
+				opacity1: (slice.primary as any).gradient_opacity_1 ?? 1,
+				opacity2: (slice.primary as any).gradient_opacity_2 ?? 1,
+				stop1: (slice.primary as any).gradient_stop_1 != null ? `${(slice.primary as any).gradient_stop_1}%` : '0%',
+				stop2: (slice.primary as any).gradient_stop_2 != null ? `${(slice.primary as any).gradient_stop_2}%` : '100%',
+				type: (slice.primary as any).gradient_type || 'Linear',
+				angle: ((slice.primary as any).gradient_angle || '180°').replace('°', 'deg')
+			}
+		: null;
+
+	$: presetFont = 'preset_font' in slice.primary ? (slice.primary as any).preset_font || null : null;
+	$: presetFontUrl = presetFont ? presetFontUrls[presetFont] ?? null : null;
 
 	const overlayOpacity = (() => {
 		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
@@ -42,17 +60,19 @@
 	})();
 
 	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
+	const hideHeaderOnLoad = (slice.primary as any).hide_header_on_load ?? false;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
 	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop und headerBgOpacity im Theme-Store aktualisieren - beide reaktiv
-	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity }));
+	// bannerTop, headerBgOpacity und hideHeaderOnLoad im Theme-Store aktualisieren
+	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity, hideHeaderOnLoad }));
 
 	onDestroy(() => {
 		theme.update((t) => ({
 			...t,
 			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
-			bannerTop: THEME_DEFAULTS.bannerTop
+			bannerTop: THEME_DEFAULTS.bannerTop,
+			hideHeaderOnLoad: THEME_DEFAULTS.hideHeaderOnLoad
 		}));
 	});
 
@@ -110,11 +130,6 @@
 		mounted = true;
 	});
 
-	// Wir definieren das Mapping: Wenn Prismic den Typ "label" findet,
-	// soll unsere RichTextLabel Komponente genutzt werden.
-	const components = {
-		label: RichTextLabels
-	};
 
 	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
 	let sectionEl: HTMLElement;
@@ -144,18 +159,35 @@
 	});
 </script>
 
+<svelte:head>
+	{#if presetFontUrl}
+		<link rel="stylesheet" href={presetFontUrl} />
+	{/if}
+</svelte:head>
+
 <section
 	bind:this={sectionEl}
 	class="relative z-0 overflow-visible"
-	style="background-color: {isMobile ? textOverlayColor : overlayColor};
-		color: {color};
+	data-slice-type={slice.slice_type}
+	style="color: {color};
 		height: {$bannerHeight};
-		font-family: {('font' in slice.primary &&
+		font-family: {presetFont ? `'${presetFont}'` : (('font' in slice.primary &&
 		isFilled.contentRelationship(slice.primary.font) &&
 		slice.primary.font.data?.name) ||
-		'inherit'};
+		'inherit')};
 	"
 >
+	<GradientBackground
+		color1={gradient?.color1 ?? null}
+		color2={gradient?.color2 ?? null}
+		opacity1={gradient?.opacity1 ?? 1}
+		opacity2={gradient?.opacity2 ?? 1}
+		stop1={gradient?.stop1 ?? '0%'}
+		stop2={gradient?.stop2 ?? '100%'}
+		type={gradient?.type ?? 'Linear'}
+		angle={gradient?.angle ?? '180deg'}
+		fallback={gradientFallback}
+	/>
 	{#if image && typeof image.url === 'string' && image.url}
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
 			<div bind:this={parallaxInner} class="absolute inset-x-0" style="height: 120%; top: -10%;">
@@ -189,13 +221,8 @@
 			/>
 		{/if}
 	{/if}
-	<Bounded tag="div" yPadding="none" class="relative z-10">
-		<div
-			class="relative flex flex-col items-center justify-center"
-			style="
-				{$bannerHeight !== 'auto' ? `height: ${$bannerHeight};` : 'min-height: 100vh;'}
-			"
-		>
+	<div class="absolute inset-0 z-10 flex items-center justify-center">
+		<Bounded tag="div" yPadding="none" class="w-full">
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Overlay -->
 				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
@@ -224,6 +251,9 @@
 								padding: 0 !important;
 							}
 						}
+						.leading-loose.tracking-wider-all * {
+							margin-bottom: 0 !important;
+						}
 					</style>
 					<div
 						bind:this={richTextDiv}
@@ -231,8 +261,8 @@
 						style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
 					>
 						{#if 'text' in slice.primary}
-							<div style="--page-color: {color};">
-								<PrismicRichText field={slice.primary.text} {components} />
+							<div style="--page-color: {color}; color: {color};">
+								<PrismicRichText field={slice.primary.text} />
 							</div>
 						{/if}
 					</div>
@@ -248,8 +278,8 @@
 					{/if}
 				</div>
 			</div>
-		</div>
-	</Bounded>
+		</Bounded>
+	</div>
 </section>
 
 <style>
