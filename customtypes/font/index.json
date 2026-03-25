@@ -35,13 +35,6 @@
 					"label": "Varianten (Google)",
 					"placeholder": "z.B. \"ital,wght@0,100..900;1,100..900\""
 				}
-			},
-			"adobeFontId": {
-				"type": "Text",
-				"config": {
-					"label": "Schrift ID (Adobe)",
-					"placeholder": ""
-				}
 			}
 		}
 	}

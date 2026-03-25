@@ -6,6 +6,15 @@
 	"status": true,
 	"json": {
 		"Generell": {
+			"activ": {
+				"type": "Boolean",
+				"config": {
+					"label": "Aktiv",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"theme_name": {
 				"type": "Text",
 				"config": {
@@ -52,7 +61,29 @@
 				"config": {
 					"label": "Vorinstallierte Hauptschrift",
 					"placeholder": "— Keine —",
-					"options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
+					"options": [
+						"Inter",
+						"Roboto",
+						"Open Sans",
+						"Montserrat",
+						"Poppins",
+						"Lato",
+						"Raleway",
+						"Oswald",
+						"Nunito",
+						"DM Sans",
+						"Outfit",
+						"Plus Jakarta Sans",
+						"Josefin Sans",
+						"Quicksand",
+						"Cabin",
+						"Playfair Display",
+						"Merriweather",
+						"Lora",
+						"Cormorant Garamond",
+						"Crimson Pro",
+						"Nunito Sans"
+					]
 				}
 			},
 			"base_font_size_mobile": {
