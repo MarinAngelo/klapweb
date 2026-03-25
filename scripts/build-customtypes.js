@@ -48,12 +48,14 @@ function resolvePlanChain(planKey) {
 }
 
 const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
+console.log('DEBUG: activePlanChain =', activePlanChain);
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
 const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
+console.log('DEBUG: features =', features);
 
 console.log(
 	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${features.join(', ') || 'none'}]`
@@ -80,7 +82,10 @@ function isActive(gate) {
 function filterPrimary(primary, fieldGating) {
 	const result = {};
 	for (const [key, field] of Object.entries(primary ?? {})) {
-		if (!field || typeof field !== 'object') { result[key] = field; continue; }
+		if (!field || typeof field !== 'object') {
+			result[key] = field;
+			continue;
+		}
 		const { _meta: _, ...fieldWithoutMeta } = field; // _meta aus Output entfernen
 		if (!isActive(fieldGating?.[key])) continue;
 		result[key] = fieldWithoutMeta;
@@ -95,13 +100,13 @@ function filterPrimary(primary, fieldGating) {
  * - _meta:       aus Variationen und Feldern entfernt
  */
 function applyFilters(model, sliceGating) {
-	const varGating   = sliceGating?.variations ?? {};
-	const fieldGating = sliceGating?.fields     ?? {};
+	const varGating = sliceGating?.variations ?? {};
+	const fieldGating = sliceGating?.fields ?? {};
 	return {
 		...model,
 		variations: (model.variations ?? [])
 			.filter(({ id, _meta }) => isActive(varGating[id] ?? _meta)) // gating.json hat Vorrang, _meta als Fallback
-			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) })),
+			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) }))
 	};
 }
 
@@ -123,11 +128,11 @@ for (const type of managedTypes) {
 		const featurePath = `customtypes/_features/${feature}/${type}.json`;
 		if (!existsSync(join(ROOT, featurePath))) continue;
 
-		const featureFile  = read(featurePath);
-		const meta         = featureFile._meta ?? {};
+		const featureFile = read(featurePath);
+		const meta = featureFile._meta ?? {};
 		const insertBefore = meta.insertBefore ?? null;
-		const sliceChoices = meta.sliceChoices  ?? [];
-		const featureTabs  = Object.entries(featureFile).filter(([k]) => k !== '_meta');
+		const sliceChoices = meta.sliceChoices ?? [];
+		const featureTabs = Object.entries(featureFile).filter(([k]) => k !== '_meta');
 
 		if (insertBefore && Object.prototype.hasOwnProperty.call(tabs, insertBefore)) {
 			const rebuilt = {};
@@ -176,11 +181,12 @@ for (const sliceName of allSlices) {
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)
-	const sliceLevelGate = sliceGating?.plan || sliceGating?.feature
-		? sliceGating
-		: (_baseMeta?.Plan || _baseMeta?.Feature)
-			? { plan: _baseMeta.Plan, feature: _baseMeta.Feature }
-			: null;
+	const sliceLevelGate =
+		sliceGating?.plan || sliceGating?.feature
+			? sliceGating
+			: _baseMeta?.Plan || _baseMeta?.Feature
+				? { plan: _baseMeta.Plan, feature: _baseMeta.Feature }
+				: null;
 
 	if (!isActive(sliceLevelGate)) {
 		const reason = sliceLevelGate.feature
@@ -191,8 +197,8 @@ for (const sliceName of allSlices) {
 	}
 
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
-	const fullPath      = `src/lib/slices/${sliceName}/full.json`;
-	const fullExists    = existsSync(join(ROOT, fullPath));
+	const fullPath = `src/lib/slices/${sliceName}/full.json`;
+	const fullExists = existsSync(join(ROOT, fullPath));
 
 	// Extra-Variationen aus gating.json.slices[name].variations (ersetzt slices.json)
 	const activeExtraIds = new Set(
@@ -264,7 +270,9 @@ console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
 // ── 4. Gated Custom Types aufräumen ──────────────────────────────────────────────
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
-	if (isActive(gate)) continue;
+	const active = isActive(gate);
+	console.log(`DEBUG: CustomType ${typeId} → isActive = ${active} (gate:`, gate, ')');
+	if (active) continue;
 	const indexPath = join(ROOT, `customtypes/${typeId}/index.json`);
 	if (existsSync(indexPath)) {
 		rmSync(indexPath);
@@ -272,3 +280,15 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 		console.log(`⊘ customtypes/${typeId}/index.json removed (requires ${reason})`);
 	}
 }
+
+// ── Pre-Build-Check: Existenz aller aktiven Custom-Type-Basisdateien ─────────────
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (!isActive(gate)) continue;
+	// Feature-Ordner-Pfad
+	let basePath = `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`;
+	if (!existsSync(join(ROOT, basePath))) {
+		console.error(`❌ FEHLER: Basisdatei für aktiven Custom Type "${typeId}" fehlt: ${basePath}`);
+		process.exit(1);
+	}
+}
+// ── Ende Pre-Build-Check ──────────────────────────────────────────────────────

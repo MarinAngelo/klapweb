@@ -1,0 +1,21 @@
+{
+	"id": "event",
+	"label": "Event",
+	"repeatable": true,
+	"json": {
+		"main": {
+			"title": {
+				"type": "Text",
+				"config": { "label": "Titel" }
+			},
+			"description": {
+				"type": "StructuredText",
+				"config": { "label": "Beschreibung", "multi": "paragraph,strong,em" }
+			},
+			"date": {
+				"type": "Date",
+				"config": { "label": "Datum" }
+			}
+		}
+	}
+}
