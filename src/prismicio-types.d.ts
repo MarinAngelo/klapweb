@@ -94,17 +94,6 @@ interface FontDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	variants: prismic.KeyTextField;
-
-	/**
-	 * Schrift ID (Adobe) field in *Schrift*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: font.adobeFontId
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	adobeFontId: prismic.KeyTextField;
 }
 
 /**
@@ -222,10 +211,10 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
-	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
+	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
@@ -792,6 +781,28 @@ interface ThemeDocumentData {
 	base_font_size_desktop: prismic.SelectField<
 		'Sehr Klein' | 'Klein' | 'Standard' | 'Gross' | 'Sehr Gross'
 	>;
+
+	/**
+	 * p Schriftgrösse Offset Mobile (px) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: theme.p_font_offset_mobile
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	p_font_offset_mobile: prismic.NumberField;
+
+	/**
+	 * p Schriftgrösse Offset Desktop (px) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: theme.p_font_offset_desktop
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	p_font_offset_desktop: prismic.NumberField;
 
 	/**
 	 * Container-Breite field in *Design Vorlage*
@@ -1590,10 +1601,10 @@ export interface AdresseUndMapSliceDefaultPrimary {
 	text: prismic.RichTextField;
 
 	/**
-	 * Google Maps Embed-URL field in *AdresseUndMap → Standard → Primary*
+	 * Google Maps URL field in *AdresseUndMap → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: https://www.google.com/maps/embed?pb=...
+	 * - **Placeholder**: Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)
 	 * - **API ID Path**: adresse_und_map.default.primary.map_url
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
@@ -1608,6 +1619,16 @@ export interface AdresseUndMapSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	map_height: prismic.NumberField;
+
+	/**
+	 * Transparenz field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: Zahl zwischen 0 und 80 %
+	 * - **API ID Path**: adresse_und_map.default.primary.opacity
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	opacity: prismic.NumberField;
 
 	/**
 	 * Hintergrundfarbe field in *AdresseUndMap → Standard → Primary*
@@ -1630,25 +1651,35 @@ export interface AdresseUndMapSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *AdresseUndMap → Standard → Primary*
+	 * Schrift horizontal zentrieren field in *AdresseUndMap → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
-	 * - **Default Value**: true
-	 * - **API ID Path**: adresse_und_map.default.primary.y_padding_same
+	 * - **Default Value**: false
+	 * - **API ID Path**: adresse_und_map.default.primary.text_center_h
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	y_padding_same: prismic.BooleanField;
+	text_center_h: prismic.BooleanField;
 
 	/**
-	 * Vertikaler Abstand field in *AdresseUndMap → Standard → Primary*
+	 * Schriftgrösse Desktop (%) field in *AdresseUndMap → Standard → Primary*
 	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: adresse_und_map.default.primary.y_padding
-	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: adresse_und_map.default.primary.text_zoom_desktop
+	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+	text_zoom_desktop: prismic.NumberField;
+
+	/**
+	 * Schriftgrösse Mobile (%) field in *AdresseUndMap → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 100
+	 * - **API ID Path**: adresse_und_map.default.primary.text_zoom_mobile
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	text_zoom_mobile: prismic.NumberField;
 
 	/**
 	 * Karte links field in *AdresseUndMap → Standard → Primary*
@@ -5031,6 +5062,17 @@ export interface TextWithImageSliceDefaultPrimary {
 	text_center_h: prismic.BooleanField;
 
 	/**
+	 * Vollbild (100vh) field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.default.primary.fullscreen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	fullscreen: prismic.BooleanField;
+
+	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild rechts → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -5182,6 +5224,17 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	text_center_h: prismic.BooleanField;
+
+	/**
+	 * Vollbild (100vh) field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.withButton.primary.fullscreen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	fullscreen: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *TextMitBild → Mit Schaltfläche → Primary*
@@ -5347,6 +5400,17 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	text_center_h: prismic.BooleanField;
+
+	/**
+	 * Vollbild (100vh) field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.fullscreen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	fullscreen: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *TextMitBild → Standard Bild links → Primary*
