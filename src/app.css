@@ -242,6 +242,16 @@ body {
   }
 }
 
+p {
+  font-size: calc(1rem + var(--p-font-offset-mobile, 0px));
+}
+
+@media (min-width: 1024px) {
+  p {
+    font-size: calc(1rem + var(--p-font-offset-desktop, 0px));
+  }
+}
+
 
 
 @layer base {

@@ -228,6 +228,13 @@
 		document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
 	}
 
+	$: pOffsetMobile = prismicTheme?.data?.p_font_offset_mobile ?? 0;
+	$: pOffsetDesktop = prismicTheme?.data?.p_font_offset_desktop ?? 0;
+	$: if (typeof document !== 'undefined') {
+		document.documentElement.style.setProperty('--p-font-offset-mobile', `${pOffsetMobile}px`);
+		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
+	}
+
 	$: googleFontsUrl = (() => {
 		if (!Array.isArray(fonts)) return null;
 		const families = fonts

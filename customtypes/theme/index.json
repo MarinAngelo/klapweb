@@ -71,6 +71,20 @@
 					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
 				}
 			},
+			"p_font_offset_mobile": {
+				"type": "Number",
+				"config": {
+					"label": "p Schriftgrösse Offset Mobile (px)",
+					"placeholder": "0"
+				}
+			},
+			"p_font_offset_desktop": {
+				"type": "Number",
+				"config": {
+					"label": "p Schriftgrösse Offset Desktop (px)",
+					"placeholder": "0"
+				}
+			},
 			"container_width": {
 				"type": "Select",
 				"config": {

@@ -29,7 +29,7 @@
 >
 	<div
 		class="{clsx(
-			slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-6'
+			slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16'
 		)} {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 	>
 		<PrismicRichText field={slice.primary.text} />
