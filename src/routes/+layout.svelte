@@ -14,6 +14,8 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 
+	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
+
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
@@ -353,3 +355,11 @@
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
+
+<!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
+{#if process.env.NODE_ENV !== 'production'}
+	<style>
+		@import '$lib/components/CrosshairDevTool.css';
+	</style>
+	<CrosshairDevTool />
+{/if}
