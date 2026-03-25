@@ -44,7 +44,7 @@ export async function load({ params, fetch, cookies, url }) {
 		}
 
 		// 6. Paralleles Laden der globalen Daten mit klaren Fehlermeldungen
-		const [settings, navigation, theme, fonts, variablenDoc] = await Promise.all([
+		const [settings, navigation, themes, fonts, variablenDoc] = await Promise.all([
 			// Aktuelle Settings (müssen für jede Sprache existieren)
 			client.getSingle('settings', { lang }).catch(() => {
 				throw error(
@@ -61,8 +61,8 @@ export async function load({ params, fetch, cookies, url }) {
 				);
 			}),
 
-			// Theme & Fonts (Global)
-			client.getSingle('theme', { lang: '*' }).catch(() => null),
+			// Alle Themes (Global)
+			client.getAllByType('theme', { lang: '*' }).catch(() => []),
 			client.getAllByType('font').catch(() => []),
 
 			// Variablen & Preise (Global, optional) — cast: type generated after Prismic push
@@ -71,6 +71,9 @@ export async function load({ params, fetch, cookies, url }) {
 
 		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
 
+		// Aktives Theme bestimmen (Feld activ == true)
+		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;
+
 		// Resolve font content relationships server-side so font names are always available
 		// without relying on fetchLinks or CSS variable state.
 		function resolveFontLink(link: any) {
@@ -78,13 +81,13 @@ export async function load({ params, fetch, cookies, url }) {
 			const doc = fonts.find((f: any) => f.id === link.id);
 			return doc ? { ...link, data: doc.data } : link;
 		}
-		const prismicTheme = theme && {
-			...theme,
+		const prismicTheme = activeTheme && {
+			...activeTheme,
 			data: {
-				...theme.data,
-				page_font: resolveFontLink(theme.data?.page_font),
-				site_title_font: resolveFontLink(theme.data?.site_title_font),
-				header_link_font: resolveFontLink(theme.data?.header_link_font)
+				...activeTheme.data,
+				page_font: resolveFontLink(activeTheme.data?.page_font),
+				site_title_font: resolveFontLink(activeTheme.data?.site_title_font),
+				header_link_font: resolveFontLink(activeTheme.data?.header_link_font)
 			}
 		};
 

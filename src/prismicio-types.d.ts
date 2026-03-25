@@ -680,6 +680,18 @@ export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocu
  */
 interface ThemeDocumentData {
 	/**
+	 * Aktiv field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: theme.activ
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	activ: prismic.BooleanField;
+
+	/**
 	 * Design Vorlage Bezeichnung field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Text
