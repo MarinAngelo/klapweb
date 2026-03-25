@@ -27,6 +27,12 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"text_and_cta": {
+							"type": "SharedSlice"
+						},
+						"button": {
+							"type": "SharedSlice"
+						},
 						"anleitung": {
 							"type": "SharedSlice"
 						},
@@ -112,6 +118,15 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
+				}
+			},
+			"password_protected": {
+				"type": "Boolean",
+				"config": {
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false,
+					"label": "Passwortgeschützt"
 				}
 			}
 		}

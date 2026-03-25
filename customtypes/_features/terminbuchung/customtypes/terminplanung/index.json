@@ -1,0 +1,105 @@
+{
+	"id": "terminplanung",
+	"label": "Terminplanung",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID",
+					"placeholder": ""
+				}
+			},
+			"titel": {
+				"type": "Text",
+				"config": {
+					"label": "Bezeichnung",
+					"placeholder": "z.B. Erstgespräch"
+				}
+			},
+			"datum": {
+				"type": "Date",
+				"config": {
+					"label": "Startdatum"
+				}
+			},
+			"uhrzeit": {
+				"type": "Text",
+				"config": {
+					"label": "Uhrzeit (HH:MM)",
+					"placeholder": "14:00"
+				}
+			},
+			"session_laenge": {
+				"type": "Number",
+				"config": {
+					"label": "Dauer (Minuten)",
+					"placeholder": "60"
+				}
+			},
+			"zeitzone": {
+				"type": "Select",
+				"config": {
+					"label": "Zeitzone",
+					"options": [
+						"Pacific/Honolulu",
+						"America/Los_Angeles",
+						"America/Denver",
+						"America/Chicago",
+						"America/New_York",
+						"America/Sao_Paulo",
+						"Atlantic/Azores",
+						"Europe/London",
+						"Europe/Paris",
+						"Europe/Zurich",
+						"Europe/Berlin",
+						"Europe/Vienna",
+						"Europe/Athens",
+						"Europe/Moscow",
+						"Asia/Dubai",
+						"Asia/Kolkata",
+						"Asia/Dhaka",
+						"Asia/Bangkok",
+						"Asia/Singapore",
+						"Asia/Shanghai",
+						"Asia/Tokyo",
+						"Australia/Sydney",
+						"Pacific/Auckland",
+						"Africa/Johannesburg"
+					],
+					"default_value": "Europe/Zurich"
+				}
+			},
+			"wiederholung": {
+				"type": "Select",
+				"config": {
+					"label": "Wiederholung",
+					"options": [
+						"Keine",
+						"Täglich",
+						"Wöchentlich",
+						"Zweiwöchentlich",
+						"Monatlich"
+					],
+					"default_value": "Keine"
+				}
+			},
+			"wiederholung_bis": {
+				"type": "Date",
+				"config": {
+					"label": "Wiederholen bis (Datum)"
+				}
+			},
+			"wiederholung_anzahl": {
+				"type": "Number",
+				"config": {
+					"label": "Anzahl Wiederholungen",
+					"placeholder": "z.B. 10"
+				}
+			}
+		}
+	}
+}

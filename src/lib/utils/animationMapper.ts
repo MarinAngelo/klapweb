@@ -32,3 +32,19 @@ export function mapAnimation(
 		}
 	};
 }
+
+/**
+ * Kurzform für Slices: Liest die Animations-Felder direkt aus slice.primary.
+ * Alle Slices mit animate / anim_direction / anim_delay / anim_duration
+ * können statt 4 Parametern einfach das ganze primary-Objekt übergeben.
+ */
+export function mapAnimationFromPrimary(primary: {
+	animate?: boolean | null;
+	anim_direction?: string | null;
+	anim_delay?: number | null;
+	anim_duration?: number | null;
+	[key: string]: unknown;
+} | null | undefined): { animate: boolean; options: RevealOptions } {
+	if (!primary) return mapAnimation(false, null, null, null);
+	return mapAnimation(primary.animate, primary.anim_direction, primary.anim_delay, primary.anim_duration);
+}

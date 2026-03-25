@@ -1,0 +1,266 @@
+{
+	"id": "form",
+	"type": "SharedSlice",
+	"name": "Formular",
+	"description": "Formular",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"form_title": {
+					"type": "Text",
+					"config": {
+						"label": "Formular Titel",
+						"placeholder": ""
+					}
+				},
+				"form_instructions": {
+					"type": "StructuredText",
+					"config": {
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"allowTargetBlank": true,
+						"label": "Formular Instruktionen",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"submitt_button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Schaltflächen-Text"
+					}
+				},
+				"zwei_spalten": {
+					"type": "Boolean",
+					"config": {
+						"label": "2 Spalten",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"submitted_title": {
+					"type": "Text",
+					"config": {
+						"label": "Gesendet Titel",
+						"placeholder": ""
+					}
+				},
+				"submitted_text": {
+					"type": "StructuredText",
+					"config": {
+						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"allowTargetBlank": true,
+						"label": "Gesendet Text",
+						"labels": [
+							"h1",
+							"h2",
+							"h3",
+							"h4",
+							"h5",
+							"h6",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"form_fields": {
+					"type": "Group",
+					"config": {
+						"label": "Formular Felder",
+						"repeat": true,
+						"fields": {
+							"field_name": {
+								"type": "Text",
+								"config": {
+									"label": "Formularfeld Label"
+								}
+							},
+							"field_type": {
+								"type": "Select",
+								"config": {
+									"label": "Feld Typ",
+									"placeholder": "",
+									"options": [
+										"Textfeld",
+										"E-Mail",
+										"Telefon",
+										"Textbereich",
+										"Auswahlliste",
+										"Ankreuzfeld",
+										"Einzelauswahl",
+										"Land"
+									]
+								}
+							},
+							"required": {
+								"type": "Boolean",
+								"config": {
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": true,
+									"label": "Obligatorisch"
+								}
+							},
+							"invalid_feedback_text": {
+								"type": "Text",
+								"config": {
+									"label": "Fehlermeldung",
+									"placeholder": "Bitte ausfüllen"
+								}
+							},
+							"options": {
+								"type": "Text",
+								"config": {
+									"label": "Optionen bei Auswahlfeldern",
+									"placeholder": "mit Komma getrennt"
+								}
+							},
+							"placeholder": {
+								"type": "Text",
+								"config": {
+									"label": "Platzhalter",
+									"placeholder": ""
+								}
+							}
+						}
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

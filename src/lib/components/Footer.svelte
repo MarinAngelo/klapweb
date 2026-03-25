@@ -70,20 +70,22 @@
 				</ul>
 			</div>
 
-			<div class="flex justify-center items-center h-full mb-9">
-				<p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
-					{$_('Kontakt')}:
-					<a
-						href={`mailto:${email}`}
-						class="text-center text-inherit hover:underline"
-						style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
-						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-						on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
-					>
-						{email}
-					</a>
-				</p>
-			</div>
+			{#if email}
+				<div class="flex justify-center items-center h-full mb-9">
+					<p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
+						{$_('Kontakt')}:
+						<a
+							href={`mailto:${email}`}
+							class="text-center text-inherit hover:underline"
+							style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
+							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+						>
+							{email}
+						</a>
+					</p>
+				</div>
+			{/if}
 
 			<hr class="border-current opacity-20 mb-6" />
 

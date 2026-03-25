@@ -1,0 +1,28 @@
+{
+	"default": {
+		"variation": "default",
+		"version": "initial",
+		"items": [],
+		"primary": {
+			"text": [
+				{ "type": "heading2", "text": "Unsere Adresse", "spans": [] },
+				{ "type": "paragraph", "text": "Musterstrasse 1\n8000 Zürich\nSchweiz", "spans": [] },
+				{ "type": "paragraph", "text": "Tel: +41 00 000 00 00", "spans": [] }
+			],
+			"map_url": "",
+			"map_height": 400,
+			"bg_color": null,
+			"color": null,
+			"y_padding_same": true,
+			"y_padding": "mittel",
+			"map_left": false,
+			"mobile_vollbreite": false,
+			"animate": false,
+			"anim_direction": "Oben",
+			"anim_delay": null,
+			"anim_duration": null
+		},
+		"id": "adresse_und_map$default",
+		"slice_type": "adresse_und_map"
+	}
+}

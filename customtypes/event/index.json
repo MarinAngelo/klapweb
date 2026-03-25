@@ -1,26 +1,26 @@
 {
-	"format": "custom",
 	"id": "event",
 	"label": "Event",
 	"repeatable": true,
-	"status": true,
 	"json": {
-		"Main": {
-			"uid": {
-				"type": "UID",
+		"main": {
+			"title": {
+				"type": "Text",
 				"config": {
-					"label": "UID"
+					"label": "Titel"
 				}
 			},
-			"slices": {
-				"type": "Slices",
-				"fieldset": "Slice Zone",
+			"description": {
+				"type": "StructuredText",
 				"config": {
-					"choices": {
-						"event": {
-							"type": "SharedSlice"
-						}
-					}
+					"label": "Beschreibung",
+					"multi": "paragraph,strong,em"
+				}
+			},
+			"date": {
+				"type": "Date",
+				"config": {
+					"label": "Datum"
 				}
 			}
 		}

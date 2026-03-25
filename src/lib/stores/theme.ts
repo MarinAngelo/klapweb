@@ -4,7 +4,7 @@ export const THEME_DEFAULTS = {
 	// Globale Defaults
 	imageOverlayOpacity: 60, // Standardwert für Bild-Overlays im gleichem Format wie vom Prismic geliefert
 	bannerTop: false, // Aus Slices/Titelbereich/index.svelte
-	
+
 	// Generelle Seitenfarben und Schriftarten (wie in app.css)
 	pageColor: '',
 	pageBgColor: '',
@@ -12,14 +12,14 @@ export const THEME_DEFAULTS = {
 	baseFontSizeMobile: 0,
 	baseFontSizeDesktop: 0,
 	pageLinkColor: '',
-	
+
 	// Button Farben (wie in app.css)
 	pageLinkHoverColor: '',
 	pageButtonColor: '',
 	pageButtonBgColor: '',
 	pageButtonHoverColor: '',
 	pageButtonHoverBgColor: '',
-	
+
 	// Kopfzeile Farben (wie in app.css)
 	siteTitleFontSize: 0,
 	siteTitleFont: '',
@@ -32,7 +32,7 @@ export const THEME_DEFAULTS = {
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
 	headerLinkFont: '',
-	
+
 	// Fußzeile Farben (wie in app.css)
 	footerColor: '',
 	footerBgColor: '',
@@ -40,7 +40,7 @@ export const THEME_DEFAULTS = {
 	footerFontSizeButtonBar: 0,
 	footerLinkColor: '',
 	footerLinkHoverColor: '',
-	
+
 	// Weitere Eigenschaften (nicht in app.css)
 	headerLinkActiveColor: '',
 	headerLinkVisitedColor: '',
@@ -55,6 +55,7 @@ export const THEME_DEFAULTS = {
 
 	// Titelbereich Slice spezifisch
 	headerBgOpacity: 1, // Default: voll deckend (wird aus Slice überschrieben)
+	hideHeaderOnLoad: false
 };
 
 export const theme = writable({ ...THEME_DEFAULTS });

@@ -21,6 +21,8 @@
         ? settings.privacy_policy 
         : [];
 
+    $: companyId = settings?.company_identification_number ?? '';
+
     $: cookiesField = (Array.isArray(settings?.cookies_text) && settings.cookies_text.length > 0)
         ? settings.cookies_text
         : [];
@@ -59,6 +61,10 @@
         responsible_address={address}
         responsible_email={email}
     />
+
+    {#if companyId}
+        <p>{$_('UID')}: {companyId}</p>
+    {/if}
 
     <h2>{$_('Einsatz von Cookies')}</h2>
     
