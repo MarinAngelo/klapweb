@@ -48,9 +48,7 @@
 			if (scrollY < delay) {
 				opacity = headerBgOpacity;
 			} else {
-				const heroBottom = heroEl
-					? heroEl.offsetTop + heroEl.offsetHeight
-					: window.innerHeight;
+				const heroBottom = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
 				const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
 				opacity = headerBgOpacity + (1 - headerBgOpacity) * progress;
 			}
@@ -210,7 +208,7 @@
 						style="color: {headerColor};"
 					>
 						<span
-							class="text-xl font-semibold tracking-tight"
+							class="text-xl font-semibold"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
 						>
 							<PrismicText field={settings.data.site_title} /><br />
