@@ -209,11 +209,17 @@
 					>
 						<span
 							class="text-xl font-semibold tracking-tight"
-							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
+							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont
+								? siteTitleFont
+								: 'var(--page-font), sans-serif'};"
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
-						<span style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont}">
+						<span
+							style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont
+								? siteTitleFont
+								: 'var(--page-font), sans-serif'};"
+						>
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>
 					</a>
@@ -233,6 +239,7 @@
 					{locales}
 					{showSwitcher}
 					{allAlternates}
+					headerLinkFont={prismicTheme?.data?.header_link_font?.data?.name || $theme.headerLinkFont}
 				/>
 			{/if}
 		</div>

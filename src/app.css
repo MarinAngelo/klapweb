@@ -1,3 +1,15 @@
+/* Navigation: Links immer mit globaler Schriftart */
+.smart-header nav a, .smart-header nav .nav-link, .smart-header nav li, .smart-header nav ul {
+  font-family: var(--page-font), sans-serif !important;
+}
+/* Erzwinge globale Schrift im Header (Logo, Titel, Untertitel) */
+.smart-header {
+  font-family: var(--page-font), sans-serif !important;
+}
+.logo,
+.logo span {
+  font-family: var(--page-font), sans-serif;
+}
 :root, html, body {
   font-family: var(--page-font);
 }
@@ -22,73 +34,55 @@
 }
 
 /* TailwindCSS-Overrides */
+    /* Globale Heading-Styles: Font-Familie immer von --page-font */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--page-font), sans-serif !important;
+    }
+    h1 {
+      @apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
+      color: var(--page-color);
+    }
+    h2 {
+      @apply text-3xl tracking-tight md:text-4xl font-semibold leading-snug mb-4 mt-8;
+      color: var(--page-color);
+    }
+    h3 {
+      @apply text-2xl tracking-tight md:text-3xl font-semibold mb-3 mt-6;
+      color: var(--page-color);
+    }
+    h4 {
+      @apply text-xl tracking-tight font-semibold mb-2;
+      color: var(--page-color);
+    }
+    h5 {
+      @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+      color: var(--page-color);
+    }
+    h6 {
+      @apply text-base tracking-tight font-semibold mb-1 mt-2;
+      color: var(--page-color);
+    }
+    /* Heading-Komponente: .heading-Klasse (Fallback, falls verwendet) */
+    .heading {
+      font-family: var(--page-font), sans-serif !important;
+    }
+    /* Header-Komponente: .header-Klasse (Fallback, falls verwendet) */
+    .header {
+      font-family: var(--page-font), sans-serif !important;
+    }
+    p, li {
+      @apply text-lg leading-relaxed mb-4;
+      color: var(--page-color);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    ul:not([class]) {
+      @apply list-disc list-inside mb-4;
+    }
+    ol:not([class]) {
+      @apply list-decimal list-inside mb-4;
+    }
 
-a:focus,
-button:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-/* Hauptnavigation - Hover-Effekt für Links */
-.nav-link:hover {
-  color: var(--header-link-hover-color) !important;
-  text-decoration: underline !important;
-}
-
-.hover\:text-white:hover {
-  color: var(--page-link-hover-color) !important;
-}
-
-
-.leading-loose * {
-  line-height: 2 !important;
-}
-
-/* letter-spacing */
-.tracking-wider-all * {
-  letter-spacing: 0.12em !important;
-}
-
-
-/* Autofill: override browser's white background with page colors */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px var(--page-bg-color, #fff) inset !important;
-  -webkit-text-fill-color: var(--page-color, #000) !important;
-  caret-color: var(--page-color, #000);
-}
-
-.button-prismic-link:hover {
-    background-color: var(--hover-bg-color) !important;
-    color: var(--hover-text-color) !important;
-    border-color: var(--hover-text-color) !important; /* Border-Farbe beim Hover */
-}
-
-.focus\:ring-current:focus {
-  --tw-ring-color: var(--focus-ring-color) !important;
-  box-shadow: 0 0 0 calc(2px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color), var(--tw-ring-shadow, 0 0 #0000);
-}
-
-/* Labels h1–h6: Heading-Styles auf inline-Spans im RichText */
-
-/* Spezial-Label für große, nicht-semantische Titel */
-.rt-title { @apply text-3xl tracking-tight font-bold; color: var(--page-color); }
-
-/* Multi-Label-System: kombinierbare Einzeleigenschaften */
-span.rt-size-xs     { font-size: clamp(0.55rem, 1.2vw,  0.65rem); }
-span.rt-size-sm     { font-size: clamp(0.7rem,  1.8vw,  0.85rem); }
-span.rt-size-lg     { font-size: clamp(1rem,    2.5vw,  1.35rem); }
-span.rt-size-xl     { font-size: clamp(1.1rem,  3vw,    1.75rem); }
-span.rt-size-2xl    { font-size: clamp(1.35rem, 3.5vw,  2.25rem); }
-span.rt-size-3xl    { font-size: clamp(1.6rem,  4.5vw,  3rem);    }
-span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);     }
 span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
 span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
 
@@ -162,7 +156,7 @@ a[data-type="prismic-link"]:hover {
   /* Generelle Seitenfarben und Schriftarten */
   --page-color: #5f5fab;
   --page-bg-color: #c7c9fe;
-  --page-font: 'Roboto', sans-serif; /* Fallback greift nicht, Problem in app.html stattdessen wird system font verwendet */
+  --page-font: 'Jura', sans-serif;
   --base-font-size-mobile: 16px;  /* unused, wird direkt in +layout.svelte verwendet */
   --base-font-size-desktop: 16px; /* unused, wird direkt in +layout.svelte verwendet */
   --page-link-color: #26683c;
