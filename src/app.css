@@ -83,8 +83,15 @@
       @apply list-decimal list-inside mb-4;
     }
 
+span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);    }
 span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
 span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
+span.rt-size-2xl    { font-size: clamp(1.5rem, 4vw, 2.25rem);    }
+span.rt-size-3xl    { font-size: clamp(1.875rem, 5vw, 3rem);    }
+span.rt-size-xs     { font-size: 0.75rem;    }
+span.rt-size-sm     { font-size: 0.875rem;   }
+span.rt-size-lg     { font-size: 1.125rem;   }
+span.rt-size-xl     { font-size: 1.25rem;    }
 
 /* Kombinations-Labels */
 /* Display — 4rem desktop, 3rem mobil */
