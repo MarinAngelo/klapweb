@@ -36,6 +36,17 @@ function write(path, data) {
 	writeFileSync(fullPath, JSON.stringify(data, null, '\t') + '\n');
 }
 
+function writeIfChanged(path, data) {
+	const fullPath = join(ROOT, path);
+	const newContent = JSON.stringify(data, null, '\t') + '\n';
+	if (existsSync(fullPath)) {
+		const oldContent = readFileSync(fullPath, 'utf-8');
+		if (oldContent === newContent) return; // Keine Änderung, nicht überschreiben
+	}
+	mkdirSync(dirname(fullPath), { recursive: true });
+	writeFileSync(fullPath, newContent);
+}
+
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
 
@@ -223,7 +234,8 @@ for (const sliceName of allSlices) {
 		console.log(`✓ slices/${sliceName}/model.json (+${[...activeExtraIds].join(', ')})`);
 	}
 
-	write(fullModelPath, model);
+	// Schreibe model.json nur bei echter Änderung
+	writeIfChanged(fullModelPath, model);
 
 	// Sync base variation primaries → full.json
 	if (fullExists) {
