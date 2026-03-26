@@ -5659,7 +5659,16 @@ export interface P5GrafikSliceDefaultPrimary {
 	 * - **API ID Path**: p5_grafik.default.primary.sketch_name
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
-	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow' | 'My Sketch', 'filled'>;
+	sketch_name: prismic.SelectField<
+		| 'Orbital Circles'
+		| 'Particle Flow'
+		| 'My Sketch'
+		| 'Generative Gestaltung P_1_0_01'
+		| 'Generative Gestaltung P_1_1_1_01'
+		| 'Generative Gestaltung P_1_2_1_01'
+		| 'Generative Gestaltung P_1_2_2_01',
+		'filled'
+	>;
 
 	/**
 	 * Hintergrundfarbe Canvas field in *P5Grafik → Standard (Vollbild) → Primary*
@@ -5680,6 +5689,16 @@ export interface P5GrafikSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/color
 	 */
 	color: prismic.ColorField;
+
+	/**
+	 * Bild field in *P5Grafik → Standard (Vollbild) → Primary*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: p5_grafik.default.primary.image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
 }
 
 /**
@@ -5708,7 +5727,15 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	 * - **API ID Path**: p5_grafik.mitTitelbereich.primary.sketch_name
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
-	sketch_name: prismic.SelectField<'Orbital Circles' | 'Particle Flow', 'filled'>;
+	sketch_name: prismic.SelectField<
+		| 'Orbital Circles'
+		| 'Particle Flow'
+		| 'Generative Gestaltung P_1_0_01'
+		| 'Generative Gestaltung P_1_1_1_01'
+		| 'Generative Gestaltung P_1_2_1_01'
+		| 'Generative Gestaltung P_1_2_2_01',
+		'filled'
+	>;
 
 	/**
 	 * Überlappend mit Kopfzeile field in *P5Grafik → Mit Titelbereich → Primary*
