@@ -359,10 +359,12 @@
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
 {#if process.env.NODE_ENV !== 'production'}
-	<style>@import '$lib/components/CrosshairDevTool.css';</style>
+	<style>
+		@import '$lib/components/CrosshairDevTool.css';
+	</style>
 	<button
-		on:click={() => showCrosshair.update(v => !v)}
-		aria-label={ $showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden' }
+		on:click={() => showCrosshair.update((v) => !v)}
+		aria-label={$showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden'}
 		style="position:fixed;top:8px;right:8px;z-index:1000001;width:28px;height:28px;padding:0;background:#fff;border:1px solid #ccc;border-radius:50%;box-shadow:0 2px 8px #0001;font-size:18px;line-height:26px;cursor:pointer;opacity:0.7;display:flex;align-items:center;justify-content:center;"
 	>
 		+
