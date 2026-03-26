@@ -46,10 +46,12 @@ import { particleFlowSketch } from './particle-flow';
 import { mySketch } from './my-sketches';
 import { generativeGestaltungP1_0_01 } from './generative-gestaltung-P1_0_01';
 import { generativeGestaltungP1_1_1_01 } from './generative-gestaltung-P1_1_1_01';
+import { generativeGestaltungP1_2_1_01 } from './generative-gestaltung-P1_2_1_01';
 
 export { mySketch } from './my-sketches';
 export { generativeGestaltungP1_0_01 } from './generative-gestaltung-P1_0_01';
 export { generativeGestaltungP1_1_1_01 } from './generative-gestaltung-P1_1_1_01';
+export { generativeGestaltungP1_2_1_01 } from './generative-gestaltung-P1_2_1_01';
 
 export type SketchParams = {
 	bgColor: string | null;
@@ -68,7 +70,8 @@ const registry: Record<string, SketchFactory> = {
 	'Particle Flow': particleFlowSketch,
 	'My Sketch': mySketch,
 	'Generative Gestaltung P_1_0_01': generativeGestaltungP1_0_01,
-	'Generative Gestaltung P_1_1_1_01': generativeGestaltungP1_1_1_01
+	'Generative Gestaltung P_1_1_1_01': generativeGestaltungP1_1_1_01,
+	'Generative Gestaltung P_1_2_1_01': generativeGestaltungP1_2_1_01
 };
 
 const DEFAULT_SKETCH = 'Orbital Circles';
