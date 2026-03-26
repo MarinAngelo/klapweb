@@ -43,6 +43,9 @@
 import type p5Type from 'p5';
 import { orbitalCirclesSketch } from './orbital-circles';
 import { particleFlowSketch } from './particle-flow';
+import { mySketch } from './my-sketches';
+
+export { mySketch } from './my-sketches';
 
 export type SketchParams = {
 	bgColor: string | null;
@@ -58,7 +61,8 @@ type SketchFactory = (params: SketchParams) => (p5: p5Type, el: HTMLDivElement) 
 // Step 2: register new sketches here.
 const registry: Record<string, SketchFactory> = {
 	'Orbital Circles': orbitalCirclesSketch,
-	'Particle Flow': particleFlowSketch
+	'Particle Flow': particleFlowSketch,
+	'My Sketch': mySketch
 };
 
 const DEFAULT_SKETCH = 'Orbital Circles';
