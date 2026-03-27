@@ -211,6 +211,7 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
+	| TimelineSlice
 	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
@@ -903,6 +904,18 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	heading_opacity: prismic.NumberField;
+
+	/**
+	 * Titel Einblend-Animation field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: theme.heading_animation
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	heading_animation: prismic.BooleanField;
 
 	/**
 	 * Favicon field in *Design Vorlage*
@@ -5516,6 +5529,134 @@ export type TextWithImageSlice = prismic.SharedSlice<
 	TextWithImageSliceVariation
 >;
 
+/**
+ * Primary content in *Timeline → Standard → Primary*
+ */
+export interface TimelineSliceDefaultPrimary {
+	/**
+	 * Titel field in *Timeline → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: z.B. Lebenslauf
+	 * - **API ID Path**: timeline.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	title: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe field in *Timeline → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: timeline.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe field in *Timeline → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: timeline.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Linienfarbe field in *Timeline → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: timeline.default.primary.line_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	line_color: prismic.ColorField;
+
+	/**
+	 * Einblend-Animation field in *Timeline → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: timeline.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+}
+
+/**
+ * Primary content in *Timeline → Items*
+ */
+export interface TimelineSliceDefaultItem {
+	/**
+	 * Datum / Jahr field in *Timeline → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: 2020 – 2023
+	 * - **API ID Path**: timeline.items[].date
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	date: prismic.KeyTextField;
+
+	/**
+	 * Titel field in *Timeline → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Position oder Ausbildung
+	 * - **API ID Path**: timeline.items[].title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Untertitel field in *Timeline → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Unternehmen oder Institution
+	 * - **API ID Path**: timeline.items[].subtitle
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	subtitle: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Timeline → Items*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: timeline.items[].description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+}
+
+/**
+ * Standard variation for Timeline Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Standard Timeline
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TimelineSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<TimelineSliceDefaultPrimary>,
+	Simplify<TimelineSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Timeline*
+ */
+type TimelineSliceVariation = TimelineSliceDefault;
+
+/**
+ * Timeline Shared Slice
+ *
+ * - **API ID**: `timeline`
+ * - **Description**: Vertikale Timeline für CV-Darstellung
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TimelineSlice = prismic.SharedSlice<'timeline', TimelineSliceVariation>;
+
 declare module '@prismicio/client' {
 	interface CreateClient {
 		(
@@ -5647,7 +5788,12 @@ declare module '@prismicio/client' {
 			TextWithImageSliceVariation,
 			TextWithImageSliceDefault,
 			TextWithImageSliceWithButton,
-			TextWithImageSliceStandardBildLinks
+			TextWithImageSliceStandardBildLinks,
+			TimelineSlice,
+			TimelineSliceDefaultPrimary,
+			TimelineSliceDefaultItem,
+			TimelineSliceVariation,
+			TimelineSliceDefault
 		};
 	}
 }

@@ -19,6 +19,7 @@ import Preisaufstellung from './Preisaufstellung/index.svelte';
 import Preisvergleich from './Preisvergleich/index.svelte';
 import TextAndCta from './TextAndCta/index.svelte';
 import P5Grafik from './P5Grafik/index.svelte';
+import Timeline from './Timeline/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -39,5 +40,6 @@ export const components = {
 	preisaufstellung: Preisaufstellung,
 	preisvergleich: Preisvergleich,
 	text_with_image: TextMitBild,
-	p5_grafik: P5Grafik
+	p5_grafik: P5Grafik,
+	timeline: Timeline
 };
