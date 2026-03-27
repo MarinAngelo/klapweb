@@ -125,6 +125,38 @@ function applyFilters(model, sliceGating) {
 
 const managedTypes = ['page', 'settings'];
 
+// ── Warnung: Slice-Choices in index.json aber nicht in base.json ─────────────────
+// Passiert wenn man in der Slice Machine UI einen Slice zur Page hinzufügt,
+// aber base.json nicht manuell aktualisiert. index.json ist gitignored → geht verloren.
+function getSliceChoices(doc) {
+	const choices = new Set();
+	for (const tab of Object.values(doc.json ?? {})) {
+		for (const field of Object.values(tab)) {
+			if (field?.type === 'Slices') {
+				for (const key of Object.keys(field?.config?.choices ?? {})) {
+					choices.add(key);
+				}
+			}
+		}
+	}
+	return choices;
+}
+
+for (const type of managedTypes) {
+	const indexPath = `customtypes/${type}/index.json`;
+	const basePath = `customtypes/${type}/base.json`;
+	if (existsSync(join(ROOT, indexPath)) && existsSync(join(ROOT, basePath))) {
+		const indexChoices = getSliceChoices(read(indexPath));
+		const baseChoices = getSliceChoices(read(basePath));
+		const missing = [...indexChoices].filter((c) => !baseChoices.has(c));
+		if (missing.length > 0) {
+			console.warn(`⚠ ${type}/base.json fehlen Slice-Choices, die in index.json vorhanden sind:`);
+			console.warn(`  → ${missing.join(', ')}`);
+			console.warn(`  Bitte base.json manuell ergänzen, damit es in allen Branches verfügbar ist.`);
+		}
+	}
+}
+
 for (const type of managedTypes) {
 	const basePath = `customtypes/${type}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) {
