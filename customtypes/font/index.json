@@ -25,7 +25,11 @@
 				"config": {
 					"label": "Anbieter",
 					"placeholder": "",
-					"options": ["Google", "Adobe", "Lokal"],
+					"options": [
+						"Google",
+						"Adobe",
+						"Lokal"
+					],
 					"default_value": "Google"
 				}
 			},

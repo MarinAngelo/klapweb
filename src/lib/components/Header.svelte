@@ -208,7 +208,7 @@
 						style="color: {headerColor};"
 					>
 						<span
-							class="text-xl font-semibold tracking-tight"
+							class="text-xl font-semibold tracking-tight site-title-text"
 							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont
 								? siteTitleFont
 								: 'var(--page-font), sans-serif'};"
@@ -216,6 +216,7 @@
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
 						<span
+							class="site-title-text"
 							style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont
 								? siteTitleFont
 								: 'var(--page-font), sans-serif'};"

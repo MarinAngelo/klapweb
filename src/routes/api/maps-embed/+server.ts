@@ -53,7 +53,7 @@ export async function GET({ url: reqUrl, fetch }) {
 
 	// Already an embed URL – return immediately
 	if (rawUrl.includes('google.com/maps/embed') || rawUrl.includes('output=embed')) {
-		return json({ embedUrl: rawUrl });
+		return json({ embedUrl: rawUrl, resolvedUrl: rawUrl });
 	}
 
 	try {
@@ -64,13 +64,13 @@ export async function GET({ url: reqUrl, fetch }) {
 		});
 		const resolvedUrl = response.url || rawUrl;
 		const embedUrl = toEmbedUrl(resolvedUrl);
-		if (embedUrl) return json({ embedUrl });
+		if (embedUrl) return json({ embedUrl, resolvedUrl });
 	} catch {
 		// fetch failed – fall through to direct transform
 	}
 
 	// Fallback: try converting the raw URL directly
 	const fallback = toEmbedUrl(rawUrl);
-	if (fallback) return json({ embedUrl: fallback });
+	if (fallback) return json({ embedUrl: fallback, resolvedUrl: rawUrl });
 	throw error(422, 'Could not resolve map URL');
 }

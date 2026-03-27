@@ -43,6 +43,7 @@ interface PrismicThemeData {
 	button_padding_x?: number;
 	container_width?: string;
 	preset_font?: string;
+	heading_opacity?: number;
 }
 
 interface ThemeUpdateData {
@@ -192,6 +193,15 @@ export function updateTheme(data: ThemeUpdateData): void {
 		root.style.setProperty('--footer-link-hover-color', footerLinkHoverColor);
 		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
 		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
+		if (
+			prismicThemeData.heading_opacity !== undefined &&
+			prismicThemeData.heading_opacity !== null
+		) {
+			root.style.setProperty(
+				'--heading-opacity',
+				(prismicThemeData.heading_opacity / 100).toString()
+			);
+		}
 
 		const containerWidthMap: Record<string, string> = {
 			Schmal: '48rem',

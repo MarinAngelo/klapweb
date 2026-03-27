@@ -166,6 +166,22 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"heading_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Titel Deckkraft (%)",
+					"placeholder": "0 - 100 (voll = 100)"
+				}
+			},
+			"heading_animation": {
+				"type": "Boolean",
+				"config": {
+					"label": "Titel Einblend-Animation",
+					"placeholder_false": "Aus",
+					"placeholder_true": "Ein",
+					"default_value": true
+				}
+			},
 			"favicon": {
 				"type": "Image",
 				"config": {

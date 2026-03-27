@@ -74,6 +74,12 @@
 						},
 						"text_with_image": {
 							"type": "SharedSlice"
+						},
+						"timeline": {
+							"type": "SharedSlice"
+						},
+						"stimmen": {
+							"type": "SharedSlice"
 						}
 					}
 				}

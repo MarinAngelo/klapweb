@@ -138,7 +138,12 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": ["name", "provider", "variants", "adobeFontId"]
+								"fields": [
+									"name",
+									"provider",
+									"variants",
+									"adobeFontId"
+								]
 							}
 						]
 					}
@@ -149,7 +154,9 @@
 						"label": "Schaltflächenlink",
 						"placeholder": "",
 						"select": null,
-						"customtypes": ["page"]
+						"customtypes": [
+							"page"
+						]
 					}
 				},
 				"button_text": {
@@ -255,7 +262,10 @@
 					"config": {
 						"label": "Verlauf Form",
 						"placeholder": "",
-						"options": ["Linear", "Radial"],
+						"options": [
+							"Linear",
+							"Radial"
+						],
 						"default_value": "Linear"
 					}
 				},
@@ -264,7 +274,16 @@
 					"config": {
 						"label": "Verlauf Richtung (nur Linear)",
 						"placeholder": "",
-						"options": ["0°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"],
+						"options": [
+							"0°",
+							"45°",
+							"90°",
+							"135°",
+							"180°",
+							"225°",
+							"270°",
+							"315°"
+						],
 						"default_value": "180°"
 					}
 				},
@@ -287,7 +306,11 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
-						"options": ["100 %", "50 %", "33 %"],
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
 						"default_value": "100 %"
 					}
 				},
@@ -319,7 +342,11 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
 						"placeholder": "",
-						"options": ["klein", "mittel", "gross"]
+						"options": [
+							"klein",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"mobile_text_scale": {
@@ -327,7 +354,12 @@
 					"config": {
 						"label": "Textgrösse Mobile",
 						"placeholder": "",
-						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
+						"options": [
+							"Normal",
+							"Klein",
+							"Kleiner",
+							"Sehr klein"
+						]
 					}
 				}
 			},

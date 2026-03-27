@@ -186,7 +186,9 @@
 				"config": {
 					"label": "Umleitungs-Seite",
 					"select": "document",
-					"customtypes": ["page"]
+					"customtypes": [
+						"page"
+					]
 				}
 			}
 		},
