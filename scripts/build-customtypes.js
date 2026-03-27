@@ -80,7 +80,10 @@ function isActive(gate) {
 function filterPrimary(primary, fieldGating) {
 	const result = {};
 	for (const [key, field] of Object.entries(primary ?? {})) {
-		if (!field || typeof field !== 'object') { result[key] = field; continue; }
+		if (!field || typeof field !== 'object') {
+			result[key] = field;
+			continue;
+		}
 		const { _meta: _, ...fieldWithoutMeta } = field; // _meta aus Output entfernen
 		if (!isActive(fieldGating?.[key])) continue;
 		result[key] = fieldWithoutMeta;
@@ -95,19 +98,51 @@ function filterPrimary(primary, fieldGating) {
  * - _meta:       aus Variationen und Feldern entfernt
  */
 function applyFilters(model, sliceGating) {
-	const varGating   = sliceGating?.variations ?? {};
-	const fieldGating = sliceGating?.fields     ?? {};
+	const varGating = sliceGating?.variations ?? {};
+	const fieldGating = sliceGating?.fields ?? {};
 	return {
 		...model,
 		variations: (model.variations ?? [])
 			.filter(({ id, _meta }) => isActive(varGating[id] ?? _meta)) // gating.json hat Vorrang, _meta als Fallback
-			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) })),
+			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) }))
 	};
 }
 
 // ── 1. Custom Types ──────────────────────────────────────────────────────────────
 
 const managedTypes = ['page', 'settings'];
+
+// ── Warnung: Slice-Choices in index.json aber nicht in base.json ─────────────────
+// Passiert wenn man in der Slice Machine UI einen Slice zur Page hinzufügt,
+// aber base.json nicht manuell aktualisiert. index.json ist gitignored → geht verloren.
+function getSliceChoices(doc) {
+	const choices = new Set();
+	for (const tab of Object.values(doc.json ?? {})) {
+		for (const field of Object.values(tab)) {
+			if (field?.type === 'Slices') {
+				for (const key of Object.keys(field?.config?.choices ?? {})) {
+					choices.add(key);
+				}
+			}
+		}
+	}
+	return choices;
+}
+
+for (const type of managedTypes) {
+	const indexPath = `customtypes/${type}/index.json`;
+	const basePath = `customtypes/${type}/base.json`;
+	if (existsSync(join(ROOT, indexPath)) && existsSync(join(ROOT, basePath))) {
+		const indexChoices = getSliceChoices(read(indexPath));
+		const baseChoices = getSliceChoices(read(basePath));
+		const missing = [...indexChoices].filter((c) => !baseChoices.has(c));
+		if (missing.length > 0) {
+			console.warn(`⚠ ${type}/base.json fehlen Slice-Choices, die in index.json vorhanden sind:`);
+			console.warn(`  → ${missing.join(', ')}`);
+			console.warn(`  Bitte base.json manuell ergänzen, damit es in allen Branches verfügbar ist.`);
+		}
+	}
+}
 
 for (const type of managedTypes) {
 	const basePath = `customtypes/${type}/base.json`;
@@ -123,11 +158,11 @@ for (const type of managedTypes) {
 		const featurePath = `customtypes/_features/${feature}/${type}.json`;
 		if (!existsSync(join(ROOT, featurePath))) continue;
 
-		const featureFile  = read(featurePath);
-		const meta         = featureFile._meta ?? {};
+		const featureFile = read(featurePath);
+		const meta = featureFile._meta ?? {};
 		const insertBefore = meta.insertBefore ?? null;
-		const sliceChoices = meta.sliceChoices  ?? [];
-		const featureTabs  = Object.entries(featureFile).filter(([k]) => k !== '_meta');
+		const sliceChoices = meta.sliceChoices ?? [];
+		const featureTabs = Object.entries(featureFile).filter(([k]) => k !== '_meta');
 
 		if (insertBefore && Object.prototype.hasOwnProperty.call(tabs, insertBefore)) {
 			const rebuilt = {};
@@ -176,11 +211,12 @@ for (const sliceName of allSlices) {
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)
-	const sliceLevelGate = sliceGating?.plan || sliceGating?.feature
-		? sliceGating
-		: (_baseMeta?.Plan || _baseMeta?.Feature)
-			? { plan: _baseMeta.Plan, feature: _baseMeta.Feature }
-			: null;
+	const sliceLevelGate =
+		sliceGating?.plan || sliceGating?.feature
+			? sliceGating
+			: _baseMeta?.Plan || _baseMeta?.Feature
+				? { plan: _baseMeta.Plan, feature: _baseMeta.Feature }
+				: null;
 
 	if (!isActive(sliceLevelGate)) {
 		const reason = sliceLevelGate.feature
@@ -191,8 +227,8 @@ for (const sliceName of allSlices) {
 	}
 
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
-	const fullPath      = `src/lib/slices/${sliceName}/full.json`;
-	const fullExists    = existsSync(join(ROOT, fullPath));
+	const fullPath = `src/lib/slices/${sliceName}/full.json`;
+	const fullExists = existsSync(join(ROOT, fullPath));
 
 	// Extra-Variationen aus gating.json.slices[name].variations (ersetzt slices.json)
 	const activeExtraIds = new Set(
