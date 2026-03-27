@@ -151,6 +151,14 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
+/* Touch-Zielgrösse für Inline-Links auf Mobile (WCAG 2.5.5 / 44px) */
+@media (max-width: 767px) {
+	a[data-type="prismic-link"] {
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+	}
+}
+
 a[data-type="prismic-link"]:hover {
 	color: var(--page-link-hover-color) !important;
 }
