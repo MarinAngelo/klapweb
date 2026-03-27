@@ -78,7 +78,7 @@
 >
 	<div
 		class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch {mobileVollbreite
-			? '-mx-6 md:mx-0 px-6 md:px-0'
+			? '-mx-6 md:mx-0'
 			: ''}"
 	>
 		{#if mapLeft}
@@ -109,7 +109,7 @@
 						href={directionsUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="inline-flex items-center gap-2 self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
+						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
 						style="border-color: {textColor}; color: {textColor};"
 					>
 						<svg
@@ -167,7 +167,7 @@
 						href={directionsUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="inline-flex items-center gap-2 self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
+						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
 						style="border-color: {textColor}; color: {textColor};"
 					>
 						<svg

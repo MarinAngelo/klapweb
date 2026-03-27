@@ -48,7 +48,7 @@
 	animationOptions={anim.options}
 	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
-	<div class="relative w-full {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
+	<div class="relative {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 		{#if embedUrl}
 			<div class="relative rounded-3xl overflow-hidden">
 				<iframe
