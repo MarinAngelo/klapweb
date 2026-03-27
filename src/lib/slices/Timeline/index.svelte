@@ -51,7 +51,6 @@
 			{#each items as item, i}
 				{@const isLeft = i % 2 === 0}
 				<li use:reveal={animate ? itemFadeIn : itemNoAnim} class="relative py-8">
-
 					<!-- ── MOBILE Layout ── -->
 					<div class="md:hidden pl-14">
 						<!-- Punkt auf der Linie (absolut) -->
@@ -120,7 +119,6 @@
 							{/if}
 						</div>
 					</div>
-
 				</li>
 			{/each}
 		</ol>

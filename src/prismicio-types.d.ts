@@ -211,7 +211,6 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
-	| TimelineSlice
 	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
@@ -226,7 +225,9 @@ type PageDocumentDataSlicesSlice =
 	| TextSlice
 	| ImageSlice
 	| ImageCardsSlice
-	| TextWithImageSlice;
+	| TextWithImageSlice
+	| TimelineSlice
+	| StimmenSlice;
 
 /**
  * Content for Page documents
@@ -4560,6 +4561,123 @@ type QuoteSliceVariation = QuoteSliceDefault;
 export type QuoteSlice = prismic.SharedSlice<'quote', QuoteSliceVariation>;
 
 /**
+ * Primary content in *Stimmen → Standard → Primary*
+ */
+export interface StimmenSliceDefaultPrimary {
+	/**
+	 * Titel field in *Stimmen → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Was unsere Kunden sagen
+	 * - **API ID Path**: stimmen.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	title: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe field in *Stimmen → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: stimmen.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe field in *Stimmen → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: stimmen.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Karten Hintergrundfarbe field in *Stimmen → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: stimmen.default.primary.card_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	card_bg_color: prismic.ColorField;
+}
+
+/**
+ * Primary content in *Stimmen → Items*
+ */
+export interface StimmenSliceDefaultItem {
+	/**
+	 * Zitat field in *Stimmen → Items*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Das Kundenzitat...
+	 * - **API ID Path**: stimmen.items[].quote
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	quote: prismic.RichTextField;
+
+	/**
+	 * Name field in *Stimmen → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Max Muster
+	 * - **API ID Path**: stimmen.items[].author
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	author: prismic.KeyTextField;
+
+	/**
+	 * Rolle / Unternehmen field in *Stimmen → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: CEO, Muster GmbH
+	 * - **API ID Path**: stimmen.items[].role
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	role: prismic.KeyTextField;
+
+	/**
+	 * Foto (optional) field in *Stimmen → Items*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: stimmen.items[].avatar
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	avatar: prismic.ImageField<never>;
+}
+
+/**
+ * Standard variation for Stimmen Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Testimonials horizontal scrollbar
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type StimmenSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<StimmenSliceDefaultPrimary>,
+	Simplify<StimmenSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Stimmen*
+ */
+type StimmenSliceVariation = StimmenSliceDefault;
+
+/**
+ * Stimmen Shared Slice
+ *
+ * - **API ID**: `stimmen`
+ * - **Description**: Horizontal scrollbare Kunden-Testimonials
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type StimmenSlice = prismic.SharedSlice<'stimmen', StimmenSliceVariation>;
+
+/**
  * Primary content in *Text → Standard → Primary*
  */
 export interface TextSliceDefaultPrimary {
@@ -5771,6 +5889,11 @@ declare module '@prismicio/client' {
 			QuoteSliceDefaultPrimary,
 			QuoteSliceVariation,
 			QuoteSliceDefault,
+			StimmenSlice,
+			StimmenSliceDefaultPrimary,
+			StimmenSliceDefaultItem,
+			StimmenSliceVariation,
+			StimmenSliceDefault,
 			TextSlice,
 			TextSliceDefaultPrimary,
 			TextSliceTwoColumnsPrimary,
