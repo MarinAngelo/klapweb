@@ -146,6 +146,31 @@ p:has(span.rt-kompakt) {
   line-height: 1.5 !important;
 }
 
+/* Hauptnavigation - Hover-Effekt für Links */
+.nav-link:hover {
+  color: var(--header-link-hover-color) !important;
+  text-decoration: underline !important;
+}
+
+.tracking-wider-all * {
+  letter-spacing: 0.12em !important;
+}
+
+/* Autofill: override browser's white/gray background with page colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--page-bg-color, #fff) inset !important;
+  -webkit-text-fill-color: var(--page-color, #000) !important;
+  caret-color: var(--page-color, #000);
+}
+
 a[data-type="prismic-link"] {
 	@apply underline;
 	color: var(--page-link-color);
