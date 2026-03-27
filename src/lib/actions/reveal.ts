@@ -11,7 +11,10 @@ export interface RevealOptions {
 }
 
 export function reveal(node: HTMLElement, params: RevealOptions = {}) {
-	if (params.direction === 'none' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+	if (
+		params.direction === 'none' ||
+		window.matchMedia('(prefers-reduced-motion: reduce)').matches
+	) {
 		node.style.opacity = '1';
 		node.style.transform = 'none';
 		return;
@@ -20,7 +23,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 	const options = {
 		// Wir verringern den threshold für 'down', damit es früher triggert
 		threshold: params.direction === 'down' ? 0.01 : (params.threshold ?? 0.1),
-		delay: params.delay ?? 500,
+		delay: params.delay ?? 100,
 		duration: params.duration ?? 2000,
 		distance: params.distance ?? '40px', // Etwas mehr Distanz macht es sichtbarer
 		direction: params.direction ?? 'up'

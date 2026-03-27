@@ -84,7 +84,8 @@
 			const uid = planDoc?.uid as string | undefined;
 			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
 			const pageHref = uid ? `/${uid}` : null;
-			const features: Array<{ label: string; wert: string | null; beschreibung?: string }> = plaeneData[i] ?? [];
+			const features: Array<{ label: string; wert: string | null; beschreibung?: string }> =
+				plaeneData[i] ?? [];
 			return { name, price: converted, suffix, billingType, highlight, href, pageHref, features };
 		});
 	})();
@@ -107,119 +108,114 @@
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+		class={mobileVollbreite ? 'overflow-x-clip' : ''}
 	>
-		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
-		{#if isFilled.richText(slice.primary.heading)}
-			<h2 class="font-bold mb-8 custom-color">
-				<PrismicText field={slice.primary.heading} />
-			</h2>
-		{/if}
+		<div class={mobileVollbreite ? '-mx-6 md:mx-0' : ''}>
+			{#if isFilled.richText(slice.primary.heading)}
+				<h2 class="font-bold mb-8 custom-color">
+					<PrismicText field={slice.primary.heading} />
+				</h2>
+			{/if}
 
-		<div
-			class="grid grid-cols-1 gap-6"
-			style="--plan-cols: {planItems.length};"
-		>
-			{#each planItems as plan, i}
-				<div
-					class="relative flex flex-col p-6 border"
-					class:border-2={plan.highlight}
-					style="
+			<div class="grid grid-cols-1 gap-6" style="--plan-cols: {planItems.length};">
+				{#each planItems as plan, i}
+					<div
+						class="relative flex flex-col p-6 border"
+						class:border-2={plan.highlight}
+						style="
 						color: {cardColor};
 						background-color: {plan.highlight ? `${cardBgColor}` : cardBgColor};
 						border-color: {plan.highlight ? borderColor : `${borderColor}44`};
 						border-radius: {roundCorners ? '0.5rem' : '0'};
 						{plan.highlight ? `box-shadow: 0 4px 24px ${borderColor}22;` : ''}
 					"
-				>
-					<!-- Plan name + price -->
-					<div class="mb-4">
-						<h4 class="font-bold">
-							{#if plan.pageHref}
-								<a
-									href={plan.pageHref}
-									class="hover:opacity-70 transition-opacity"
-									style="color: {cardColor};"
-								>{plan.name} <span style="font-size: 0.75em; opacity: 0.6;">↗</span></a>
-							{:else}
-								{plan.name}
+					>
+						<!-- Plan name + price -->
+						<div class="mb-4">
+							<h4 class="font-bold">
+								{#if plan.pageHref}
+									<a
+										href={plan.pageHref}
+										class="hover:opacity-70 transition-opacity"
+										style="color: {cardColor};"
+										>{plan.name} <span style="font-size: 0.75em; opacity: 0.6;">↗</span></a
+									>
+								{:else}
+									{plan.name}
+								{/if}
+							</h4>
+							{#if plan.price !== null}
+								<div class="text-2xl font-bold mt-1 tabular-nums">
+									{formatPrice(plan.price, activeCurrency)}
+								</div>
+								{#if plan.suffix}
+									<div class="text-sm opacity-60">{plan.suffix}</div>
+								{/if}
 							{/if}
-						</h4>
-						{#if plan.price !== null}
-							<div class="text-2xl font-bold mt-1 tabular-nums">
-								{formatPrice(plan.price, activeCurrency)}
-							</div>
-							{#if plan.suffix}
-								<div class="text-sm opacity-60">{plan.suffix}</div>
-							{/if}
+						</div>
+
+						<!-- Feature list -->
+						{#if plan.features.length > 0}
+							<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
+								{#if i > 0}
+									<li class="text-sm opacity-60 italic pb-1">
+										Alles von {planItems[i - 1].name} und:
+									</li>
+								{/if}
+								{#each plan.features as feat}
+									<li class="flex items-start gap-2">
+										{#if feat.wert === '✓' || (!feat.wert && feat.label)}
+											<span style="color: {cardColor};">✓</span>
+										{:else if feat.wert === '–' || feat.wert === null}
+											<span style="opacity: 0.3;">–</span>
+										{:else}
+											<span style="color: {cardColor};">{feat.wert}</span>
+										{/if}
+										<span>
+											{feat.label}{#if feat.beschreibung}&thinsp;<InfoTooltip
+													html={feat.beschreibung}
+												/>{/if}
+										</span>
+									</li>
+								{/each}
+							</ul>
 						{/if}
-					</div>
 
-					<!-- Feature list -->
-					{#if plan.features.length > 0}
-						<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
-							{#if i > 0}
-								<li class="text-sm opacity-60 italic pb-1">
-									Alles von {planItems[i - 1].name} und:
-								</li>
-							{/if}
-							{#each plan.features as feat}
-								<li class="flex items-start gap-2">
-									{#if feat.wert === '✓' || (!feat.wert && feat.label)}
-										<span style="color: {cardColor};">✓</span>
-									{:else if feat.wert === '–' || feat.wert === null}
-										<span style="opacity: 0.3;">–</span>
-									{:else}
-										<span style="color: {cardColor};">{feat.wert}</span>
-									{/if}
-									<span>
-										{feat.label}{#if feat.beschreibung}&thinsp;<InfoTooltip html={feat.beschreibung} />{/if}
-									</span>
-								</li>
-							{/each}
-						</ul>
-					{/if}
-
-					<!-- CTA -->
-					{#if plan.href}
-						<a
-							href={plan.href}
-							class="mt-auto block text-center px-4 py-2 text-sm border transition-opacity hover:opacity-70"
-							style="
+						<!-- CTA -->
+						{#if plan.href}
+							<a
+								href={plan.href}
+								class="mt-auto block text-center px-4 py-2 text-sm border transition-opacity hover:opacity-70"
+								style="
 								color: {btnColor};
 								background-color: {btnBgColor};
 								border-color: {btnColor};
 								border-radius: {roundCorners ? '0.25rem' : '0'};
 							"
-						>
-							{ctaLabel}
-						</a>
-					{/if}
-				</div>
-			{/each}
-		</div>
+							>
+								{ctaLabel}
+							</a>
+						{/if}
+					</div>
+				{/each}
+			</div>
 		</div>
 	</Bounded>
 {:else}
 	<Bounded
 		tag="section"
-		specialLayout={true}
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-clip' : ''}"
 		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
 	>
-		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 			{#if isFilled.richText(slice.primary.heading)}
 				<h2 class="text-center custom-color">
 					<PrismicText field={slice.primary.heading} />
 				</h2>
 			{/if}
-			<ul
-				class="grid grid-cols-1 gap-8 {gridColumns === 3
-					? 'md:grid-cols-3'
-					: 'md:grid-cols-2'}"
-			>
+			<ul class="grid grid-cols-1 gap-8 {gridColumns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}">
 				{#each slice.primary.cards as card, i}
 					<ImageCard
 						{card}
@@ -251,5 +247,4 @@
 			grid-template-columns: repeat(var(--plan-cols), minmax(0, 1fr));
 		}
 	}
-
 </style>

@@ -57,7 +57,7 @@
 	$: bottomClass = paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? '');
 
 	$: finalOptions = animate
-		? { duration: 2000, delay: 500, ...animationOptions }
+		? { duration: 2000, delay: 100, ...animationOptions }
 		: { direction: 'none' as const };
 </script>
 
@@ -67,7 +67,14 @@
 	use:reveal={finalOptions}
 	data-collapsible={collapsible}
 	{...$$restProps}
-	class={clsx('px-6', specialLayout && isMobile && 'px-0', topClass, bottomClass, fullHeight && 'flex flex-col', $$props.class)}
+	class={clsx(
+		'px-6',
+		specialLayout && isMobile && 'px-0',
+		topClass,
+		bottomClass,
+		fullHeight && 'flex flex-col',
+		$$props.class
+	)}
 >
 	<div
 		class="mx-auto w-full relative overflow-visible"
