@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"adresse_und_map": {
+							"type": "SharedSlice"
+						},
 						"text_and_cta": {
 							"type": "SharedSlice"
 						},
