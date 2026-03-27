@@ -19,12 +19,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -107,7 +101,12 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"image_round": {
@@ -166,7 +165,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -203,12 +208,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -258,7 +257,9 @@
 						"label": "Button Link",
 						"placeholder": "",
 						"select": null,
-						"customtypes": ["page"]
+						"customtypes": [
+							"page"
+						]
 					}
 				},
 				"buttonText": {
@@ -337,7 +338,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -374,12 +381,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -462,7 +463,12 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
 					}
 				},
 				"image_round": {
@@ -521,7 +527,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},

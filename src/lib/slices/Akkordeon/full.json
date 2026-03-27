@@ -20,12 +20,6 @@
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -77,12 +71,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -147,12 +135,6 @@
 									"allowTargetBlank": true,
 									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6",
 										"size-xs",
 										"size-sm",
 										"size-lg",
@@ -327,12 +309,6 @@
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -384,12 +360,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -454,12 +424,6 @@
 									"allowTargetBlank": true,
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6",
 										"size-xs",
 										"size-sm",
 										"size-lg",
@@ -666,15 +630,7 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
 					}
 				},
 				"description": {
@@ -683,15 +639,7 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
 					}
 				},
 				"erstes_item_ausgeklappt": {
