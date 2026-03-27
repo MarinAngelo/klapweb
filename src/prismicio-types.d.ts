@@ -894,6 +894,17 @@ interface ThemeDocumentData {
 	page_button_hover_bg_color: prismic.ColorField;
 
 	/**
+	 * Titel Deckkraft (%) field in *Design Vorlage*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0 - 100 (voll = 100)
+	 * - **API ID Path**: theme.heading_opacity
+	 * - **Tab**: Generell
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	heading_opacity: prismic.NumberField;
+
+	/**
 	 * Favicon field in *Design Vorlage*
 	 *
 	 * - **Field Type**: Image
@@ -2099,14 +2110,24 @@ export type ButtonSlice = prismic.SharedSlice<'button', ButtonSliceVariation>;
  */
 export interface CodeEinbettenSliceDefaultPrimary {
 	/**
-	 * HTML Code field in *GoogleMapEinbetten → Standard → Primary*
+	 * Google Maps URL field in *GoogleMapEinbetten → Standard → Primary*
 	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: code_einbetten.default.primary.html_code
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)
+	 * - **API ID Path**: code_einbetten.default.primary.map_url
+	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
-	html_code: prismic.RichTextField;
+	map_url: prismic.KeyTextField;
+
+	/**
+	 * Kartenhöhe (px) field in *GoogleMapEinbetten → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 400
+	 * - **API ID Path**: code_einbetten.default.primary.map_height
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	map_height: prismic.NumberField;
 
 	/**
 	 * Transparenz field in *GoogleMapEinbetten → Standard → Primary*

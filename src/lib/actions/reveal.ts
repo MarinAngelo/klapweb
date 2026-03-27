@@ -15,7 +15,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 		params.direction === 'none' ||
 		window.matchMedia('(prefers-reduced-motion: reduce)').matches
 	) {
-		node.style.opacity = '1';
+		node.style.setProperty('opacity', 'var(--heading-opacity, 1)');
 		node.style.transform = 'none';
 		return;
 	}
@@ -52,7 +52,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					setTimeout(() => {
-						node.style.opacity = '1';
+						node.style.setProperty('opacity', 'var(--heading-opacity, 1)');
 						node.style.transform = 'translate(0, 0)';
 					}, options.delay);
 					observer.unobserve(node);

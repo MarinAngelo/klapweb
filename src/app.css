@@ -37,6 +37,7 @@
     /* Globale Heading-Styles: Font-Familie immer von --page-font */
     h1, h2, h3, h4, h5, h6 {
       font-family: var(--page-font), sans-serif !important;
+      opacity: var(--heading-opacity, 1);
     }
     h1 {
       @apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
@@ -156,6 +157,10 @@ p:has(span.rt-kompakt) {
   letter-spacing: 0.12em !important;
 }
 
+.site-title-text {
+  opacity: var(--heading-opacity, 1);
+}
+
 /* Autofill: override browser's white/gray background with page colors */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -191,7 +196,8 @@ a[data-type="prismic-link"]:hover {
 :root {
   --global-size-mobile: 16px;
   --global-size-desktop: 16px;
-  
+  --heading-opacity: 1;
+
   /* --- Fallback Styles, die im CMS verwendet werden --- */
   /* Generelle Seitenfarben und Schriftarten */
   --page-color: #5f5fab;
