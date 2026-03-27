@@ -110,3 +110,25 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 2. `npm run dev` → Script generiert neue `model.json` + `index.json`
 3. `git diff` → `slicemachine.config.json` + evtl. `full.json` committen
 4. `slicemachine push`
+
+### Neuen Slice erstellen und allen Branches verfügbar machen
+
+1. Slice via Slice Machine UI erstellen
+2. In Slice Machine UI den Slice der Page-Slice-Zone zuweisen (Custom Type → Page → Slices → Add)
+3. **`customtypes/page/base.json` manuell ergänzen** — das ist der entscheidende Schritt:
+   ```json
+   "slices": { "config": { "choices": {
+     "mein_neuer_slice": { "type": "SharedSlice" }
+   }}}
+   ```
+4. Alles committen: `src/lib/slices/NeuerSlice/` + `customtypes/page/base.json`
+5. `slicemachine push`
+6. Branch in andere Branches mergen → `base.json` bringt den Eintrag automatisch mit
+
+**Warum:** `customtypes/page/index.json` ist gitignored (generiert). Die Slice Machine UI schreibt nur dort hin. Nur `base.json` ist versioniert und damit branch-übergreifend gültig.
+
+**Frühwarnung:** `npm run dev` warnt automatisch wenn `index.json` Slices enthält, die in `base.json` fehlen:
+
+```
+⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
+```

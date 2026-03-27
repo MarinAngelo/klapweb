@@ -4,7 +4,8 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
-	import { convertNumberInverse } from '$lib/utils/convertNumber';
+	import { convertNumber } from '$lib/utils/convertNumber';
+	import { _ } from '$lib/stores/i18n';
 
 	export let slice: any;
 	export let slices: unknown[] | undefined = undefined;
@@ -22,9 +23,33 @@
 	$: textZoomMobile = (p.text_zoom_mobile ?? 100) / 100;
 	$: textColor = p.color || $theme.pageColor;
 	$: bgColor = p.bg_color || $theme.pageBgColor;
-	const mapOpacity = convertNumberInverse(p.opacity ?? 0) || 0;
+	const mapOpacity = convertNumber(p.opacity ?? 100);
 
 	let embedUrl = '';
+	let resolvedUrl = '';
+
+	function toDirectionsUrl(resolved: string): string {
+		if (!resolved) return '';
+		// Ortsname aus URL-Pfad (genauer als Koordinaten)
+		const placeMatch = resolved.match(/\/maps\/place\/([^/@?]+)/);
+		if (placeMatch) {
+			const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+			return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place)}`;
+		}
+		// Koordinaten aus URL
+		const coordMatch = resolved.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+		if (coordMatch) {
+			return `https://www.google.com/maps/dir/?api=1&destination=${coordMatch[1]},${coordMatch[2]}`;
+		}
+		// Fallback: q-Parameter
+		try {
+			const q = new URL(resolved).searchParams.get('q');
+			if (q) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
+		} catch {}
+		return '';
+	}
+
+	$: directionsUrl = resolvedUrl ? toDirectionsUrl(resolvedUrl) : '';
 
 	onMount(async () => {
 		if (!p.map_url) return;
@@ -33,6 +58,7 @@
 			if (res.ok) {
 				const data = await res.json();
 				embedUrl = data.embedUrl;
+				resolvedUrl = data.resolvedUrl || data.embedUrl;
 			}
 		} catch {
 			embedUrl = p.map_url;
@@ -57,24 +83,48 @@
 	>
 		{#if mapLeft}
 			<!-- Karte links, Text rechts -->
-			<div class="relative md:h-full rounded-3xl overflow-hidden">
-				{#if embedUrl}
-					<iframe
-						src={embedUrl}
-						width="100%"
-						height={mapHeight}
-						style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
-						allowfullscreen={true}
-						loading="lazy"
-						referrerpolicy="no-referrer-when-downgrade"
-						title="Google Maps"
-					></iframe>
-					{#if mapOpacity > 0}
-						<div
-							class="absolute inset-0"
-							style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
-						></div>
+			<div class="flex flex-col gap-3">
+				<div class="relative md:h-full rounded-3xl overflow-hidden">
+					{#if embedUrl}
+						<iframe
+							src={embedUrl}
+							width="100%"
+							height={mapHeight}
+							style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+							allowfullscreen={true}
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade"
+							title="Google Maps"
+						></iframe>
+						{#if mapOpacity > 0}
+							<div
+								class="absolute inset-0"
+								style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+							></div>
+						{/if}
 					{/if}
+				</div>
+				{#if directionsUrl}
+					<a
+						href={directionsUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-2 self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
+						style="border-color: {textColor}; color: {textColor};"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg
+						>
+						{$_('Route planen')}
+					</a>
 				{/if}
 			</div>
 			<div
@@ -91,24 +141,48 @@
 			>
 				<PrismicRichText field={p.text} />
 			</div>
-			<div class="relative md:h-full rounded-3xl overflow-hidden">
-				{#if embedUrl}
-					<iframe
-						src={embedUrl}
-						width="100%"
-						height={mapHeight}
-						style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
-						allowfullscreen={true}
-						loading="lazy"
-						referrerpolicy="no-referrer-when-downgrade"
-						title="Google Maps"
-					></iframe>
-					{#if mapOpacity > 0}
-						<div
-							class="absolute inset-0"
-							style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
-						></div>
+			<div class="flex flex-col gap-3">
+				<div class="relative md:h-full rounded-3xl overflow-hidden">
+					{#if embedUrl}
+						<iframe
+							src={embedUrl}
+							width="100%"
+							height={mapHeight}
+							style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+							allowfullscreen={true}
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade"
+							title="Google Maps"
+						></iframe>
+						{#if mapOpacity > 0}
+							<div
+								class="absolute inset-0"
+								style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+							></div>
+						{/if}
 					{/if}
+				</div>
+				{#if directionsUrl}
+					<a
+						href={directionsUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-2 self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
+						style="border-color: {textColor}; color: {textColor};"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg
+						>
+						{$_('Route planen')}
+					</a>
 				{/if}
 			</div>
 		{/if}
