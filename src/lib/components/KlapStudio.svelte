@@ -283,7 +283,12 @@
 		sketchActive = false;
 		entry.origStyle = entry.el.style.cssText;
 
-		const innerStyled = entry.el.querySelector<HTMLElement>('[style*="background-color"]');
+		// Nur dann ein inneres Element suchen, wenn die Section selbst keine background-color hat.
+		// (z.B. TextMitBild hat background-color direkt auf <section> – ImageTextGrid-Kinder dürfen nicht überschrieben werden)
+		const selfHasBg = entry.el.getAttribute('style')?.includes('background-color') ?? false;
+		const innerStyled = selfHasBg
+			? null
+			: entry.el.querySelector<HTMLElement>('[style*="background-color"]');
 		entry.innerEl = innerStyled ?? null;
 		entry.origInnerStyle = entry.innerEl?.style.cssText ?? '';
 		entry.pageColorEls = Array.from(

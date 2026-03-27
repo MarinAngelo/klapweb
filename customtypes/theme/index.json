@@ -172,7 +172,8 @@
 					"label": "Titel Deckkraft (%)",
 					"placeholder": "0 - 100 (voll = 100)"
 				}
-			},			"heading_animation": {
+			},
+			"heading_animation": {
 				"type": "Boolean",
 				"config": {
 					"label": "Titel Einblend-Animation",
@@ -180,7 +181,8 @@
 					"placeholder_true": "Ein",
 					"default_value": true
 				}
-			},			"favicon": {
+			},
+			"favicon": {
 				"type": "Image",
 				"config": {
 					"label": "Favicon",
