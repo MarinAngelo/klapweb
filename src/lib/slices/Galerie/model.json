@@ -81,6 +81,15 @@
 						"label": "Transparenz der Kopfzeile",
 						"placeholder": "0 - 100 %"
 					}
+				},
+				"full_bleed": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbild-Raster (Randlos)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
 				}
 			},
 			"items": {

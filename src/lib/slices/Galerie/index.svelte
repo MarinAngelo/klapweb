@@ -27,6 +27,7 @@
 	$: titleText = (p.title as { text: string }[] | undefined)?.[0]?.text ?? '';
 	$: bannerOverlap = (p.banner_overlap as boolean) ?? false;
 	$: headerBgOpacityRaw = (p.header_bg_opacity as number | null) ?? null;
+	$: fullBleed = (p.full_bleed as boolean) ?? false;
 
 	$: items = (slice.items ?? []) as {
 		image?: ImageField;
@@ -116,12 +117,15 @@
 
 <Bounded
 	tag="section"
+	fullWidth={fullBleed || bannerOverlap}
+	yPadding={bannerOverlap ? 'none' : 'base-top'}
+	class={fullBleed || bannerOverlap ? '!px-0' : ''}
 	style="background-color: {bgColor}; color: {color}; --page-color: {color};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
 	{#if titleText}
-		<h2 class="mb-8">{titleText}</h2>
+		<h2 class="mb-8 {fullBleed || bannerOverlap ? 'px-6' : ''}">{titleText}</h2>
 	{/if}
 
 	<div class="grid {gridClass} {gapClass}">
