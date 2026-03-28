@@ -15,6 +15,14 @@
 	export let bgColor: string | undefined;
 	export let hoverColor: string | undefined;
 	export let hoverBgColor: string | undefined;
+	export let size: 'sm' | 'md' | 'lg' = 'md';
+
+	$: sizeClass =
+		size === 'sm'
+			? 'px-3 py-1.5 text-sm'
+			: size === 'lg'
+				? 'px-10 py-4 text-lg'
+				: 'px-6 py-3 text-base';
 
 	// Ermittle aktuelle Sprache für den Standard-Text
 	$: lang = $page.data.lang || 'de-ch';
@@ -32,7 +40,7 @@
 	{#if beauftragungHref}
 		<a
 			href={beauftragungHref}
-			class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
+			class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
 			style={`
                 background-color: ${resolvedBgColor};
                 color: ${resolvedColor};
@@ -47,7 +55,7 @@
 	{:else}
 		<PrismicLink
 			field={link}
-			class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
+			class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
 			style={`
                 background-color: ${resolvedBgColor};
                 color: ${resolvedColor};
@@ -63,7 +71,7 @@
 {:else}
 	<button
 		type="submit"
-		class="button-prismic-link inline-block px-4 py-2 font-semibold rounded-full text-xs sm:text-sm mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
+		class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
 		style={`
             background-color: ${resolvedBgColor};
             color: ${resolvedColor};

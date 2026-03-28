@@ -93,6 +93,10 @@
 		'button_bg_color' in slice.primary ? (slice.primary as any).button_bg_color : null;
 	$: buttonHoverBgColor =
 		'button_hover_bg_color' in slice.primary ? (slice.primary as any).button_hover_bg_color : null;
+	$: buttonSize = (() => {
+		const v = 'button_size' in slice.primary ? (slice.primary as any).button_size : null;
+		return v === 'Klein' ? 'sm' : v === 'Gross' ? 'lg' : 'md';
+	})() as 'sm' | 'md' | 'lg';
 
 	// Mapping von CMS-Wert zu CSS-Padding
 	const paddingMap: Record<string, string> = {
@@ -277,14 +281,17 @@
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
-						<Button
-							link={slice.primary.button_link}
-							text={slice.primary.button_text || 'Mehr erfahren'}
-							color={buttonColor || $theme.pageButtonColor}
-							bgColor={buttonBgColor || $theme.pageButtonBgColor}
-							hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
-							hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
-						/>
+						<div class="mt-8">
+							<Button
+								link={slice.primary.button_link}
+								text={slice.primary.button_text || 'Mehr erfahren'}
+								color={buttonColor || $theme.pageButtonColor}
+								bgColor={buttonBgColor || $theme.pageButtonBgColor}
+								hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
+								hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
+								size={buttonSize}
+							/>
+						</div>
 					{/if}
 				</div>
 			</div>

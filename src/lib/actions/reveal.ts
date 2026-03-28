@@ -11,11 +11,14 @@ export interface RevealOptions {
 }
 
 export function reveal(node: HTMLElement, params: RevealOptions = {}) {
+	const isHeading = /^H[1-6]$/.test(node.tagName);
+	const targetOpacity = isHeading ? 'var(--heading-opacity, 1)' : '1';
+
 	if (
 		params.direction === 'none' ||
 		window.matchMedia('(prefers-reduced-motion: reduce)').matches
 	) {
-		node.style.setProperty('opacity', 'var(--heading-opacity, 1)');
+		node.style.setProperty('opacity', targetOpacity);
 		node.style.transform = 'none';
 		return;
 	}
@@ -42,7 +45,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 		return map[dir] || map.up;
 	};
 
-	// Initialer Zustand – sofort setzen, damit kein Flackern von 1→0 sichtbar ist
+	// Initialer Zustand sicherstellen (SSR setzt bereits opacity:0 via Bounded, hier nur Transform)
 	node.style.opacity = '0';
 	node.style.willChange = 'transform, opacity';
 	node.style.transform = getTransform(options.direction, options.distance);
@@ -52,7 +55,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					setTimeout(() => {
-						node.style.setProperty('opacity', 'var(--heading-opacity, 1)');
+						node.style.setProperty('opacity', targetOpacity);
 						node.style.transform = 'translate(0, 0)';
 					}, options.delay);
 					observer.unobserve(node);

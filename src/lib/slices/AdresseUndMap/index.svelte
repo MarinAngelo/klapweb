@@ -53,6 +53,8 @@
 
 	onMount(async () => {
 		if (!p.map_url) return;
+		// Sofort auf Client setzen, damit der iframe vor der Animation existiert
+		embedUrl = p.map_url;
 		try {
 			const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(p.map_url)}`);
 			if (res.ok) {
@@ -61,7 +63,7 @@
 				resolvedUrl = data.resolvedUrl || data.embedUrl;
 			}
 		} catch {
-			embedUrl = p.map_url;
+			// embedUrl bereits gesetzt, Fallback bleibt
 		}
 	});
 </script>
