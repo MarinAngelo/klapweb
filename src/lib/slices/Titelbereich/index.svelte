@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { convertNumber } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -59,19 +60,18 @@
 		return convertNumber(slice.primary.overlay_opacity);
 	})();
 
-	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
 	const hideHeaderOnLoad = (slice.primary as any).hide_header_on_load ?? false;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
-	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop, headerBgOpacity und hideHeaderOnLoad im Theme-Store aktualisieren
-	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity, hideHeaderOnLoad }));
+	// hideHeaderOnLoad im Theme-Store aktualisieren (bannerTop/headerBgOpacity via BannerThemeSync)
+	$: theme.update((t) => ({ ...t, hideHeaderOnLoad }));
+
+	$: btsBannerOverlap = (slice.primary as any).banner_overlap ?? false;
+	$: btsHeaderBgOpacity = (slice.primary as any).header_bg_opacity ?? null;
 
 	onDestroy(() => {
 		theme.update((t) => ({
 			...t,
-			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
-			bannerTop: THEME_DEFAULTS.bannerTop,
 			hideHeaderOnLoad: THEME_DEFAULTS.hideHeaderOnLoad
 		}));
 	});
@@ -159,6 +159,7 @@
 	});
 </script>
 
+<BannerThemeSync bannerOverlap={btsBannerOverlap} headerBgOpacityRaw={btsHeaderBgOpacity} />
 <svelte:head>
 	{#if presetFontUrl}
 		<link rel="stylesheet" href={presetFontUrl} />

@@ -230,7 +230,8 @@
 			}));
 			if (typeof document !== 'undefined') {
 				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
-				if (overrideColor) document.documentElement.style.setProperty('--page-color', overrideColor);
+				if (overrideColor)
+					document.documentElement.style.setProperty('--page-color', overrideColor);
 			}
 		}
 	}

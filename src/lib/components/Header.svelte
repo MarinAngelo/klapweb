@@ -83,6 +83,7 @@
 		const bannerSlice = slices.find(
 			(s: any) =>
 				(s.slice_type === 'hero' ||
+					s.slice_type === 'galerie' ||
 					(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 				s.primary?.banner_overlap === true
 		);

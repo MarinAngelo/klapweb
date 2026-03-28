@@ -65,6 +65,22 @@
 						"placeholder_true": "Ein",
 						"default_value": true
 					}
+				},
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
 				}
 			},
 			"items": {

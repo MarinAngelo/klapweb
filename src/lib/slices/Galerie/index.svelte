@@ -6,6 +6,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { reveal } from '$lib/actions/reveal';
 	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 
 	export let slice: {
 		primary: Record<string, unknown>;
@@ -24,6 +25,8 @@
 	$: animate = (p.animate as boolean) !== false;
 
 	$: titleText = (p.title as { text: string }[] | undefined)?.[0]?.text ?? '';
+	$: bannerOverlap = (p.banner_overlap as boolean) ?? false;
+	$: headerBgOpacityRaw = (p.header_bg_opacity as number | null) ?? null;
 
 	$: items = (slice.items ?? []) as {
 		image?: ImageField;
@@ -52,16 +55,22 @@
 	function open(i: number) {
 		lightboxIndex = i;
 		isLightboxOpen.set(true);
-		if (typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-			document.documentElement.requestFullscreen().catch(() => {});
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = 'hidden';
+			if (document.documentElement.requestFullscreen) {
+				document.documentElement.requestFullscreen().catch(() => {});
+			}
 		}
 	}
 
 	function close() {
 		lightboxIndex = null;
 		isLightboxOpen.set(false);
-		if (typeof document !== 'undefined' && document.fullscreenElement) {
-			document.exitFullscreen().catch(() => {});
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = '';
+			if (document.fullscreenElement) {
+				document.exitFullscreen().catch(() => {});
+			}
 		}
 	}
 
@@ -70,6 +79,7 @@
 		if (typeof document !== 'undefined' && !document.fullscreenElement && lightboxIndex !== null) {
 			lightboxIndex = null;
 			isLightboxOpen.set(false);
+			document.body.style.overflow = '';
 		}
 	}
 
@@ -92,13 +102,17 @@
 
 	onDestroy(() => {
 		isLightboxOpen.set(false);
-		if (typeof document !== 'undefined' && document.fullscreenElement) {
-			document.exitFullscreen().catch(() => {});
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = '';
+			if (document.fullscreenElement) {
+				document.exitFullscreen().catch(() => {});
+			}
 		}
 	});
 </script>
 
 <svelte:window on:keydown={onKeydown} on:fullscreenchange={onFullscreenChange} />
+<BannerThemeSync {bannerOverlap} {headerBgOpacityRaw} />
 
 <Bounded
 	tag="section"
