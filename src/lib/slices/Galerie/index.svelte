@@ -23,6 +23,7 @@
 	$: hasGap = (p.gap as boolean) !== false;
 	$: rounded = (p.rounded as boolean) !== false;
 	$: animate = (p.animate as boolean) !== false;
+	$: isMasonry = (p.grid_type as string) === 'Masonry';
 
 	$: titleText = (p.title as { text: string }[] | undefined)?.[0]?.text ?? '';
 	$: bannerOverlap = (p.banner_overlap as boolean) ?? false;
@@ -41,11 +42,31 @@
 				? 'grid-cols-1 sm:grid-cols-2'
 				: 'grid-cols-2 md:grid-cols-3';
 
+	$: masonryClass =
+		columns === 4
+			? 'columns-2 md:columns-4'
+			: columns === 2
+				? 'columns-1 sm:columns-2'
+				: 'columns-2 md:columns-3';
+
+	$: gapPx = hasGap ? '12px' : '0px';
 	$: gapClass = hasGap ? 'gap-3 md:gap-4' : 'gap-0';
 	$: roundedClass = rounded ? 'rounded-lg overflow-hidden' : '';
 
 	const itemFadeIn = { direction: 'up' as const, distance: '20px', duration: 800, delay: 80 };
 	const itemNoAnim = { direction: 'none' as const };
+
+	// Prismic-CDN (imgix): optimierte URL mit Breite + WebP + Komprimierung
+	function imgUrl(url: string | null | undefined, w: number): string {
+		if (!url) return '';
+		const base = url.split('?')[0];
+		return `${base}?auto=compress,format&w=${w}&fit=max`;
+	}
+
+	function imgSrcset(url: string | null | undefined, widths: number[]): string {
+		if (!url) return '';
+		return widths.map((w) => `${imgUrl(url, w)} ${w}w`).join(', ');
+	}
 
 	// ── Lightbox ──────────────────────────────────────────────────────
 	let lightboxIndex: number | null = null;
@@ -128,60 +149,117 @@
 		<h2 class="mb-8 {fullBleed || bannerOverlap ? 'px-6' : ''}">{titleText}</h2>
 	{/if}
 
-	<div class="grid {gridClass} {gapClass}">
-		{#each items as item, i}
-			{#if item.image && isFilled.image(item.image)}
-				<button
-					use:reveal={animate
-						? { ...itemFadeIn, delay: (itemFadeIn.delay ?? 0) + i * 60 }
-						: itemNoAnim}
-					class="group relative cursor-zoom-in text-left {roundedClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-					on:click={() => open(i)}
-					aria-label="Bild {i + 1} vergrössern{item.caption ? ': ' + item.caption : ''}"
-				>
-					<!-- Bild -->
-					<img
-						src={item.image.url}
-						alt={item.image.alt ?? item.caption ?? ''}
-						loading="lazy"
-						decoding="async"
-						class="w-full h-full object-cover aspect-square block"
-					/>
-
-					<!-- Hover-Overlay mit Caption -->
-					{#if item.caption}
-						<span
-							class="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-medium
-							       translate-y-full group-hover:translate-y-0 transition-transform duration-300
-							       {rounded ? 'rounded-b-lg' : ''}"
-							style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff;"
-						>
-							{item.caption}
-						</span>
-					{/if}
-
-					<!-- Zoom-Icon -->
-					<span
-						class="absolute inset-0 flex items-center justify-center
-						       opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-						aria-hidden="true"
+	{#if isMasonry}
+		<!-- ── Masonry (CSS columns) ── -->
+		<div class={masonryClass} style="column-gap: {gapPx};">
+			{#each items as item, i}
+				{#if item.image && isFilled.image(item.image)}
+					<button
+						use:reveal={animate
+							? { ...itemFadeIn, delay: (itemFadeIn.delay ?? 0) + i * 60 }
+							: itemNoAnim}
+						class="group relative cursor-zoom-in text-left w-full block {roundedClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 break-inside-avoid"
+						style="margin-bottom: {gapPx};"
+						on:click={() => open(i)}
+						aria-label="Bild {i + 1} vergrössern{item.caption ? ': ' + item.caption : ''}"
 					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="white"
-							stroke-width="1.5"
-							class="w-8 h-8 drop-shadow-lg"
+						<img
+							src={imgUrl(item.image.url, 800)}
+							srcset={imgSrcset(item.image.url, [400, 800, 1200])}
+							sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+							alt={item.image.alt ?? item.caption ?? ''}
+							width={item.image.dimensions?.width ?? undefined}
+							height={item.image.dimensions?.height ?? undefined}
+							loading={i < 6 ? 'eager' : 'lazy'}
+							decoding="async"
+							class="w-full h-auto block"
+						/>
+						{#if item.caption}
+							<span
+								class="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-medium
+								       translate-y-full group-hover:translate-y-0 transition-transform duration-300
+								       {rounded ? 'rounded-b-lg' : ''}"
+								style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff;"
+							>
+								{item.caption}
+							</span>
+						{/if}
+						<span
+							class="absolute inset-0 flex items-center justify-center
+							       opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+							aria-hidden="true"
 						>
-							<circle cx="11" cy="11" r="7" />
-							<path d="M16.5 16.5L21 21" stroke-linecap="round" />
-							<path d="M11 8v6M8 11h6" stroke-linecap="round" />
-						</svg>
-					</span>
-				</button>
-			{/if}
-		{/each}
-	</div>
+							<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" class="w-8 h-8 drop-shadow-lg">
+								<circle cx="11" cy="11" r="7" />
+								<path d="M16.5 16.5L21 21" stroke-linecap="round" />
+								<path d="M11 8v6M8 11h6" stroke-linecap="round" />
+							</svg>
+						</span>
+					</button>
+				{/if}
+			{/each}
+		</div>
+	{:else}
+		<!-- ── Uniform Grid ── -->
+		<div class="grid {gridClass} {gapClass}">
+			{#each items as item, i}
+				{#if item.image && isFilled.image(item.image)}
+					<button
+						use:reveal={animate
+							? { ...itemFadeIn, delay: (itemFadeIn.delay ?? 0) + i * 60 }
+							: itemNoAnim}
+						class="group relative cursor-zoom-in text-left {roundedClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+						on:click={() => open(i)}
+						aria-label="Bild {i + 1} vergrössern{item.caption ? ': ' + item.caption : ''}"
+					>
+						<!-- Bild -->
+						<img
+							src={imgUrl(item.image.url, 800)}
+							srcset={imgSrcset(item.image.url, [400, 800, 1200])}
+							sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+							alt={item.image.alt ?? item.caption ?? ''}
+							width={item.image.dimensions?.width ?? undefined}
+							height={item.image.dimensions?.height ?? undefined}
+							loading={i < 6 ? 'eager' : 'lazy'}
+							decoding="async"
+							class="w-full h-full object-cover aspect-square block"
+						/>
+
+						<!-- Hover-Overlay mit Caption -->
+						{#if item.caption}
+							<span
+								class="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-medium
+								       translate-y-full group-hover:translate-y-0 transition-transform duration-300
+								       {rounded ? 'rounded-b-lg' : ''}"
+								style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff;"
+							>
+								{item.caption}
+							</span>
+						{/if}
+
+						<!-- Zoom-Icon -->
+						<span
+							class="absolute inset-0 flex items-center justify-center
+							       opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+							aria-hidden="true"
+						>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="white"
+								stroke-width="1.5"
+								class="w-8 h-8 drop-shadow-lg"
+							>
+								<circle cx="11" cy="11" r="7" />
+								<path d="M16.5 16.5L21 21" stroke-linecap="round" />
+								<path d="M11 8v6M8 11h6" stroke-linecap="round" />
+							</svg>
+						</span>
+					</button>
+				{/if}
+			{/each}
+		</div>
+	{/if}
 </Bounded>
 
 <!-- ── Lightbox ─────────────────────────────────────────────────────── -->
@@ -207,7 +285,9 @@
 			class="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-3 pointer-events-auto"
 		>
 			<img
-				src={lightboxImg.url}
+				src={imgUrl(lightboxImg.url, 1600)}
+				srcset={imgSrcset(lightboxImg.url, [800, 1200, 1600, 2400])}
+				sizes="90vw"
 				alt={lightboxImg.alt ?? lightboxItem?.caption ?? ''}
 				class="max-w-[90vw] max-h-[80vh] object-contain rounded-lg shadow-2xl"
 			/>

@@ -39,6 +39,14 @@
 						"default_value": "3"
 					}
 				},
+				"grid_type": {
+					"type": "Select",
+					"config": {
+						"label": "Raster-Typ",
+						"options": ["Uniform", "Masonry"],
+						"default_value": "Uniform"
+					}
+				},
 				"gap": {
 					"type": "Boolean",
 					"config": {
