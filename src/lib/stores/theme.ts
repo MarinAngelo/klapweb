@@ -106,7 +106,7 @@ const initialValues = {
 	// Buttons
 	buttonBorderRadius: parseFloat(cssVar('--button-border-radius')) || 0,
 	buttonPaddingY: parseFloat(cssVar('--button-padding-y')) || 0,
-	buttonPaddingX: parseFloat(cssVar('--button-padding-x')) || 0,
+	buttonPaddingX: parseFloat(cssVar('--button-padding-x')) || 0
 };
 
 export const theme = writable(initialValues);
