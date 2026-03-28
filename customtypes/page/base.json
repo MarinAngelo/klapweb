@@ -80,8 +80,25 @@
 						},
 						"stimmen": {
 							"type": "SharedSlice"
+						},
+						"galerie": {
+							"type": "SharedSlice"
 						}
 					}
+				}
+			}
+		},
+		"Erscheinungsbild": {
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe (überschreibt globale Farbe)"
+				}
+			},
+			"page_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schriftfarbe (überschreibt globale Farbe)"
 				}
 			}
 		},

@@ -5,6 +5,7 @@
 	import type { Content, PrismicDocument } from '@prismicio/client';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
+	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
 	import { hexToRgba } from '$lib/utils/color';
 	import Bounded from './Bounded.svelte';
@@ -82,6 +83,7 @@
 		const bannerSlice = slices.find(
 			(s: any) =>
 				(s.slice_type === 'hero' ||
+					s.slice_type === 'galerie' ||
 					(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 				s.primary?.banner_overlap === true
 		);
@@ -166,6 +168,8 @@
 <header
 	bind:this={headerEl}
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
+	class:opacity-0={$isLightboxOpen}
+	class:pointer-events-none={$isLightboxOpen}
 	style:position={stickyHeader ? 'fixed' : bannerTop ? 'absolute' : 'relative'}
 	style:top="0"
 	style:left="0"

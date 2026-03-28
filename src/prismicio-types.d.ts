@@ -58,6 +58,59 @@ type ContentRelationshipFieldWithData<
 }[Exclude<TCustomType[number], string>['id']];
 
 /**
+ * Content for Event documents
+ */
+interface EventDocumentData {
+	/**
+	 * Titel field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.title
+	 * - **Tab**: main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	title: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Event*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.description
+	 * - **Tab**: main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Datum field in *Event*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: event.date
+	 * - **Tab**: main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	date: prismic.DateField;
+}
+
+/**
+ * Event document from Prismic
+ *
+ * - **API ID**: `event`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type EventDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<
+	Simplify<EventDocumentData>,
+	'event',
+	Lang
+>;
+
+/**
  * Content for Schrift documents
  */
 interface FontDocumentData {
@@ -108,6 +161,48 @@ interface FontDocumentData {
 export type FontDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
 	Simplify<FontDocumentData>,
 	'font',
+	Lang
+>;
+
+/**
+ * Content for Leistung documents
+ */
+interface LeistungDocumentData {
+	/**
+	 * Bezeichnung field in *Leistung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: E-Commerce
+	 * - **API ID Path**: leistung.label
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Leistung*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Kurze Beschreibung dieser Leistung...
+	 * - **API ID Path**: leistung.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
+}
+
+/**
+ * Leistung document from Prismic
+ *
+ * - **API ID**: `leistung`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type LeistungDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<LeistungDocumentData>,
+	'leistung',
 	Lang
 >;
 
@@ -227,7 +322,51 @@ type PageDocumentDataSlicesSlice =
 	| ImageCardsSlice
 	| TextWithImageSlice
 	| TimelineSlice
-	| StimmenSlice;
+	| StimmenSlice
+	| GalerieSlice
+	| PreisvergleichSlice
+	| PreisaufstellungSlice
+	| P5GrafikSlice;
+
+/**
+ * Item in *Page → Zusatzleistungen*
+ */
+export interface PageDocumentDataEcommerceAddonsItem {
+	/**
+	 * Seite field in *Page → Zusatzleistungen*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.ecommerce_addons[].addon_page
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	addon_page: prismic.ContentRelationshipField<'page'>;
+}
+
+/**
+ * Item in *Page → Leistungen*
+ */
+export interface PageDocumentDataLeistungenItem {
+	/**
+	 * Leistung field in *Page → Leistungen*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.leistungen[].leistung
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	leistung: prismic.ContentRelationshipField<'leistung'>;
+
+	/**
+	 * Wert (optional) field in *Page → Leistungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: ✓ oder bis 5 Produkte
+	 * - **API ID Path**: page.leistungen[].wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	wert: prismic.KeyTextField;
+}
 
 /**
  * Content for Page documents
@@ -254,6 +393,112 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
 	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
+	 * Hintergrundfarbe (überschreibt globale Farbe) field in *Page*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.page_bg_color
+	 * - **Tab**: Erscheinungsbild
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe (überschreibt globale Farbe) field in *Page*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.page_color
+	 * - **Tab**: Erscheinungsbild
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_color: prismic.ColorField; /**
+	 * E-Commerce aktiv field in *Page*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: page.ecommerce_active
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	ecommerce_active: prismic.BooleanField;
+
+	/**
+	 * Preis exkl. MwSt. (CHF) field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 1290
+	 * - **API ID Path**: page.ecommerce_price_chf
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_price_chf: prismic.NumberField;
+
+	/**
+	 * Anzahlung % field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 30
+	 * - **API ID Path**: page.ecommerce_deposit_percent
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_deposit_percent: prismic.NumberField;
+
+	/**
+	 * Rabatt % field in *Page*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 10
+	 * - **API ID Path**: page.ecommerce_discount_percent
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	ecommerce_discount_percent: prismic.NumberField;
+
+	/**
+	 * Abrechnungsart field in *Page*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Einmalig
+	 * - **API ID Path**: page.ecommerce_billing_type
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	ecommerce_billing_type: prismic.SelectField<'Einmalig' | 'Jährlich' | 'Monatlich', 'filled'>;
+
+	/**
+	 * Stripe Payment Link field in *Page*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: https://buy.stripe.com/...
+	 * - **API ID Path**: page.ecommerce_stripe_url
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	ecommerce_stripe_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>; /**
+	 * Zusatzleistungen field in *Page*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.ecommerce_addons[]
+	 * - **Tab**: Leistungen
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	ecommerce_addons: prismic.GroupField<Simplify<PageDocumentDataEcommerceAddonsItem>>;
+
+	/**
+	 * Leistungen field in *Page*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.leistungen[]
+	 * - **Tab**: Leistungen
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	leistungen: prismic.GroupField<Simplify<PageDocumentDataLeistungenItem>>; /**
 	 * Meta Titel field in *Page*
 	 *
 	 * - **Field Type**: Text
@@ -403,6 +648,203 @@ export interface SettingsDocumentDataContactsItem {
 	 */
 	address: prismic.RichTextField;
 }
+
+/**
+ * Item in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
+ */
+export interface SettingsDocumentDataInvoiceAdditionalCurrenciesItem {
+	/**
+	 * Währung field in *Einstellungen → Weitere Währungen (Käufer-Auswahl)*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.invoice_additional_currencies[].waehrung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	waehrung: prismic.SelectField<
+		| 'AED - Dirham der Vereinigten Arabischen Emirate'
+		| 'AFN - Afghani'
+		| 'ALL - Albanischer Lek'
+		| 'AMD - Armenischer Dram'
+		| 'ANG - Niederländisch-Antillianischer Gulden'
+		| 'AOA - Angolanischer Kwanza'
+		| 'ARS - Argentinischer Peso'
+		| 'AUD - Australischer Dollar'
+		| 'AWG - Arubischer Florin'
+		| 'AZN - Aserbaidschanischer Manat'
+		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
+		| 'BBD - Barbadischer Dollar'
+		| 'BDT - Bangladeschischer Taka'
+		| 'BGN - Bulgarischer Lew'
+		| 'BHD - Bahrainischer Dinar'
+		| 'BIF - Burundischer Franc'
+		| 'BMD - Bermudischer Dollar'
+		| 'BND - Bruneischer Dollar'
+		| 'BOB - Bolivianischer Boliviano'
+		| 'BRL - Brasilianischer Real'
+		| 'BSD - Bahamaischer Dollar'
+		| 'BTN - Bhutanischer Ngultrum'
+		| 'BWP - Botswanischer Pula'
+		| 'BYN - Belarussischer Rubel'
+		| 'BZD - Belizischer Dollar'
+		| 'CAD - Kanadischer Dollar'
+		| 'CDF - Kongoläsischer Franc'
+		| 'CHF - Schweizer Franken'
+		| 'CLP - Chilenischer Peso'
+		| 'CNY - Chinesischer Renminbi'
+		| 'COP - Kolumbianischer Peso'
+		| 'CRC - Costa-Ricanischer Colon'
+		| 'CUP - Kubanischer Peso'
+		| 'CVE - Kap-Verdischer Escudo'
+		| 'CZK - Tschechische Krone'
+		| 'DJF - Djiboutischer Franc'
+		| 'DKK - Dänische Krone'
+		| 'DOP - Dominikanischer Peso'
+		| 'DZD - Algerischer Dinar'
+		| 'EGP - Ägyptisches Pfund'
+		| 'ERN - Eritreischer Nakfa'
+		| 'ETB - Äthiopischer Birr'
+		| 'EUR - Euro'
+		| 'FJD - Fidschi-Dollar'
+		| 'FKP - Falkländisches Pfund'
+		| 'GBP - Britisches Pfund'
+		| 'GEL - Georgischer Lari'
+		| 'GHS - Ghanaischer Cedi'
+		| 'GIP - Gibraltarisches Pfund'
+		| 'GMD - Gambischer Dalasi'
+		| 'GNF - Guineischer Franc'
+		| 'GTQ - Guatemaltekischer Quetzal'
+		| 'GYD - Guyanischer Dollar'
+		| 'HKD - Hongkonger Dollar'
+		| 'HNL - Honduranischer Lempira'
+		| 'HTG - Haitianische Gourde'
+		| 'HUF - Ungarischer Forint'
+		| 'IDR - Indonesische Rupiah'
+		| 'ILS - Neuer Israelischer Schekel'
+		| 'INR - Indische Rupie'
+		| 'IQD - Irakischer Dinar'
+		| 'IRR - Iranischer Rial'
+		| 'ISK - Isländische Krone'
+		| 'JMD - Jamaikanischer Dollar'
+		| 'JOD - Jordanischer Dinar'
+		| 'JPY - Japanischer Yen'
+		| 'KES - Kenianischer Schilling'
+		| 'KGS - Kirgisischer Som'
+		| 'KHR - Kambodschanischer Riel'
+		| 'KMF - Komorischer Franc'
+		| 'KPW - Nordkoreanischer Won'
+		| 'KRW - Südkoreanischer Won'
+		| 'KWD - Kuwaitischer Dinar'
+		| 'KYD - Kaiman-Dollar'
+		| 'KZT - Kasachischer Tenge'
+		| 'LAK - Laotischer Kip'
+		| 'LBP - Libanesisches Pfund'
+		| 'LKR - Sri-Lankische Rupie'
+		| 'LRD - Liberianischer Dollar'
+		| 'LSL - Lesothischer Loti'
+		| 'LYD - Libyscher Dinar'
+		| 'MAD - Marokkanischer Dirham'
+		| 'MDL - Moldauischer Leu'
+		| 'MGA - Madagassischer Ariary'
+		| 'MKD - Nordmazedonischer Denar'
+		| 'MMK - Myanmarischer Kyat'
+		| 'MNT - Mongolischer Tögrög'
+		| 'MOP - Macao-Pataca'
+		| 'MRU - Mauretanischer Ouguiya'
+		| 'MUR - Mauritische Rupie'
+		| 'MVR - Maledivischer Rufiyaa'
+		| 'MWK - Malawischer Kwacha'
+		| 'MXN - Mexikanischer Peso'
+		| 'MYR - Malaysischer Ringgit'
+		| 'MZN - Mosambikanischer Metical'
+		| 'NAD - Namibischer Dollar'
+		| 'NGN - Nigerianische Naira'
+		| 'NIO - Nicaraguanischer Córdoba'
+		| 'NOK - Norwegische Krone'
+		| 'NPR - Nepalesische Rupie'
+		| 'NZD - Neuseeländischer Dollar'
+		| 'OMR - Omanischer Rial'
+		| 'PAB - Panamaischer Balboa'
+		| 'PEN - Peruanischer Sol'
+		| 'PGK - Papua-Neuguineischer Kina'
+		| 'PHP - Philippinischer Peso'
+		| 'PKR - Pakistanische Rupie'
+		| 'PLN - Polnischer Zloty'
+		| 'PYG - Paraguayischer Guaraní'
+		| 'QAR - Katarischer Riyal'
+		| 'RON - Rumänischer Leu'
+		| 'RSD - Serbischer Dinar'
+		| 'RUB - Russischer Rubel'
+		| 'RWF - Ruandischer Franc'
+		| 'SAR - Saudi-Arabischer Riyal'
+		| 'SBD - Salomonen-Dollar'
+		| 'SCR - Seychellische Rupie'
+		| 'SDG - Sudanesisches Pfund'
+		| 'SEK - Schwedische Krone'
+		| 'SGD - Singapurischer Dollar'
+		| 'SHP - St.-Helenisches Pfund'
+		| 'SLL - Sierraleonischer Leone'
+		| 'SOS - Somalischer Schilling'
+		| 'SRD - Surinamischer Dollar'
+		| 'STN - São-toménsische Dobra'
+		| 'SVC - El-Salvadorianischer Colón'
+		| 'SYP - Syrisches Pfund'
+		| 'SZL - Swasiland-Lilangeni'
+		| 'THB - Thailändischer Baht'
+		| 'TJS - Tadschikischer Somoni'
+		| 'TMT - Turkmenischer Manat'
+		| 'TND - Tunesischer Dinar'
+		| 'TOP - Tongaischer Paʻanga'
+		| 'TRY - Türkische Lira'
+		| 'TTD - Trinidad-und-Tobago-Dollar'
+		| 'TWD - Neuer Taiwanischer Dollar'
+		| 'TZS - Tansanischer Schilling'
+		| 'UAH - Ukrainische Hrywnja'
+		| 'UGX - Ugandischer Schilling'
+		| 'USD - US-Dollar'
+		| 'UYU - Uruguayischer Peso'
+		| 'UZS - Usbekischer Sum'
+		| 'VES - Venezolanischer Bolívar'
+		| 'VND - Vietnamesischer Dong'
+		| 'VUV - Vanuatuischer Vatu'
+		| 'WST - Samoanischer Tala'
+		| 'XAF - CFA-Franc BEAC'
+		| 'XCD - Ostkaribischer Dollar'
+		| 'XOF - CFA-Franc BCEAO'
+		| 'XPF - CFP-Franc'
+		| 'YER - Jemenitischer Rial'
+		| 'ZAR - Südafrikanischer Rand'
+		| 'ZMW - Sambischer Kwacha'
+		| 'ZWL - Simbabwischer Dollar'
+	>;
+}
+
+/**
+ * Item in *Einstellungen → Rabatt-Codes*
+ */
+export interface SettingsDocumentDataDiscountCodesItem {
+	/**
+	 * Code field in *Einstellungen → Rabatt-Codes*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. SOMMER2025
+	 * - **API ID Path**: settings.discount_codes[].code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	code: prismic.KeyTextField;
+
+	/**
+	 * Rabatt (%) field in *Einstellungen → Rabatt-Codes*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 10
+	 * - **API ID Path**: settings.discount_codes[].discount_percent
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	discount_percent: prismic.NumberField;
+}
+
+type SettingsDocumentDataSlices3Slice = FormSlice;
 
 /**
  * Content for Einstellungen documents
@@ -659,7 +1101,440 @@ interface SettingsDocumentData {
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	favicon: prismic.ImageField<never>;
+	favicon: prismic.ImageField<never>; /**
+	 * Absender-E-Mail field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: termine@beispiel.ch
+	 * - **API ID Path**: settings.booking_from_email
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	booking_from_email: prismic.KeyTextField;
+
+	/**
+	 * Kunden-E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}
+	 * - **API ID Path**: settings.booking_customer_email_subject
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	booking_customer_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Kunden-E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}
+	 * - **API ID Path**: settings.booking_customer_email_body
+	 * - **Tab**: Terminbuchung
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	booking_customer_email_body: prismic.RichTextField; /**
+	 * Grundwährung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: CHF - Schweizer Franken
+	 * - **API ID Path**: settings.invoice_currency
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	invoice_currency: prismic.SelectField<
+		| 'AED - Dirham der Vereinigten Arabischen Emirate'
+		| 'AFN - Afghani'
+		| 'ALL - Albanischer Lek'
+		| 'AMD - Armenischer Dram'
+		| 'ANG - Niederländisch-Antillianischer Gulden'
+		| 'AOA - Angolanischer Kwanza'
+		| 'ARS - Argentinischer Peso'
+		| 'AUD - Australischer Dollar'
+		| 'AWG - Arubischer Florin'
+		| 'AZN - Aserbaidschanischer Manat'
+		| 'BAM - Bosnisch-Herzegowinische Konvertible Mark'
+		| 'BBD - Barbadischer Dollar'
+		| 'BDT - Bangladeschischer Taka'
+		| 'BGN - Bulgarischer Lew'
+		| 'BHD - Bahrainischer Dinar'
+		| 'BIF - Burundischer Franc'
+		| 'BMD - Bermudischer Dollar'
+		| 'BND - Bruneischer Dollar'
+		| 'BOB - Bolivianischer Boliviano'
+		| 'BRL - Brasilianischer Real'
+		| 'BSD - Bahamaischer Dollar'
+		| 'BTN - Bhutanischer Ngultrum'
+		| 'BWP - Botswanischer Pula'
+		| 'BYN - Belarussischer Rubel'
+		| 'BZD - Belizischer Dollar'
+		| 'CAD - Kanadischer Dollar'
+		| 'CDF - Kongoläsischer Franc'
+		| 'CHF - Schweizer Franken'
+		| 'CLP - Chilenischer Peso'
+		| 'CNY - Chinesischer Renminbi'
+		| 'COP - Kolumbianischer Peso'
+		| 'CRC - Costa-Ricanischer Colon'
+		| 'CUP - Kubanischer Peso'
+		| 'CVE - Kap-Verdischer Escudo'
+		| 'CZK - Tschechische Krone'
+		| 'DJF - Djiboutischer Franc'
+		| 'DKK - Dänische Krone'
+		| 'DOP - Dominikanischer Peso'
+		| 'DZD - Algerischer Dinar'
+		| 'EGP - Ägyptisches Pfund'
+		| 'ERN - Eritreischer Nakfa'
+		| 'ETB - Äthiopischer Birr'
+		| 'EUR - Euro'
+		| 'FJD - Fidschi-Dollar'
+		| 'FKP - Falkländisches Pfund'
+		| 'GBP - Britisches Pfund'
+		| 'GEL - Georgischer Lari'
+		| 'GHS - Ghanaischer Cedi'
+		| 'GIP - Gibraltarisches Pfund'
+		| 'GMD - Gambischer Dalasi'
+		| 'GNF - Guineischer Franc'
+		| 'GTQ - Guatemaltekischer Quetzal'
+		| 'GYD - Guyanischer Dollar'
+		| 'HKD - Hongkonger Dollar'
+		| 'HNL - Honduranischer Lempira'
+		| 'HTG - Haitianische Gourde'
+		| 'HUF - Ungarischer Forint'
+		| 'IDR - Indonesische Rupiah'
+		| 'ILS - Neuer Israelischer Schekel'
+		| 'INR - Indische Rupie'
+		| 'IQD - Irakischer Dinar'
+		| 'IRR - Iranischer Rial'
+		| 'ISK - Isländische Krone'
+		| 'JMD - Jamaikanischer Dollar'
+		| 'JOD - Jordanischer Dinar'
+		| 'JPY - Japanischer Yen'
+		| 'KES - Kenianischer Schilling'
+		| 'KGS - Kirgisischer Som'
+		| 'KHR - Kambodschanischer Riel'
+		| 'KMF - Komorischer Franc'
+		| 'KPW - Nordkoreanischer Won'
+		| 'KRW - Südkoreanischer Won'
+		| 'KWD - Kuwaitischer Dinar'
+		| 'KYD - Kaiman-Dollar'
+		| 'KZT - Kasachischer Tenge'
+		| 'LAK - Laotischer Kip'
+		| 'LBP - Libanesisches Pfund'
+		| 'LKR - Sri-Lankische Rupie'
+		| 'LRD - Liberianischer Dollar'
+		| 'LSL - Lesothischer Loti'
+		| 'LYD - Libyscher Dinar'
+		| 'MAD - Marokkanischer Dirham'
+		| 'MDL - Moldauischer Leu'
+		| 'MGA - Madagassischer Ariary'
+		| 'MKD - Nordmazedonischer Denar'
+		| 'MMK - Myanmarischer Kyat'
+		| 'MNT - Mongolischer Tögrög'
+		| 'MOP - Macao-Pataca'
+		| 'MRU - Mauretanischer Ouguiya'
+		| 'MUR - Mauritische Rupie'
+		| 'MVR - Maledivischer Rufiyaa'
+		| 'MWK - Malawischer Kwacha'
+		| 'MXN - Mexikanischer Peso'
+		| 'MYR - Malaysischer Ringgit'
+		| 'MZN - Mosambikanischer Metical'
+		| 'NAD - Namibischer Dollar'
+		| 'NGN - Nigerianische Naira'
+		| 'NIO - Nicaraguanischer Córdoba'
+		| 'NOK - Norwegische Krone'
+		| 'NPR - Nepalesische Rupie'
+		| 'NZD - Neuseeländischer Dollar'
+		| 'OMR - Omanischer Rial'
+		| 'PAB - Panamaischer Balboa'
+		| 'PEN - Peruanischer Sol'
+		| 'PGK - Papua-Neuguineischer Kina'
+		| 'PHP - Philippinischer Peso'
+		| 'PKR - Pakistanische Rupie'
+		| 'PLN - Polnischer Zloty'
+		| 'PYG - Paraguayischer Guaraní'
+		| 'QAR - Katarischer Riyal'
+		| 'RON - Rumänischer Leu'
+		| 'RSD - Serbischer Dinar'
+		| 'RUB - Russischer Rubel'
+		| 'RWF - Ruandischer Franc'
+		| 'SAR - Saudi-Arabischer Riyal'
+		| 'SBD - Salomonen-Dollar'
+		| 'SCR - Seychellische Rupie'
+		| 'SDG - Sudanesisches Pfund'
+		| 'SEK - Schwedische Krone'
+		| 'SGD - Singapurischer Dollar'
+		| 'SHP - St.-Helenisches Pfund'
+		| 'SLL - Sierraleonischer Leone'
+		| 'SOS - Somalischer Schilling'
+		| 'SRD - Surinamischer Dollar'
+		| 'STN - São-toménsische Dobra'
+		| 'SVC - El-Salvadorianischer Colón'
+		| 'SYP - Syrisches Pfund'
+		| 'SZL - Swasiland-Lilangeni'
+		| 'THB - Thailändischer Baht'
+		| 'TJS - Tadschikischer Somoni'
+		| 'TMT - Turkmenischer Manat'
+		| 'TND - Tunesischer Dinar'
+		| 'TOP - Tongaischer Paʻanga'
+		| 'TRY - Türkische Lira'
+		| 'TTD - Trinidad-und-Tobago-Dollar'
+		| 'TWD - Neuer Taiwanischer Dollar'
+		| 'TZS - Tansanischer Schilling'
+		| 'UAH - Ukrainische Hrywnja'
+		| 'UGX - Ugandischer Schilling'
+		| 'USD - US-Dollar'
+		| 'UYU - Uruguayischer Peso'
+		| 'UZS - Usbekischer Sum'
+		| 'VES - Venezolanischer Bolívar'
+		| 'VND - Vietnamesischer Dong'
+		| 'VUV - Vanuatuischer Vatu'
+		| 'WST - Samoanischer Tala'
+		| 'XAF - CFA-Franc BEAC'
+		| 'XCD - Ostkaribischer Dollar'
+		| 'XOF - CFA-Franc BCEAO'
+		| 'XPF - CFP-Franc'
+		| 'YER - Jemenitischer Rial'
+		| 'ZAR - Südafrikanischer Rand'
+		| 'ZMW - Sambischer Kwacha'
+		| 'ZWL - Simbabwischer Dollar',
+		'filled'
+	>;
+
+	/**
+	 * Weitere Währungen (Käufer-Auswahl) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.invoice_additional_currencies[]
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	invoice_additional_currencies: prismic.GroupField<
+		Simplify<SettingsDocumentDataInvoiceAdditionalCurrenciesItem>
+	>;
+
+	/**
+	 * IBAN field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: CH00 0000 0000 0000 0000 0
+	 * - **API ID Path**: settings.invoice_iban
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_iban: prismic.KeyTextField;
+
+	/**
+	 * Bank field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Musterbank
+	 * - **API ID Path**: settings.invoice_bank
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_bank: prismic.KeyTextField;
+
+	/**
+	 * BIC / SWIFT field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: XXXXXXXX
+	 * - **API ID Path**: settings.invoice_bic
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invoice_bic: prismic.KeyTextField;
+
+	/**
+	 * Zahlungsfrist (Tage) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 30
+	 * - **API ID Path**: settings.invoice_payment_terms_days
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	invoice_payment_terms_days: prismic.NumberField;
+
+	/**
+	 * MWST-Satz (%) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 8.1
+	 * - **API ID Path**: settings.invoice_vat_rate
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	invoice_vat_rate: prismic.NumberField;
+
+	/**
+	 * Globale Anzahlung (%) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 50 — wird verwendet wenn beim Produkt kein Wert gesetzt ist
+	 * - **API ID Path**: settings.global_deposit_percent
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	global_deposit_percent: prismic.NumberField;
+
+	/**
+	 * Rabatt-Codes field in *Einstellungen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.discount_codes[]
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	discount_codes: prismic.GroupField<Simplify<SettingsDocumentDataDiscountCodesItem>>;
+
+	/**
+	 * Zahlung: Kreditkarte / TWINT (Stripe) field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_stripe_enabled
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_stripe_enabled: prismic.BooleanField;
+
+	/**
+	 * Zahlung: Gegen Rechnung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_rechnung_enabled
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_rechnung_enabled: prismic.BooleanField;
+
+	/**
+	 * Zahlung: Gegen Bar field in *Einstellungen*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: settings.payment_bar_enabled
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	payment_bar_enabled: prismic.BooleanField;
+
+	/**
+	 * Rechnung E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
+	 * - **API ID Path**: settings.payment_rechnung_email_subject
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	payment_rechnung_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Rechnung E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}
+	 * - **API ID Path**: settings.payment_rechnung_email_body
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_rechnung_email_body: prismic.RichTextField;
+
+	/**
+	 * Bar E-Mail: Betreff field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
+	 * - **API ID Path**: settings.payment_bar_email_subject
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	payment_bar_email_subject: prismic.KeyTextField;
+
+	/**
+	 * Bar E-Mail: Text field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}
+	 * - **API ID Path**: settings.payment_bar_email_body
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_bar_email_body: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Kreditkarte / TWINT field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Stripe-Zahlung
+	 * - **API ID Path**: settings.payment_stripe_confirmation_text
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_stripe_confirmation_text: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Gegen Rechnung field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Rechnung-Bestellung
+	 * - **API ID Path**: settings.payment_rechnung_confirmation_text
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_rechnung_confirmation_text: prismic.RichTextField;
+
+	/**
+	 * Bestätigungstext: Gegen Bar field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Text auf der Bestätigungsseite nach Bar-Bestellung
+	 * - **API ID Path**: settings.payment_bar_confirmation_text
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	payment_bar_confirmation_text: prismic.RichTextField;
+
+	/**
+	 * Beauftragungsseite Titel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Beauftragung
+	 * - **API ID Path**: settings.beauftragung_title
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	beauftragung_title: prismic.KeyTextField;
+
+	/**
+	 * Bestellübersicht Titel field in *Einstellungen*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bestellübersicht
+	 * - **API ID Path**: settings.zusammenfassung_title
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	zusammenfassung_title: prismic.KeyTextField;
+
+	/**
+	 * Checkout-Formular Zusatzfelder field in *Einstellungen*
+	 *
+	 * - **Field Type**: Slice Zone
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.slices3[]
+	 * - **Tab**: Online-Handel
+	 * - **Documentation**: https://prismic.io/docs/slices
+	 */
+	slices3: prismic.SliceZone<SettingsDocumentDataSlices3Slice>;
 }
 
 /**
@@ -674,6 +1549,145 @@ interface SettingsDocumentData {
 export type SettingsDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<
 	Simplify<SettingsDocumentData>,
 	'settings',
+	Lang
+>;
+
+/**
+ * Content for Terminplanung documents
+ */
+interface TerminplanungDocumentData {
+	/**
+	 * Bezeichnung field in *Terminplanung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Erstgespräch
+	 * - **API ID Path**: terminplanung.titel
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	titel: prismic.KeyTextField;
+
+	/**
+	 * Startdatum field in *Terminplanung*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: terminplanung.datum
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	datum: prismic.DateField;
+
+	/**
+	 * Uhrzeit (HH:MM) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: 14:00
+	 * - **API ID Path**: terminplanung.uhrzeit
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	uhrzeit: prismic.KeyTextField;
+
+	/**
+	 * Dauer (Minuten) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 60
+	 * - **API ID Path**: terminplanung.session_laenge
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	session_laenge: prismic.NumberField;
+
+	/**
+	 * Zeitzone field in *Terminplanung*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Europe/Zurich
+	 * - **API ID Path**: terminplanung.zeitzone
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	zeitzone: prismic.SelectField<
+		| 'Pacific/Honolulu'
+		| 'America/Los_Angeles'
+		| 'America/Denver'
+		| 'America/Chicago'
+		| 'America/New_York'
+		| 'America/Sao_Paulo'
+		| 'Atlantic/Azores'
+		| 'Europe/London'
+		| 'Europe/Paris'
+		| 'Europe/Zurich'
+		| 'Europe/Berlin'
+		| 'Europe/Vienna'
+		| 'Europe/Athens'
+		| 'Europe/Moscow'
+		| 'Asia/Dubai'
+		| 'Asia/Kolkata'
+		| 'Asia/Dhaka'
+		| 'Asia/Bangkok'
+		| 'Asia/Singapore'
+		| 'Asia/Shanghai'
+		| 'Asia/Tokyo'
+		| 'Australia/Sydney'
+		| 'Pacific/Auckland'
+		| 'Africa/Johannesburg',
+		'filled'
+	>;
+
+	/**
+	 * Wiederholung field in *Terminplanung*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Keine
+	 * - **API ID Path**: terminplanung.wiederholung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	wiederholung: prismic.SelectField<
+		'Keine' | 'Täglich' | 'Wöchentlich' | 'Zweiwöchentlich' | 'Monatlich',
+		'filled'
+	>;
+
+	/**
+	 * Wiederholen bis (Datum) field in *Terminplanung*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: terminplanung.wiederholung_bis
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	wiederholung_bis: prismic.DateField;
+
+	/**
+	 * Anzahl Wiederholungen field in *Terminplanung*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 10
+	 * - **API ID Path**: terminplanung.wiederholung_anzahl
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	wiederholung_anzahl: prismic.NumberField;
+}
+
+/**
+ * Terminplanung document from Prismic
+ *
+ * - **API ID**: `terminplanung`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type TerminplanungDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<TerminplanungDocumentData>,
+	'terminplanung',
 	Lang
 >;
 
@@ -1165,12 +2179,72 @@ export type ThemeDocument<Lang extends string = string> = prismic.PrismicDocumen
 	Lang
 >;
 
+/**
+ * Item in *Variablen → Einträge (Token → Wert)*
+ */
+export interface VariablenDocumentDataEintraegeItem {
+	/**
+	 * Token-Name field in *Variablen → Einträge (Token → Wert)*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Firmename oder Telefon
+	 * - **API ID Path**: variablen.eintraege[].schluessel
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	schluessel: prismic.KeyTextField;
+
+	/**
+	 * Wert field in *Variablen → Einträge (Token → Wert)*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Klap GmbH oder +41 44 123 45 67
+	 * - **API ID Path**: variablen.eintraege[].wert
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	wert: prismic.KeyTextField;
+}
+
+/**
+ * Content for Variablen documents
+ */
+interface VariablenDocumentData {
+	/**
+	 * Einträge (Token → Wert) field in *Variablen*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: variablen.eintraege[]
+	 * - **Tab**: Variablen
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	eintraege: prismic.GroupField<Simplify<VariablenDocumentDataEintraegeItem>>;
+}
+
+/**
+ * Variablen document from Prismic
+ *
+ * - **API ID**: `variablen`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type VariablenDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<
+	Simplify<VariablenDocumentData>,
+	'variablen',
+	Lang
+>;
+
 export type AllDocumentTypes =
+	| EventDocument
 	| FontDocument
+	| LeistungDocument
 	| NavigationDocument
 	| PageDocument
 	| SettingsDocument
-	| ThemeDocument;
+	| TerminplanungDocument
+	| ThemeDocument
+	| VariablenDocument;
 
 /**
  * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
@@ -1307,6 +2381,27 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
 	erstes_item_ausgeklappt: prismic.BooleanField;
+
+	/**
+	 * Suche aktivieren field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.default.primary.mit_suche
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mit_suche: prismic.BooleanField;
+
+	/**
+	 * Suchfeld-Platzhalter field in *Akkordeon → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Suchen...
+	 * - **API ID Path**: accordion.default.primary.suchfeld_platzhalter
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	suchfeld_platzhalter: prismic.KeyTextField;
 
 	/**
 	 * Vollbreite auf Mobile field in *Akkordeon → Standard → Primary*
@@ -1482,6 +2577,27 @@ export interface AccordionSliceBildUndTextPrimary {
 	erstes_item_ausgeklappt: prismic.BooleanField;
 
 	/**
+	 * Suche aktivieren field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.mit_suche
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mit_suche: prismic.BooleanField;
+
+	/**
+	 * Suchfeld-Platzhalter field in *Akkordeon → Bild und Text → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Suchen...
+	 * - **API ID Path**: accordion.bildUndText.primary.suchfeld_platzhalter
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	suchfeld_platzhalter: prismic.KeyTextField;
+
+	/**
 	 * Vollbreite auf Mobile field in *Akkordeon → Bild und Text → Primary*
 	 *
 	 * - **Field Type**: Boolean
@@ -1610,9 +2726,196 @@ export type AccordionSliceBildUndText = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Akkordeon → Leistungen → Primary*
+ */
+export interface AccordionSliceLeistungenPrimary {
+	/**
+	 * Überschrift field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Beschreibung field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.description
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+
+	/**
+	 * Erstes Item ausgeklappt field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: accordion.leistungen.primary.erstes_item_ausgeklappt
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	erstes_item_ausgeklappt: prismic.BooleanField;
+
+	/**
+	 * Suche aktivieren field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.leistungen.primary.mit_suche
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mit_suche: prismic.BooleanField;
+
+	/**
+	 * Suchfeld-Platzhalter field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Suchen...
+	 * - **API ID Path**: accordion.leistungen.primary.suchfeld_platzhalter
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	suchfeld_platzhalter: prismic.KeyTextField;
+
+	/**
+	 * Vollbreite auf Mobile field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.leistungen.primary.mobile_vollbreite
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_vollbreite: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.leistungen.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: accordion.leistungen.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: accordion.leistungen.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: accordion.leistungen.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+
+	/**
+	 * Hintergrundfarbe (leer = Seitenfarbe) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe (leer = Seitenfarbe) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.text_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	text_color: prismic.ColorField;
+
+	/**
+	 * Kontrast-Offset (leer = automatisch) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: accordion.leistungen.primary.contrast_amount
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	contrast_amount: prismic.NumberField;
+
+	/**
+	 * Link-Farbe (leer = Seitenfarbe) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.link_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	link_color: prismic.ColorField;
+
+	/**
+	 * Rahmen-Farbe (leer = Schriftfarbe) field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: accordion.leistungen.primary.border_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	border_color: prismic.ColorField;
+
+	/**
+	 * Rahmen um die Sektion field in *Akkordeon → Leistungen → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.leistungen.primary.sektion_rahmen
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	sektion_rahmen: prismic.BooleanField;
+}
+
+/**
+ * Leistungen variation for Akkordeon Slice
+ *
+ * - **API ID**: `leistungen`
+ * - **Description**: Leistungs-Dokumente als Akkordeon
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AccordionSliceLeistungen = prismic.SharedSliceVariation<
+	'leistungen',
+	Simplify<AccordionSliceLeistungenPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Akkordeon*
  */
-type AccordionSliceVariation = AccordionSliceDefault | AccordionSliceBildUndText;
+type AccordionSliceVariation =
+	| AccordionSliceDefault
+	| AccordionSliceBildUndText
+	| AccordionSliceLeistungen;
 
 /**
  * Akkordeon Shared Slice
@@ -2106,9 +3409,162 @@ export type ButtonSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Schaltfläche → Kauf-Schaltfläche → Primary*
+ */
+export interface ButtonSliceKaufPrimary {
+	/**
+	 * Beschriftung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Jetzt beauftragen
+	 * - **API ID Path**: button.kauf.primary.button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	button_text: prismic.KeyTextField;
+
+	/**
+	 * Grösse field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mittel
+	 * - **API ID Path**: button.kauf.primary.button_size
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
+
+	/**
+	 * Ausrichtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mitte
+	 * - **API ID Path**: button.kauf.primary.button_align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Mobile: Volle Breite field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.kauf.primary.mobile_full_width
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	mobile_full_width: prismic.BooleanField;
+
+	/**
+	 * Schaltfläche Text- und Rahmenfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche T & R Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_hover_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrundfarbe field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltfläche Hintergrund Mouseover field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: button.kauf.primary.button_hover_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_hover_bg_color: prismic.ColorField;
+
+	/**
+	 * Vertikaler Abstand field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: button.kauf.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Animation aktivieren field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: button.kauf.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: button.kauf.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: button.kauf.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Schaltfläche → Kauf-Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: button.kauf.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Kauf-Schaltfläche variation for Schaltfläche Slice
+ *
+ * - **API ID**: `kauf`
+ * - **Description**: Schaltfläche die direkt zur Beauftragungsseite führt. URL wird automatisch gesetzt.
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ButtonSliceKauf = prismic.SharedSliceVariation<
+	'kauf',
+	Simplify<ButtonSliceKaufPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Schaltfläche*
  */
-type ButtonSliceVariation = ButtonSliceDefault;
+type ButtonSliceVariation = ButtonSliceDefault | ButtonSliceKauf;
 
 /**
  * Schaltfläche Shared Slice
@@ -2490,6 +3946,160 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 }
 
 /**
+ * Item in *Formular → Mit Termin → Primary → Formular Felder*
+ */
+export interface FormSliceMitTerminPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	field_type: prismic.SelectField<
+		| 'Textfeld'
+		| 'E-Mail'
+		| 'Telefon'
+		| 'Textbereich'
+		| 'Auswahlliste'
+		| 'Ankreuzfeld'
+		| 'Einzelauswahl'
+		| 'Land'
+		| 'Termin'
+		| 'Zeitzone'
+	>;
+
+	/**
+	 * Obligatorisch field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].invalid_feedback_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invalid_feedback_text: prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	options: prismic.KeyTextField;
+
+	/**
+	 * Platzhalter field in *Formular → Mit Termin → Primary → Formular Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[].placeholder
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	placeholder: prismic.KeyTextField;
+}
+
+/**
+ * Item in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+ */
+export interface FormSliceKaufPrimaryFormFieldsItem {
+	/**
+	 * Formularfeld Label field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].field_name
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	field_name: prismic.KeyTextField;
+
+	/**
+	 * Feld Typ field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].field_type
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	field_type: prismic.SelectField<
+		| 'Textfeld'
+		| 'E-Mail'
+		| 'Telefon'
+		| 'Textbereich'
+		| 'Auswahlliste'
+		| 'Ankreuzfeld'
+		| 'Einzelauswahl'
+		| 'Land'
+		| 'Termin'
+		| 'Zeitzone'
+	>;
+
+	/**
+	 * Obligatorisch field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: form.kauf.primary.form_fields[].required
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	required: prismic.BooleanField;
+
+	/**
+	 * Fehlermeldung field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Bitte ausfüllen
+	 * - **API ID Path**: form.kauf.primary.form_fields[].invalid_feedback_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	invalid_feedback_text: prismic.KeyTextField;
+
+	/**
+	 * Optionen bei Auswahlfeldern field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: mit Komma getrennt
+	 * - **API ID Path**: form.kauf.primary.form_fields[].options
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	options: prismic.KeyTextField;
+
+	/**
+	 * Platzhalter field in *Formular → Kauf-Formular → Primary → Zusätzliche Formular-Felder*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[].placeholder
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	placeholder: prismic.KeyTextField;
+}
+
+/**
  * Primary content in *Formular → Standard → Primary*
  */
 export interface FormSliceDefaultPrimary {
@@ -2632,9 +4242,168 @@ export type FormSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Formular → Mit Termin → Primary*
+ */
+export interface FormSliceMitTerminPrimary {
+	/**
+	 * Formular Titel field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	form_title: prismic.KeyTextField;
+
+	/**
+	 * Formular Instruktionen field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_instructions
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	form_instructions: prismic.RichTextField;
+
+	/**
+	 * Senden-Schaltflächen-Text field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.submitt_button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	submitt_button_text: prismic.KeyTextField;
+
+	/**
+	 * 2 Spalten field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.mitTermin.primary.zwei_spalten
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	zwei_spalten: prismic.BooleanField;
+
+	/**
+	 * Gesendet Titel field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.submitted_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	submitted_title: prismic.KeyTextField;
+
+	/**
+	 * Gesendet Text field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.submitted_text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	submitted_text: prismic.RichTextField;
+
+	/**
+	 * Formular Felder field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.mitTermin.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceMitTerminPrimaryFormFieldsItem>>;
+
+	/**
+	 * Animation aktivieren field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: form.mitTermin.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: form.mitTermin.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: form.mitTermin.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Formular → Mit Termin → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: form.mitTermin.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Mit Termin variation for Formular Slice
+ *
+ * - **API ID**: `mitTermin`
+ * - **Description**: Standard-Formular mit Termin- und Zeitzone-Feld
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type FormSliceMitTermin = prismic.SharedSliceVariation<
+	'mitTermin',
+	Simplify<FormSliceMitTerminPrimary>,
+	never
+>;
+
+/**
+ * Primary content in *Formular → Kauf-Formular → Primary*
+ */
+export interface FormSliceKaufPrimary {
+	/**
+	 * Zusätzliche Formular-Felder field in *Formular → Kauf-Formular → Primary*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: form.kauf.primary.form_fields[]
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	form_fields: prismic.GroupField<Simplify<FormSliceKaufPrimaryFormFieldsItem>>;
+}
+
+/**
+ * Kauf-Formular variation for Formular Slice
+ *
+ * - **API ID**: `kauf`
+ * - **Description**: Zusatzfelder für den Kauf-Prozess (ergänzt die fixen Rechnungsfelder auf /beauftragung).
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type FormSliceKauf = prismic.SharedSliceVariation<
+	'kauf',
+	Simplify<FormSliceKaufPrimary>,
+	never
+>;
+
+/**
  * Slice variation for *Formular*
  */
-type FormSliceVariation = FormSliceDefault;
+type FormSliceVariation = FormSliceDefault | FormSliceMitTermin | FormSliceKauf;
 
 /**
  * Formular Shared Slice
@@ -2644,6 +4413,137 @@ type FormSliceVariation = FormSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type FormSlice = prismic.SharedSlice<'form', FormSliceVariation>;
+
+/**
+ * Primary content in *Galerie → Standard → Primary*
+ */
+export interface GalerieSliceDefaultPrimary {
+	/**
+	 * Titel (optional) field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Unsere Arbeiten
+	 * - **API ID Path**: galerie.default.primary.title
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	title: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: galerie.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Textfarbe field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: galerie.default.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Spalten (Desktop) field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: 3
+	 * - **API ID Path**: galerie.default.primary.columns
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	columns: prismic.SelectField<'2' | '3' | '4', 'filled'>;
+
+	/**
+	 * Abstände zwischen Bildern field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: galerie.default.primary.gap
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	gap: prismic.BooleanField;
+
+	/**
+	 * Abgerundete Ecken field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: galerie.default.primary.rounded
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	rounded: prismic.BooleanField;
+
+	/**
+	 * Einblend-Animation field in *Galerie → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: galerie.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+}
+
+/**
+ * Primary content in *Galerie → Items*
+ */
+export interface GalerieSliceDefaultItem {
+	/**
+	 * Bild field in *Galerie → Items*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: galerie.items[].image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
+
+	/**
+	 * Bildunterschrift (optional) field in *Galerie → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Projektname, Ort…
+	 * - **API ID Path**: galerie.items[].caption
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	caption: prismic.KeyTextField;
+}
+
+/**
+ * Standard variation for Galerie Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Grid-Galerie mit Lightbox
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type GalerieSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<GalerieSliceDefaultPrimary>,
+	Simplify<GalerieSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Galerie*
+ */
+type GalerieSliceVariation = GalerieSliceDefault;
+
+/**
+ * Galerie Shared Slice
+ *
+ * - **API ID**: `galerie`
+ * - **Description**: Foto-Galerie mit Lightbox
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type GalerieSlice = prismic.SharedSlice<'galerie', GalerieSliceVariation>;
 
 /**
  * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
@@ -3733,9 +5633,196 @@ export type ImageCardsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *Kacheln → Pläne → Primary*
+ */
+export interface ImageCardsSlicePlaenePrimary {
+	/**
+	 * Titel field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Unsere Pakete
+	 * - **API ID Path**: image_cards.plaene.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Hervorgehobener Plan field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Keiner
+	 * - **API ID Path**: image_cards.plaene.primary.hervorhebung
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	hervorhebung: prismic.SelectField<'Keiner' | 'Plan 1' | 'Plan 2' | 'Plan 3' | 'Plan 4', 'filled'>;
+
+	/**
+	 * CTA-Beschriftung field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Jetzt bestellen
+	 * - **API ID Path**: image_cards.plaene.primary.cta_label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	cta_label: prismic.KeyTextField;
+
+	/**
+	 * Schriftfarbe Karten field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.body_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	body_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe Karten field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.body_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	body_bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe Bereich field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.component_body_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	component_body_color: prismic.ColorField;
+
+	/**
+	 * Hintergrundfarbe Bereich field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.component_body_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	component_body_bg_color: prismic.ColorField;
+
+	/**
+	 * Schaltflächen Schriftfarbe field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.button_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_color: prismic.ColorField;
+
+	/**
+	 * Schaltflächen Hintergrundfarbe field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.button_bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	button_bg_color: prismic.ColorField;
+
+	/**
+	 * Farbe der Umrandung field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: image_cards.plaene.primary.border_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	border_color: prismic.ColorField;
+
+	/**
+	 * Runde Ecken field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: image_cards.plaene.primary.round_corners
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	round_corners: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: image_cards.plaene.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: image_cards.plaene.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: image_cards.plaene.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Kacheln → Pläne → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: image_cards.plaene.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Primary content in *Kacheln → Items*
+ */
+export interface ImageCardsSlicePlaeneItem {
+	/**
+	 * Plan (Seite) field in *Kacheln → Items*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: image_cards.items[].plan
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	plan: prismic.ContentRelationshipField<'page'>;
+}
+
+/**
+ * Pläne variation for Kacheln Slice
+ *
+ * - **API ID**: `plaene`
+ * - **Description**: Mobile-freundliche Plan-Karten mit Leistungsübersicht
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type ImageCardsSlicePlaene = prismic.SharedSliceVariation<
+	'plaene',
+	Simplify<ImageCardsSlicePlaenePrimary>,
+	Simplify<ImageCardsSlicePlaeneItem>
+>;
+
+/**
  * Slice variation for *Kacheln*
  */
-type ImageCardsSliceVariation = ImageCardsSliceDefault;
+type ImageCardsSliceVariation = ImageCardsSliceDefault | ImageCardsSlicePlaene;
 
 /**
  * Kacheln Shared Slice
@@ -5796,28 +7883,44 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
+			EventDocument,
+			EventDocumentData,
 			FontDocument,
 			FontDocumentData,
+			LeistungDocument,
+			LeistungDocumentData,
 			NavigationDocument,
 			NavigationDocumentData,
 			NavigationDocumentDataLinksItem,
 			PageDocument,
 			PageDocumentData,
 			PageDocumentDataSlicesSlice,
+			PageDocumentDataEcommerceAddonsItem,
+			PageDocumentDataLeistungenItem,
 			SettingsDocument,
 			SettingsDocumentData,
 			SettingsDocumentDataContactsItem,
+			SettingsDocumentDataInvoiceAdditionalCurrenciesItem,
+			SettingsDocumentDataDiscountCodesItem,
+			SettingsDocumentDataSlices3Slice,
+			TerminplanungDocument,
+			TerminplanungDocumentData,
 			ThemeDocument,
 			ThemeDocumentData,
+			VariablenDocument,
+			VariablenDocumentData,
+			VariablenDocumentDataEintraegeItem,
 			AllDocumentTypes,
 			AccordionSlice,
 			AccordionSliceDefaultPrimaryAccordionItemsItem,
 			AccordionSliceDefaultPrimary,
 			AccordionSliceBildUndTextPrimaryAccordionItemsItem,
 			AccordionSliceBildUndTextPrimary,
+			AccordionSliceLeistungenPrimary,
 			AccordionSliceVariation,
 			AccordionSliceDefault,
 			AccordionSliceBildUndText,
+			AccordionSliceLeistungen,
 			AdresseUndMapSlice,
 			AdresseUndMapSliceDefaultPrimary,
 			AdresseUndMapSliceVariation,
@@ -5829,8 +7932,10 @@ declare module '@prismicio/client' {
 			AnleitungSliceDefault,
 			ButtonSlice,
 			ButtonSliceDefaultPrimary,
+			ButtonSliceKaufPrimary,
 			ButtonSliceVariation,
 			ButtonSliceDefault,
+			ButtonSliceKauf,
 			CodeEinbettenSlice,
 			CodeEinbettenSliceDefaultPrimary,
 			CodeEinbettenSliceVariation,
@@ -5843,8 +7948,19 @@ declare module '@prismicio/client' {
 			FormSlice,
 			FormSliceDefaultPrimaryFormFieldsItem,
 			FormSliceDefaultPrimary,
+			FormSliceMitTerminPrimaryFormFieldsItem,
+			FormSliceMitTerminPrimary,
+			FormSliceKaufPrimaryFormFieldsItem,
+			FormSliceKaufPrimary,
 			FormSliceVariation,
 			FormSliceDefault,
+			FormSliceMitTermin,
+			FormSliceKauf,
+			GalerieSlice,
+			GalerieSliceDefaultPrimary,
+			GalerieSliceDefaultItem,
+			GalerieSliceVariation,
+			GalerieSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,
@@ -5868,8 +7984,11 @@ declare module '@prismicio/client' {
 			ImageCardsSlice,
 			ImageCardsSliceDefaultPrimaryCardsItem,
 			ImageCardsSliceDefaultPrimary,
+			ImageCardsSlicePlaenePrimary,
+			ImageCardsSlicePlaeneItem,
 			ImageCardsSliceVariation,
 			ImageCardsSliceDefault,
+			ImageCardsSlicePlaene,
 			P5GrafikSlice,
 			P5GrafikSliceDefaultPrimary,
 			P5GrafikSliceMitTitelbereichPrimary,

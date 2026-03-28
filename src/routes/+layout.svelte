@@ -217,6 +217,24 @@
 	$: {
 		updateTheme(data);
 	}
+	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	$: {
+		const pd = $page.data?.page?.data ?? {};
+		const overrideBg: string | null = pd.page_bg_color ?? null;
+		const overrideColor: string | null = pd.page_color ?? null;
+		if (overrideBg || overrideColor) {
+			theme.update((t) => ({
+				...t,
+				...(overrideBg ? { pageBgColor: overrideBg } : {}),
+				...(overrideColor ? { pageColor: overrideColor } : {})
+			}));
+			if (typeof document !== 'undefined') {
+				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
+				if (overrideColor)
+					document.documentElement.style.setProperty('--page-color', overrideColor);
+			}
+		}
+	}
 	$: pageFontName =
 		prismicTheme?.data?.page_font?.data?.name ||
 		fonts?.find((f: any) => f.id === prismicTheme?.data?.page_font?.id)?.data?.name ||
@@ -259,6 +277,7 @@
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
+				s.slice_type === 'galerie' ||
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);

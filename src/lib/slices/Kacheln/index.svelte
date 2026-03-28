@@ -6,6 +6,8 @@
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { reveal } from '$lib/actions/reveal';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
@@ -20,7 +22,7 @@
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
-	const gridColumns = String(slice.primary.grid_columns).includes('3') ? 3 : 2;
+	const gridColumns = String((slice.primary as any).grid_columns ?? '').includes('3') ? 3 : 2;
 
 	$: anim = mapAnimation(
 		slice.primary.animate,
@@ -98,6 +100,20 @@
 	$: roundCorners = (slice.primary as any).round_corners !== false;
 	$: ctaLabel = (slice.primary as any).cta_label || 'Jetzt bestellen';
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+
+	// --- Team variation ---
+	$: isTeamVariation = (slice as any).variation === 'team';
+	$: teamItems = ((slice as any).items ?? []) as Array<Record<string, any>>;
+	$: teamCols = String((slice.primary as any).grid_columns ?? '').includes('4')
+		? 4
+		: String((slice.primary as any).grid_columns ?? '').includes('3')
+			? 3
+			: 2;
+	$: isCircle = (slice.primary as any).image_shape === 'Kreis';
+	$: teamRound = (slice.primary as any).round_corners !== false;
+	$: teamCardColor = (slice.primary as any).body_color || get(theme).pageColor;
+	$: teamCardBg = (slice.primary as any).body_bg_color || 'transparent';
+	$: teamHeading = (slice.primary as any).heading ?? null;
 </script>
 
 {#if slice.variation === 'plaene'}
@@ -201,13 +217,118 @@
 			</div>
 		</div>
 	</Bounded>
+{:else if isTeamVariation}
+	<!-- ── Team-Variation ── -->
+	<Bounded
+		tag="section"
+		style="color: {componentBodyColor}; background-color: {componentBodyBgColor};"
+		data-slice-type="image_cards"
+		data-slice-variation="team"
+		animate={anim.animate}
+		animationOptions={anim.options}
+	>
+		{#if isFilled.richText(teamHeading)}
+			<h2 class="text-center mb-10 custom-color">
+				<PrismicText field={teamHeading} />
+			</h2>
+		{/if}
+
+		<ul
+			class="grid grid-cols-2 gap-8
+			{teamCols === 4 ? 'md:grid-cols-4' : teamCols === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}"
+		>
+			{#each teamItems as member, i}
+				{@const m = member}
+				{@const photo = m.photo}
+				{@const memberName = m.name}
+				{@const memberRole = m.role}
+				{@const memberBio = m.bio}
+				{@const memberLink = m.link}
+				<li
+					use:reveal={anim.animate
+						? { ...anim.options, delay: (anim.options.delay ?? 0) + i * STAGGER_MS }
+						: { direction: 'none' }}
+					style="color: {teamCardColor};"
+				>
+					<!-- Foto -->
+					{#if isFilled.image(photo)}
+						<div
+							class="w-full aspect-square overflow-hidden {isCircle
+								? 'rounded-full'
+								: teamRound
+									? 'rounded-xl'
+									: ''}"
+							style="background-color: {teamCardBg};"
+						>
+							<img
+								src="{photo.url?.split('?')[0]}?auto=compress,format&w=600&fit=crop&ar=1:1"
+								alt={photo.alt ?? memberName ?? ''}
+								width="600"
+								height="600"
+								loading={i < 4 ? 'eager' : 'lazy'}
+								decoding="async"
+								class="w-full h-full object-cover"
+							/>
+						</div>
+					{:else}
+						<div
+							class="w-full aspect-square {isCircle
+								? 'rounded-full'
+								: teamRound
+									? 'rounded-xl'
+									: ''} flex items-center justify-center opacity-20"
+							style="background-color: {teamCardColor};"
+						>
+							<svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12">
+								<path
+									d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-5.33 0-8 2.67-8 4v1h16v-1c0-1.33-2.67-4-8-4z"
+								/>
+							</svg>
+						</div>
+					{/if}
+
+					<!-- Name + Rolle -->
+					<div>
+						{#if memberName}
+							<p class="font-semibold leading-snug">{memberName}</p>
+						{/if}
+						{#if memberRole}
+							<p class="text-sm opacity-60 mt-0.5">{memberRole}</p>
+						{/if}
+					</div>
+
+					<!-- Bio -->
+					{#if isFilled.richText(memberBio)}
+						<div class="text-sm opacity-80 leading-relaxed">
+							<PrismicRichText field={memberBio} />
+						</div>
+					{/if}
+
+					<!-- Link -->
+					{#if isFilled.link(memberLink)}
+						<a
+							href={memberLink.url}
+							target={'target' in memberLink ? (memberLink.target ?? '_blank') : '_blank'}
+							rel="noopener noreferrer"
+							class="text-xs underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity"
+							style="color: {teamCardColor};"
+						>
+							{memberLink.url?.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] ?? 'Link'}
+						</a>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	</Bounded>
 {:else}
 	<Bounded
 		tag="section"
-		data-slice-type={slice.slice_type}
-		data-slice-variation={slice.variation}
 		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-clip' : ''}"
 		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
+		data-slice-type={slice.slice_type}
+		data-slice-variation={slice.variation}
+		animate={anim.animate}
+		animationOptions={anim.options}
 	>
 		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 			{#if isFilled.richText(slice.primary.heading)}
@@ -228,7 +349,7 @@
 						buttonHoverBgColor={slice.primary.button_hover_bg_color}
 						borderColor={slice.primary.border_color}
 						revealOptions={anim.animate
-							? { ...anim.options, delay: anim.options.delay + i * STAGGER_MS }
+							? { ...anim.options, delay: (anim.options.delay ?? 0) + i * STAGGER_MS }
 							: { direction: 'none' }}
 					/>
 				{/each}

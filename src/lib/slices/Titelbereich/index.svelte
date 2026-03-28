@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { convertNumber } from '$lib/utils/convertNumber';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -36,21 +37,29 @@
 	const overlayColor = slice.primary.overlay_color || 'var(--overlay-color)';
 	$: bgColor = 'bg_color' in slice.primary ? (slice.primary as any).bg_color || null : null;
 	$: gradientFallback = bgColor ?? ($isMobile ? textOverlayColor : overlayColor);
-	$: gradient = 'gradient_color_1' in slice.primary
-		? {
-				color1: (slice.primary as any).gradient_color_1 || null,
-				color2: (slice.primary as any).gradient_color_2 || null,
-				opacity1: (slice.primary as any).gradient_opacity_1 ?? 1,
-				opacity2: (slice.primary as any).gradient_opacity_2 ?? 1,
-				stop1: (slice.primary as any).gradient_stop_1 != null ? `${(slice.primary as any).gradient_stop_1}%` : '0%',
-				stop2: (slice.primary as any).gradient_stop_2 != null ? `${(slice.primary as any).gradient_stop_2}%` : '100%',
-				type: (slice.primary as any).gradient_type || 'Linear',
-				angle: ((slice.primary as any).gradient_angle || '180°').replace('°', 'deg')
-			}
-		: null;
+	$: gradient =
+		'gradient_color_1' in slice.primary
+			? {
+					color1: (slice.primary as any).gradient_color_1 || null,
+					color2: (slice.primary as any).gradient_color_2 || null,
+					opacity1: (slice.primary as any).gradient_opacity_1 ?? 1,
+					opacity2: (slice.primary as any).gradient_opacity_2 ?? 1,
+					stop1:
+						(slice.primary as any).gradient_stop_1 != null
+							? `${(slice.primary as any).gradient_stop_1}%`
+							: '0%',
+					stop2:
+						(slice.primary as any).gradient_stop_2 != null
+							? `${(slice.primary as any).gradient_stop_2}%`
+							: '100%',
+					type: (slice.primary as any).gradient_type || 'Linear',
+					angle: ((slice.primary as any).gradient_angle || '180°').replace('°', 'deg')
+				}
+			: null;
 
-	$: presetFont = 'preset_font' in slice.primary ? (slice.primary as any).preset_font || null : null;
-	$: presetFontUrl = presetFont ? presetFontUrls[presetFont] ?? null : null;
+	$: presetFont =
+		'preset_font' in slice.primary ? (slice.primary as any).preset_font || null : null;
+	$: presetFontUrl = presetFont ? (presetFontUrls[presetFont] ?? null) : null;
 
 	const overlayOpacity = (() => {
 		if (!('overlay_opacity' in slice.primary) || slice.primary.overlay_opacity === null) {
@@ -59,19 +68,18 @@
 		return convertNumber(slice.primary.overlay_opacity);
 	})();
 
-	const headerBgOpacity = convertNumber((slice.primary as any).header_bg_opacity ?? 0) || 0;
 	const hideHeaderOnLoad = (slice.primary as any).hide_header_on_load ?? false;
 	const color = 'color' in slice.primary ? slice.primary.color : 'var(--text-color)';
-	const bannerTop = slice.primary.banner_overlap ?? false;
 
-	// bannerTop, headerBgOpacity und hideHeaderOnLoad im Theme-Store aktualisieren
-	$: theme.update((t) => ({ ...t, bannerTop, headerBgOpacity, hideHeaderOnLoad }));
+	// hideHeaderOnLoad im Theme-Store aktualisieren (bannerTop/headerBgOpacity via BannerThemeSync)
+	$: theme.update((t) => ({ ...t, hideHeaderOnLoad }));
+
+	$: btsBannerOverlap = (slice.primary as any).banner_overlap ?? false;
+	$: btsHeaderBgOpacity = (slice.primary as any).header_bg_opacity ?? null;
 
 	onDestroy(() => {
 		theme.update((t) => ({
 			...t,
-			headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
-			bannerTop: THEME_DEFAULTS.bannerTop,
 			hideHeaderOnLoad: THEME_DEFAULTS.hideHeaderOnLoad
 		}));
 	});
@@ -130,7 +138,6 @@
 		mounted = true;
 	});
 
-
 	// Parallax – direktes DOM-Update, kein Svelte-Re-Render
 	let sectionEl: HTMLElement;
 	let parallaxInner: HTMLElement | undefined;
@@ -159,6 +166,7 @@
 	});
 </script>
 
+<BannerThemeSync bannerOverlap={btsBannerOverlap} headerBgOpacityRaw={btsHeaderBgOpacity} />
 <svelte:head>
 	{#if presetFontUrl}
 		<link rel="stylesheet" href={presetFontUrl} />
@@ -171,10 +179,12 @@
 	data-slice-type={slice.slice_type}
 	style="color: {color};
 		height: {$bannerHeight};
-		font-family: {presetFont ? `'${presetFont}'` : (('font' in slice.primary &&
-		isFilled.contentRelationship(slice.primary.font) &&
-		slice.primary.font.data?.name) ||
-		'inherit')};
+		font-family: {presetFont
+		? `'${presetFont}'`
+		: ('font' in slice.primary &&
+				isFilled.contentRelationship(slice.primary.font) &&
+				slice.primary.font.data?.name) ||
+			'inherit'};
 	"
 >
 	<GradientBackground

@@ -67,10 +67,7 @@
 					"config": {
 						"label": "Spalten je Reihe",
 						"placeholder": "2",
-						"options": [
-							"2",
-							"3"
-						],
+						"options": ["2", "3"],
 						"default_value": "2"
 					}
 				},
@@ -241,9 +238,7 @@
 									"placeholder": "",
 									"select": null,
 									"allowTargetBlank": true,
-									"customtypes": [
-										"page"
-									]
+									"customtypes": ["page"]
 								}
 							},
 							"buttonText": {
@@ -276,13 +271,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -324,13 +313,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Hervorgehobener Plan",
-						"options": [
-							"Keiner",
-							"Plan 1",
-							"Plan 2",
-							"Plan 3",
-							"Plan 4"
-						],
+						"options": ["Keiner", "Plan 1", "Plan 2", "Plan 3", "Plan 4"],
 						"default_value": "Keiner"
 					}
 				},
@@ -410,13 +393,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -441,9 +418,122 @@
 					"config": {
 						"label": "Plan (Seite)",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
+					}
+				}
+			}
+		},
+		{
+			"id": "team",
+			"name": "Team",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Team-Mitglieder als Portr\u00e4t-Kacheln",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Titel",
+						"placeholder": "Unser Team",
+						"allowTargetBlank": false,
+						"single": "heading2"
+					}
+				},
+				"component_body_color": {
+					"type": "Color",
+					"config": { "label": "Schriftfarbe Bereich", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+				},
+				"component_body_bg_color": {
+					"type": "Color",
+					"config": { "label": "Hintergrundfarbe Bereich", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+				},
+				"body_color": {
+					"type": "Color",
+					"config": { "label": "Schriftfarbe Kacheln", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+				},
+				"body_bg_color": {
+					"type": "Color",
+					"config": { "label": "Hintergrundfarbe Kacheln", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+				},
+				"grid_columns": {
+					"type": "Select",
+					"config": {
+						"label": "Spalten je Reihe",
+						"options": ["2", "3", "4"],
+						"default_value": "3"
+					}
+				},
+				"image_shape": {
+					"type": "Select",
+					"config": {
+						"label": "Bild-Form",
+						"options": ["Quadratisch", "Kreis"],
+						"default_value": "Quadratisch"
+					}
+				},
+				"round_corners": {
+					"type": "Boolean",
+					"config": {
+						"label": "Runde Ecken (Kachel)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": { "label": "Animation aktivieren", "default_value": false }
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": { "label": "Verz\u00f6gerung (ms)", "placeholder": "500" }
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+				}
+			},
+			"items": {
+				"photo": {
+					"type": "Image",
+					"config": {
+						"label": "Foto",
+						"constraint": { "width": 800, "height": 800 },
+						"thumbnails": []
+					}
+				},
+				"name": {
+					"type": "Text",
+					"config": { "label": "Name", "placeholder": "Maria Muster" }
+				},
+				"role": {
+					"type": "Text",
+					"config": { "label": "Funktion / Rolle", "placeholder": "Gesch\u00e4ftsf\u00fchrerin" }
+				},
+				"bio": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Kurzbiografie (optional)",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong,em"
+					}
+				},
+				"link": {
+					"type": "Link",
+					"config": {
+						"label": "Link (z.B. LinkedIn)",
+						"placeholder": "",
+						"select": null,
+						"allowTargetBlank": true
 					}
 				}
 			}
