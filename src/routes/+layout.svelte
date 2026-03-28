@@ -214,6 +214,9 @@
 	}
 
 	// --- THEME & FONTS ---
+	// Sofort synchron ausführen (verhindert Flash beim ersten Render)
+	updateTheme(data);
+	// Reaktiv bei Datenänderungen (z.B. Seitennavigation)
 	$: {
 		updateTheme(data);
 	}
@@ -338,7 +341,7 @@
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
-<div style="background-color: {$theme.pageBgColor}; min-height: 100vh;">
+<div style="background-color: var(--page-bg-color); min-height: 100vh;">
 	{#if !isLandingPage && !isPreview}
 		<Header
 			{navigation}
@@ -356,7 +359,7 @@
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
 				as="section"
-				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
+				style="background-color: var(--page-bg-color); color: var(--page-color);"
 			>
 				<!--Seiten Titel Page Title-->
 				<h1 use:reveal={titleAnimation} class="tracking-tight mt-12 mb-4 first:mt-0">
