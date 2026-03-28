@@ -393,6 +393,26 @@ interface PageDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
 	slices: prismic.SliceZone<PageDocumentDataSlicesSlice>; /**
+	 * Hintergrundfarbe (überschreibt globale Farbe) field in *Page*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.page_bg_color
+	 * - **Tab**: Erscheinungsbild
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe (überschreibt globale Farbe) field in *Page*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: page.page_color
+	 * - **Tab**: Erscheinungsbild
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	page_color: prismic.ColorField; /**
 	 * E-Commerce aktiv field in *Page*
 	 *
 	 * - **Field Type**: Boolean

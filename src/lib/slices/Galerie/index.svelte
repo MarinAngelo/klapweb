@@ -5,6 +5,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { reveal } from '$lib/actions/reveal';
+	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 
 	export let slice: {
 		primary: Record<string, unknown>;
@@ -50,10 +51,26 @@
 
 	function open(i: number) {
 		lightboxIndex = i;
+		isLightboxOpen.set(true);
+		if (typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
+			document.documentElement.requestFullscreen().catch(() => {});
+		}
 	}
 
 	function close() {
 		lightboxIndex = null;
+		isLightboxOpen.set(false);
+		if (typeof document !== 'undefined' && document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		}
+	}
+
+	function onFullscreenChange() {
+		// User hat Fullscreen extern verlassen (z.B. Esc, F11) → Lightbox schließen
+		if (typeof document !== 'undefined' && !document.fullscreenElement && lightboxIndex !== null) {
+			lightboxIndex = null;
+			isLightboxOpen.set(false);
+		}
 	}
 
 	function navNext() {
@@ -74,11 +91,14 @@
 	}
 
 	onDestroy(() => {
-		// Keyboard-Listener wird in <svelte:window> gebunden
+		isLightboxOpen.set(false);
+		if (typeof document !== 'undefined' && document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		}
 	});
 </script>
 
-<svelte:window on:keydown={onKeydown} />
+<svelte:window on:keydown={onKeydown} on:fullscreenchange={onFullscreenChange} />
 
 <Bounded
 	tag="section"

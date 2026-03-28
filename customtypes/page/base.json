@@ -88,6 +88,20 @@
 				}
 			}
 		},
+		"Erscheinungsbild": {
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe (überschreibt globale Farbe)"
+				}
+			},
+			"page_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schriftfarbe (überschreibt globale Farbe)"
+				}
+			}
+		},
 		"SEO & Metadata": {
 			"meta_title": {
 				"type": "Text",

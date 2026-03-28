@@ -5,6 +5,7 @@
 	import type { Content, PrismicDocument } from '@prismicio/client';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
+	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
 	import { hexToRgba } from '$lib/utils/color';
 	import Bounded from './Bounded.svelte';
@@ -166,6 +167,8 @@
 <header
 	bind:this={headerEl}
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
+	class:opacity-0={$isLightboxOpen}
+	class:pointer-events-none={$isLightboxOpen}
 	style:position={stickyHeader ? 'fixed' : bannerTop ? 'absolute' : 'relative'}
 	style:top="0"
 	style:left="0"
