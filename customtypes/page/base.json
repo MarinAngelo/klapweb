@@ -80,6 +80,9 @@
 						},
 						"stimmen": {
 							"type": "SharedSlice"
+						},
+						"galerie": {
+							"type": "SharedSlice"
 						}
 					}
 				}
