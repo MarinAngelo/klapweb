@@ -349,7 +349,7 @@
 				{/if}
 
 				<!-- Anmelden-Button -->
-				{#if parentEvent.registration_email || parentEvent.registration_whatsapp}
+				{#if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
 					<div>
 						<Button link={undefined} text="Anmelden" on:click={() => openModal()} />
 					</div>
@@ -431,7 +431,8 @@
 
 								<!-- Ticket-Button oder Einzel-Anmelden -->
 								{#if ev.individually_bookable}
-									{@const hasIndividualContact = registrationEmail(ev) || registrationWhatsapp(ev)}
+									{@const hasIndividualContact =
+										registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
 									{#if isFilled.link(ev.individual_ticket_url)}
 										<Button link={ev.individual_ticket_url} text="Tickets" size="sm" />
 									{:else if hasIndividualContact}
@@ -447,6 +448,13 @@
 										link={ev.ticket_url}
 										text={ev.registration_required ? 'Anmelden' : 'Tickets'}
 										size="sm"
+									/>
+								{:else if registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
+									<Button
+										link={undefined}
+										text="Anmelden"
+										size="sm"
+										on:click={() => openModal(ev)}
 									/>
 								{/if}
 							</div>

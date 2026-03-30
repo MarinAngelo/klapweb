@@ -72,13 +72,20 @@
 				"config": {
 					"label": "Status",
 					"placeholder": "Status wählen",
-					"options": ["Kein", "Geplant", "Bestätigt", "Abgesagt", "Verschoben", "Ausgebucht"],
+					"options": [
+						"Kein",
+						"Geplant",
+						"Bestätigt",
+						"Abgesagt",
+						"Verschoben",
+						"Ausgebucht"
+					],
 					"default_value": "Geplant"
 				}
 			},
 			"slices": {
 				"type": "Slices",
-				"fieldset": "Slice Zone",
+				"fieldset": "Inhalt",
 				"config": {
 					"choices": {}
 				}
@@ -120,7 +127,12 @@
 				"config": {
 					"label": "Zeitzone",
 					"placeholder": "Zeitzone wählen",
-					"options": ["Europe/Zurich", "Europe/Berlin", "Europe/Vienna", "UTC"],
+					"options": [
+						"Europe/Zurich",
+						"Europe/Berlin",
+						"Europe/Vienna",
+						"UTC"
+					],
 					"default_value": "Europe/Zurich"
 				}
 			}
@@ -140,8 +152,7 @@
 				"config": {
 					"label": "Online-Link / Stream",
 					"allowTargetBlank": true,
-					"placeholder": "https://...",
-					"select": null
+					"placeholder": "https://..."
 				}
 			},
 			"location_name": {
@@ -184,7 +195,13 @@
 				"config": {
 					"label": "Land",
 					"placeholder": "Land wählen",
-					"options": ["Schweiz", "Deutschland", "Österreich", "Liechtenstein", "Sonstiges"],
+					"options": [
+						"Schweiz",
+						"Deutschland",
+						"Österreich",
+						"Liechtenstein",
+						"Sonstiges"
+					],
 					"default_value": "Schweiz"
 				}
 			},
@@ -193,8 +210,7 @@
 				"config": {
 					"label": "Karte / Google Maps",
 					"allowTargetBlank": true,
-					"placeholder": "https://maps.google.com/...",
-					"select": null
+					"placeholder": "https://maps.google.com/..."
 				}
 			}
 		},
@@ -265,8 +281,7 @@
 				"config": {
 					"label": "Veranstalter-Website",
 					"allowTargetBlank": true,
-					"placeholder": "https://...",
-					"select": null
+					"placeholder": "https://..."
 				}
 			},
 			"contact_email": {
@@ -370,8 +385,7 @@
 				"config": {
 					"label": "Tickets kaufen / Anmeldung",
 					"allowTargetBlank": true,
-					"placeholder": "https://...",
-					"select": null
+					"placeholder": "https://..."
 				}
 			},
 			"registration_required": {
@@ -417,13 +431,6 @@
 					"placeholder": "z.B. +41791234567"
 				}
 			},
-			"registration_telegram": {
-				"type": "Text",
-				"config": {
-					"label": "Anmeldung per Telegram (Username oder Nummer)",
-					"placeholder": "@username oder +41..."
-				}
-			},
 			"registration_text_all": {
 				"type": "Text",
 				"config": {
@@ -436,6 +443,13 @@
 				"config": {
 					"label": "Anmeldetext (Einzeltermin)",
 					"placeholder": "Hallo, ich möchte mich für den Termin vom {{Datum}} von {{Event-Name}} anmelden."
+				}
+			},
+			"registration_telegram": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldung per Telegram (Username oder Nummer)",
+					"placeholder": "@username oder +41..."
 				}
 			}
 		},
@@ -505,8 +519,7 @@
 				"config": {
 					"label": "Übergeordnetes Event / Serie",
 					"allowTargetBlank": false,
-					"placeholder": "Link zur Haupt-Veranstaltung",
-					"select": null
+					"placeholder": "Link zur Haupt-Veranstaltung"
 				}
 			},
 			"individually_bookable": {
@@ -601,8 +614,7 @@
 				"config": {
 					"label": "Einzeltermin Ticket-Link",
 					"placeholder": "https://...",
-					"allowTargetBlank": true,
-					"select": null
+					"allowTargetBlank": true
 				}
 			},
 			"individual_registration_telegram": {
