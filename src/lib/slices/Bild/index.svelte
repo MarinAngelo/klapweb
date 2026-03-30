@@ -3,50 +3,41 @@
 	import { PrismicImage } from '@prismicio/svelte';
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Carousel from './carousel.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let slice: Content.ImageSlice;
-	export let index: number;
-	export let slices;
-	export let context;
+	export let index: number | undefined = undefined;
+	export let slices: unknown[] | undefined = undefined;
+	export let context: unknown = undefined;
 
-	const { pageBgColor } = get(theme);
-
-	const { openIndex, toggleItem } = useOpenIndex();
-
-	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 </script>
 
 <Bounded
 	tag="section"
-	class={clsx(index === 0 && 'pt-0 md:pt-0')}
-	style={index === 0 ? `background-color: ${pageBgColor};` : `background-color: ${pageBgColor};`}
+	class={clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}
+	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	{#if isFilled.image(slice.primary.image)}
-		<div style="background-color: {pageBgColor};">
-			<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
-		</div>
-	{/if}
-	{#if slice.variation === 'carousel'}
-		<Carousel
-			images={slice.primary.images.map((item) => item.image)}
-			animate={anim.animate}
-			animationOptions={anim.options}
-		/>
-	{/if}
+	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+		{#if isFilled.image(slice.primary.image)}
+			<div style="background-color: {$theme.pageBgColor};">
+				<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
+			</div>
+		{/if}
+		{#if slice.variation === 'carousel'}
+			<Carousel
+				images={slice.items.map((item) => item.image)}
+				animate={anim.animate}
+				animationOptions={anim.options}
+			/>
+		{/if}
+	</div>
 </Bounded>

@@ -4,22 +4,14 @@
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
 
-	const { openIndex, toggleItem } = useOpenIndex();
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => {
@@ -110,6 +102,8 @@ END:VCALENDAR`;
 		icsUrl = URL.createObjectURL(blob);
 	}
 
+	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+
 	// Array mit allen Daten: start_date_time + additional_dates, nur zukünftige oder heutige
 	let allDates: string[] = [];
 	$: {
@@ -135,8 +129,10 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: {get(theme).pageColor}"
+	style="color: {$theme.pageColor}"
+	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
+	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 	{#if primary.title}
 		<h2>{primary.title}</h2>
 	{/if}
@@ -232,5 +228,6 @@ END:VCALENDAR`;
 				{/if}
 			{/if}
 		</div>
+	</div>
 	</div>
 </Bounded>

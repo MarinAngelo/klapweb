@@ -25,7 +25,11 @@
 				"config": {
 					"label": "Anbieter",
 					"placeholder": "",
-					"options": ["Google", "Adobe", "Lokal"],
+					"options": [
+						"Google",
+						"Adobe",
+						"Lokal"
+					],
 					"default_value": "Google"
 				}
 			},
@@ -34,13 +38,6 @@
 				"config": {
 					"label": "Varianten (Google)",
 					"placeholder": "z.B. \"ital,wght@0,100..900;1,100..900\""
-				}
-			},
-			"adobeFontId": {
-				"type": "Text",
-				"config": {
-					"label": "Schrift ID (Adobe)",
-					"placeholder": ""
 				}
 			}
 		}

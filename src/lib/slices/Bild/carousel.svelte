@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { reveal } from '$lib/actions/reveal'; // Action direkt importieren
+	import { reveal } from '$lib/actions/reveal';
+	import { onMount, onDestroy } from 'svelte';
+
 	export let images: Array<{ url: string; alt?: string }>;
 	export let animate: boolean = false;
 	export let animationOptions: { duration: number; delay: number } = { duration: 500, delay: 0 };
 
 	let currentIndex = 0;
-
-	// Variablen für Swipe-Logik
 	let startX = 0;
 	let endX = 0;
+	let autoplayInterval: ReturnType<typeof setInterval> | null = null;
 
-	// Funktion zum Wechseln des Bildes
 	function nextImage() {
 		currentIndex = (currentIndex + 1) % images.length;
 	}
@@ -19,7 +19,6 @@
 		currentIndex = (currentIndex - 1 + images.length) % images.length;
 	}
 
-	// Swipe-Logik
 	function handleTouchStart(event: TouchEvent) {
 		startX = event.touches[0].clientX;
 	}
@@ -30,13 +29,22 @@
 
 	function handleTouchEnd() {
 		if (startX - endX > 50) {
-			// Swipe nach links
 			nextImage();
 		} else if (endX - startX > 50) {
-			// Swipe nach rechts
 			prevImage();
 		}
 	}
+
+	onMount(() => {
+		const isDesktop = window.matchMedia('(min-width: 768px)');
+		if (isDesktop.matches) {
+			autoplayInterval = setInterval(nextImage, 4000);
+		}
+	});
+
+	onDestroy(() => {
+		if (autoplayInterval) clearInterval(autoplayInterval);
+	});
 </script>
 
 <div

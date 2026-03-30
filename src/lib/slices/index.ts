@@ -2,6 +2,7 @@
 
 import Akkordeon from './Akkordeon/index.svelte';
 import Anleitung from './Anleitung/index.svelte';
+import AdresseUndMap from './AdresseUndMap/index.svelte';
 import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
@@ -13,10 +14,20 @@ import Kacheln from './Kacheln/index.svelte';
 import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
+import ButtonSlice from './Button/index.svelte';
+import Preisaufstellung from './Preisaufstellung/index.svelte';
+import Preisvergleich from './Preisvergleich/index.svelte';
+import TextAndCta from './TextAndCta/index.svelte';
+import P5Grafik from './P5Grafik/index.svelte';
+import Timeline from './Timeline/index.svelte';
+import Stimmen from './Stimmen/index.svelte';
+import Galerie from './Galerie/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
+	adresse_und_map: AdresseUndMap,
 	anleitung: Anleitung,
+	button: ButtonSlice,
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,
@@ -27,5 +38,12 @@ export const components = {
 	image_cards: Kacheln,
 	quote: Zitat,
 	text: Text,
-	text_with_image: TextMitBild
+	text_and_cta: TextAndCta,
+	preisaufstellung: Preisaufstellung,
+	preisvergleich: Preisvergleich,
+	text_with_image: TextMitBild,
+	p5_grafik: P5Grafik,
+	timeline: Timeline,
+	stimmen: Stimmen,
+	galerie: Galerie
 };

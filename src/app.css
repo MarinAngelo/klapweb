@@ -1,3 +1,18 @@
+/* Navigation: Links immer mit globaler Schriftart */
+.smart-header nav a, .smart-header nav .nav-link, .smart-header nav li, .smart-header nav ul {
+  font-family: var(--page-font), sans-serif !important;
+}
+/* Erzwinge globale Schrift im Header (Logo, Titel, Untertitel) */
+.smart-header {
+  font-family: var(--page-font), sans-serif !important;
+}
+.logo,
+.logo span {
+  font-family: var(--page-font), sans-serif;
+}
+:root, html, body {
+  font-family: var(--page-font);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,6 +34,118 @@
 }
 
 /* TailwindCSS-Overrides */
+    /* Globale Heading-Styles: Font-Familie immer von --page-font */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--page-font), sans-serif !important;
+      opacity: var(--heading-opacity, 1);
+    }
+    h1 {
+      @apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
+      color: var(--page-color);
+    }
+    h2 {
+      @apply text-3xl tracking-tight md:text-4xl font-semibold leading-snug mb-4 mt-8;
+      color: var(--page-color);
+    }
+    h3 {
+      @apply text-2xl tracking-tight md:text-3xl font-semibold mb-3 mt-6;
+      color: var(--page-color);
+    }
+    h4 {
+      @apply text-xl tracking-tight font-semibold mb-2;
+      color: var(--page-color);
+    }
+    h5 {
+      @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+      color: var(--page-color);
+    }
+    h6 {
+      @apply text-base tracking-tight font-semibold mb-1 mt-2;
+      color: var(--page-color);
+    }
+    /* Heading-Komponente: .heading-Klasse (Fallback, falls verwendet) */
+    .heading {
+      font-family: var(--page-font), sans-serif !important;
+    }
+    /* Header-Komponente: .header-Klasse (Fallback, falls verwendet) */
+    .header {
+      font-family: var(--page-font), sans-serif !important;
+    }
+    p, li {
+      @apply text-lg leading-relaxed mb-4;
+      color: var(--page-color);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    ul:not([class]) {
+      @apply list-disc list-inside mb-4;
+    }
+    ol:not([class]) {
+      @apply list-decimal list-inside mb-4;
+    }
+
+span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);    }
+span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
+span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
+span.rt-size-2xl    { font-size: clamp(1.5rem, 4vw, 2.25rem);    }
+span.rt-size-3xl    { font-size: clamp(1.875rem, 5vw, 3rem);    }
+span.rt-size-xs     { font-size: 0.75rem;    }
+span.rt-size-sm     { font-size: 0.875rem;   }
+span.rt-size-lg     { font-size: 1.125rem;   }
+span.rt-size-xl     { font-size: 1.25rem;    }
+
+/* Kombinations-Labels */
+/* Display — 4rem desktop, 3rem mobil */
+span.rt-display-thin  { font-size: clamp(3rem, 6vw, 4rem); font-weight: 100; }
+span.rt-display-light { font-size: clamp(3rem, 6vw, 4rem); font-weight: 300; }
+span.rt-display-bold  { font-size: clamp(3rem, 6vw, 4rem); font-weight: 700; }
+span.rt-display-black { font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; }
+
+/* Giant — 5.5rem desktop, 2.25rem mobil */
+span.rt-giant-thin    { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 100; }
+span.rt-giant-light   { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 300; }
+span.rt-giant-bold    { font-size: clamp(2.25rem, 7.5vw, 5.5rem); font-weight: 700; }
+
+/* Hero — 7rem desktop, 2.75rem mobil */
+span.rt-hero-thin     { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 100; }
+span.rt-hero-light    { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 300; }
+span.rt-hero-bold     { font-size: clamp(2.75rem, 10vw, 7rem); font-weight: 700; }
+
+/* Subtitle */
+span.rt-subtitle      { font-size: clamp(1.1rem, 3vw, 1.75rem); font-weight: 300; letter-spacing: 0.05em; }
+span.rt-subtitle-bold { font-size: clamp(1.1rem, 3vw, 1.75rem); font-weight: 600; }
+
+/* Kicker / Overline */
+span.rt-kicker        { font-size: clamp(0.7rem, 1.8vw, 0.85rem); font-weight: 500; text-transform: uppercase; letter-spacing: 0.25em; }
+span.rt-overline      { font-size: clamp(0.7rem, 1.8vw, 0.85rem); font-weight: 300; text-transform: uppercase; letter-spacing: 0.15em; }
+
+span.rt-weight-thin     { font-weight: 100; }
+span.rt-weight-light    { font-weight: 300; }
+span.rt-weight-medium   { font-weight: 500; }
+span.rt-weight-semibold { font-weight: 600; }
+span.rt-weight-black    { font-weight: 900; }
+
+span.rt-tracking-tight   { letter-spacing: -0.04em; }
+span.rt-tracking-wide    { letter-spacing: 0.1em; }
+span.rt-tracking-wider   { letter-spacing: 0.2em; }
+span.rt-tracking-widest  { letter-spacing: 0.4em; }
+
+span.rt-leading-tight { line-height: 1; }
+span.rt-leading-loose { line-height: 2; }
+
+span.rt-uppercase  { text-transform: uppercase; }
+span.rt-lowercase  { text-transform: lowercase; }
+span.rt-capitalize { text-transform: capitalize; }
+
+span.rt-underline { text-decoration: underline; }
+span.rt-block     { display: block; }
+span.rt-muted     { opacity: 0.55; }
+
+/* Label "kompakt": Paragraf-Abstand entfernen (z.B. für Adressen) */
+p:has(span.rt-kompakt) {
+  margin-bottom: 0 !important;
+  line-height: 1.5 !important;
+}
 
 /* Hauptnavigation - Hover-Effekt für Links */
 .nav-link:hover {
@@ -26,35 +153,40 @@
   text-decoration: underline !important;
 }
 
-.hover\:text-white:hover {
-  color: var(--page-link-hover-color) !important;
-}
-
-
-.leading-loose * {
-  line-height: 2 !important;
-}
-
-/* letter-spacing */
 .tracking-wider-all * {
   letter-spacing: 0.12em !important;
 }
 
-
-.button-prismic-link:hover {
-    background-color: var(--hover-bg-color) !important;
-    color: var(--hover-text-color) !important;
-    border-color: var(--hover-text-color) !important; /* Border-Farbe beim Hover */
+.site-title-text {
+  opacity: var(--heading-opacity, 1);
 }
 
-.focus\:ring-current:focus {
-  --tw-ring-color: var(--focus-ring-color) !important;
-  box-shadow: 0 0 0 calc(2px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color), var(--tw-ring-shadow, 0 0 #0000);
+/* Autofill: override browser's white/gray background with page colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--page-bg-color, #fff) inset !important;
+  -webkit-text-fill-color: var(--page-color, #000) !important;
+  caret-color: var(--page-color, #000);
 }
 
 a[data-type="prismic-link"] {
 	@apply underline;
 	color: var(--page-link-color);
+}
+
+/* Touch-Zielgrösse für Inline-Links auf Mobile (WCAG 2.5.5 / 44px) */
+@media (max-width: 767px) {
+	a[data-type="prismic-link"] {
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+	}
 }
 
 a[data-type="prismic-link"]:hover {
@@ -64,12 +196,13 @@ a[data-type="prismic-link"]:hover {
 :root {
   --global-size-mobile: 16px;
   --global-size-desktop: 16px;
-  
+  --heading-opacity: 1;
+
   /* --- Fallback Styles, die im CMS verwendet werden --- */
   /* Generelle Seitenfarben und Schriftarten */
   --page-color: #5f5fab;
   --page-bg-color: #c7c9fe;
-  --page-font: 'Roboto', sans-serif; /* Fallback greift nicht, Problem in app.html stattdessen wird system font verwendet */
+  --page-font: 'Jura', sans-serif;
   --base-font-size-mobile: 16px;  /* unused, wird direkt in +layout.svelte verwendet */
   --base-font-size-desktop: 16px; /* unused, wird direkt in +layout.svelte verwendet */
   --page-link-color: #26683c;
@@ -86,9 +219,9 @@ a[data-type="prismic-link"]:hover {
   --site-title-font: 'Roboto', sans-serif;
   --site-sub-title-font-size: 1; /* in rem */
   --logo-height: 5; /* in rem */
-  --header-color: #1c1c25;
+  --header-color: #cfcefe;
   --header-bg-color: #302F78;
-  --header-link-color: #cfcefe;
+  --header-link-color: #cfcefe; 
   --header-link-hover-color: #716db5;
   --header-link-font-size: 1.5; /* in rem */
   --header-link-font: 'Roboto', sans-serif;
@@ -123,7 +256,7 @@ a[data-type="prismic-link"]:hover {
   --button-padding-x: 1rem;
   --hover-text-color: var(--page-button-color);
   --focus-ring-color: var(--hover-text-color);
-  --hover-bg-color: var(--page--button-hover-bg-color);
+  --hover-bg-color: var(--page-button-hover-bg-color);
 
 }
 
@@ -132,39 +265,81 @@ html {
   font-size: var(--global-size-mobile);
 }
 
+/* Scroll-Snap: Mobile Landscape – Fullscreen-Bereiche rasten ein */
+@media (pointer: coarse) and (orientation: landscape) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
+body {
+  font-family: var(--page-font, sans-serif);
+}
+
 @media (min-width: 1024px) { /* Ab Tailwind "lg" Breakpoint oder deinem gewünschten */
   html {
     font-size: var(--global-size-desktop);
   }
 }
 
+p {
+  font-size: calc(1rem + var(--p-font-offset-mobile, 0px));
+}
+
+@media (min-width: 1024px) {
+  p {
+    font-size: calc(1rem + var(--p-font-offset-desktop, 0px));
+  }
+}
+
 
 
 @layer base {
+    h5 {
+      @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+      color: var(--page-color);
+    }
+
+    h6 {
+      @apply text-base tracking-tight font-semibold mb-1 mt-2;
+      color: var(--page-color);
+    }
   /* Hier definieren wir die globale Hierarchie. 
     Prismic RichText und harte HTML-Tags nutzen nun diese Basis.
   */
 
+
+
   h1 {
-    @apply text-4xl md:text-5xl font-bold leading-tight mb-6;
+    @apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
     /* text-4xl = 2.25rem (36px), md:text-5xl = 3rem (48px) */
     color: var(--page-color); /* Übernimmt deine Theme-Farbe */
   }
 
   h2 {
-    @apply text-3xl md:text-4xl font-semibold leading-snug mb-4 mt-8;
+    @apply text-3xl tracking-tight md:text-4xl font-semibold leading-snug mb-4 mt-8;
     /* text-3xl = 1.875rem (30px) -> Kleiner als H1 */
     color: var(--page-color);
   }
 
   h3 {
-    @apply text-2xl md:text-3xl font-semibold mb-3 mt-6;
+    @apply text-2xl tracking-tight md:text-3xl font-semibold mb-3 mt-6;
     /* text-2xl = 1.5rem (24px) */
     color: var(--page-color);
   }
 
   h4 {
-    @apply text-xl font-semibold mb-2;
+    @apply text-xl tracking-tight font-semibold mb-2;
+    color: var(--page-color);
+  }
+
+  h5 {
+    @apply text-lg tracking-tight font-semibold mb-2 mt-3;
+    color: var(--page-color);
+  }
+
+  h6 {
+    @apply text-base tracking-tight font-semibold mb-1 mt-2;
     color: var(--page-color);
   }
 
@@ -172,6 +347,8 @@ html {
     @apply text-lg leading-relaxed mb-4;
     /* text-lg = 1.125rem (18px) - ähnlich wie deine 1.2rem */
     color: var(--page-color);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
 /* Wende Styles nur an, wenn der ul/ol Tag KEINE CSS-Klasse hat.

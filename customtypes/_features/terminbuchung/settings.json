@@ -1,0 +1,30 @@
+{
+	"_meta": {
+		"insertBefore": null
+	},
+	"Terminbuchung": {
+		"booking_from_email": {
+			"type": "Text",
+			"config": {
+				"label": "Absender-E-Mail",
+				"placeholder": "termine@beispiel.ch"
+			}
+		},
+		"booking_customer_email_subject": {
+			"type": "Text",
+			"config": {
+				"label": "Kunden-E-Mail: Betreff",
+				"placeholder": "Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}"
+			}
+		},
+		"booking_customer_email_body": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Kunden-E-Mail: Text",
+				"placeholder": "Tokens: {{Titel}} {{Datum}} {{Uhrzeit}} {{Dauer}} {{Name}} {{Firma}}",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		}
+	}
+}

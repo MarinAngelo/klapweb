@@ -1,0 +1,122 @@
+{
+	"id": "button",
+	"type": "SharedSlice",
+	"name": "Schaltfläche",
+	"description": "Schaltfläche",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Schaltfläche",
+			"primary": {
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Link",
+						"placeholder": "",
+						"select": null,
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Beschriftung",
+						"placeholder": "Mehr erfahren"
+					}
+				},
+				"button_size": {
+					"type": "Select",
+					"config": {
+						"label": "Grösse",
+						"placeholder": "",
+						"options": [
+							"Klein",
+							"Mittel",
+							"Gross"
+						],
+						"default_value": "Mittel"
+					}
+				},
+				"button_align": {
+					"type": "Select",
+					"config": {
+						"label": "Ausrichtung",
+						"placeholder": "",
+						"options": [
+							"Links",
+							"Mitte",
+							"Rechts"
+						],
+						"default_value": "Mitte"
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Mobile: Volle Breite",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"button_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche T & R Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrund Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"placeholder": "",
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				}
+			},
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		}
+	]
+}

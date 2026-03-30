@@ -1,0 +1,122 @@
+{
+	"id": "galerie",
+	"type": "SharedSlice",
+	"name": "Galerie",
+	"description": "Foto-Galerie mit Lightbox",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Grid-Galerie mit Lightbox",
+			"primary": {
+				"title": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Titel (optional)",
+						"placeholder": "Unsere Arbeiten",
+						"single": "heading2"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Textfarbe"
+					}
+				},
+				"columns": {
+					"type": "Select",
+					"config": {
+						"label": "Spalten (Desktop)",
+						"options": ["2", "3", "4"],
+						"default_value": "3"
+					}
+				},
+				"grid_type": {
+					"type": "Select",
+					"config": {
+						"label": "Raster-Typ",
+						"options": ["Uniform", "Masonry"],
+						"default_value": "Uniform"
+					}
+				},
+				"gap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Abstände zwischen Bildern",
+						"placeholder_false": "Kein Abstand",
+						"placeholder_true": "Mit Abstand",
+						"default_value": true
+					}
+				},
+				"rounded": {
+					"type": "Boolean",
+					"config": {
+						"label": "Abgerundete Ecken",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Einblend-Animation",
+						"placeholder_false": "Aus",
+						"placeholder_true": "Ein",
+						"default_value": true
+					}
+				},
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"full_bleed": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbild-Raster (Randlos)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				}
+			},
+			"items": {
+				"image": {
+					"type": "Image",
+					"config": {
+						"label": "Bild",
+						"constraint": {},
+						"thumbnails": []
+					}
+				},
+				"caption": {
+					"type": "Text",
+					"config": {
+						"label": "Bildunterschrift (optional)",
+						"placeholder": "Projektname, Ort…"
+					}
+				}
+			}
+		}
+	]
+}
