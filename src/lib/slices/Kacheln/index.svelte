@@ -17,18 +17,18 @@
 	export let context: any = {};
 	export let index: number = 0;
 
-	const componentBodyBgColor = slice.primary.component_body_bg_color || get(theme).pageBgColor;
-	const componentBodyColor = slice.primary.component_body_color || get(theme).pageColor;
+	const componentBodyBgColor = slice.primary?.component_body_bg_color || get(theme).pageBgColor;
+	const componentBodyColor = slice.primary?.component_body_color || get(theme).pageColor;
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
-	const hasCustomBgColor = !!slice.primary.component_body_bg_color;
+	const hasCustomBgColor = !!slice.primary?.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
-	const gridColumns = String((slice.primary as any).grid_columns ?? '').includes('3') ? 3 : 2;
+	const gridColumns = String((slice.primary as any)?.grid_columns ?? '').includes('3') ? 3 : 2;
 
 	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
+		slice.primary?.animate,
+		slice.primary?.anim_direction,
+		slice.primary?.anim_delay,
+		slice.primary?.anim_duration
 	);
 
 	// Stagger-Intervall zwischen den Kacheln (ms)
@@ -92,28 +92,28 @@
 		});
 	})();
 
-	$: cardColor = (slice.primary as any).body_color || get(theme).pageColor;
-	$: cardBgColor = (slice.primary as any).body_bg_color || get(theme).pageBgColor;
-	$: btnColor = (slice.primary as any).button_color || get(theme).pageColor;
-	$: btnBgColor = (slice.primary as any).button_bg_color || 'transparent';
-	$: borderColor = (slice.primary as any).border_color || get(theme).pageColor;
-	$: roundCorners = (slice.primary as any).round_corners !== false;
-	$: ctaLabel = (slice.primary as any).cta_label || 'Jetzt bestellen';
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: cardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
+	$: cardBgColor = (slice.primary as any)?.body_bg_color || get(theme).pageBgColor;
+	$: btnColor = (slice.primary as any)?.button_color || get(theme).pageColor;
+	$: btnBgColor = (slice.primary as any)?.button_bg_color || 'transparent';
+	$: borderColor = (slice.primary as any)?.border_color || get(theme).pageColor;
+	$: roundCorners = (slice.primary as any)?.round_corners !== false;
+	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
+	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
 
 	// --- Team variation ---
 	$: isTeamVariation = (slice as any).variation === 'team';
 	$: teamItems = ((slice as any).items ?? []) as Array<Record<string, any>>;
-	$: teamCols = String((slice.primary as any).grid_columns ?? '').includes('4')
+	$: teamCols = String((slice.primary as any)?.grid_columns ?? '').includes('4')
 		? 4
-		: String((slice.primary as any).grid_columns ?? '').includes('3')
+		: String((slice.primary as any)?.grid_columns ?? '').includes('3')
 			? 3
 			: 2;
-	$: isCircle = (slice.primary as any).image_shape === 'Kreis';
-	$: teamRound = (slice.primary as any).round_corners !== false;
-	$: teamCardColor = (slice.primary as any).body_color || get(theme).pageColor;
-	$: teamCardBg = (slice.primary as any).body_bg_color || 'transparent';
-	$: teamHeading = (slice.primary as any).heading ?? null;
+	$: isCircle = (slice.primary as any)?.image_shape === 'Kreis';
+	$: teamRound = (slice.primary as any)?.round_corners !== false;
+	$: teamCardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
+	$: teamCardBg = (slice.primary as any)?.body_bg_color || 'transparent';
+	$: teamHeading = (slice.primary as any)?.heading ?? null;
 </script>
 
 {#if slice.variation === 'plaene'}
@@ -127,9 +127,9 @@
 		class={mobileVollbreite ? 'overflow-x-clip' : ''}
 	>
 		<div class={mobileVollbreite ? '-mx-6 md:mx-0' : ''}>
-			{#if isFilled.richText(slice.primary.heading)}
+			{#if isFilled.richText(slice.primary?.heading)}
 				<h2 class="font-bold mb-8 custom-color">
-					<PrismicText field={slice.primary.heading} />
+					<PrismicText field={slice.primary?.heading} />
 				</h2>
 			{/if}
 
@@ -331,23 +331,23 @@
 		animationOptions={anim.options}
 	>
 		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
-			{#if isFilled.richText(slice.primary.heading)}
+			{#if isFilled.richText(slice.primary?.heading)}
 				<h2 class="text-center custom-color">
-					<PrismicText field={slice.primary.heading} />
+					<PrismicText field={slice.primary?.heading} />
 				</h2>
 			{/if}
 			<ul class="grid grid-cols-1 gap-8 {gridColumns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}">
-				{#each slice.primary.cards as card, i}
+				{#each slice.primary?.cards ?? [] as card, i}
 					<ImageCard
 						{card}
-						roundCorners={slice.primary.round_corners}
-						bodyBgColor={slice.primary.body_bg_color}
-						bodyColor={slice.primary.body_color}
-						buttonColor={slice.primary.button_color}
-						buttonBgColor={slice.primary.button_bg_color}
-						buttonHoverColor={slice.primary.button_hover_color}
-						buttonHoverBgColor={slice.primary.button_hover_bg_color}
-						borderColor={slice.primary.border_color}
+						roundCorners={slice.primary?.round_corners}
+						bodyBgColor={slice.primary?.body_bg_color}
+						bodyColor={slice.primary?.body_color}
+						buttonColor={slice.primary?.button_color}
+						buttonBgColor={slice.primary?.button_bg_color}
+						buttonHoverColor={slice.primary?.button_hover_color}
+						buttonHoverBgColor={slice.primary?.button_hover_bg_color}
+						borderColor={slice.primary?.border_color}
 						revealOptions={anim.animate
 							? { ...anim.options, delay: (anim.options.delay ?? 0) + i * STAGGER_MS }
 							: { direction: 'none' }}
