@@ -430,6 +430,20 @@
           "label": "Anmeldung per WhatsApp (Nummer)",
           "placeholder": "z.B. +41791234567"
         }
+      },
+      "registration_text_all": {
+        "type": "Text",
+        "config": {
+          "label": "Anmeldetext (alle Termine)",
+          "placeholder": "Hallo, ich möchte mich für alle Termine von {{Event-Name}} anmelden."
+        }
+      },
+      "registration_text_single": {
+        "type": "Text",
+        "config": {
+          "label": "Anmeldetext (Einzeltermin)",
+          "placeholder": "Hallo, ich möchte mich für den Termin vom {{Datum}} von {{Event-Name}} anmelden."
+        }
       }
     },
     "Serie & Wiederholung": {

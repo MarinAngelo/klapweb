@@ -37,6 +37,25 @@
 		return ev?.individual_registration_whatsapp || parentEvent?.registration_whatsapp || '';
 	}
 
+	// Anmeldetext: null = alle Termine (Parent-Button), ev = Einzeltermin
+	function buildRegistrationText(ev: Record<string, any> | null): string {
+		const eventName = parentEvent?.title || '';
+		if (ev === null) {
+			// Alle Termine
+			const tpl = parentEvent?.registration_text_all ||
+				`Hallo, ich möchte mich für alle Termine von "{{Event-Name}}" anmelden.`;
+			return tpl.replace(/\{\{Event-Name\}\}/g, eventName);
+		} else {
+			// Einzeltermin
+			const dateStr = formatDateTime(ev.start_date, ev.all_day ?? false);
+			const tpl = parentEvent?.registration_text_single ||
+				`Hallo, ich möchte mich für den Termin vom {{Datum}} von "{{Event-Name}}" anmelden.`;
+			return tpl
+				.replace(/\{\{Datum\}\}/g, dateStr)
+				.replace(/\{\{Event-Name\}\}/g, eventName);
+		}
+	}
+
 	function formatDateTime(ts: string | null | undefined, allDay: boolean): string {
 		if (!ts) return '';
 		const d = new Date(ts);
@@ -448,6 +467,7 @@
 		{@const modalEmail = registrationEmail(selectedEvent)}
 		{@const modalWhatsapp = registrationWhatsapp(selectedEvent)}
 		{@const modalTitle = selectedEvent?.title || parentEvent.title || ''}
+		{@const modalRegistrationText = buildRegistrationText(selectedEvent)}
 		<div
 			class="fixed inset-0 flex items-center justify-center z-50"
 			style="background-color: rgba(0,0,0,0.5);"
@@ -479,9 +499,7 @@
 
 					{#if modalWhatsapp}
 						{@const waNumber = modalWhatsapp.replace(/\D/g, '')}
-						{@const waText = encodeURIComponent(
-							`Hallo, ich möchte mich für "${modalTitle}" anmelden.`
-						)}
+						{@const waText = encodeURIComponent(modalRegistrationText)}
 						<a
 							href="https://wa.me/{waNumber}?text={waText}"
 							target="_blank"
