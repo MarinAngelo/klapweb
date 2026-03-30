@@ -130,12 +130,12 @@ interface EventDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	status: prismic.SelectField<
-		'Geplant' | 'Bestätigt' | 'Abgesagt' | 'Verschoben' | 'Ausgebucht',
+		'Kein' | 'Geplant' | 'Bestätigt' | 'Abgesagt' | 'Verschoben' | 'Ausgebucht',
 		'filled'
 	>;
 
 	/**
-	 * Inhalt field in *Event*
+	 * Slice Zone field in *Event*
 	 *
 	 * - **Field Type**: Slice Zone
 	 * - **Placeholder**: *None*
@@ -446,13 +446,13 @@ interface EventDocumentData {
 	/**
 	 * Preis (Freitext) field in *Event*
 	 *
-	 * - **Field Type**: Text
+	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: z.B. CHF 20 / Ermässigt CHF 15 / Kinder frei
 	 * - **API ID Path**: event.price_text
 	 * - **Tab**: Tickets & Anmeldung
-	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
-	price_text: prismic.KeyTextField;
+	price_text: prismic.RichTextField;
 
 	/**
 	 * Tickets kaufen / Anmeldung field in *Event*
@@ -508,7 +508,62 @@ interface EventDocumentData {
 	 * - **Tab**: Tickets & Anmeldung
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
-	min_participants: prismic.NumberField; /**
+	min_participants: prismic.NumberField;
+
+	/**
+	 * Anmeldung per E-Mail field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. anmeldung@beispiel.ch
+	 * - **API ID Path**: event.registration_email
+	 * - **Tab**: Tickets & Anmeldung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	registration_email: prismic.KeyTextField;
+
+	/**
+	 * Anmeldung per WhatsApp (Nummer) field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. +41791234567
+	 * - **API ID Path**: event.registration_whatsapp
+	 * - **Tab**: Tickets & Anmeldung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	registration_whatsapp: prismic.KeyTextField;
+
+	/**
+	 * Anmeldung per Telegram (Username oder Nummer) field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: @username oder +41...
+	 * - **API ID Path**: event.registration_telegram
+	 * - **Tab**: Tickets & Anmeldung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	registration_telegram: prismic.KeyTextField;
+
+	/**
+	 * Anmeldetext (alle Termine) field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Hallo, ich möchte mich für alle Termine von {{Event-Name}} anmelden.
+	 * - **API ID Path**: event.registration_text_all
+	 * - **Tab**: Tickets & Anmeldung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	registration_text_all: prismic.KeyTextField;
+
+	/**
+	 * Anmeldetext (Einzeltermin) field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Hallo, ich möchte mich für den Termin vom {{Datum}} von {{Event-Name}} anmelden.
+	 * - **API ID Path**: event.registration_text_single
+	 * - **Tab**: Tickets & Anmeldung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	registration_text_single: prismic.KeyTextField; /**
 	 * Veranstaltungsserie field in *Event*
 	 *
 	 * - **Field Type**: Boolean
@@ -605,7 +660,86 @@ interface EventDocumentData {
 	 * - **Tab**: Serie & Wiederholung
 	 * - **Documentation**: https://prismic.io/docs/fields/link
 	 */
-	parent_event: prismic.LinkField<string, string, unknown, prismic.FieldState, never>; /**
+	parent_event: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Einzeln buchbar field in *Event*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: event.individually_bookable
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	individually_bookable: prismic.BooleanField;
+
+	/**
+	 * Einzeltermin kostenlos field in *Event*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: event.individual_is_free
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	individual_is_free: prismic.BooleanField;
+
+	/**
+	 * Einzeltermin Preis (Freitext) field in *Event*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: z.B. CHF 20 / Ermässigt CHF 15
+	 * - **API ID Path**: event.individual_price_text
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	individual_price_text: prismic.RichTextField;
+
+	/**
+	 * Einzeltermin Anmeldung per E-Mail field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. anmeldung@beispiel.ch
+	 * - **API ID Path**: event.individual_registration_email
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	individual_registration_email: prismic.KeyTextField;
+
+	/**
+	 * Einzeltermin Anmeldung per WhatsApp field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. +41791234567
+	 * - **API ID Path**: event.individual_registration_whatsapp
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	individual_registration_whatsapp: prismic.KeyTextField;
+
+	/**
+	 * Einzeltermin Ticket-Link field in *Event*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: https://...
+	 * - **API ID Path**: event.individual_ticket_url
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	individual_ticket_url: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+	/**
+	 * Einzeltermin Anmeldung per Telegram field in *Event*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: @username oder +41...
+	 * - **API ID Path**: event.individual_registration_telegram
+	 * - **Tab**: Serie & Wiederholung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	individual_registration_telegram: prismic.KeyTextField; /**
 	 * SEO-Titel field in *Event*
 	 *
 	 * - **Field Type**: Text
@@ -854,6 +988,7 @@ type PageDocumentDataSlicesSlice =
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
+	| GlobaleEventsSlice
 	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
@@ -5133,6 +5268,90 @@ type GalerieSliceVariation = GalerieSliceDefault;
 export type GalerieSlice = prismic.SharedSlice<'galerie', GalerieSliceVariation>;
 
 /**
+ * Primary content in *Globale Events → Standard → Primary*
+ */
+export interface GlobaleEventsSliceDefaultPrimary {
+	/**
+	 * Serie / Eltern-Event field in *Globale Events → Standard → Primary*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: Serien-Dokument auswählen
+	 * - **API ID Path**: globale_events.default.primary.events
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	events: prismic.ContentRelationshipField<'event'>;
+
+	/**
+	 * Animation aktivieren field in *Globale Events → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: globale_events.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Globale Events → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: globale_events.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Globale Events → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: globale_events.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Globale Events → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: globale_events.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Standard variation for Globale Events Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Standard
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<GlobaleEventsSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Globale Events*
+ */
+type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
+
+/**
+ * Globale Events Shared Slice
+ *
+ * - **API ID**: `globale_events`
+ * - **Description**: Zeigt Inhalte eines verknüpften Event-Dokuments an.
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type GlobaleEventsSlice = prismic.SharedSlice<'globale_events', GlobaleEventsSliceVariation>;
+
+/**
  * Item in *Titelbereich → Mit Bild Karusell → Primary → Bilder Karusell*
  */
 export interface HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem {
@@ -8549,6 +8768,10 @@ declare module '@prismicio/client' {
 			GalerieSliceDefaultItem,
 			GalerieSliceVariation,
 			GalerieSliceDefault,
+			GlobaleEventsSlice,
+			GlobaleEventsSliceDefaultPrimary,
+			GlobaleEventsSliceVariation,
+			GlobaleEventsSliceDefault,
 			HeroSlice,
 			HeroSliceDefaultPrimary,
 			HeroSliceMitBildKarusellPrimaryImageMerryGoRoundItem,

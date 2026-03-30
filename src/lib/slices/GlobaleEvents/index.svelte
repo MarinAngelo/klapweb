@@ -489,7 +489,9 @@
 				<div class="flex flex-col gap-3">
 					{#if modalEmail}
 						<a
-							href="mailto:{modalEmail}?subject=Anmeldung: {modalTitle}"
+							href="mailto:{modalEmail}?subject=Anmeldung: {modalTitle}&body={encodeURIComponent(
+								modalRegistrationText
+							)}"
 							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
 							style="border-color: {$theme.pageLinkColor}40"
 						>
@@ -519,24 +521,31 @@
 						</a>
 					{/if}
 
-				{#if modalTelegram}
-					{@const tgHandle = modalTelegram.startsWith('@') || modalTelegram.startsWith('+') ? modalTelegram : '@' + modalTelegram}
-					{@const tgTarget = modalTelegram.startsWith('+') ? 'https://t.me/' + modalTelegram.replace(/\D/g, '') : 'https://t.me/' + modalTelegram.replace(/^@/, '')}
-					{@const tgText = encodeURIComponent(modalRegistrationText)}
-					<a
-						href="{tgTarget}?text={tgText}"
-						target="_blank"
-						rel="noopener"
-						class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-						style="border-color: {$theme.pageLinkColor}40"
-					>
-						<span class="text-xl">✈️</span>
-						<div>
-							<div class="font-medium">Per Telegram</div>
-							<div class="opacity-60">{tgHandle}</div>
-						</div>
-					</a>
-				{/if}
+					{#if modalTelegram}
+						{@const tgHandle =
+							modalTelegram.startsWith('@') || modalTelegram.startsWith('+')
+								? modalTelegram
+								: '@' + modalTelegram}
+						{@const tgTarget = modalTelegram.startsWith('+')
+							? 'https://t.me/' + modalTelegram.replace(/\D/g, '')
+							: 'https://t.me/' + modalTelegram.replace(/^@/, '')}
+						{@const tgText = encodeURIComponent(modalRegistrationText)}
+						<a
+							href="{tgTarget}?text={tgText}"
+							target="_blank"
+							rel="noopener"
+							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
+							style="border-color: {$theme.pageLinkColor}40"
+						>
+							<span class="text-xl">✈️</span>
+							<div>
+								<div class="font-medium">Per Telegram</div>
+								<div class="opacity-60">{tgHandle}</div>
+							</div>
+						</a>
+					{/if}
+				</div>
+
 				<Button
 					link={undefined}
 					text="Schliessen"
