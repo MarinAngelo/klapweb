@@ -36,23 +36,26 @@
 	function registrationWhatsapp(ev: Record<string, any> | null): string {
 		return ev?.individual_registration_whatsapp || parentEvent?.registration_whatsapp || '';
 	}
+	function registrationTelegram(ev: Record<string, any> | null): string {
+		return ev?.individual_registration_telegram || parentEvent?.registration_telegram || '';
+	}
 
 	// Anmeldetext: null = alle Termine (Parent-Button), ev = Einzeltermin
 	function buildRegistrationText(ev: Record<string, any> | null): string {
 		const eventName = parentEvent?.title || '';
 		if (ev === null) {
 			// Alle Termine
-			const tpl = parentEvent?.registration_text_all ||
+			const tpl =
+				parentEvent?.registration_text_all ||
 				`Hallo, ich möchte mich für alle Termine von "{{Event-Name}}" anmelden.`;
 			return tpl.replace(/\{\{Event-Name\}\}/g, eventName);
 		} else {
 			// Einzeltermin
 			const dateStr = formatDateTime(ev.start_date, ev.all_day ?? false);
-			const tpl = parentEvent?.registration_text_single ||
+			const tpl =
+				parentEvent?.registration_text_single ||
 				`Hallo, ich möchte mich für den Termin vom {{Datum}} von "{{Event-Name}}" anmelden.`;
-			return tpl
-				.replace(/\{\{Datum\}\}/g, dateStr)
-				.replace(/\{\{Event-Name\}\}/g, eventName);
+			return tpl.replace(/\{\{Datum\}\}/g, dateStr).replace(/\{\{Event-Name\}\}/g, eventName);
 		}
 	}
 
@@ -466,6 +469,7 @@
 	{#if showRegistrationModal && parentEvent}
 		{@const modalEmail = registrationEmail(selectedEvent)}
 		{@const modalWhatsapp = registrationWhatsapp(selectedEvent)}
+		{@const modalTelegram = registrationTelegram(selectedEvent)}
 		{@const modalTitle = selectedEvent?.title || parentEvent.title || ''}
 		{@const modalRegistrationText = buildRegistrationText(selectedEvent)}
 		<div
@@ -514,8 +518,25 @@
 							</div>
 						</a>
 					{/if}
-				</div>
 
+				{#if modalTelegram}
+					{@const tgHandle = modalTelegram.startsWith('@') || modalTelegram.startsWith('+') ? modalTelegram : '@' + modalTelegram}
+					{@const tgTarget = modalTelegram.startsWith('+') ? 'https://t.me/' + modalTelegram.replace(/\D/g, '') : 'https://t.me/' + modalTelegram.replace(/^@/, '')}
+					{@const tgText = encodeURIComponent(modalRegistrationText)}
+					<a
+						href="{tgTarget}?text={tgText}"
+						target="_blank"
+						rel="noopener"
+						class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
+						style="border-color: {$theme.pageLinkColor}40"
+					>
+						<span class="text-xl">✈️</span>
+						<div>
+							<div class="font-medium">Per Telegram</div>
+							<div class="opacity-60">{tgHandle}</div>
+						</div>
+					</a>
+				{/if}
 				<Button
 					link={undefined}
 					text="Schliessen"

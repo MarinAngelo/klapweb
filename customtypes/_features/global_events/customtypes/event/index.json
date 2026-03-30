@@ -444,6 +444,13 @@
           "label": "Anmeldetext (Einzeltermin)",
           "placeholder": "Hallo, ich möchte mich für den Termin vom {{Datum}} von {{Event-Name}} anmelden."
         }
+      },
+      "registration_telegram": {
+        "type": "Text",
+        "config": {
+          "label": "Anmeldung per Telegram (Username oder Nummer)",
+          "placeholder": "@username oder +41..."
+        }
       }
     },
     "Serie & Wiederholung": {
@@ -608,6 +615,13 @@
           "label": "Einzeltermin Ticket-Link",
           "placeholder": "https://...",
           "allowTargetBlank": true
+        }
+      },
+      "individual_registration_telegram": {
+        "type": "Text",
+        "config": {
+          "label": "Einzeltermin Anmeldung per Telegram",
+          "placeholder": "@username oder +41..."
         }
       }
     },
