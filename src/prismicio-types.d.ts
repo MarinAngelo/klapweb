@@ -631,7 +631,7 @@ interface SettingsDocumentData {
 	 * Globaler SEO Titel field in *Einstellungen*
 	 *
 	 * - **Field Type**: Text
-	 * - **Placeholder**: Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *'')
+	 * - **Placeholder**: Der Standard-Titel, falls eine Seite keinen eigenen hat
 	 * - **API ID Path**: settings.meta_title
 	 * - **Tab**: SEO
 	 * - **Documentation**: https://prismic.io/docs/fields/text
@@ -707,7 +707,7 @@ interface ThemeDocumentData {
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
+	 * - **Default Value**: true
 	 * - **API ID Path**: theme.activ
 	 * - **Tab**: Generell
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
