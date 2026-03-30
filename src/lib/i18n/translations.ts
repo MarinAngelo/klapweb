@@ -537,7 +537,35 @@ export const translations: Record<string, Record<string, string>> = {
 	'Zurück zur Startseite': {
 		'de-ch': 'Zurück zur Startseite',
 		'en-us': 'Back to home'
-	}
+	},
+	// GlobaleEvents
+	'Online-Veranstaltung': { 'de-ch': 'Online-Veranstaltung', 'en-us': 'Online Event' },
+	'Auf Karte anzeigen': { 'de-ch': 'Auf Karte anzeigen', 'en-us': 'View on map' },
+	'bis': { 'de-ch': 'bis', 'en-us': 'to' },
+	'Einlass ab': { 'de-ch': 'Einlass ab', 'en-us': 'Doors open at' },
+	'Kostenlos': { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
+	'Anmeldung erforderlich': { 'de-ch': 'Anmeldung erforderlich', 'en-us': 'Registration required' },
+	'Anmelden': { 'de-ch': 'Anmelden', 'en-us': 'Register' },
+	'Tickets': { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
+	'Veranstalter': { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
+	'Termine': { 'de-ch': 'Termine', 'en-us': 'Dates' },
+	'Datum noch nicht festgelegt': { 'de-ch': 'Datum noch nicht festgelegt', 'en-us': 'Date not yet set' },
+	'Anmeldung': { 'de-ch': 'Anmeldung', 'en-us': 'Registration' },
+	'Wähle deine bevorzugte Methode zur Anmeldung:': {
+		'de-ch': 'Wähle deine bevorzugte Methode zur Anmeldung:',
+		'en-us': 'Choose your preferred method to register:'
+	},
+	'Per E-Mail': { 'de-ch': 'Per E-Mail', 'en-us': 'Via E-Mail' },
+	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
+	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
+	'Schliessen': { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	'Link': { 'de-ch': 'Link', 'en-us': 'Link' },
+	// Event Status
+	'Geplant': { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },
+	'Bestätigt': { 'de-ch': 'Bestätigt', 'en-us': 'Confirmed' },
+	'Abgesagt': { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
+	'Verschoben': { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
+	'Ausgebucht': { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' }
 };
 
 /**

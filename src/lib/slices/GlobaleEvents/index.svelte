@@ -6,6 +6,7 @@
 	import { PrismicImage } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
 	import { page } from '$app/stores';
+	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -59,13 +60,14 @@
 		}
 	}
 
-	function formatDateTime(ts: string | null | undefined, allDay: boolean): string {
+	function formatDateTime(ts: string | null | undefined, allDay: boolean, locale?: string): string {
 		if (!ts) return '';
 		const d = new Date(ts);
+		const loc = locale || $page.data.lang || 'de-CH';
 		if (allDay) {
-			return d.toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' });
+			return d.toLocaleDateString(loc, { day: '2-digit', month: 'long', year: 'numeric' });
 		}
-		return d.toLocaleDateString('de-CH', {
+		return d.toLocaleDateString(loc, {
 			day: '2-digit',
 			month: 'long',
 			year: 'numeric',
@@ -244,7 +246,7 @@
 						{#if parentEvent.status && parentEvent.status !== 'Kein'}
 							<span
 								class="px-2.5 py-1 rounded-full font-medium {statusColor[parentEvent.status] ??
-									'bg-gray-100 text-gray-600'}">{parentEvent.status}</span
+									'bg-gray-100 text-gray-600'}">{$_(parentEvent.status)}</span
 							>
 						{/if}
 						{#if parentEvent.event_type}
@@ -267,7 +269,7 @@
 				{#if parentEvent.online_event}
 					<div class="flex items-center gap-2">
 						<span class="shrink-0">🌐</span>
-						<span>Online-Veranstaltung</span>
+						<span>{$_('Online-Veranstaltung')}</span>
 						{#if isFilled.link(parentEvent.online_url)}
 							<a
 								href={parentEvent.online_url.url}
@@ -314,10 +316,10 @@
 						<div>
 							<div>{startFormatted}</div>
 							{#if endFormatted && endFormatted !== startFormatted}
-								<div class="opacity-60">bis {endFormatted}</div>
-							{/if}
-							{#if parentEvent.doors_open}
-								<div class="opacity-60">Einlass ab {parentEvent.doors_open}</div>
+							<div class="opacity-60">{$_('bis')} {endFormatted}</div>
+						{/if}
+						{#if parentEvent.doors_open}
+							<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
 							{/if}
 						</div>
 					</div>
@@ -338,12 +340,12 @@
 				{#if parentEvent.is_free || parentEvent.price_text?.length}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
-							<span class="font-medium">Kostenlos</span>
-						{:else}
-							<PrismicRichText field={parentEvent.price_text} />
-						{/if}
-						{#if parentEvent.registration_required}
-							<span class="opacity-60">· Anmeldung erforderlich</span>
+						<span class="font-medium">{$_('Kostenlos')}</span>
+					{:else}
+						<PrismicRichText field={parentEvent.price_text} />
+					{/if}
+					{#if parentEvent.registration_required}
+						<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
 						{/if}
 					</div>
 				{/if}
@@ -351,14 +353,14 @@
 				<!-- Anmelden-Button -->
 				{#if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
 					<div>
-						<Button link={undefined} text="Anmelden" on:click={() => openModal()} />
+						<Button link={undefined} text={$_('Anmelden')} on:click={() => openModal()} />
 					</div>
 				{/if}
 
 				<!-- Veranstalter & Kontakt -->
 				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
 					<div class="opacity-60 flex flex-wrap gap-3">
-						{#if parentEvent.organizer}<span>Veranstalter: {parentEvent.organizer}</span>{/if}
+						{#if parentEvent.organizer}<span>{$_('Veranstalter')}: {parentEvent.organizer}</span>{/if}
 						{#if parentEvent.contact_email}<a
 								href="mailto:{parentEvent.contact_email}"
 								class="underline">{parentEvent.contact_email}</a
@@ -373,7 +375,7 @@
 						class="pt-4 border-t flex flex-col gap-3"
 						style="border-color: {$theme.pageLinkColor}20"
 					>
-						<h3 class="mt-0 mb-1">Termine</h3>
+						<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
 						{#each events as ev}
 							{@const allDay = ev.all_day ?? false}
@@ -388,7 +390,7 @@
 								{#if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
 									<span
 										class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[ev.status] ??
-											'bg-gray-100 text-gray-600'}">{ev.status}</span
+											'bg-gray-100 text-gray-600'}">{$_(ev.status)}</span
 									>
 								{/if}
 
@@ -399,13 +401,13 @@
 										{#if startFormatted}
 											<div>{startFormatted}</div>
 											{#if endFormatted && endFormatted !== startFormatted}
-												<div class="opacity-60">bis {endFormatted}</div>
+												<div class="opacity-60">{$_('bis')} {endFormatted}</div>
 											{/if}
 											{#if ev.doors_open}
-												<div class="opacity-60">Einlass ab {ev.doors_open}</div>
+												<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
 											{/if}
 										{:else}
-											<div class="opacity-40">Datum noch nicht festgelegt</div>
+											<div class="opacity-40">{$_('Datum noch nicht festgelegt')}</div>
 										{/if}
 									</div>
 								</div>
@@ -414,7 +416,7 @@
 								{#if ev.individually_bookable && (ev.individual_is_free || ev.individual_price_text?.length)}
 									<div class="shrink-0 opacity-70">
 										{#if ev.individual_is_free}
-											Kostenlos
+											{$_('Kostenlos')}
 										{:else}
 											<PrismicRichText field={ev.individual_price_text} />
 										{/if}
@@ -422,7 +424,7 @@
 								{:else if !ev.individually_bookable && (ev.is_free || ev.price_text?.length)}
 									<div class="shrink-0 opacity-70">
 										{#if ev.is_free}
-											Kostenlos
+											{$_('Kostenlos')}
 										{:else}
 											<PrismicRichText field={ev.price_text} />
 										{/if}
@@ -434,11 +436,11 @@
 									{@const hasIndividualContact =
 										registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
 									{#if isFilled.link(ev.individual_ticket_url)}
-										<Button link={ev.individual_ticket_url} text="Tickets" size="sm" />
+										\<Button link={ev.individual_ticket_url} text={$_('Tickets')} size="sm" />
 									{:else if hasIndividualContact}
 										<Button
 											link={undefined}
-											text="Anmelden"
+												text={$_('Anmelden')}
 											size="sm"
 											on:click={() => openModal(ev)}
 										/>
@@ -446,13 +448,13 @@
 								{:else if isFilled.link(ev.ticket_url)}
 									<Button
 										link={ev.ticket_url}
-										text={ev.registration_required ? 'Anmelden' : 'Tickets'}
+											text={ev.registration_required ? $_('Anmelden') : $_('Tickets')}
 										size="sm"
 									/>
 								{:else if registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
 									<Button
 										link={undefined}
-										text="Anmelden"
+										text={$_('Anmelden')}
 										size="sm"
 										on:click={() => openModal(ev)}
 									/>
@@ -491,8 +493,8 @@
 				class="rounded-xl shadow-xl p-8 max-w-sm w-full mx-4 flex flex-col gap-4"
 				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border: 1px solid {$theme.pageLinkColor}20"
 			>
-				<h3 class="mt-0 mb-0">Anmeldung</h3>
-				<p class="opacity-70 mb-0">Wähle deine bevorzugte Methode zur Anmeldung:</p>
+				<h3 class="mt-0 mb-0">{$_('Anmeldung')}</h3>
+				<p class="opacity-70 mb-0">{$_('Wähle deine bevorzugte Methode zur Anmeldung:')}</p>
 
 				<div class="flex flex-col gap-3">
 					{#if modalEmail}
@@ -505,7 +507,7 @@
 						>
 							<span class="text-xl">✉️</span>
 							<div>
-								<div class="font-medium">Per E-Mail</div>
+								<div class="font-medium">{$_('Per E-Mail')}</div>
 								<div class="opacity-60">{modalEmail}</div>
 							</div>
 						</a>
@@ -523,7 +525,7 @@
 						>
 							<span class="text-xl">💬</span>
 							<div>
-								<div class="font-medium">Per WhatsApp</div>
+								<div class="font-medium">{$_('Per WhatsApp')}</div>
 								<div class="opacity-60">{modalWhatsapp}</div>
 							</div>
 						</a>
@@ -547,7 +549,7 @@
 						>
 							<span class="text-xl">✈️</span>
 							<div>
-								<div class="font-medium">Per Telegram</div>
+								<div class="font-medium">{$_('Per Telegram')}</div>
 								<div class="opacity-60">{tgHandle}</div>
 							</div>
 						</a>
@@ -556,7 +558,7 @@
 
 				<Button
 					link={undefined}
-					text="Schliessen"
+					text={$_('Schliessen')}
 					on:click={() => (showRegistrationModal = false)}
 				/>
 			</div>
