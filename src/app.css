@@ -84,11 +84,11 @@
       @apply list-decimal list-inside mb-4;
     }
 
-span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);    }
-span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
-span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
-span.rt-size-2xl    { font-size: clamp(1.5rem, 4vw, 2.25rem);    }
-span.rt-size-3xl    { font-size: clamp(1.875rem, 5vw, 3rem);    }
+span.rt-size-4xl    { font-size: clamp(2.25rem, 5vw,   3rem);     }  /* 36–48px */
+span.rt-size-5xl    { font-size: clamp(3rem,    7.5vw, 4.5rem);   }  /* 48–72px */
+span.rt-size-6xl    { font-size: clamp(4.5rem,  10vw,  7rem);     }  /* 72–112px */
+span.rt-size-2xl    { font-size: clamp(1.5rem,  2.5vw, 1.75rem);  }  /* 24–28px */
+span.rt-size-3xl    { font-size: clamp(1.75rem, 4vw,   2.25rem);  }  /* 28–36px */
 span.rt-size-xs     { font-size: 0.75rem;    }
 span.rt-size-sm     { font-size: 0.875rem;   }
 span.rt-size-lg     { font-size: 1.125rem;   }
