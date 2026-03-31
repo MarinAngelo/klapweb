@@ -1,161 +1,195 @@
 {
-  "id": "preisvergleich",
-  "type": "SharedSlice",
-  "name": "Preisvergleich",
-  "description": "Vergleichstabelle für bis zu 3 Dienstleistungs-Pakete",
-  "variations": [
-    {
-      "id": "default",
-      "name": "Standard",
-      "docURL": "...",
-      "version": "initial",
-      "description": "Preisvergleich",
-      "primary": {
-        "titel": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Titel",
-            "placeholder": "Unsere Pakete",
-            "allowTargetBlank": false,
-            "single": "heading2",
-            "labels": [
-              "h1",
-              "h2",
-              "h3",
-              "h4",
-              "h5",
-              "h6"
-            ]
-          }
-        },
-        "plan_1": {
-          "type": "Link",
-          "config": {
-            "label": "Plan 1",
-            "select": "document",
-            "customtypes": [
-              "page"
-            ]
-          }
-        },
-        "plan_2": {
-          "type": "Link",
-          "config": {
-            "label": "Plan 2",
-            "select": "document",
-            "customtypes": [
-              "page"
-            ]
-          }
-        },
-        "plan_3": {
-          "type": "Link",
-          "config": {
-            "label": "Plan 3",
-            "select": "document",
-            "customtypes": [
-              "page"
-            ]
-          }
-        },
-        "hervorhebung": {
-          "type": "Select",
-          "config": {
-            "label": "Hervorgehobener Plan",
-            "options": [
-              "Keiner",
-              "Plan 1",
-              "Plan 2",
-              "Plan 3"
-            ],
-            "default_value": "Keiner"
-          }
-        },
-        "cta_label": {
-          "type": "Text",
-          "config": {
-            "label": "CTA-Beschriftung",
-            "placeholder": "Jetzt bestellen"
-          }
-        },
-        "mobile_vollbreite": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "animate": {
-          "type": "Boolean",
-          "config": {
-            "label": "Animation aktivieren",
-            "default_value": false
-          }
-        },
-        "anim_direction": {
-          "type": "Select",
-          "config": {
-            "label": "Animations-Richtung",
-            "options": [
-              "Oben",
-              "Unten",
-              "Links",
-              "Rechts",
-              "Keine"
-            ],
-            "default_value": "Oben"
-          }
-        },
-        "anim_delay": {
-          "type": "Number",
-          "config": {
-            "label": "Verzögerung (ms)",
-            "placeholder": "500"
-          }
-        },
-        "anim_duration": {
-          "type": "Number",
-          "config": {
-            "label": "Animationsdauer (ms)",
-            "placeholder": "2000"
-          }
-        }
-      },
-      "items": {
-        "leistung": {
-          "type": "Link",
-          "config": {
-            "label": "Leistung",
-            "select": "document",
-            "customtypes": [
-              "leistung"
-            ]
-          }
-        },
-        "plan_1_wert": {
-          "type": "Text",
-          "config": {
-            "label": "Plan 1 Wert",
-            "placeholder": "✓"
-          }
-        },
-        "plan_2_wert": {
-          "type": "Text",
-          "config": {
-            "label": "Plan 2 Wert",
-            "placeholder": "✓"
-          }
-        },
-        "plan_3_wert": {
-          "type": "Text",
-          "config": {
-            "label": "Plan 3 Wert",
-            "placeholder": "–"
-          }
-        }
-      }
-    }
-  ]
+	"id": "preisvergleich",
+	"type": "SharedSlice",
+	"name": "Preisvergleich",
+	"description": "Vergleichstabelle für bis zu 3 Dienstleistungs-Pakete",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Preisvergleich",
+			"primary": {
+				"titel": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Titel",
+						"placeholder": "Unsere Pakete",
+						"allowTargetBlank": false,
+						"single": "heading2",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"plan_1": {
+					"type": "Link",
+					"config": {
+						"label": "Plan 1",
+						"select": "document",
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"plan_2": {
+					"type": "Link",
+					"config": {
+						"label": "Plan 2",
+						"select": "document",
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"plan_3": {
+					"type": "Link",
+					"config": {
+						"label": "Plan 3",
+						"select": "document",
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"hervorhebung": {
+					"type": "Select",
+					"config": {
+						"label": "Hervorgehobener Plan",
+						"options": [
+							"Keiner",
+							"Plan 1",
+							"Plan 2",
+							"Plan 3"
+						],
+						"default_value": "Keiner"
+					}
+				},
+				"cta_label": {
+					"type": "Text",
+					"config": {
+						"label": "CTA-Beschriftung",
+						"placeholder": "Jetzt bestellen"
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {
+				"leistung": {
+					"type": "Link",
+					"config": {
+						"label": "Leistung",
+						"select": "document",
+						"customtypes": [
+							"leistung"
+						]
+					}
+				},
+				"plan_1_wert": {
+					"type": "Text",
+					"config": {
+						"label": "Plan 1 Wert",
+						"placeholder": "✓"
+					}
+				},
+				"plan_2_wert": {
+					"type": "Text",
+					"config": {
+						"label": "Plan 2 Wert",
+						"placeholder": "✓"
+					}
+				},
+				"plan_3_wert": {
+					"type": "Text",
+					"config": {
+						"label": "Plan 3 Wert",
+						"placeholder": "–"
+					}
+				}
+			}
+		}
+	]
 }

@@ -14,16 +14,22 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 
+	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
+
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
+	import { headerHeight } from '$lib/stores/headerHeight';
 	import { variables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
 	import { addonRows } from '$lib/stores/addonRows';
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 	import { parseCurrencyCode } from '$lib/pricing';
+	import { showCrosshair } from '$lib/stores/showCrosshair';
 
 	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
+	const titleNoAnim = { direction: 'none' as const };
+	$: titleAnimation = prismicTheme?.data?.heading_animation === false ? titleNoAnim : titleFadeIn;
 
 	export let data: any;
 
@@ -208,8 +214,29 @@
 	}
 
 	// --- THEME & FONTS ---
+	// Sofort synchron ausführen (verhindert Flash beim ersten Render)
+	updateTheme(data);
+	// Reaktiv bei Datenänderungen (z.B. Seitennavigation)
 	$: {
 		updateTheme(data);
+	}
+	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	$: {
+		const pd = $page.data?.page?.data ?? {};
+		const overrideBg: string | null = pd.page_bg_color ?? null;
+		const overrideColor: string | null = pd.page_color ?? null;
+		if (overrideBg || overrideColor) {
+			theme.update((t) => ({
+				...t,
+				...(overrideBg ? { pageBgColor: overrideBg } : {}),
+				...(overrideColor ? { pageColor: overrideColor } : {})
+			}));
+			if (typeof document !== 'undefined') {
+				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
+				if (overrideColor)
+					document.documentElement.style.setProperty('--page-color', overrideColor);
+			}
+		}
 	}
 	$: pageFontName =
 		prismicTheme?.data?.page_font?.data?.name ||
@@ -225,6 +252,13 @@
 	$: if (typeof document !== 'undefined') {
 		document.documentElement.style.setProperty('--global-size-mobile', cssMobileSize);
 		document.documentElement.style.setProperty('--global-size-desktop', cssDesktopSize);
+	}
+
+	$: pOffsetMobile = prismicTheme?.data?.p_font_offset_mobile ?? 0;
+	$: pOffsetDesktop = prismicTheme?.data?.p_font_offset_desktop ?? 0;
+	$: if (typeof document !== 'undefined') {
+		document.documentElement.style.setProperty('--p-font-offset-mobile', `${pOffsetMobile}px`);
+		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
 	}
 
 	$: googleFontsUrl = (() => {
@@ -246,11 +280,13 @@
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
+				s.slice_type === 'galerie' ||
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
+	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -305,7 +341,7 @@
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
-<div style="background-color: {$theme.pageBgColor}; min-height: 100vh;">
+<div style="background-color: var(--page-bg-color); min-height: 100vh;">
 	{#if !isLandingPage && !isPreview}
 		<Header
 			{navigation}
@@ -319,14 +355,14 @@
 		/>
 	{/if}
 
-	<main>
+	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
 		{#if $page.data?.title && !hasBannerOverlap}
 			<Bounded
 				as="section"
-				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
+				style="background-color: var(--page-bg-color); color: var(--page-color);"
 			>
 				<!--Seiten Titel Page Title-->
-				<h1 use:reveal={titleFadeIn} class="tracking-tight mt-12 mb-4 first:mt-0">
+				<h1 use:reveal={titleAnimation} class="tracking-tight mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
 				</h1>
 			</Bounded>
@@ -344,3 +380,18 @@
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
+
+<!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
+{#if process.env.NODE_ENV !== 'production'}
+	<style>
+		@import '$lib/components/CrosshairDevTool.css';
+	</style>
+	<button
+		on:click={() => showCrosshair.update((v) => !v)}
+		aria-label={$showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden'}
+		style="position:fixed;top:8px;right:8px;z-index:1000001;width:28px;height:28px;padding:0;background:#fff;border:1px solid #ccc;border-radius:50%;box-shadow:0 2px 8px #0001;font-size:18px;line-height:26px;cursor:pointer;opacity:0.7;display:flex;align-items:center;justify-content:center;"
+	>
+		+
+	</button>
+	<CrosshairDevTool />
+{/if}

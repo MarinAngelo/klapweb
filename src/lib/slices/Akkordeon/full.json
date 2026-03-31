@@ -19,7 +19,48 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
 					}
 				},
 				"description": {
@@ -29,7 +70,48 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
 					}
 				},
 				"accordion_items": {
@@ -52,7 +134,48 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-									"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
 								}
 							}
 						}
@@ -103,7 +226,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -179,7 +308,48 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
 					}
 				},
 				"description": {
@@ -189,7 +359,48 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
 					}
 				},
 				"accordion_items": {
@@ -212,7 +423,48 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-									"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
 								}
 							},
 							"image": {
@@ -293,7 +545,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -359,7 +617,6 @@
 				"Beschreibung": "Diese Variante erlaubt es Leistungen, die im Tab Leistungen der page erfasst wurden, anzuzeigen.",
 				"BeschreibungEn": "This variant allows services captured in the Services tab of the page to be displayed."
 			},
-
 			"id": "leistungen",
 			"name": "Leistungen",
 			"docURL": "...",
@@ -373,8 +630,7 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
 					}
 				},
 				"description": {
@@ -383,8 +639,7 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
-						"labels": ["h1", "h2", "h3", "h4", "h5", "h6"]
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
 					}
 				},
 				"erstes_item_ausgeklappt": {
@@ -432,7 +687,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},

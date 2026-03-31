@@ -1,7 +1,7 @@
 {
 	"plans": {
-		"starter": { "label": "Basis" },
-		"professional": { "label": "Professionell", "extends": "starter" },
+		"basis": { "label": "Basis" },
+		"professional": { "label": "Professionell", "extends": "basis" },
 		"individuell": { "label": "Individuell", "extends": "professional" }
 	},
 
@@ -9,13 +9,15 @@
 		"terminbuchung": { "label": "Terminbuchung", "plans": ["professional"] },
 		"ecommerce": { "label": "E-Commerce", "plans": ["individuell"] },
 		"p5js": { "label": "P5.js", "plans": ["individuell"] },
-		"variablen": { "label": "Variablen", "plans": ["individuell"] }
+		"variablen": { "label": "Variablen", "plans": ["individuell"] },
+		"global_events": { "label": "Globale Events", "plans": ["professional"] }
 	},
 
 	"customTypes": {
 		"terminplanung": { "feature": "terminbuchung" },
 		"leistung": { "feature": "ecommerce" },
-		"variablen": { "feature": "variablen" }
+		"variablen": { "feature": "variablen" },
+		"event": { "feature": "global_events" }
 	},
 
 	"slices": {
@@ -43,6 +45,7 @@
 			"variations": {
 				"plaene": { "feature": "ecommerce" }
 			}
-		}
+		},
+		"GlobaleEvents": { "feature": "global_events" }
 	}
 }

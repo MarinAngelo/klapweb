@@ -10,7 +10,7 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Website Titel",
-					"placeholder": "Title of the site",
+					"placeholder": "Titel der Website",
 					"allowTargetBlank": false,
 					"single": "heading1"
 				}

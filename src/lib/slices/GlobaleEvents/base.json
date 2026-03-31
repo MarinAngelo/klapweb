@@ -1,0 +1,57 @@
+{
+	"id": "globale_events",
+	"type": "SharedSlice",
+	"name": "Globale Events",
+	"description": "Zeigt Inhalte eines verknüpften Event-Dokuments an.",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Standard",
+			"primary": {
+				"events": {
+					"type": "Link",
+					"config": {
+						"label": "Serie / Eltern-Event",
+						"placeholder": "Serien-Dokument auswählen",
+						"select": "document",
+						"customtypes": ["event"]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		}
+	]
+}

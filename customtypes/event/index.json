@@ -1,26 +1,654 @@
 {
-	"format": "custom",
 	"id": "event",
 	"label": "Event",
 	"repeatable": true,
 	"status": true,
+	"format": "custom",
 	"json": {
-		"Main": {
+		"Allgemein": {
 			"uid": {
 				"type": "UID",
 				"config": {
-					"label": "UID"
+					"label": "UID",
+					"placeholder": "z.B. yoga-workshop-april-2026"
+				}
+			},
+			"title": {
+				"type": "Text",
+				"config": {
+					"label": "Titel",
+					"placeholder": "Name der Veranstaltung"
+				}
+			},
+			"subtitle": {
+				"type": "Text",
+				"config": {
+					"label": "Untertitel",
+					"placeholder": "Optionaler Zusatztitel"
+				}
+			},
+			"description": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Kurzbeschreibung",
+					"placeholder": "Kurze Beschreibung für Vorschau und SEO",
+					"allowTargetBlank": false,
+					"multi": "paragraph,strong,em,hyperlink,list-item"
+				}
+			},
+			"image": {
+				"type": "Image",
+				"config": {
+					"label": "Hauptbild",
+					"constraint": {
+						"width": 1600,
+						"height": 900
+					},
+					"thumbnails": [
+						{
+							"name": "Quadratisch",
+							"width": 800,
+							"height": 800
+						},
+						{
+							"name": "Portrait",
+							"width": 800,
+							"height": 1200
+						}
+					]
+				}
+			},
+			"featured": {
+				"type": "Boolean",
+				"config": {
+					"label": "Hervorgehoben",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"status": {
+				"type": "Select",
+				"config": {
+					"label": "Status",
+					"placeholder": "Status wählen",
+					"options": [
+						"Kein",
+						"Geplant",
+						"Bestätigt",
+						"Abgesagt",
+						"Verschoben",
+						"Ausgebucht"
+					],
+					"default_value": "Geplant"
 				}
 			},
 			"slices": {
 				"type": "Slices",
-				"fieldset": "Slice Zone",
+				"fieldset": "Inhalt",
 				"config": {
-					"choices": {
-						"event": {
-							"type": "SharedSlice"
-						}
-					}
+					"choices": {}
+				}
+			}
+		},
+		"Datum & Zeit": {
+			"start_date": {
+				"type": "Timestamp",
+				"config": {
+					"label": "Beginn (Datum & Uhrzeit)",
+					"placeholder": "Startdatum und -uhrzeit"
+				}
+			},
+			"end_date": {
+				"type": "Timestamp",
+				"config": {
+					"label": "Ende (Datum & Uhrzeit)",
+					"placeholder": "Enddatum und -uhrzeit"
+				}
+			},
+			"all_day": {
+				"type": "Boolean",
+				"config": {
+					"label": "Ganztägig",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"doors_open": {
+				"type": "Text",
+				"config": {
+					"label": "Einlass ab",
+					"placeholder": "z.B. 18:30 Uhr"
+				}
+			},
+			"timezone": {
+				"type": "Select",
+				"config": {
+					"label": "Zeitzone",
+					"placeholder": "Zeitzone wählen",
+					"options": [
+						"Europe/Zurich",
+						"Europe/Berlin",
+						"Europe/Vienna",
+						"UTC"
+					],
+					"default_value": "Europe/Zurich"
+				}
+			}
+		},
+		"Ort": {
+			"online_event": {
+				"type": "Boolean",
+				"config": {
+					"label": "Online-Veranstaltung",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"online_url": {
+				"type": "Link",
+				"config": {
+					"label": "Online-Link / Stream",
+					"allowTargetBlank": true,
+					"placeholder": "https://..."
+				}
+			},
+			"location_name": {
+				"type": "Text",
+				"config": {
+					"label": "Veranstaltungsort / Bezeichnung",
+					"placeholder": "z.B. Stadthalle, Café XY, Studio 4"
+				}
+			},
+			"location_room": {
+				"type": "Text",
+				"config": {
+					"label": "Raum / Saal",
+					"placeholder": "z.B. Saal A, Erdgeschoss"
+				}
+			},
+			"location_address": {
+				"type": "Text",
+				"config": {
+					"label": "Strasse & Hausnummer",
+					"placeholder": "z.B. Musterstrasse 12"
+				}
+			},
+			"location_zip": {
+				"type": "Text",
+				"config": {
+					"label": "PLZ",
+					"placeholder": "z.B. 8001"
+				}
+			},
+			"location_city": {
+				"type": "Text",
+				"config": {
+					"label": "Ort",
+					"placeholder": "z.B. Zürich"
+				}
+			},
+			"location_country": {
+				"type": "Select",
+				"config": {
+					"label": "Land",
+					"placeholder": "Land wählen",
+					"options": [
+						"Schweiz",
+						"Deutschland",
+						"Österreich",
+						"Liechtenstein",
+						"Sonstiges"
+					],
+					"default_value": "Schweiz"
+				}
+			},
+			"location_map_url": {
+				"type": "Link",
+				"config": {
+					"label": "Karte / Google Maps",
+					"allowTargetBlank": true,
+					"placeholder": "https://maps.google.com/..."
+				}
+			}
+		},
+		"Details": {
+			"event_type": {
+				"type": "Select",
+				"config": {
+					"label": "Veranstaltungsart",
+					"placeholder": "Art wählen",
+					"options": [
+						"Ausstellung",
+						"Festival",
+						"Führung",
+						"Jubiläum",
+						"Konzert",
+						"Kurs",
+						"Lesung",
+						"Messe",
+						"Party / Fest",
+						"Seminar",
+						"Sportveranstaltung",
+						"Tag der offenen Tür",
+						"Vortrag",
+						"Workshop",
+						"Sonstiges"
+					]
+				}
+			},
+			"event_language": {
+				"type": "Select",
+				"config": {
+					"label": "Sprache der Veranstaltung",
+					"placeholder": "Sprache wählen",
+					"options": [
+						"Deutsch",
+						"Englisch",
+						"Französisch",
+						"Italienisch",
+						"Mehrsprachig",
+						"Keine Sprache"
+					],
+					"default_value": "Deutsch"
+				}
+			},
+			"target_audience": {
+				"type": "Text",
+				"config": {
+					"label": "Zielgruppe",
+					"placeholder": "z.B. Erwachsene ab 18, Familien mit Kindern"
+				}
+			},
+			"min_age": {
+				"type": "Number",
+				"config": {
+					"label": "Mindestalter",
+					"placeholder": "z.B. 16"
+				}
+			},
+			"organizer": {
+				"type": "Text",
+				"config": {
+					"label": "Veranstalter",
+					"placeholder": "Name der veranstaltenden Organisation"
+				}
+			},
+			"organizer_url": {
+				"type": "Link",
+				"config": {
+					"label": "Veranstalter-Website",
+					"allowTargetBlank": true,
+					"placeholder": "https://..."
+				}
+			},
+			"contact_email": {
+				"type": "Text",
+				"config": {
+					"label": "Kontakt E-Mail",
+					"placeholder": "info@beispiel.ch"
+				}
+			},
+			"contact_phone": {
+				"type": "Text",
+				"config": {
+					"label": "Kontakt Telefon",
+					"placeholder": "+41 44 123 45 67"
+				}
+			},
+			"accessibility_info": {
+				"type": "Text",
+				"config": {
+					"label": "Barrierefreiheit",
+					"placeholder": "z.B. Rollstuhlzugang, Induktionsschleife"
+				}
+			},
+			"additional_info": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Weitere Hinweise",
+					"placeholder": "Parkplätze, Kleidungsvorschriften, Mitbringen usw.",
+					"allowTargetBlank": false,
+					"multi": "paragraph,strong,em,list-item"
+				}
+			}
+		},
+		"Tickets & Anmeldung": {
+			"is_free": {
+				"type": "Boolean",
+				"config": {
+					"label": "Kostenlos",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"price_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Preis (Freitext)",
+					"placeholder": "z.B. CHF 20 / Ermässigt CHF 15 / Kinder frei",
+					"allowTargetBlank": true,
+					"multi": "paragraph,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible"
+					]
+				}
+			},
+			"ticket_url": {
+				"type": "Link",
+				"config": {
+					"label": "Tickets kaufen / Anmeldung",
+					"allowTargetBlank": true,
+					"placeholder": "https://..."
+				}
+			},
+			"registration_required": {
+				"type": "Boolean",
+				"config": {
+					"label": "Anmeldung erforderlich",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"registration_deadline": {
+				"type": "Date",
+				"config": {
+					"label": "Anmeldeschluss"
+				}
+			},
+			"max_participants": {
+				"type": "Number",
+				"config": {
+					"label": "Max. Teilnehmerzahl",
+					"placeholder": "z.B. 30"
+				}
+			},
+			"min_participants": {
+				"type": "Number",
+				"config": {
+					"label": "Mindest-Teilnehmerzahl",
+					"placeholder": "z.B. 5"
+				}
+			},
+			"registration_email": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldung per E-Mail",
+					"placeholder": "z.B. anmeldung@beispiel.ch"
+				}
+			},
+			"registration_whatsapp": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldung per WhatsApp (Nummer)",
+					"placeholder": "z.B. +41791234567"
+				}
+			},
+			"registration_text_all": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldetext (alle Termine)",
+					"placeholder": "Hallo, ich möchte mich für alle Termine von {{Event-Name}} anmelden."
+				}
+			},
+			"registration_text_single": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldetext (Einzeltermin)",
+					"placeholder": "Hallo, ich möchte mich für den Termin vom {{Datum}} von {{Event-Name}} anmelden."
+				}
+			},
+			"registration_telegram": {
+				"type": "Text",
+				"config": {
+					"label": "Anmeldung per Telegram (Username oder Nummer)",
+					"placeholder": "@username oder +41..."
+				}
+			}
+		},
+		"Serie & Wiederholung": {
+			"is_series": {
+				"type": "Boolean",
+				"config": {
+					"label": "Veranstaltungsserie",
+					"placeholder_true": "Ja, Teil einer Serie",
+					"placeholder_false": "Nein, Einzelveranstaltung",
+					"default_value": false
+				}
+			},
+			"series_name": {
+				"type": "Text",
+				"config": {
+					"label": "Serienname",
+					"placeholder": "z.B. Montagsyoga, Mittagskonzerte 2026"
+				}
+			},
+			"recurrence": {
+				"type": "Select",
+				"config": {
+					"label": "Wiederholungsrhythmus",
+					"placeholder": "Rhythmus wählen",
+					"options": [
+						"Einmalig",
+						"Täglich",
+						"Wöchentlich",
+						"Zweiwöchentlich",
+						"Monatlich",
+						"Jährlich",
+						"Unregelmässig"
+					],
+					"default_value": "Einmalig"
+				}
+			},
+			"recurrence_days": {
+				"type": "Text",
+				"config": {
+					"label": "Wochentag(e)",
+					"placeholder": "z.B. Montag & Mittwoch"
+				}
+			},
+			"series_end_date": {
+				"type": "Date",
+				"config": {
+					"label": "Serienende (Datum)"
+				}
+			},
+			"series_total_count": {
+				"type": "Number",
+				"config": {
+					"label": "Anzahl Termine (Serie)",
+					"placeholder": "z.B. 8"
+				}
+			},
+			"series_exceptions": {
+				"type": "Text",
+				"config": {
+					"label": "Ausnahmen / Ausfälle",
+					"placeholder": "z.B. Kein Kurs am 1. August und 25. Dezember"
+				}
+			},
+			"parent_event": {
+				"type": "Link",
+				"config": {
+					"label": "Übergeordnetes Event / Serie",
+					"allowTargetBlank": false,
+					"placeholder": "Link zur Haupt-Veranstaltung"
+				}
+			},
+			"individually_bookable": {
+				"type": "Boolean",
+				"config": {
+					"label": "Einzeln buchbar",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"individual_is_free": {
+				"type": "Boolean",
+				"config": {
+					"label": "Einzeltermin kostenlos",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"individual_price_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Einzeltermin Preis (Freitext)",
+					"placeholder": "z.B. CHF 20 / Ermässigt CHF 15",
+					"allowTargetBlank": true,
+					"multi": "paragraph,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible"
+					]
+				}
+			},
+			"individual_registration_email": {
+				"type": "Text",
+				"config": {
+					"label": "Einzeltermin Anmeldung per E-Mail",
+					"placeholder": "z.B. anmeldung@beispiel.ch"
+				}
+			},
+			"individual_registration_whatsapp": {
+				"type": "Text",
+				"config": {
+					"label": "Einzeltermin Anmeldung per WhatsApp",
+					"placeholder": "z.B. +41791234567"
+				}
+			},
+			"individual_ticket_url": {
+				"type": "Link",
+				"config": {
+					"label": "Einzeltermin Ticket-Link",
+					"placeholder": "https://...",
+					"allowTargetBlank": true
+				}
+			},
+			"individual_registration_telegram": {
+				"type": "Text",
+				"config": {
+					"label": "Einzeltermin Anmeldung per Telegram",
+					"placeholder": "@username oder +41..."
+				}
+			}
+		},
+		"SEO": {
+			"meta_title": {
+				"type": "Text",
+				"config": {
+					"label": "SEO-Titel",
+					"placeholder": "Titel für Suchmaschinen (max. 60 Zeichen)"
+				}
+			},
+			"meta_description": {
+				"type": "Text",
+				"config": {
+					"label": "SEO-Beschreibung",
+					"placeholder": "Beschreibung für Suchmaschinen (max. 160 Zeichen)"
+				}
+			},
+			"meta_image": {
+				"type": "Image",
+				"config": {
+					"label": "SEO-Bild (Open Graph)",
+					"constraint": {
+						"width": 1200,
+						"height": 630
+					},
+					"thumbnails": []
 				}
 			}
 		}
