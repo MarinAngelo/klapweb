@@ -34,24 +34,39 @@
 		isMenuOpen.update((open) => !open);
 	}
 
-	// Schließt das Menü bei Scroll oder Touch-Bewegung
-	function handleCloseInteraction() {
-		if ($isMenuOpen) {
+	let menuEl: HTMLDivElement | null = null;
+
+	// Body-Scroll-Lock wenn Menü offen: verhindert dass Seiten-Scroll window.scroll triggert
+	$: if (typeof document !== 'undefined') {
+		document.body.style.overflow = $isMenuOpen ? 'hidden' : '';
+	}
+
+	// Seiten-Scroll (window.scroll feuert nicht bei internem Menü-Scroll)
+	function handleWindowScroll() {
+		if ($isMenuOpen) isMenuOpen.set(false);
+	}
+
+	// Touch-Bewegung: nur schließen wenn der Touch außerhalb des Menü-Containers ist
+	function handleTouchmove(e: TouchEvent) {
+		if ($isMenuOpen && !menuEl?.contains(e.target as Node)) {
 			isMenuOpen.set(false);
 		}
 	}
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
-			window.addEventListener('scroll', handleCloseInteraction);
-			window.addEventListener('touchmove', handleCloseInteraction); // NEU: Für Mobile Wischen
+			window.addEventListener('scroll', handleWindowScroll, { passive: true });
+			window.addEventListener('touchmove', handleTouchmove, { passive: true });
 		}
 	});
 
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
-			window.removeEventListener('scroll', handleCloseInteraction);
-			window.removeEventListener('touchmove', handleCloseInteraction);
+			window.removeEventListener('scroll', handleWindowScroll);
+			window.removeEventListener('touchmove', handleTouchmove);
+		}
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = '';
 		}
 	});
 
@@ -91,11 +106,12 @@
 	</div>
 
 	<div
+		bind:this={menuEl}
 		class={`${
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
 		style={$isMenuOpen
-			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor};`
+			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
 			: ''}
 	>
 		<ul
