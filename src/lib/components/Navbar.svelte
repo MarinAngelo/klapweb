@@ -24,10 +24,23 @@
 
 	// const { headerLinkFont } = get(theme);
 
-	// 1. REAKTIVER FIX FÜR DAS SCHLIESSEN
-	// Sobald sich der Pfad ändert (z.B. durch Sprachwechsel), schließt das Menü.
-	$: if ($page.url.pathname) {
-		isMenuOpen.set(false);
+	// Pfad ohne Locale-Prefix ermitteln
+	function pathWithoutLocale(pathname: string, knownLocales: string[]): string {
+		const segments = pathname.split('/').filter(Boolean);
+		if (segments.length > 0 && knownLocales.includes(segments[0])) {
+			return '/' + segments.slice(1).join('/');
+		}
+		return pathname;
+	}
+
+	// Menü schließen bei echten Seitennavigationen, aber NICHT bei Sprachwechsel
+	let prevContentPath = '';
+	$: {
+		const currentContentPath = pathWithoutLocale($page.url.pathname, locales ?? []);
+		if (prevContentPath && currentContentPath !== prevContentPath) {
+			isMenuOpen.set(false);
+		}
+		prevContentPath = currentContentPath;
 	}
 
 	function toggleMenu() {
