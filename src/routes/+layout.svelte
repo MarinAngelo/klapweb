@@ -50,6 +50,8 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
+	$: pwaEnabled = settings?.data?.pwa_enabled ?? false;
+	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
 	// --- DOMAIN & URL ---
@@ -313,6 +315,13 @@
 	<title>{finalTitle}</title>
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
+	{#if pwaEnabled}
+		<link rel="manifest" href="/manifest.webmanifest" />
+		{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	{/if}
 	<link rel="canonical" href={currentUrl} />
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
