@@ -42,13 +42,6 @@ export function particleFlowSketch(
 				p5.background(0, 0, 8, 25);
 			}
 
-			// Derive particle hue from sketchParams.color if set, otherwise cycle slowly
-			let baseHue: number | null = null;
-			if (sketchParams.color) {
-				const c = p5.color(sketchParams.color);
-				baseHue = p5.hue(c);
-			}
-
 			const t = p5.frameCount * 0.004;
 
 			for (const pt of particles) {
@@ -63,10 +56,7 @@ export function particleFlowSketch(
 				if (pt.y < 0) pt.y = p5.height;
 				if (pt.y > p5.height) pt.y = 0;
 
-				const hue =
-					baseHue !== null
-						? (baseHue + p5.noise(pt.x * 0.001, pt.y * 0.001) * 40 - 20 + 360) % 360
-						: (p5.frameCount * 0.3 + pt.x * 0.05) % 360;
+				const hue = (p5.frameCount * 0.3 + pt.x * 0.05) % 360;
 
 				p5.fill(hue, 55, 95, pt.alpha);
 				p5.circle(pt.x, pt.y, pt.size);
