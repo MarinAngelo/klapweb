@@ -121,6 +121,19 @@ function applyFilters(model, sliceGating) {
 	};
 }
 
+/**
+ * Filtert Felder eines Custom-Type-Tabs gemäss gating.json customTypes[typeId].fields.
+ */
+function filterTabFields(tab, fieldGating) {
+	if (!fieldGating || Object.keys(fieldGating).length === 0) return tab;
+	const result = {};
+	for (const [key, field] of Object.entries(tab)) {
+		if (!isActive(fieldGating[key])) continue;
+		result[key] = field;
+	}
+	return result;
+}
+
 // ── 1. Custom Types ──────────────────────────────────────────────────────────────
 
 const managedTypes = ['page', 'settings'];
@@ -200,6 +213,14 @@ for (const type of managedTypes) {
 					}
 				}
 			}
+		}
+	}
+
+	// Feld-Gating für Custom Types (gating.json customTypes[typeId].fields)
+	const ctFieldGating = gating.customTypes?.[type]?.fields ?? {};
+	if (Object.keys(ctFieldGating).length > 0) {
+		for (const [tabName, tabContent] of Object.entries(doc.json)) {
+			doc.json[tabName] = filterTabFields(tabContent, ctFieldGating);
 		}
 	}
 
@@ -328,6 +349,7 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 // ── Pre-Build-Check: Existenz aller aktiven Custom-Type-Basisdateien ─────────────
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	if (!isActive(gate)) continue;
+	if (!gate.feature) continue; // managedTypes (page/settings) ohne feature-Gate überspringen
 	// Feature-Ordner-Pfad
 	let basePath = `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`;
 	if (!existsSync(join(ROOT, basePath))) {
