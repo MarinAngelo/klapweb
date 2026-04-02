@@ -239,7 +239,9 @@ for (const type of managedTypes) {
 // die ein "button_style" Select-Feld in ihren Variationen haben.
 {
 	// Labels als Optionen (lesbar im CMS-Dropdown), Slugs bleiben intern in der Theme-Store-Logik
-	const buttonStilOptions = Object.values(gating.button_stile ?? {}).map((v) => v.label).filter(Boolean);
+	const buttonStilOptions = Object.values(gating.button_stile ?? {})
+		.map((v) => v.label)
+		.filter(Boolean);
 	const slicesRoot = join(ROOT, 'src/lib/slices');
 	const sliceDirs = readdirSync(slicesRoot, { withFileTypes: true })
 		.filter((d) => d.isDirectory())
@@ -415,10 +417,25 @@ const themePath = join(ROOT, 'customtypes/theme/index.json');
 const iconsMap = gating.icons ?? {};
 const iconEntries = Object.entries(iconsMap);
 
+// Pflicht-Tabs — diese müssen immer vorhanden sein. Fehlen sie, bricht das Script ab
+// statt eine beschädigte Datei zu schreiben (Kundendaten-Schutz!).
+const REQUIRED_THEME_TABS = ['Generell', 'Kopfzeile', 'Fusszeile'];
+
 // a) Schreibe Labels als Select-Optionen
 if (existsSync(themePath) && iconEntries.length > 0) {
 	const iconLabels = iconEntries.map(([, v]) => v.label).filter(Boolean);
 	const themeJson = JSON.parse(readFileSync(themePath, 'utf-8'));
+
+	// ── Sicherheitscheck: Pflicht-Tabs müssen vorhanden sein ──────────────────
+	const missingTabs = REQUIRED_THEME_TABS.filter((t) => !themeJson?.json?.[t]);
+	if (missingTabs.length > 0) {
+		console.error(`\n❌ KRITISCHER FEHLER: customtypes/theme/index.json ist beschädigt!`);
+		console.error(`   Fehlende Tabs: ${missingTabs.join(', ')}`);
+		console.error(`   Die Datei wird NICHT überschrieben. Bitte aus Git wiederherstellen:\n`);
+		console.error(`   git checkout HEAD -- customtypes/theme/index.json\n`);
+		process.exit(1);
+	}
+
 	const iconField = themeJson?.json?.Generell?.button_stile?.config?.fields?.icon;
 	if (iconField?.type === 'Select') {
 		const before = JSON.stringify(iconField.config.options);
