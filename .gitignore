@@ -21,3 +21,4 @@ src/lib/slices/Formular/model.json
 src/lib/slices/Kacheln/model.json
 src/lib/slices/Button/model.json
 src/lib/slices/Titelbereich/model.json
+src/lib/config/icon-labels.ts
