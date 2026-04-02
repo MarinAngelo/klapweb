@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 
 export interface ButtonStil {
+	/** Auto-generierter Slug aus `label` (z.B. "Hauptbutton" → "hauptbutton") */
 	name: string;
 	label?: string;
 	color?: string;
@@ -8,6 +9,14 @@ export interface ButtonStil {
 	hover_color?: string;
 	hover_bg_color?: string;
 	icon?: string;
+}
+
+export interface SvgIcon {
+	name: string;
+	label?: string;
+	svg_code?: string;
+	image_url?: string;
+	image_alt?: string;
 }
 
 // Liest eine CSS-Variable aus dem DOM (nur client-seitig verfügbar)
@@ -78,7 +87,10 @@ export const THEME_DEFAULTS = {
 	hideHeaderOnLoad: false,
 
 	// CMS-konfigurierbare Button-Stile
-	buttonStile: [] as ButtonStil[]
+	buttonStile: [] as ButtonStil[],
+
+	// CMS-konfigurierbare SVG-Icons
+	svgIcons: [] as SvgIcon[]
 };
 
 // Auf dem Client sofort mit den bereits gesetzten CSS-Variablen initialisieren

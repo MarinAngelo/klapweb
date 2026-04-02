@@ -44,37 +44,38 @@
 
 	$: beauftragungHref = getBeauftragunHref(link, $page.params.uid);
 
-	// CMS Button-Stil Lookup
+	// CMS Button-Stil Lookup — findet Eintrag per Slug (legacy) oder Label (neuer CMS-Wert)
 	$: stileEntry = styleName
-		? ($theme.buttonStile ?? []).find((s) => s.name === styleName)
+		? ($theme.buttonStile ?? []).find((s) => s.name === styleName || s.label === styleName)
 		: undefined;
+	$: resolvedStyleSlug = stileEntry?.name || styleName;
 	$: resolvedIcon = stileEntry?.icon || undefined;
 
 	$: resolvedColor =
 		color ||
-		(styleName
-			? `var(--btn-${styleName}-color)`
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-color)`
 			: variant
 				? `var(--btn-${variant}-color)`
 				: 'var(--page-button-color)');
 	$: resolvedBgColor =
 		bgColor ||
-		(styleName
-			? `var(--btn-${styleName}-bg)`
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-bg)`
 			: variant
 				? `var(--btn-${variant}-bg)`
 				: 'var(--page-button-bg-color)');
 	$: resolvedHoverColor =
 		hoverColor ||
-		(styleName
-			? `var(--btn-${styleName}-hover-color)`
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-hover-color)`
 			: variant
 				? `var(--btn-${variant}-hover-color)`
 				: 'var(--page-button-hover-color)');
 	$: resolvedHoverBgColor =
 		hoverBgColor ||
-		(styleName
-			? `var(--btn-${styleName}-hover-bg)`
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-hover-bg)`
 			: variant
 				? `var(--btn-${variant}-hover-bg)`
 				: 'var(--page-button-hover-bg-color)');
