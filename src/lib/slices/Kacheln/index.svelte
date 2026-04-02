@@ -76,7 +76,7 @@
 			const base: number | null = d.ecommerce_price_chf ?? null;
 			const discount: number | null = d.ecommerce_discount_percent ?? null;
 			const deposit: number | null = d.ecommerce_deposit_percent ?? globalDepositPct;
-			const displayAmount = calcDisplayPrice(base, discount, deposit);
+			const displayAmount = calcDisplayPrice(base, discount, null);
 			const converted =
 				displayAmount !== null ? Math.round(displayAmount * conversionRate * 100) / 100 : null;
 			const billingType: string | null = d.ecommerce_billing_type ?? null;
