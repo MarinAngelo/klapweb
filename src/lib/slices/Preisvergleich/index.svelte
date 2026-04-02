@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { theme } from '$lib/stores/theme';
 	import { currencySelection } from '$lib/stores/currency';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
@@ -12,14 +10,7 @@
 	export let index: any;
 	const p = slice.primary ?? ({} as any);
 
-	const { pageColor, pageBgColor } = get(theme);
-
-	$: anim = mapAnimation(
-		p.animate,
-		p.anim_direction,
-		p.anim_delay,
-		p.anim_duration
-	);
+	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 
 	const billingTypeSuffix: Record<string, string> = {
@@ -63,9 +54,7 @@
 		// Title from StructuredText
 		const titleField = d.title;
 		const name: string =
-			Array.isArray(titleField) && titleField[0]?.text
-				? titleField[0].text
-				: (p.field.uid ?? '');
+			Array.isArray(titleField) && titleField[0]?.text ? titleField[0].text : (p.field.uid ?? '');
 
 		return {
 			name,
@@ -87,7 +76,7 @@
 
 	function wertStyle(wert: string | null | undefined): string {
 		if (!wert || wert === '–') return 'opacity: 0.3;';
-		if (wert === '✓') return `color: ${pageColor};`;
+		if (wert === '✓') return `color: var(--page-color);`;
 		return '';
 	}
 </script>
@@ -95,89 +84,92 @@
 {#if plans.length > 0}
 	<Bounded
 		as="section"
-		style="color: {pageColor}; background-color: {pageBgColor};"
+		style="color: var(--page-color); background-color: var(--page-bg-color);"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+		class={mobileVollbreite ? 'overflow-x-clip' : ''}
 	>
-		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
-		{#if titel}
-			<h2 class="font-bold mb-8">{titel}</h2>
-		{/if}
+		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+			{#if titel}
+				<h2 class="font-bold mb-8">{titel}</h2>
+			{/if}
 
-		<div class="overflow-x-auto">
-			<table class="w-full border-collapse" style="min-width: {160 + planCount * 160}px;">
-				<!-- Plan headers -->
-				<thead>
-					<tr>
-						<th class="text-left py-3 pr-6 font-normal w-40"></th>
-						{#each plans as plan}
-							<th
-								class="py-3 px-4 text-center align-top"
-								class:border-2={plan.highlight}
-								style={plan.highlight
-									? `border-color: ${pageColor}; background-color: ${pageColor}11;`
-									: ''}
-							>
-								<div class="font-bold text-lg">{plan.name}</div>
-								{#if plan.price !== null}
-									<div class="text-2xl font-bold mt-1 tabular-nums">
-										{formatPrice(plan.price, activeCurrency)}
-									</div>
-									{#if plan.priceSuffix}
-										<div class="text-sm opacity-60">{plan.priceSuffix}</div>
-									{/if}
-								{/if}
-								<a
-									href={plan.href}
-									class="inline-block mt-3 px-4 py-2 text-sm border transition-opacity hover:opacity-70"
-									style="border-color: {pageColor}; color: {pageColor};"
-								>
-									{ctaLabel}
-								</a>
-							</th>
-						{/each}
-					</tr>
-				</thead>
-
-				<!-- Feature rows -->
-				<tbody>
-					{#each slice.items as item, i}
-						{@const featureLabel = item.leistung?.data?.label ?? item.leistung?.uid ?? ''}
-						<tr class="border-t" style="border-color: {pageColor}22;">
-							<td class="py-3 pr-6 text-sm">{featureLabel}</td>
-							{#each plans as plan, pi}
-								{@const wert = item[wertKeys[pi]] ?? null}
-								<td
-									class="py-3 px-4 text-center text-sm"
-									class:border-x-2={plan.highlight}
-									style={plan.highlight ? `border-color: ${pageColor};` : ''}
-								>
-									<span style={wertStyle(wert)}>{wert || '–'}</span>
-								</td>
-							{/each}
-						</tr>
-					{/each}
-
-					<!-- Bottom border for highlighted column -->
-					{#if plans.some((p) => p.highlight)}
+			<div class="overflow-x-auto">
+				<table class="w-full border-collapse" style="min-width: {160 + planCount * 160}px;">
+					<!-- Plan headers -->
+					<thead>
 						<tr>
-							<td></td>
+							<th class="text-left py-3 pr-6 font-normal w-40"></th>
 							{#each plans as plan}
-								<td
-									class="pb-1"
-									class:border-b-2={plan.highlight}
-									class:border-x-2={plan.highlight}
-									style={plan.highlight ? `border-color: ${pageColor};` : ''}
-								></td>
+								<th
+									class="py-3 px-4 text-center align-top"
+									class:border-2={plan.highlight}
+									style={plan.highlight
+										? `border-color: var(--page-color); background-color: color-mix(in srgb, var(--page-color) 6.7%, transparent);`
+										: ''}
+								>
+									<div class="font-bold text-lg">{plan.name}</div>
+									{#if plan.price !== null}
+										<div class="text-2xl font-bold mt-1 tabular-nums">
+											{formatPrice(plan.price, activeCurrency)}
+										</div>
+										{#if plan.priceSuffix}
+											<div class="text-sm opacity-60">{plan.priceSuffix}</div>
+										{/if}
+									{/if}
+									<a
+										href={plan.href}
+										class="inline-block mt-3 px-4 py-2 text-sm border transition-opacity hover:opacity-70"
+										style="border-color: var(--page-color); color: var(--page-color);"
+									>
+										{ctaLabel}
+									</a>
+								</th>
 							{/each}
 						</tr>
-					{/if}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+
+					<!-- Feature rows -->
+					<tbody>
+						{#each slice.items as item, i}
+							{@const featureLabel = item.leistung?.data?.label ?? item.leistung?.uid ?? ''}
+							<tr
+								class="border-t"
+								style="border-color: color-mix(in srgb, var(--page-color) 13.3%, transparent);"
+							>
+								<td class="py-3 pr-6 text-sm">{featureLabel}</td>
+								{#each plans as plan, pi}
+									{@const wert = item[wertKeys[pi]] ?? null}
+									<td
+										class="py-3 px-4 text-center text-sm"
+										class:border-x-2={plan.highlight}
+										style={plan.highlight ? `border-color: var(--page-color);` : ''}
+									>
+										<span style={wertStyle(wert)}>{wert || '–'}</span>
+									</td>
+								{/each}
+							</tr>
+						{/each}
+
+						<!-- Bottom border for highlighted column -->
+						{#if plans.some((p) => p.highlight)}
+							<tr>
+								<td></td>
+								{#each plans as plan}
+									<td
+										class="pb-1"
+										class:border-b-2={plan.highlight}
+										class:border-x-2={plan.highlight}
+										style={plan.highlight ? `border-color: var(--page-color);` : ''}
+									></td>
+								{/each}
+							</tr>
+						{/if}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</Bounded>
 {/if}

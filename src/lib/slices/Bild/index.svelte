@@ -2,7 +2,6 @@
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
 	import clsx from 'clsx';
-	import { theme } from '$lib/stores/theme';
 	import Carousel from './carousel.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
@@ -20,7 +19,7 @@
 <Bounded
 	tag="section"
 	class={clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}
-	style="background-color: {$theme.pageBgColor};"
+	style="background-color: var(--page-bg-color);"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -28,7 +27,7 @@
 >
 	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 		{#if isFilled.image(slice.primary.image)}
-			<div style="background-color: {$theme.pageBgColor};">
+			<div style="background-color: var(--page-bg-color);">
 				<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
 			</div>
 		{/if}

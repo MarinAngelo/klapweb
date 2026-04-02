@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { theme } from '$lib/stores/theme';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { convertNumber } from '$lib/utils/convertNumber';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -87,7 +86,7 @@
 					{#if mapOpacity > 0}
 						<div
 							class="absolute inset-0"
-							style="background-color: {$theme.pageBgColor}; opacity: {mapOpacity}; pointer-events: none;"
+							style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
 						></div>
 					{/if}
 				</div>
@@ -97,7 +96,7 @@
 						target="_blank"
 						rel="noopener noreferrer"
 						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
-						style="border-color: {$theme.pageColor}; color: {$theme.pageColor};"
+						style="border-color: var(--page-color); color: var(--page-color);"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

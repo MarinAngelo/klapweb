@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
-	import { currencySelection } from '$lib/stores/currency';
 	import { get } from 'svelte/store';
+	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -11,14 +10,16 @@
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
+	import { _ } from '$lib/stores/i18n';
+	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.ImageCardsSlice;
 	export let slices: any = {};
 	export let context: any = {};
 	export let index: number = 0;
 
-	const componentBodyBgColor = slice.primary?.component_body_bg_color || get(theme).pageBgColor;
-	const componentBodyColor = slice.primary?.component_body_color || get(theme).pageColor;
+	const componentBodyBgColor = slice.primary?.component_body_bg_color || 'var(--page-bg-color)';
+	const componentBodyColor = slice.primary?.component_body_color || 'var(--page-color)';
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary?.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
@@ -92,11 +93,11 @@
 		});
 	})();
 
-	$: cardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
-	$: cardBgColor = (slice.primary as any)?.body_bg_color || get(theme).pageBgColor;
-	$: btnColor = (slice.primary as any)?.button_color || get(theme).pageColor;
+	$: cardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
+	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
+	$: btnColor = (slice.primary as any)?.button_color || 'var(--page-button-color)';
 	$: btnBgColor = (slice.primary as any)?.button_bg_color || 'transparent';
-	$: borderColor = (slice.primary as any)?.border_color || get(theme).pageColor;
+	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
 	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
 	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
@@ -111,7 +112,7 @@
 			: 2;
 	$: isCircle = (slice.primary as any)?.image_shape === 'Kreis';
 	$: teamRound = (slice.primary as any)?.round_corners !== false;
-	$: teamCardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
+	$: teamCardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: teamCardBg = (slice.primary as any)?.body_bg_color || 'transparent';
 	$: teamHeading = (slice.primary as any)?.heading ?? null;
 </script>
@@ -198,20 +199,36 @@
 						{/if}
 
 						<!-- CTA -->
-						{#if plan.href}
-							<a
-								href={plan.href}
-								class="mt-auto block text-center px-4 py-2 text-sm border transition-opacity hover:opacity-70"
-								style="
-								color: {btnColor};
-								background-color: {btnBgColor};
-								border-color: {btnColor};
-								border-radius: {roundCorners ? '0.25rem' : '0'};
-							"
-							>
-								{ctaLabel}
-							</a>
-						{/if}
+						<div
+							class="mt-auto flex flex-col gap-2 [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
+						>
+							{#if plan.href}
+								<Button
+									href={plan.href}
+									text={ctaLabel}
+									color={btnColor}
+									bgColor={btnBgColor}
+									hoverColor={btnColor}
+									hoverBgColor={btnBgColor}
+									rounded={roundCorners}
+									mb={false}
+									size="sm"
+								/>
+							{/if}
+							{#if plan.pageHref}
+								<Button
+									href={plan.pageHref}
+									text={$_('Details')}
+									color={btnColor}
+									bgColor="transparent"
+									hoverColor={btnColor}
+									hoverBgColor="transparent"
+									rounded={roundCorners}
+									mb={false}
+									size="sm"
+								/>
+							{/if}
+						</div>
 					</div>
 				{/each}
 			</div>
