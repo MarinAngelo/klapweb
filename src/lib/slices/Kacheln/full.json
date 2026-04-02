@@ -352,32 +352,11 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
-				"button_color": {
-					"type": "Color",
+				"button_style": {
+					"type": "Text",
 					"config": {
-						"label": "Schaltflächen Schriftfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"button_bg_color": {
-					"type": "Color",
-					"config": {
-						"label": "Schaltflächen Hintergrundfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"button_hover_color": {
-					"type": "Color",
-					"config": {
-						"label": "Schaltfl. Schriftfarbe Maus drüber",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"button_hover_bg_color": {
-					"type": "Color",
-					"config": {
-						"label": "Schaltfl. Hintergrundf. Maus drüber",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
+						"label": "Button-Stil (Name)",
+						"placeholder": "z.B. primary"
 					}
 				},
 				"border_color": {
@@ -442,7 +421,7 @@
 			"name": "Team",
 			"docURL": "...",
 			"version": "initial",
-			"description": "Team-Mitglieder als Portr\u00e4t-Kacheln",
+			"description": "Team-Mitglieder als Porträt-Kacheln",
 			"primary": {
 				"heading": {
 					"type": "StructuredText",
@@ -455,19 +434,31 @@
 				},
 				"component_body_color": {
 					"type": "Color",
-					"config": { "label": "Schriftfarbe Bereich", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+					"config": {
+						"label": "Schriftfarbe Bereich",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
 				},
 				"component_body_bg_color": {
 					"type": "Color",
-					"config": { "label": "Hintergrundfarbe Bereich", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+					"config": {
+						"label": "Hintergrundfarbe Bereich",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
 				},
 				"body_color": {
 					"type": "Color",
-					"config": { "label": "Schriftfarbe Kacheln", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+					"config": {
+						"label": "Schriftfarbe Kacheln",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
 				},
 				"body_bg_color": {
 					"type": "Color",
-					"config": { "label": "Hintergrundfarbe Kacheln", "placeholder": "Hex-Farbcode (#RRGGBB)" }
+					"config": {
+						"label": "Hintergrundfarbe Kacheln",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
 				},
 				"grid_columns": {
 					"type": "Select",
@@ -496,7 +487,10 @@
 				},
 				"animate": {
 					"type": "Boolean",
-					"config": { "label": "Animation aktivieren", "default_value": false }
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
 				},
 				"anim_direction": {
 					"type": "Select",
@@ -508,11 +502,17 @@
 				},
 				"anim_delay": {
 					"type": "Number",
-					"config": { "label": "Verz\u00f6gerung (ms)", "placeholder": "500" }
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
 			"items": {
@@ -520,17 +520,26 @@
 					"type": "Image",
 					"config": {
 						"label": "Foto",
-						"constraint": { "width": 800, "height": 800 },
+						"constraint": {
+							"width": 800,
+							"height": 800
+						},
 						"thumbnails": []
 					}
 				},
 				"name": {
 					"type": "Text",
-					"config": { "label": "Name", "placeholder": "Maria Muster" }
+					"config": {
+						"label": "Name",
+						"placeholder": "Maria Muster"
+					}
 				},
 				"role": {
 					"type": "Text",
-					"config": { "label": "Funktion / Rolle", "placeholder": "Gesch\u00e4ftsf\u00fchrerin" }
+					"config": {
+						"label": "Funktion / Rolle",
+						"placeholder": "Geschäftsführerin"
+					}
 				},
 				"bio": {
 					"type": "StructuredText",

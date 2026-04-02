@@ -44,6 +44,16 @@ interface PrismicThemeData {
 	container_width?: string;
 	preset_font?: string;
 	heading_opacity?: number;
+	// CMS-konfigurierbare Button-Stile
+	button_stile?: Array<{
+		name?: string;
+		label?: string;
+		color?: string;
+		bg_color?: string;
+		hover_color?: string;
+		hover_bg_color?: string;
+		icon?: string;
+	}>;
 }
 
 interface ThemeUpdateData {
@@ -198,6 +208,26 @@ export function updateTheme(data: ThemeUpdateData): void {
 		set('--footer-link-hover-color', footerLinkHoverColor);
 		set('--page-link-active-color', pageLinkActiveColor);
 		set('--page-link-visited-color', pageLinkVisitedColor);
+
+		// CMS-konfigurierbare Button-Stile (Repeatable Group)
+		const buttonStile = (prismicThemeData.button_stile ?? []).map((s) => ({
+			name: s.name ?? '',
+			label: s.label,
+			color: s.color,
+			bg_color: s.bg_color,
+			hover_color: s.hover_color,
+			hover_bg_color: s.hover_bg_color,
+			icon: s.icon
+		}));
+		buttonStile.forEach((s) => {
+			if (!s.name) return;
+			if (s.color) set(`--btn-${s.name}-color`, s.color);
+			if (s.bg_color) set(`--btn-${s.name}-bg`, s.bg_color);
+			if (s.hover_color) set(`--btn-${s.name}-hover-color`, s.hover_color);
+			if (s.hover_bg_color) set(`--btn-${s.name}-hover-bg`, s.hover_bg_color);
+		});
+		theme.update((t) => ({ ...t, buttonStile }));
+
 		if (
 			prismicThemeData.heading_opacity !== undefined &&
 			prismicThemeData.heading_opacity !== null

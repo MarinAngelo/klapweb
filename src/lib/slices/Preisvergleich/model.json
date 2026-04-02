@@ -67,9 +67,7 @@
 					"config": {
 						"label": "Plan 1",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"plan_2": {
@@ -77,9 +75,7 @@
 					"config": {
 						"label": "Plan 2",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"plan_3": {
@@ -87,21 +83,14 @@
 					"config": {
 						"label": "Plan 3",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"hervorhebung": {
 					"type": "Select",
 					"config": {
 						"label": "Hervorgehobener Plan",
-						"options": [
-							"Keiner",
-							"Plan 1",
-							"Plan 2",
-							"Plan 3"
-						],
+						"options": ["Keiner", "Plan 1", "Plan 2", "Plan 3"],
 						"default_value": "Keiner"
 					}
 				},
@@ -110,6 +99,13 @@
 					"config": {
 						"label": "CTA-Beschriftung",
 						"placeholder": "Jetzt bestellen"
+					}
+				},
+				"button_style": {
+					"type": "Text",
+					"config": {
+						"label": "Button-Stil (Name)",
+						"placeholder": "z.B. primary"
 					}
 				},
 				"mobile_vollbreite": {
@@ -132,13 +128,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -163,9 +153,7 @@
 					"config": {
 						"label": "Leistung",
 						"select": "document",
-						"customtypes": [
-							"leistung"
-						]
+						"customtypes": ["leistung"]
 					}
 				},
 				"plan_1_wert": {
