@@ -166,6 +166,64 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"button_stile": {
+				"type": "Group",
+				"config": {
+					"label": "Button-Stile",
+					"fields": {
+						"name": {
+							"type": "Text",
+							"config": {
+								"label": "Name (Kennung)",
+								"placeholder": "z.B. primary"
+							}
+						},
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Hauptbutton"
+							}
+						},
+						"color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"icon": {
+							"type": "Select",
+							"config": {
+								"label": "Symbol",
+								"placeholder": "— Kein Symbol —",
+								"options": ["external-link", "menu", "close"]
+							}
+						}
+					}
+				}
+			},
 			"heading_opacity": {
 				"type": "Number",
 				"config": {

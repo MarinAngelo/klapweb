@@ -12,6 +12,7 @@
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import Button from '$lib/components/Button.svelte';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 
 	export let slice: Content.ImageCardsSlice;
 	export let slices: any = {};
@@ -95,10 +96,10 @@
 
 	$: cardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
-	$: btnColor = (slice.primary as any)?.button_color || 'var(--page-button-color)';
-	$: btnBgColor = (slice.primary as any)?.button_bg_color || 'transparent';
-	$: btnHoverColor = (slice.primary as any)?.button_hover_color || 'var(--page-button-hover-color)';
-	$: btnHoverBgColor = (slice.primary as any)?.button_hover_bg_color || 'var(--page-button-hover-bg-color)';
+	$: btnStyleName = ((slice.primary as any)?.button_style as string | undefined) || undefined;
+	$: btnHighlightColor = btnStyleName
+		? `var(--btn-${btnStyleName}-color)`
+		: 'var(--page-button-color)';
 	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
 	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
@@ -144,9 +145,11 @@
 						style="
 						color: {cardColor};
 						background-color: {plan.highlight ? `${cardBgColor}` : cardBgColor};
-						border-color: {plan.highlight ? borderColor : `${borderColor}44`};
-						border-radius: {roundCorners ? '0.5rem' : '0'};
-						{plan.highlight ? `box-shadow: 0 4px 24px ${borderColor}22;` : ''}
+					border-color: {plan.highlight ? btnHighlightColor : `${borderColor}44`};
+					border-radius: {roundCorners ? '0.5rem' : '0'};
+					{plan.highlight
+							? `box-shadow: 0 4px 24px color-mix(in srgb, ${btnHighlightColor} 13%, transparent);`
+							: ''}
 					"
 					>
 						<!-- Plan name + price -->
@@ -155,9 +158,12 @@
 								{#if plan.pageHref}
 									<a
 										href={plan.pageHref}
-										class="hover:opacity-70 transition-opacity"
+										class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity"
 										style="color: {cardColor};"
-										>{plan.name} <span style="font-size: 0.75em; opacity: 0.6;">↗</span></a
+										>{plan.name}
+										<span class="opacity-60" style="line-height: 0;"
+											><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
+										></a
 									>
 								{:else}
 									{plan.name}
@@ -172,7 +178,21 @@
 								{/if}
 							{/if}
 						</div>
-
+						<!-- CTA: Jetzt bestellen -->
+						{#if plan.href}
+							<div
+								class="mb-4 [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
+							>
+								<Button
+									href={plan.href}
+									text={ctaLabel}
+									styleName={btnStyleName}
+									rounded={roundCorners}
+									mb={false}
+									size="sm"
+								/>
+							</div>
+						{/if}
 						<!-- Feature list -->
 						{#if plan.features.length > 0}
 							<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
@@ -200,24 +220,11 @@
 							</ul>
 						{/if}
 
-						<!-- CTA -->
-						<div
-							class="mt-auto flex flex-col gap-2 [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
-						>
-							{#if plan.href}
-								<Button
-									href={plan.href}
-									text={ctaLabel}
-									color={btnColor}
-									bgColor={btnBgColor}
-								hoverColor={btnHoverColor}
-								hoverBgColor={btnHoverBgColor}
-									rounded={roundCorners}
-									mb={false}
-									size="sm"
-								/>
-							{/if}
-							{#if plan.pageHref}
+						<!-- Details-Button -->
+						{#if plan.pageHref}
+							<div
+								class="mt-auto [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
+							>
 								<Button
 									href={plan.pageHref}
 									text={$_('Details')}
@@ -229,8 +236,8 @@
 									mb={false}
 									size="sm"
 								/>
-							{/if}
-						</div>
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 
@@ -63,7 +65,8 @@
 			billingType,
 			priceSuffix: suffix,
 			highlight: p.highlight,
-			href: `/beauftragung?dienstleistung=${encodeURIComponent(p.field.uid)}`
+			href: `/beauftragung?dienstleistung=${encodeURIComponent(p.field.uid)}`,
+			pageHref: `/${p.field.uid}`
 		};
 	});
 
@@ -73,6 +76,11 @@
 
 	const ctaLabel = p.cta_label || 'Jetzt bestellen';
 	const titel = p.titel?.[0]?.text ?? null;
+
+	$: btnStyleName = (p.button_style as string | undefined) || undefined;
+	$: btnHighlightColor = btnStyleName
+		? `var(--btn-${btnStyleName}-color)`
+		: 'var(--page-button-color)';
 
 	function wertStyle(wert: string | null | undefined): string {
 		if (!wert || wert === '–') return 'opacity: 0.3;';
@@ -107,10 +115,20 @@
 									class="py-3 px-4 text-center align-top"
 									class:border-2={plan.highlight}
 									style={plan.highlight
-										? `border-color: var(--page-color); background-color: color-mix(in srgb, var(--page-color) 6.7%, transparent);`
+										? `border-color: ${btnHighlightColor}; background-color: color-mix(in srgb, ${btnHighlightColor} 6.7%, transparent);`
 										: ''}
 								>
-									<div class="font-bold text-lg">{plan.name}</div>
+									<div class="font-bold text-lg">
+										<a
+											href={plan.pageHref}
+											class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity"
+											style="color: inherit;"
+											>{plan.name}
+											<span class="opacity-60" style="line-height: 0;"
+												><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
+											></a
+										>
+									</div>
 									{#if plan.price !== null}
 										<div class="text-2xl font-bold mt-1 tabular-nums">
 											{formatPrice(plan.price, activeCurrency)}
@@ -119,13 +137,17 @@
 											<div class="text-sm opacity-60">{plan.priceSuffix}</div>
 										{/if}
 									{/if}
-									<a
-										href={plan.href}
-										class="inline-block mt-3 px-4 py-2 text-sm border transition-opacity hover:opacity-70"
-										style="border-color: var(--page-color); color: var(--page-color);"
+									<div
+										class="mt-3 [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
 									>
-										{ctaLabel}
-									</a>
+										<Button
+											href={plan.href}
+											text={ctaLabel}
+											styleName={btnStyleName}
+											mb={false}
+											size="sm"
+										/>
+									</div>
 								</th>
 							{/each}
 						</tr>
@@ -145,7 +167,7 @@
 									<td
 										class="py-3 px-4 text-center text-sm"
 										class:border-x-2={plan.highlight}
-										style={plan.highlight ? `border-color: var(--page-color);` : ''}
+										style={plan.highlight ? `border-color: ${btnHighlightColor};` : ''}
 									>
 										<span style={wertStyle(wert)}>{wert || '–'}</span>
 									</td>
@@ -162,7 +184,7 @@
 										class="pb-1"
 										class:border-b-2={plan.highlight}
 										class:border-x-2={plan.highlight}
-										style={plan.highlight ? `border-color: var(--page-color);` : ''}
+										style={plan.highlight ? `border-color: ${btnHighlightColor};` : ''}
 									></td>
 								{/each}
 							</tr>
