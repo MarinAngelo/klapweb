@@ -366,6 +366,20 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfl. Schriftfarbe Maus drüber",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfl. Hintergrundf. Maus drüber",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
 				"border_color": {
 					"type": "Color",
 					"config": {

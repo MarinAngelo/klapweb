@@ -97,6 +97,8 @@
 	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
 	$: btnColor = (slice.primary as any)?.button_color || 'var(--page-button-color)';
 	$: btnBgColor = (slice.primary as any)?.button_bg_color || 'transparent';
+	$: btnHoverColor = (slice.primary as any)?.button_hover_color || 'var(--page-button-hover-color)';
+	$: btnHoverBgColor = (slice.primary as any)?.button_hover_bg_color || 'var(--page-button-hover-bg-color)';
 	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
 	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
@@ -208,8 +210,8 @@
 									text={ctaLabel}
 									color={btnColor}
 									bgColor={btnBgColor}
-									hoverColor={btnColor}
-									hoverBgColor={btnBgColor}
+								hoverColor={btnHoverColor}
+								hoverBgColor={btnHoverBgColor}
 									rounded={roundCorners}
 									mb={false}
 									size="sm"
@@ -219,9 +221,9 @@
 								<Button
 									href={plan.pageHref}
 									text={$_('Details')}
-									color={btnColor}
+									color="var(--page-link-color)"
 									bgColor="transparent"
-									hoverColor={btnColor}
+									hoverColor="var(--page-link-hover-color)"
 									hoverBgColor="transparent"
 									rounded={roundCorners}
 									mb={false}
