@@ -7,6 +7,7 @@ export default {
 		'grid-rows-[1fr]',
 		'transition-[grid-template-rows]'
 	],
+	blocklist: ['[-:.]'],
 	theme: {},
 	plugins: []
 } satisfies Config;
