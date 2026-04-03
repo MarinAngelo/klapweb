@@ -148,6 +148,9 @@
 	"button_stile": {
 		"durchstarten": {
 			"label": "Durchstarten"
+		},
+		"denKundenZumKaufAnimieren": {
+			"label": "Den Kunden zum Kauf animieren"
 		}
 	},
 	"icons": {

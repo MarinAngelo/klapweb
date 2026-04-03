@@ -11,8 +11,9 @@
  *   icons:       Icon-Registry    (slug → { label })
  *                → Slugs werden als Select-Optionen in theme/button_stile.icon geschrieben
  *                → Built-ins (external-link, menu, close) + CMS-Icons hier eintragen
- *   button_stile: Button-Stil-Registry (slug → { label })
+ *   button_stile: Button-Stil-Registry (slug → { label, color?, bgColor?, hoverColor?, hoverBgColor? })
  *                → Labels werden als Select-Optionen in Slice-Feldern "button_style" geschrieben
+ *                → optionale Farb-Defaults dienen als Fallback wenn Theme-Dokument den Stil nicht kennt
  *                → Button.svelte sucht Eintrag per label, setzt CSS-Vars per slug
  *   slices:      Slice-Gating     (SliceName → {
  *                  plan?, feature?,            // Slice-Ebene

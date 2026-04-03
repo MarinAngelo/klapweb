@@ -54,28 +54,28 @@
 	$: resolvedColor =
 		color ||
 		(resolvedStyleSlug
-			? `var(--btn-${resolvedStyleSlug}-color)`
+			? `var(--btn-${resolvedStyleSlug}-color, var(--page-button-color))`
 			: variant
 				? `var(--btn-${variant}-color)`
 				: 'var(--page-button-color)');
 	$: resolvedBgColor =
 		bgColor ||
 		(resolvedStyleSlug
-			? `var(--btn-${resolvedStyleSlug}-bg)`
+			? `var(--btn-${resolvedStyleSlug}-bg, var(--page-button-bg-color))`
 			: variant
 				? `var(--btn-${variant}-bg)`
 				: 'var(--page-button-bg-color)');
 	$: resolvedHoverColor =
 		hoverColor ||
 		(resolvedStyleSlug
-			? `var(--btn-${resolvedStyleSlug}-hover-color)`
+			? `var(--btn-${resolvedStyleSlug}-hover-color, var(--page-button-hover-color))`
 			: variant
 				? `var(--btn-${variant}-hover-color)`
 				: 'var(--page-button-hover-color)');
 	$: resolvedHoverBgColor =
 		hoverBgColor ||
 		(resolvedStyleSlug
-			? `var(--btn-${resolvedStyleSlug}-hover-bg)`
+			? `var(--btn-${resolvedStyleSlug}-hover-bg, var(--page-button-hover-bg-color))`
 			: variant
 				? `var(--btn-${variant}-hover-bg)`
 				: 'var(--page-button-hover-bg-color)');

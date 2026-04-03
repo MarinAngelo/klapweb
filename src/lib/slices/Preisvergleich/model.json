@@ -118,7 +118,8 @@
 						"label": "Button-Stil",
 						"placeholder": "— Standard —",
 						"options": [
-							"Durchstarten"
+							"Durchstarten",
+							"Den Kunden zum Kauf animieren"
 						]
 					}
 				},
