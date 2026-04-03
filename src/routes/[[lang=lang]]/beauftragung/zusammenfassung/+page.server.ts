@@ -21,7 +21,7 @@ export interface ProductData {
 
 export async function load({ fetch, url, parent }) {
 	const { lang, settings } = await parent();
-	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || 'Bestellübersicht';
+	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || '';
 	const baseCurrency: string =
 		parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 	const additionalEntries: Array<{ waehrung?: string }> =

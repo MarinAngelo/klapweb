@@ -30,6 +30,9 @@
 - Import im Template: `import { _ } from '$lib/stores/i18n'` → Verwendung: `{$_('Schlüssel')}`
 - Neuen Key zuerst in `src/lib/i18n/translations.ts` eintragen (Key = deutscher Text, mind. `de-ch` + `en-us`)
 - Gilt auch für interne Tools wie den Katalog
+- **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
+- **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
+- **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
 
 ## Netlify Blobs
 

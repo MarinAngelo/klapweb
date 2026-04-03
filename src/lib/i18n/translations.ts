@@ -478,9 +478,49 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Weiter zum Formular',
 		'en-us': 'Continue to form'
 	},
+	Vorname: {
+		'de-ch': 'Vorname',
+		'en-us': 'First name'
+	},
+	Nachname: {
+		'de-ch': 'Nachname',
+		'en-us': 'Last name'
+	},
+	Pflichtfelder: {
+		'de-ch': 'Pflichtfelder',
+		'en-us': 'Required fields'
+	},
+	Beauftragung: {
+		'de-ch': 'Beauftragung',
+		'en-us': 'Order'
+	},
+	Firma: {
+		'de-ch': 'Firma',
+		'en-us': 'Company'
+	},
+	'E-Mail': {
+		'de-ch': 'E-Mail',
+		'en-us': 'Email'
+	},
+	Adresse: {
+		'de-ch': 'Adresse',
+		'en-us': 'Address'
+	},
+	PLZ: {
+		'de-ch': 'PLZ',
+		'en-us': 'ZIP code'
+	},
+	Ort: {
+		'de-ch': 'Ort',
+		'en-us': 'City'
+	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
 		'en-us': 'Billing address'
+	},
+	Kommentare: {
+		'de-ch': 'Kommentare',
+		'en-us': 'Comments'
 	},
 	'Weitere Angaben': {
 		'de-ch': 'Weitere Angaben',
@@ -578,7 +618,21 @@ export const translations: Record<string, Record<string, string>> = {
 	Bestätigt: { 'de-ch': 'Bestätigt', 'en-us': 'Confirmed' },
 	Abgesagt: { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
 	Verschoben: { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
-	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' }
+	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' },
+	Bestellübersicht: { 'de-ch': 'Bestellübersicht', 'en-us': 'Order Summary' },
+	Einmalig: { 'de-ch': 'Einmalig', 'en-us': 'One-time' },
+	Monatlich: { 'de-ch': 'Monatlich', 'en-us': 'Monthly' },
+	Jährlich: { 'de-ch': 'Jährlich', 'en-us': 'Annually' },
+	'auf Anfrage': { 'de-ch': 'auf Anfrage', 'en-us': 'on request' },
+	Total: { 'de-ch': 'Total', 'en-us': 'Total' },
+	Jahr: { 'de-ch': 'Jahr', 'en-us': 'year' },
+	Monat: { 'de-ch': 'Monat', 'en-us': 'month' },
+	'Abrechnungsart:': { 'de-ch': 'Abrechnungsart:', 'en-us': 'Billing type:' },
+	'exkl. MwSt.': { 'de-ch': 'exkl. MwSt.', 'en-us': 'excl. VAT' },
+	'Code angewendet:': { 'de-ch': 'Code angewendet:', 'en-us': 'Code applied:' },
+	'Ich habe die': { 'de-ch': 'Ich habe die', 'en-us': 'I have read the' },
+	'und die': { 'de-ch': 'und die', 'en-us': 'and the' },
+	'gelesen und akzeptiere diese.': { 'de-ch': 'gelesen und akzeptiere diese.', 'en-us': 'and accept them.' }
 };
 
 /**

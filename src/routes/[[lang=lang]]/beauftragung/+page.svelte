@@ -127,6 +127,12 @@
 		}
 		// Dienstleistung (hidden, needed by zusammenfassung)
 		checkoutData.data['dienstleistung'] = data.dienstleistung;
+		// Kommentare
+		const kommentare = (formData.get('kommentare') as string | null)?.trim();
+		if (kommentare) {
+			checkoutData.data['kommentare'] = kommentare;
+			checkoutData.labels['kommentare'] = t('Kommentare', lang);
+		}
 
 		sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
 		goto(`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}`);
@@ -138,11 +144,11 @@
 </script>
 
 <svelte:head>
-	<title>{data.pageTitle}</title>
+	<title>{data.pageTitle || t('Beauftragung', lang)}</title>
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
-	<Heading tag="h1">{data.pageTitle}</Heading>
+<Heading tag="h1">{data.pageTitle || t('Beauftragung', lang)}</Heading>
 
 	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6">
 
@@ -177,7 +183,7 @@
 				{#each invoiceFields as f}
 					<div class="mb-4 {f.span === 2 ? 'sm:col-span-2' : ''}">
 						<label class="block text-base font-bold" for={f.key}>
-							{f.label}{f.required ? ' *' : ''}
+								{t(f.label, lang)}{f.required ? ' *' : ''}
 						</label>
 						<input
 							id={f.key}
@@ -215,7 +221,21 @@
 			</fieldset>
 		{/if}
 
-		<p class="text-xs opacity-60">* Pflichtfelder</p>
+		<!-- Kommentare (immer sichtbar) -->
+		<div>
+			<label class="block text-base font-bold mb-1" for="kommentare">
+				{t('Kommentare', lang)}
+			</label>
+			<textarea
+				id="kommentare"
+				name="kommentare"
+				rows="4"
+				class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 resize-none"
+				style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+			></textarea>
+		</div>
+
+		<p class="text-xs opacity-60">* {t('Pflichtfelder', lang)}</p>
 
 		<button
 			type="submit"
