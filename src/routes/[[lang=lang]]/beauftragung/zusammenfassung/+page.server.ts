@@ -21,12 +21,15 @@ export interface ProductData {
 
 export async function load({ fetch, url, parent }) {
 	const { lang, settings } = await parent();
-	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || 'Bestellübersicht';
+	const pageTitle: string = (settings.data as any).zusammenfassung_title?.trim() || '';
+	const checkoutButtonText: string = (settings.data as any).checkout_button_text?.trim() || '';
 	const baseCurrency: string =
 		parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 	const additionalEntries: Array<{ waehrung?: string }> =
 		(settings.data as any).invoice_additional_currencies ?? [];
-	const additionalCodes = additionalEntries.map((e) => parseCurrencyCode(e.waehrung)).filter(Boolean);
+	const additionalCodes = additionalEntries
+		.map((e) => parseCurrencyCode(e.waehrung))
+		.filter(Boolean);
 	const rates = await fetchExchangeRates(baseCurrency, additionalCodes);
 
 	// Payment methods — default to true if not explicitly set to false
@@ -39,7 +42,16 @@ export async function load({ fetch, url, parent }) {
 	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
 
 	const serviceUid = url.searchParams.get('service') ?? '';
-	if (!serviceUid) return { product: null, pageTitle, baseCurrency, additionalCodes, rates, paymentMethods };
+	if (!serviceUid)
+		return {
+			product: null,
+			pageTitle,
+			checkoutButtonText,
+			baseCurrency,
+			additionalCodes,
+			rates,
+			paymentMethods
+		};
 	try {
 		const client = createClient({ fetch });
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
@@ -66,8 +78,7 @@ export async function load({ fetch, url, parent }) {
 						const addonDiscount = (ad.ecommerce_discount_percent as number) ?? null;
 						const addonDeposit = (ad.ecommerce_deposit_percent as number) ?? globalDepositPct;
 						return {
-							label:
-								(addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
+							label: (addonDoc.data.title as Array<{ text: string }>)?.[0]?.text ?? uid,
 							displayAmount: calcDisplayPrice(addonBase, addonDiscount, addonDeposit),
 							billingType: (ad.ecommerce_billing_type as string) || null
 						} satisfies AddonData;
@@ -81,7 +92,7 @@ export async function load({ fetch, url, parent }) {
 		return {
 			product: {
 				label: pageDoc.data.title
-					? (pageDoc.data.title as Array<{ text: string }>)[0]?.text ?? serviceUid
+					? ((pageDoc.data.title as Array<{ text: string }>)[0]?.text ?? serviceUid)
 					: serviceUid,
 				price: basePrice,
 				displayAmount,
@@ -90,6 +101,7 @@ export async function load({ fetch, url, parent }) {
 				addons
 			} satisfies ProductData,
 			pageTitle,
+			checkoutButtonText,
 			baseCurrency,
 			additionalCodes,
 			rates,
@@ -97,6 +109,14 @@ export async function load({ fetch, url, parent }) {
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
-		return { product: null, pageTitle, baseCurrency, additionalCodes, rates, paymentMethods };
+		return {
+			product: null,
+			pageTitle,
+			checkoutButtonText,
+			baseCurrency,
+			additionalCodes,
+			rates,
+			paymentMethods
+		};
 	}
 }
