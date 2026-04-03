@@ -285,6 +285,7 @@ async function generatePdf(
 	// Leerzeile + E-Mail + Projektname
 	recipientLines.push({ text: '' });
 	if (d['email']) recipientLines.push({ text: `E-Mail: ${d['email']}` });
+	if (d['tel']) recipientLines.push({ text: `Tel.: ${d['tel']}` });
 	if (d['projektname']) recipientLines.push({ text: `Projektname: ${d['projektname']}` });
 
 	for (const line of recipientLines) {

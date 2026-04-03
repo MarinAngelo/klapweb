@@ -510,6 +510,22 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Projektname',
 		'en-us': 'Project name'
 	},
+	Land: {
+		'de-ch': 'Land',
+		'en-us': 'Country'
+	},
+	'Registrierter Domainname': {
+		'de-ch': 'Registrierter Domainname',
+		'en-us': 'Registered domain name'
+	},
+	'Gewünschter Domainname': {
+		'de-ch': 'Gewünschter Domainname',
+		'en-us': 'Desired domain name'
+	},
+	'Tel. Nr.': {
+		'de-ch': 'Tel. Nr.',
+		'en-us': 'Phone no.'
+	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
 		'en-us': 'Billing address'
