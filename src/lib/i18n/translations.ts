@@ -514,6 +514,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ort',
 		'en-us': 'City'
 	},
+	Projektname: {
+		'de-ch': 'Projektname',
+		'en-us': 'Project name'
+	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
 		'en-us': 'Billing address'

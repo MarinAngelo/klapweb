@@ -252,6 +252,9 @@
 				for (const [k, v] of Object.entries(checkoutData.data)) {
 					params.set(k, v);
 				}
+				if (grandTotal !== null) {
+					params.set('preis', formatPrice(grandTotal, selectedCurrency));
+				}
 				const resp = await fetch('/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -325,33 +328,27 @@
 					<p class="text-sm opacity-60 mt-0.5">{t(addon.billingType ?? 'Einmalig', lang)}</p>
 				{/each}
 
-				<!-- Total -->
+				<!-- Grouped totals + grand total -->
 				{#if effectiveDisplayPrice !== null}
 					<div class="mt-4 pt-3 border-t" style="border-color: {borderColor};">
-						{#if groupedTotals.length === 1}
+						{#each groupedTotals as [type, total]}
 							<div class="flex justify-between text-sm mt-1">
-								<span class="font-bold">{t('Total', lang)}</span>
-								<span class="font-bold tabular-nums"
-									>{formatPrice(groupedTotals[0][1], selectedCurrency)}</span
+								<span class="opacity-60">{t('Total', lang)} {t(type, lang)}:</span>
+								<span class="font-semibold tabular-nums"
+									>{formatPrice(total, selectedCurrency)}</span
 								>
 							</div>
-						{:else}
-							{#each groupedTotals as [type, total]}
-								<div class="flex justify-between text-sm mt-1 opacity-70">
-									<span>{t(type, lang)}</span>
-									<span class="tabular-nums"
-										>{formatPrice(total, selectedCurrency)}</span
-									>
-								</div>
-							{/each}
-							{#if grandTotal !== null}
-								<div class="flex justify-between text-sm mt-2 pt-2 border-t" style="border-color: {borderColor}44;">
-									<span class="font-bold">{t('Gesamttotal', lang)}</span>
-									<span class="font-bold tabular-nums"
-										>{formatPrice(grandTotal, selectedCurrency)}</span
-									>
-								</div>
-							{/if}
+						{/each}
+						{#if grandTotal !== null && groupedTotals.length > 1}
+							<div
+								class="flex justify-between mt-2 pt-2 border-t"
+								style="border-color: {borderColor}44;"
+							>
+								<span class="font-bold">{t('Total', lang)}</span>
+								<span class="font-bold tabular-nums"
+									>{formatPrice(grandTotal, selectedCurrency)}</span
+								>
+							</div>
 						{/if}
 					</div>
 				{/if}

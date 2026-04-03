@@ -63,12 +63,13 @@ async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<Company
 
 		return {
 			name: (d.responsible_person_company as string) ?? '',
-			address: (Array.isArray(d.responsible_address)
-				? (d.responsible_address as Array<{ text?: string }>)
-						.map((b) => b?.text ?? '')
-						.filter(Boolean)
-						.join('\n')
-				: '') ?? '',
+			address:
+				(Array.isArray(d.responsible_address)
+					? (d.responsible_address as Array<{ text?: string }>)
+							.map((b) => b?.text ?? '')
+							.filter(Boolean)
+							.join('\n')
+					: '') ?? '',
 			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
 			uid: (d.company_identification_number as string) ?? '',
 			iban: (d.invoice_iban as string) ?? '',
@@ -128,7 +129,12 @@ async function fetchProductInfo(
 	fetch: typeof globalThis.fetch,
 	serviceUid: string,
 	globalDepositPct: number | null
-): Promise<{ label: string; price: number | null; billingType: string | null; addons: AddonInfo[] }> {
+): Promise<{
+	label: string;
+	price: number | null;
+	billingType: string | null;
+	addons: AddonInfo[];
+}> {
 	if (!serviceUid) return { label: serviceUid, price: null, billingType: null, addons: [] };
 	try {
 		const client = createClient({ fetch });
@@ -237,13 +243,24 @@ async function generatePdf(
 	y -= 40;
 
 	// --- Trennlinie ---
-	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+	page.drawLine({
+		start: { x: marginL, y },
+		end: { x: marginR, y },
+		thickness: 0.5,
+		color: lightGray
+	});
 	y -= 30;
 
 	// --- Rechnungstitel + Nummer ---
 	page.drawText('RECHNUNG', { x: marginL, y, size: 20, font: fontBold, color: black });
 	y -= 22;
-	page.drawText(`Nr. ${invoiceNumber}`, { x: marginL, y, size: 11, font: fontRegular, color: gray });
+	page.drawText(`Nr. ${invoiceNumber}`, {
+		x: marginL,
+		y,
+		size: 11,
+		font: fontRegular,
+		color: gray
+	});
 
 	y -= 40;
 
@@ -271,7 +288,10 @@ async function generatePdf(
 	if (d['projektname']) recipientLines.push({ text: `Projektname: ${d['projektname']}` });
 
 	for (const line of recipientLines) {
-		if (line.text === '') { y -= 8; continue; }
+		if (line.text === '') {
+			y -= 8;
+			continue;
+		}
 		page.drawText(line.text, { x: marginL, y, size: 10, font: fontRegular, color: black });
 		y -= 16;
 	}
@@ -319,7 +339,11 @@ async function generatePdf(
 		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
 	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
 
-	const billingTypeSuffix: Record<string, string> = { Einmalig: 'Einmalig', Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
+	const billingTypeSuffix: Record<string, string> = {
+		Einmalig: 'Einmalig',
+		Jährlich: 'pro Jahr',
+		Monatlich: 'pro Monat'
+	};
 
 	// --- Line items ---
 	// Main service
@@ -330,7 +354,11 @@ async function generatePdf(
 	// Code discount
 	if (codeDiscount && netPrice !== null) {
 		page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
-			x: marginL + 8, y, size: 10, font: fontRegular, color: gray
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontRegular,
+			color: gray
 		});
 		drawRight(fmt(-codeDiscountAmount), y);
 		y -= 20;
@@ -338,38 +366,67 @@ async function generatePdf(
 
 	// Addon lines
 	for (const addon of addons) {
-		const addonSuffix = addon.billingType && billingTypeSuffix[addon.billingType]
-			? ` (${billingTypeSuffix[addon.billingType]})`
-			: '';
+		const addonSuffix =
+			addon.billingType && billingTypeSuffix[addon.billingType]
+				? ` (${billingTypeSuffix[addon.billingType]})`
+				: '';
 		page.drawText(`${addon.label}${addonSuffix}`, {
-			x: marginL + 8, y, size: 10, font: fontRegular, color: black
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontRegular,
+			color: black
 		});
 		drawRight(addon.price !== null ? fmt(addon.price) : '—', y);
 		y -= 20;
 	}
 
 	y -= 10;
-	page.drawLine({ start: { x: marginL, y }, end: { x: marginR, y }, thickness: 0.5, color: lightGray });
+	page.drawLine({
+		start: { x: marginL, y },
+		end: { x: marginR, y },
+		thickness: 0.5,
+		color: lightGray
+	});
 	y -= 16;
 
 	// --- Totals ---
 	if (co.vatRate && discountedPrice !== null) {
 		// VAT: apply to sum of all items
 		const allItemsNet = [discountedPrice, ...addons.map((a) => a.price ?? 0)].reduce(
-			(s, p) => s + p, 0
+			(s, p) => s + p,
+			0
 		);
 		const vatAmount = Math.round(allItemsNet * co.vatRate) / 100;
 		const grandTotal = allItemsNet + vatAmount;
 
 		if (addons.length > 0) {
-			page.drawText('Zwischensumme', { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+			page.drawText('Zwischensumme', {
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: fontRegular,
+				color: black
+			});
 			drawRight(fmt(allItemsNet), y);
 			y -= 20;
 		}
-		page.drawText(`MwSt ${co.vatRate}%`, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		page.drawText(`MwSt ${co.vatRate}%`, {
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontRegular,
+			color: black
+		});
 		drawRight(fmt(vatAmount), y);
 		y -= 20;
-		page.drawText('Total inkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+		page.drawText('Total inkl. MwSt.', {
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontBold,
+			color: black
+		});
 		drawRight(fmt(grandTotal), y, fontBold);
 	} else if (addons.length > 0) {
 		// No VAT, multiple items: grouped totals by billing type
@@ -387,24 +444,48 @@ async function generatePdf(
 		const multipleTypes = typeEntries.length > 1;
 		for (const [type, total] of typeEntries) {
 			page.drawText(multipleTypes ? `${type} exkl. MwSt.` : `Total exkl. MwSt.`, {
-				x: marginL + 8, y, size: 10, font: multipleTypes ? fontRegular : fontBold, color: black
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: multipleTypes ? fontRegular : fontBold,
+				color: black
 			});
 			drawRight(fmt(total), y, multipleTypes ? fontRegular : fontBold);
 			y -= 18;
 		}
 		if (multipleTypes) {
 			// Trennlinie + Gesamttotal
-			page.drawLine({ start: { x: marginL + 8, y: y + 12 }, end: { x: marginR - 8, y: y + 12 }, thickness: 0.5, color: lightGray });
+			page.drawLine({
+				start: { x: marginL + 8, y: y + 12 },
+				end: { x: marginR - 8, y: y + 12 },
+				thickness: 0.5,
+				color: lightGray
+			});
 			y -= 6;
-			const grandTotalNet = [discountedPrice ?? 0, ...addons.map((a) => a.price ?? 0)].reduce((s, p) => s + p, 0);
-			page.drawText('Gesamttotal exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+			const grandTotalNet = [discountedPrice ?? 0, ...addons.map((a) => a.price ?? 0)].reduce(
+				(s, p) => s + p,
+				0
+			);
+			page.drawText('Gesamttotal exkl. MwSt.', {
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: fontBold,
+				color: black
+			});
 			drawRight(fmt(grandTotalNet), y, fontBold);
 			y -= 18;
 		}
 	} else {
 		// No VAT, single item
 		const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
-		page.drawText('Total exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+		page.drawText('Total exkl. MwSt.', {
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontBold,
+			color: black
+		});
 		drawRight(priceStr, y, fontBold);
 	}
 
@@ -495,18 +576,32 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			: invoicePrice;
 
 	// Build service label with billing type suffix for PDF
-	const billingTypeSuffix: Record<string, string> = { Einmalig: 'Einmalig', Jährlich: 'pro Jahr', Monatlich: 'pro Monat' };
-	const pdfServiceLabel = product.billingType && billingTypeSuffix[product.billingType]
-		? `${product.label} (${billingTypeSuffix[product.billingType]})`
-		: product.label;
+	const billingTypeSuffix: Record<string, string> = {
+		Einmalig: 'Einmalig',
+		Jährlich: 'pro Jahr',
+		Monatlich: 'pro Monat'
+	};
+	const pdfServiceLabel =
+		product.billingType && billingTypeSuffix[product.billingType]
+			? `${product.label} (${billingTypeSuffix[product.billingType]})`
+			: product.label;
 
 	// PDF generieren (generatePdf receives price before code discount; applies discount internally)
 	let pdfBytes: Uint8Array;
 	try {
-		pdfBytes = await generatePdf(invoiceNumber, data, pdfServiceLabel, invoicePrice, {
-			...co,
-			currency: invoiceCurrency
-		}, codeDiscountInfo, convertedAddons, product.billingType);
+		pdfBytes = await generatePdf(
+			invoiceNumber,
+			data,
+			pdfServiceLabel,
+			invoicePrice,
+			{
+				...co,
+				currency: invoiceCurrency
+			},
+			codeDiscountInfo,
+			convertedAddons,
+			product.billingType
+		);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {
@@ -549,12 +644,15 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const toEmail = env.INVOICE_TO_EMAIL;
 
 	if (!resendKey || !fromEmail || !toEmail) {
-		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL)');
+		console.error(
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL)'
+		);
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 
 	const customerEmail = data['email'] ?? '';
-	const customerName = [data['vorname'], data['nachname']].filter(Boolean).join(' ') || data['name'] || 'Kunde';
+	const customerName =
+		[data['vorname'], data['nachname']].filter(Boolean).join(' ') || data['name'] || 'Kunde';
 	const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
 	// Token map for email templates
@@ -607,7 +705,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			from: fromEmail,
 			to: toEmail,
 			subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
-			text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(data)
+			text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
+				data
+			)
 				.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
 				.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
 				.join('\n')}`,
