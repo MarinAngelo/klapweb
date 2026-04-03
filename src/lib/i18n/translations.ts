@@ -625,6 +625,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Jährlich: { 'de-ch': 'Jährlich', 'en-us': 'Annually' },
 	'auf Anfrage': { 'de-ch': 'auf Anfrage', 'en-us': 'on request' },
 	Total: { 'de-ch': 'Total', 'en-us': 'Total' },
+	Gesamttotal: { 'de-ch': 'Gesamttotal', 'en-us': 'Grand total' },
 	Jahr: { 'de-ch': 'Jahr', 'en-us': 'year' },
 	Monat: { 'de-ch': 'Monat', 'en-us': 'month' },
 	'Abrechnungsart:': { 'de-ch': 'Abrechnungsart:', 'en-us': 'Billing type:' },
@@ -632,7 +633,10 @@ export const translations: Record<string, Record<string, string>> = {
 	'Code angewendet:': { 'de-ch': 'Code angewendet:', 'en-us': 'Code applied:' },
 	'Ich habe die': { 'de-ch': 'Ich habe die', 'en-us': 'I have read the' },
 	'und die': { 'de-ch': 'und die', 'en-us': 'and the' },
-	'gelesen und akzeptiere diese.': { 'de-ch': 'gelesen und akzeptiere diese.', 'en-us': 'and accept them.' }
+	'gelesen und akzeptiere diese.': {
+		'de-ch': 'gelesen und akzeptiere diese.',
+		'en-us': 'and accept them.'
+	}
 };
 
 /**
