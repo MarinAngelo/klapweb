@@ -1,8 +1,4 @@
 {
-	"_meta": {
-		"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält.",
-		"BeschreibungEn": "Collapsible elements, ideal for FAQs or similar content. Any number of elements can be created, each containing a heading and a text."
-	},
 	"id": "accordion",
 	"type": "SharedSlice",
 	"name": "Akkordeon",
@@ -230,13 +226,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -298,10 +288,6 @@
 			"items": {}
 		},
 		{
-			"_meta": {
-				"Beschreibung": "Die Variante Bild und Text bietet die Möglichkeit, ein Bild neben einem Textblock anzuzeigen.",
-				"BeschreibungEn": "The Image and Text variant offers the option to display an image next to a text block."
-			},
 			"id": "bildUndText",
 			"name": "Bild und Text",
 			"docURL": "...",
@@ -553,13 +539,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

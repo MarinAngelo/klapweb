@@ -31,6 +31,17 @@
 		mockSlice = { ...mockSlice, primary: { ...mockSlice.primary, [key]: value } };
 	}
 
+	function buildImageField(url: string) {
+		if (!url) return { url: '', dimensions: null, alt: null, copyright: null, edit: null };
+		return {
+			url,
+			dimensions: { width: 1200, height: 800 },
+			alt: null,
+			copyright: null,
+			edit: { x: 0, y: 0, zoom: 1, background: 'transparent' }
+		};
+	}
+
 	$: hasPanel = (data.functionalFields?.length ?? 0) > 0;
 
 	// Viewport-Simulation
@@ -44,7 +55,8 @@
 </script>
 
 <svelte:head
-	><title>{$_(data.sliceName)} / {$_(data.variationName)} – {$_('Slice-Katalog')}</title></svelte:head
+	><title>{$_(data.sliceName)} / {$_(data.variationName)} – {$_('Slice-Katalog')}</title
+	></svelte:head
 >
 
 <!-- Äusserer Flex: Mobile vertikal, Desktop horizontal -->
@@ -58,7 +70,8 @@
 		>
 			<!-- Links: Slice / Variation / Badge -->
 			<div class="flex items-center gap-3">
-				<span class="font-semibold" style="color: {fg}; font-size: 16px;">{$_(data.sliceName)}</span>
+				<span class="font-semibold" style="color: {fg}; font-size: 16px;">{$_(data.sliceName)}</span
+				>
 				<span style="color: {fgMuted}; opacity: 0.4;">/</span>
 				<span style="color: {fg}; font-size: 16px;">{$_(data.variationName)}</span>
 				{#each Object.entries(data.meta ?? {}).filter(([k]) => k !== 'Beschreibung' && k !== 'BeschreibungEn' && k !== 'Paket') as [key, value]}
@@ -260,6 +273,17 @@
 								value={mockSlice.primary[field.key] ?? field.default_value ?? ''}
 								placeholder={field.placeholder}
 								on:input={(e) => updateField(field.key, Number(e.currentTarget.value))}
+								style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 14px; padding: 4px 8px; border-radius: 4px; width: 100%;"
+							/>
+						</div>
+					{:else if field.type === 'Image'}
+						<div class="flex flex-col gap-1.5">
+							<span style="color: {fgMuted}; font-size: 12px;">{$_(field.label)}</span>
+							<input
+								type="url"
+								value={field.default_url ?? ''}
+								placeholder="https://"
+								on:input={(e) => updateField(field.key, buildImageField(e.currentTarget.value))}
 								style="background-color: {bg}; color: {fg}; border: 1px solid {fgMuted}44; font-size: 14px; padding: 4px 8px; border-radius: 4px; width: 100%;"
 							/>
 						</div>

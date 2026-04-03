@@ -70,23 +70,28 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	// Slice-Namen
 	Akkordeon: { 'de-ch': 'Akkordeon', 'en-us': 'Accordion' },
+	AdresseUndMap: { 'de-ch': 'Adresse & Karte', 'en-us': 'Address & Map' },
 	Anleitung: { 'de-ch': 'Anleitung', 'en-us': 'Instructions' },
 	Bild: { 'de-ch': 'Bild', 'en-us': 'Image' },
 	Schaltfläche: { 'de-ch': 'Schaltfläche', 'en-us': 'Button' },
 	Event: { 'de-ch': 'Event', 'en-us': 'Event' },
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
-	GlobaleEvents: { 'de-ch': 'GlobaleEvents', 'en-us': 'Global Events' },
+	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
+	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
 	GoogleMapEinbetten: { 'de-ch': 'GoogleMapEinbetten', 'en-us': 'Embed Google Map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Kacheln: { 'de-ch': 'Kacheln', 'en-us': 'Tiles' },
 	P5Grafik: { 'de-ch': 'P5Grafik', 'en-us': 'P5 Graphic' },
 	Preisaufstellung: { 'de-ch': 'Preisaufstellung', 'en-us': 'Price List' },
 	Preisvergleich: { 'de-ch': 'Preisvergleich', 'en-us': 'Price Comparison' },
+	Stimmen: { 'de-ch': 'Stimmen', 'en-us': 'Testimonials' },
+	Timeline: { 'de-ch': 'Timeline', 'en-us': 'Timeline' },
 	'Text&Aktion': { 'de-ch': 'Text&Aktion', 'en-us': 'Text & CTA' },
 	TextMitBild: { 'de-ch': 'TextMitBild', 'en-us': 'Text With Image' },
 	Text: { 'de-ch': 'Text', 'en-us': 'Text' },
 	Titelbereich: { 'de-ch': 'Titelbereich', 'en-us': 'Hero' },
 	Zitat: { 'de-ch': 'Zitat', 'en-us': 'Quote' },
+	Galerie: { 'de-ch': 'Galerie', 'en-us': 'Gallery' },
 	// Variations-Namen
 	Standard: { 'de-ch': 'Standard', 'en-us': 'Default' },
 	Standart: { 'de-ch': 'Standart', 'en-us': 'Default' },
@@ -95,6 +100,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Leistungen: { 'de-ch': 'Leistungen', 'en-us': 'Services' },
 	Banner: { 'de-ch': 'Banner', 'en-us': 'Banner' },
 	Karussell: { 'de-ch': 'Karussell', 'en-us': 'Carousel' },
+	'Vorher/Nachher': { 'de-ch': 'Vorher/Nachher', 'en-us': 'Before/After' },
 	'Kauf-Schaltfläche': { 'de-ch': 'Kauf-Schaltfläche', 'en-us': 'Purchase Button' },
 	'Mit Termin': { 'de-ch': 'Mit Termin', 'en-us': 'With Appointment' },
 	'Kauf-Formular': { 'de-ch': 'Kauf-Formular', 'en-us': 'Purchase Form' },
@@ -110,6 +116,8 @@ export const translations: Record<string, Record<string, string>> = {
 
 	// Funktions-Panel Labels
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
+	'Bild Links (Vorher)': { 'de-ch': 'Bild Links (Vorher)', 'en-us': 'Image Left (Before)' },
+	'Bild Rechts (Nachher)': { 'de-ch': 'Bild Rechts (Nachher)', 'en-us': 'Image Right (After)' },
 	'Abstand oben / unten gleich': {
 		'de-ch': 'Abstand oben / unten gleich',
 		'en-us': 'Equal top/bottom spacing'
