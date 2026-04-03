@@ -470,6 +470,46 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Weiter zum Formular',
 		'en-us': 'Continue to form'
 	},
+	Vorname: {
+		'de-ch': 'Vorname',
+		'en-us': 'First name'
+	},
+	Nachname: {
+		'de-ch': 'Nachname',
+		'en-us': 'Last name'
+	},
+	Pflichtfelder: {
+		'de-ch': 'Pflichtfelder',
+		'en-us': 'Required fields'
+	},
+	Beauftragung: {
+		'de-ch': 'Beauftragung',
+		'en-us': 'Order'
+	},
+	Firma: {
+		'de-ch': 'Firma',
+		'en-us': 'Company'
+	},
+	'E-Mail': {
+		'de-ch': 'E-Mail',
+		'en-us': 'Email'
+	},
+	Adresse: {
+		'de-ch': 'Adresse',
+		'en-us': 'Address'
+	},
+	PLZ: {
+		'de-ch': 'PLZ',
+		'en-us': 'ZIP code'
+	},
+	Ort: {
+		'de-ch': 'Ort',
+		'en-us': 'City'
+	},
+	Projektname: {
+		'de-ch': 'Projektname',
+		'en-us': 'Project name'
+	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
 		'en-us': 'Billing address'

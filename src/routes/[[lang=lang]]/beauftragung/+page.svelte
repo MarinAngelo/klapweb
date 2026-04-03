@@ -29,7 +29,8 @@
 		{ key: 'email',     label: 'E-Mail',     type: 'email', required: true,  span: 1 },
 		{ key: 'adresse',   label: 'Adresse',    type: 'text',  required: true,  span: 2 },
 		{ key: 'plz',       label: 'PLZ',        type: 'text',  required: true,  span: 1 },
-		{ key: 'ort',       label: 'Ort',        type: 'text',  required: true,  span: 1 }
+		{ key: 'ort',       label: 'Ort',        type: 'text',  required: true,  span: 1 },
+		{ key: 'projektname', label: 'Projektname', type: 'text', required: true, span: 2 }
 	];
 
 	// Map extra fields (from Settings slices3) to InputField-compatible shape
