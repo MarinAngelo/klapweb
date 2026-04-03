@@ -383,11 +383,22 @@ async function generatePdf(
 			const t = addon.billingType ?? 'Einmalig';
 			byType[t] = (byType[t] ?? 0) + addon.price;
 		}
-		for (const [type, total] of Object.entries(byType)) {
-			page.drawText(`Total ${type} exkl. MwSt.`, {
-				x: marginL + 8, y, size: 10, font: fontBold, color: black
+		const typeEntries = Object.entries(byType);
+		const multipleTypes = typeEntries.length > 1;
+		for (const [type, total] of typeEntries) {
+			page.drawText(multipleTypes ? `${type} exkl. MwSt.` : `Total exkl. MwSt.`, {
+				x: marginL + 8, y, size: 10, font: multipleTypes ? fontRegular : fontBold, color: black
 			});
-			drawRight(fmt(total), y, fontBold);
+			drawRight(fmt(total), y, multipleTypes ? fontRegular : fontBold);
+			y -= 18;
+		}
+		if (multipleTypes) {
+			// Trennlinie + Gesamttotal
+			page.drawLine({ start: { x: marginL + 8, y: y + 12 }, end: { x: marginR - 8, y: y + 12 }, thickness: 0.5, color: lightGray });
+			y -= 6;
+			const grandTotalNet = [discountedPrice ?? 0, ...addons.map((a) => a.price ?? 0)].reduce((s, p) => s + p, 0);
+			page.drawText('Gesamttotal exkl. MwSt.', { x: marginL + 8, y, size: 10, font: fontBold, color: black });
+			drawRight(fmt(grandTotalNet), y, fontBold);
 			y -= 18;
 		}
 	} else {
