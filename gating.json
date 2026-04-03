@@ -134,6 +134,8 @@
 			"variations": {
 				"vorherNachher": {
 					"catalog": {
+						"previewBg": "#1a1a2e",
+						"previewColor": "#ffffff",
 						"mockImages": {
 							"bild_links": "https://images.prismic.io/klapweb/ac-F85GXnQHGZPmU_vorher.png?auto=format%2Ccompress&h=186&dpr=1",
 							"bild_rechts": "https://images.prismic.io/klapweb/ac-GCJGXnQHGZPmV_nachher.png?auto=format%2Ccompress&h=186&dpr=1"

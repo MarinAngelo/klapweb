@@ -30,7 +30,7 @@ export const load = async ({ params, parent }) => {
 	const variation = (model.variations ?? []).find((v: any) => v.id === params.variation);
 	if (!variation) throw error(404, `Variation "${params.variation}" nicht gefunden`);
 
-	const sliceGating = gating.slices?.[params.slice];
+	const sliceGating = gating.slices?.[model.name] ?? gating.slices?.[params.slice];
 	const varGate = sliceGating?.variations?.[params.variation];
 	const sliceLevelGate =
 		sliceGating?.plan || sliceGating?.feature
@@ -42,6 +42,8 @@ export const load = async ({ params, parent }) => {
 	const sliceCatalog = sliceGating?.catalog ?? {};
 	const varCatalog = sliceGating?.variations?.[params.variation]?.catalog ?? {};
 	const mockImages: Record<string, string> = varCatalog.mockImages ?? {};
+	const previewBg: string | null = varCatalog.previewBg ?? sliceCatalog.previewBg ?? null;
+	const previewColor: string | null = varCatalog.previewColor ?? sliceCatalog.previewColor ?? null;
 
 	const beschreibungKey = isEn ? 'BeschreibungEn' : 'Beschreibung';
 	const sliceBeschreibung = (sliceCatalog[beschreibungKey] ?? sliceCatalog['Beschreibung']) as
@@ -87,6 +89,8 @@ export const load = async ({ params, parent }) => {
 			mockImages
 		),
 		meta,
-		functionalFields
+		functionalFields,
+		previewBg,
+		previewColor
 	};
 };
