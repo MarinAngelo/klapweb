@@ -1,6 +1,7 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
 import { presetFontUrls } from '$lib/utils/presetFonts';
+import gating from '../../../gating.json';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -225,22 +226,50 @@ export function updateTheme(data: ThemeUpdateData): void {
 				.replace(/[^a-z0-9]+/g, '-')
 				.replace(/^-+|-+$/g, '');
 
-		const buttonStile = (prismicThemeData.button_stile ?? []).map((s) => ({
-			name: toSlug(s.label ?? ''),
-			label: s.label,
-			color: s.color,
-			bg_color: s.bg_color,
-			hover_color: s.hover_color,
-			hover_bg_color: s.hover_bg_color,
-			icon: s.icon
-		}));
-		buttonStile.forEach((s) => {
-			if (!s.name) return;
-			if (s.color) set(`--btn-${s.name}-color`, s.color);
-			if (s.bg_color) set(`--btn-${s.name}-bg`, s.bg_color);
-			if (s.hover_color) set(`--btn-${s.name}-hover-color`, s.hover_color);
-			if (s.hover_bg_color) set(`--btn-${s.name}-hover-bg`, s.hover_bg_color);
-		});
+		// Schritt 1: Alle Stile aus gating.json als Basis (Label+Slug, keine Farben)
+		// → Slug wird aus dem Label berechnet (toSlug), nicht aus dem camelCase-Key in gating.json
+		// → Muss identisch mit dem Slug sein, den Theme-Dokument-Labels erzeugen
+		const gatingButtonStile = (gating as any).button_stile ?? {};
+		const buttonStileMap = new Map<
+			string,
+			{
+				name: string;
+				label: string;
+				color?: string;
+				bg_color?: string;
+				hover_color?: string;
+				hover_bg_color?: string;
+				icon?: string;
+			}
+		>(
+			Object.entries(gatingButtonStile).map(([, def]) => {
+				const label = (def as any).label ?? '';
+				const slug = toSlug(label);
+				return [slug, { name: slug, label }];
+			})
+		);
+
+		// Schritt 2: Theme-Dokument-Werte als Override-Layer (Farben sind projekt-spezifisch)
+		for (const s of prismicThemeData.button_stile ?? []) {
+			if (!s.label) continue;
+			const slug = toSlug(s.label);
+			const existing = buttonStileMap.get(slug) ?? { name: slug, label: s.label };
+			buttonStileMap.set(slug, {
+				...existing,
+				color: s.color ?? undefined,
+				bg_color: s.bg_color ?? undefined,
+				hover_color: s.hover_color ?? undefined,
+				hover_bg_color: s.hover_bg_color ?? undefined,
+				icon: s.icon ?? undefined
+			});
+			// Nur gesetzte Farben als CSS-Vars schreiben
+			if (s.color) set(`--btn-${slug}-color`, s.color);
+			if (s.bg_color) set(`--btn-${slug}-bg`, s.bg_color);
+			if (s.hover_color) set(`--btn-${slug}-hover-color`, s.hover_color);
+			if (s.hover_bg_color) set(`--btn-${slug}-hover-bg`, s.hover_bg_color);
+		}
+
+		const buttonStile = [...buttonStileMap.values()];
 		theme.update((t) => ({ ...t, buttonStile }));
 
 		// CMS-konfigurierbare SVG-Icons
