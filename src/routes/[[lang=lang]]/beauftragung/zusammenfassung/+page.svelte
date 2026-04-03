@@ -337,13 +337,21 @@
 							</div>
 						{:else}
 							{#each groupedTotals as [type, total]}
-								<div class="flex justify-between text-sm mt-1">
-									<span class="font-bold">{t('Total', lang)} {t(type, lang)}</span>
-									<span class="font-bold tabular-nums"
+								<div class="flex justify-between text-sm mt-1 opacity-70">
+									<span>{t(type, lang)}</span>
+									<span class="tabular-nums"
 										>{formatPrice(total, selectedCurrency)}</span
 									>
 								</div>
 							{/each}
+							{#if grandTotal !== null}
+								<div class="flex justify-between text-sm mt-2 pt-2 border-t" style="border-color: {borderColor}44;">
+									<span class="font-bold">{t('Gesamttotal', lang)}</span>
+									<span class="font-bold tabular-nums"
+										>{formatPrice(grandTotal, selectedCurrency)}</span
+									>
+								</div>
+							{/if}
 						{/if}
 					</div>
 				{/if}
