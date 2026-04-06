@@ -11,6 +11,7 @@
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
 	import { _ } from '$lib/stores/i18n';
+	import { theme } from '$lib/stores/theme';
 	import Button from '$lib/components/Button.svelte';
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
 
@@ -97,8 +98,12 @@
 	$: cardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
 	$: btnStyleName = ((slice.primary as any)?.button_style as string | undefined) || undefined;
-	$: btnHighlightColor = btnStyleName
-		? `var(--btn-${btnStyleName}-color)`
+	$: btnStileEntry = btnStyleName
+		? ($theme.buttonStile ?? []).find((s) => s.name === btnStyleName || s.label === btnStyleName)
+		: undefined;
+	$: btnStyleSlug = btnStileEntry?.name || btnStyleName;
+	$: btnHighlightColor = btnStyleSlug
+		? `var(--btn-${btnStyleSlug}-color, var(--page-button-color))`
 		: 'var(--page-button-color)';
 	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
