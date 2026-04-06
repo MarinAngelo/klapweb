@@ -44,16 +44,11 @@
 		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
 	$: finalDesc = $page.data?.meta_description || asText(settings?.data?.meta_description) || '';
-	$: finalImage = (() => {
-		const url =
-			$page.data?.meta_image ||
-			$page.data?.page?.data?.meta_image?.url ||
-			settings?.data?.meta_image?.url ||
-			'';
-		if (!url) return '';
-		// Transparenz erhalten: fm=png verhindert JPEG-Konvertierung durch Imgix
-		return url.includes('?') ? `${url}&fm=png` : `${url}?fm=png`;
-	})();
+	$: finalImage =
+		$page.data?.meta_image ||
+		$page.data?.page?.data?.meta_image?.url ||
+		settings?.data?.meta_image?.url ||
+		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
 	$: pwaEnabled = settings?.data?.pwa_enabled ?? false;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
