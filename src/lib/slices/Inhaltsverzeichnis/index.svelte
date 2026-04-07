@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: any;
 	export let slices: unknown[] | undefined = undefined;
@@ -14,6 +15,29 @@
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
 
+	// Mobile Bottom-Sheet Farben (Header-Palette)
+	$: mobileBg = $theme.headerBgColor || bgColor || $theme.pageBgColor;
+	$: mobileActiveColor = $theme.headerColor || textColor;
+	// Nicht-aktive Einträge: ausreichend Kontrast gegen mobileBg, aber sichtbar gedämpft
+	$: mobileDimColor = mobileBg
+		? shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110)
+		: mobileActiveColor;
+
+	interface TocGroup {
+		h2: TocEntry;
+		h3s: TocEntry[];
+	}
+
+	// Flache Liste → Gruppen: jede H2 mit ihren nachfolgenden H3s
+	$: tocGroups = tocEntries.reduce<TocGroup[]>((groups, entry) => {
+		if (entry.level === 2) {
+			groups.push({ h2: entry, h3s: [] });
+		} else if (groups.length > 0) {
+			groups[groups.length - 1].h3s.push(entry);
+		}
+		return groups;
+	}, []);
+
 	interface TocEntry {
 		id: string;
 		text: string;
@@ -23,6 +47,9 @@
 	let tocEntries: TocEntry[] = [];
 	let activeId = '';
 	let sidebarVisible = false;
+	let dismissed = false;
+	let dismissedAtY = 0;
+	let mobileOpen = false;
 	let anchorEl: HTMLElement;
 
 	const toSlug = (s: string) =>
@@ -70,15 +97,29 @@
 		let anchorObserver: IntersectionObserver | null = null;
 		if (linksMode && anchorEl) {
 			anchorObserver = new IntersectionObserver(
-				([entry]) => { sidebarVisible = !entry.isIntersecting; },
+				([entry]) => {
+					const wasVisible = sidebarVisible;
+					sidebarVisible = !entry.isIntersecting;
+					// Zurück zum Seitenanfang → dismissed zurücksetzen
+					if (!sidebarVisible) dismissed = false;
+				},
 				{ threshold: 0 }
 			);
 			anchorObserver.observe(anchorEl);
 		}
 
+		// Beim Scrollen dismissed zurücksetzen (Sidebar wieder einblenden)
+		const onScroll = () => {
+			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) {
+				dismissed = false;
+			}
+		};
+		window.addEventListener('scroll', onScroll, { passive: true });
+
 		return () => {
 			headingObserver.disconnect();
 			anchorObserver?.disconnect();
+			window.removeEventListener('scroll', onScroll);
 		};
 	});
 </script>
@@ -102,18 +143,33 @@
 				class="toc-sidebar hidden md:block"
 				style="--toc-color: {textColor}; --toc-bg: {bgColor || $theme.pageBgColor};"
 				aria-label={tocTitle}
-				class:visible={sidebarVisible}
+				class:visible={sidebarVisible && !dismissed}
 			>
-				<p class="text-xs font-semibold uppercase tracking-widest mb-4" style="opacity: 0.5;">
-					{tocTitle}
-				</p>
+				<div class="flex items-center justify-between mb-4">
+					<p class="text-xs font-semibold uppercase tracking-widest" style="opacity: 0.5;">
+						{tocTitle}
+					</p>
+					<button
+						on:click={() => {
+							dismissed = true;
+							dismissedAtY = window.scrollY;
+						}}
+						aria-label="Inhaltsverzeichnis schliessen"
+						class="toc-close-btn"
+						style="opacity: 0.4;">×</button
+					>
+				</div>
 				<ul class="space-y-2 text-sm">
 					{#each tocEntries as entry}
 						<li style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};">
 							<a
 								href="#{entry.id}"
 								class="toc-link block transition-all"
-								style="opacity: {entry.id === activeId ? '1' : entry.level === 3 ? '0.5' : '0.7'}; font-weight: {entry.id === activeId ? '600' : '400'};"
+								style="opacity: {entry.id === activeId
+									? '1'
+									: entry.level === 3
+										? '0.5'
+										: '0.7'}; font-weight: {entry.id === activeId ? '600' : '400'};"
 							>
 								{entry.text}
 							</a>
@@ -122,56 +178,147 @@
 				</ul>
 			</nav>
 		{:else}
-			<!-- Oben-Modus: horizontale Leiste (Desktop) -->
+			<!-- Oben-Modus: Gruppierte Spalten (Desktop) -->
 			<div class="hidden md:block">
-				<p class="text-xs font-semibold uppercase tracking-widest mb-4" style="opacity: 0.5;">
-					{tocTitle}
-				</p>
-				<ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-					{#each tocEntries as entry}
-						<li style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};">
+				{#if tocTitle}
+					<p class="text-xs font-semibold uppercase tracking-widest mb-4" style="opacity: 0.5;">
+						{tocTitle}
+					</p>
+				{/if}
+				<ul class="flex flex-wrap gap-x-8 gap-y-4 text-sm items-start">
+					{#each tocGroups as group}
+						<li class="flex flex-col gap-1">
+							<!-- H2 -->
 							<a
-								href="#{entry.id}"
+								href="#{group.h2.id}"
 								class="toc-link transition-all"
-								style="opacity: {entry.id === activeId ? '1' : entry.level === 3 ? '0.5' : '0.7'}; font-weight: {entry.id === activeId ? '600' : '400'}; border-bottom: {entry.id === activeId ? '2px solid currentColor' : '2px solid transparent'};"
+								style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
+									.id === activeId
+									? '700'
+									: '500'}; border-bottom: {group.h2.id === activeId
+									? '2px solid currentColor'
+									: '2px solid transparent'};"
 							>
-								{entry.text}
+								{group.h2.text}
 							</a>
+							<!-- H3-Unterpunkte -->
+							{#if group.h3s.length > 0}
+								<ul
+									class="flex flex-col gap-0.5 pl-3 border-l"
+									style="border-color: currentColor; opacity: 0.4;"
+								>
+									{#each group.h3s as sub}
+										<li style="opacity: {sub.id === activeId ? '1' : '0.85'};">
+											<a
+												href="#{sub.id}"
+												class="toc-link transition-all block"
+												style="font-weight: {sub.id === activeId ? '600' : '400'};"
+											>
+												{sub.text}
+											</a>
+										</li>
+									{/each}
+								</ul>
+							{/if}
 						</li>
 					{/each}
 				</ul>
 			</div>
 		{/if}
 
-		<!-- Mobile: aufklappbares Akkordeon (beide Modi) -->
-		<details class="md:hidden w-full">
-			<summary
-				class="cursor-pointer text-sm font-semibold flex items-center justify-between"
-				style="list-style: none;"
+		<!-- Mobile: Sticky Bottom-Sheet -->
+		<div
+			class="md:hidden toc-mobile-sheet"
+			class:open={mobileOpen}
+			style="--toc-color: {mobileActiveColor}; --toc-bg: {mobileBg}; --toc-dim: {mobileDimColor}; color: {mobileActiveColor}; background-color: {mobileBg};"
+		>
+			<!-- Leiste (immer sichtbar wenn der Slice aus dem Viewport gescrollt ist) -->
+			<button
+				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
+				on:click={() => (mobileOpen = !mobileOpen)}
+				aria-expanded={mobileOpen}
 			>
-				<span>{tocTitle}</span>
-				<span class="toc-arrow ml-2" style="opacity: 0.6;">↓</span>
-			</summary>
-			<ul class="mt-4 space-y-2 text-sm">
-				{#each tocEntries as entry}
-					<li style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};">
-						<a href="#{entry.id}" style="opacity: {entry.level === 3 ? '0.65' : '0.85'};">
-							{entry.text}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</details>
+				<span class="flex items-center gap-2 min-w-0">
+					<span
+						style="color: {mobileDimColor}; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+						>{tocTitle}</span
+					>
+					{#if activeId}
+						<span class="truncate font-medium">
+							{tocEntries.find((e) => e.id === activeId)?.text ?? ''}
+						</span>
+					{/if}
+				</span>
+				<span class="flex-shrink-0 ml-3" style="color: {mobileDimColor};"
+					>{mobileOpen ? '↓' : '↑'}</span
+				>
+			</button>
+			<!-- Ausgeklappte Liste -->
+			{#if mobileOpen}
+				<div class="toc-mobile-list px-4 pb-4 pt-1">
+					<ul class="space-y-3 text-sm">
+						{#each tocGroups as group}
+							<li>
+								<a
+									href="#{group.h2.id}"
+									on:click={() => (mobileOpen = false)}
+									class="block font-medium"
+									style="color: {group.h2.id === activeId
+										? mobileActiveColor
+										: mobileDimColor}; font-weight: {group.h2.id === activeId ? '600' : '500'};"
+									>{group.h2.text}</a
+								>
+								{#if group.h3s.length > 0}
+									<ul
+										class="mt-1.5 space-y-1.5 pl-3 border-l"
+										style="border-color: {mobileDimColor};"
+									>
+										{#each group.h3s as sub}
+											<li>
+												<a
+													href="#{sub.id}"
+													on:click={() => (mobileOpen = false)}
+													style="color: {sub.id === activeId
+														? mobileActiveColor
+														: mobileDimColor}; font-weight: {sub.id === activeId ? '600' : '400'};"
+													>{sub.text}</a
+												>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</div>
 	{/if}
 </Bounded>
 
 <style>
-	details[open] .toc-arrow {
-		transform: rotate(180deg);
+	/* Mobile: Sticky Bottom-Sheet */
+	.toc-mobile-sheet {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: var(--toc-bg);
+		color: var(--toc-color);
+		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+		z-index: 40;
+		font-family: var(--page-font);
 	}
-	.toc-arrow {
-		transition: transform 0.2s ease;
-		display: inline-block;
+	.toc-mobile-bar {
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: inherit;
+		text-align: left;
+	}
+	.toc-mobile-list {
+		max-height: 50vh;
+		overflow-y: auto;
 	}
 
 	/* Links-Modus: Fixed Sidebar */
@@ -190,13 +337,29 @@
 		opacity: 0;
 		pointer-events: none;
 		transform: translateX(-0.5rem);
-		transition: opacity 0.25s ease, transform 0.25s ease;
+		transition:
+			opacity 0.25s ease,
+			transform 0.25s ease;
 		z-index: 40;
 	}
 	.toc-sidebar.visible {
 		opacity: 1;
 		pointer-events: auto;
 		transform: translateX(0);
+	}
+
+	.toc-close-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1.25rem;
+		line-height: 1;
+		color: inherit;
+		padding: 0 0.15rem;
+		flex-shrink: 0;
+	}
+	.toc-close-btn:hover {
+		opacity: 1 !important;
 	}
 
 	/* Links-Modus: Bounded-Block selbst ist unsichtbar wenn Sidebar aktiv */

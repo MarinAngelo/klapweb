@@ -14,6 +14,9 @@ export const actions: Actions = {
 		const settings = await client.getSingle('settings', { lang: '*' }).catch(() => null);
 		const pagePassword = (settings?.data as any)?.page_password as string | null;
 
+		console.log('[login] pagePassword from Prismic:', JSON.stringify(pagePassword));
+		console.log('[login] provided password:', JSON.stringify(password));
+
 		if (!pagePassword || password !== pagePassword) {
 			return fail(403, { error: 'Falsches Passwort', redirect: redirectTo });
 		}

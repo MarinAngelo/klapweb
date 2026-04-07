@@ -284,6 +284,33 @@ a[data-type="prismic-link"]:hover {
   --focus-ring-color: var(--hover-text-color);
   --hover-bg-color: var(--page-button-hover-bg-color);
 
+  /* ── Dev-Dokumentation /doku ── */
+  --doku-bg:                #0f0f13;
+  --doku-sidebar-bg:        #0a0a0f;
+  --doku-border:            #1e1e2e;
+  --doku-surface:           #1e1e2e;
+  --doku-surface-border:    #2d2d3e;
+
+  --doku-text:              #e2e8f0;
+  --doku-text-muted:        #cbd5e1;
+  --doku-text-dim:          #6b7280;
+  --doku-text-faint:        #4b5563;
+  --doku-heading:           var(--header-bg-color);
+  --doku-nav-link:          #9ca3af;
+  --doku-nav-active:        #a78bfa;
+  --doku-table-header:      #94a3b8;
+
+  --doku-code-bg:           #1e1e2e;
+  --doku-code-color:        #c084fc;
+  --doku-pre-color:         #a5f3fc;
+
+  --doku-callout-bg:        #1e2a3a;
+  --doku-callout-border:    #3b82f6;
+  --doku-callout-text:      #93c5fd;
+  --doku-callout-warn-bg:   #2a1f10;
+  --doku-callout-warn-border: #f59e0b;
+  --doku-callout-warn-text: #fcd34d;
+
 }
 
 /* Hier passiert die Magie: Wir ändern die Basis-Größe des HTML-Tags */

@@ -300,7 +300,9 @@
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
-	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
+	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: stickyHeader =
+		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -363,7 +365,7 @@
 </svelte:head>
 
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
 			{navigation}
 			{settings}
@@ -377,7 +379,7 @@
 	{/if}
 
 	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
-		{#if $page.data?.title && !hasBannerOverlap}
+		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
 				style="background-color: var(--page-bg-color); color: var(--page-color);"
@@ -394,7 +396,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
