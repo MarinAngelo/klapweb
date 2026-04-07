@@ -13,6 +13,10 @@
 :root, html, body {
   font-family: var(--page-font);
 }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height, 80px) + 1rem);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

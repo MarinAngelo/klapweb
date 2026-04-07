@@ -119,6 +119,9 @@
 		},
 		"GlobaleEvents": {
 			"feature": "global_events"
+		},
+		"Inhaltsverzeichnis": {
+			"plan": "professional"
 		}
 	},
 	"button_stile": {

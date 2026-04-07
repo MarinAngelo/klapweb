@@ -1,0 +1,46 @@
+{
+	"id": "inhaltsverzeichnis",
+	"type": "SharedSlice",
+	"name": "Inhaltsverzeichnis",
+	"description": "Seitenweites Inhaltsverzeichnis (aggregiert alle Überschriften der Seite)",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Seitenweites Inhaltsverzeichnis",
+			"primary": {
+				"title": {
+					"type": "Text",
+					"config": {
+						"label": "Titel",
+						"placeholder": "Inhalt"
+					}
+				},
+				"tiefe": {
+					"type": "Select",
+					"config": {
+						"label": "Tiefe",
+						"placeholder": "H2 und H3",
+						"options": ["Nur H2", "H2 und H3"],
+						"default_value": "H2 und H3"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Textfarbe"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}
