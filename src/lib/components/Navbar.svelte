@@ -111,9 +111,9 @@
 	<div class="block lg:hidden h-full flex items-center">
 		<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
 			{#if $isMenuOpen}
-				<SvgIcon name="close" color={headerLinkColor} />
+				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
-				<SvgIcon name="menu" color={headerLinkColor} />
+				<SvgIcon name="menu" color={headerLinkColor} size="1.5rem" />
 			{/if}
 		</button>
 	</div>
