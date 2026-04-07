@@ -27,6 +27,15 @@
 						"default_value": "H2 und H3"
 					}
 				},
+				"ausrichtung": {
+					"type": "Select",
+					"config": {
+						"label": "Ausrichtung",
+						"placeholder": "Oben",
+						"options": ["Oben", "Links"],
+						"default_value": "Oben"
+					}
+				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
