@@ -223,6 +223,9 @@
 		updateTheme(data);
 	}
 	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	// Läuft bei jeder Navigation ($page.data ändert sich immer).
+	// Ohne Override: globale Farben explizit zurücksetzen (layout `data` ändert
+	// sich bei Client-Navigation nicht zwingend, daher kein Verlassen auf Block 1).
 	$: {
 		const pd = $page.data?.page?.data ?? {};
 		const overrideBg: string | null = pd.page_bg_color ?? null;
@@ -238,6 +241,15 @@
 				if (overrideColor)
 					document.documentElement.style.setProperty('--page-color', overrideColor);
 			}
+		} else {
+			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
+			// Wichtig: CSS-Variablen ZUERST löschen, sonst liest updateTheme via
+			// getCssVar() den alten Override-Wert zurück (zirkuläre Überschreibung).
+			if (typeof document !== 'undefined') {
+				document.documentElement.style.removeProperty('--page-color');
+				document.documentElement.style.removeProperty('--page-bg-color');
+			}
+			updateTheme(data);
 		}
 	}
 	$: pageFontName =
