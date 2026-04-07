@@ -1,5 +1,13 @@
 {
     "chat.tools.terminal.autoApprove": {
-        "git stash": true
+        "git stash": true,
+        "/^cd /home/angelo/web/klapweb && grep -n \"discount_code\" customtypes/settings/base\\.json \\| head -20 && python3 -c \"\nimport json\nwith open\\('customtypes/settings/base\\.json'\\) as f:\n    d = json\\.load\\(f\\)\n# Find discount_codes field\ntabs = d\\.get\\('json', \\{\\}\\)\nfor tab, fields in tabs\\.items\\(\\):\n    for fname, fval in fields\\.items\\(\\):\n        if 'discount' in fname\\.lower\\(\\):\n            print\\(f'TAB: \\{tab\\}, FIELD: \\{fname\\}'\\)\n            print\\(json\\.dumps\\(fval, indent=2\\)\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/angelo/web/klapweb && python3 -c \"\nimport json\nwith open\\('customtypes/settings/base\\.json'\\) as f:\n    d = json\\.load\\(f\\)\nprint\\(json\\.dumps\\(list\\(d\\.get\\('json',\\{\\}\\)\\.keys\\(\\)\\), indent=2\\)\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

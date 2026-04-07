@@ -61,6 +61,10 @@
 				appliedCode = code;
 				codeDiscountPct = result.discount;
 				codeError = null;
+			} else if (resp.status === 410) {
+				appliedCode = '';
+				codeDiscountPct = 0;
+				codeError = t('Abgelaufener Rabatt-Code.', lang);
 			} else {
 				appliedCode = '';
 				codeDiscountPct = 0;

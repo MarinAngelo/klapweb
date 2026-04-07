@@ -398,6 +398,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ungültiger Rabatt-Code.',
 		'en-us': 'Invalid discount code.'
 	},
+	'Abgelaufener Rabatt-Code.': {
+		'de-ch': 'Rabatt-Code ist abgelaufen.',
+		'en-us': 'Discount code has expired.'
+	},
 	'Verbindungsfehler bei Code-Prüfung.': {
 		'de-ch': 'Verbindungsfehler bei Code-Prüfung.',
 		'en-us': 'Connection error during code verification.'
