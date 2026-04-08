@@ -15,23 +15,33 @@
 	"features": {
 		"terminbuchung": {
 			"label": "Terminbuchung",
-			"plans": ["professional"]
+			"plans": [
+				"professional"
+			]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
-			"plans": ["individuell"]
+			"plans": [
+				"individuell"
+			]
 		},
 		"p5js": {
 			"label": "P5.js",
-			"plans": ["individuell"]
+			"plans": [
+				"individuell"
+			]
 		},
 		"variablen": {
 			"label": "Variablen",
-			"plans": ["individuell"]
+			"plans": [
+				"individuell"
+			]
 		},
 		"global_events": {
 			"label": "Globale Events",
-			"plans": ["professional"]
+			"plans": [
+				"professional"
+			]
 		}
 	},
 	"customTypes": {
@@ -69,10 +79,6 @@
 	},
 	"slices": {
 		"Akkordeon": {
-			"catalog": {
-				"Beschreibung": "Ausklappbare Elemente, die sich ideal für FAQs oder ähnliche Inhalte eignen. Es können beliebig viele Elemente angelegt werden, von denen jedes eine Überschrift und einen Text enthält.",
-				"BeschreibungEn": "Collapsible elements, ideal for FAQs or similar content. Any number of elements can be created, each containing a heading and a text."
-			},
 			"fields": {
 				"mit_suche": {
 					"plan": "professional"
@@ -82,18 +88,8 @@
 				}
 			},
 			"variations": {
-				"bildUndText": {
-					"catalog": {
-						"Beschreibung": "Die Variante Bild und Text bietet die Möglichkeit, ein Bild neben einem Textblock anzuzeigen.",
-						"BeschreibungEn": "The Image and Text variant offers the option to display an image next to a text block."
-					}
-				},
 				"leistungen": {
-					"feature": "ecommerce",
-					"catalog": {
-						"Beschreibung": "Diese Variante erlaubt es Leistungen, die im Tab Leistungen der page erfasst wurden, anzuzeigen.",
-						"BeschreibungEn": "This variant allows services captured in the Services tab of the page to be displayed."
-					}
+					"feature": "ecommerce"
 				}
 			}
 		},
@@ -124,25 +120,8 @@
 		"GlobaleEvents": {
 			"feature": "global_events"
 		},
-		"Titelbereich": {
-			"catalog": {
-				"Beschreibung": "Grosser Titelbereich mit Bild, Text und optionaler Schaltfläche.",
-				"BeschreibungEn": "Large hero section with image, text, and optional button."
-			}
-		},
-		"Bild": {
-			"variations": {
-				"vorherNachher": {
-					"catalog": {
-						"previewBg": "#1a1a2e",
-						"previewColor": "#ffffff",
-						"mockImages": {
-							"bild_links": "https://images.prismic.io/klapweb/ac-F85GXnQHGZPmU_vorher.png?auto=format%2Ccompress&h=186&dpr=1",
-							"bild_rechts": "https://images.prismic.io/klapweb/ac-GCJGXnQHGZPmV_nachher.png?auto=format%2Ccompress&h=186&dpr=1"
-						}
-					}
-				}
-			}
+		"Inhaltsverzeichnis": {
+			"plan": "professional"
 		}
 	},
 	"button_stile": {

@@ -223,6 +223,9 @@
 		updateTheme(data);
 	}
 	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	// Läuft bei jeder Navigation ($page.data ändert sich immer).
+	// Ohne Override: globale Farben explizit zurücksetzen (layout `data` ändert
+	// sich bei Client-Navigation nicht zwingend, daher kein Verlassen auf Block 1).
 	$: {
 		const pd = $page.data?.page?.data ?? {};
 		const overrideBg: string | null = pd.page_bg_color ?? null;
@@ -238,6 +241,15 @@
 				if (overrideColor)
 					document.documentElement.style.setProperty('--page-color', overrideColor);
 			}
+		} else {
+			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
+			// Wichtig: CSS-Variablen ZUERST löschen, sonst liest updateTheme via
+			// getCssVar() den alten Override-Wert zurück (zirkuläre Überschreibung).
+			if (typeof document !== 'undefined') {
+				document.documentElement.style.removeProperty('--page-color');
+				document.documentElement.style.removeProperty('--page-bg-color');
+			}
+			updateTheme(data);
 		}
 	}
 	$: pageFontName =
@@ -288,7 +300,9 @@
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
-	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
+	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: stickyHeader =
+		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -351,7 +365,7 @@
 </svelte:head>
 
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
 			{navigation}
 			{settings}
@@ -365,7 +379,7 @@
 	{/if}
 
 	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
-		{#if $page.data?.title && !hasBannerOverlap}
+		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
 				style="background-color: var(--page-bg-color); color: var(--page-color);"
@@ -382,7 +396,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>

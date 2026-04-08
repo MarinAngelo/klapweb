@@ -397,6 +397,12 @@
 							"label": "Rabatt (%)",
 							"placeholder": "z.B. 10"
 						}
+					},
+					"expiry_date": {
+						"type": "Timestamp",
+						"config": {
+							"label": "Ablaufdatum (optional)"
+						}
 					}
 				}
 			}

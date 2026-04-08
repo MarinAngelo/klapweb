@@ -22,6 +22,7 @@ import P5Grafik from './P5Grafik/index.svelte';
 import Timeline from './Timeline/index.svelte';
 import Stimmen from './Stimmen/index.svelte';
 import Galerie from './Galerie/index.svelte';
+import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -45,5 +46,6 @@ export const components = {
 	p5_grafik: P5Grafik,
 	timeline: Timeline,
 	stimmen: Stimmen,
-	galerie: Galerie
+	galerie: Galerie,
+	inhaltsverzeichnis: Inhaltsverzeichnis
 };
