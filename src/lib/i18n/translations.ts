@@ -65,7 +65,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Slice Catalog'
 	},
 	'Wähle einen Slice aus der Navigation': {
-		'de-ch': 'Wähle einen Slice aus der Navigation',
+		'de-ch': 'Wähle ein Inhalts-Element aus der Navigation',
 		'en-us': 'Select a slice from the navigation'
 	},
 	// Slice-Namen
