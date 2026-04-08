@@ -80,6 +80,7 @@ export const translations: Record<string, Record<string, string>> = {
 	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
 	GoogleMapEinbetten: { 'de-ch': 'GoogleMapEinbetten', 'en-us': 'Embed Google Map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
+	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
 	Kacheln: { 'de-ch': 'Kacheln', 'en-us': 'Tiles' },
 	P5Grafik: { 'de-ch': 'P5Grafik', 'en-us': 'P5 Graphic' },
 	Preisaufstellung: { 'de-ch': 'Preisaufstellung', 'en-us': 'Price List' },
