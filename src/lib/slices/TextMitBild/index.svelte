@@ -45,7 +45,7 @@
 	yPadding={fullscreen ? 'none' : yPadding}
 	fullHeight={fullscreen}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-		'var(--page-color)'}; --page-color: {p.color || 'var(--page-color)'};{fullscreen
+		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 		? ` min-height: calc(100vh - ${$headerHeight}px);`
 		: ''}"
 	data-slice-type={slice.slice_type}
