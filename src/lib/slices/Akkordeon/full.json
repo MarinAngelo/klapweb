@@ -114,73 +114,6 @@
 						]
 					}
 				},
-				"accordion_items": {
-					"type": "Group",
-					"config": {
-						"label": "Akkordeon Elemente",
-						"repeat": true,
-						"fields": {
-							"label": {
-								"type": "Text",
-								"config": {
-									"label": "Titel",
-									"placeholder": ""
-								}
-							},
-							"content": {
-								"type": "StructuredText",
-								"config": {
-									"label": "Text",
-									"placeholder": "",
-									"allowTargetBlank": true,
-									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-									"labels": [
-										"size-xs",
-										"size-sm",
-										"size-lg",
-										"size-xl",
-										"size-2xl",
-										"size-3xl",
-										"size-4xl",
-										"size-5xl",
-										"size-6xl",
-										"weight-thin",
-										"weight-light",
-										"weight-medium",
-										"weight-semibold",
-										"weight-black",
-										"tracking-tight",
-										"tracking-wide",
-										"tracking-wider",
-										"tracking-widest",
-										"leading-tight",
-										"leading-loose",
-										"uppercase",
-										"lowercase",
-										"capitalize",
-										"underline",
-										"block",
-										"muted",
-										"display-thin",
-										"display-light",
-										"display-bold",
-										"display-black",
-										"giant-thin",
-										"giant-light",
-										"giant-bold",
-										"hero-thin",
-										"hero-light",
-										"hero-bold",
-										"subtitle",
-										"subtitle-bold",
-										"kicker",
-										"overline"
-									]
-								}
-							}
-						}
-					}
-				},
 				"erstes_item_ausgeklappt": {
 					"type": "Boolean",
 					"config": {
@@ -288,6 +221,73 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"accordion_items": {
+					"type": "Group",
+					"config": {
+						"label": "Akkordeon Elemente",
+						"repeat": true,
+						"fields": {
+							"label": {
+								"type": "Text",
+								"config": {
+									"label": "Titel",
+									"placeholder": ""
+								}
+							},
+							"content": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text",
+									"placeholder": "",
+									"allowTargetBlank": true,
+									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
+								}
+							}
+						}
 					}
 				}
 			},
@@ -403,103 +403,6 @@
 						]
 					}
 				},
-				"accordion_items": {
-					"type": "Group",
-					"config": {
-						"label": "Akkordeon Elemente",
-						"repeat": true,
-						"fields": {
-							"label": {
-								"type": "Text",
-								"config": {
-									"label": "Titel",
-									"placeholder": ""
-								}
-							},
-							"content": {
-								"type": "StructuredText",
-								"config": {
-									"label": "Text",
-									"placeholder": "",
-									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-									"labels": [
-										"size-xs",
-										"size-sm",
-										"size-lg",
-										"size-xl",
-										"size-2xl",
-										"size-3xl",
-										"size-4xl",
-										"size-5xl",
-										"size-6xl",
-										"weight-thin",
-										"weight-light",
-										"weight-medium",
-										"weight-semibold",
-										"weight-black",
-										"tracking-tight",
-										"tracking-wide",
-										"tracking-wider",
-										"tracking-widest",
-										"leading-tight",
-										"leading-loose",
-										"uppercase",
-										"lowercase",
-										"capitalize",
-										"underline",
-										"block",
-										"muted",
-										"display-thin",
-										"display-light",
-										"display-bold",
-										"display-black",
-										"giant-thin",
-										"giant-light",
-										"giant-bold",
-										"hero-thin",
-										"hero-light",
-										"hero-bold",
-										"subtitle",
-										"subtitle-bold",
-										"kicker",
-										"overline"
-									]
-								}
-							},
-							"image": {
-								"type": "Image",
-								"config": {
-									"label": "Bild",
-									"constraint": {},
-									"thumbnails": []
-								}
-							},
-							"standardBildLinks": {
-								"type": "Boolean",
-								"config": {
-									"label": "Bild Links",
-									"placeholder_false": "Nein",
-									"placeholder_true": "Ja",
-									"default_value": false
-								}
-							},
-							"bild_hintergrund": {
-								"type": "Color",
-								"config": {
-									"label": "Bild-Hintergrundfarbe"
-								}
-							},
-							"bild_overlay_transparenz": {
-								"type": "Number",
-								"config": {
-									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
-									"placeholder": "100"
-								}
-							}
-						}
-					}
-				},
 				"erstes_item_ausgeklappt": {
 					"type": "Boolean",
 					"config": {
@@ -607,6 +510,103 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"accordion_items": {
+					"type": "Group",
+					"config": {
+						"label": "Akkordeon Elemente",
+						"repeat": true,
+						"fields": {
+							"label": {
+								"type": "Text",
+								"config": {
+									"label": "Titel",
+									"placeholder": ""
+								}
+							},
+							"content": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text",
+									"placeholder": "",
+									"allowTargetBlank": true,
+									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
+								}
+							},
+							"image": {
+								"type": "Image",
+								"config": {
+									"label": "Bild",
+									"constraint": {},
+									"thumbnails": []
+								}
+							},
+							"standardBildLinks": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild Links",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
+							},
+							"bild_hintergrund": {
+								"type": "Color",
+								"config": {
+									"label": "Bild-Hintergrundfarbe"
+								}
+							},
+							"bild_overlay_transparenz": {
+								"type": "Number",
+								"config": {
+									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
+									"placeholder": "100"
+								}
+							}
+						}
 					}
 				}
 			},
