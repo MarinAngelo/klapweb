@@ -36,6 +36,8 @@ interface PrismicThemeData {
 	footer_link_hover_color?: string;
 	page_link_active_color?: string;
 	page_link_visited_color?: string;
+	highlight_color?: string;
+	highlight_bg_color?: string;
 	button_active_color?: string;
 	button_visited_color?: string;
 	button_active_bg_color?: string;
@@ -138,6 +140,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
 	const pageLinkVisitedColor =
 		prismicThemeData.page_link_visited_color || getCssVar('--page-link-visited-color');
+	const highlightColor = prismicThemeData.highlight_color || getCssVar('--highlight-color');
+	const highlightBgColor = prismicThemeData.highlight_bg_color || getCssVar('--highlight-bg-color');
 
 	theme.update((t) => ({
 		...t,
@@ -214,6 +218,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 		set('--footer-link-hover-color', footerLinkHoverColor);
 		set('--page-link-active-color', pageLinkActiveColor);
 		set('--page-link-visited-color', pageLinkVisitedColor);
+		set('--highlight-color', highlightColor);
+		set('--highlight-bg-color', highlightBgColor);
 
 		// CMS-konfigurierbare Button-Stile (Repeatable Group)
 		const toSlug = (s: string) =>

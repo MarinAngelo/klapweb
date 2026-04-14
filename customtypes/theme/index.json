@@ -272,6 +272,20 @@
 					}
 				}
 			},
+			"highlight_color": {
+				"type": "Color",
+				"config": {
+					"label": "Highlight Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"highlight_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Highlight Hintergrundfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"heading_opacity": {
 				"type": "Number",
 				"config": {
