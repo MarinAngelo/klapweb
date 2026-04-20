@@ -23,6 +23,7 @@ import Timeline from './Timeline/index.svelte';
 import Stimmen from './Stimmen/index.svelte';
 import Galerie from './Galerie/index.svelte';
 import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
+import RessourceBuchung from './RessourceBuchung/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -47,5 +48,6 @@ export const components = {
 	timeline: Timeline,
 	stimmen: Stimmen,
 	galerie: Galerie,
-	inhaltsverzeichnis: Inhaltsverzeichnis
+	inhaltsverzeichnis: Inhaltsverzeichnis,
+	ressource_buchung: RessourceBuchung
 };

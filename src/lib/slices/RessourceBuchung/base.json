@@ -1,0 +1,120 @@
+{
+	"id": "ressource_buchung",
+	"type": "SharedSlice",
+	"name": "RessourceBuchung",
+	"description": "Buchungsformular für eine Ressource (Ferienhaus, Raum etc.)",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"ressource_link": {
+					"type": "Link",
+					"config": {
+						"label": "Ressource",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "ressource",
+								"fields": [
+									"name",
+									"max_personen",
+									"min_naechte",
+									"preis_pro_nacht"
+								]
+							}
+						],
+						"placeholder": "Ferienhaus, Raum, … auswählen"
+					}
+				},
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"single": "heading2,heading3"
+					}
+				},
+				"intro": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Schaltflächen-Text",
+						"placeholder": "Jetzt anfragen"
+					}
+				},
+				"success_heading": {
+					"type": "Text",
+					"config": {
+						"label": "Erfolgsmeldung Titel",
+						"placeholder": "Anfrage erhalten!"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Erfolgsmeldung Text",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong"
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "0"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "600"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

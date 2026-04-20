@@ -86,6 +86,9 @@
 						},
 						"inhaltsverzeichnis": {
 							"type": "SharedSlice"
+						},
+						"ressource_buchung": {
+							"type": "SharedSlice"
 						}
 					}
 				}
