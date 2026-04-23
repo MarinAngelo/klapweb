@@ -42,8 +42,19 @@
 	// Safety bei dynamischem Nachladen
 	$: if (len() > 0 && current >= len()) current = len() - 1;
 
-	// Mobile-Thumbnail bevorzugen (Hochformat-Crop), Fallback auf Hauptbild
-	$: currentImage = (images?.[current]?.image as any)?.mobile ?? images?.[current]?.image;
+	// Orientierung: portrait = Hochformat, landscape = Querformat
+	let isPortrait = browser ? window.matchMedia('(orientation: portrait)').matches : true;
+	function onOrientationChange() {
+		isPortrait = window.matchMedia('(orientation: portrait)').matches;
+	}
+	if (browser) {
+		window.matchMedia('(orientation: portrait)').addEventListener('change', onOrientationChange);
+	}
+
+	// Mobile-Thumbnail nur bei Hochformat verwenden; Querformat → Hauptbild
+	$: currentImage = isPortrait
+		? ((images?.[current]?.image as any)?.mobile ?? images?.[current]?.image)
+		: images?.[current]?.image;
 
 	// Layout-Klassen
 	const outerClass =
