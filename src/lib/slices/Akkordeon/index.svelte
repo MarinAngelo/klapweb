@@ -267,6 +267,8 @@
 										desktopPadding={p.mobile_vollbreite ? '1.5rem' : ''}
 										desktopPaddingY="1.5rem"
 										noRoundMobile={p.mobile_vollbreite}
+										noObjectCover
+										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
 										{theme}
 									/>
 								{:else}

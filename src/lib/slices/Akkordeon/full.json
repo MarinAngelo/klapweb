@@ -159,7 +159,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -442,7 +448,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -593,6 +605,15 @@
 									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
 									"placeholder": "100"
 								}
+							},
+							"bild_lupe": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild-Lupe aktivieren",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
 							}
 						}
 					}
@@ -671,7 +692,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
