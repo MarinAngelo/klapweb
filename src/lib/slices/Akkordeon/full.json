@@ -605,6 +605,15 @@
 									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
 									"placeholder": "100"
 								}
+							},
+							"bild_lupe": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild-Lupe aktivieren",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
 							}
 						}
 					}

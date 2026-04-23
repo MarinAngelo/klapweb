@@ -1,9 +1,8 @@
 <script lang="ts">
 	// 1. PrismicImage holen wir weiter aus der Library (da hast du keinen Wrapper)
 	import { PrismicImage } from '@prismicio/svelte';
-
-	// 2. WICHTIG: PrismicRichText holen wir aus DEINER eigenen Datei
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import BildLupe from '$lib/components/BildLupe.svelte';
 	export let image: any;
 	export let text: any;
 	export let imageLeft: boolean = false;
@@ -17,6 +16,8 @@
 	export let desktopPadding: string = '';
 	export let desktopPaddingY: string = '';
 	export let noRoundMobile: boolean = false;
+	export let noObjectCover: boolean = false;
+	export let lupe: boolean = false;
 	export let textCenterV: boolean = false;
 	export let textCenterH: boolean = false;
 	export let fullscreen: boolean = false;
@@ -34,15 +35,29 @@
 		>
 			{#if image}
 				<div id="7" class="relative md:h-full" style="background-color: {imageBgColor};">
-					<PrismicImage
-						field={image}
-						sizes="100vw"
-						class="w-full md:h-full md:object-cover {imageRound
-							? 'rounded-full'
-							: noRoundMobile
-								? 'md:rounded-3xl'
-								: 'rounded-3xl'}"
-					/>
+					{#if lupe}
+						<BildLupe imageUrl={image?.url ?? ''}>
+							<PrismicImage
+								field={image}
+								sizes="100vw"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
+									? 'rounded-full'
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
+							/>
+						</BildLupe>
+					{:else}
+						<PrismicImage
+							field={image}
+							sizes="100vw"
+							class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
+								? 'rounded-full'
+								: noRoundMobile
+									? 'md:rounded-3xl'
+									: 'rounded-3xl'}"
+						/>
+					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
 							class="absolute inset-0 {imageRound
@@ -83,15 +98,29 @@
 		>
 			{#if image}
 				<div id="8" class="relative md:h-full" style="background-color: {imageBgColor};">
-					<PrismicImage
-						field={image}
-						sizes="100vw"
-						class="w-full md:h-full md:object-cover {imageRound
-							? 'rounded-full'
-							: noRoundMobile
-								? 'md:rounded-3xl'
-								: 'rounded-3xl'}"
-					/>
+					{#if lupe}
+						<BildLupe imageUrl={image?.url ?? ''}>
+							<PrismicImage
+								field={image}
+								sizes="100vw"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
+									? 'rounded-full'
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
+							/>
+						</BildLupe>
+					{:else}
+						<PrismicImage
+							field={image}
+							sizes="100vw"
+							class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
+								? 'rounded-full'
+								: noRoundMobile
+									? 'md:rounded-3xl'
+									: 'rounded-3xl'}"
+						/>
+					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
 							class="absolute inset-0 {imageRound
