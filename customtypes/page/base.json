@@ -89,6 +89,9 @@
 						},
 						"ressource_buchung": {
 							"type": "SharedSlice"
+						},
+						"plan_filter": {
+							"type": "SharedSlice"
 						}
 					}
 				}

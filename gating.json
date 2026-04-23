@@ -132,6 +132,16 @@
 		"Inhaltsverzeichnis": {
 			"plan": "professional"
 		},
+		"Text": {
+			"fields": {
+				"feature_gate": { "plan": "individuell" }
+			}
+		},
+		"TextMitBild": {
+			"fields": {
+				"feature_gate": { "plan": "individuell" }
+			}
+		},
 		"RessourceBuchung": {
 			"feature": "ressourcenbuchung"
 		}

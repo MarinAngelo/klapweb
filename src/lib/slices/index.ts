@@ -24,6 +24,7 @@ import Stimmen from './Stimmen/index.svelte';
 import Galerie from './Galerie/index.svelte';
 import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
 import RessourceBuchung from './RessourceBuchung/index.svelte';
+import PlanFilter from './PlanFilter/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -49,5 +50,6 @@ export const components = {
 	stimmen: Stimmen,
 	galerie: Galerie,
 	inhaltsverzeichnis: Inhaltsverzeichnis,
-	ressource_buchung: RessourceBuchung
+	ressource_buchung: RessourceBuchung,
+	plan_filter: PlanFilter
 };
