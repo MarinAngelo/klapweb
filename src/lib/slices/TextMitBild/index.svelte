@@ -11,9 +11,9 @@
 	export let slices: unknown[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
-	const p = slice.primary ?? ({} as any);
+	const p: any = slice.primary ?? {};
 
-	let yPadding = p.y_padding_same ? 'base' : 'base-top';
+	let yPadding: 'base' | 'base-top' | 'none' | 'sm' | 'sm-top' | 'lg' | 'lg-top' = p.y_padding_same ? 'base' : 'base-top';
 
 	if (p.y_padding) {
 		switch (p.y_padding) {
@@ -32,7 +32,9 @@
 		}
 	}
 
-	const isBildLinks = slice.variation === 'standardBildLinks';
+	const variation = slice.variation as string;
+	const isBildLinks = variation === 'standardBildLinks';
+	const isMulti = variation === 'multi';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
@@ -40,9 +42,69 @@
 	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 	$: fullscreen = (slice.primary as any).fullscreen ?? false;
 	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
+
+	const rowGapMap: Record<string, string> = {
+		'kein Abstand': '0',
+		'wenig': '1rem',
+		'mittel': '3rem',
+		'gross': '6rem'
+	};
+	$: columnGapVal = (p as any).column_gap ?? 'mittel';
+	$: rowGap = isMulti
+		? columnGapVal === 'kein'
+			? '0'
+			: (rowGapMap[(p as any).row_gap ?? 'mittel'] ?? '3rem')
+		: '0';
+	$: multiItems = isMulti ? ((slice as any).items ?? []) : [];
+	$: imageRound = (p as any).image_round ?? false;
+	$: isFullWidth = (p as any).full_width ?? false;
+
+	const textPadMap: Record<string, string> = {
+		kein: '0',
+		klein: '1rem',
+		mittel: '2rem',
+		gross: '4rem'
+	};
+	$: textPad = textPadMap[(p as any).text_padding ?? 'mittel'] ?? '2rem';
 </script>
 
 {#if visible}
+{#if isMulti}
+<Bounded
+	as="section"
+	yPadding={yPadding}
+	fullWidth={isFullWidth}
+	noPadding={isFullWidth}
+	data-slice-type={slice.slice_type}
+	data-slice-variation={slice.variation}
+	animate={anim.animate}
+	animationOptions={anim.options}
+	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
+>
+	<div class="flex flex-col" style="gap: {rowGap};">
+		{#each multiItems as item}
+			<ImageTextGrid
+				image={isFilled.image(item.image) ? item.image : null}
+				text={item.text}
+				imageLeft={item.bild_links ?? false}
+				imageBgColor={p.bg_color || 'var(--page-bg-color)'}
+				imageRound={imageRound}
+				noRound={!imageRound}
+				mobileTextFirst={true}
+				columnGap={columnGapVal}
+				mobilePadding={textPad}
+				mobilePaddingTop={textPad}
+				desktopPadding={textPad}
+				desktopPaddingY={textPad}
+				{textCenterV}
+				{textCenterH}
+				fullscreen={false}
+	
+			/>
+		{/each}
+	</div>
+</Bounded>
+{:else}
 <Bounded
 	as="section"
 	yPadding={fullscreen ? 'none' : yPadding}
@@ -68,10 +130,12 @@
 			imageLeft={isBildLinks}
 			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 			imageRound={p.image_round}
+
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
 		/>
 	</div>
 </Bounded>
+{/if}
 {/if}

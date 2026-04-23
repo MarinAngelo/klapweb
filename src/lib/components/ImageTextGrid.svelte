@@ -8,7 +8,6 @@
 	export let imageLeft: boolean = false;
 	export let imageBgColor: string = '';
 	export let imageRound: boolean = false;
-	export let theme: any;
 	export let overlayColor: string = '';
 	export let overlayTransparency: number = 100;
 	export let mobilePadding: string = '';
@@ -16,6 +15,16 @@
 	export let desktopPadding: string = '';
 	export let desktopPaddingY: string = '';
 	export let noRoundMobile: boolean = false;
+	export let noRound: boolean = false;
+	export let mobileTextFirst: boolean = false;
+	export let columnGap: 'kein' | 'klein' | 'mittel' | 'gross' = 'mittel';
+
+	const gapClass: Record<string, string> = {
+		kein: 'gap-0',
+		klein: 'gap-4',
+		mittel: 'gap-8',
+		gross: 'gap-16'
+	};
 	export let noObjectCover: boolean = false;
 	export let lupe: boolean = false;
 	export let textCenterV: boolean = false;
@@ -25,12 +34,12 @@
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 </script>
 
-<div id="5" class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 {fullscreen ? 'md:h-full' : ''}">
+<div id="5" class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen ? 'md:h-full' : ''}">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
 			id="6"
-			class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
 		>
 			{#if image}
@@ -42,9 +51,11 @@
 								sizes="100vw"
 								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
 									? 'rounded-full'
-									: noRoundMobile
-										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
+									: noRound
+										? ''
+										: noRoundMobile
+											? 'md:rounded-3xl'
+											: 'rounded-3xl'}"
 							/>
 						</BildLupe>
 					{:else}
@@ -53,18 +64,22 @@
 							sizes="100vw"
 							class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
 								? 'rounded-full'
-								: noRoundMobile
-									? 'md:rounded-3xl'
-									: 'rounded-3xl'}"
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 						/>
 					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
 							class="absolute inset-0 {imageRound
 								? 'rounded-full'
-								: noRoundMobile
-									? 'md:rounded-3xl'
-									: 'rounded-3xl'}"
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
@@ -73,7 +88,7 @@
 		</div>
 		<div
 			id="8"
-			class="text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
 				? 'text-center'
 				: ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
@@ -93,7 +108,7 @@
 		</div>
 		<div
 			id="7"
-			class="md:h-full {imageRound ? 'md:rounded-full' : 'md:rounded-3xl'} overflow-hidden"
+			class="md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
 		>
 			{#if image}
@@ -105,9 +120,11 @@
 								sizes="100vw"
 								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
 									? 'rounded-full'
-									: noRoundMobile
-										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
+									: noRound
+										? ''
+										: noRoundMobile
+											? 'md:rounded-3xl'
+											: 'rounded-3xl'}"
 							/>
 						</BildLupe>
 					{:else}
@@ -116,18 +133,22 @@
 							sizes="100vw"
 							class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
 								? 'rounded-full'
-								: noRoundMobile
-									? 'md:rounded-3xl'
-									: 'rounded-3xl'}"
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 						/>
 					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
 							class="absolute inset-0 {imageRound
 								? 'rounded-full'
-								: noRoundMobile
-									? 'md:rounded-3xl'
-									: 'rounded-3xl'}"
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
@@ -143,6 +164,7 @@
 			padding-left: var(--mob-pad, 0);
 			padding-right: var(--mob-pad, 0);
 			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
+			padding-bottom: var(--mob-pad-top, var(--mob-pad, 0));
 		}
 	}
 
