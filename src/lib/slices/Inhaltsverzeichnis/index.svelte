@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { theme } from '$lib/stores/theme';
+	import { planFilter } from '$lib/stores/planFilter';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
@@ -61,6 +62,28 @@
 			.replace(/ß/g, 'ss')
 			.replace(/[^a-z0-9]+/g, '-')
 			.replace(/^-+|-+$/g, '');
+
+	function scanHeadings() {
+		if (typeof document === 'undefined') return;
+		const selector = tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3';
+		const headings = Array.from(document.querySelectorAll<HTMLElement>(selector));
+		headings.forEach((el) => {
+			if (!el.id) {
+				const id = toSlug(el.textContent ?? '');
+				if (id) el.id = id;
+			}
+		});
+		tocEntries = headings
+			.filter((el) => el.id)
+			.map((el) => ({
+				id: el.id,
+				text: el.textContent ?? '',
+				level: el.tagName === 'H2' ? 2 : 3
+			}));
+	}
+
+	// Re-scan after filter changes (tick ensures {#if} has updated the DOM first)
+	$: if (typeof $planFilter !== 'undefined') tick().then(scanHeadings);
 
 	onMount(() => {
 		const selector = tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3';

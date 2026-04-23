@@ -2,6 +2,7 @@
 import type { Content } from '@prismicio/client';
 import clsx from 'clsx';
 import { theme } from '$lib/stores/theme';
+import { planFilter, isVisibleForPlan } from '$lib/stores/planFilter';
 
 import Bounded from '$lib/components/Bounded.svelte';
 import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -16,8 +17,10 @@ $: anim = mapAnimationFromPrimary(slice.primary);
 $: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
 $: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 $: textColor = (slice.primary as any).color || $theme.pageColor;
+$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
 </script>
 
+{#if visible}
 <Bounded
 as="section"
 class="leading-relaxed {mobileVollbreite ? 'overflow-x-clip' : ''}"
@@ -35,6 +38,7 @@ slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16'
 <PrismicRichText field={slice.primary.text} />
 </div>
 </Bounded>
+{/if}
 
 <style>
 :global(.two-col > *:first-child) {

@@ -123,6 +123,20 @@
             "label": "Animationsdauer (ms)",
             "placeholder": "2000"
           }
+        },
+        "feature_gate": {
+          "type": "Select",
+          "config": {
+            "label": "Sichtbar für Leistung (Plan)",
+            "options": [
+              "Terminbuchung",
+              "E-Commerce",
+              "P5.js",
+              "Variablen",
+              "Ressourcen-Buchung",
+              "Globale Events"
+            ]
+          }
         }
       },
       "items": {},
@@ -246,6 +260,20 @@
           "config": {
             "label": "Animationsdauer (ms)",
             "placeholder": "2000"
+          }
+        },
+        "feature_gate": {
+          "type": "Select",
+          "config": {
+            "label": "Sichtbar für Leistung (Plan)",
+            "options": [
+              "Terminbuchung",
+              "E-Commerce",
+              "P5.js",
+              "Variablen",
+              "Ressourcen-Buchung",
+              "Globale Events"
+            ]
           }
         }
       },

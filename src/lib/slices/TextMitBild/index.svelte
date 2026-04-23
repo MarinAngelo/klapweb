@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { headerHeight } from '$lib/stores/headerHeight';
+	import { planFilter, isVisibleForPlan } from '$lib/stores/planFilter';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
@@ -38,8 +39,10 @@
 	$: textCenterV = (slice.primary as any).text_center_v ?? false;
 	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 	$: fullscreen = (slice.primary as any).fullscreen ?? false;
+	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
 </script>
 
+{#if visible}
 <Bounded
 	as="section"
 	yPadding={fullscreen ? 'none' : yPadding}
@@ -71,3 +74,4 @@
 		/>
 	</div>
 </Bounded>
+{/if}
