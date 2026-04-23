@@ -16,6 +16,7 @@
 	export let animationOptions: RevealOptions = {};
 
 	export let fullWidth: boolean = false;
+	export let noPadding: boolean = false;
 	export let fullHeight: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
@@ -68,7 +69,7 @@
 	data-collapsible={collapsible}
 	{...$$restProps}
 	class={clsx(
-		'px-6',
+		!noPadding && 'px-6',
 		specialLayout && isMobile && 'px-0',
 		topClass,
 		bottomClass,
