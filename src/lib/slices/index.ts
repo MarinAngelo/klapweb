@@ -2,38 +2,54 @@
 
 import Akkordeon from './Akkordeon/index.svelte';
 import Anleitung from './Anleitung/index.svelte';
-import Button from './Button/index.svelte';
+import AdresseUndMap from './AdresseUndMap/index.svelte';
 import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
+import GlobaleEvents from './GlobaleEvents/index.svelte';
 import Titelbereich from './Titelbereich/index.svelte';
 import HtmlCode from './HtmlCode/index.svelte';
 import Bild from './Bild/index.svelte';
 import Kacheln from './Kacheln/index.svelte';
-import P5Grafik from './P5Grafik/index.svelte';
-import Preisaufstellung from './Preisaufstellung/index.svelte';
-import Preisvergleich from './Preisvergleich/index.svelte';
 import Zitat from './Zitat/index.svelte';
 import Text from './Text/index.svelte';
-import TextAndCta from './TextAndCta/index.svelte';
 import TextMitBild from './TextMitBild/index.svelte';
+import ButtonSlice from './Button/index.svelte';
+import Preisaufstellung from './Preisaufstellung/index.svelte';
+import Preisvergleich from './Preisvergleich/index.svelte';
+import TextAndCta from './TextAndCta/index.svelte';
+import P5Grafik from './P5Grafik/index.svelte';
+import Timeline from './Timeline/index.svelte';
+import Stimmen from './Stimmen/index.svelte';
+import Galerie from './Galerie/index.svelte';
+import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
+import RessourceBuchung from './RessourceBuchung/index.svelte';
+import PlanFilter from './PlanFilter/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
+	adresse_und_map: AdresseUndMap,
 	anleitung: Anleitung,
-	button: Button,
+	button: ButtonSlice,
 	code_einbetten: GoogleMapEinbetten,
 	event: Event,
 	form: Formular,
+	globale_events: GlobaleEvents,
 	hero: Titelbereich,
 	html_code: HtmlCode,
 	image: Bild,
 	image_cards: Kacheln,
-	p5_grafik: P5Grafik,
-	preisaufstellung: Preisaufstellung,
-	preisvergleich: Preisvergleich,
 	quote: Zitat,
 	text: Text,
 	text_and_cta: TextAndCta,
-	text_with_image: TextMitBild
+	preisaufstellung: Preisaufstellung,
+	preisvergleich: Preisvergleich,
+	text_with_image: TextMitBild,
+	p5_grafik: P5Grafik,
+	timeline: Timeline,
+	stimmen: Stimmen,
+	galerie: Galerie,
+	inhaltsverzeichnis: Inhaltsverzeichnis,
+	ressource_buchung: RessourceBuchung,
+	plan_filter: PlanFilter
 };

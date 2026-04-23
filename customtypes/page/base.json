@@ -27,6 +27,9 @@
 				"fieldset": "Slice Zone",
 				"config": {
 					"choices": {
+						"adresse_und_map": {
+							"type": "SharedSlice"
+						},
 						"text_and_cta": {
 							"type": "SharedSlice"
 						},
@@ -65,8 +68,40 @@
 						},
 						"text_with_image": {
 							"type": "SharedSlice"
+						},
+						"timeline": {
+							"type": "SharedSlice"
+						},
+						"stimmen": {
+							"type": "SharedSlice"
+						},
+						"galerie": {
+							"type": "SharedSlice"
+						},
+						"inhaltsverzeichnis": {
+							"type": "SharedSlice"
+						},
+						"ressource_buchung": {
+							"type": "SharedSlice"
+						},
+						"plan_filter": {
+							"type": "SharedSlice"
 						}
 					}
+				}
+			}
+		},
+		"Erscheinungsbild": {
+			"page_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe (überschreibt globale Farbe)"
+				}
+			},
+			"page_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schriftfarbe (überschreibt globale Farbe)"
 				}
 			}
 		},

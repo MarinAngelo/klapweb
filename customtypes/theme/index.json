@@ -6,6 +6,15 @@
 	"status": true,
 	"json": {
 		"Generell": {
+			"activ": {
+				"type": "Boolean",
+				"config": {
+					"label": "Aktiv",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": true
+				}
+			},
 			"theme_name": {
 				"type": "Text",
 				"config": {
@@ -22,7 +31,7 @@
 			"page_color": {
 				"type": "Color",
 				"config": {
-					"label": "Textfarbe",
+					"label": "Schriftfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -42,8 +51,40 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
+					]
+				}
+			},
+			"preset_font": {
+				"type": "Select",
+				"config": {
+					"label": "Vorinstallierte Hauptschrift",
+					"placeholder": "— Keine —",
+					"options": [
+						"Inter",
+						"Roboto",
+						"Open Sans",
+						"Montserrat",
+						"Poppins",
+						"Lato",
+						"Raleway",
+						"Oswald",
+						"Nunito",
+						"DM Sans",
+						"Outfit",
+						"Plus Jakarta Sans",
+						"Josefin Sans",
+						"Quicksand",
+						"Cabin",
+						"Playfair Display",
+						"Merriweather",
+						"Lora",
+						"Cormorant Garamond",
+						"Crimson Pro",
+						"Nunito Sans"
 					]
 				}
 			},
@@ -52,7 +93,13 @@
 				"config": {
 					"label": "Mobile Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+					"options": [
+						"Sehr Klein",
+						"Klein",
+						"Standard",
+						"Gross",
+						"Sehr Gross"
+					]
 				}
 			},
 			"base_font_size_desktop": {
@@ -60,7 +107,41 @@
 				"config": {
 					"label": " Desktop Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+					"options": [
+						"Sehr Klein",
+						"Klein",
+						"Standard",
+						"Gross",
+						"Sehr Gross"
+					]
+				}
+			},
+			"p_font_offset_mobile": {
+				"type": "Number",
+				"config": {
+					"label": "p Schriftgrösse Offset Mobile (px)",
+					"placeholder": "0"
+				}
+			},
+			"p_font_offset_desktop": {
+				"type": "Number",
+				"config": {
+					"label": "p Schriftgrösse Offset Desktop (px)",
+					"placeholder": "0"
+				}
+			},
+			"container_width": {
+				"type": "Select",
+				"config": {
+					"label": "Container-Breite",
+					"placeholder": "Standard (72rem)",
+					"options": [
+						"Schmal",
+						"Normal",
+						"Standard",
+						"Weit",
+						"Sehr weit"
+					]
 				}
 			},
 			"page_link_color": {
@@ -105,6 +186,108 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"svg_icons": {
+				"type": "Group",
+				"config": {
+					"label": "SVG-Icons",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Pfeil rechts"
+							}
+						},
+						"svg_code": {
+							"type": "Text",
+							"config": {
+								"label": "SVG-Code",
+								"placeholder": "<svg viewBox=\"0 0 24 24\">...</svg>"
+							}
+						},
+						"image": {
+							"type": "Image",
+							"config": {
+								"label": "Bild (Alternative zu SVG-Code)",
+								"constraint": {},
+								"thumbnails": []
+							}
+						}
+					}
+				}
+			},
+			"button_stile": {
+				"type": "Group",
+				"config": {
+					"label": "Button-Stile",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Hauptbutton"
+							}
+						},
+						"color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"icon": {
+							"type": "Select",
+							"config": {
+								"label": "Symbol",
+								"placeholder": "— Kein Symbol —",
+								"options": [
+									"Externer Link",
+									"Menü",
+									"Schließen",
+									"Pfeil Rechts Oben"
+								]
+							}
+						}
+					}
+				}
+			},
+			"heading_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Titel Deckkraft (%)",
+					"placeholder": "0 - 100 (voll = 100)"
+				}
+			},
+			"heading_animation": {
+				"type": "Boolean",
+				"config": {
+					"label": "Titel Einblend-Animation",
+					"placeholder_false": "Aus",
+					"placeholder_true": "Ein",
+					"default_value": true
+				}
+			},
 			"favicon": {
 				"type": "Image",
 				"config": {
@@ -147,7 +330,12 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name", "provider", "variants", "adobeFontId"]
+							"fields": [
+								"name",
+								"provider",
+								"variants",
+								"adobeFontId"
+							]
 						}
 					]
 				}
@@ -181,6 +369,13 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"header_color": {
+				"type": "Color",
+				"config": {
+					"label": "Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
 			"header_link_color": {
 				"type": "Color",
 				"config": {
@@ -211,9 +406,20 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
 					]
+				}
+			},
+			"sticky_header": {
+				"type": "Boolean",
+				"config": {
+					"label": "Kopfzeile fixiert (Sticky)",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
 				}
 			}
 		},
@@ -228,7 +434,7 @@
 			"footer_color": {
 				"type": "Color",
 				"config": {
-					"label": "Textfarbe",
+					"label": "Schriftfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -259,6 +465,176 @@
 					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
+			}
+		}
+	},
+	"Kopfzeile": {
+		"full_screen_width": {
+			"type": "Boolean",
+			"config": {
+				"label": "Volle Bildschirmbreite nutzen",
+				"placeholder_false": "Nein",
+				"placeholder_true": "Ja",
+				"default_value": false
+			}
+		},
+		"site_title_font_size": {
+			"type": "Number",
+			"config": {
+				"label": "Website-Titel Schriftgrösse",
+				"placeholder": "1 - 5"
+			}
+		},
+		"site_sub_title_font_size": {
+			"type": "Number",
+			"config": {
+				"label": "Website-Untertitel Schriftgrösse",
+				"placeholder": "0.5 - 4"
+			}
+		},
+		"site_title_font": {
+			"type": "Link",
+			"config": {
+				"label": "Website-Titel Schriftart",
+				"select": "document",
+				"repeat": false,
+				"customtypes": [
+					{
+						"id": "font",
+						"fields": [
+							"name",
+							"provider",
+							"variants",
+							"adobeFontId"
+						]
+					}
+				]
+			}
+		},
+		"logo": {
+			"type": "Image",
+			"config": {
+				"label": "Logo",
+				"constraint": {},
+				"thumbnails": []
+			}
+		},
+		"logo_height": {
+			"type": "Number",
+			"config": {
+				"label": "Logo Grösse",
+				"placeholder": "1 - 8"
+			}
+		},
+		"logo_color": {
+			"type": "Color",
+			"config": {
+				"label": "Logo Farbe (nur SVG)",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"header_bg_color": {
+			"type": "Color",
+			"config": {
+				"label": "Hintergrundfarbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"header_color": {
+			"type": "Color",
+			"config": {
+				"label": "Schriftfarbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"header_link_color": {
+			"type": "Color",
+			"config": {
+				"label": "Linkfarbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"header_link_hover_color": {
+			"type": "Color",
+			"config": {
+				"label": "Linkfarbe, wenn Maus darüber",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"header_link_font_size": {
+			"type": "Number",
+			"config": {
+				"label": "Link Schriftgrösse",
+				"placeholder": "1.5 - 3"
+			}
+		},
+		"header_link_font": {
+			"type": "Link",
+			"config": {
+				"label": "Link Schriftart",
+				"select": "document",
+				"repeat": false,
+				"customtypes": [
+					{
+						"id": "font",
+						"fields": [
+							"name"
+						]
+					}
+				]
+			}
+		},
+		"sticky_header": {
+			"type": "Boolean",
+			"config": {
+				"label": "Kopfzeile fixiert (Sticky)",
+				"placeholder_false": "Nein",
+				"placeholder_true": "Ja",
+				"default_value": false
+			}
+		}
+	},
+	"Fusszeile": {
+		"footer_bg_color": {
+			"type": "Color",
+			"config": {
+				"label": "Hintergrundfarbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"footer_color": {
+			"type": "Color",
+			"config": {
+				"label": "Schriftfarbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"footer_font_size_top_bar": {
+			"type": "Number",
+			"config": {
+				"label": "Textgrösse Obere Fusszeile",
+				"placeholder": "0.5 - 2"
+			}
+		},
+		"footer_font_size_button_bar": {
+			"type": "Number",
+			"config": {
+				"label": "Textgrösse Untere Fusszeile",
+				"placeholder": "0.2 - 1.5"
+			}
+		},
+		"footer_link_color": {
+			"type": "Color",
+			"config": {
+				"label": "Link Farbe",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
+			}
+		},
+		"footer_link_hover_color": {
+			"type": "Color",
+			"config": {
+				"label": "Linkfarbe wenn Maus darüber",
+				"placeholder": "Hex-Farbcode (#RRGGBB)"
 			}
 		}
 	}

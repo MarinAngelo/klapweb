@@ -1,5 +1,7 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
+import { presetFontUrls } from '$lib/utils/presetFonts';
+import gating from '../../../gating.json';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -40,6 +42,24 @@ interface PrismicThemeData {
 	button_border_radius?: number;
 	button_padding_y?: number;
 	button_padding_x?: number;
+	container_width?: string;
+	preset_font?: string;
+	heading_opacity?: number;
+	// CMS-konfigurierbare Button-Stile
+	button_stile?: Array<{
+		label?: string;
+		color?: string;
+		bg_color?: string;
+		hover_color?: string;
+		hover_bg_color?: string;
+		icon?: string;
+	}>;
+	// CMS-konfigurierbare SVG-Icons
+	svg_icons?: Array<{
+		label?: string;
+		svg_code?: string;
+		image?: { url?: string; alt?: string };
+	}>;
 }
 
 interface ThemeUpdateData {
@@ -69,35 +89,56 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
-	const pageFont = prismicThemeData.page_font?.data?.name || getCssVar('--page-font');
+	const pageFont =
+		prismicThemeData.page_font?.data?.name ||
+		prismicThemeData.preset_font ||
+		getCssVar('--page-font');
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
-	const pageLinkHoverColor = prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
+	const pageLinkHoverColor =
+		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
 	const pageButtonColor = prismicThemeData.page_button_color || getCssVar('--page-button-color');
-	const pageButtonBgColor = prismicThemeData.page_button_bg_color || getCssVar('--page-button-bg-color');
-	const pageButtonHoverColor = prismicThemeData.page_button_hover_color || getCssVar('--page-button-hover-color');
-	const pageButtonHoverBgColor = prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
-	const siteTitleFontSize = prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
-	const siteTitleFont = prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font');
-	const siteSubtitleFontSize = prismicThemeData.site_subtitle_font_size || parseFloat(getCssVar('--site-sub-title-font-size'));
-	const headerFontSize = prismicThemeData.header_font_size || parseFloat(getCssVar('--header-font-size'));
+	const pageButtonBgColor =
+		prismicThemeData.page_button_bg_color || getCssVar('--page-button-bg-color');
+	const pageButtonHoverColor =
+		prismicThemeData.page_button_hover_color || getCssVar('--page-button-hover-color');
+	const pageButtonHoverBgColor =
+		prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
+	const siteTitleFontSize =
+		prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
+	const siteTitleFont =
+		prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font');
+	const siteSubtitleFontSize =
+		prismicThemeData.site_subtitle_font_size || parseFloat(getCssVar('--site-sub-title-font-size'));
+	const headerFontSize =
+		prismicThemeData.header_font_size || parseFloat(getCssVar('--header-font-size'));
 	const logoHeight = prismicThemeData.logo_height || parseFloat(getCssVar('--logo-height'));
 	const headerColor = prismicThemeData.header_color || getCssVar('--header-color');
 	const headerBgColor = prismicThemeData.header_bg_color || getCssVar('--header-bg-color');
 	const headerLinkColor = prismicThemeData.header_link_color || getCssVar('--header-link-color');
-	const headerLinkHoverColor = prismicThemeData.header_link_hover_color || getCssVar('--header-link-hover-color');
-	const headerLinkHoverBgColor = prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
-	const headerLinkFontSize = prismicThemeData.header_link_font_size || parseFloat(getCssVar('--header-link-font-size'));
-	const headerLinkFont = prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font');
+	const headerLinkHoverColor =
+		prismicThemeData.header_link_hover_color || getCssVar('--header-link-hover-color');
+	const headerLinkHoverBgColor =
+		prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
+	const headerLinkFontSize =
+		prismicThemeData.header_link_font_size || parseFloat(getCssVar('--header-link-font-size'));
+	const headerLinkFont =
+		prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font');
 	const footerColor = prismicThemeData.footer_color || getCssVar('--footer-color');
 	const footerBgColor = prismicThemeData.footer_bg_color || getCssVar('--footer-bg-color');
-	const footerFontSizeTopBar = prismicThemeData.footer_font_size_top_bar || parseFloat(getCssVar('--footer-font-size-top-bar'));
-	const footerFontSizeButtonBar = prismicThemeData.footer_font_size_button_bar || parseFloat(getCssVar('--footer-font-size-button-bar'));
+	const footerFontSizeTopBar =
+		prismicThemeData.footer_font_size_top_bar ||
+		parseFloat(getCssVar('--footer-font-size-top-bar'));
+	const footerFontSizeButtonBar =
+		prismicThemeData.footer_font_size_button_bar ||
+		parseFloat(getCssVar('--footer-font-size-button-bar'));
 	const footerLinkColor = prismicThemeData.footer_link_color || getCssVar('--footer-link-color');
-	const footerLinkHoverColor = prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
-	const pageLinkActiveColor = prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
-	const pageLinkVisitedColor = prismicThemeData.page_link_visited_color || getCssVar('--page-link-visited-color');
+	const footerLinkHoverColor =
+		prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
+	const pageLinkActiveColor =
+		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
+	const pageLinkVisitedColor =
+		prismicThemeData.page_link_visited_color || getCssVar('--page-link-visited-color');
 
-	
 	theme.update((t) => ({
 		...t,
 		bannerTop,
@@ -132,40 +173,146 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageLinkVisitedColor
 	}));
 
-	// NEU: Werte auch als CSS-Variablen setzen
+	// Werte als CSS-Variablen setzen – nur wenn nicht leer, damit die
+	// app.css-Kaskade (z.B. --page-button-color: var(--page-link-color)) greift
 	if (typeof window !== 'undefined') {
 		const root = document.documentElement;
-		root.style.setProperty('--page-color', pageColor);
-		root.style.setProperty('--page-bg-color', pageBgColor);
-		root.style.setProperty('--page-font', pageFont);
-		root.style.setProperty('--page-link-color', pageLinkColor);
-		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
-		root.style.setProperty('--page-button-color', pageButtonColor);
-		root.style.setProperty('--page-button-bg-color', pageButtonBgColor);
-		root.style.setProperty('--page-button-hover-color', pageButtonHoverColor);
-		root.style.setProperty('--page-button-hover-bg-color', pageButtonHoverBgColor);
-		root.style.setProperty('--site-title-font-size', siteTitleFontSize.toString());
-		root.style.setProperty('--site-title-font', siteTitleFont);
-		root.style.setProperty('--site-sub-title-font-size', siteSubtitleFontSize.toString());
-		root.style.setProperty('--header-font-size', headerFontSize.toString());
-		root.style.setProperty('--logo-height', logoHeight.toString());
-		root.style.setProperty('--header-color', headerColor);
-		root.style.setProperty('--header-bg-color', headerBgColor);
+		const set = (prop: string, value: string | number) => {
+			const v = String(value).trim();
+			if (v) root.style.setProperty(prop, v);
+		};
+		set('--page-color', pageColor);
+		set('--page-bg-color', pageBgColor);
+		set('--page-font', pageFont);
+		set('--page-link-color', pageLinkColor);
+		set('--page-link-hover-color', pageLinkHoverColor);
+		set('--page-button-color', pageButtonColor);
+		set('--page-button-bg-color', pageButtonBgColor);
+		set('--page-button-hover-color', pageButtonHoverColor);
+		set('--page-button-hover-bg-color', pageButtonHoverBgColor);
+		set('--site-title-font-size', siteTitleFontSize);
+		set('--site-title-font', siteTitleFont);
+		set('--site-sub-title-font-size', siteSubtitleFontSize);
+		set('--header-font-size', headerFontSize);
+		set('--logo-height', logoHeight);
+		set('--header-color', headerColor);
+		set('--header-bg-color', headerBgColor);
 		// headerBgOpacity: Verwende Theme Store oder CSS-Fallback
-		const currentHeaderBgOpacity = get(theme).headerBgOpacity || parseFloat(getCssVar('--header-bg-opacity'));
-		root.style.setProperty('--header-bg-opacity', currentHeaderBgOpacity.toString());
-		root.style.setProperty('--header-link-color', headerLinkColor);
-		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
-		root.style.setProperty('--header-link-hover-bg-color', headerLinkHoverBgColor);
-		root.style.setProperty('--header-link-font-size', headerLinkFontSize.toString());
-		root.style.setProperty('--header-link-font', headerLinkFont);
-		root.style.setProperty('--footer-color', footerColor);
-		root.style.setProperty('--footer-bg-color', footerBgColor);
-		root.style.setProperty('--footer-font-size-top-bar', footerFontSizeTopBar.toString());
-		root.style.setProperty('--footer-font-size-button-bar', footerFontSizeButtonBar.toString());
-		root.style.setProperty('--footer-link-color', footerLinkColor);
-		root.style.setProperty('--footer-link-hover-color', footerLinkHoverColor);
-		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
-		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
+		const currentHeaderBgOpacity =
+			get(theme).headerBgOpacity || parseFloat(getCssVar('--header-bg-opacity'));
+		set('--header-bg-opacity', currentHeaderBgOpacity);
+		set('--header-link-color', headerLinkColor);
+		set('--header-link-hover-color', headerLinkHoverColor);
+		set('--header-link-hover-bg-color', headerLinkHoverBgColor);
+		set('--header-link-font-size', headerLinkFontSize);
+		set('--header-link-font', headerLinkFont);
+		set('--footer-color', footerColor);
+		set('--footer-bg-color', footerBgColor);
+		set('--footer-font-size-top-bar', footerFontSizeTopBar);
+		set('--footer-font-size-button-bar', footerFontSizeButtonBar);
+		set('--footer-link-color', footerLinkColor);
+		set('--footer-link-hover-color', footerLinkHoverColor);
+		set('--page-link-active-color', pageLinkActiveColor);
+		set('--page-link-visited-color', pageLinkVisitedColor);
+
+		// CMS-konfigurierbare Button-Stile (Repeatable Group)
+		const toSlug = (s: string) =>
+			s
+				.toLowerCase()
+				.replace(/ä/g, 'ae')
+				.replace(/ö/g, 'oe')
+				.replace(/ü/g, 'ue')
+				.replace(/ß/g, 'ss')
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '');
+
+		// Schritt 1: Alle Stile aus gating.json als Basis (Label+Slug, keine Farben)
+		// → Slug wird aus dem Label berechnet (toSlug), nicht aus dem camelCase-Key in gating.json
+		// → Muss identisch mit dem Slug sein, den Theme-Dokument-Labels erzeugen
+		const gatingButtonStile = (gating as any).button_stile ?? {};
+		const buttonStileMap = new Map<
+			string,
+			{
+				name: string;
+				label: string;
+				color?: string;
+				bg_color?: string;
+				hover_color?: string;
+				hover_bg_color?: string;
+				icon?: string;
+			}
+		>(
+			Object.entries(gatingButtonStile).map(([, def]) => {
+				const label = (def as any).label ?? '';
+				const slug = toSlug(label);
+				return [slug, { name: slug, label }];
+			})
+		);
+
+		// Schritt 2: Theme-Dokument-Werte als Override-Layer (Farben sind projekt-spezifisch)
+		for (const s of prismicThemeData.button_stile ?? []) {
+			if (!s.label) continue;
+			const slug = toSlug(s.label);
+			const existing = buttonStileMap.get(slug) ?? { name: slug, label: s.label };
+			buttonStileMap.set(slug, {
+				...existing,
+				color: s.color ?? undefined,
+				bg_color: s.bg_color ?? undefined,
+				hover_color: s.hover_color ?? undefined,
+				hover_bg_color: s.hover_bg_color ?? undefined,
+				icon: s.icon ?? undefined
+			});
+			// Nur gesetzte Farben als CSS-Vars schreiben
+			if (s.color) set(`--btn-${slug}-color`, s.color);
+			if (s.bg_color) set(`--btn-${slug}-bg`, s.bg_color);
+			if (s.hover_color) set(`--btn-${slug}-hover-color`, s.hover_color);
+			if (s.hover_bg_color) set(`--btn-${slug}-hover-bg`, s.hover_bg_color);
+		}
+
+		const buttonStile = [...buttonStileMap.values()];
+		theme.update((t) => ({ ...t, buttonStile }));
+
+		// CMS-konfigurierbare SVG-Icons
+		const svgIcons = (prismicThemeData.svg_icons ?? []).map((s) => ({
+			name: toSlug(s.label ?? ''),
+			label: s.label,
+			svg_code: s.svg_code,
+			image_url: s.image?.url,
+			image_alt: s.image?.alt
+		}));
+		theme.update((t) => ({ ...t, svgIcons }));
+
+		if (
+			prismicThemeData.heading_opacity !== undefined &&
+			prismicThemeData.heading_opacity !== null
+		) {
+			root.style.setProperty(
+				'--heading-opacity',
+				(prismicThemeData.heading_opacity / 100).toString()
+			);
+		}
+
+		const containerWidthMap: Record<string, string> = {
+			Schmal: '48rem',
+			Normal: '56rem',
+			Standard: '72rem',
+			Weit: '80rem',
+			'Sehr weit': '96rem'
+		};
+		const containerWidth = containerWidthMap[prismicThemeData.container_width ?? ''] ?? '72rem';
+		root.style.setProperty('--container-max-width', containerWidth);
+
+		const presetFontUrl = prismicThemeData.preset_font
+			? (presetFontUrls[prismicThemeData.preset_font] ?? null)
+			: null;
+		const existingLink = document.querySelector('link[data-theme-preset-font]');
+		if (existingLink) existingLink.remove();
+		if (presetFontUrl && !prismicThemeData.page_font?.data?.name) {
+			const link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = presetFontUrl;
+			link.dataset.themePresetFont = '1';
+			document.head.appendChild(link);
+		}
 	}
 }

@@ -10,7 +10,7 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Website Titel",
-					"placeholder": "Title of the site",
+					"placeholder": "Titel der Website",
 					"allowTargetBlank": false,
 					"single": "heading1"
 				}
@@ -250,6 +250,53 @@
 						"height": 32
 					},
 					"thumbnails": []
+				}
+			},
+			"pwa_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Als App installierbar (PWA)",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"pwa_name": {
+				"type": "Text",
+				"config": {
+					"label": "App Name",
+					"placeholder": "Name der App (z.B. Muster GmbH)"
+				}
+			},
+			"pwa_short_name": {
+				"type": "Text",
+				"config": {
+					"label": "App Kurzname",
+					"placeholder": "Kurzer Name fürs App-Icon (max. ~12 Zeichen)"
+				}
+			},
+			"pwa_theme_color": {
+				"type": "Color",
+				"config": {
+					"label": "App Theme-Farbe",
+					"placeholder": "Farbe der Statusleiste beim App-Start"
+				}
+			},
+			"pwa_icon": {
+				"type": "Image",
+				"config": {
+					"label": "App Icon (512×512)",
+					"constraint": {
+						"width": 512,
+						"height": 512
+					},
+					"thumbnails": [
+						{
+							"name": "192",
+							"width": 192,
+							"height": 192
+						}
+					]
 				}
 			}
 		}

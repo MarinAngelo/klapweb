@@ -1,0 +1,26 @@
+{
+	"id": "plan_filter",
+	"type": "SharedSlice",
+	"name": "PlanFilter",
+	"description": "Plan-Filter für Dokumentationsseiten",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Beschriftung",
+						"placeholder": "Inhalte filtern nach Plan:"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

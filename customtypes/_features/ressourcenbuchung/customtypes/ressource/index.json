@@ -1,0 +1,211 @@
+{
+	"id": "ressource",
+	"label": "Ressource",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID",
+					"placeholder": "z.B. ferienhaus-tessin"
+				}
+			},
+			"name": {
+				"type": "Text",
+				"config": {
+					"label": "Bezeichnung",
+					"placeholder": "z.B. Ferienhaus Tessin"
+				}
+			},
+			"beschreibung": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Beschreibung",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item"
+				}
+			},
+			"bilder": {
+				"type": "Image",
+				"config": {
+					"label": "Hauptbild",
+					"constraint": {},
+					"thumbnails": [
+						{
+							"name": "quadrat",
+							"width": 800,
+							"height": 800
+						}
+					]
+				}
+			}
+		},
+		"Kapazität": {
+			"max_personen": {
+				"type": "Number",
+				"config": {
+					"label": "Maximale Personenanzahl",
+					"placeholder": "6"
+				}
+			},
+			"schlafzimmer": {
+				"type": "Group",
+				"config": {
+					"label": "Schlafzimmer",
+					"repeat": true,
+					"fields": {
+						"zimmer_name": {
+							"type": "Text",
+							"config": {
+								"label": "Zimmer-Bezeichnung",
+								"placeholder": "z.B. Elternschlafzimmer"
+							}
+						},
+						"bett_typ": {
+							"type": "Select",
+							"config": {
+								"label": "Betttyp",
+								"options": [
+									"Doppelbett",
+									"Einzelbett",
+									"Stockbett",
+									"Schlafsofa"
+								]
+							}
+						},
+						"anzahl_betten": {
+							"type": "Number",
+							"config": {
+								"label": "Anzahl Betten",
+								"placeholder": "1"
+							}
+						},
+						"bild": {
+							"type": "Image",
+							"config": {
+								"label": "Bild",
+								"constraint": {},
+								"thumbnails": []
+							}
+						}
+					}
+				}
+			}
+		},
+		"Preise & Regeln": {
+			"preis_pro_nacht": {
+				"type": "Number",
+				"config": {
+					"label": "Preis pro Nacht (CHF)",
+					"placeholder": "150"
+				}
+			},
+			"min_naechte": {
+				"type": "Number",
+				"config": {
+					"label": "Mindestaufenthalt (Nächte)",
+					"placeholder": "2"
+				}
+			},
+			"checkin_tage": {
+				"type": "Select",
+				"config": {
+					"label": "Check-in Tage",
+					"options": [
+						"Täglich",
+						"Nur Freitag",
+						"Nur Samstag",
+						"Freitag & Samstag"
+					],
+					"default_value": "Täglich"
+				}
+			},
+			"saisonpreise": {
+				"type": "Group",
+				"config": {
+					"label": "Saisonpreise",
+					"repeat": true,
+					"fields": {
+						"saison_name": {
+							"type": "Text",
+							"config": {
+								"label": "Saison-Bezeichnung",
+								"placeholder": "z.B. Hochsaison"
+							}
+						},
+						"von": {
+							"type": "Date",
+							"config": {
+								"label": "Von (Datum)"
+							}
+						},
+						"bis": {
+							"type": "Date",
+							"config": {
+								"label": "Bis (Datum)"
+							}
+						},
+						"preis_pro_nacht": {
+							"type": "Number",
+							"config": {
+								"label": "Preis pro Nacht (CHF)",
+								"placeholder": "200"
+							}
+						}
+					}
+				}
+			}
+		},
+		"Inhalt": {
+			"slices": {
+				"type": "Slices",
+				"fieldset": "Slice Zone",
+				"config": {
+					"choices": {
+						"ressource_buchung": {
+							"type": "SharedSlice"
+						},
+						"hero": {
+							"type": "SharedSlice"
+						},
+						"text": {
+							"type": "SharedSlice"
+						},
+						"image": {
+							"type": "SharedSlice"
+						},
+						"galerie": {
+							"type": "SharedSlice"
+						}
+					}
+				}
+			}
+		},
+		"Kontakt": {
+			"ansprechperson": {
+				"type": "Text",
+				"config": {
+					"label": "Ansprechperson",
+					"placeholder": "z.B. Hans Muster"
+				}
+			},
+			"telefon": {
+				"type": "Text",
+				"config": {
+					"label": "Telefon",
+					"placeholder": "+41 79 123 45 67"
+				}
+			},
+			"email": {
+				"type": "Text",
+				"config": {
+					"label": "E-Mail",
+					"placeholder": "kontakt@beispiel.ch"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,142 @@
+{
+	"id": "adresse_und_map",
+	"type": "SharedSlice",
+	"name": "AdresseUndMap",
+	"description": "AdresseUndMap",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Adresse / Text",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
+						"labels": [
+							"kompakt"
+						]
+					}
+				},
+				"map_url": {
+					"type": "Text",
+					"config": {
+						"label": "Google Maps URL",
+						"placeholder": "Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)"
+					}
+				},
+				"map_height": {
+					"type": "Number",
+					"config": {
+						"label": "Kartenhöhe (px)",
+						"placeholder": "400"
+					}
+				},
+				"opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz",
+						"placeholder": "Zahl zwischen 0 und 80 %"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"text_center_h": {
+					"type": "Boolean",
+					"config": {
+						"label": "Schrift horizontal zentrieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text_zoom_desktop": {
+					"type": "Number",
+					"config": {
+						"label": "Schriftgrösse Desktop (%)",
+						"placeholder": "100"
+					}
+				},
+				"text_zoom_mobile": {
+					"type": "Number",
+					"config": {
+						"label": "Schriftgrösse Mobile (%)",
+						"placeholder": "100"
+					}
+				},
+				"map_left": {
+					"type": "Boolean",
+					"config": {
+						"label": "Karte links",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"mobile_vollbreite": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

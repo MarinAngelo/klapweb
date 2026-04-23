@@ -9,6 +9,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Mehr erfahren',
 		'en-us': 'Learn more'
 	},
+	'Route planen': {
+		'de-ch': 'Route planen',
+		'en-us': 'Get directions'
+	},
 	'Beispiel-Überschrift': { 'de-ch': 'Beispiel-Überschrift', 'en-us': 'Example Heading' },
 	Beispiel: { 'de-ch': 'Beispiel', 'en-us': 'Example' },
 	Überschrift: { 'de-ch': 'Überschrift', 'en-us': 'Heading' },
@@ -28,7 +32,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Kein Component registriert für',
 		'en-us': 'No component registered for'
 	},
-	'Zurück': {
+	Zurück: {
 		'de-ch': 'Zurück',
 		'en-us': 'Back'
 	},
@@ -64,11 +68,48 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Wähle einen Slice aus der Navigation',
 		'en-us': 'Select a slice from the navigation'
 	},
+	// RessourceBuchung Slice
+	Anreise: { 'de-ch': 'Anreise', 'en-us': 'Check-in' },
+	Abreise: { 'de-ch': 'Abreise', 'en-us': 'Check-out' },
+	'Anzahl Personen': { 'de-ch': 'Anzahl Personen', 'en-us': 'Number of persons' },
+	Maximal: { 'de-ch': 'Maximal', 'en-us': 'Maximum' },
+	Personen: { 'de-ch': 'Personen', 'en-us': 'persons' },
+	Name: { 'de-ch': 'Name', 'en-us': 'Name' },
+	Nachricht: { 'de-ch': 'Nachricht', 'en-us': 'Message' },
+	Preisvorschau: { 'de-ch': 'Preisvorschau', 'en-us': 'Price preview' },
+	'Verfügbarkeit wird geladen…': { 'de-ch': 'Verfügbarkeit wird geladen…', 'en-us': 'Loading availability…' },
+	Nacht: { 'de-ch': 'Nacht', 'en-us': 'night' },
+	Nächte: { 'de-ch': 'Nächte', 'en-us': 'nights' },
+	Schlafzimmer: { 'de-ch': 'Schlafzimmer', 'en-us': 'Bedrooms' },
+	'Bereits gebucht': { 'de-ch': 'Bereits gebucht', 'en-us': 'Already booked' },
+	'Voll belegt': { 'de-ch': 'Voll belegt', 'en-us': 'Fully booked' },
+	'Teilweise belegt': { 'de-ch': 'Teilweise belegt', 'en-us': 'Partially booked' },
+	'Frei': { 'de-ch': 'Frei', 'en-us': 'Available' },
+	'Gewählter Zeitraum': { 'de-ch': 'Gewählter Zeitraum', 'en-us': 'Selected period' },
+	Zimmerauswahl: { 'de-ch': 'Zimmerauswahl', 'en-us': 'Room selection' },
+	'Ausgewählte Zimmer': { 'de-ch': 'Ausgewählte Zimmer', 'en-us': 'Selected rooms' },
+	Belegt: { 'de-ch': 'Belegt', 'en-us': 'Unavailable' },
+	'Alle gewählten Zimmer sind in diesem Zeitraum belegt': { 'de-ch': 'Alle gewählten Zimmer sind in diesem Zeitraum belegt', 'en-us': 'All selected rooms are booked in this period' },
+	'Bitte mindestens ein Zimmer auswählen': { 'de-ch': 'Bitte mindestens ein Zimmer auswählen', 'en-us': 'Please select at least one room' },
+	'Ausgewählte Zimmer bieten Platz für maximal': { 'de-ch': 'Ausgewählte Zimmer bieten Platz für maximal', 'en-us': 'Selected rooms accommodate a maximum of' },
+	Kapazität: { 'de-ch': 'Kapazität', 'en-us': 'Capacity' },
+	Mindestaufenthalt: { 'de-ch': 'Mindestaufenthalt', 'en-us': 'Minimum stay' },
+	'Preis pro Nacht ab': { 'de-ch': 'Preis pro Nacht ab', 'en-us': 'Price per night from' },
+	'Jetzt anfragen': { 'de-ch': 'Jetzt anfragen', 'en-us': 'Request now' },
+	'Wird gesendet…': { 'de-ch': 'Wird gesendet…', 'en-us': 'Sending…' },
+	'Anfrage erhalten!': { 'de-ch': 'Anfrage erhalten!', 'en-us': 'Request received!' },
+	'Wir melden uns in Kürze bei Ihnen.': { 'de-ch': 'Wir melden uns in Kürze bei Ihnen.', 'en-us': 'We will get back to you shortly.' },
+	'Abreise muss nach Anreise liegen': { 'de-ch': 'Abreise muss nach Anreise liegen', 'en-us': 'Check-out must be after check-in' },
+	'Dieser Zeitraum ist bereits belegt': { 'de-ch': 'Dieser Zeitraum ist bereits belegt', 'en-us': 'This period is already booked' },
+	'Dieser Zeitraum ist leider nicht mehr verfügbar': { 'de-ch': 'Dieser Zeitraum ist leider nicht mehr verfügbar', 'en-us': 'This period is unfortunately no longer available' },
+	'Ein Fehler ist aufgetreten': { 'de-ch': 'Ein Fehler ist aufgetreten', 'en-us': 'An error occurred' },
+	'Keine Ressource verknüpft': { 'de-ch': 'Keine Ressource verknüpft', 'en-us': 'No resource linked' },
+
 	// Slice-Namen
 	Akkordeon: { 'de-ch': 'Akkordeon', 'en-us': 'Accordion' },
 	Anleitung: { 'de-ch': 'Anleitung', 'en-us': 'Instructions' },
 	Bild: { 'de-ch': 'Bild', 'en-us': 'Image' },
-	'Schaltfläche': { 'de-ch': 'Schaltfläche', 'en-us': 'Button' },
+	Schaltfläche: { 'de-ch': 'Schaltfläche', 'en-us': 'Button' },
 	Event: { 'de-ch': 'Event', 'en-us': 'Event' },
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
 	GlobaleEvents: { 'de-ch': 'GlobaleEvents', 'en-us': 'Global Events' },
@@ -94,7 +135,7 @@ export const translations: Record<string, Record<string, string>> = {
 	'Kauf-Schaltfläche': { 'de-ch': 'Kauf-Schaltfläche', 'en-us': 'Purchase Button' },
 	'Mit Termin': { 'de-ch': 'Mit Termin', 'en-us': 'With Appointment' },
 	'Kauf-Formular': { 'de-ch': 'Kauf-Formular', 'en-us': 'Purchase Form' },
-	'Pläne': { 'de-ch': 'Pläne', 'en-us': 'Plans' },
+	Pläne: { 'de-ch': 'Pläne', 'en-us': 'Plans' },
 	'Standard (Vollbild)': { 'de-ch': 'Standard (Vollbild)', 'en-us': 'Default (Full Screen)' },
 	'Mit Titelbereich': { 'de-ch': 'Mit Titelbereich', 'en-us': 'With Hero' },
 	'Standard Bild rechts': { 'de-ch': 'Standard Bild rechts', 'en-us': 'Default Image Right' },
@@ -102,9 +143,14 @@ export const translations: Record<string, Record<string, string>> = {
 	'Standard Bild links': { 'de-ch': 'Standard Bild links', 'en-us': 'Default Image Left' },
 	'Zwei Spalten': { 'de-ch': 'Zwei Spalten', 'en-us': 'Two Columns' },
 	'Mit Bild Karusell': { 'de-ch': 'Mit Bild Karusell', 'en-us': 'With Image Carousel' },
+	Details: { 'de-ch': 'Details', 'en-us': 'Details' },
+
 	// Funktions-Panel Labels
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
-	'Abstand oben / unten gleich': { 'de-ch': 'Abstand oben / unten gleich', 'en-us': 'Equal top/bottom spacing' },
+	'Abstand oben / unten gleich': {
+		'de-ch': 'Abstand oben / unten gleich',
+		'en-us': 'Equal top/bottom spacing'
+	},
 	'Animation aktivieren': { 'de-ch': 'Animation aktivieren', 'en-us': 'Enable animation' },
 	'Animations-Richtung': { 'de-ch': 'Animations-Richtung', 'en-us': 'Animation direction' },
 	'Animationsdauer (ms)': { 'de-ch': 'Animationsdauer (ms)', 'en-us': 'Animation duration (ms)' },
@@ -112,35 +158,68 @@ export const translations: Record<string, Record<string, string>> = {
 	'Bild als Kreis': { 'de-ch': 'Bild als Kreis', 'en-us': 'Image as circle' },
 	Bildschirmhoch: { 'de-ch': 'Bildschirmhoch', 'en-us': 'Full viewport height' },
 	'Erstes Item ausgeklappt': { 'de-ch': 'Erstes Item ausgeklappt', 'en-us': 'First item expanded' },
-	'Grösse': { 'de-ch': 'Grösse', 'en-us': 'Size' },
+	Grösse: { 'de-ch': 'Grösse', 'en-us': 'Size' },
 	'Hervorgehobener Plan': { 'de-ch': 'Hervorgehobener Plan', 'en-us': 'Featured plan' },
-	'Kontrast-Offset (leer = automatisch)': { 'de-ch': 'Kontrast-Offset (leer = automatisch)', 'en-us': 'Contrast offset (empty = automatic)' },
+	'Kontrast-Offset (leer = automatisch)': {
+		'de-ch': 'Kontrast-Offset (leer = automatisch)',
+		'en-us': 'Contrast offset (empty = automatic)'
+	},
 	'Mobile: Volle Breite': { 'de-ch': 'Mobile: Volle Breite', 'en-us': 'Mobile: Full width' },
 	'Rahmen um die Sektion': { 'de-ch': 'Rahmen um die Sektion', 'en-us': 'Section border' },
 	'Runde Ecken': { 'de-ch': 'Runde Ecken', 'en-us': 'Rounded corners' },
 	'Schaltfläche Ausrichtung': { 'de-ch': 'Schaltfläche Ausrichtung', 'en-us': 'Button alignment' },
 	'Schaltfläche Grösse': { 'de-ch': 'Schaltfläche Grösse', 'en-us': 'Button size' },
-	'Schriftgrösse Desktop (%)': { 'de-ch': 'Schriftgrösse Desktop (%)', 'en-us': 'Font size desktop (%)' },
-	'Schriftgrösse Mobile (%)': { 'de-ch': 'Schriftgrösse Mobile (%)', 'en-us': 'Font size mobile (%)' },
+	'Schriftgrösse Desktop (%)': {
+		'de-ch': 'Schriftgrösse Desktop (%)',
+		'en-us': 'Font size desktop (%)'
+	},
+	'Schriftgrösse Mobile (%)': {
+		'de-ch': 'Schriftgrösse Mobile (%)',
+		'en-us': 'Font size mobile (%)'
+	},
 	'Scrollen einrasten': { 'de-ch': 'Scrollen einrasten', 'en-us': 'Scroll snapping' },
 	Sketch: { 'de-ch': 'Sketch', 'en-us': 'Sketch' },
 	'Spalten je Reihe': { 'de-ch': 'Spalten je Reihe', 'en-us': 'Columns per row' },
 	'Suche aktivieren': { 'de-ch': 'Suche aktivieren', 'en-us': 'Enable search' },
-	'Text Hintergrund in Mobile aus': { 'de-ch': 'Text Hintergrund in Mobile aus', 'en-us': 'Disable text background on mobile' },
-	'Text Überlagerungsfeld Grösse': { 'de-ch': 'Text Überlagerungsfeld Grösse', 'en-us': 'Text overlay field size' },
+	'Text Hintergrund in Mobile aus': {
+		'de-ch': 'Text Hintergrund in Mobile aus',
+		'en-us': 'Disable text background on mobile'
+	},
+	'Text Überlagerungsfeld Grösse': {
+		'de-ch': 'Text Überlagerungsfeld Grösse',
+		'en-us': 'Text overlay field size'
+	},
 	Textausrichtung: { 'de-ch': 'Textausrichtung', 'en-us': 'Text alignment' },
 	'Textgrösse Mobile': { 'de-ch': 'Textgrösse Mobile', 'en-us': 'Font size mobile' },
 	'Titelbild Höhe': { 'de-ch': 'Titelbild Höhe', 'en-us': 'Hero height' },
 	Transparenz: { 'de-ch': 'Transparenz', 'en-us': 'Transparency' },
-	'Transparenz Text Überlagerungsfarbe': { 'de-ch': 'Transparenz Text Überlagerungsfarbe', 'en-us': 'Text overlay color transparency' },
-	'Transparenz der Kopfzeile': { 'de-ch': 'Transparenz der Kopfzeile', 'en-us': 'Header transparency' },
-	'Transparenz der Überlagerung': { 'de-ch': 'Transparenz der Überlagerung', 'en-us': 'Overlay transparency' },
-	'Transparenz der Überlagerungsfarbe': { 'de-ch': 'Transparenz der Überlagerungsfarbe', 'en-us': 'Overlay color transparency' },
-	'Transparenz überlagerter Kopfzeile': { 'de-ch': 'Transparenz überlagerter Kopfzeile', 'en-us': 'Overlapping header transparency' },
+	'Transparenz Text Überlagerungsfarbe': {
+		'de-ch': 'Transparenz Text Überlagerungsfarbe',
+		'en-us': 'Text overlay color transparency'
+	},
+	'Transparenz der Kopfzeile': {
+		'de-ch': 'Transparenz der Kopfzeile',
+		'en-us': 'Header transparency'
+	},
+	'Transparenz der Überlagerung': {
+		'de-ch': 'Transparenz der Überlagerung',
+		'en-us': 'Overlay transparency'
+	},
+	'Transparenz der Überlagerungsfarbe': {
+		'de-ch': 'Transparenz der Überlagerungsfarbe',
+		'en-us': 'Overlay color transparency'
+	},
+	'Transparenz überlagerter Kopfzeile': {
+		'de-ch': 'Transparenz überlagerter Kopfzeile',
+		'en-us': 'Overlapping header transparency'
+	},
 	'Vertikaler Abstand': { 'de-ch': 'Vertikaler Abstand', 'en-us': 'Vertical spacing' },
 	'Verzögerung (ms)': { 'de-ch': 'Verzögerung (ms)', 'en-us': 'Delay (ms)' },
 	'Vollbreite auf Mobile': { 'de-ch': 'Vollbreite auf Mobile', 'en-us': 'Full width on mobile' },
-	'Überlappend mit Kopfzeile': { 'de-ch': 'Überlappend mit Kopfzeile', 'en-us': 'Overlapping with header' },
+	'Überlappend mit Kopfzeile': {
+		'de-ch': 'Überlappend mit Kopfzeile',
+		'en-us': 'Overlapping with header'
+	},
 	// Select-Optionen
 	Gross: { 'de-ch': 'Gross', 'en-us': 'Large' },
 	gross: { 'de-ch': 'gross', 'en-us': 'large' },
@@ -356,6 +435,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ungültiger Rabatt-Code.',
 		'en-us': 'Invalid discount code.'
 	},
+	'Abgelaufener Rabatt-Code.': {
+		'de-ch': 'Rabatt-Code ist abgelaufen.',
+		'en-us': 'Discount code has expired.'
+	},
 	'Verbindungsfehler bei Code-Prüfung.': {
 		'de-ch': 'Verbindungsfehler bei Code-Prüfung.',
 		'en-us': 'Connection error during code verification.'
@@ -428,6 +511,62 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Weiter zum Formular',
 		'en-us': 'Continue to form'
 	},
+	Vorname: {
+		'de-ch': 'Vorname',
+		'en-us': 'First name'
+	},
+	Nachname: {
+		'de-ch': 'Nachname',
+		'en-us': 'Last name'
+	},
+	Pflichtfelder: {
+		'de-ch': 'Pflichtfelder',
+		'en-us': 'Required fields'
+	},
+	Beauftragung: {
+		'de-ch': 'Beauftragung',
+		'en-us': 'Order'
+	},
+	Firma: {
+		'de-ch': 'Firma',
+		'en-us': 'Company'
+	},
+	'E-Mail': {
+		'de-ch': 'E-Mail',
+		'en-us': 'Email'
+	},
+	Adresse: {
+		'de-ch': 'Adresse',
+		'en-us': 'Address'
+	},
+	PLZ: {
+		'de-ch': 'PLZ',
+		'en-us': 'ZIP code'
+	},
+	Ort: {
+		'de-ch': 'Ort',
+		'en-us': 'City'
+	},
+	Projektname: {
+		'de-ch': 'Projektname',
+		'en-us': 'Project name'
+	},
+	Land: {
+		'de-ch': 'Land',
+		'en-us': 'Country'
+	},
+	'Registrierter Domainname': {
+		'de-ch': 'Registrierter Domainname',
+		'en-us': 'Registered domain name'
+	},
+	'Gewünschter Domainname': {
+		'de-ch': 'Gewünschter Domainname',
+		'en-us': 'Desired domain name'
+	},
+	'Tel. Nr.': {
+		'de-ch': 'Tel. Nr.',
+		'en-us': 'Phone no.'
+	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
 		'en-us': 'Billing address'
@@ -497,6 +636,55 @@ export const translations: Record<string, Record<string, string>> = {
 	'Zurück zur Startseite': {
 		'de-ch': 'Zurück zur Startseite',
 		'en-us': 'Back to home'
+	},
+	// GlobaleEvents
+	'Online-Veranstaltung': { 'de-ch': 'Online-Veranstaltung', 'en-us': 'Online Event' },
+	'Auf Karte anzeigen': { 'de-ch': 'Auf Karte anzeigen', 'en-us': 'View on map' },
+	bis: { 'de-ch': 'bis', 'en-us': 'to' },
+	'Einlass ab': { 'de-ch': 'Einlass ab', 'en-us': 'Doors open at' },
+	Kostenlos: { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
+	'Anmeldung erforderlich': { 'de-ch': 'Anmeldung erforderlich', 'en-us': 'Registration required' },
+	Anmelden: { 'de-ch': 'Anmelden', 'en-us': 'Register' },
+	Tickets: { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
+	Veranstalter: { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
+	Termine: { 'de-ch': 'Termine', 'en-us': 'Dates' },
+	'Datum noch nicht festgelegt': {
+		'de-ch': 'Datum noch nicht festgelegt',
+		'en-us': 'Date not yet set'
+	},
+	Anmeldung: { 'de-ch': 'Anmeldung', 'en-us': 'Registration' },
+	'Wähle deine bevorzugte Methode zur Anmeldung:': {
+		'de-ch': 'Wähle deine bevorzugte Methode zur Anmeldung:',
+		'en-us': 'Choose your preferred method to register:'
+	},
+	'Per E-Mail': { 'de-ch': 'Per E-Mail', 'en-us': 'Via E-Mail' },
+	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
+	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
+	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	Link: { 'de-ch': 'Link', 'en-us': 'Link' },
+	// Event Status
+	Geplant: { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },
+	Bestätigt: { 'de-ch': 'Bestätigt', 'en-us': 'Confirmed' },
+	Abgesagt: { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
+	Verschoben: { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
+	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' },
+	Bestellübersicht: { 'de-ch': 'Bestellübersicht', 'en-us': 'Order Summary' },
+	Einmalig: { 'de-ch': 'Einmalig', 'en-us': 'One-time' },
+	Monatlich: { 'de-ch': 'Monatlich', 'en-us': 'Monthly' },
+	Jährlich: { 'de-ch': 'Jährlich', 'en-us': 'Annually' },
+	'auf Anfrage': { 'de-ch': 'auf Anfrage', 'en-us': 'on request' },
+	Total: { 'de-ch': 'Total', 'en-us': 'Total' },
+	Gesamttotal: { 'de-ch': 'Gesamttotal', 'en-us': 'Grand total' },
+	Jahr: { 'de-ch': 'Jahr', 'en-us': 'year' },
+	Monat: { 'de-ch': 'Monat', 'en-us': 'month' },
+	'Abrechnungsart:': { 'de-ch': 'Abrechnungsart:', 'en-us': 'Billing type:' },
+	'exkl. MwSt.': { 'de-ch': 'exkl. MwSt.', 'en-us': 'excl. VAT' },
+	'Code angewendet:': { 'de-ch': 'Code angewendet:', 'en-us': 'Code applied:' },
+	'Ich habe die': { 'de-ch': 'Ich habe die', 'en-us': 'I have read the' },
+	'und die': { 'de-ch': 'und die', 'en-us': 'and the' },
+	'gelesen und akzeptiere diese.': {
+		'de-ch': 'gelesen und akzeptiere diese.',
+		'en-us': 'and accept them.'
 	}
 };
 

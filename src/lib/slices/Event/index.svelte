@@ -3,12 +3,11 @@
 	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { theme } from '$lib/stores/theme';
+
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
-
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
@@ -129,105 +128,105 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: {$theme.pageColor}"
-	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+	style="color: var(--page-color)"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
-	<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
-	{#if primary.title}
-		<h2>{primary.title}</h2>
-	{/if}
-	{#if primary.sub_title}
-		<h3>{primary.sub_title}</h3>
-	{/if}
+	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+		{#if primary.title}
+			<h2>{primary.title}</h2>
+		{/if}
+		{#if primary.sub_title}
+			<h3>{primary.sub_title}</h3>
+		{/if}
 
-	{#if primary.description}
-		<div>
-			<PrismicRichText field={primary.description} />
-		</div>
-	{/if}
+		{#if primary.description}
+			<div>
+				<PrismicRichText field={primary.description} />
+			</div>
+		{/if}
 
-	<div class="grid md:grid-cols-2 gap-6 mb-6">
-		<div>
-			{#if primary.start_date_time}
-				{#if primary.additional_dates.length > 0}
-					<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
-				{:else}
-					<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
+		<div class="grid md:grid-cols-2 gap-6 mb-6">
+			<div>
+				{#if primary.start_date_time}
+					{#if primary.additional_dates.length > 0}
+						<p><strong>Beginn:</strong> {formatTime(primary.start_date_time)}</p>
+					{:else}
+						<p><strong>Beginn:</strong> {formatDateTime(primary.start_date_time)}</p>
+					{/if}
 				{/if}
-			{/if}
-			{#if primary.end_date_time}
-				{#if primary.additional_dates.length > 0}
-					<p><strong>Ende:</strong> {formatTime(primary.end_date_time)}</p>
-				{:else}
-					<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
+				{#if primary.end_date_time}
+					{#if primary.additional_dates.length > 0}
+						<p><strong>Ende:</strong> {formatTime(primary.end_date_time)}</p>
+					{:else}
+						<p><strong>Ende:</strong> {formatDateTime(primary.end_date_time)}</p>
+					{/if}
 				{/if}
-			{/if}
-			<!-- Kalender-Links -->
-			{#if icsUrl}
-				<PrismicLink
-					field={{
-						link_type: 'Web',
-						url: icsUrl
-					}}
-					download="event.ics"
-					target="_blank"
-					data-type="prismic-link"
-				>
-					Zum Kalender hinzufügen (.ics)
-				</PrismicLink><br />
+				<!-- Kalender-Links -->
+				{#if icsUrl}
+					<PrismicLink
+						field={{
+							link_type: 'Web',
+							url: icsUrl
+						}}
+						download="event.ics"
+						target="_blank"
+						data-type="prismic-link"
+					>
+						Zum Kalender hinzufügen (.ics)
+					</PrismicLink><br />
 
-				<PrismicLink
-					field={{
-						link_type: 'Web',
-						url: getGoogleCalendarLink({
-							title: primary.title,
-							start: primary.start_date_time,
-							end: primary.end_date_time,
-							description: asText(primary.description),
-							location: asText(primary.location_text)
-						})
-					}}
-					target="_blank"
-					data-type="prismic-link"
-				>
-					In Google Calendar öffnen
-				</PrismicLink><br />
-			{/if}
-			{#if primary.location_text}
-				<div class="mt-4">
-					<strong>Ort:</strong>
-					<PrismicRichText field={primary.location_text} />
-				</div>
-			{/if}
-			{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
-				<PrismicLink
-					field={{
-						link_type: 'Web',
-						url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
-					}}
-					target="_blank"
-					data-type="prismic-link"
-				>
-					Standort auf Google Maps anzeigen
-				</PrismicLink><br />
-			{/if}
-			{#if primary.additional_dates.length > 0}
-				{#if allDates.length > 0 && primary.additional_dates.length > 0}
+					<PrismicLink
+						field={{
+							link_type: 'Web',
+							url: getGoogleCalendarLink({
+								title: primary.title,
+								start: primary.start_date_time,
+								end: primary.end_date_time,
+								description: asText(primary.description),
+								location: asText(primary.location_text)
+							})
+						}}
+						target="_blank"
+						data-type="prismic-link"
+					>
+						In Google Calendar öffnen
+					</PrismicLink><br />
+				{/if}
+				{#if primary.location_text}
 					<div class="mt-4">
-						<strong>Daten:</strong>
-						{#each allDates as date}
-							<p>
-								- {date
-									? new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date(date))
-									: ''}
-							</p>
-						{/each}
+						<strong>Ort:</strong>
+						<PrismicRichText field={primary.location_text} />
 					</div>
-				{:else}
-					<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
 				{/if}
-			{/if}
+				{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
+					<PrismicLink
+						field={{
+							link_type: 'Web',
+							url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
+						}}
+						target="_blank"
+						data-type="prismic-link"
+					>
+						Standort auf Google Maps anzeigen
+					</PrismicLink><br />
+				{/if}
+				{#if primary.additional_dates.length > 0}
+					{#if allDates.length > 0 && primary.additional_dates.length > 0}
+						<div class="mt-4">
+							<strong>Daten:</strong>
+							{#each allDates as date}
+								<p>
+									- {date
+										? new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date(date))
+										: ''}
+								</p>
+							{/each}
+						</div>
+					{:else}
+						<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
+					{/if}
+				{/if}
+			</div>
 		</div>
-	</div>
 	</div>
 </Bounded>

@@ -15,6 +15,7 @@
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { getSketch } from '$lib/sketches';
+	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
 
 	export let slice: any;
 	export let slices: any = {};
@@ -23,6 +24,9 @@
 
 	const isTitelbereich = slice.variation === 'mitTitelbereich';
 	const p = slice.primary;
+
+	$: presetFont = (p.preset_font as string | null) || null;
+	$: presetFontUrl = presetFont ? (presetFontUrls[presetFont] ?? null) : null;
 
 	// sketchParams wird reaktiv aktualisiert (Svelte $:).
 	// Da es ein Objekt ist, liest der Sketch in draw() immer die neusten Werte —
@@ -33,7 +37,8 @@
 		overlayOpacity: p.overlay_opacity != null ? convertNumber(p.overlay_opacity) : 0,
 		bannerOverlap: p.banner_overlap ?? false,
 		bannerHeight: p.banner_height ?? '100 %',
-		color: p.color || null
+		color: p.color || null,
+		imageUrl: p.image?.url || null
 	};
 
 	// Reaktiv aktualisieren wenn sich CMS-Daten ändern
@@ -61,14 +66,21 @@
 	const color = p.color || 'var(--text-color)';
 	const bannerTop = p.banner_overlap ?? false;
 
-	$: if (isTitelbereich) theme.update((t) => ({ ...t, bannerTop, headerBgOpacity: convertNumber(p.header_bg_opacity ?? 0) }));
+	$: if (isTitelbereich)
+		theme.update((t) => ({
+			...t,
+			bannerTop,
+			headerBgOpacity: convertNumber(p.header_bg_opacity ?? 0),
+			hideHeaderOnLoad: p.hide_header_on_load ?? false
+		}));
 
 	onDestroy(() => {
 		if (isTitelbereich) {
 			theme.update((t) => ({
 				...t,
 				headerBgOpacity: THEME_DEFAULTS.headerBgOpacity,
-				bannerTop: THEME_DEFAULTS.bannerTop
+				bannerTop: THEME_DEFAULTS.bannerTop,
+				hideHeaderOnLoad: THEME_DEFAULTS.hideHeaderOnLoad
 			}));
 		}
 	});
@@ -77,13 +89,25 @@
 	$: overlayOpacity = p.overlay_opacity != null ? convertNumber(p.overlay_opacity) : 0.2;
 
 	$: textOverlayColor = p.text_overlay_color || 'var(--text-color)';
-	$: textOverlayOpacity = p.text_overlay_opacity != null ? convertNumber(p.text_overlay_opacity) : 0.2;
+	$: textOverlayOpacity =
+		p.text_overlay_opacity != null ? convertNumber(p.text_overlay_opacity) : 0.2;
 	$: switchOffTextOverlay = p.switch_off_text_overlay ?? false;
 
-	const paddingMap: Record<string, string> = { klein: '1rem 2rem', mittel: '2rem 4rem', gross: '4rem 6rem' };
-	$: textOverlayPadding = p.text_overlay_padding in paddingMap ? paddingMap[p.text_overlay_padding] : paddingMap['mittel'];
+	const paddingMap: Record<string, string> = {
+		klein: '1rem 2rem',
+		mittel: '2rem 4rem',
+		gross: '4rem 6rem'
+	};
+	$: textOverlayPadding =
+		p.text_overlay_padding in paddingMap
+			? paddingMap[p.text_overlay_padding]
+			: paddingMap['mittel'];
 
-	const mobileTextScaleMap: Record<string, number> = { Klein: 0.8, Kleiner: 0.65, 'Sehr klein': 0.5 };
+	const mobileTextScaleMap: Record<string, number> = {
+		Klein: 0.8,
+		Kleiner: 0.65,
+		'Sehr klein': 0.5
+	};
 	$: mobileFontScale = mobileTextScaleMap[p.mobile_text_scale as string] ?? 1.0;
 
 	$: buttonColor = p.button_color || null;
@@ -106,6 +130,12 @@
 	});
 </script>
 
+<svelte:head>
+	{#if presetFontUrl}
+		<link rel="stylesheet" href={presetFontUrl} />
+	{/if}
+</svelte:head>
+
 {#if isTitelbereich}
 	<!-- ── Titelbereich-Variation ── -->
 	<!-- overflow-visible: identisch zu Titelbereich, damit margin-top-Trick für banner_overlap funktioniert -->
@@ -117,7 +147,11 @@
 			background-color: {canvasBg};
 			color: {color};
 			height: {$bannerHeight};
-			font-family: {isFilled.contentRelationship(p.font) && p.font.data?.name ? p.font.data.name : 'inherit'};
+			font-family: {presetFont
+			? `'${presetFont}'`
+			: isFilled.contentRelationship(p.font) && p.font.data?.name
+				? p.font.data.name
+				: 'inherit'};
 		"
 	>
 		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
@@ -129,7 +163,9 @@
 		{#if overlayOpacity > 0}
 			<div
 				class="absolute inset-0 pointer-events-none"
-				style="background-color: {overlayColor}; opacity: {$isMobile ? textOverlayOpacity : overlayOpacity};"
+				style="background-color: {overlayColor}; opacity: {$isMobile
+					? textOverlayOpacity
+					: overlayOpacity};"
 			></div>
 		{/if}
 
@@ -149,13 +185,24 @@
 							aria-hidden="true"
 						></div>
 					{/if}
-					<div use:reveal={fadeIn} class="relative z-10 text-center" style="padding: {textOverlayPadding};">
+					<div
+						use:reveal={fadeIn}
+						class="relative z-10 text-center"
+						style="padding: {textOverlayPadding};"
+					>
 						<style>
-							@media (max-width: 640px) { .relative.z-10.text-center { padding: 0 !important; } }
+							@media (max-width: 640px) {
+								.relative.z-10.text-center {
+									padding: 0 !important;
+								}
+							}
 						</style>
-						<div class="leading-loose tracking-wider-all" style="{$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}">
+						<div
+							class="leading-loose tracking-wider-all"
+							style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
+						>
 							{#if p.text}
-								<div style="--page-color: {color};">
+								<div style="--page-color: {color}; color: {color};">
 									<PrismicRichText field={p.text} />
 								</div>
 							{/if}
