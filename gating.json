@@ -37,6 +37,12 @@
 				"individuell"
 			]
 		},
+		"ressourcenbuchung": {
+			"label": "Ressourcen-Buchung",
+			"plans": [
+				"individuell"
+			]
+		},
 		"global_events": {
 			"label": "Globale Events",
 			"plans": [
@@ -56,6 +62,9 @@
 		},
 		"event": {
 			"feature": "global_events"
+		},
+		"ressource": {
+			"feature": "ressourcenbuchung"
 		},
 		"settings": {
 			"fields": {
@@ -122,6 +131,9 @@
 		},
 		"Inhaltsverzeichnis": {
 			"plan": "professional"
+		},
+		"RessourceBuchung": {
+			"feature": "ressourcenbuchung"
 		}
 	},
 	"button_stile": {
