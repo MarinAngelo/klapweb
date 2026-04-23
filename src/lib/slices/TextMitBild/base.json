@@ -833,15 +833,6 @@
 						"placeholder_true": "Ja",
 						"default_value": false
 					}
-				},
-				"bild_runde_ecken": {
-					"type": "Boolean",
-					"config": {
-						"label": "Bild runde Ecken",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
 				}
 			},
 			"imageUrl": ""

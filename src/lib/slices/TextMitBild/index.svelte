@@ -6,7 +6,6 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
-	import { theme } from '$lib/stores/theme';
 
 	export let slice: Content.TextWithImageSlice;
 	export let slices: unknown[] | undefined = undefined;
@@ -90,7 +89,8 @@
 				imageLeft={item.bild_links ?? false}
 				imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 				imageRound={imageRound}
-				noRound={!(item.bild_runde_ecken ?? false)}
+				noRound={!imageRound}
+				mobileTextFirst={true}
 				columnGap={columnGapVal}
 				mobilePadding={textPad}
 				mobilePaddingTop={textPad}
@@ -99,7 +99,7 @@
 				{textCenterV}
 				{textCenterH}
 				fullscreen={false}
-				theme={$theme}
+	
 			/>
 		{/each}
 	</div>
@@ -130,7 +130,7 @@
 			imageLeft={isBildLinks}
 			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 			imageRound={p.image_round}
-			theme={$theme}
+
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}

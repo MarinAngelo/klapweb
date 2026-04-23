@@ -8,7 +8,6 @@
 	export let imageLeft: boolean = false;
 	export let imageBgColor: string = '';
 	export let imageRound: boolean = false;
-	export let theme: any;
 	export let overlayColor: string = '';
 	export let overlayTransparency: number = 100;
 	export let mobilePadding: string = '';
@@ -17,6 +16,7 @@
 	export let desktopPaddingY: string = '';
 	export let noRoundMobile: boolean = false;
 	export let noRound: boolean = false;
+	export let mobileTextFirst: boolean = false;
 	export let columnGap: 'kein' | 'klein' | 'mittel' | 'gross' = 'mittel';
 
 	const gapClass: Record<string, string> = {
@@ -39,7 +39,7 @@
 		<!-- Bild links, Text rechts -->
 		<div
 			id="6"
-			class="md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
 		>
 			{#if image}
@@ -88,7 +88,7 @@
 		</div>
 		<div
 			id="8"
-			class="text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
 				? 'text-center'
 				: ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
@@ -164,6 +164,7 @@
 			padding-left: var(--mob-pad, 0);
 			padding-right: var(--mob-pad, 0);
 			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
+			padding-bottom: var(--mob-pad-top, var(--mob-pad, 0));
 		}
 	}
 
