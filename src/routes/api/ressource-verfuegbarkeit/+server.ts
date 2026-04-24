@@ -1,10 +1,9 @@
 /**
- * GET /api/ressource-verfuegbarkeit?uid=ferienhaus-tessin
+ * GET /api/ressource-verfuegbarkeit?uid=...
  *
- * Returns all booked periods with their booked room names, so the frontend
- * can compute full vs. partial availability per day.
- *
- * Response: Array<{ von: string; bis: string; zimmer: string[] }>
+ * Returns all booked periods for a resource.
+ * zimmer: [] means the whole resource was booked (blocks all rooms).
+ * zimmer: ['Room A'] means only that room is blocked.
  */
 import type { RequestHandler } from '@sveltejs/kit';
 import { getBelegtePerioden } from '$lib/server/ressourceBuchungen';
