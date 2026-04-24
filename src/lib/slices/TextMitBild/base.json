@@ -604,6 +604,13 @@
 			"version": "sktwi1xtmkfgx8626",
 			"description": "Mehrere Text-Bild-Zeilen in einem Slice",
 			"primary": {
+				"section_title": {
+					"type": "Text",
+					"config": {
+						"label": "Sektions-Titel",
+						"placeholder": ""
+					}
+				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
