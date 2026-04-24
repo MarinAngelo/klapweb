@@ -41,6 +41,13 @@
 						}
 					]
 				}
+			},
+			"zimmer_einzelbuchbar": {
+				"type": "Boolean",
+				"config": {
+					"label": "Zimmer einzeln buchbar",
+					"default_value": false
+				}
 			}
 		},
 		"Kapazität": {
@@ -70,6 +77,7 @@
 								"label": "Betttyp",
 								"options": [
 									"Doppelbett",
+									"Doppelbett (140 cm)",
 									"Einzelbett",
 									"Stockbett",
 									"Schlafsofa"
@@ -181,29 +189,6 @@
 							"type": "SharedSlice"
 						}
 					}
-				}
-			}
-		},
-		"Kontakt": {
-			"ansprechperson": {
-				"type": "Text",
-				"config": {
-					"label": "Ansprechperson",
-					"placeholder": "z.B. Hans Muster"
-				}
-			},
-			"telefon": {
-				"type": "Text",
-				"config": {
-					"label": "Telefon",
-					"placeholder": "+41 79 123 45 67"
-				}
-			},
-			"email": {
-				"type": "Text",
-				"config": {
-					"label": "E-Mail",
-					"placeholder": "kontakt@beispiel.ch"
 				}
 			}
 		}

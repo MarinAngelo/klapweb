@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 
 	try {
 		const client = createClient({ fetch });
-		const doc = await client.getByUID('ressource', uid, { lang });
+		const doc = await client.getByUID('ressource', uid, { lang, fetchLinks: ['ressource.name'] });
 		const d = doc.data as any;
 
 		const schlafzimmer = (d.schlafzimmer ?? []).map((z: any) => ({
@@ -41,6 +41,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 			maxPersonen: d.max_personen ?? 0,
 			minNaechte: d.min_naechte ?? 1,
 			preisProNacht: d.preis_pro_nacht ?? 0,
+			zimmerEinzelbuchbar: d.zimmer_einzelbuchbar ?? false,
 			saisonpreise,
 			schlafzimmer
 		}), { headers: { 'Content-Type': 'application/json' } });

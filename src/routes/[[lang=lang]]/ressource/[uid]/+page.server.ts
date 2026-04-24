@@ -65,6 +65,7 @@ export async function load({ params, parent, fetch }: { params: { uid: string; l
 			maxPersonen: (d.max_personen as number) ?? 0,
 			minNaechte: (d.min_naechte as number) ?? 1,
 			preisProNacht: (d.preis_pro_nacht as number) ?? 0,
+			zimmerEinzelbuchbar: (d.zimmer_einzelbuchbar as boolean) ?? false,
 			saisonpreise,
 			schlafzimmer
 		}

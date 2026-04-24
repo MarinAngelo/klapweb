@@ -19,12 +19,14 @@ export interface ZimmerAuswahl {
 export interface RessourceBuchung {
 	id: string;           // blob key (ressourceUid/timestamp_uuid)
 	ressourceUid: string;
+	ressourceName?: string;
 	von: string;          // YYYY-MM-DD (check-in, inclusive)
 	bis: string;          // YYYY-MM-DD (check-out, exclusive)
 	personen: number;
-	zimmerauswahl?: ZimmerAuswahl[];
+	zimmerauswahl?: ZimmerAuswahl[]; // leer = ganze Ressource gebucht
 	preisCHF: number;
 	bookedAt: string;
+	status: 'pending' | 'confirmed';
 	name?: string;
 	email?: string;
 	telefon?: string;
@@ -70,7 +72,8 @@ export async function listAlleRessourceBuchungen(): Promise<RessourceBuchung[]> 
 }
 
 /**
- * Returns all overlapping bookings for a period, each with their booked room names.
+ * Returns all booked periods with their booked room names.
+ * zimmer: [] means the whole resource was booked (no room selection).
  */
 export async function getBelegtePerioden(
 	ressourceUid: string
@@ -83,44 +86,55 @@ export async function getBelegtePerioden(
 	}));
 }
 
-/**
- * Returns the room names that are already booked in the given period.
+/** Save a booking. Checks for conflicts before saving.
+ *
+ * Conflict rules:
+ * - zimmerauswahl empty (whole resource): any overlapping booking → conflict
+ * - zimmerauswahl with rooms: any overlapping whole-resource booking OR same room → conflict
  */
-export async function getBelegteZimmer(
-	ressourceUid: string,
-	von: string,
-	bis: string
-): Promise<Set<string>> {
-	const existing = await listRessourceBuchungen(ressourceUid);
-	const overlapping = existing.filter((b) => datesOverlap(von, bis, b.von, b.bis));
-	const names = overlapping.flatMap((b) =>
-		(b.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ)
-	);
-	return new Set(names);
-}
-
-/** Save a booking. Checks for room-level conflicts before saving. */
 export async function bucheRessource(buchung: Omit<RessourceBuchung, 'id'>): Promise<RessourceBuchung> {
-	const requestedNames = (buchung.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ);
-	const belegteZimmer = await getBelegteZimmer(buchung.ressourceUid, buchung.von, buchung.bis);
+	const existing = await listRessourceBuchungen(buchung.ressourceUid);
+	const overlapping = existing.filter((b) => datesOverlap(buchung.von, buchung.bis, b.von, b.bis));
 
-	// If zimmerauswahl is empty, fall back to any-overlap check
+	const requestedNames = (buchung.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ);
+
 	if (requestedNames.length === 0) {
-		const existing = await listRessourceBuchungen(buchung.ressourceUid);
-		if (existing.some((b) => datesOverlap(buchung.von, buchung.bis, b.von, b.bis))) {
-			throw new Error('CONFLICT');
-		}
+		// Ganze Ressource: jede Überschneidung = Konflikt
+		if (overlapping.length > 0) throw new Error('CONFLICT');
 	} else {
-		const conflict = requestedNames.some((name) => belegteZimmer.has(name));
-		if (conflict) throw new Error('CONFLICT');
+		// Einzelne Zimmer: Konflikt wenn ganze Ressource belegt ODER selbes Zimmer gebucht
+		const ganzeRessourceBelegt = overlapping.some((b) => (b.zimmerauswahl ?? []).length === 0);
+		if (ganzeRessourceBelegt) throw new Error('CONFLICT');
+		const belegteNamen = new Set(
+			overlapping.flatMap((b) => (b.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ))
+		);
+		if (requestedNames.some((name) => belegteNamen.has(name))) throw new Error('CONFLICT');
 	}
 
 	const id = `${buchung.ressourceUid}/${Date.now()}_${crypto.randomUUID()}`;
 	const record: RessourceBuchung = { id, ...buchung };
-
 	const store = getStore_();
 	await store.setJSON(id, record);
 	return record;
+}
+
+/** Get a single booking by ID. */
+export async function getRessourceBuchung(id: string): Promise<RessourceBuchung | null> {
+	const store = getStore_();
+	return store.get(id, { type: 'json' }) as Promise<RessourceBuchung | null>;
+}
+
+/** Update booking status. */
+export async function updateRessourceBuchungStatus(
+	id: string,
+	status: 'pending' | 'confirmed'
+): Promise<RessourceBuchung> {
+	const store = getStore_();
+	const existing = await store.get(id, { type: 'json' }) as RessourceBuchung | null;
+	if (!existing) throw new Error('Buchung nicht gefunden');
+	const updated = { ...existing, status };
+	await store.setJSON(id, updated);
+	return updated;
 }
 
 /** Delete a booking (admin). */

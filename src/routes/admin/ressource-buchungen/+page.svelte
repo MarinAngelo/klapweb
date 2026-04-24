@@ -57,7 +57,7 @@
 				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 					<thead>
 						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Gebucht am', ''] as col}
+							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Gebucht am', ''] as col}
 								<th style={tdNowrap}>{col}</th>
 							{/each}
 						</tr>
@@ -67,6 +67,13 @@
 							{@const n = naechte(b.von, b.bis)}
 							{@const isPast = b.bis < new Date().toISOString().slice(0, 10)}
 							<tr style="border-bottom: 1px solid #e5e7eb; {isPast ? 'opacity: 0.45;' : ''}">
+								<td style={tdNowrap}>
+									{#if b.status === 'confirmed'}
+										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Bestätigt</span>
+									{:else}
+										<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausstehend</span>
+									{/if}
+								</td>
 								<td style={tdNowrap}>{fmtDate(b.von)}</td>
 								<td style={tdNowrap}>{fmtDate(b.bis)}</td>
 								<td style="{tdNowrap} text-align: right;">{n}</td>
@@ -93,7 +100,15 @@
 								<td style="{tdNowrap} opacity: 0.5; font-size: 0.75rem;">
 									{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
 								</td>
-								<td style={tdStyle}>
+								<td style="{tdStyle} display: flex; gap: 0.75rem; align-items: center;">
+									{#if b.status !== 'confirmed'}
+										<form method="POST" action="?/bestaetigen&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button type="submit" style="color: #065f46; font-size: 0.75rem; background: #d1fae5; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+												✓ Bestätigen
+											</button>
+										</form>
+									{/if}
 									<form
 										method="POST"
 										action="?/delete&secret={secret}"

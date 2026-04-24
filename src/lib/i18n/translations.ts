@@ -104,6 +104,12 @@ export const translations: Record<string, Record<string, string>> = {
 	'Dieser Zeitraum ist leider nicht mehr verfügbar': { 'de-ch': 'Dieser Zeitraum ist leider nicht mehr verfügbar', 'en-us': 'This period is unfortunately no longer available' },
 	'Ein Fehler ist aufgetreten': { 'de-ch': 'Ein Fehler ist aufgetreten', 'en-us': 'An error occurred' },
 	'Keine Ressource verknüpft': { 'de-ch': 'Keine Ressource verknüpft', 'en-us': 'No resource linked' },
+	'Ganze Wohnung': { 'de-ch': 'Ganze Wohnung', 'en-us': 'Entire apartment' },
+	Einzelzimmer: { 'de-ch': 'Einzelzimmer', 'en-us': 'Individual room' },
+	Buchungsart: { 'de-ch': 'Buchungsart', 'en-us': 'Booking type' },
+	'Zimmer auswählen': { 'de-ch': 'Zimmer auswählen', 'en-us': 'Select room' },
+	'Zimmer wird geladen…': { 'de-ch': 'Zimmer wird geladen…', 'en-us': 'Loading room…' },
+	'Wohnung auswählen': { 'de-ch': 'Wohnung auswählen', 'en-us': 'Select apartment' },
 
 	// Slice-Namen
 	Akkordeon: { 'de-ch': 'Akkordeon', 'en-us': 'Accordion' },
