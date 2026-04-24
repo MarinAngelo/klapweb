@@ -82,6 +82,9 @@
 	animationOptions={anim.options}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
 >
+	{#if p.section_title}
+		<h2 class="text-center mb-16">{p.section_title}</h2>
+	{/if}
 	<div class="flex flex-col" style="gap: {rowGap};">
 		{#each multiItems as item}
 			<ImageTextGrid
