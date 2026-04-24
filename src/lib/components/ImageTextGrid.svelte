@@ -88,23 +88,29 @@
 		</div>
 		<div
 			id="8"
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH
 				? 'text-center'
 				: ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
+			{#if $$slots.default}
+				<div class="mt-auto pt-4"><slot /></div>
+			{/if}
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
 			id="6"
-			class="text-col {textCenterV ? 'flex flex-col justify-center' : ''} {textCenterH
+			class="text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH
 				? 'text-center'
 				: ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
+			{#if $$slots.default}
+				<div class="mt-auto pt-4"><slot /></div>
+			{/if}
 		</div>
 		<div
 			id="7"

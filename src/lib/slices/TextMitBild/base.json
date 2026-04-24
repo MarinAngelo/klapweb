@@ -833,6 +833,20 @@
 						"placeholder_true": "Ja",
 						"default_value": false
 					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Button Text",
+						"placeholder": "Mehr erfahren"
+					}
+				},
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Button Link",
+						"select": null
+					}
 				}
 			},
 			"imageUrl": ""

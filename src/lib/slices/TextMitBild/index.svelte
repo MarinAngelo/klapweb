@@ -6,6 +6,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.TextWithImageSlice;
 	export let slices: unknown[] | undefined = undefined;
@@ -99,8 +100,11 @@
 				{textCenterV}
 				{textCenterH}
 				fullscreen={false}
-	
-			/>
+			>
+				{#if item.button_text && isFilled.link(item.button_link)}
+					<Button link={item.button_link} text={item.button_text} mb={false} />
+				{/if}
+			</ImageTextGrid>
 		{/each}
 	</div>
 </Bounded>
