@@ -91,19 +91,11 @@
 		? bookedRanges.map((r) => ({ von: r.von, bis: r.bis, zimmer: [] as string[] }))
 		: bookedRanges;
 
-	onMount(async () => {
+	onMount(() => {
 		const uid = ressource?.uid ?? linkedUid;
 		if (!uid) return;
 
-		if (!ressource && linkedUid) {
-			try {
-				const lang = context?.lang ?? 'de-ch';
-				const res = await fetch(`/api/ressource-info?uid=${linkedUid}&lang=${lang}`);
-				if (res.ok) ressource = await res.json();
-			} catch { /* non-critical */ }
-		}
-
-		if (!context?.bookedRanges) {
+		async function refreshVerfuegbarkeit() {
 			try {
 				const res = await fetch(`/api/ressource-verfuegbarkeit?uid=${uid}`);
 				if (res.ok) bookedRanges = await res.json();
@@ -111,6 +103,31 @@
 				calendarLoading = false;
 			}
 		}
+
+		async function init() {
+			if (!ressource && linkedUid) {
+				try {
+					const lang = context?.lang ?? 'de-ch';
+					const res = await fetch(`/api/ressource-info?uid=${linkedUid}&lang=${lang}`);
+					if (res.ok) ressource = await res.json();
+				} catch { /* non-critical */ }
+			}
+			if (!context?.bookedRanges) await refreshVerfuegbarkeit();
+		}
+
+		init();
+
+		function onVisibilityChange() {
+			if (document.visibilityState === 'visible') refreshVerfuegbarkeit();
+		}
+		document.addEventListener('visibilitychange', onVisibilityChange);
+
+		const pollInterval = setInterval(refreshVerfuegbarkeit, 5 * 60 * 1000);
+
+		return () => {
+			document.removeEventListener('visibilitychange', onVisibilityChange);
+			clearInterval(pollInterval);
+		};
 	});
 
 	// ── Price calculation ────────────────────────────────────────────────────
@@ -287,7 +304,15 @@
 		</div>
 	{/if}
 
-	{#if success}
+	{#if calendarLoading}
+		<div class="flex items-center justify-center py-20 gap-3 text-sm opacity-60">
+			<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="color:{textColor};">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+			</svg>
+			{$_('Verfügbarkeit wird geladen…')}
+		</div>
+	{:else if success}
 		<div class="max-w-xl rounded p-6" style="border: 1px solid {textColor}44;">
 			<p class="text-lg font-semibold mb-2">
 				{slice.primary.success_heading || $_('Anfrage erhalten!')}
@@ -340,25 +365,27 @@
 				</div>
 			{/if}
 
-			<!-- Calendar -->
-			<div class="rounded p-5 relative" style="background: #83bd69; border: 1px solid {textColor}22;">
-				{#if calendarLoading}
-					<div class="flex items-center justify-center py-12 gap-3 opacity-50 text-sm">
-						<svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" style="color:{textColor};">
-							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
-						</svg>
-						{$_('Verfügbarkeit wird geladen…')}
-					</div>
-				{:else}
-					<RessourceKalender
-						bookedRanges={calendarBookedRanges}
-						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
-		bind:von
-						bind:bis
-						{textColor}
-					/>
+			<!-- Infoleiste -->
+		{#if ressource?.minNaechte > 1 || ressource?.preisProNacht}
+			<div class="flex flex-wrap gap-6 text-base">
+				{#if ressource?.preisProNacht}
+					<span>{$_('Preis pro Nacht ab')} <strong>{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(ressource.preisProNacht)}</strong></span>
 				{/if}
+				{#if ressource?.minNaechte > 1}
+					<span>{$_('Mindestaufenthalt')}: <strong>{ressource.minNaechte} {$_('Nächte')}</strong></span>
+				{/if}
+			</div>
+		{/if}
+
+		<!-- Calendar -->
+			<div class="rounded p-5 relative" style="background: #83bd69; border: 1px solid {textColor}22;">
+				<RessourceKalender
+					bookedRanges={calendarBookedRanges}
+					allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
+					bind:von
+					bind:bis
+					{textColor}
+				/>
 			</div>
 
 			<div class="grid md:grid-cols-2 gap-10">

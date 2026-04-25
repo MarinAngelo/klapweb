@@ -5,7 +5,6 @@
 	export let data: {
 		doc: any;
 		title: string;
-		bookedRanges: Array<{ von: string; bis: string; zimmer: string[] }>;
 		ressource: {
 			uid: string;
 			name: string;
@@ -26,5 +25,5 @@
 <SliceZone
 	slices={data.doc.data.slices ?? []}
 	{components}
-	context={{ ressource: data.ressource, bookedRanges: data.bookedRanges }}
+	context={{ ressource: data.ressource }}
 />
