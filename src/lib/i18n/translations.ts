@@ -94,6 +94,7 @@ export const translations: Record<string, Record<string, string>> = {
 	'Ausgewählte Zimmer bieten Platz für maximal': { 'de-ch': 'Ausgewählte Zimmer bieten Platz für maximal', 'en-us': 'Selected rooms accommodate a maximum of' },
 	Kapazität: { 'de-ch': 'Kapazität', 'en-us': 'Capacity' },
 	Mindestaufenthalt: { 'de-ch': 'Mindestaufenthalt', 'en-us': 'Minimum stay' },
+	'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar': { 'de-ch': 'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar', 'en-us': 'Only individual rooms are available for the selected period' },
 	'Preis pro Nacht ab': { 'de-ch': 'Preis pro Nacht ab', 'en-us': 'Price per night from' },
 	'Jetzt anfragen': { 'de-ch': 'Jetzt anfragen', 'en-us': 'Request now' },
 	'Wird gesendet…': { 'de-ch': 'Wird gesendet…', 'en-us': 'Sending…' },

@@ -6,6 +6,8 @@
 	export let von = '';
 	export let bis = '';
 	export let textColor = '#000000';
+	export let ganzeRessource = false; // wenn true, blockiert auch Teilbuchungen
+	export let partialGeklickt = false;
 
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
@@ -83,23 +85,33 @@
 	function isRangeEnd(ds: string) { return !!bis && ds === bis; }
 	function isToday(ds: string) { return ds === todayStr; }
 
+	function isBlocked(ds: string): boolean {
+		const s = getStatus(ds);
+		return s === 'full' || (ganzeRessource && s === 'partial');
+	}
+
 	function handleDayClick(ds: string) {
-		if (isPast(ds) || getStatus(ds) === 'full') return;
-		if (!von || (von && bis)) {
+		if (isPast(ds)) return;
+		if (isBlocked(ds)) {
+			if (ganzeRessource && getStatus(ds) === 'partial') partialGeklickt = true;
+			return;
+		}
+		if (von && !bis && ds === von) {
+			von = ''; bis = '';
+		} else if (!von || (von && bis)) {
 			von = ds; bis = '';
 		} else if (ds <= von) {
 			von = ds; bis = '';
 		} else {
-			// Block if range crosses a fully-booked day
 			const cur = new Date(von + 'T12:00:00Z');
 			cur.setUTCDate(cur.getUTCDate() + 1);
 			const endD = new Date(ds + 'T12:00:00Z');
-			let crossesFull = false;
+			let crossesBlocked = false;
 			while (cur < endD) {
-				if (getStatus(cur.toISOString().slice(0, 10)) === 'full') { crossesFull = true; break; }
+				if (isBlocked(cur.toISOString().slice(0, 10))) { crossesBlocked = true; break; }
 				cur.setUTCDate(cur.getUTCDate() + 1);
 			}
-			if (crossesFull) { von = ds; bis = ''; } else { bis = ds; }
+			if (crossesBlocked) { von = ds; bis = ''; } else { bis = ds; }
 		}
 	}
 
@@ -123,8 +135,8 @@
 	$: cells1 = buildMonth(month1.year, month1.month);
 	$: cells2 = buildMonth(month2.year, month2.month);
 
-	// Force cell re-render when statusMap changes by including it in cells
-	$: allCells = { cells1, cells2, statusMap };
+	// Force cell re-render when statusMap or selection changes
+	$: allCells = { cells1, cells2, statusMap, von, bis, hoverDate };
 
 	const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 	const monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
@@ -153,7 +165,7 @@
 				<p class="text-sm font-semibold text-center mb-2">{monthNames[m.month]} {m.year}</p>
 				<div class="grid grid-cols-7 mb-1">
 					{#each weekdays as wd}
-						<div class="text-center text-xs opacity-40 py-1">{wd}</div>
+						<div class="text-center text-xs py-1">{wd}</div>
 					{/each}
 				</div>
 				<div class="grid grid-cols-7">
@@ -168,7 +180,8 @@
 								{@const start = isRangeStart(cell.ds)}
 								{@const end = isRangeEnd(cell.ds)}
 								{@const hover = isHover(cell.ds)}
-								{@const disabled = status === 'full' || past}
+								{@const blocked = isBlocked(cell.ds)}
+								{@const disabled = blocked || past}
 								{@const belegteNamen = status === 'partial' ? getBelegteNamen(cell.ds) : []}
 								{@const freieNamen = status === 'partial' ? allZimmerNamen.filter(n => !belegteNamen.includes(n)) : []}
 								<button
@@ -179,11 +192,10 @@
 									{disabled}
 									class="h-8 text-xs rounded transition-colors"
 									style="
-										{status === 'full'    ? 'background:#fee2e2;color:#991b1b;cursor:default;' : ''}
-										{status === 'partial' ? 'background:#dcfce7;color:#166534;cursor:pointer;' : ''}
+										{status === 'full' ? 'background:#e29898;color:#5c1f1f;cursor:default;' : ''}
+										{status === 'partial' ? `background:#dcfce7;color:#166534;cursor:${ganzeRessource ? 'default' : 'pointer'};` : ''}
 										{past && status === 'free' ? 'opacity:0.3;cursor:default;' : ''}
-										{(start || end) && status !== 'full' ? 'background:#2563eb;color:#fff;cursor:pointer;' : ''}
-										{(sel || hover) && !start && !end && status === 'free' ? 'background:#dbeafe;color:#1e40af;cursor:pointer;' : ''}
+										{(sel || start || end || hover) && !blocked ? 'background:#2563eb;color:#fff;cursor:pointer;' : ''}
 										{isToday(cell.ds) && !sel && status === 'free' ? 'font-weight:700;' : ''}
 									"
 									title={
@@ -206,7 +218,7 @@
 	<!-- Legend -->
 	<div class="flex flex-wrap gap-4 mt-4 text-xs opacity-60">
 		<span class="flex items-center gap-1">
-			<span class="inline-block w-3 h-3 rounded" style="background:#fee2e2;"></span>
+			<span class="inline-block w-3 h-3 rounded" style="background:#e29898;"></span>
 			{$_('Voll belegt')}
 		</span>
 		<span class="flex items-center gap-1">

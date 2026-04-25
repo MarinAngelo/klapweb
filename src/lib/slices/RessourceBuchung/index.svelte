@@ -86,7 +86,8 @@
 		0
 	);
 
-	$: calendarBookedRanges = (isWohnung && buchungsart === 'wohnung')
+	// Im Wohnung-Modus alle Buchungen als voll belegt anzeigen (auch Teilbuchungen blockieren)
+	$: calendarBookedRanges = buchungsart === 'wohnung'
 		? bookedRanges.map((r) => ({ von: r.von, bis: r.bis, zimmer: [] as string[] }))
 		: bookedRanges;
 
@@ -166,6 +167,8 @@
 
 	$: today = new Date().toISOString().slice(0, 10);
 	$: bisMin = von || today;
+
+
 	$: step1Valid = !!(von && bis && !priceError && !zimmerError && personen > 0);
 	$: formValid = !!(step1Valid && name && email && telefon);
 
@@ -183,7 +186,7 @@
 		loading = true;
 		errorMsg = '';
 
-		const zimmerToSubmit = (isWohnung && buchungsart === 'wohnung') ? [] : selectedZimmer;
+		const zimmerToSubmit = buchungsart === 'zimmer' ? selectedZimmer : [];
 
 		try {
 			const res = await fetch('/api/buche-ressource', {
@@ -338,7 +341,7 @@
 			{/if}
 
 			<!-- Calendar -->
-			<div class="rounded p-5 relative" style="border: 1px solid {textColor}22;">
+			<div class="rounded p-5 relative" style="background: #83bd69; border: 1px solid {textColor}22;">
 				{#if calendarLoading}
 					<div class="flex items-center justify-center py-12 gap-3 opacity-50 text-sm">
 						<svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" style="color:{textColor};">
@@ -350,8 +353,8 @@
 				{:else}
 					<RessourceKalender
 						bookedRanges={calendarBookedRanges}
-						allZimmerNamen={showZimmerSelection ? (ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ) : []}
-						bind:von
+						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
+		bind:von
 						bind:bis
 						{textColor}
 					/>
