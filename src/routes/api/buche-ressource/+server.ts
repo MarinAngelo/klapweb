@@ -80,7 +80,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	const { ressourceUid, von, bis, personen, zimmerauswahl, name, email, telefon, nachricht } = body;
 
 	// Validation
-	if (!ressourceUid || !von || !bis || !personen || !name || !email) {
+	if (!ressourceUid || !von || !bis || !personen || !name || !email || !telefon) {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 	if (von >= bis) {
