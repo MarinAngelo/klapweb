@@ -24,6 +24,7 @@ import Stimmen from './Stimmen/index.svelte';
 import Galerie from './Galerie/index.svelte';
 import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
 import RessourceBuchung from './RessourceBuchung/index.svelte';
+import Aufgaben from './Aufgaben/index.svelte';
 import PlanFilter from './PlanFilter/index.svelte';
 
 export const components = {
@@ -51,5 +52,6 @@ export const components = {
 	galerie: Galerie,
 	inhaltsverzeichnis: Inhaltsverzeichnis,
 	ressource_buchung: RessourceBuchung,
+	aufgaben: Aufgaben,
 	plan_filter: PlanFilter
 };

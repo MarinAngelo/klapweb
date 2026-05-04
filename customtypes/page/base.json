@@ -84,6 +84,9 @@
 						"ressource_buchung": {
 							"type": "SharedSlice"
 						},
+						"aufgaben": {
+							"type": "SharedSlice"
+						},
 						"plan_filter": {
 							"type": "SharedSlice"
 						}

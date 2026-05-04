@@ -3,6 +3,7 @@
 	import { PrismicRichText } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
 	import { onMount } from 'svelte';
@@ -292,7 +293,7 @@
 	data-slice-variation={slice.variation}
 	style="background-color: {bgColor}; color: {textColor};"
 >
-	<div class="flex flex-col gap-8 max-w-4xl mx-auto w-full">
+	<div class="flex flex-col gap-8 w-full">
 
 	{#if slice.primary.heading?.length}
 		<PrismicRichText field={slice.primary.heading} />
@@ -451,16 +452,11 @@
 								{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
 								{@const belegt = belegteZimmerNamen.has(zimmerName)}
 								<label
+									for="zimmer-{i}"
 									class="flex items-center gap-3 text-sm"
 									style="{belegt ? 'opacity: 0.4; cursor: not-allowed;' : 'cursor: pointer;'}"
 								>
-									<input
-										type="checkbox"
-										bind:checked={zimmerSelected[i]}
-										disabled={belegt}
-										class="w-4 h-4 shrink-0"
-										style="accent-color: {textColor};"
-									/>
+									<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
 									<span class="flex-1" style="{belegt ? 'text-decoration: line-through;' : ''}">{zimmerName}</span>
 									<span class="opacity-60">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
 									{#if belegt && (von || bis)}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TIMEZONES } from '$lib/utils/timezones';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 
 	export let field: {
 		field_name: string | null;
@@ -463,14 +464,7 @@
 	{:else if htmlType === 'checkbox'}
 		<div class="flex items-center">
 			<label class="flex items-center">
-				<input
-					type="checkbox"
-					name={key}
-					checked={field.required}
-					value="Ausgewählt"
-					class="h-5 w-5 cursor-pointer"
-					style="width: 20px; height: 20px;"
-				/>
+				<Checkbox name={key} checked={field.required} value="Ausgewählt" />
 				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}"
 					>{field.field_name ?? ''}</span
 				>

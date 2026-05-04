@@ -66,6 +66,12 @@
 		"ressource": {
 			"feature": "ressourcenbuchung"
 		},
+		"aufgabe": {
+			"feature": "ressourcenbuchung"
+		},
+		"werkzeug": {
+			"feature": "ressourcenbuchung"
+		},
 		"settings": {
 			"fields": {
 				"pwa_enabled": {
@@ -143,6 +149,9 @@
 			}
 		},
 		"RessourceBuchung": {
+			"feature": "ressourcenbuchung"
+		},
+		"Aufgaben": {
 			"feature": "ressourcenbuchung"
 		}
 	},

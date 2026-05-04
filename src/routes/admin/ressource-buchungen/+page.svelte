@@ -32,6 +32,19 @@
 
 	const tdStyle = 'padding: 0.5rem 0.75rem;';
 	const tdNowrap = tdStyle + ' white-space: nowrap;';
+
+	const statusLabels: Record<string, string> = {
+		angenommen: 'Angenommen',
+		annahme_bestaetigt: 'Bestätigt',
+		erledigt: 'Erledigt'
+	};
+
+	let expandedBuchungen = new Set<string>();
+	function toggleExpand(id: string) {
+		if (expandedBuchungen.has(id)) expandedBuchungen.delete(id);
+		else expandedBuchungen.add(id);
+		expandedBuchungen = expandedBuchungen;
+	}
 </script>
 
 <svelte:head><title>Ressource-Buchungen</title></svelte:head>
@@ -57,13 +70,13 @@
 				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 					<thead>
 						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Gebucht am', ''] as col}
+							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', ''] as col}
 								<th style={tdNowrap}>{col}</th>
 							{/each}
 						</tr>
 					</thead>
 					<tbody>
-						{#each buchungen.sort((a, b) => a.von.localeCompare(b.von)) as b}
+						{#each buchungen.sort((x, y) => x.von.localeCompare(y.von)) as b}
 							{@const n = naechte(b.von, b.bis)}
 							{@const isPast = b.bis < new Date().toISOString().slice(0, 10)}
 							<tr style="border-bottom: 1px solid #e5e7eb; {isPast ? 'opacity: 0.45;' : ''}">
@@ -97,6 +110,14 @@
 									{:else}–{/if}
 								</td>
 								<td style={tdStyle}>{b.telefon ?? '–'}</td>
+								<td style="{tdStyle} font-family: monospace; font-size: 0.7rem; max-width: 160px;">
+									<button
+										type="button"
+										title="Klicken zum Kopieren"
+										style="cursor: pointer; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; background: none; border: none; padding: 0; font-family: monospace; font-size: 0.7rem; color: inherit;"
+										on:click={() => navigator.clipboard.writeText(b.id)}
+									>{b.id}</button>
+								</td>
 								<td style="{tdNowrap} opacity: 0.5; font-size: 0.75rem;">
 									{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
 								</td>
@@ -121,6 +142,46 @@
 									</form>
 								</td>
 							</tr>
+							{@const annahmen = data.annahmenMap?.[b.id] ?? []}
+							{#if annahmen.length > 0}
+								<tr>
+									<td colspan="13" style="padding: 0;">
+										<button
+											type="button"
+											on:click={() => toggleExpand(b.id)}
+											style="width: 100%; text-align: left; padding: 0.375rem 0.75rem; background: #f0fdf4; border: none; border-top: 1px solid #d1fae5; cursor: pointer; font-size: 0.75rem; color: #065f46;"
+										>
+											{expandedBuchungen.has(b.id) ? '▾' : '▸'}
+											{annahmen.length} Aufgabe{annahmen.length !== 1 ? 'n' : ''}
+											· Credits erledigt: {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(annahmen.filter(a => a.status === 'erledigt').reduce((s, a) => s + (a.credits ?? 0), 0))}
+											· Restbetrag: {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(Math.max(0, b.preisCHF - annahmen.filter(a => a.status === 'erledigt').reduce((s, a) => s + (a.credits ?? 0), 0)))}
+										</button>
+										{#if expandedBuchungen.has(b.id)}
+											<table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; background: #f9fafb;">
+												<thead>
+													<tr style="border-bottom: 1px solid #e5e7eb;">
+														{#each ['Aufgabe', 'Name', 'Status', 'Credits', 'Minuten', 'Erledigt am'] as col}
+															<th style="padding: 0.25rem 0.75rem; font-weight: 600; text-align: left; white-space: nowrap;">{col}</th>
+														{/each}
+													</tr>
+												</thead>
+												<tbody>
+													{#each annahmen as a}
+														<tr style="border-bottom: 1px solid #f3f4f6;">
+															<td style="padding: 0.25rem 0.75rem;">{a.aufgabeTitel}</td>
+															<td style="padding: 0.25rem 0.75rem; white-space: nowrap;">{a.name}</td>
+															<td style="padding: 0.25rem 0.75rem; white-space: nowrap;">{statusLabels[a.status] ?? a.status}</td>
+															<td style="padding: 0.25rem 0.75rem; white-space: nowrap;">{a.credits != null ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(a.credits) : '–'}</td>
+															<td style="padding: 0.25rem 0.75rem;">{a.minuten != null ? `${a.minuten} min` : '–'}</td>
+															<td style="padding: 0.25rem 0.75rem; white-space: nowrap; opacity: 0.6;">{a.erledigtAt ? new Date(a.erledigtAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '–'}</td>
+														</tr>
+													{/each}
+												</tbody>
+											</table>
+										{/if}
+									</td>
+								</tr>
+							{/if}
 						{/each}
 					</tbody>
 				</table>

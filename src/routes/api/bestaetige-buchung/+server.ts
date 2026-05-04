@@ -63,12 +63,12 @@ export const GET: RequestHandler = async ({ url }) => {
 			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
 		);
 		const buchungsDetails = [
-			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
+			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid} (${buchung.ressourceUid})`,
 			`Anreise:   ${vonFormatted}`,
 			`Abreise:   ${bisFormatted}`,
 			`Nächte:    ${naechte}`,
 			`Personen:  ${buchung.personen}`,
-			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : []),
+			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
 			`Total:     ${preisFormatted}`
 		].join('\n');
 
@@ -84,6 +84,9 @@ export const GET: RequestHandler = async ({ url }) => {
 					`Ihre Buchungsanfrage wurde bestätigt.`,
 					``,
 					buchungsDetails,
+					``,
+					`Ihre Buchungs-ID: ${buchung!.id}`,
+					`(Diese ID benötigen Sie, um Aufgaben auf unserer Website anzunehmen.)`,
 					``,
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,

@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
 import { listAlleRessourceBuchungen, deleteRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
+import { listAnnahmenFuerBuchung } from '$lib/server/aufgaben';
 import { env } from '$env/dynamic/private';
 
 export const prerender = false;
@@ -19,7 +20,17 @@ export const load: PageServerLoad = async ({ url }) => {
 		blobError = String(e);
 	}
 
-	return { buchungen, blobError };
+	// Annahmen pro Buchung laden (non-critical)
+	const annahmenMap: Record<string, Awaited<ReturnType<typeof listAnnahmenFuerBuchung>>> = {};
+	await Promise.all(
+		buchungen.map(async (b) => {
+			try {
+				annahmenMap[b.id] = await listAnnahmenFuerBuchung(b.id);
+			} catch { annahmenMap[b.id] = []; }
+		})
+	);
+
+	return { buchungen, blobError, annahmenMap };
 };
 
 export const actions: Actions = {
@@ -65,12 +76,12 @@ export const actions: Actions = {
 				(z: any) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
 			);
 			const buchungsDetails = [
-				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
+				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid} (${buchung.ressourceUid})`,
 				`Anreise:   ${vonFormatted}`,
 				`Abreise:   ${bisFormatted}`,
 				`Nächte:    ${naechte}`,
 				`Personen:  ${buchung.personen}`,
-				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : []),
+				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
 				`Total:     ${preisFormatted}`
 			].join('\n');
 
@@ -86,6 +97,9 @@ export const actions: Actions = {
 					`Ihre Buchungsanfrage wurde bestätigt.`,
 					``,
 					buchungsDetails,
+					``,
+					`Ihre Buchungs-ID: ${buchung.id}`,
+					`(Diese ID benötigen Sie, um Aufgaben auf unserer Website anzunehmen.)`,
 					``,
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,
