@@ -4,6 +4,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
+	import InputField from '$lib/components/InputField.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
 	import { onMount } from 'svelte';
@@ -40,7 +41,7 @@
 	let ressource: RessourceData | null = context?.ressource ?? null;
 	const linkedUid: string | undefined = (slice.primary as any)?.ressource_link?.uid;
 
-	let buchungsart = 'wohnung'; // 'wohnung' | 'zimmer'
+	let buchungsart = 'zimmer'; // 'wohnung' | 'zimmer'
 	$: isWohnung = !!(ressource?.zimmerEinzelbuchbar && (ressource?.schlafzimmer?.length ?? 0) > 0);
 
 	// ── Step ─────────────────────────────────────────────────────────────────
@@ -57,7 +58,7 @@
 	let zimmerSelected: boolean[] = [];
 	$: if (ressource?.schlafzimmer) {
 		if (zimmerSelected.length !== ressource.schlafzimmer.length) {
-			zimmerSelected = ressource.schlafzimmer.map(() => true);
+			zimmerSelected = ressource.schlafzimmer.map(() => false);
 		}
 	}
 
@@ -154,14 +155,18 @@
 	}
 
 	$: anzahlNaechte = naechte(von, bis);
-	$: totalPreis = von && bis ? berechneTotal(von, bis) : 0;
+	$: zimmerFaktor = buchungsart === 'zimmer' ? selectedZimmer.length : anzahlZimmer;
+	$: totalPreis = von && bis ? berechneTotal(von, bis) * Math.max(1, zimmerFaktor) : 0;
 	$: preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(totalPreis);
 
 	function formatDate(d: string): string {
 		if (!d) return '';
-		return new Date(d + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
+		const date = new Date(d + 'T12:00:00Z');
+		if (isNaN(date.getTime())) return '';
+		const day = String(date.getUTCDate()).padStart(2, '0');
+		const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+		const year = date.getUTCFullYear();
+		return `${day}.${month}.${year}`;
 	}
 
 	// ── Validation ───────────────────────────────────────────────────────────
@@ -188,7 +193,8 @@
 
 
 	$: step1Valid = !!(von && bis && !priceError && !zimmerError && personen > 0);
-	$: formValid = !!(step1Valid && name && email && telefon);
+	$: referenzEmailValid = !referenzEmail ? true : referenzEmailFound === true;
+	$: formValid = !!(step1Valid && name && email && telefon && referenzEmailValid);
 
 	function goToStep2() {
 		if (step1Valid) step = 2;
@@ -244,47 +250,44 @@
 	function switchBuchungsart(art: string) {
 		buchungsart = art;
 		von = ''; bis = '';
-		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => true);
+		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => false);
 	}
+
+	$: anzahlZimmer = ressource?.schlafzimmer?.length ?? 1;
+	$: preisProNachtAnzeige = ressource
+		? (buchungsart === 'wohnung' && anzahlZimmer > 1
+			? ressource.preisProNacht * anzahlZimmer
+			: ressource.preisProNacht)
+		: 0;
 
 	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 	$: textColor = (slice.primary as any).text_color || $theme.pageColor;
 
-	// Telefon: Vorwahl + Nummer
-	const countryPrefixes = [
-		{ prefix: '+41', label: '🇨🇭 +41' },
-		{ prefix: '+49', label: '🇩🇪 +49' },
-		{ prefix: '+43', label: '🇦🇹 +43' },
-		{ prefix: '+33', label: '🇫🇷 +33' },
-		{ prefix: '+39', label: '🇮🇹 +39' },
-		{ prefix: '+44', label: '🇬🇧 +44' },
-		{ prefix: '+1', label: '🇺🇸 +1' },
-		{ prefix: '+34', label: '🇪🇸 +34' },
-		{ prefix: '+31', label: '🇳🇱 +31' },
-		{ prefix: '+32', label: '🇧🇪 +32' },
-		{ prefix: '+352', label: '🇱🇺 +352' },
-		{ prefix: '+48', label: '🇵🇱 +48' },
-		{ prefix: '+351', label: '🇵🇹 +351' },
-		{ prefix: '+420', label: '🇨🇿 +420' },
-		{ prefix: '+7', label: '🇷🇺 +7' },
-		{ prefix: '+90', label: '🇹🇷 +90' },
-		{ prefix: '+86', label: '🇨🇳 +86' },
-		{ prefix: '+81', label: '🇯🇵 +81' },
-		{ prefix: '+82', label: '🇰🇷 +82' },
-		{ prefix: '+91', label: '🇮🇳 +91' },
-		{ prefix: '+55', label: '🇧🇷 +55' },
-		{ prefix: '+52', label: '🇲🇽 +52' },
-		{ prefix: '+54', label: '🇦🇷 +54' },
-		{ prefix: '+61', label: '🇦🇺 +61' },
-		{ prefix: '+64', label: '🇳🇿 +64' },
-		{ prefix: '+27', label: '🇿🇦 +27' },
-		{ prefix: '+971', label: '🇦🇪 +971' },
-		{ prefix: '+966', label: '🇸🇦 +966' },
-		{ prefix: '+20', label: '🇪🇬 +20' }
-	];
-	let telefonPrefix = '+41';
-	let telefonNummer = '';
-	$: telefon = telefonNummer ? `${telefonPrefix} ${telefonNummer}` : '';
+	let telefon = '';
+	let referenzEmail = '';
+	let referenzEmailFound: boolean | null = null;
+	let referenzEmailChecking = false;
+	let referenzEmailTimer: ReturnType<typeof setTimeout>;
+
+	function checkReferenzEmail(val: string) {
+		clearTimeout(referenzEmailTimer);
+		referenzEmailFound = null;
+		if (!val || !val.includes('@')) return;
+		referenzEmailChecking = true;
+		referenzEmailTimer = setTimeout(async () => {
+			try {
+				const res = await fetch(`/api/check-referenz-email?email=${encodeURIComponent(val.trim())}`);
+				const data = await res.json();
+				referenzEmailFound = data.found as boolean;
+			} catch {
+				referenzEmailFound = null;
+			} finally {
+				referenzEmailChecking = false;
+			}
+		}, 150);
+	}
+
+	$: checkReferenzEmail(referenzEmail);
 </script>
 
 <Bounded
@@ -353,16 +356,16 @@
 				<div class="flex gap-2">
 					<button
 						type="button"
-						on:click={() => switchBuchungsart('wohnung')}
-						class="px-4 py-2 rounded text-sm font-medium transition-all"
-						style="background-color: {buchungsart === 'wohnung' ? textColor : 'transparent'}; color: {buchungsart === 'wohnung' ? bgColor : textColor}; border: 1px solid {textColor}44;"
-					>{$_('Ganze Wohnung')}</button>
-					<button
-						type="button"
 						on:click={() => switchBuchungsart('zimmer')}
 						class="px-4 py-2 rounded text-sm font-medium transition-all"
 						style="background-color: {buchungsart === 'zimmer' ? textColor : 'transparent'}; color: {buchungsart === 'zimmer' ? bgColor : textColor}; border: 1px solid {textColor}44;"
 					>{$_('Einzelzimmer')}</button>
+					<button
+						type="button"
+						on:click={() => switchBuchungsart('wohnung')}
+						class="px-4 py-2 rounded text-sm font-medium transition-all"
+						style="background-color: {buchungsart === 'wohnung' ? textColor : 'transparent'}; color: {buchungsart === 'wohnung' ? bgColor : textColor}; border: 1px solid {textColor}44;"
+					>{$_('Ganze Wohnung')}</button>
 				</div>
 			{/if}
 
@@ -370,7 +373,7 @@
 		{#if ressource?.minNaechte > 1 || ressource?.preisProNacht}
 			<div class="flex flex-wrap gap-6 text-base">
 				{#if ressource?.preisProNacht}
-					<span>{$_('Preis pro Nacht ab')} <strong>{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(ressource.preisProNacht)}</strong></span>
+					<span>{$_('Preis pro Nacht ab')} <strong>{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisProNachtAnzeige)}</strong></span>
 				{/if}
 				{#if ressource?.minNaechte > 1}
 					<span>{$_('Mindestaufenthalt')}: <strong>{ressource.minNaechte} {$_('Nächte')}</strong></span>
@@ -534,7 +537,7 @@
 							<p>{$_('Mindestaufenthalt')}: {ressource?.minNaechte} {$_('Nächte')}</p>
 						{/if}
 						{#if ressource?.preisProNacht}
-							<p>{$_('Preis pro Nacht ab')} {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(ressource.preisProNacht)}</p>
+							<p>{$_('Preis pro Nacht ab')} {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisProNachtAnzeige)}</p>
 						{/if}
 					</div>
 				</div>
@@ -602,27 +605,29 @@
 					/>
 				</div>
 
+				<InputField
+					field={{ field_name: $_('Telefon'), field_type: 'Telefon', required: true }}
+					bind:value={telefon}
+				/>
+
 				<div>
-					<label for="telefon-nr" class="block text-base font-bold">{$_('Telefon')} *</label>
-					<div class="flex items-end mt-1 border-b focus-within:border-b-2" style="border-bottom-color: var(--page-color);">
-						<select
-							bind:value={telefonPrefix}
-							class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
-						>
-							{#each countryPrefixes as cp}
-								<option value={cp.prefix}>{cp.label}</option>
-							{/each}
-						</select>
-						<input
-							id="telefon-nr"
-							type="tel"
-							bind:value={telefonNummer}
-							required
-							class="input p-2 flex-1 focus:outline-none focus:ring-0"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
-						/>
-					</div>
+					<label for="referenz-email" class="block text-base font-bold">{$_('Freundes-Referenz-E-Mail Adresse')}</label>
+					<input
+						id="referenz-email"
+						type="email"
+						bind:value={referenzEmail}
+						class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
+						style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+					/>
+					{#if referenzEmailChecking}
+						<p class="text-xs opacity-50 -mt-3">{$_('Wird geprüft…')}</p>
+					{:else if referenzEmail && referenzEmail.includes('@')}
+						{#if referenzEmailFound === true}
+							<p class="text-xs -mt-3" style="color: #16a34a;">✓ {$_('E-Mail gefunden')}</p>
+						{:else if referenzEmailFound === false}
+							<p class="text-xs -mt-3" style="color: #dc2626;">✗ {$_('E-Mail nicht gefunden')}</p>
+						{/if}
+					{/if}
 				</div>
 
 				<div>
