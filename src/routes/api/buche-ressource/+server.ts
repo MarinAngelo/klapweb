@@ -191,12 +191,12 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
 		);
 		const buchungsDetails = [
-			`Ressource: ${ressourceName}`,
+			`Ressource: ${ressourceName} (${ressourceUid})`,
 			`Anreise:   ${vonFormatted}`,
 			`Abreise:   ${bisFormatted}`,
 			`Nächte:    ${anzahlNaechte}`,
 			`Personen:  ${personen}`,
-			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : []),
+			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
 			`Total:     ${preisFormatted}`
 		].join('\n');
 

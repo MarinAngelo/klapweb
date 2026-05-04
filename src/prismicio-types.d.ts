@@ -57,6 +57,127 @@ type ContentRelationshipFieldWithData<
 	>;
 }[Exclude<TCustomType[number], string>['id']];
 
+/**
+ * Item in *Aufgabe → Werkzeuge*
+ */
+export interface AufgabeDocumentDataWerkzeugeItem {
+	/**
+	 * Werkzeug field in *Aufgabe → Werkzeuge*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgabe.werkzeuge[].werkzeug
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	werkzeug: prismic.ContentRelationshipField<'werkzeug'>;
+}
+
+/**
+ * Content for Aufgabe documents
+ */
+interface AufgabeDocumentData {
+	/**
+	 * Titel field in *Aufgabe*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Rasen mähen
+	 * - **API ID Path**: aufgabe.titel
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	titel: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Aufgabe*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgabe.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
+
+	/**
+	 * Bild field in *Aufgabe*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgabe.bild
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	bild: prismic.ImageField<never>;
+
+	/**
+	 * Aktiv field in *Aufgabe*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: aufgabe.aktiv
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	aktiv: prismic.BooleanField;
+
+	/**
+	 * Max. Annahmen (0 = unbegrenzt) field in *Aufgabe*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 0
+	 * - **API ID Path**: aufgabe.max_annahmen
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	max_annahmen: prismic.NumberField; /**
+	 * Werkzeuge field in *Aufgabe*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgabe.werkzeuge[]
+	 * - **Tab**: Werkzeuge
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	werkzeuge: prismic.GroupField<Simplify<AufgabeDocumentDataWerkzeugeItem>>; /**
+	 * Credit-Typ field in *Aufgabe*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Fest
+	 * - **API ID Path**: aufgabe.credit_typ
+	 * - **Tab**: Credits
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	credit_typ: prismic.SelectField<'Fest' | 'Offen (Zeitbasiert)', 'filled'>;
+
+	/**
+	 * Credits (nur bei Fest) field in *Aufgabe*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: z.B. 10
+	 * - **API ID Path**: aufgabe.credit_betrag
+	 * - **Tab**: Credits
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	credit_betrag: prismic.NumberField;
+}
+
+/**
+ * Aufgabe document from Prismic
+ *
+ * - **API ID**: `aufgabe`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type AufgabeDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<AufgabeDocumentData>,
+	'aufgabe',
+	Lang
+>;
+
 type EventDocumentDataSlicesSlice = never;
 
 /**
@@ -984,13 +1105,10 @@ export type NavigationDocument<Lang extends string = string> = prismic.PrismicDo
 >;
 
 type PageDocumentDataSlicesSlice =
-	| RessourceBuchungSlice
 	| AdresseUndMapSlice
 	| TextAndCtaSlice
 	| ButtonSlice
 	| AnleitungSlice
-	| GlobaleEventsSlice
-	| EventSlice
 	| HtmlCodeSlice
 	| CodeEinbettenSlice
 	| AccordionSlice
@@ -1005,9 +1123,14 @@ type PageDocumentDataSlicesSlice =
 	| StimmenSlice
 	| GalerieSlice
 	| InhaltsverzeichnisSlice
+	| RessourceBuchungSlice
+	| AufgabenSlice
+	| PlanFilterSlice
 	| PreisvergleichSlice
 	| PreisaufstellungSlice
-	| P5GrafikSlice;
+	| P5GrafikSlice
+	| GlobaleEventsSlice
+	| EventSlice;
 
 /**
  * Item in *Page → Zusatzleistungen*
@@ -1286,7 +1409,9 @@ export interface RessourceDocumentDataSchlafzimmerItem {
 	 * - **API ID Path**: ressource.schlafzimmer[].bett_typ
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
-	bett_typ: prismic.SelectField<'Doppelbett' | 'Einzelbett' | 'Stockbett' | 'Schlafsofa'>;
+	bett_typ: prismic.SelectField<
+		'Doppelbett' | 'Doppelbett (140 cm)' | 'Einzelbett' | 'Stockbett' | 'Schlafsofa'
+	>;
 
 	/**
 	 * Anzahl Betten field in *Ressource → Schlafzimmer*
@@ -1297,7 +1422,16 @@ export interface RessourceDocumentDataSchlafzimmerItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anzahl_betten: prismic.NumberField;
-	bild: prismic.ImageField;
+
+	/**
+	 * Bild field in *Ressource → Schlafzimmer*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: ressource.schlafzimmer[].bild
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	bild: prismic.ImageField<never>;
 }
 
 /**
@@ -1345,12 +1479,7 @@ export interface RessourceDocumentDataSaisonpreiseItem {
 	preis_pro_nacht: prismic.NumberField;
 }
 
-type RessourceDocumentDataSlicesSlice =
-	| RessourceBuchungSlice
-	| HeroSlice
-	| TextSlice
-	| ImageSlice
-	| GalerieSlice;
+type RessourceDocumentDataSlicesSlice = RessourceBuchungSlice;
 
 /**
  * Content for Ressource documents
@@ -1368,17 +1497,6 @@ interface RessourceDocumentData {
 	name: prismic.KeyTextField;
 
 	/**
-	 * Beschreibung field in *Ressource*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: ressource.beschreibung
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	beschreibung: prismic.RichTextField;
-
-	/**
 	 * Hauptbild field in *Ressource*
 	 *
 	 * - **Field Type**: Image
@@ -1387,7 +1505,19 @@ interface RessourceDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/image
 	 */
-	bilder: prismic.ImageField<'quadrat'>; /**
+	bilder: prismic.ImageField<'quadrat'>;
+
+	/**
+	 * Zimmer einzeln buchbar field in *Ressource*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: ressource.zimmer_einzelbuchbar
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	zimmer_einzelbuchbar: prismic.BooleanField; /**
 	 * Maximale Personenanzahl field in *Ressource*
 	 *
 	 * - **Field Type**: Number
@@ -1462,38 +1592,7 @@ interface RessourceDocumentData {
 	 * - **Tab**: Inhalt
 	 * - **Documentation**: https://prismic.io/docs/slices
 	 */
-	slices: prismic.SliceZone<RessourceDocumentDataSlicesSlice>; /**
-	 * Ansprechperson field in *Ressource*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: z.B. Hans Muster
-	 * - **API ID Path**: ressource.ansprechperson
-	 * - **Tab**: Kontakt
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	ansprechperson: prismic.KeyTextField;
-
-	/**
-	 * Telefon field in *Ressource*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: +41 79 123 45 67
-	 * - **API ID Path**: ressource.telefon
-	 * - **Tab**: Kontakt
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	telefon: prismic.KeyTextField;
-
-	/**
-	 * E-Mail field in *Ressource*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: kontakt@beispiel.ch
-	 * - **API ID Path**: ressource.email
-	 * - **Tab**: Kontakt
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	email: prismic.KeyTextField;
+	slices: prismic.SliceZone<RessourceDocumentDataSlicesSlice>;
 }
 
 /**
@@ -1875,6 +1974,17 @@ interface SettingsDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
 	 */
 	privacy_policy: prismic.RichTextField;
+
+	/**
+	 * Haftungsausschluss field in *Einstellungen*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: settings.haftungsausschluss
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	haftungsausschluss: prismic.RichTextField;
 
 	/**
 	 * Impressum field in *Einstellungen*
@@ -3362,7 +3472,61 @@ export type VariablenDocument<Lang extends string = string> = prismic.PrismicDoc
 	Lang
 >;
 
+/**
+ * Content for Werkzeug documents
+ */
+interface WerkzeugDocumentData {
+	/**
+	 * Titel field in *Werkzeug*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: z.B. Rasenmäher
+	 * - **API ID Path**: werkzeug.titel
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	titel: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Werkzeug*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: werkzeug.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
+
+	/**
+	 * Bild field in *Werkzeug*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: werkzeug.bild
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	bild: prismic.ImageField<never>;
+}
+
+/**
+ * Werkzeug document from Prismic
+ *
+ * - **API ID**: `werkzeug`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type WerkzeugDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<
+	Simplify<WerkzeugDocumentData>,
+	'werkzeug',
+	Lang
+>;
+
 export type AllDocumentTypes =
+	| AufgabeDocument
 	| EventDocument
 	| FontDocument
 	| LeistungDocument
@@ -3372,7 +3536,8 @@ export type AllDocumentTypes =
 	| SettingsDocument
 	| TerminplanungDocument
 	| ThemeDocument
-	| VariablenDocument;
+	| VariablenDocument
+	| WerkzeugDocument;
 
 /**
  * Item in *Akkordeon → Standard → Primary → Akkordeon Elemente*
@@ -3463,6 +3628,17 @@ export interface AccordionSliceBildUndTextPrimaryAccordionItemsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	bild_overlay_transparenz: prismic.NumberField;
+
+	/**
+	 * Bild-Lupe aktivieren field in *Akkordeon → Bild und Text → Primary → Akkordeon Elemente*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: accordion.bildUndText.primary.accordion_items[].bild_lupe
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	bild_lupe: prismic.BooleanField;
 }
 
 /**
@@ -4403,6 +4579,78 @@ type AnleitungSliceVariation = AnleitungSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slices
  */
 export type AnleitungSlice = prismic.SharedSlice<'anleitung', AnleitungSliceVariation>;
+
+/**
+ * Primary content in *Aufgaben → Standard → Primary*
+ */
+export interface AufgabenSliceDefaultPrimary {
+	/**
+	 * Überschrift field in *Aufgaben → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Ihre Aufgaben
+	 * - **API ID Path**: aufgaben.default.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	heading: prismic.RichTextField;
+
+	/**
+	 * Einleitung field in *Aufgaben → Standard → Primary*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgaben.default.primary.intro
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	intro: prismic.RichTextField;
+
+	/**
+	 * Hintergrundfarbe (leer = Seitenfarbe) field in *Aufgaben → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgaben.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe (leer = Seitenfarbe) field in *Aufgaben → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: aufgaben.default.primary.text_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	text_color: prismic.ColorField;
+}
+
+/**
+ * Standard variation for Aufgaben Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AufgabenSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<AufgabenSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *Aufgaben*
+ */
+type AufgabenSliceVariation = AufgabenSliceDefault;
+
+/**
+ * Aufgaben Shared Slice
+ *
+ * - **API ID**: `aufgaben`
+ * - **Description**: Aufgaben-Liste: Nutzer loggt sich mit Buchungs-ID + E-Mail ein und nimmt Aufgaben an
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type AufgabenSlice = prismic.SharedSlice<'aufgaben', AufgabenSliceVariation>;
 
 /**
  * Primary content in *Schaltfläche → Standard → Primary*
@@ -7648,6 +7896,48 @@ type P5GrafikSliceVariation = P5GrafikSliceDefault | P5GrafikSliceMitTitelbereic
 export type P5GrafikSlice = prismic.SharedSlice<'p5_grafik', P5GrafikSliceVariation>;
 
 /**
+ * Primary content in *PlanFilter → Standard → Primary*
+ */
+export interface PlanFilterSliceDefaultPrimary {
+	/**
+	 * Beschriftung field in *PlanFilter → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Inhalte filtern nach Plan:
+	 * - **API ID Path**: plan_filter.default.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	heading: prismic.KeyTextField;
+}
+
+/**
+ * Standard variation for PlanFilter Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PlanFilterSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<PlanFilterSliceDefaultPrimary>,
+	never
+>;
+
+/**
+ * Slice variation for *PlanFilter*
+ */
+type PlanFilterSliceVariation = PlanFilterSliceDefault;
+
+/**
+ * PlanFilter Shared Slice
+ *
+ * - **API ID**: `plan_filter`
+ * - **Description**: Plan-Filter für Dokumentationsseiten
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type PlanFilterSlice = prismic.SharedSlice<'plan_filter', PlanFilterSliceVariation>;
+
+/**
  * Primary content in *Preisaufstellung → Standard → Primary*
  */
 export interface PreisaufstellungSliceDefaultPrimary {
@@ -8454,6 +8744,18 @@ export interface TextSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *Text → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text.default.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
 }
 
 /**
@@ -8555,6 +8857,18 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *Text → Zwei Spalten → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text.twoColumns.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
 }
 
 /**
@@ -8963,6 +9277,18 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *TextMitBild → Standard Bild rechts → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.default.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
 }
 
 /**
@@ -9127,6 +9453,18 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *TextMitBild → Mit Schaltfläche → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.withButton.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
 }
 
 /**
@@ -9303,6 +9641,18 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/number
 	 */
 	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *TextMitBild → Standard Bild links → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
 }
 
 /**
@@ -9319,12 +9669,269 @@ export type TextWithImageSliceStandardBildLinks = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+ */
+export interface TextWithImageSliceMultiPrimary {
+	/**
+	 * Sektions-Titel field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.multi.primary.section_title
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	section_title: prismic.KeyTextField;
+
+	/**
+	 * Hintergrundfarbe field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.multi.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Schriftfarbe field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: text_with_image.multi.primary.color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	color: prismic.ColorField;
+
+	/**
+	 * Abstand oben / unten gleich field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: true
+	 * - **API ID Path**: text_with_image.multi.primary.y_padding_same
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	y_padding_same: prismic.BooleanField;
+
+	/**
+	 * Vertikaler Abstand field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.multi.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Abstand zwischen Zeilen field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: mittel
+	 * - **API ID Path**: text_with_image.multi.primary.row_gap
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	row_gap: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross', 'filled'>;
+
+	/**
+	 * Abstand Bild / Text field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: mittel
+	 * - **API ID Path**: text_with_image.multi.primary.column_gap
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	column_gap: prismic.SelectField<'kein' | 'klein' | 'mittel' | 'gross', 'filled'>;
+
+	/**
+	 * Volle Breite (kein Seitenrand) field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.multi.primary.full_width
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	full_width: prismic.BooleanField;
+
+	/**
+	 * Text-Bereich Innenabstand field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: mittel
+	 * - **API ID Path**: text_with_image.multi.primary.text_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	text_padding: prismic.SelectField<'kein' | 'klein' | 'mittel' | 'gross', 'filled'>;
+
+	/**
+	 * Bilder als Kreis field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.multi.primary.image_round
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	image_round: prismic.BooleanField;
+
+	/**
+	 * Schrift vertikal zentrieren field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.multi.primary.text_center_v
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_v: prismic.BooleanField;
+
+	/**
+	 * Schrift horizontal zentrieren field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.multi.primary.text_center_h
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	text_center_h: prismic.BooleanField;
+
+	/**
+	 * Animation aktivieren field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.multi.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: text_with_image.multi.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: text_with_image.multi.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: text_with_image.multi.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+
+	/**
+	 * Sichtbar für Leistung (Plan) field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.multi.primary.feature_gate
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	feature_gate: prismic.SelectField<
+		'Terminbuchung' | 'E-Commerce' | 'P5.js' | 'Variablen' | 'Ressourcen-Buchung' | 'Globale Events'
+	>;
+}
+
+/**
+ * Primary content in *TextMitBild → Items*
+ */
+export interface TextWithImageSliceMultiItem {
+	/**
+	 * Text field in *TextMitBild → Items*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.items[].text
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	text: prismic.RichTextField;
+
+	/**
+	 * Bild field in *TextMitBild → Items*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.items[].image
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	image: prismic.ImageField<never>;
+
+	/**
+	 * Bild links field in *TextMitBild → Items*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: text_with_image.items[].bild_links
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	bild_links: prismic.BooleanField;
+
+	/**
+	 * Button Text field in *TextMitBild → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Mehr erfahren
+	 * - **API ID Path**: text_with_image.items[].button_text
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	button_text: prismic.KeyTextField;
+
+	/**
+	 * Button Link field in *TextMitBild → Items*
+	 *
+	 * - **Field Type**: Link
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: text_with_image.items[].button_link
+	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 */
+	button_link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+}
+
+/**
+ * Multi (Mehrere Zeilen) variation for TextMitBild Slice
+ *
+ * - **API ID**: `multi`
+ * - **Description**: Mehrere Text-Bild-Zeilen in einem Slice
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type TextWithImageSliceMulti = prismic.SharedSliceVariation<
+	'multi',
+	Simplify<TextWithImageSliceMultiPrimary>,
+	Simplify<TextWithImageSliceMultiItem>
+>;
+
+/**
  * Slice variation for *TextMitBild*
  */
 type TextWithImageSliceVariation =
 	| TextWithImageSliceDefault
 	| TextWithImageSliceWithButton
-	| TextWithImageSliceStandardBildLinks;
+	| TextWithImageSliceStandardBildLinks
+	| TextWithImageSliceMulti;
 
 /**
  * TextMitBild Shared Slice
@@ -9487,6 +10094,9 @@ declare module '@prismicio/client' {
 
 	namespace Content {
 		export type {
+			AufgabeDocument,
+			AufgabeDocumentData,
+			AufgabeDocumentDataWerkzeugeItem,
 			EventDocument,
 			EventDocumentData,
 			EventDocumentDataSlicesSlice,
@@ -9522,6 +10132,8 @@ declare module '@prismicio/client' {
 			VariablenDocument,
 			VariablenDocumentData,
 			VariablenDocumentDataEintraegeItem,
+			WerkzeugDocument,
+			WerkzeugDocumentData,
 			AllDocumentTypes,
 			AccordionSlice,
 			AccordionSliceDefaultPrimaryAccordionItemsItem,
@@ -9542,6 +10154,10 @@ declare module '@prismicio/client' {
 			AnleitungSliceDefaultPrimary,
 			AnleitungSliceVariation,
 			AnleitungSliceDefault,
+			AufgabenSlice,
+			AufgabenSliceDefaultPrimary,
+			AufgabenSliceVariation,
+			AufgabenSliceDefault,
 			ButtonSlice,
 			ButtonSliceDefaultPrimary,
 			ButtonSliceKaufPrimary,
@@ -9617,6 +10233,10 @@ declare module '@prismicio/client' {
 			P5GrafikSliceVariation,
 			P5GrafikSliceDefault,
 			P5GrafikSliceMitTitelbereich,
+			PlanFilterSlice,
+			PlanFilterSliceDefaultPrimary,
+			PlanFilterSliceVariation,
+			PlanFilterSliceDefault,
 			PreisaufstellungSlice,
 			PreisaufstellungSliceDefaultPrimary,
 			PreisaufstellungSliceVariation,
@@ -9653,10 +10273,13 @@ declare module '@prismicio/client' {
 			TextWithImageSliceDefaultPrimary,
 			TextWithImageSliceWithButtonPrimary,
 			TextWithImageSliceStandardBildLinksPrimary,
+			TextWithImageSliceMultiPrimary,
+			TextWithImageSliceMultiItem,
 			TextWithImageSliceVariation,
 			TextWithImageSliceDefault,
 			TextWithImageSliceWithButton,
 			TextWithImageSliceStandardBildLinks,
+			TextWithImageSliceMulti,
 			TimelineSlice,
 			TimelineSliceDefaultPrimary,
 			TimelineSliceDefaultItem,

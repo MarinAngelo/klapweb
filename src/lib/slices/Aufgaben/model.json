@@ -1,0 +1,49 @@
+{
+	"id": "aufgaben",
+	"type": "SharedSlice",
+	"name": "Aufgaben",
+	"description": "Aufgaben-Liste: Nutzer loggt sich mit Buchungs-ID + E-Mail ein und nimmt Aufgaben an",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Ihre Aufgaben",
+						"allowTargetBlank": false,
+						"single": "heading2,heading3"
+					}
+				},
+				"intro": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

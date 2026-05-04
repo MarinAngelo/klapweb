@@ -10,8 +10,7 @@
 	export let partialGeklickt = false;
 
 	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const todayStr = today.toISOString().slice(0, 10);
+	const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
 	let viewYear = today.getFullYear();
 	let viewMonth = today.getMonth();
