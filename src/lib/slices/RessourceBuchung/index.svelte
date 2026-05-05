@@ -14,6 +14,7 @@
 		ressource?: {
 			uid: string;
 			name: string;
+			beschreibung: any[];
 			maxPersonen: number;
 			minNaechte: number;
 			preisProNacht: number;
@@ -30,6 +31,7 @@
 	type RessourceData = {
 		uid: string;
 		name: string;
+		beschreibung: any[];
 		maxPersonen: number;
 		minNaechte: number;
 		preisProNacht: number;
@@ -181,7 +183,7 @@
 		}
 	}
 
-	$: showZimmerSelection = buchungsart === 'zimmer' && (ressource?.schlafzimmer?.length ?? 0) > 0;
+	$: showZimmerSelection = !!(ressource?.zimmerEinzelbuchbar) && buchungsart === 'zimmer' && (ressource?.schlafzimmer?.length ?? 0) > 0;
 	$: zimmerError = showZimmerSelection && selectedZimmer.length === 0
 		? $_('Bitte mindestens ein Zimmer auswählen')
 		: personen > kapazitaetAusgewaehlterZimmer && kapazitaetAusgewaehlterZimmer > 0 && showZimmerSelection

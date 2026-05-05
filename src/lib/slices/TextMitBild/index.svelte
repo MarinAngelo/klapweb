@@ -9,7 +9,7 @@
 	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.TextWithImageSlice;
-	export let slices: unknown[] | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 	const p: any = slice.primary ?? {};

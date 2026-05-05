@@ -13,6 +13,7 @@
 		rates: Record<string, number>;
 		globalDepositPct?: number | null;
 		plaeneData?: Record<string, Array<Array<{ label: string; wert: string | null }>>>;
+		pageLeistungen?: any[];
 	};
 
 	$: hasPrice = data.page?.data?.ecommerce_price_chf != null;

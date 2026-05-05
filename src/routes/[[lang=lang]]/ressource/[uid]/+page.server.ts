@@ -53,6 +53,7 @@ export async function load({ params, parent, fetch }: { params: { uid: string; l
 		ressource: {
 			uid: ressourceDoc.uid as string,
 			name: (d.name as string) ?? '',
+			beschreibung: (d.beschreibung as any[]) ?? [],
 			maxPersonen: (d.max_personen as number) ?? 0,
 			minNaechte: (d.min_naechte as number) ?? 1,
 			preisProNacht: (d.preis_pro_nacht as number) ?? 0,

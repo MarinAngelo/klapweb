@@ -1479,7 +1479,12 @@ export interface RessourceDocumentDataSaisonpreiseItem {
 	preis_pro_nacht: prismic.NumberField;
 }
 
-type RessourceDocumentDataSlicesSlice = RessourceBuchungSlice;
+type RessourceDocumentDataSlicesSlice =
+	| RessourceBuchungSlice
+	| HeroSlice
+	| TextSlice
+	| ImageSlice
+	| GalerieSlice;
 
 /**
  * Content for Ressource documents
@@ -1495,6 +1500,17 @@ interface RessourceDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	name: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Ressource*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: ressource.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
 
 	/**
 	 * Hauptbild field in *Ressource*
