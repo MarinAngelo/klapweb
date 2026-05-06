@@ -1600,6 +1600,26 @@ interface RessourceDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
 	saisonpreise: prismic.GroupField<Simplify<RessourceDocumentDataSaisonpreiseItem>>; /**
+	 * E-Mail Betreff field in *Ressource*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Ihre Anreise morgen – Wichtige Informationen
+	 * - **API ID Path**: ressource.reminder_betreff
+	 * - **Tab**: Erinnerung
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	reminder_betreff: prismic.KeyTextField;
+
+	/**
+	 * E-Mail Text field in *Ressource*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}
+	 * - **API ID Path**: ressource.reminder_text
+	 * - **Tab**: Erinnerung
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	reminder_text: prismic.RichTextField; /**
 	 * Slice Zone field in *Ressource*
 	 *
 	 * - **Field Type**: Slice Zone
