@@ -17,6 +17,11 @@
 	$: settingsData = settings?.data || {};
 	$: navigationLinks = navigation?.data?.links || [];
 
+	function getWebUrl(link: unknown): { url: string; target?: string } | null {
+		const l = link as { link_type?: string; url?: string; target?: string };
+		return l?.link_type === 'Web' && l?.url ? { url: l.url, target: l.target } : null;
+	}
+
 	// REAKTIVE LINK-GENERIERUNG
 	// Diese Logik prüft jetzt: "Welche Sprache bin ich?" statt "Bin ich Master?"
 	$: getStaticHref = (deSlug: string, enSlug: string) => {
@@ -55,15 +60,28 @@
 			<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
 				<ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
 					{#each navigationLinks as link}
-						{#if link.footer_sec_nav === true && link.link}
+						{#if link.footer_sec_nav === true}
+							{@const webUrl = getWebUrl(link.link)}
 							<li class="m-0">
-								<PrismicLink
-									field={link.link}
-									class="footer-nav-link hover:underline text-sm leading-tight text-center"
-									style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
-								>
-									<PrismicText field={link.label} />
-								</PrismicLink>
+								{#if webUrl}
+									<a
+										href={webUrl.url}
+										target={webUrl.target || '_self'}
+										rel="noopener noreferrer"
+										class="footer-nav-link hover:underline text-sm leading-tight text-center"
+										style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
+									>
+										<PrismicText field={link.label} />
+									</a>
+								{:else}
+									<PrismicLink
+										field={link.link}
+										class="footer-nav-link hover:underline text-sm leading-tight text-center"
+										style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
+									>
+										<PrismicText field={link.label} />
+									</PrismicLink>
+								{/if}
 							</li>
 						{/if}
 					{/each}
@@ -128,6 +146,18 @@
 							{$_('AGB')}
 						</a>
 					{/if}
+					{#if settingsData.haftungsausschluss && settingsData.haftungsausschluss.length > 0}
+						&nbsp;|&nbsp;
+						<a
+							href={getStaticHref('haftungsausschluss', 'disclaimer')}
+							class="hover:underline text-inherit"
+							style="color: var(--footer-link-color);"
+							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
+							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
+						>
+							{$_('Haftungsausschluss')}
+						</a>
+					{/if}
 				</p>
 
 				<p
@@ -149,6 +179,27 @@
 						rel="noopener noreferrer nofollow"
 						class="hover:underline text-inherit"
 						style="color: var(--footer-link-color);">Prismic</a
+					>
+				</p>
+				<p
+					class="text-inherit footer-buttonbar-p"
+					style="font-size: var(--footer-font-size-button-bar-rem);"
+				>
+					{$_('Gehostet auf')}
+					<a
+						href="https://www.netlify.com/"
+						target="_blank"
+						rel="noopener noreferrer nofollow"
+						class="hover:underline text-inherit"
+						style="color: var(--footer-link-color);">Netlify</a
+					>
+					&nbsp;|&nbsp;
+					<a
+						href="https://resend.com/"
+						target="_blank"
+						rel="noopener noreferrer nofollow"
+						class="hover:underline text-inherit"
+						style="color: var(--footer-link-color);">Resend</a
 					>
 				</p>
 
