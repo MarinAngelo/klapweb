@@ -23,9 +23,6 @@
 	const fadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 
 	export let slice: Content.HeroSlice;
-	export const slices: any[] = [];
-	export const context: unknown = undefined;
-	export const index: number = 0;
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
 	$: image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
 	const sliceStore = writable(slice);

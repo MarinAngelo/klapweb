@@ -10,8 +10,8 @@
 
 	export let slice: Content.ImageSlice;
 	export let index: number | undefined = undefined;
-	export const slices: any[] | undefined = undefined;
-	export const context: unknown = undefined;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;

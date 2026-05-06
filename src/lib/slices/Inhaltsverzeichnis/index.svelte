@@ -6,8 +6,8 @@
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: any;
-	export const slices: any[] | undefined = undefined;
-	export const context: unknown = undefined;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 
 	$: bgColor = slice.primary.bg_color || $theme.pageBgColor;

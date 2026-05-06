@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let node: any = undefined;
 	import Heading from '../Heading.svelte';
 </script>
 

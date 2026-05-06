@@ -16,9 +16,9 @@
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
 
 	export let slice: Content.ImageCardsSlice;
-	export const slices: any = {};
+	export let slices: any = {};
 	export let context: any = {};
-	export const index: number = 0;
+	export let index: number = 0;
 
 	const componentBodyBgColor = slice.primary?.component_body_bg_color || 'var(--page-bg-color)';
 	const componentBodyColor = slice.primary?.component_body_color || 'var(--page-color)';

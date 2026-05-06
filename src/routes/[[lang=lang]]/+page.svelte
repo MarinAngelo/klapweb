@@ -4,7 +4,6 @@
 	import { components } from '$lib/slices';
 
 	export let data;
-	export let params: Record<string, string> = {};
 </script>
 
 <SliceZone slices={data.page.data.slices} {components} />

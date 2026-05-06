@@ -7,9 +7,9 @@
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: any;
-	export const slices: any;
-	export const context: any;
-	export const index: any;
+	export let slices: any;
+	export let context: any;
+	export let index: any;
 	const p = slice.primary ?? ({} as any);
 
 	const { pageColor, pageBgColor } = get(theme);

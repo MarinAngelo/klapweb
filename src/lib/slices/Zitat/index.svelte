@@ -7,9 +7,9 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.QuoteSlice;
-	export const slices: any[] | undefined = undefined;
-	export const context: unknown = undefined;
-	export const index: number | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;

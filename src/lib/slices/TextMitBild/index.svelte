@@ -9,9 +9,9 @@
 	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.TextWithImageSlice;
-	export const slices: any[] | undefined = undefined;
-	export const context: unknown = undefined;
-	export const index: number | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 	const p: any = slice.primary ?? {};
 
 	let yPadding: 'base' | 'base-top' | 'none' | 'sm' | 'sm-top' | 'lg' | 'lg-top' = p.y_padding_same ? 'base' : 'base-top';
