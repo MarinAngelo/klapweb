@@ -303,6 +303,10 @@
 	];
 	let prefix = '+41';
 	let localNumber = '';
+	export let value = '';
+	let textValue = '';
+	$: if (htmlType === 'text' || htmlType === 'email') value = textValue;
+	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
 </script>
 
 <div class="mb-4">
@@ -316,19 +320,28 @@
 		</label>
 	{/if}
 
-	{#if htmlType === 'text' || htmlType === 'email'}
+	{#if htmlType === 'text'}
 		<input
-			type={htmlType}
+			type="text"
 			id={key}
 			name={key}
+			bind:value={textValue}
 			required={field.required}
 			placeholder={field.placeholder ?? ''}
-			class={compact
-				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-			style={compact
-				? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-				: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:blur
+		/>
+	{:else if htmlType === 'email'}
+		<input
+			type="email"
+			id={key}
+			name={key}
+			bind:value={textValue}
+			required={field.required}
+			placeholder={field.placeholder ?? ''}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
 		/>
 	{:else if htmlType === 'tel'}

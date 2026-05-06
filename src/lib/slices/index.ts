@@ -53,5 +53,5 @@ export const components = {
 	inhaltsverzeichnis: Inhaltsverzeichnis,
 	ressource_buchung: RessourceBuchung,
 	aufgaben: Aufgaben,
-	plan_filter: PlanFilter
+	plan_filter: PlanFilter,
 };

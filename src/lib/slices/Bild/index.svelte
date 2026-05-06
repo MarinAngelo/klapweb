@@ -10,7 +10,7 @@
 
 	export let slice: Content.ImageSlice;
 	export let index: number | undefined = undefined;
-	export let slices: unknown[] | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
 	export let context: unknown = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);

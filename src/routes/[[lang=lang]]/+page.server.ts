@@ -35,8 +35,8 @@ export async function load({ params, parent }) {
 
 		return {
 			page,
-			title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
-			meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
+			title: asText(page.data.title) || '',
+			meta_title: page.data.meta_title || '',
 			meta_description: page.data.meta_description
 		};
 	} catch (e) {
