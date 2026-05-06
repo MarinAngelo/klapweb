@@ -24,10 +24,6 @@
 	$: beschreibung = data.doc.data.beschreibung as any;
 </script>
 
-<svelte:head>
-	<title>{data.title}</title>
-</svelte:head>
-
 {#if beschreibung?.length}
 	<Bounded yPadding="sm">
 		<PrismicRichText field={beschreibung} />
