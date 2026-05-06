@@ -72,7 +72,7 @@
 	<div class="relative {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 		{#if embedUrl}
 			<div class="flex flex-col gap-3">
-				<div class="relative rounded-3xl overflow-hidden">
+				<div class="relative overflow-hidden {mobileVollbreite ? 'md:rounded-3xl' : 'rounded-3xl'}">
 					<iframe
 						src={embedUrl}
 						width="100%"
