@@ -14,7 +14,6 @@ export let context: unknown = undefined;
 export let index: number | undefined = undefined;
 
 $: anim = mapAnimationFromPrimary(slice.primary);
-$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 $: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 $: textColor = (slice.primary as any).color || $theme.pageColor;
 $: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
@@ -23,7 +22,7 @@ $: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
 {#if visible}
 <Bounded
 as="section"
-class="leading-relaxed {mobileVollbreite ? 'overflow-x-clip' : ''}"
+class="leading-relaxed"
 style="font-family: var(--page-font); --page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor};"
 data-slice-type={slice.slice_type}
 data-slice-variation={slice.variation}
@@ -33,7 +32,7 @@ animationOptions={anim.options}
 <div
 class="{clsx(
 slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16'
-)} {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
+)}"
 >
 <PrismicRichText field={slice.primary.text} />
 </div>

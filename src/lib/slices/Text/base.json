@@ -80,15 +80,6 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "mobile_full_width": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
         "animate": {
           "type": "Boolean",
           "config": {
@@ -216,15 +207,6 @@
           "config": {
             "label": "Schriftfarbe",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "mobile_full_width": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
           }
         },
         "animate": {
