@@ -476,8 +476,8 @@
 		</select>
 	{:else if htmlType === 'checkbox'}
 		<div class="flex items-center">
-			<label class="flex items-center">
-				<Checkbox name={key} checked={field.required} value="Ausgewählt" />
+			<label class="flex items-center" for={key}>
+				<Checkbox id={key} name={key} checked={field.required} value="Ausgewählt" />
 				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}"
 					>{field.field_name ?? ''}</span
 				>
