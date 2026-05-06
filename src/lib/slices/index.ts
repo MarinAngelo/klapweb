@@ -26,6 +26,7 @@ import Inhaltsverzeichnis from './Inhaltsverzeichnis/index.svelte';
 import RessourceBuchung from './RessourceBuchung/index.svelte';
 import Aufgaben from './Aufgaben/index.svelte';
 import PlanFilter from './PlanFilter/index.svelte';
+import Kontakt from './Kontakt/index.svelte';
 
 export const components = {
 	accordion: Akkordeon,
@@ -53,5 +54,6 @@ export const components = {
 	inhaltsverzeichnis: Inhaltsverzeichnis,
 	ressource_buchung: RessourceBuchung,
 	aufgaben: Aufgaben,
+	kontakt: Kontakt,
 	plan_filter: PlanFilter,
 };
