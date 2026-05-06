@@ -4,9 +4,9 @@
 	import gating from '../../../../gating.json';
 
 	export let slice: any;
-	export let slices: any[] | undefined = undefined;
-	export let context: unknown = undefined;
-	export let index: number | undefined = undefined;
+	export const slices: any[] | undefined = undefined;
+	export const context: unknown = undefined;
+	export const index: number | undefined = undefined;
 
 	const plans = Object.entries(gating.plans as Record<string, { label: string }>).map(
 		([id, p]) => ({ id, label: p.label })

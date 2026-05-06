@@ -32,6 +32,7 @@
 	$: titleAnimation = prismicTheme?.data?.heading_animation === false ? titleNoAnim : titleFadeIn;
 
 	export let data: any;
+	export let params: Record<string, string> = {};
 
 	// 1. REAKTIVE DATEN
 	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);

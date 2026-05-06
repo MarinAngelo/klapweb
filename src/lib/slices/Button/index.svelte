@@ -9,9 +9,9 @@
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
 	export let slice: any;
-	export let slices: any;
-	export let context: any;
-	export let index: any;
+	export const slices: any;
+	export const context: any;
+	export const index: any;
 
 	const sizeMap: Record<string, string> = {
 		Klein: 'px-3 py-1.5 text-sm',

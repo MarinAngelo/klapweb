@@ -8,9 +8,9 @@
 	import { _ } from '$lib/stores/i18n';
 
 	export let slice: any;
-	export let slices: any[] | undefined = undefined;
-	export let context: unknown = undefined;
-	export let index: number | undefined = undefined;
+	export const slices: any[] | undefined = undefined;
+	export const context: unknown = undefined;
+	export const index: number | undefined = undefined;
 
 	const p = slice.primary ?? {};
 

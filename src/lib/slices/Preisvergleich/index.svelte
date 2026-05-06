@@ -7,7 +7,7 @@
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 
 	export let slice: any;
-	export let slices: any;
+	export const slices: any;
 	export let context: any;
 	export let index: any;
 	const p = slice.primary ?? ({} as any);

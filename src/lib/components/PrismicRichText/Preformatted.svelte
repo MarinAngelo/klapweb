@@ -1,4 +1,5 @@
 <script lang="ts">
+	export let node: any = undefined;
 	import { theme } from '$lib/stores/theme';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 

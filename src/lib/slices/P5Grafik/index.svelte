@@ -18,9 +18,9 @@
 	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
 
 	export let slice: any;
-	export let slices: any = {};
-	export let context: any = {};
-	export let index: number = 0;
+	export const slices: any = {};
+	export const context: any = {};
+	export const index: number = 0;
 
 	const isTitelbereich = slice.variation === 'mitTitelbereich';
 	const p = slice.primary;
