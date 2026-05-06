@@ -98,11 +98,9 @@ export const actions: Actions = {
 					``,
 					buchungsDetails,
 					``,
-					...(buchung.referenz ? [
-						`Ihre Buchungsreferenz: ${buchung.referenz}`,
-						`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
-						``
-					] : []),
+					`Ihre Buchungsreferenz: ${buchung.referenz ?? buchung.id}`,
+					`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
+					``,
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,
 					`Freundliche Grüsse`
