@@ -47,11 +47,9 @@
 
 	let tocEntries: TocEntry[] = [];
 	let activeId = '';
-	let sidebarVisible = false;
 	let dismissed = false;
 	let dismissedAtY = 0;
 	let mobileOpen = false;
-	let anchorEl: HTMLElement;
 
 	const toSlug = (s: string) =>
 		s
@@ -116,19 +114,9 @@
 		);
 		headings.filter((el) => el.id).forEach((el) => headingObserver.observe(el));
 
-		// Sidebar-Modus: Sichtbarkeit anhand des Anker-Elements steuern
-		let anchorObserver: IntersectionObserver | null = null;
-		if (linksMode && anchorEl) {
-			anchorObserver = new IntersectionObserver(
-				([entry]) => {
-					const wasVisible = sidebarVisible;
-					sidebarVisible = !entry.isIntersecting;
-					// Zurück zum Seitenanfang → dismissed zurücksetzen
-					if (!sidebarVisible) dismissed = false;
-				},
-				{ threshold: 0 }
-			);
-			anchorObserver.observe(anchorEl);
+		// In Links-Modus: main nach rechts verschieben damit Sidebar nicht überlappt
+		if (linksMode) {
+			document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
 		}
 
 		// Beim Scrollen dismissed zurücksetzen (Sidebar wieder einblenden)
@@ -141,14 +129,12 @@
 
 		return () => {
 			headingObserver.disconnect();
-			anchorObserver?.disconnect();
 			window.removeEventListener('scroll', onScroll);
+			document.documentElement.style.removeProperty('--toc-sidebar-offset');
 		};
 	});
 </script>
 
-<!-- Anker-Element: zeigt wo der Slice im DOM ist (für Sidebar-Sichtbarkeit) -->
-<div bind:this={anchorEl} aria-hidden="true"></div>
 
 <Bounded
 	as="nav"
@@ -166,7 +152,7 @@
 				class="toc-sidebar hidden md:block"
 				style="--toc-color: {textColor}; --toc-bg: {bgColor || $theme.pageBgColor};"
 				aria-label={tocTitle}
-				class:visible={sidebarVisible && !dismissed}
+				class:visible={!dismissed}
 			>
 				<div class="flex items-center justify-between mb-4">
 					<p class="text-xs font-semibold uppercase tracking-widest" style="opacity: 0.5;">
@@ -347,7 +333,7 @@
 	/* Links-Modus: Fixed Sidebar */
 	.toc-sidebar {
 		position: fixed;
-		left: 1.5rem;
+		left: 0;
 		top: calc(var(--header-height, 80px) + 2rem);
 		width: 13rem;
 		max-height: calc(100vh - var(--header-height, 80px) - 4rem);

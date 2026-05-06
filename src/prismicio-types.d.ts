@@ -1022,12 +1022,12 @@ export interface NavigationDocumentDataLinksItem {
 	/**
 	 * Link field in *Navigation → Links*
 	 *
-	 * - **Field Type**: Link
+	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: *None*
 	 * - **API ID Path**: navigation.links[].link
-	 * - **Documentation**: https://prismic.io/docs/fields/link
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+	link: prismic.ContentRelationshipField<'page'>;
 
 	/**
 	 * Sub-Link von field in *Navigation → Links*
@@ -1126,6 +1126,7 @@ type PageDocumentDataSlicesSlice =
 	| RessourceBuchungSlice
 	| AufgabenSlice
 	| PlanFilterSlice
+	| KontaktSlice
 	| PreisvergleichSlice
 	| PreisaufstellungSlice
 	| P5GrafikSlice
@@ -1479,7 +1480,12 @@ export interface RessourceDocumentDataSaisonpreiseItem {
 	preis_pro_nacht: prismic.NumberField;
 }
 
-type RessourceDocumentDataSlicesSlice = RessourceBuchungSlice;
+type RessourceDocumentDataSlicesSlice =
+	| RessourceBuchungSlice
+	| HeroSlice
+	| TextSlice
+	| ImageSlice
+	| GalerieSlice;
 
 /**
  * Content for Ressource documents
@@ -1495,6 +1501,17 @@ interface RessourceDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	name: prismic.KeyTextField;
+
+	/**
+	 * Beschreibung field in *Ressource*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: ressource.beschreibung
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	beschreibung: prismic.RichTextField;
 
 	/**
 	 * Hauptbild field in *Ressource*
@@ -4719,7 +4736,7 @@ export interface ButtonSliceDefaultPrimary {
 	button_align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
 
 	/**
-	 * Mobile: Volle Breite field in *Schaltfläche → Standard → Primary*
+	 * Vollbreite auf Mobile field in *Schaltfläche → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -4778,17 +4795,6 @@ export interface ButtonSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
-
-	/**
-	 * Vollbreite auf Mobile field in *Schaltfläche → Standard → Primary*
-	 *
-	 * - **Field Type**: Boolean
-	 * - **Placeholder**: *None*
-	 * - **Default Value**: false
-	 * - **API ID Path**: button.default.primary.mobile_full_width
-	 * - **Documentation**: https://prismic.io/docs/fields/boolean
-	 */
-	mobile_full_width: prismic.BooleanField;
 }
 
 /**
@@ -7549,6 +7555,193 @@ export type InhaltsverzeichnisSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Kontakt → Standard → Primary*
+ */
+export interface KontaktSliceDefaultPrimary {
+	/**
+	 * Überschrift field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: Kontakt aufnehmen
+	 * - **API ID Path**: kontakt.default.primary.heading
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	heading: prismic.KeyTextField;
+
+	/**
+	 * Ausrichtung field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Horizontal
+	 * - **API ID Path**: kontakt.default.primary.layout
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	layout: prismic.SelectField<'Horizontal' | 'Vertikal', 'filled'>;
+
+	/**
+	 * Grösse field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mittel
+	 * - **API ID Path**: kontakt.default.primary.button_size
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	button_size: prismic.SelectField<'Klein' | 'Mittel' | 'Gross', 'filled'>;
+
+	/**
+	 * Ausrichtung (horizontal) field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Mitte
+	 * - **API ID Path**: kontakt.default.primary.align
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	align: prismic.SelectField<'Links' | 'Mitte' | 'Rechts', 'filled'>;
+
+	/**
+	 * Nummer/Adresse anzeigen field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: kontakt.default.primary.show_number
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	show_number: prismic.BooleanField;
+
+	/**
+	 * Hintergrundfarbe field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Color
+	 * - **Placeholder**: Hex-Farbcode (#RRGGBB)
+	 * - **API ID Path**: kontakt.default.primary.bg_color
+	 * - **Documentation**: https://prismic.io/docs/fields/color
+	 */
+	bg_color: prismic.ColorField;
+
+	/**
+	 * Vertikaler Abstand field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: kontakt.default.primary.y_padding
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	y_padding: prismic.SelectField<'kein Abstand' | 'wenig' | 'mittel' | 'gross'>;
+
+	/**
+	 * Animation aktivieren field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Boolean
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: false
+	 * - **API ID Path**: kontakt.default.primary.animate
+	 * - **Documentation**: https://prismic.io/docs/fields/boolean
+	 */
+	animate: prismic.BooleanField;
+
+	/**
+	 * Animations-Richtung field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: Oben
+	 * - **API ID Path**: kontakt.default.primary.anim_direction
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
+
+	/**
+	 * Verzögerung (ms) field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 500
+	 * - **API ID Path**: kontakt.default.primary.anim_delay
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_delay: prismic.NumberField;
+
+	/**
+	 * Animationsdauer (ms) field in *Kontakt → Standard → Primary*
+	 *
+	 * - **Field Type**: Number
+	 * - **Placeholder**: 2000
+	 * - **API ID Path**: kontakt.default.primary.anim_duration
+	 * - **Documentation**: https://prismic.io/docs/fields/number
+	 */
+	anim_duration: prismic.NumberField;
+}
+
+/**
+ * Primary content in *Kontakt → Items*
+ */
+export interface KontaktSliceDefaultItem {
+	/**
+	 * App field in *Kontakt → Items*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: WhatsApp
+	 * - **API ID Path**: kontakt.items[].app
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	app: prismic.SelectField<
+		'WhatsApp' | 'Telegram' | 'Signal' | 'Telefon' | 'E-Mail' | 'Facebook Messenger' | 'Instagram',
+		'filled'
+	>;
+
+	/**
+	 * Beschriftung (optional, überschreibt App-Name) field in *Kontakt → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: kontakt.items[].label
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	label: prismic.KeyTextField;
+
+	/**
+	 * Nummer / Adresse / Benutzername field in *Kontakt → Items*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: +41 79 000 00 00
+	 * - **API ID Path**: kontakt.items[].value
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	value: prismic.KeyTextField;
+}
+
+/**
+ * Standard variation for Kontakt Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Kontakt
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type KontaktSliceDefault = prismic.SharedSliceVariation<
+	'default',
+	Simplify<KontaktSliceDefaultPrimary>,
+	Simplify<KontaktSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Kontakt*
+ */
+type KontaktSliceVariation = KontaktSliceDefault;
+
+/**
+ * Kontakt Shared Slice
+ *
+ * - **API ID**: `kontakt`
+ * - **Description**: Direkte Kontakt-Buttons für Messenger-Apps
+ * - **Documentation**: https://prismic.io/docs/slices
+ */
+export type KontaktSlice = prismic.SharedSlice<'kontakt', KontaktSliceVariation>;
+
+/**
  * Primary content in *P5Grafik → Standard (Vollbild) → Primary*
  */
 export interface P5GrafikSliceDefaultPrimary {
@@ -10247,6 +10440,11 @@ declare module '@prismicio/client' {
 			InhaltsverzeichnisSliceDefaultPrimary,
 			InhaltsverzeichnisSliceVariation,
 			InhaltsverzeichnisSliceDefault,
+			KontaktSlice,
+			KontaktSliceDefaultPrimary,
+			KontaktSliceDefaultItem,
+			KontaktSliceVariation,
+			KontaktSliceDefault,
 			P5GrafikSlice,
 			P5GrafikSliceDefaultPrimary,
 			P5GrafikSliceMitTitelbereichPrimary,
