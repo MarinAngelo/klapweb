@@ -18,6 +18,7 @@ export interface ZimmerAuswahl {
 
 export interface RessourceBuchung {
 	id: string;           // blob key (ressourceUid/timestamp_uuid)
+	referenz: string;     // short human-readable code (6 chars uppercase)
 	ressourceUid: string;
 	ressourceName?: string;
 	von: string;          // YYYY-MM-DD (check-in, inclusive)
@@ -26,11 +27,20 @@ export interface RessourceBuchung {
 	zimmerauswahl?: ZimmerAuswahl[]; // leer = ganze Ressource gebucht
 	preisCHF: number;
 	bookedAt: string;
-	status: 'pending' | 'confirmed';
+	status: 'pending' | 'confirmed' | 'checked_in' | 'checked_out';
 	name?: string;
 	email?: string;
 	telefon?: string;
 	nachricht?: string;
+	checkedInAt?: string;
+	checkOutAt?: string;
+	checkInItems?: string[];
+	checkOutItems?: string[];
+}
+
+function generateReferenz(): string {
+	const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+	return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
 function getStore_() {
@@ -92,7 +102,47 @@ export async function getBelegtePerioden(
  * - zimmerauswahl empty (whole resource): any overlapping booking → conflict
  * - zimmerauswahl with rooms: any overlapping whole-resource booking OR same room → conflict
  */
-export async function bucheRessource(buchung: Omit<RessourceBuchung, 'id'>): Promise<RessourceBuchung> {
+export async function getBuchungByReferenz(referenz: string): Promise<RessourceBuchung | null> {
+	const store = getStore_();
+	const { blobs } = await store.list();
+	const records = await Promise.all(
+		blobs.map((b) => store.get(b.key, { type: 'json' }) as Promise<RessourceBuchung>)
+	);
+	const upper = referenz.toUpperCase();
+	return records.find((r) => r?.referenz?.toUpperCase() === upper || r?.id === referenz) ?? null;
+}
+
+export async function checkInBuchung(referenz: string, items: string[]): Promise<RessourceBuchung> {
+	const buchung = await getBuchungByReferenz(referenz);
+	if (!buchung) throw new Error('NOT_FOUND');
+	if (buchung.status === 'checked_in' || buchung.status === 'checked_out') throw new Error('ALREADY_DONE');
+	const store = getStore_();
+	const updated: RessourceBuchung = {
+		...buchung,
+		status: 'checked_in',
+		checkedInAt: new Date().toISOString(),
+		checkInItems: items
+	};
+	await store.setJSON(buchung.id, updated);
+	return updated;
+}
+
+export async function checkOutBuchung(referenz: string, items: string[]): Promise<RessourceBuchung> {
+	const buchung = await getBuchungByReferenz(referenz);
+	if (!buchung) throw new Error('NOT_FOUND');
+	if (buchung.status === 'checked_out') throw new Error('ALREADY_DONE');
+	const store = getStore_();
+	const updated: RessourceBuchung = {
+		...buchung,
+		status: 'checked_out',
+		checkOutAt: new Date().toISOString(),
+		checkOutItems: items
+	};
+	await store.setJSON(buchung.id, updated);
+	return updated;
+}
+
+export async function bucheRessource(buchung: Omit<RessourceBuchung, 'id' | 'referenz'>): Promise<RessourceBuchung> {
 	const existing = await listRessourceBuchungen(buchung.ressourceUid);
 	const overlapping = existing.filter((b) => datesOverlap(buchung.von, buchung.bis, b.von, b.bis));
 
@@ -112,7 +162,7 @@ export async function bucheRessource(buchung: Omit<RessourceBuchung, 'id'>): Pro
 	}
 
 	const id = `${buchung.ressourceUid}/${Date.now()}_${crypto.randomUUID()}`;
-	const record: RessourceBuchung = { id, ...buchung };
+	const record: RessourceBuchung = { id, referenz: generateReferenz(), ...buchung };
 	const store = getStore_();
 	await store.setJSON(id, record);
 	return record;

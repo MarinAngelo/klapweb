@@ -6,6 +6,7 @@
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
@@ -21,6 +22,47 @@
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
+	$: isEinChecken = (slice.variation as string) === 'einChecken';
+	$: isAusChecken = (slice.variation as string) === 'ausChecken';
+	$: checkPrimary = slice.primary as any;
+
+	// Check-in / Check-out state
+	let buchungsref = '';
+	let checkedItems: Set<number> = new Set();
+	let checkSubmitting = false;
+	let checkSuccess = false;
+	let checkError = '';
+
+	function checklistItemText(item: unknown): string {
+		return (item as Record<string, unknown>)?.checklist_item as string ?? '';
+	}
+
+	async function handleCheckSubmit() {
+		const p = slice.primary as any;
+		checkSubmitting = true;
+		checkError = '';
+		const endpoint = isEinChecken ? '/api/ressource-check-in' : '/api/ressource-check-out';
+		const items = (slice.items as any[]).map((item) => item.checklist_item ?? '');
+		try {
+			const res = await fetch(endpoint, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ referenz: buchungsref.trim().toUpperCase(), items })
+			});
+			const data = await res.json();
+			if (data.success) {
+				checkSuccess = true;
+			} else {
+				const code = data.error;
+				if (code === 'NOT_FOUND') checkError = p.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE') checkError = p.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				else checkError = t('Ein Fehler ist aufgetreten.', lang);
+			}
+		} catch {
+			checkError = t('Ein Fehler ist aufgetreten.', lang);
+		}
+		checkSubmitting = false;
+	}
 	$: isDefaultZweiSpalten =
 		((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') &&
 		(slice.primary as any)?.zwei_spalten === true;
@@ -319,6 +361,60 @@
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
+	{:else if isEinChecken || isAusChecken}
+		<div style="background-color: {checkPrimary.bg_color || get(theme).pageBgColor};">
+			{#if checkSuccess}
+				<PrismicRichText field={checkPrimary.success_text} />
+			{:else}
+				{#if checkPrimary.heading}<h2>{checkPrimary.heading}</h2>{/if}
+				{#if checkPrimary.intro_text?.length}<PrismicRichText field={checkPrimary.intro_text} />{/if}
+
+				<form on:submit|preventDefault={handleCheckSubmit} class="flex flex-col gap-4 mt-4">
+					<InputField
+						field={{
+							field_name: checkPrimary.buchungsref_label || t('Buchungsreferenz', lang),
+							field_type: 'Textfeld',
+							required: true
+						}}
+						bind:value={buchungsref}
+					/>
+
+					{#if slice.items.length > 0}
+						<ul class="flex flex-col gap-2">
+							{#each slice.items as item, i}
+								<li class="flex items-start gap-3">
+									<Checkbox
+										id="check-item-{i}"
+										checked={checkedItems.has(i)}
+										on:change={() => {
+											if (checkedItems.has(i)) checkedItems.delete(i);
+											else checkedItems.add(i);
+											checkedItems = checkedItems;
+										}}
+									/>
+									<label for="check-item-{i}" class="leading-snug cursor-pointer">
+										{checklistItemText(item)}
+									</label>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+
+					{#if checkError}
+						<p class="text-red-600 text-sm">{checkError}</p>
+					{/if}
+
+					<button
+						type="submit"
+						disabled={checkedItems.size < slice.items.length || !buchungsref.trim() || checkSubmitting}
+						class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
+						style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+					>
+						{checkSubmitting ? '…' : (checkPrimary.submit_label || t('Abschicken', lang))}
+					</button>
+				</form>
+			{/if}
+		</div>
 	{:else}
 		<!-- Standard: einspaltig -->
 		<div

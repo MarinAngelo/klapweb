@@ -8,6 +8,9 @@
 		required: boolean;
 		options?: string | null; // Optionen als String, durch Kommas getrennt
 		placeholder?: string | null;
+		maxlength?: number | null;
+		min?: number | null;
+		max?: number | null;
 		'invalid_feedback-text'?: string | null;
 		invalid_feedback_text?: string | null;
 	};
@@ -33,6 +36,8 @@
 		Einzelauswahl: 'radio',
 		Auswahlliste: 'select',
 		Textfeld: 'text',
+		Code: 'code',
+		Zahl: 'number',
 		'E-Mail': 'email',
 		Textbereich: 'textarea',
 		Telefon: 'tel',
@@ -303,10 +308,16 @@
 	];
 	let prefix = '+41';
 	let localNumber = '';
-	export let value = '';
+	export let value: string | number = '';
 	let textValue = '';
-	$: if (htmlType === 'text' || htmlType === 'email') value = textValue;
+	let numberValue: number | null = typeof value === 'number' ? value : null;
+	$: if (htmlType === 'text' || htmlType === 'code' || htmlType === 'email') value = textValue;
+	$: if (htmlType === 'number') value = numberValue ?? '';
 	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
+
+	function handleCodeInput(e: Event) {
+		textValue = (e.target as HTMLInputElement).value.toUpperCase();
+	}
 </script>
 
 <div class="mb-4">
@@ -330,6 +341,35 @@
 			placeholder={field.placeholder ?? ''}
 			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:blur
+		/>
+	{:else if htmlType === 'number'}
+		<input
+			type="number"
+			id={key}
+			name={key}
+			bind:value={numberValue}
+			required={field.required}
+			min={field.min ?? undefined}
+			max={field.max ?? undefined}
+			placeholder={field.placeholder ?? ''}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:blur
+		/>
+	{:else if htmlType === 'code'}
+		<input
+			type="text"
+			id={key}
+			name={key}
+			bind:value={textValue}
+			required={field.required}
+			placeholder={field.placeholder ?? ''}
+			maxlength={field.maxlength ?? undefined}
+			autocomplete="off"
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none uppercase tracking-widest font-mono code-input' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm uppercase tracking-widest font-mono code-input'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:input={handleCodeInput}
 			on:blur
 		/>
 	{:else if htmlType === 'email'}
@@ -539,5 +579,9 @@
 	.input {
 		font-size: 18px;
 		line-height: 1.5;
+	}
+
+	.code-input::placeholder {
+		color: color-mix(in srgb, var(--page-color) 35%, transparent);
 	}
 </style>

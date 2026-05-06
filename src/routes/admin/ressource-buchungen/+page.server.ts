@@ -87,7 +87,7 @@ export const actions: Actions = {
 
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
-			await resend.emails.send({
+			const { error: mailError } = await resend.emails.send({
 				from: emailFrom,
 				to: buchung.email,
 				subject: `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`,
@@ -98,14 +98,19 @@ export const actions: Actions = {
 					``,
 					buchungsDetails,
 					``,
-					`Ihre Buchungs-ID: ${buchung.id}`,
-					`(Diese ID benötigen Sie, um Aufgaben auf unserer Website anzunehmen.)`,
-					``,
+					...(buchung.referenz ? [
+						`Ihre Buchungsreferenz: ${buchung.referenz}`,
+						`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
+						``
+					] : []),
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,
 					`Freundliche Grüsse`
 				].join('\n')
 			});
+			if (mailError) {
+				console.error('Bestätigungsmail fehlgeschlagen:', mailError);
+			}
 		}
 	}
 };
