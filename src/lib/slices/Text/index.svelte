@@ -14,7 +14,7 @@ export let context: unknown = undefined;
 export let index: number | undefined = undefined;
 
 $: anim = mapAnimationFromPrimary(slice.primary);
-$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 $: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 $: textColor = (slice.primary as any).color || $theme.pageColor;
 $: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);

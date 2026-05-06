@@ -81,7 +81,7 @@
 					<tr><td><code>text_zoom_desktop</code> / <code>text_zoom_mobile</code></td><td>Zahl</td><td>Schriftgrösse Desktop / Mobile (%)</td></tr>
 					<tr><td><code>bg_color</code> / <code>color</code></td><td>Farbe</td><td>Hintergrund- / Schriftfarbe</td></tr>
 					<tr><td><code>opacity</code></td><td>Zahl</td><td>Deckkraft der Karte (0–100)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation (Richtung, Verzögerung ms, Dauer ms)</td></tr>
 				</tbody>
 			</table>
@@ -108,7 +108,7 @@
 					<tr><td><code>sektion_rahmen</code></td><td>Toggle</td><td>Rahmen um die gesamte Sektion</td></tr>
 					<tr><td><code>bg_color</code> / <code>text_color</code> / <code>border_color</code> / <code>link_color</code></td><td>Farbe</td><td>Hintergrund-, Text-, Rahmen-, Linkfarbe</td></tr>
 					<tr><td><code>contrast_amount</code></td><td>Zahl</td><td>Kontrast-Offset für Akkordeon-Titel</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -134,7 +134,7 @@
 					<tr><td><code>title</code></td><td>Text</td><td>Titel der Anleitung</td></tr>
 					<tr><td><code>description</code></td><td>Rich Text</td><td>Einleitungstext</td></tr>
 					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Gesamt-Video</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -163,7 +163,7 @@
 				<thead><tr><th>API-ID</th><th>Typ</th><th>Beschreibung</th></tr></thead>
 				<tbody>
 					<tr><td><code>image</code></td><td>Bild</td><td>Hauptbild (+ mobile Thumbnail 1080×1920)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -203,7 +203,7 @@
 					<tr><td><code>button_color</code> / <code>button_hover_color</code></td><td>Farbe</td><td>Text- &amp; Rahmenfarbe / Hover</td></tr>
 					<tr><td><code>button_bg_color</code> / <code>button_hover_bg_color</code></td><td>Farbe</td><td>Hintergrundfarbe / Hover</td></tr>
 					<tr><td><code>y_padding</code></td><td>Auswahl</td><td>Vertikaler Abstand (kein / wenig / mittel / gross)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 				</tbody>
 			</table>
 			<div class="callout"><em>kauf</em>-Variation: Link automatisch via <code>getBeauftragunHref()</code> gesetzt. Fallback-Farben aus <code>$theme.pageButton*</code>-Stores.</div>
@@ -222,7 +222,7 @@
 					<tr><td><code>start_date_time</code> / <code>end_date_time</code></td><td>Datum/Zeit</td><td>Start / Ende</td></tr>
 					<tr><td><code>location_text</code></td><td>Rich Text</td><td>Ortsangabe</td></tr>
 					<tr><td><code>geopoint</code></td><td>Geo-Punkt</td><td>Koordinaten für Google Maps</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -329,7 +329,7 @@
 					<tr><td><code>map_url</code></td><td>Text</td><td>Google Maps URL</td></tr>
 					<tr><td><code>map_height</code></td><td>Zahl</td><td>Kartenhöhe in px</td></tr>
 					<tr><td><code>opacity</code></td><td>Zahl</td><td>Deckkraft (0–100)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -344,7 +344,7 @@
 				<thead><tr><th>API-ID</th><th>Typ</th><th>Beschreibung</th></tr></thead>
 				<tbody>
 					<tr><td><code>html_code</code></td><td>Rich Text (preformatted)</td><td>HTML-Quelltext</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -446,7 +446,7 @@
 					<tr><td><code>label_restbetrag</code></td><td>Text</td><td>Bezeichnung Restbetrag</td></tr>
 					<tr><td><code>label_abrechnungsart</code></td><td>Text</td><td>Bezeichnung Abrechnungsart</td></tr>
 					<tr><td><code>label_total</code></td><td>Text</td><td>Bezeichnung Total</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -466,7 +466,7 @@
 					<tr><td><code>hervorhebung</code></td><td>Auswahl</td><td>Keiner / Plan 1 / Plan 2 / Plan 3</td></tr>
 					<tr><td><code>cta_label</code></td><td>Text</td><td>CTA-Button-Beschriftung</td></tr>
 					<tr><td><code>button_style</code></td><td>Auswahl</td><td>Button-Stil</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -519,7 +519,7 @@
 				<tbody>
 					<tr><td><code>text</code></td><td>Rich Text</td><td>Inhalt (unterstützt Labels: highlight / note / quote / invisible)</td></tr>
 					<tr><td><code>bg_color</code> / <code>color</code></td><td>Farbe</td><td>Hintergrund- / Schriftfarbe (cascadiert in Kind-Elemente via Inline-Style)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>
@@ -568,7 +568,7 @@
 					<tr><td><code>text_center_v</code> / <code>text_center_h</code></td><td>Toggle</td><td>Text vertikal / horizontal zentrieren</td></tr>
 					<tr><td><code>y_padding_same</code></td><td>Toggle</td><td>Abstand oben = unten</td></tr>
 					<tr><td><code>y_padding</code></td><td>Auswahl</td><td>Vertikaler Abstand (kein / wenig / mittel / gross)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 					<tr><td colspan="3">Nur <em>withButton</em>:</td></tr>
 					<tr><td><code>buttonLink</code> / <code>buttonText</code></td><td>Link / Text</td><td>Schaltfläche</td></tr>
@@ -642,7 +642,7 @@
 				<tbody>
 					<tr><td><code>quote</code></td><td>Rich Text (Einzel)</td><td>Zitattext</td></tr>
 					<tr><td><code>source</code></td><td>Text</td><td>Quelle / Autor (optional)</td></tr>
-					<tr><td><code>mobile_vollbreite</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
+					<tr><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td></tr>
 					<tr><td><code>animate</code> / <code>anim_*</code></td><td>Toggle / Auswahl / Zahl</td><td>Einblend-Animation</td></tr>
 				</tbody>
 			</table>

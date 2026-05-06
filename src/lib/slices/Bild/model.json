@@ -25,7 +25,7 @@
 						]
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -97,7 +97,7 @@
 						]
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -152,7 +152,7 @@
 			"version": "sktwi1xtmkfgx8626",
 			"description": "Image",
 			"primary": {
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -252,7 +252,7 @@
 						"placeholder": "Nachher"
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",

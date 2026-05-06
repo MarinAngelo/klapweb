@@ -10,7 +10,7 @@
 	const p = slice.primary ?? {};
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = p.mobile_vollbreite ?? false;
+	$: mobileVollbreite = p.mobile_full_width ?? false;
 
 	const mapOpacity = convertNumber(p.opacity ?? 100);
 	const mapHeight = p.map_height || 400;
