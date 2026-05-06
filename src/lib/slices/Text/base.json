@@ -80,7 +80,7 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "mobile_vollbreite": {
+        "mobile_full_width": {
           "type": "Boolean",
           "config": {
             "label": "Vollbreite auf Mobile",
@@ -218,7 +218,7 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
-        "mobile_vollbreite": {
+        "mobile_full_width": {
           "type": "Boolean",
           "config": {
             "label": "Vollbreite auf Mobile",

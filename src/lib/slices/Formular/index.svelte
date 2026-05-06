@@ -41,7 +41,7 @@
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
 	$: checkoutUrl =
 		((slice.primary as any)?.checkout_url as string | null | undefined)?.trim() || null;
-	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any)?.mobile_full_width ?? false;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen

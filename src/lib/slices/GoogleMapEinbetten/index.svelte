@@ -10,7 +10,7 @@
 	const p = slice.primary ?? {};
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = p.mobile_vollbreite ?? false;
+	$: mobileVollbreite = p.mobile_full_width ?? false;
 
 	const mapOpacity = convertNumber(p.opacity ?? 100);
 	const mapHeight = p.map_height || 400;
@@ -72,7 +72,7 @@
 	<div class="relative {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 		{#if embedUrl}
 			<div class="flex flex-col gap-3">
-				<div class="relative rounded-3xl overflow-hidden">
+				<div class="relative overflow-hidden {mobileVollbreite ? 'md:rounded-3xl' : 'rounded-3xl'}">
 					<iframe
 						src={embedUrl}
 						width="100%"

@@ -69,7 +69,7 @@
 						"placeholder": ""
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",

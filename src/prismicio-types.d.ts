@@ -1479,12 +1479,7 @@ export interface RessourceDocumentDataSaisonpreiseItem {
 	preis_pro_nacht: prismic.NumberField;
 }
 
-type RessourceDocumentDataSlicesSlice =
-	| RessourceBuchungSlice
-	| HeroSlice
-	| TextSlice
-	| ImageSlice
-	| GalerieSlice;
+type RessourceDocumentDataSlicesSlice = RessourceBuchungSlice;
 
 /**
  * Content for Ressource documents
@@ -1500,17 +1495,6 @@ interface RessourceDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	name: prismic.KeyTextField;
-
-	/**
-	 * Beschreibung field in *Ressource*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: ressource.beschreibung
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	beschreibung: prismic.RichTextField;
 
 	/**
 	 * Hauptbild field in *Ressource*
@@ -3739,10 +3723,10 @@ export interface AccordionSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: accordion.default.primary.mobile_vollbreite
+	 * - **API ID Path**: accordion.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Akkordeon → Standard → Primary*
@@ -3933,10 +3917,10 @@ export interface AccordionSliceBildUndTextPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: accordion.bildUndText.primary.mobile_vollbreite
+	 * - **API ID Path**: accordion.bildUndText.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Akkordeon → Bild und Text → Primary*
@@ -4127,10 +4111,10 @@ export interface AccordionSliceLeistungenPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: accordion.leistungen.primary.mobile_vollbreite
+	 * - **API ID Path**: accordion.leistungen.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Akkordeon → Leistungen → Primary*
@@ -4378,10 +4362,10 @@ export interface AdresseUndMapSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: adresse_und_map.default.primary.mobile_vollbreite
+	 * - **API ID Path**: adresse_und_map.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *AdresseUndMap → Standard → Primary*
@@ -4531,10 +4515,10 @@ export interface AnleitungSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: anleitung.default.primary.mobile_vollbreite
+	 * - **API ID Path**: anleitung.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Anleitung → Default → Primary*
@@ -4801,10 +4785,10 @@ export interface ButtonSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: button.default.primary.mobile_vollbreite
+	 * - **API ID Path**: button.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 }
 
 /**
@@ -5027,10 +5011,10 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: code_einbetten.default.primary.mobile_vollbreite
+	 * - **API ID Path**: code_einbetten.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *GoogleMapEinbetten → Standard → Primary*
@@ -5197,10 +5181,10 @@ export interface EventSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: event.default.primary.mobile_vollbreite
+	 * - **API ID Path**: event.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Event → Standart → Primary*
@@ -5582,10 +5566,10 @@ export interface FormSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: form.default.primary.mobile_vollbreite
+	 * - **API ID Path**: form.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Formular → Standard → Primary*
@@ -6566,10 +6550,10 @@ export interface HtmlCodeSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: html_code.default.primary.mobile_vollbreite
+	 * - **API ID Path**: html_code.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *HtmlCode → Standard → Primary*
@@ -6661,10 +6645,10 @@ export interface ImageSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: image.default.primary.mobile_vollbreite
+	 * - **API ID Path**: image.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Standard → Primary*
@@ -6742,10 +6726,10 @@ export interface ImageSliceBannerPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: image.banner.primary.mobile_vollbreite
+	 * - **API ID Path**: image.banner.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Banner → Primary*
@@ -6813,10 +6797,10 @@ export interface ImageSliceCarouselPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: image.carousel.primary.mobile_vollbreite
+	 * - **API ID Path**: image.carousel.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Karussell → Primary*
@@ -6939,10 +6923,10 @@ export interface ImageSliceVorherNachherPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: image.vorherNachher.primary.mobile_vollbreite
+	 * - **API ID Path**: image.vorherNachher.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Bild → Vorher/Nachher → Primary*
@@ -7215,10 +7199,10 @@ export interface ImageCardsSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: image_cards.default.primary.mobile_vollbreite
+	 * - **API ID Path**: image_cards.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Kacheln → Standard → Primary*
@@ -8043,10 +8027,10 @@ export interface PreisaufstellungSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: preisaufstellung.default.primary.mobile_vollbreite
+	 * - **API ID Path**: preisaufstellung.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Preisaufstellung → Standard → Primary*
@@ -8202,10 +8186,10 @@ export interface PreisvergleichSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: preisvergleich.default.primary.mobile_vollbreite
+	 * - **API ID Path**: preisvergleich.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Preisvergleich → Standard → Primary*
@@ -8355,10 +8339,10 @@ export interface QuoteSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: quote.default.primary.mobile_vollbreite
+	 * - **API ID Path**: quote.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Zitat → Standart → Primary*
@@ -8734,10 +8718,10 @@ export interface TextSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: text.default.primary.mobile_vollbreite
+	 * - **API ID Path**: text.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Text → Standard → Primary*
@@ -8847,10 +8831,10 @@ export interface TextSliceTwoColumnsPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: text.twoColumns.primary.mobile_vollbreite
+	 * - **API ID Path**: text.twoColumns.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Animation aktivieren field in *Text → Zwei Spalten → Primary*
@@ -9234,10 +9218,10 @@ export interface TextWithImageSliceDefaultPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: text_with_image.default.primary.mobile_vollbreite
+	 * - **API ID Path**: text_with_image.default.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild rechts → Primary*
@@ -9410,10 +9394,10 @@ export interface TextWithImageSliceWithButtonPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: text_with_image.withButton.primary.mobile_vollbreite
+	 * - **API ID Path**: text_with_image.withButton.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Schrift vertikal zentrieren field in *TextMitBild → Mit Schaltfläche → Primary*
@@ -9598,10 +9582,10 @@ export interface TextWithImageSliceStandardBildLinksPrimary {
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
 	 * - **Default Value**: false
-	 * - **API ID Path**: text_with_image.standardBildLinks.primary.mobile_vollbreite
+	 * - **API ID Path**: text_with_image.standardBildLinks.primary.mobile_full_width
 	 * - **Documentation**: https://prismic.io/docs/fields/boolean
 	 */
-	mobile_vollbreite: prismic.BooleanField;
+	mobile_full_width: prismic.BooleanField;
 
 	/**
 	 * Schrift vertikal zentrieren field in *TextMitBild → Standard Bild links → Primary*

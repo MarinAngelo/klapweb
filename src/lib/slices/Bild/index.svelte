@@ -14,7 +14,7 @@
 	export let context: unknown = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 	$: primaryVN = slice.primary as any;
 	$: isVorherNachher = (slice.variation as string) === 'vorherNachher';
 </script>
