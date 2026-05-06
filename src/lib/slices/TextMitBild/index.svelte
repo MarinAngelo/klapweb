@@ -128,7 +128,7 @@
 >
 	<div
 		class="{fullscreen ? 'flex-1 flex items-center' : ''} {mobileVollbreite
-			? '-mx-6 md:mx-0 px-6 md:px-0'
+			? '-mx-6 md:mx-0'
 			: ''}"
 	>
 		<ImageTextGrid
@@ -137,7 +137,8 @@
 			imageLeft={isBildLinks}
 			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 			imageRound={p.image_round}
-
+			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
+			noRoundMobile={mobileVollbreite}
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
