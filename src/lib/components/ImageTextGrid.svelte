@@ -3,7 +3,11 @@
 	import { PrismicImage } from '@prismicio/svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import BildLupe from '$lib/components/BildLupe.svelte';
+	import BildSlider from '$lib/components/BildSlider.svelte';
+	import { isFilled } from '@prismicio/client';
 	export let image: any;
+	export let images: any[] | undefined = undefined;
+	$: activeImages = images?.filter(img => isFilled.image(img)) ?? [];
 	export let text: any;
 	export let imageLeft: boolean = false;
 	export let imageBgColor: string = '';
@@ -42,7 +46,9 @@
 			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
 		>
-			{#if image}
+			{#if activeImages.length > 1}
+				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} />
+			{:else if image}
 				<div id="7" class="relative md:h-full" style="background-color: {imageBgColor};">
 					{#if lupe}
 						<BildLupe imageUrl={image?.url ?? ''}>
@@ -117,7 +123,9 @@
 			class="md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
 		>
-			{#if image}
+			{#if activeImages.length > 1}
+				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} />
+			{:else if image}
 				<div id="8" class="relative md:h-full" style="background-color: {imageBgColor};">
 					{#if lupe}
 						<BildLupe imageUrl={image?.url ?? ''}>

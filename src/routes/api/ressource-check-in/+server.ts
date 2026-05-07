@@ -4,7 +4,7 @@ import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
 export async function POST({ request, fetch }) {
-	const { referenz, items } = await request.json();
+	const { referenz, items, kommentar } = await request.json();
 	if (!referenz?.trim()) return json({ error: 'Buchungsreferenz fehlt.' }, { status: 400 });
 
 	let buchung;
@@ -46,7 +46,8 @@ export async function POST({ request, fetch }) {
 					`Anreise:   ${vonD}.${vonM}.${vonY}`,
 					`Abreise:   ${bisD}.${bisM}.${bisY}`,
 					`Personen:  ${buchung.personen}`,
-					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : [])
+					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : []),
+					...(kommentar ? [``, `Kommentar:`, kommentar] : [])
 				].join('\n')
 			});
 		} catch (e) {
