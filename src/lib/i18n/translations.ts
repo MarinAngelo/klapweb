@@ -462,6 +462,14 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Buchungsreferenz',
 		'en-us': 'Booking reference'
 	},
+	'Check-in ab': {
+		'de-ch': 'Check-in ab',
+		'en-us': 'Check-in from'
+	},
+	'Check-out ab': {
+		'de-ch': 'Check-out ab',
+		'en-us': 'Check-out from'
+	},
 	'Buchungsreferenz nicht gefunden.': {
 		'de-ch': 'Buchungsreferenz nicht gefunden.',
 		'en-us': 'Booking reference not found.'

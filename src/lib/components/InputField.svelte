@@ -341,6 +341,7 @@
 			placeholder={field.placeholder ?? ''}
 			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:input
 			on:blur
 		/>
 	{:else if htmlType === 'number'}

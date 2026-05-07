@@ -59,6 +59,13 @@
 		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">Fehler: {data.blobError}</p>
 	{/if}
 
+	{#if data.buchungen.length > 0}
+		<details style="margin-bottom:1rem;">
+			<summary style="cursor:pointer;font-size:0.75rem;opacity:0.5;">Debug: erste Buchung (roh)</summary>
+			<pre style="font-size:0.7rem;background:#f3f4f6;padding:0.5rem;overflow:auto;">{JSON.stringify(data.buchungen[0], null, 2)}</pre>
+		</details>
+	{/if}
+
 	{#if data.buchungen.length === 0}
 		<p style="opacity: 0.5;">Noch keine Buchungen vorhanden.</p>
 	{:else}
@@ -76,7 +83,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each buchungen.sort((x, y) => x.von.localeCompare(y.von)) as b}
+						{#each buchungen.sort((x, y) => (x.von ?? '').localeCompare(y.von ?? '')) as b}
 							{@const n = naechte(b.von, b.bis)}
 							{@const isPast = b.bis < new Date().toISOString().slice(0, 10)}
 							<tr style="border-bottom: 1px solid #e5e7eb; {isPast ? 'opacity: 0.45;' : ''}">

@@ -32,30 +32,60 @@
 	let checkSubmitting = false;
 	let checkSuccess = false;
 	let checkError = '';
+	let checkStep = 1; // 1 = Ref eingeben, 2 = Checkliste
+
+	function onBuchungsrefInput(e: Event) {
+		buchungsref = (e.target as HTMLInputElement).value;
+	}
 
 	function checklistItemText(item: unknown): string {
 		return (item as Record<string, unknown>)?.checklist_item as string ?? '';
 	}
 
-	async function handleCheckSubmit() {
-		const p = slice.primary as any;
-		checkSubmitting = true;
+	async function handleStep1() {
 		checkError = '';
+		checkSubmitting = true;
+		try {
+			const res = await fetch('/api/pruefe-buchungsref', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ referenz: buchungsref.trim(), typ: isEinChecken ? 'einChecken' : 'ausChecken' })
+			});
+			const data = await res.json();
+			if (data.ok) {
+				checkStep = 2;
+			} else {
+				const code = data.error;
+				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				else if (code === 'TOO_EARLY') checkError = t(isEinChecken ? 'Check-in ab' : 'Check-out ab', lang) + ' ' + data.von;
+				else checkError = t('Ein Fehler ist aufgetreten.', lang);
+			}
+		} catch {
+			checkError = t('Ein Fehler ist aufgetreten.', lang);
+		}
+		checkSubmitting = false;
+	}
+
+	async function handleStep2() {
+		checkError = '';
+		checkSubmitting = true;
 		const endpoint = isEinChecken ? '/api/ressource-check-in' : '/api/ressource-check-out';
 		const items = (slice.items as any[]).map((item) => item.checklist_item ?? '');
 		try {
 			const res = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ referenz: buchungsref.trim().toUpperCase(), items })
+				body: JSON.stringify({ referenz: buchungsref.trim(), items })
 			});
 			const data = await res.json();
 			if (data.success) {
 				checkSuccess = true;
+				setTimeout(() => goto('/'), 4000);
 			} else {
 				const code = data.error;
-				if (code === 'NOT_FOUND') checkError = p.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
-				else if (code === 'ALREADY_DONE') checkError = p.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
 				else checkError = t('Ein Fehler ist aufgetreten.', lang);
 			}
 		} catch {
@@ -369,50 +399,66 @@
 				{#if checkPrimary.heading}<h2>{checkPrimary.heading}</h2>{/if}
 				{#if checkPrimary.intro_text?.length}<PrismicRichText field={checkPrimary.intro_text} />{/if}
 
-				<form on:submit|preventDefault={handleCheckSubmit} class="flex flex-col gap-4 mt-4">
-					<InputField
-						field={{
-							field_name: checkPrimary.buchungsref_label || t('Buchungsreferenz', lang),
-							field_type: 'Textfeld',
-							required: true
-						}}
-						bind:value={buchungsref}
-					/>
-
-					{#if slice.items.length > 0}
-						<ul class="flex flex-col gap-2">
-							{#each slice.items as item, i}
-								<li class="flex items-start gap-3">
-									<Checkbox
-										id="check-item-{i}"
-										checked={checkedItems.has(i)}
-										on:change={() => {
-											if (checkedItems.has(i)) checkedItems.delete(i);
-											else checkedItems.add(i);
-											checkedItems = checkedItems;
-										}}
-									/>
-									<label for="check-item-{i}" class="leading-snug cursor-pointer">
-										{checklistItemText(item)}
-									</label>
-								</li>
-							{/each}
-						</ul>
-					{/if}
-
-					{#if checkError}
-						<p class="text-red-600 text-sm">{checkError}</p>
-					{/if}
-
-					<button
-						type="submit"
-						disabled={checkedItems.size < slice.items.length || !buchungsref.trim() || checkSubmitting}
-						class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
-						style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
-					>
-						{checkSubmitting ? '…' : (checkPrimary.submit_label || t('Abschicken', lang))}
-					</button>
-				</form>
+				{#if checkStep === 1}
+					<!-- Schritt 1: Buchungsreferenz prüfen -->
+					<form on:submit|preventDefault={handleStep1} class="flex flex-col gap-4 mt-4">
+						<InputField
+							field={{
+								field_name: checkPrimary.buchungsref_label || t('Buchungsreferenz', lang),
+								field_type: 'Textfeld',
+								required: true
+							}}
+							bind:value={buchungsref}
+							on:input={onBuchungsrefInput}
+						/>
+						{#if checkError}
+							<p class="text-red-600 text-sm">{checkError}</p>
+						{/if}
+						<button
+							type="submit"
+							disabled={checkSubmitting}
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+						>
+							{checkSubmitting ? '…' : t('Weiter', lang)}
+						</button>
+					</form>
+				{:else}
+					<!-- Schritt 2: Checkliste + Abschicken -->
+					<form on:submit|preventDefault={handleStep2} class="flex flex-col gap-4 mt-4">
+						{#if slice.items.length > 0}
+							<ul class="flex flex-col gap-2">
+								{#each slice.items as item, i}
+									<li class="flex items-start gap-3">
+										<Checkbox
+											id="check-item-{i}"
+											checked={checkedItems.has(i)}
+											on:change={() => {
+												if (checkedItems.has(i)) checkedItems.delete(i);
+												else checkedItems.add(i);
+												checkedItems = checkedItems;
+											}}
+										/>
+										<label for="check-item-{i}" class="leading-snug cursor-pointer">
+											{checklistItemText(item)}
+										</label>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+						{#if checkError}
+							<p class="text-red-600 text-sm">{checkError}</p>
+						{/if}
+						<button
+							type="submit"
+							disabled={checkSubmitting}
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+						>
+							{checkSubmitting ? '…' : (checkPrimary.submit_label || t('Abschicken', lang))}
+						</button>
+					</form>
+				{/if}
 			{/if}
 		</div>
 	{:else}
