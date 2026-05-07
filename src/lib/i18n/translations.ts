@@ -486,6 +486,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Abschicken',
 		'en-us': 'Submit'
 	},
+	'Kommentar': {
+		'de-ch': 'Kommentar',
+		'en-us': 'Comment'
+	},
 	'Erfolgreich eingecheckt.': {
 		'de-ch': 'Erfolgreich eingecheckt.',
 		'en-us': 'Successfully checked in.'

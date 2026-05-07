@@ -33,6 +33,7 @@
 	let checkSuccess = false;
 	let checkError = '';
 	let checkStep = 1; // 1 = Ref eingeben, 2 = Checkliste
+	let checkKommentar = '';
 
 	function onBuchungsrefInput(e: Event) {
 		buchungsref = (e.target as HTMLInputElement).value;
@@ -79,7 +80,7 @@
 			const res = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ referenz: buchungsref.trim(), items })
+				body: JSON.stringify({ referenz: buchungsref.trim(), items, kommentar: checkKommentar.trim() || undefined })
 			});
 			const data = await res.json();
 			if (data.success) {
@@ -456,6 +457,10 @@
 								{/each}
 							</ul>
 						{/if}
+						<InputField
+							field={{ field_name: t('Kommentar', lang), field_type: 'Textbereich', required: false }}
+							bind:value={checkKommentar}
+						/>
 						{#if checkError}
 							<p class="text-red-600 text-sm">{checkError}</p>
 						{/if}
