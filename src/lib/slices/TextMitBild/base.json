@@ -827,7 +827,31 @@
         "image": {
           "type": "Image",
           "config": {
-            "label": "Bild",
+            "label": "Bild 1",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image_2": {
+          "type": "Image",
+          "config": {
+            "label": "Bild 2 (Slider)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image_3": {
+          "type": "Image",
+          "config": {
+            "label": "Bild 3 (Slider)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image_4": {
+          "type": "Image",
+          "config": {
+            "label": "Bild 4 (Slider)",
             "constraint": {},
             "thumbnails": []
           }

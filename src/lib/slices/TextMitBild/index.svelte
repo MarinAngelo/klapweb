@@ -58,6 +58,10 @@
 			: (rowGapMap[(p as any).row_gap ?? 'mittel'] ?? '3rem')
 		: '0';
 	$: multiItems = isMulti ? ((slice as any).items ?? []) : [];
+	$: multiItemsWithImages = multiItems.map((item: any) => ({
+		...item,
+		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
+	}));
 	$: imageRound = (p as any).image_round ?? false;
 	$: isFullWidth = (p as any).full_width ?? false;
 
@@ -87,9 +91,10 @@
 		<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 	{/if}
 	<div class="flex flex-col" style="gap: {rowGap};">
-		{#each multiItems as item}
+		{#each multiItemsWithImages as item, i}
 			<ImageTextGrid
 				image={isFilled.image(item.image) ? item.image : null}
+				images={item.sliderImages.length > 1 ? item.sliderImages : undefined}
 				text={item.text}
 				imageLeft={item.bild_links ?? false}
 				imageBgColor={p.bg_color || 'var(--page-bg-color)'}
@@ -100,7 +105,7 @@
 				mobilePadding={textPad}
 				mobilePaddingTop={textPad}
 				desktopPadding={textPad}
-				desktopPaddingY={textPad}
+				desktopPaddingY={i === 0 ? '0' : textPad}
 				{textCenterV}
 				{textCenterH}
 				fullscreen={false}
