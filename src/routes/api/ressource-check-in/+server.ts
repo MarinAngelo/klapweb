@@ -1,8 +1,9 @@
 import { json } from '@sveltejs/kit';
 import { checkInBuchung } from '$lib/server/ressourceBuchungen';
+import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
-export async function POST({ request }) {
+export async function POST({ request, fetch }) {
 	const { referenz, items } = await request.json();
 	if (!referenz?.trim()) return json({ error: 'Buchungsreferenz fehlt.' }, { status: 400 });
 
@@ -18,8 +19,16 @@ export async function POST({ request }) {
 
 	// E-Mail an Betreiber
 	const resendKey = env.RESEND_API_KEY;
-	const toEmail = env.INVOICE_TO_EMAIL;
 	const emailFrom = env.INVOICE_FROM_EMAIL;
+	let toEmail = env.INVOICE_TO_EMAIL || '';
+	if (!toEmail) {
+		try {
+			const client = createClient({ fetch });
+			const settings = await client.getSingle('settings');
+			const s = settings.data as any;
+			toEmail = (s.responsible_email as string) || (s.e_mail as string) || '';
+		} catch { /* ignore */ }
+	}
 	if (resendKey && toEmail && emailFrom && buchung) {
 		const [vonY, vonM, vonD] = buchung.von.split('-');
 		const [bisY, bisM, bisD] = buchung.bis.split('-');
