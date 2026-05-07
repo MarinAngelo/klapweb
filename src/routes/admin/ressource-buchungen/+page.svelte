@@ -12,6 +12,10 @@
 		return `${day}.${month}.${year}`;
 	}
 
+	function reminderSent(b: any): boolean {
+		return !!(b as any).reminderSent;
+	}
+
 	function fmtPrice(chf: number) {
 		return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
 	}
@@ -70,7 +74,7 @@
 				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 					<thead>
 						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', ''] as col}
+							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', 'Reminder', ''] as col}
 								<th style={tdNowrap}>{col}</th>
 							{/each}
 						</tr>
@@ -124,6 +128,13 @@
 								</td>
 								<td style="{tdNowrap} opacity: 0.5; font-size: 0.75rem;">
 									{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+								</td>
+								<td style={tdNowrap}>
+									{#if reminderSent(b)}
+										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">✓ gesendet</span>
+									{:else}
+										<span style="opacity: 0.35; font-size: 0.75rem;">–</span>
+									{/if}
 								</td>
 								<td style="{tdStyle} display: flex; gap: 0.75rem; align-items: center;">
 									{#if b.status === 'pending'}
