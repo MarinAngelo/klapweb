@@ -336,7 +336,7 @@
 
 			// Im Dev-Modus → lokaler Mock-Endpunkt
 			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
-			const endpoint = import.meta.env.DEV ? '/api/form' : '/';
+			const endpoint = '/api/form';
 			const response = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
