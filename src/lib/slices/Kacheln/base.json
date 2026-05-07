@@ -296,6 +296,13 @@
                   "label": "Schaltflächen-Text",
                   "placeholder": ""
                 }
+              },
+              "button_anchor": {
+                "type": "Text",
+                "config": {
+                  "label": "Schaltflächen-Anker (statt Link)",
+                  "placeholder": "#Titel1"
+                }
               }
             }
           }
