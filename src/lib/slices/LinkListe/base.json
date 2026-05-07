@@ -1,0 +1,147 @@
+{
+  "id": "link_liste",
+  "type": "SharedSlice",
+  "name": "LinkListe",
+  "description": "Gruppierbare Linkliste mit Social Preview",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Standard",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "Linkliste mit optionaler Gruppierung und Social Preview",
+      "imageUrl": "",
+      "primary": {
+        "heading": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titel",
+            "placeholder": "",
+            "allowTargetBlank": false,
+            "single": "heading2",
+            "labels": []
+          }
+        },
+        "layout": {
+          "type": "Select",
+          "config": {
+            "label": "Layout",
+            "options": ["Liste", "Kacheln", "Kompakt"],
+            "default_value": "Liste"
+          }
+        },
+        "spalten": {
+          "type": "Select",
+          "config": {
+            "label": "Spalten bei Kacheln (Desktop)",
+            "options": ["2", "3", "4"],
+            "default_value": "3"
+          }
+        },
+        "group_by": {
+          "type": "Boolean",
+          "config": {
+            "label": "Nach Gruppe gruppieren",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "bg_color": {
+          "type": "Color",
+          "config": {
+            "label": "Hintergrundfarbe"
+          }
+        },
+        "color": {
+          "type": "Color",
+          "config": {
+            "label": "Textfarbe"
+          }
+        },
+        "y_padding_same": {
+          "type": "Boolean",
+          "config": {
+            "label": "Abstand oben / unten gleich",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "y_padding": {
+          "type": "Select",
+          "config": {
+            "label": "Vertikaler Abstand",
+            "options": ["kein Abstand", "wenig", "mittel", "gross"]
+          }
+        },
+        "animate": {
+          "type": "Boolean",
+          "config": {
+            "label": "Animation aktivieren",
+            "default_value": false
+          }
+        },
+        "anim_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Animations-Richtung",
+            "options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+            "default_value": "Oben"
+          }
+        },
+        "anim_delay": {
+          "type": "Number",
+          "config": {
+            "label": "Verzögerung (ms)",
+            "placeholder": "0"
+          }
+        },
+        "anim_duration": {
+          "type": "Number",
+          "config": {
+            "label": "Animationsdauer (ms)",
+            "placeholder": "2000"
+          }
+        }
+      },
+      "items": {
+        "url": {
+          "type": "Link",
+          "config": {
+            "label": "URL",
+            "allowTargetBlank": true
+          }
+        },
+        "titel": {
+          "type": "Text",
+          "config": {
+            "label": "Titel (optional, sonst Domain)",
+            "placeholder": "Meine Webseite"
+          }
+        },
+        "beschreibung": {
+          "type": "Text",
+          "config": {
+            "label": "Beschreibung",
+            "placeholder": ""
+          }
+        },
+        "gruppe": {
+          "type": "Text",
+          "config": {
+            "label": "Gruppe / Kategorie",
+            "placeholder": "z.B. Tools, Partner, Ressourcen"
+          }
+        },
+        "bild": {
+          "type": "Image",
+          "config": {
+            "label": "Vorschaubild (überschreibt Social Image)",
+            "thumbnails": []
+          }
+        }
+      }
+    }
+  ]
+}

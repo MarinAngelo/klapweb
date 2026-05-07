@@ -21,6 +21,7 @@ import PlanFilter from './PlanFilter/index.svelte';
 import Preisaufstellung from './Preisaufstellung/index.svelte';
 import Preisvergleich from './Preisvergleich/index.svelte';
 import Zitat from './Zitat/index.svelte';
+import LinkListe from './LinkListe/index.svelte';
 import RessourceBuchung from './RessourceBuchung/index.svelte';
 import Stimmen from './Stimmen/index.svelte';
 import Text from './Text/index.svelte';
@@ -45,6 +46,7 @@ export const components = {
 	image_cards: Kacheln,
 	inhaltsverzeichnis: Inhaltsverzeichnis,
 	kontakt: Kontakt,
+	link_liste: LinkListe,
 	p5_grafik: P5Grafik,
 	plan_filter: PlanFilter,
 	preisaufstellung: Preisaufstellung,

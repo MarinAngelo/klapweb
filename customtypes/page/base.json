@@ -92,6 +92,9 @@
             },
             "kontakt": {
               "type": "SharedSlice"
+            },
+            "link_liste": {
+              "type": "SharedSlice"
             }
           }
         }
