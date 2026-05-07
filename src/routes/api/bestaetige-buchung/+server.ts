@@ -30,20 +30,26 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (!buchung) {
 		return html(404, 'Buchung nicht gefunden');
 	}
-	if (buchung.status === 'confirmed') {
-		return html(200, `Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt.`);
+	const forceResend = url.searchParams.get('resend') === 'true';
+	if (buchung.status === 'confirmed' && !forceResend) {
+		return html(200, `Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt. <a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(secret ?? '')}&resend=true">Bestätigungsmail erneut senden</a>`);
 	}
 
-	// Status auf confirmed setzen
-	try {
-		await updateRessourceBuchungStatus(id, 'confirmed');
-	} catch (e) {
-		return html(500, `Fehler beim Bestätigen: ${e}`);
+	// Status auf confirmed setzen (nur wenn noch nicht bestätigt)
+	if (buchung.status !== 'confirmed') {
+		try {
+			await updateRessourceBuchungStatus(id, 'confirmed');
+		} catch (e) {
+			return html(500, `Fehler beim Bestätigen: ${e}`);
+		}
 	}
 
 	// Bestätigungsmail an Mieter senden
 	const resendKey = env.RESEND_API_KEY;
 	const emailFrom = env.INVOICE_FROM_EMAIL;
+
+	let mailGesendet = false;
+	let mailFehler = '';
 
 	if (resendKey && emailFrom && buchung.email) {
 		const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
@@ -72,37 +78,47 @@ export const GET: RequestHandler = async ({ url }) => {
 			`Total:     ${preisFormatted}`
 		].join('\n');
 
-		import('resend').then(({ Resend }) => {
+		try {
+			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
-			resend.emails.send({
+			const { error: e } = await resend.emails.send({
 				from: emailFrom,
-				to: buchung!.email!,
-				subject: `Buchungsbestätigung: ${buchung!.ressourceName ?? buchung!.ressourceUid}`,
+				to: buchung.email,
+				subject: `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`,
 				text: [
-					`Guten Tag ${buchung!.name}`,
+					`Guten Tag ${buchung.name}`,
 					``,
 					`Ihre Buchungsanfrage wurde bestätigt.`,
 					``,
 					buchungsDetails,
 					``,
-					`Ihre Buchungs-ID: ${buchung!.id}`,
-					`(Diese ID benötigen Sie, um Aufgaben auf unserer Website anzunehmen.)`,
+					`Ihre Buchungsreferenz:`,
+					``,
+					`${buchung.referenz ?? buchung.id}`,
+					`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
 					``,
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,
 					`Freundliche Grüsse`
 				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Bestätigung Kunden-E-Mail fehlgeschlagen:', e);
 			});
-		}).catch((e) => console.error('Resend import fehlgeschlagen:', e));
+			if (e) {
+				console.error('Bestätigung Kunden-E-Mail fehlgeschlagen:', e);
+				mailFehler = JSON.stringify(e);
+			} else {
+				mailGesendet = true;
+			}
+		} catch (e) {
+			console.error('Resend fehlgeschlagen:', e);
+			mailFehler = String(e);
+		}
 	}
 
 	return html(200, `
 		<strong>Buchung bestätigt ✓</strong><br><br>
 		Mieter: ${buchung.name ?? '–'}<br>
 		Zeitraum: ${buchung.von} – ${buchung.bis}<br>
-		${buchung.email ? `Bestätigungsmail wurde an <strong>${buchung.email}</strong> gesendet.` : 'Keine E-Mail-Adresse hinterlegt.'}
+		${!buchung.email ? 'Keine E-Mail-Adresse hinterlegt.' : mailGesendet ? `Bestätigungsmail wurde an <strong>${buchung.email}</strong> gesendet.` : `E-Mail fehlgeschlagen: ${mailFehler || '–'}`}
 	`);
 };
 

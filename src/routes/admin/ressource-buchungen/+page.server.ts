@@ -46,6 +46,18 @@ export const actions: Actions = {
 		}
 	},
 
+	zuruecksetzen: async ({ request, url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+
+		const form = await request.formData();
+		const id = form.get('id');
+		if (typeof id === 'string' && id) {
+			await updateRessourceBuchungStatus(id, 'confirmed');
+		}
+	},
+
 	bestaetigen: async ({ request, url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
@@ -87,7 +99,7 @@ export const actions: Actions = {
 
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
-			await resend.emails.send({
+			const { error: mailError } = await resend.emails.send({
 				from: emailFrom,
 				to: buchung.email,
 				subject: `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`,
@@ -98,14 +110,19 @@ export const actions: Actions = {
 					``,
 					buchungsDetails,
 					``,
-					`Ihre Buchungs-ID: ${buchung.id}`,
-					`(Diese ID benötigen Sie, um Aufgaben auf unserer Website anzunehmen.)`,
+					`Ihre Buchungsreferenz:`,
+					``,
+					`${buchung.referenz ?? buchung.id}`,
+					`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
 					``,
 					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
 					``,
 					`Freundliche Grüsse`
 				].join('\n')
 			});
+			if (mailError) {
+				console.error('Bestätigungsmail fehlgeschlagen:', mailError);
+			}
 		}
 	}
 };

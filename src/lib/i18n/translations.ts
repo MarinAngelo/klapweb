@@ -458,6 +458,42 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ein Fehler ist aufgetreten.',
 		'en-us': 'An error occurred.'
 	},
+	'Buchungsreferenz': {
+		'de-ch': 'Buchungsreferenz',
+		'en-us': 'Booking reference'
+	},
+	'Check-in ab': {
+		'de-ch': 'Check-in ab',
+		'en-us': 'Check-in from'
+	},
+	'Check-out ab': {
+		'de-ch': 'Check-out ab',
+		'en-us': 'Check-out from'
+	},
+	'Buchungsreferenz nicht gefunden.': {
+		'de-ch': 'Buchungsreferenz nicht gefunden.',
+		'en-us': 'Booking reference not found.'
+	},
+	'Bereits eingecheckt.': {
+		'de-ch': 'Bereits eingecheckt.',
+		'en-us': 'Already checked in.'
+	},
+	'Bereits ausgecheckt.': {
+		'de-ch': 'Bereits ausgecheckt.',
+		'en-us': 'Already checked out.'
+	},
+	'Abschicken': {
+		'de-ch': 'Abschicken',
+		'en-us': 'Submit'
+	},
+	'Erfolgreich eingecheckt.': {
+		'de-ch': 'Erfolgreich eingecheckt.',
+		'en-us': 'Successfully checked in.'
+	},
+	'Erfolgreich ausgecheckt.': {
+		'de-ch': 'Erfolgreich ausgecheckt.',
+		'en-us': 'Successfully checked out.'
+	},
 	'Verbindungsfehler. Bitte versuchen Sie es erneut.': {
 		'de-ch': 'Verbindungsfehler. Bitte versuchen Sie es erneut.',
 		'en-us': 'Connection error. Please try again.'

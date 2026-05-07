@@ -14,6 +14,7 @@
 	{value}
 	{id}
 	class="checkbox"
+	on:change
 />
 
 <style>

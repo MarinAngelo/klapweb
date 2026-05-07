@@ -5,11 +5,15 @@
 	import { page } from '$app/stores';
 	$: secret = $page.url.searchParams.get('secret') ?? '';
 
-	function fmtDate(ds: string) {
+	function fmtDate(ds: string | null | undefined) {
 		if (!ds) return '–';
-		return new Date(ds + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
+		const [year, month, day] = ds.slice(0, 10).split('-');
+		if (!year || !month || !day) return ds;
+		return `${day}.${month}.${year}`;
+	}
+
+	function reminderSent(b: any): boolean {
+		return !!(b as any).reminderSent;
 	}
 
 	function fmtPrice(chf: number) {
@@ -59,7 +63,7 @@
 		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">Fehler: {data.blobError}</p>
 	{/if}
 
-	{#if data.buchungen.length === 0}
+{#if data.buchungen.length === 0}
 		<p style="opacity: 0.5;">Noch keine Buchungen vorhanden.</p>
 	{:else}
 		{#each Object.entries(grouped) as [ressourceUid, buchungen]}
@@ -70,19 +74,23 @@
 				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 					<thead>
 						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', ''] as col}
+							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', 'Reminder', ''] as col}
 								<th style={tdNowrap}>{col}</th>
 							{/each}
 						</tr>
 					</thead>
 					<tbody>
-						{#each buchungen.sort((x, y) => x.von.localeCompare(y.von)) as b}
+						{#each buchungen.sort((x, y) => (x.von ?? '').localeCompare(y.von ?? '')) as b}
 							{@const n = naechte(b.von, b.bis)}
 							{@const isPast = b.bis < new Date().toISOString().slice(0, 10)}
 							<tr style="border-bottom: 1px solid #e5e7eb; {isPast ? 'opacity: 0.45;' : ''}">
 								<td style={tdNowrap}>
 									{#if b.status === 'confirmed'}
 										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Bestätigt</span>
+									{:else if b.status === 'checked_in'}
+										<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Eingecheckt</span>
+									{:else if b.status === 'checked_out'}
+										<span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausgecheckt</span>
 									{:else}
 										<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausstehend</span>
 									{/if}
@@ -121,12 +129,27 @@
 								<td style="{tdNowrap} opacity: 0.5; font-size: 0.75rem;">
 									{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
 								</td>
+								<td style={tdNowrap}>
+									{#if reminderSent(b)}
+										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">✓ gesendet</span>
+									{:else}
+										<span style="opacity: 0.35; font-size: 0.75rem;">–</span>
+									{/if}
+								</td>
 								<td style="{tdStyle} display: flex; gap: 0.75rem; align-items: center;">
-									{#if b.status !== 'confirmed'}
+									{#if b.status === 'pending'}
 										<form method="POST" action="?/bestaetigen&secret={secret}">
 											<input type="hidden" name="id" value={b.id} />
 											<button type="submit" style="color: #065f46; font-size: 0.75rem; background: #d1fae5; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
 												✓ Bestätigen
+											</button>
+										</form>
+									{/if}
+									{#if b.status === 'checked_in' || b.status === 'checked_out'}
+										<form method="POST" action="?/zuruecksetzen&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button type="submit" style="color: #6b7280; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+												↩ Zurücksetzen
 											</button>
 										</form>
 									{/if}

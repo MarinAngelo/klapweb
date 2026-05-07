@@ -14,6 +14,7 @@
 	import { theme } from '$lib/stores/theme';
 	import Button from '$lib/components/Button.svelte';
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import { headingAnchor } from '$lib/actions/headingAnchor';
 
 	export let slice: Content.ImageCardsSlice;
 	export let slices: any = {};
@@ -259,7 +260,7 @@
 		animationOptions={anim.options}
 	>
 		{#if isFilled.richText(teamHeading)}
-			<h2 class="text-center mb-10 custom-color">
+			<h2 use:headingAnchor class="text-center mb-10 custom-color">
 				<PrismicText field={teamHeading} />
 			</h2>
 		{/if}
@@ -363,7 +364,7 @@
 	>
 		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 			{#if isFilled.richText(slice.primary?.heading)}
-				<h2 class="text-center custom-color">
+				<h2 use:headingAnchor class="text-center custom-color">
 					<PrismicText field={slice.primary?.heading} />
 				</h2>
 			{/if}

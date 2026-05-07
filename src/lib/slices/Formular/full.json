@@ -204,6 +204,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -449,6 +450,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -524,6 +526,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -571,6 +574,192 @@
 				}
 			},
 			"items": {}
+		},
+		{
+			"id": "einChecken",
+			"name": "Check-in",
+			"description": "Check-in Checkliste für Ressourcen-Buchungen.",
+			"docURL": "...",
+			"version": "initial",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Check-in"
+					}
+				},
+				"intro_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitungstext",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"buchungsref_label": {
+					"type": "Text",
+					"config": {
+						"label": "Buchungsreferenz Label",
+						"placeholder": "Buchungsreferenz"
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Button Text",
+						"placeholder": "Check-in abschliessen"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Bestätigungstext",
+						"multi": "paragraph,strong,em"
+					}
+				},
+				"error_not_found": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: Referenz nicht gefunden",
+						"placeholder": "Buchungsreferenz nicht gefunden."
+					}
+				},
+				"error_already_done": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: bereits erledigt",
+						"placeholder": "Du bist bereits eingecheckt."
+					}
+				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-in (URL)",
+						"placeholder": "/"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
+					}
+				}
+			},
+			"items": {
+				"checklist_item": {
+					"type": "Text",
+					"config": {
+						"label": "Checklisten-Eintrag"
+					}
+				}
+			}
+		},
+		{
+			"id": "ausChecken",
+			"name": "Check-out",
+			"description": "Check-out Checkliste für Ressourcen-Buchungen.",
+			"docURL": "...",
+			"version": "initial",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Check-out"
+					}
+				},
+				"intro_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitungstext",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"buchungsref_label": {
+					"type": "Text",
+					"config": {
+						"label": "Buchungsreferenz Label",
+						"placeholder": "Buchungsreferenz"
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Button Text",
+						"placeholder": "Check-out abschliessen"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Bestätigungstext",
+						"multi": "paragraph,strong,em"
+					}
+				},
+				"error_not_found": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: Referenz nicht gefunden",
+						"placeholder": "Buchungsreferenz nicht gefunden."
+					}
+				},
+				"error_already_done": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: bereits ausgecheckt",
+						"placeholder": "Du bist bereits ausgecheckt."
+					}
+				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-out (URL)",
+						"placeholder": "/"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
+					}
+				}
+			},
+			"items": {
+				"checklist_item": {
+					"type": "Text",
+					"config": {
+						"label": "Checklisten-Eintrag"
+					}
+				}
+			}
 		}
 	]
 }

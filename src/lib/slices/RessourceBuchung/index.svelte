@@ -433,16 +433,15 @@
 
 					<!-- Personen -->
 					<div>
-						<label for="personen" class="block text-base font-bold">{$_('Anzahl Personen')} *</label>
-						<input
-							id="personen"
-							type="number"
+						<InputField
+							field={{
+								field_name: $_('Anzahl Personen'),
+								field_type: 'Zahl',
+								required: true,
+								min: 1,
+								max: ressource?.maxPersonen || null
+							}}
 							bind:value={personen}
-							min="1"
-							max={ressource?.maxPersonen || undefined}
-							required
-							class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
 						/>
 						{#if ressource?.maxPersonen}
 							<span class="opacity-60 text-xs">{$_('Maximal')} {ressource.maxPersonen} {$_('Personen')}</span>

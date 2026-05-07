@@ -6,6 +6,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { headingAnchor } from '$lib/actions/headingAnchor';
 	import Button from '$lib/components/Button.svelte';
 
 	export let slice: Content.TextWithImageSlice;
@@ -83,7 +84,7 @@
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
 >
 	{#if p.section_title}
-		<h2 class="text-center mb-16">{p.section_title}</h2>
+		<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 	{/if}
 	<div class="flex flex-col" style="gap: {rowGap};">
 		{#each multiItems as item}
