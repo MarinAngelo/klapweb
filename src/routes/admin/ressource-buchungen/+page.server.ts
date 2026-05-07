@@ -46,6 +46,18 @@ export const actions: Actions = {
 		}
 	},
 
+	zuruecksetzen: async ({ request, url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+
+		const form = await request.formData();
+		const id = form.get('id');
+		if (typeof id === 'string' && id) {
+			await updateRessourceBuchungStatus(id, 'confirmed');
+		}
+	},
+
 	bestaetigen: async ({ request, url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');

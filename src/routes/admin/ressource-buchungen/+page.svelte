@@ -126,11 +126,19 @@
 									{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
 								</td>
 								<td style="{tdStyle} display: flex; gap: 0.75rem; align-items: center;">
-									{#if b.status !== 'confirmed'}
+									{#if b.status === 'pending'}
 										<form method="POST" action="?/bestaetigen&secret={secret}">
 											<input type="hidden" name="id" value={b.id} />
 											<button type="submit" style="color: #065f46; font-size: 0.75rem; background: #d1fae5; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
 												✓ Bestätigen
+											</button>
+										</form>
+									{/if}
+									{#if b.status === 'checked_in' || b.status === 'checked_out'}
+										<form method="POST" action="?/zuruecksetzen&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button type="submit" style="color: #6b7280; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+												↩ Zurücksetzen
 											</button>
 										</form>
 									{/if}
