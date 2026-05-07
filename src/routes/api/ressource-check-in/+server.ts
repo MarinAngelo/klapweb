@@ -46,7 +46,7 @@ export async function POST({ request, fetch }) {
 					`Anreise:   ${vonD}.${vonM}.${vonY}`,
 					`Abreise:   ${bisD}.${bisM}.${bisY}`,
 					`Personen:  ${buchung.personen}`,
-					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  · ${i}`)] : [])
+					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : [])
 				].join('\n')
 			});
 		} catch (e) {

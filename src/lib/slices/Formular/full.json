@@ -633,6 +633,13 @@
 						"placeholder": "Du bist bereits eingecheckt."
 					}
 				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-in (URL)",
+						"placeholder": "/"
+					}
+				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
@@ -717,6 +724,13 @@
 					"config": {
 						"label": "Fehler: bereits ausgecheckt",
 						"placeholder": "Du bist bereits ausgecheckt."
+					}
+				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-out (URL)",
+						"placeholder": "/"
 					}
 				},
 				"bg_color": {

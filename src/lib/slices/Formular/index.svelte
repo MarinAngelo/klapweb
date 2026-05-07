@@ -71,7 +71,10 @@
 		checkError = '';
 		checkSubmitting = true;
 		const endpoint = isEinChecken ? '/api/ressource-check-in' : '/api/ressource-check-out';
-		const items = (slice.items as any[]).map((item) => item.checklist_item ?? '');
+		const items = (slice.items as any[]).map((item, i) => {
+				const text = item.checklist_item ?? '';
+				return (checkedItems.has(i) ? '✓ ' : '✗ ') + text;
+			});
 		try {
 			const res = await fetch(endpoint, {
 				method: 'POST',
@@ -81,7 +84,8 @@
 			const data = await res.json();
 			if (data.success) {
 				checkSuccess = true;
-				setTimeout(() => goto('/'), 4000);
+				const redirectTo = (checkPrimary as any).redirect_url?.trim() || '/';
+				setTimeout(() => goto(redirectTo), 4000);
 			} else {
 				const code = data.error;
 				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
