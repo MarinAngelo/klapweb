@@ -394,7 +394,13 @@
 	{:else if isEinChecken || isAusChecken}
 		<div style="background-color: {checkPrimary.bg_color || get(theme).pageBgColor};">
 			{#if checkSuccess}
-				<PrismicRichText field={checkPrimary.success_text} />
+				{#if checkPrimary.success_text?.length}
+					<PrismicRichText field={checkPrimary.success_text} />
+				{:else}
+					<p style="color: #065f46; font-weight: 600;">
+						{isEinChecken ? t('Erfolgreich eingecheckt.', lang) : t('Erfolgreich ausgecheckt.', lang)}
+					</p>
+				{/if}
 			{:else}
 				{#if checkPrimary.heading}<h2>{checkPrimary.heading}</h2>{/if}
 				{#if checkPrimary.intro_text?.length}<PrismicRichText field={checkPrimary.intro_text} />{/if}

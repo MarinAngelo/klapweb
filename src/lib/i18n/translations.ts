@@ -486,6 +486,14 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Abschicken',
 		'en-us': 'Submit'
 	},
+	'Erfolgreich eingecheckt.': {
+		'de-ch': 'Erfolgreich eingecheckt.',
+		'en-us': 'Successfully checked in.'
+	},
+	'Erfolgreich ausgecheckt.': {
+		'de-ch': 'Erfolgreich ausgecheckt.',
+		'en-us': 'Successfully checked out.'
+	},
 	'Verbindungsfehler. Bitte versuchen Sie es erneut.': {
 		'de-ch': 'Verbindungsfehler. Bitte versuchen Sie es erneut.',
 		'en-us': 'Connection error. Please try again.'

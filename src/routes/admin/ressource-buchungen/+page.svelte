@@ -5,11 +5,11 @@
 	import { page } from '$app/stores';
 	$: secret = $page.url.searchParams.get('secret') ?? '';
 
-	function fmtDate(ds: string) {
+	function fmtDate(ds: string | null | undefined) {
 		if (!ds) return '–';
-		return new Date(ds + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
+		const [year, month, day] = ds.slice(0, 10).split('-');
+		if (!year || !month || !day) return ds;
+		return `${day}.${month}.${year}`;
 	}
 
 	function fmtPrice(chf: number) {
@@ -59,14 +59,7 @@
 		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">Fehler: {data.blobError}</p>
 	{/if}
 
-	{#if data.buchungen.length > 0}
-		<details style="margin-bottom:1rem;">
-			<summary style="cursor:pointer;font-size:0.75rem;opacity:0.5;">Debug: erste Buchung (roh)</summary>
-			<pre style="font-size:0.7rem;background:#f3f4f6;padding:0.5rem;overflow:auto;">{JSON.stringify(data.buchungen[0], null, 2)}</pre>
-		</details>
-	{/if}
-
-	{#if data.buchungen.length === 0}
+{#if data.buchungen.length === 0}
 		<p style="opacity: 0.5;">Noch keine Buchungen vorhanden.</p>
 	{:else}
 		{#each Object.entries(grouped) as [ressourceUid, buchungen]}
@@ -90,6 +83,10 @@
 								<td style={tdNowrap}>
 									{#if b.status === 'confirmed'}
 										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Bestätigt</span>
+									{:else if b.status === 'checked_in'}
+										<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Eingecheckt</span>
+									{:else if b.status === 'checked_out'}
+										<span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausgecheckt</span>
 									{:else}
 										<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausstehend</span>
 									{/if}
