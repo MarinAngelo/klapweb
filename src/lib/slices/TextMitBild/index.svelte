@@ -62,8 +62,9 @@
 		...item,
 		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
 	}));
-	$: imageRound = (p as any).image_round ?? false;
-	$: isFullWidth = (p as any).full_width ?? false;
+	$: imageRound = !!(slice.primary as Record<string, unknown>).image_round;
+	$: lightbox = !!(slice.primary as Record<string, unknown>).lightbox;
+	$: isFullWidth = !!(slice.primary as Record<string, unknown>).full_width;
 
 	const textPadMap: Record<string, string> = {
 		kein: '0',
@@ -108,6 +109,7 @@
 				desktopPaddingY={i === 0 ? '0' : textPad}
 				{textCenterV}
 				{textCenterH}
+				{lightbox}
 				fullscreen={false}
 			>
 				{#if item.button_text && isFilled.link(item.button_link)}
@@ -122,6 +124,7 @@
 	as="section"
 	yPadding={fullscreen ? 'none' : yPadding}
 	fullHeight={fullscreen}
+	noPadding={mobileVollbreite}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 		? ` min-height: calc(100vh - ${$headerHeight}px);`
@@ -130,13 +133,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class={mobileVollbreite ? 'md:px-6' : ''}
 >
-	<div
-		class="{fullscreen ? 'flex-1 flex items-center' : ''} {mobileVollbreite
-			? '-mx-6 md:mx-0'
-			: ''}"
-	>
+	<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
 		<ImageTextGrid
 			image={isFilled.image(p.image) ? p.image : null}
 			text={p.text}
@@ -145,10 +144,15 @@
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
+			{lightbox}
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
-		/>
+		>
+			{#if p.buttonText && isFilled.link(p.buttonLink)}
+				<Button link={p.buttonLink} text={p.buttonText} mb={false} />
+			{/if}
+		</ImageTextGrid>
 	</div>
 </Bounded>
 {/if}

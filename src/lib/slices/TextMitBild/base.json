@@ -93,7 +93,7 @@
             "label": "Abstand oben / unten gleich",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
-            "default_value": true
+            "default_value": false
           }
         },
         "y_padding": {
@@ -113,6 +113,15 @@
           "type": "Boolean",
           "config": {
             "label": "Bild als Kreis",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "lightbox": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild als Lightbox öffnen",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
@@ -305,6 +314,15 @@
             "placeholder": "Hex-Farbcode (#RRGGBB)"
           }
         },
+        "lightbox": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild als Lightbox öffnen",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
         "mobile_full_width": {
           "type": "Boolean",
           "config": {
@@ -483,7 +501,7 @@
             "label": "Abstand oben / unten gleich",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
-            "default_value": true
+            "default_value": false
           }
         },
         "y_padding": {
@@ -503,6 +521,15 @@
           "type": "Boolean",
           "config": {
             "label": "Bild als Kreis",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "lightbox": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild als Lightbox öffnen",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
@@ -631,7 +658,7 @@
             "label": "Abstand oben / unten gleich",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
-            "default_value": true
+            "default_value": false
           }
         },
         "y_padding": {
@@ -699,6 +726,15 @@
           "type": "Boolean",
           "config": {
             "label": "Bilder als Kreis",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "lightbox": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bilder als Lightbox öffnen",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false

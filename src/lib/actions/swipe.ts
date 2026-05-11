@@ -13,7 +13,7 @@ export function swipe(node: HTMLElement, params: { onLeft?: () => void; onRight?
 		active = true;
 		startX = e.clientX;
 		startY = e.clientY;
-		node.setPointerCapture(e.pointerId);
+		if (e.pointerType !== 'mouse') node.setPointerCapture(e.pointerId);
 	}
 
 	function onPointerUp(e: PointerEvent) {

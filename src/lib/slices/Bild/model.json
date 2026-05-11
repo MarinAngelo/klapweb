@@ -34,6 +34,15 @@
 						"default_value": false
 					}
 				},
+				"lightbox": {
+					"type": "Boolean",
+					"config": {
+						"label": "Bild als Lightbox öffnen",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
