@@ -406,6 +406,7 @@
 					bind:value={localNumber}
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
+					pattern={"[0-9 +\\-()]{4,25}"}
 					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
 					style="color: var(--page-color); border: none;"
 					on:blur

@@ -3,6 +3,8 @@ import { json } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 
 const SYSTEM_FIELDS = new Set(['form-name', 'bot-field', 'dienstleistung', 'subject']);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TEL_RE = /^[0-9 +\-()]{4,25}$/;
 
 export async function POST({ request, fetch }) {
 	const params = new URLSearchParams(await request.text());
@@ -13,6 +15,8 @@ export async function POST({ request, fetch }) {
 	const fields: { key: string; value: string }[] = [];
 	for (const [key, value] of params.entries()) {
 		if (SYSTEM_FIELDS.has(key) || !value.trim()) continue;
+		if (key === 'email' && !EMAIL_RE.test(value)) return json({ ok: false }, { status: 400 });
+		if (key === 'telnr' && !TEL_RE.test(value)) return json({ ok: false }, { status: 400 });
 		fields.push({ key, value });
 	}
 
