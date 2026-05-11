@@ -123,6 +123,7 @@
 	as="section"
 	yPadding={fullscreen ? 'none' : yPadding}
 	fullHeight={fullscreen}
+	noPadding={mobileVollbreite}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 		? ` min-height: calc(100vh - ${$headerHeight}px);`
@@ -131,13 +132,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class={mobileVollbreite ? 'md:px-6' : ''}
 >
-	<div
-		class="{fullscreen ? 'flex-1 flex items-center' : ''} {mobileVollbreite
-			? '-mx-6 md:mx-0'
-			: ''}"
-	>
+	<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
 		<ImageTextGrid
 			image={isFilled.image(p.image) ? p.image : null}
 			text={p.text}
