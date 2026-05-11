@@ -4,6 +4,7 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import BildLupe from '$lib/components/BildLupe.svelte';
 	import BildSlider from '$lib/components/BildSlider.svelte';
+	import Lightbox from '$lib/components/Lightbox.svelte';
 	import { isFilled } from '@prismicio/client';
 	export let image: any;
 	export let images: any[] | undefined = undefined;
@@ -31,6 +32,7 @@
 	};
 	export let noObjectCover: boolean = false;
 	export let lupe: boolean = false;
+	export let lightbox: boolean = false;
 	export let textCenterV: boolean = false;
 	export let textCenterH: boolean = false;
 	export let fullscreen: boolean = false;
@@ -55,15 +57,17 @@
 							<PrismicImage
 								field={image}
 								sizes="100vw"
-								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
-									? 'rounded-full'
-									: noRound
-										? ''
-										: noRoundMobile
-											? 'md:rounded-3xl'
-											: 'rounded-3xl'}"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
 							/>
 						</BildLupe>
+					{:else if lightbox}
+						<Lightbox src={image.url ?? ''} alt={image.alt ?? ''}>
+							<PrismicImage
+								field={image}
+								sizes="100vw"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
+							/>
+						</Lightbox>
 					{:else}
 						<PrismicImage
 							field={image}
@@ -132,15 +136,17 @@
 							<PrismicImage
 								field={image}
 								sizes="100vw"
-								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound
-									? 'rounded-full'
-									: noRound
-										? ''
-										: noRoundMobile
-											? 'md:rounded-3xl'
-											: 'rounded-3xl'}"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
 							/>
 						</BildLupe>
+					{:else if lightbox}
+						<Lightbox src={image.url ?? ''} alt={image.alt ?? ''}>
+							<PrismicImage
+								field={image}
+								sizes="100vw"
+								class="w-full {noObjectCover ? '' : 'md:h-full md:object-cover'} {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
+							/>
+						</Lightbox>
 					{:else}
 						<PrismicImage
 							field={image}

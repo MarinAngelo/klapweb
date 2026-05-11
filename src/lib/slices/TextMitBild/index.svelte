@@ -63,6 +63,7 @@
 		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
 	}));
 	$: imageRound = (p as any).image_round ?? false;
+	$: lightbox = (p as any).lightbox ?? false;
 	$: isFullWidth = (p as any).full_width ?? false;
 
 	const textPadMap: Record<string, string> = {
@@ -145,6 +146,7 @@
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
+			{lightbox}
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
