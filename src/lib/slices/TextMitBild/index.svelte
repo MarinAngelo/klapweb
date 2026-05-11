@@ -62,9 +62,9 @@
 		...item,
 		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
 	}));
-	$: imageRound = (p as any).image_round ?? false;
-	$: lightbox = (p as any).lightbox ?? false;
-	$: isFullWidth = (p as any).full_width ?? false;
+	$: imageRound = !!(slice.primary as Record<string, unknown>).image_round;
+	$: lightbox = !!(slice.primary as Record<string, unknown>).lightbox;
+	$: isFullWidth = !!(slice.primary as Record<string, unknown>).full_width;
 
 	const textPadMap: Record<string, string> = {
 		kein: '0',
@@ -109,6 +109,7 @@
 				desktopPaddingY={i === 0 ? '0' : textPad}
 				{textCenterV}
 				{textCenterH}
+				{lightbox}
 				fullscreen={false}
 			>
 				{#if item.button_text && isFilled.link(item.button_link)}
@@ -147,7 +148,11 @@
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
-		/>
+		>
+			{#if p.buttonText && isFilled.link(p.buttonLink)}
+				<Button link={p.buttonLink} text={p.buttonText} mb={false} />
+			{/if}
+		</ImageTextGrid>
 	</div>
 </Bounded>
 {/if}

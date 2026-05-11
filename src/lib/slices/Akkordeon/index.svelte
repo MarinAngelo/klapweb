@@ -269,7 +269,6 @@
 										noRoundMobile={p.mobile_full_width}
 										noObjectCover
 										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
-										{theme}
 									/>
 								{:else}
 									<PrismicRichText field={item.content} />

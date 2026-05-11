@@ -1,82 +1,73 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	export let src: string;
 	export let alt: string = '';
 
-	let open = false;
+	let dialog: HTMLDialogElement;
 
-	function close() { open = false; }
-
-	function handleKey(e: KeyboardEvent) {
-		if (e.key === 'Escape') close();
+	function openDialog() {
+		dialog.showModal();
+		document.body.style.overflow = 'hidden';
 	}
 
-	onMount(() => {
-		window.addEventListener('keydown', handleKey);
-		return () => window.removeEventListener('keydown', handleKey);
-	});
+	function closeDialog() {
+		dialog.close();
+		document.body.style.overflow = '';
+	}
 
-	$: if (typeof document !== 'undefined') {
-		document.body.style.overflow = open ? 'hidden' : '';
+	function onBackdropClick(e: MouseEvent) {
+		if (e.target === dialog) closeDialog();
 	}
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="lightbox-trigger" on:click={() => (open = true)}>
+<div class="trigger" on:click={openDialog}>
 	<slot />
 </div>
 
-{#if open}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<dialog bind:this={dialog} on:click={onBackdropClick} on:cancel={closeDialog}>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<div
-		class="lightbox-backdrop"
-		on:click={close}
-	>
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div on:click|stopPropagation>
-			<img {src} {alt} class="lightbox-img" />
-		</div>
-		<button
-			type="button"
-			class="lightbox-close"
-			on:click={close}
-			aria-label="Schliessen"
-		>×</button>
+	<div class="content" on:click|stopPropagation>
+		<img {src} {alt} class="img" />
 	</div>
-{/if}
+	<button type="button" class="close" on:click={closeDialog} aria-label="Schliessen">×</button>
+</dialog>
 
 <style>
-	.lightbox-trigger {
+	.trigger {
 		cursor: zoom-in;
 		display: contents;
 	}
 
-	.lightbox-backdrop {
-		position: fixed;
-		inset: 0;
-		z-index: 999;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+	dialog {
+		padding: 0;
+		border: none;
+		background: transparent;
+		max-width: 100vw;
+		max-height: 100vh;
+		overflow: visible;
+	}
+
+	dialog::backdrop {
 		background: rgba(0, 0, 0, 0.92);
 		animation: lb-in 0.2s ease;
 	}
 
-	.lightbox-img {
+	.img {
 		max-width: min(90vw, 1600px);
 		max-height: 90vh;
 		object-fit: contain;
 		border-radius: 4px;
 		box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6);
+		display: block;
 		animation: lb-zoom 0.2s ease;
 	}
 
-	.lightbox-close {
-		position: absolute;
+	.close {
+		position: fixed;
 		top: 1rem;
 		right: 1.25rem;
 		color: #fff;
@@ -89,7 +80,7 @@
 		transition: opacity 0.15s;
 	}
 
-	.lightbox-close:hover {
+	.close:hover {
 		opacity: 1;
 	}
 
