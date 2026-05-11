@@ -17,10 +17,8 @@
 		return () => window.removeEventListener('keydown', handleKey);
 	});
 
-	$: if (open) {
-		document.body.style.overflow = 'hidden';
-	} else {
-		document.body.style.overflow = '';
+	$: if (typeof document !== 'undefined') {
+		document.body.style.overflow = open ? 'hidden' : '';
 	}
 </script>
 
@@ -39,12 +37,9 @@
 	>
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<img
-			{src}
-			{alt}
-			class="lightbox-img"
-			on:click|stopPropagation
-		/>
+		<div on:click|stopPropagation>
+			<img {src} {alt} class="lightbox-img" />
+		</div>
 		<button
 			type="button"
 			class="lightbox-close"
