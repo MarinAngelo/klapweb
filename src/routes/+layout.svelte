@@ -37,6 +37,7 @@
 	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
 	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
@@ -369,6 +370,8 @@
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
 	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
@@ -383,7 +386,7 @@
 		/>
 	{/if}
 
-	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
