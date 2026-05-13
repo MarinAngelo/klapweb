@@ -1,23 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
-	export let url: string;
+	export let src: string | null = null;
 	export let alt: string = '';
-
-	let src: string | null = null;
-	let done = false;
-	let hostname = '';
-
-	try { hostname = new URL(url).hostname; } catch {}
-
-	onMount(async () => {
-		try {
-			const res = await fetch(`/api/og?url=${encodeURIComponent(url)}`);
-			const data = await res.json();
-			src = data.image ?? null;
-		} catch {}
-		done = true;
-	});
+	export let hostname: string = '';
+	export let done: boolean = false;
 </script>
 
 {#if src}

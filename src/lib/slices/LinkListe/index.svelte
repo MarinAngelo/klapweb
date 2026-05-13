@@ -4,6 +4,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import OgBild from './OgBild.svelte';
+	import { onMount } from 'svelte';
 
 	export let slice: any;
 	export let slices: any[] | undefined = undefined;
@@ -53,8 +54,22 @@
 		try { return new URL(h).hostname.replace(/^www\./, ''); } catch { return h; }
 	}
 
-	function label(item: any): string {
-		return item.titel || domain(item);
+	type OgData = { image: string | null; title: string | null };
+	let ogData: Record<number, OgData> = {};
+
+	onMount(() => {
+		allItems.forEach((item, i) => {
+			const h = href(item);
+			if (!h || h === '#') return;
+			fetch(`/api/og?url=${encodeURIComponent(h)}`)
+				.then(r => r.json())
+				.then((d: OgData) => { ogData = { ...ogData, [i]: d }; })
+				.catch(() => {});
+		});
+	});
+
+	function label(item: any, i: number): string {
+		return item.titel || ogData[i]?.title || domain(item);
 	}
 
 	function isExternal(item: any): boolean {
@@ -84,6 +99,7 @@
 			<!-- ── Kacheln ── -->
 			<div class="grid gap-5" style="grid-template-columns: {gridCols};">
 				{#each group.items as item}
+					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
 					{@const ext = isExternal(item)}
 					<a
@@ -100,13 +116,13 @@
 									class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
 								/>
 							{:else if h && h !== '#'}
-								<OgBild url={h} alt={label(item)} />
+								<OgBild src={ogData[gi]?.image ?? null} alt={label(item, gi)} hostname={domain(item)} done={gi in ogData} />
 							{/if}
 						</div>
 						<div class="p-4 flex flex-col gap-1">
-							<p class="font-semibold leading-tight">{label(item)}</p>
+							<p class="font-semibold leading-tight">{item.titel || ogData[gi]?.title || domain(item)}</p>
 							{#if item.beschreibung}
-								<p class="text-sm opacity-60 leading-snug">{item.beschreibung}</p>
+								<p class="leading-snug">{item.beschreibung}</p>
 							{/if}
 							<p class="text-xs opacity-35 mt-1">{domain(item)}</p>
 						</div>
@@ -118,6 +134,7 @@
 			<!-- ── Kompakt ── -->
 			<ul class="flex flex-col divide-y" style="border-color: color-mix(in srgb, currentColor 10%, transparent);">
 				{#each group.items as item}
+					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
 					{@const ext = isExternal(item)}
 					<li>
@@ -132,9 +149,9 @@
 								alt=""
 								class="w-4 h-4 flex-shrink-0 opacity-70"
 							/>
-							<span class="font-medium text-sm">{label(item)}</span>
+							<span class="font-semibold">{item.titel || ogData[gi]?.title || domain(item)}</span>
 							{#if item.beschreibung}
-								<span class="text-sm opacity-45 hidden md:inline">— {item.beschreibung}</span>
+								<span class="hidden md:inline">— {item.beschreibung}</span>
 							{/if}
 							<span class="ml-auto text-xs opacity-30">{domain(item)}</span>
 						</a>
@@ -146,6 +163,7 @@
 			<!-- ── Liste (Standard) ── -->
 			<ul class="flex flex-col gap-3">
 				{#each group.items as item}
+					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
 					{@const ext = isExternal(item)}
 					<li>
@@ -166,13 +184,13 @@
 										class="w-full h-full object-cover"
 									/>
 								{:else if h && h !== '#'}
-									<OgBild url={h} alt={label(item)} />
+									<OgBild src={ogData[gi]?.image ?? null} alt={label(item, gi)} hostname={domain(item)} done={gi in ogData} />
 								{/if}
 							</div>
 							<div class="flex flex-col gap-0.5 min-w-0">
-								<p class="font-semibold leading-tight truncate">{label(item)}</p>
+								<p class="font-semibold leading-tight truncate">{item.titel || ogData[gi]?.title || domain(item)}</p>
 								{#if item.beschreibung}
-									<p class="text-sm opacity-60 leading-snug line-clamp-2">{item.beschreibung}</p>
+									<p class="leading-snug line-clamp-2">{item.beschreibung}</p>
 								{/if}
 								<p class="text-xs opacity-35 mt-0.5">{domain(item)}</p>
 							</div>
