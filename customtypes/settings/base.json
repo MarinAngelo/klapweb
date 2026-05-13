@@ -251,7 +251,7 @@
 			"meta_image": {
 				"type": "Image",
 				"config": {
-					"label": "Standard Social Image",
+					"label": "Social Image (1200 × 630 px, 16:9)",
 					"constraint": {
 						"width": 1200,
 						"height": 630
@@ -269,48 +269,18 @@
 			"favicon": {
 				"type": "Image",
 				"config": {
-					"label": "Favicon",
+					"label": "Favicon (64 × 64 px, quadratisch)",
 					"constraint": {
-						"width": 32,
-						"height": 32
+						"width": 64,
+						"height": 64
 					},
 					"thumbnails": []
 				}
 			},
-			"pwa_enabled": {
-				"type": "Boolean",
-				"config": {
-					"label": "Als App installierbar (PWA)",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"pwa_name": {
-				"type": "Text",
-				"config": {
-					"label": "App Name",
-					"placeholder": "Name der App (z.B. Muster GmbH)"
-				}
-			},
-			"pwa_short_name": {
-				"type": "Text",
-				"config": {
-					"label": "App Kurzname",
-					"placeholder": "Kurzer Name fürs App-Icon (max. ~12 Zeichen)"
-				}
-			},
-			"pwa_theme_color": {
-				"type": "Color",
-				"config": {
-					"label": "App Theme-Farbe",
-					"placeholder": "Farbe der Statusleiste beim App-Start"
-				}
-			},
-			"pwa_icon": {
+			"app_icon": {
 				"type": "Image",
 				"config": {
-					"label": "App Icon (512×512)",
+					"label": "App-Icon – quadratisch (mind. 512 × 512 px)",
 					"constraint": {
 						"width": 512,
 						"height": 512
@@ -320,8 +290,20 @@
 							"name": "192",
 							"width": 192,
 							"height": 192
+						},
+						{
+							"name": "180",
+							"width": 180,
+							"height": 180
 						}
 					]
+				}
+			},
+			"pwa_theme_color": {
+				"type": "Color",
+				"config": {
+					"label": "App & Browser Statusleisten-Farbe",
+					"placeholder": "Standard: Hintergrundfarbe des aktiven Themes"
 				}
 			}
 		}
