@@ -50,7 +50,7 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
-	$: pwaEnabled = settings?.data?.pwa_enabled ?? false;
+	$: appleTouchIconUrl = settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
@@ -329,13 +329,12 @@
 	<title>{finalTitle}</title>
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
-	{#if pwaEnabled}
-		<link rel="manifest" href="/manifest.webmanifest" />
-		{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-	{/if}
+	{#if appleTouchIconUrl}<link rel="apple-touch-icon" href={appleTouchIconUrl} />{/if}
+	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<link rel="canonical" href={currentUrl} />
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
@@ -357,8 +356,14 @@
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
 	<meta property="og:image" content={finalImage} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:url" content={currentUrl} />
 	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={finalTitle} />
+	<meta name="twitter:description" content={finalDesc} />
+	<meta name="twitter:image" content={finalImage} />
 
 	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
