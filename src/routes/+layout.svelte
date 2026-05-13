@@ -39,7 +39,7 @@
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 
 	// --- SEO & METADATEN ---
-	$: siteName = settings?.data?.site_name || '';
+	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
 	$: pageTitle =
 		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;

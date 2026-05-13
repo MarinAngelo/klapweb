@@ -228,8 +228,8 @@
 			"site_name": {
 				"type": "Text",
 				"config": {
-					"label": "Website Name",
-					"placeholder": "Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt."
+					"label": "Website Name (SEO)",
+					"placeholder": "Leer lassen = Website Titel wird verwendet. Nur ausfüllen wenn der SEO-Name kürzer sein soll."
 				}
 			},
 			"meta_title": {
