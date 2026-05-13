@@ -18,41 +18,42 @@ export async function GET({ fetch }) {
 	const activeTheme = themes.find((t: any) => t.data?.activ === true) ?? themes[0] ?? null;
 	const themeData = activeTheme?.data;
 
-	const rawDomain = data?.domain ?? '';
-	const startUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(/\/$/, '');
-
 	const name = asText(data?.site_title) || data?.site_name || 'App';
-	const shortName = name;
 	const themeColor = data?.pwa_theme_color || themeData?.page_bg_color || '#ffffff';
 
+	// Imgix unterstützt fm=png → wir erzwingen PNG für Lighthouse-Kompatibilität
 	function squareIcon(url: string | undefined, size: number): string | null {
 		if (!url) return null;
 		try {
 			const u = new URL(url);
-			u.searchParams.set('w', String(size));
-			u.searchParams.set('h', String(size));
+			u.searchParams.set('w',   String(size));
+			u.searchParams.set('h',   String(size));
 			u.searchParams.set('fit', 'crop');
+			u.searchParams.set('fm',  'png');
 			return u.toString();
 		} catch { return null; }
 	}
 
-	// app_icon hat Prismic-Thumbnails 192×192 und 180×180 (exakt gecroppt)
-	// Fallback: meta_image (1200×630) mit quadratischem Crop via URL-Param
-	const icon512 = data?.app_icon?.url
+	const icon512src = data?.app_icon?.url
 		? squareIcon(data.app_icon.url, 512)
 		: squareIcon(data?.meta_image?.url, 512);
-	const icon192 = data?.app_icon?.['192']?.url
-		|| squareIcon(data?.app_icon?.url, 192)
-		|| squareIcon(data?.meta_image?.url, 192);
 
-	const icons: { src: string; sizes: string; type: string }[] = [];
-	if (icon192) icons.push({ src: icon192, sizes: '192x192', type: 'image/png' });
-	if (icon512) icons.push({ src: icon512, sizes: '512x512', type: 'image/png' });
+	const icon192src = squareIcon(data?.app_icon?.url ?? data?.meta_image?.url, 192);
+
+	type ManifestIcon = { src: string; sizes: string; type: string; purpose?: string };
+	const icons: ManifestIcon[] = [];
+
+	if (icon192src) icons.push({ src: icon192src, sizes: '192x192', type: 'image/png', purpose: 'any' });
+	if (icon512src) {
+		icons.push({ src: icon512src, sizes: '512x512', type: 'image/png', purpose: 'any' });
+		icons.push({ src: icon512src, sizes: '512x512', type: 'image/png', purpose: 'maskable' });
+	}
 
 	const manifest = {
 		name,
-		short_name: shortName,
-		start_url: startUrl || '/',
+		short_name: name,
+		start_url: '/',
+		scope: '/',
 		display: 'standalone',
 		background_color: themeColor,
 		theme_color: themeColor,
