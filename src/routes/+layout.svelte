@@ -308,6 +308,12 @@
 	let studioOpen = false;
 
 	onMount(() => {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		}
+	});
+
+	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
 			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();

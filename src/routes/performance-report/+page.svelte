@@ -8,6 +8,7 @@
 	interface LighthouseResult {
 		deployUrl:  string;
 		deployedAt: string | null;
+		formFactor: string;
 		scores: {
 			performance:   number | null;
 			accessibility: number | null;
@@ -185,7 +186,8 @@
 			</div>
 
 			<p class="disclaimer">
-				Scores werden von Netlify Lighthouse nach jedem Deployment gemessen (Mobile).
+				Scores werden von Netlify Lighthouse nach jedem Deployment gemessen
+				({result.formFactor === 'desktop' ? 'Desktop' : 'Mobile'}).
 				Werte können je nach Serverauslastung leicht variieren.
 			</p>
 

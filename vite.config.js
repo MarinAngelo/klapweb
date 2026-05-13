@@ -4,10 +4,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-		host: '0.0.0.0', // oder einfach true
+		host: '0.0.0.0',
 		fs: {
-			// Allow access to files from the project root.
-			allow: ['..']
-		}
-	}
+			allow: ['..'],
+		},
+	},
 });

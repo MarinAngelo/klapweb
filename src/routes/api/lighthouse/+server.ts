@@ -14,7 +14,6 @@ export const GET: RequestHandler = async () => {
 		);
 	}
 
-	// Letzte 10 Deploys abrufen — wir suchen das neueste mit Lighthouse-Daten
 	const deploysRes = await fetch(`${NETLIFY_API}/sites/${siteId}/deploys?per_page=10`, {
 		headers: { Authorization: `Bearer ${token}` },
 	}).catch(() => null);
@@ -28,32 +27,31 @@ export const GET: RequestHandler = async () => {
 
 	const deploys: any[] = await deploysRes.json();
 
-	// Neuestes Deploy mit lighthouse_scores finden
+	// Neuestes production-Deploy mit lighthouse.averages
 	const deploy = deploys.find(
-		(d) => d.lighthouse_scores && Object.keys(d.lighthouse_scores).length > 0
-	);
+		(d) => d.context === 'production' && d.state === 'ready' && d.lighthouse?.averages
+	) ?? deploys.find((d) => d.lighthouse?.averages);
 
 	if (!deploy) {
 		return new Response(
-			JSON.stringify({ error: 'Noch keine Lighthouse-Daten verfügbar. Bitte nach dem nächsten Deploy erneut versuchen.' }),
+			JSON.stringify({ error: 'Keine Lighthouse-Daten gefunden.' }),
 			{ status: 404 }
 		);
 	}
 
-	const raw = deploy.lighthouse_scores as Record<string, number>;
-
-	// Netlify liefert Werte als 0–100 Integer
+	const avg = deploy.lighthouse.averages as Record<string, number>;
 	const toScore = (v: number | undefined) => (v != null ? Math.round(v) : null);
 
 	return new Response(JSON.stringify({
-		deployUrl:  deploy.deploy_url  ?? deploy.ssl_url ?? '',
+		deployUrl:  deploy.deploy_ssl_url ?? deploy.deploy_url ?? '',
 		deployedAt: deploy.published_at ?? deploy.created_at ?? null,
+		formFactor: deploy.lighthouse.details?.formFactor ?? 'mobile',
 		scores: {
-			performance:   toScore(raw.performance),
-			accessibility: toScore(raw.accessibility),
-			bestPractices: toScore(raw.best_practices ?? raw.bestPractices),
-			seo:           toScore(raw.seo),
-			pwa:           toScore(raw.pwa),
+			performance:   toScore(avg['performance']),
+			accessibility: toScore(avg['accessibility']),
+			bestPractices: toScore(avg['best-practices']),
+			seo:           toScore(avg['seo']),
+			pwa:           toScore(avg['pwa']),
 		},
 	}), { headers: { 'Content-Type': 'application/json' } });
 };
