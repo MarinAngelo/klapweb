@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TIMEZONES } from '$lib/utils/timezones';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 
 	export let field: {
 		field_name: string | null;
@@ -7,6 +8,9 @@
 		required: boolean;
 		options?: string | null; // Optionen als String, durch Kommas getrennt
 		placeholder?: string | null;
+		maxlength?: number | null;
+		min?: number | null;
+		max?: number | null;
 		'invalid_feedback-text'?: string | null;
 		invalid_feedback_text?: string | null;
 	};
@@ -32,6 +36,8 @@
 		Einzelauswahl: 'radio',
 		Auswahlliste: 'select',
 		Textfeld: 'text',
+		Code: 'code',
+		Zahl: 'number',
 		'E-Mail': 'email',
 		Textbereich: 'textarea',
 		Telefon: 'tel',
@@ -302,6 +308,16 @@
 	];
 	let prefix = '+41';
 	let localNumber = '';
+	export let value: string | number = '';
+	let textValue = '';
+	let numberValue: number | null = typeof value === 'number' ? value : null;
+	$: if (htmlType === 'text' || htmlType === 'code' || htmlType === 'email') value = textValue;
+	$: if (htmlType === 'number') value = numberValue ?? '';
+	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
+
+	function handleCodeInput(e: Event) {
+		textValue = (e.target as HTMLInputElement).value.toUpperCase();
+	}
 </script>
 
 <div class="mb-4">
@@ -315,19 +331,58 @@
 		</label>
 	{/if}
 
-	{#if htmlType === 'text' || htmlType === 'email'}
+	{#if htmlType === 'text'}
 		<input
-			type={htmlType}
+			type="text"
 			id={key}
 			name={key}
+			bind:value={textValue}
 			required={field.required}
 			placeholder={field.placeholder ?? ''}
-			class={compact
-				? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-				: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-			style={compact
-				? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-				: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:input
+			on:blur
+		/>
+	{:else if htmlType === 'number'}
+		<input
+			type="number"
+			id={key}
+			name={key}
+			bind:value={numberValue}
+			required={field.required}
+			min={field.min ?? undefined}
+			max={field.max ?? undefined}
+			placeholder={field.placeholder ?? ''}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:blur
+		/>
+	{:else if htmlType === 'code'}
+		<input
+			type="text"
+			id={key}
+			name={key}
+			bind:value={textValue}
+			required={field.required}
+			placeholder={field.placeholder ?? ''}
+			maxlength={field.maxlength ?? undefined}
+			autocomplete="off"
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none uppercase tracking-widest font-mono code-input' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm uppercase tracking-widest font-mono code-input'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+			on:input={handleCodeInput}
+			on:blur
+		/>
+	{:else if htmlType === 'email'}
+		<input
+			type="email"
+			id={key}
+			name={key}
+			bind:value={textValue}
+			required={field.required}
+			placeholder={field.placeholder ?? ''}
+			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
 		/>
 	{:else if htmlType === 'tel'}
@@ -351,6 +406,7 @@
 					bind:value={localNumber}
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
+					pattern={"[0-9 +\\-()]{4,25}"}
 					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
 					style="color: var(--page-color); border: none;"
 					on:blur
@@ -462,15 +518,8 @@
 		</select>
 	{:else if htmlType === 'checkbox'}
 		<div class="flex items-center">
-			<label class="flex items-center">
-				<input
-					type="checkbox"
-					name={key}
-					checked={field.required}
-					value="Ausgewählt"
-					class="h-5 w-5 cursor-pointer"
-					style="width: 20px; height: 20px;"
-				/>
+			<label class="flex items-center" for={key}>
+				<Checkbox id={key} name={key} checked={field.required} value="Ausgewählt" />
 				<span class="ml-2 {compact ? 'text-sm font-semibold' : 'text-base font-medium'}"
 					>{field.field_name ?? ''}</span
 				>
@@ -532,5 +581,9 @@
 	.input {
 		font-size: 18px;
 		line-height: 1.5;
+	}
+
+	.code-input::placeholder {
+		color: color-mix(in srgb, var(--page-color) 35%, transparent);
 	}
 </style>

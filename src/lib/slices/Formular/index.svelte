@@ -6,6 +6,7 @@
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
@@ -21,6 +22,82 @@
 
 	// kauf variation: config-only slice used in Settings/E-Commerce, never rendered on a page
 	$: isKauf = (slice.variation as string) === 'kauf';
+	$: isEinChecken = (slice.variation as string) === 'einChecken';
+	$: isAusChecken = (slice.variation as string) === 'ausChecken';
+	$: checkPrimary = slice.primary as any;
+
+	// Check-in / Check-out state
+	let buchungsref = '';
+	let checkedItems: Set<number> = new Set();
+	let checkSubmitting = false;
+	let checkSuccess = false;
+	let checkError = '';
+	let checkStep = 1; // 1 = Ref eingeben, 2 = Checkliste
+	let checkKommentar = '';
+
+	function onBuchungsrefInput(e: Event) {
+		buchungsref = (e.target as HTMLInputElement).value;
+	}
+
+	function checklistItemText(item: unknown): string {
+		return (item as Record<string, unknown>)?.checklist_item as string ?? '';
+	}
+
+	async function handleStep1() {
+		checkError = '';
+		checkSubmitting = true;
+		try {
+			const res = await fetch('/api/pruefe-buchungsref', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ referenz: buchungsref.trim(), typ: isEinChecken ? 'einChecken' : 'ausChecken' })
+			});
+			const data = await res.json();
+			if (data.ok) {
+				checkStep = 2;
+			} else {
+				const code = data.error;
+				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				else if (code === 'TOO_EARLY') checkError = t(isEinChecken ? 'Check-in ab' : 'Check-out ab', lang) + ' ' + data.von;
+				else checkError = t('Ein Fehler ist aufgetreten.', lang);
+			}
+		} catch {
+			checkError = t('Ein Fehler ist aufgetreten.', lang);
+		}
+		checkSubmitting = false;
+	}
+
+	async function handleStep2() {
+		checkError = '';
+		checkSubmitting = true;
+		const endpoint = isEinChecken ? '/api/ressource-check-in' : '/api/ressource-check-out';
+		const items = (slice.items as any[]).map((item, i) => {
+				const text = item.checklist_item ?? '';
+				return (checkedItems.has(i) ? '✓ ' : '✗ ') + text;
+			});
+		try {
+			const res = await fetch(endpoint, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ referenz: buchungsref.trim(), items, kommentar: checkKommentar.trim() || undefined })
+			});
+			const data = await res.json();
+			if (data.success) {
+				checkSuccess = true;
+				const redirectTo = (checkPrimary as any).redirect_url?.trim() || '/';
+				setTimeout(() => goto(redirectTo), 4000);
+			} else {
+				const code = data.error;
+				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				else checkError = t('Ein Fehler ist aufgetreten.', lang);
+			}
+		} catch {
+			checkError = t('Ein Fehler ist aufgetreten.', lang);
+		}
+		checkSubmitting = false;
+	}
 	$: isDefaultZweiSpalten =
 		((slice.variation as string) === 'default' || (slice.variation as string) === 'mitTermin') &&
 		(slice.primary as any)?.zwei_spalten === true;
@@ -41,7 +118,7 @@
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
 	$: checkoutUrl =
 		((slice.primary as any)?.checkout_url as string | null | undefined)?.trim() || null;
-	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any)?.mobile_full_width ?? false;
 
 	// Technischer Schlüssel: E-Mail-Typ → immer "email", Textbereich → immer "message",
 	// sonst normalisierter field_name (lowercase, nur a-z0-9) → konsistent über alle Sprachen
@@ -259,7 +336,7 @@
 
 			// Im Dev-Modus → lokaler Mock-Endpunkt
 			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
-			const endpoint = import.meta.env.DEV ? '/api/form' : '/';
+			const endpoint = '/api/form';
 			const response = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -319,6 +396,86 @@
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
+	{:else if isEinChecken || isAusChecken}
+		<div style="background-color: {checkPrimary.bg_color || get(theme).pageBgColor};">
+			{#if checkSuccess}
+				{#if checkPrimary.success_text?.length}
+					<PrismicRichText field={checkPrimary.success_text} />
+				{:else}
+					<p style="color: #065f46; font-weight: 600;">
+						{isEinChecken ? t('Erfolgreich eingecheckt.', lang) : t('Erfolgreich ausgecheckt.', lang)}
+					</p>
+				{/if}
+			{:else}
+				{#if checkPrimary.heading}<h2>{checkPrimary.heading}</h2>{/if}
+				{#if checkPrimary.intro_text?.length}<PrismicRichText field={checkPrimary.intro_text} />{/if}
+
+				{#if checkStep === 1}
+					<!-- Schritt 1: Buchungsreferenz prüfen -->
+					<form on:submit|preventDefault={handleStep1} class="flex flex-col gap-4 mt-4">
+						<InputField
+							field={{
+								field_name: checkPrimary.buchungsref_label || t('Buchungsreferenz', lang),
+								field_type: 'Textfeld',
+								required: true
+							}}
+							bind:value={buchungsref}
+							on:input={onBuchungsrefInput}
+						/>
+						{#if checkError}
+							<p class="text-red-600 text-sm">{checkError}</p>
+						{/if}
+						<button
+							type="submit"
+							disabled={checkSubmitting}
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+						>
+							{checkSubmitting ? '…' : t('Weiter', lang)}
+						</button>
+					</form>
+				{:else}
+					<!-- Schritt 2: Checkliste + Abschicken -->
+					<form on:submit|preventDefault={handleStep2} class="flex flex-col gap-4 mt-4">
+						{#if slice.items.length > 0}
+							<ul class="flex flex-col gap-2">
+								{#each slice.items as item, i}
+									<li class="flex items-start gap-3">
+										<Checkbox
+											id="check-item-{i}"
+											checked={checkedItems.has(i)}
+											on:change={() => {
+												if (checkedItems.has(i)) checkedItems.delete(i);
+												else checkedItems.add(i);
+												checkedItems = checkedItems;
+											}}
+										/>
+										<label for="check-item-{i}" class="leading-snug cursor-pointer">
+											{checklistItemText(item)}
+										</label>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+						<InputField
+							field={{ field_name: t('Kommentar', lang), field_type: 'Textbereich', required: false }}
+							bind:value={checkKommentar}
+						/>
+						{#if checkError}
+							<p class="text-red-600 text-sm">{checkError}</p>
+						{/if}
+						<button
+							type="submit"
+							disabled={checkSubmitting}
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+						>
+							{checkSubmitting ? '…' : (checkPrimary.submit_label || t('Abschicken', lang))}
+						</button>
+					</form>
+				{/if}
+			{/if}
+		</div>
 	{:else}
 		<!-- Standard: einspaltig -->
 		<div

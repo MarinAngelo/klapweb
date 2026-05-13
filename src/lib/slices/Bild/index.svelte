@@ -7,15 +7,18 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	import Bounded from '$lib/components/Bounded.svelte';
+	import Lightbox from '$lib/components/Lightbox.svelte';
 
 	export let slice: Content.ImageSlice;
 	export let index: number | undefined = undefined;
-	export let slices: unknown[] | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
 	export let context: unknown = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
-	$: primaryVN = slice.primary as any;
+	$: p = slice.primary as any;
+	$: mobileVollbreite = p.mobile_full_width ?? false;
+	$: lightbox = p.lightbox ?? false;
+	$: primaryVN = p;
 	$: isVorherNachher = (slice.variation as string) === 'vorherNachher';
 </script>
 
@@ -38,9 +41,15 @@
 				animate={anim.animate}
 				animationOptions={anim.options}
 			/>
-		{:else if isFilled.image(slice.primary.image)}
+		{:else if isFilled.image(p.image)}
 			<div style="background-color: var(--page-bg-color);">
-				<PrismicImage field={slice.primary.image} sizes="100vw" class="w-full" />
+				{#if lightbox}
+					<Lightbox src={p.image.url ?? ''} alt={p.image.alt ?? ''}>
+						<PrismicImage field={p.image} sizes="100vw" class="w-full" />
+					</Lightbox>
+				{:else}
+					<PrismicImage field={p.image} sizes="100vw" class="w-full" />
+				{/if}
 			</div>
 		{/if}
 		{#if slice.variation === 'carousel'}

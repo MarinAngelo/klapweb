@@ -10,7 +10,7 @@
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
 <Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">

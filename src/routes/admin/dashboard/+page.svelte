@@ -22,6 +22,12 @@
 			description: 'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen',
 			href: `/admin/ressource-buchungen?secret=${s}`,
 			icon: '🏠'
+		},
+		{
+			title: 'Aufgaben',
+			description: 'Angenommene Aufgaben bestätigen und als erledigt markieren',
+			href: `/admin/aufgaben?secret=${s}`,
+			icon: '✅'
 		}
 	];
 </script>

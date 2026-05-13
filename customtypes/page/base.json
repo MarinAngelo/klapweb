@@ -1,169 +1,172 @@
 {
-	"id": "page",
-	"label": "Page",
-	"format": "page",
-	"repeatable": true,
-	"status": true,
-	"json": {
-		"Main": {
-			"uid": {
-				"type": "UID",
-				"config": {
-					"label": "UID",
-					"placeholder": ""
-				}
-			},
-			"title": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Seitentitel",
-					"placeholder": "",
-					"allowTargetBlank": true,
-					"single": "heading1"
-				}
-			},
-			"slices": {
-				"type": "Slices",
-				"fieldset": "Slice Zone",
-				"config": {
-					"choices": {
-						"adresse_und_map": {
-							"type": "SharedSlice"
-						},
-						"text_and_cta": {
-							"type": "SharedSlice"
-						},
-						"button": {
-							"type": "SharedSlice"
-						},
-						"anleitung": {
-							"type": "SharedSlice"
-						},
-						"globale_events": {
-							"type": "SharedSlice"
-						},
-						"event": {
-							"type": "SharedSlice"
-						},
-						"html_code": {
-							"type": "SharedSlice"
-						},
-						"code_einbetten": {
-							"type": "SharedSlice"
-						},
-						"accordion": {
-							"type": "SharedSlice"
-						},
-						"form": {
-							"type": "SharedSlice"
-						},
-						"hero": {
-							"type": "SharedSlice"
-						},
-						"quote": {
-							"type": "SharedSlice"
-						},
-						"text": {
-							"type": "SharedSlice"
-						},
-						"image": {
-							"type": "SharedSlice"
-						},
-						"image_cards": {
-							"type": "SharedSlice"
-						},
-						"text_with_image": {
-							"type": "SharedSlice"
-						},
-						"timeline": {
-							"type": "SharedSlice"
-						},
-						"stimmen": {
-							"type": "SharedSlice"
-						},
-						"galerie": {
-							"type": "SharedSlice"
-						},
-						"inhaltsverzeichnis": {
-							"type": "SharedSlice"
-						},
-						"ressource_buchung": {
-							"type": "SharedSlice"
-						},
-						"plan_filter": {
-							"type": "SharedSlice"
-						}
-					}
-				}
-			}
-		},
-		"Erscheinungsbild": {
-			"page_bg_color": {
-				"type": "Color",
-				"config": {
-					"label": "Hintergrundfarbe (überschreibt globale Farbe)"
-				}
-			},
-			"page_color": {
-				"type": "Color",
-				"config": {
-					"label": "Schriftfarbe (überschreibt globale Farbe)"
-				}
-			}
-		},
-		"SEO & Metadata": {
-			"meta_title": {
-				"type": "Text",
-				"config": {
-					"label": "Meta Titel",
-					"placeholder": "Ein Seitentitel, der für soziale Medien und Suchmaschinen verwendet wird"
-				}
-			},
-			"meta_description": {
-				"type": "Text",
-				"config": {
-					"label": "Meta Description",
-					"placeholder": "Eine kurze Zusammenfassung der Seite, 150–160 Zeichen (inkl. Leerzeichen)"
-				}
-			},
-			"meta_image": {
-				"type": "Image",
-				"config": {
-					"label": "Meta Image",
-					"constraint": {
-						"width": 2400,
-						"height": 1260
-					},
-					"thumbnails": []
-				}
-			},
-			"no_index": {
-				"type": "Boolean",
-				"config": {
-					"label": "Keine Indexierung",
-					"placeholder_false": "Nein ",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"landing_page": {
-				"type": "Boolean",
-				"config": {
-					"label": "Landing Page",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"password_protected": {
-				"type": "Boolean",
-				"config": {
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false,
-					"label": "Passwortgeschützt"
-				}
-			}
-		}
-	}
+  "id": "page",
+  "label": "Page",
+  "format": "page",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID",
+          "placeholder": ""
+        }
+      },
+      "title": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Seitentitel",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "single": "heading1"
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "adresse_und_map": {
+              "type": "SharedSlice"
+            },
+            "text_and_cta": {
+              "type": "SharedSlice"
+            },
+            "button": {
+              "type": "SharedSlice"
+            },
+            "anleitung": {
+              "type": "SharedSlice"
+            },
+            "html_code": {
+              "type": "SharedSlice"
+            },
+            "code_einbetten": {
+              "type": "SharedSlice"
+            },
+            "accordion": {
+              "type": "SharedSlice"
+            },
+            "form": {
+              "type": "SharedSlice"
+            },
+            "hero": {
+              "type": "SharedSlice"
+            },
+            "quote": {
+              "type": "SharedSlice"
+            },
+            "text": {
+              "type": "SharedSlice"
+            },
+            "image": {
+              "type": "SharedSlice"
+            },
+            "image_cards": {
+              "type": "SharedSlice"
+            },
+            "text_with_image": {
+              "type": "SharedSlice"
+            },
+            "timeline": {
+              "type": "SharedSlice"
+            },
+            "stimmen": {
+              "type": "SharedSlice"
+            },
+            "galerie": {
+              "type": "SharedSlice"
+            },
+            "inhaltsverzeichnis": {
+              "type": "SharedSlice"
+            },
+            "ressource_buchung": {
+              "type": "SharedSlice"
+            },
+            "aufgaben": {
+              "type": "SharedSlice"
+            },
+            "plan_filter": {
+              "type": "SharedSlice"
+            },
+            "kontakt": {
+              "type": "SharedSlice"
+            },
+            "link_liste": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    },
+    "Erscheinungsbild": {
+      "page_bg_color": {
+        "type": "Color",
+        "config": {
+          "label": "Hintergrundfarbe (überschreibt globale Farbe)"
+        }
+      },
+      "page_color": {
+        "type": "Color",
+        "config": {
+          "label": "Schriftfarbe (überschreibt globale Farbe)"
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Titel",
+          "placeholder": "Ein Seitentitel, der für soziale Medien und Suchmaschinen verwendet wird"
+        }
+      },
+      "meta_description": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "Eine kurze Zusammenfassung der Seite, 150–160 Zeichen (inkl. Leerzeichen)"
+        }
+      },
+      "meta_image": {
+        "type": "Image",
+        "config": {
+          "label": "Meta Image",
+          "constraint": {
+            "width": 2400,
+            "height": 1260
+          },
+          "thumbnails": []
+        }
+      },
+      "no_index": {
+        "type": "Boolean",
+        "config": {
+          "label": "Keine Indexierung",
+          "placeholder_false": "Nein ",
+          "placeholder_true": "Ja",
+          "default_value": false
+        }
+      },
+      "landing_page": {
+        "type": "Boolean",
+        "config": {
+          "label": "Landing Page",
+          "placeholder_false": "Nein",
+          "placeholder_true": "Ja",
+          "default_value": false
+        }
+      },
+      "password_protected": {
+        "type": "Boolean",
+        "config": {
+          "placeholder_false": "Nein",
+          "placeholder_true": "Ja",
+          "default_value": false,
+          "label": "Passwortgeschützt"
+        }
+      }
+    }
+  }
 }

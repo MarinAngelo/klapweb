@@ -66,6 +66,12 @@
 		"ressource": {
 			"feature": "ressourcenbuchung"
 		},
+		"aufgabe": {
+			"feature": "ressourcenbuchung"
+		},
+		"werkzeug": {
+			"feature": "ressourcenbuchung"
+		},
 		"settings": {
 			"fields": {
 				"pwa_enabled": {
@@ -116,6 +122,12 @@
 				},
 				"kauf": {
 					"feature": "ecommerce"
+				},
+				"einChecken": {
+					"feature": "ressourcenbuchung"
+				},
+				"ausChecken": {
+					"feature": "ressourcenbuchung"
 				}
 			}
 		},
@@ -134,15 +146,22 @@
 		},
 		"Text": {
 			"fields": {
-				"feature_gate": { "plan": "individuell" }
+				"feature_gate": {
+					"plan": "individuell"
+				}
 			}
 		},
 		"TextMitBild": {
 			"fields": {
-				"feature_gate": { "plan": "individuell" }
+				"feature_gate": {
+					"plan": "individuell"
+				}
 			}
 		},
 		"RessourceBuchung": {
+			"feature": "ressourcenbuchung"
+		},
+		"Aufgaben": {
 			"feature": "ressourcenbuchung"
 		}
 	},

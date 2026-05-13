@@ -58,10 +58,10 @@
 				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
-						"label": "Mobile: Volle Breite",
+						"label": "Vollbreite auf Mobile",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
-						"default_value": false
+						"default_value": true
 					}
 				},
 				"button_color": {
@@ -103,15 +103,6 @@
 							"mittel",
 							"gross"
 						]
-					}
-				},
-				"mobile_vollbreite": {
-					"type": "Boolean",
-					"config": {
-						"label": "Vollbreite auf Mobile",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
 					}
 				}
 			},

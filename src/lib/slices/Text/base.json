@@ -17,7 +17,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item,heading4,heading5,heading6",
+            "multi": "paragraph,heading2,heading3,strong,em,hyperlink,image,list-item,o-list-item,heading4,heading5,heading6",
             "labels": [
               "highlight",
               "note",
@@ -78,15 +78,6 @@
           "config": {
             "label": "Schriftfarbe",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "mobile_vollbreite": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
           }
         },
         "animate": {
@@ -216,15 +207,6 @@
           "config": {
             "label": "Schriftfarbe",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "mobile_vollbreite": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
           }
         },
         "animate": {

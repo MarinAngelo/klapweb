@@ -101,7 +101,7 @@ END:VCALENDAR`;
 		icsUrl = URL.createObjectURL(blob);
 	}
 
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 
 	// Array mit allen Daten: start_date_time + additional_dates, nur zukünftige oder heutige
 	let allDates: string[] = [];

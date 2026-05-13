@@ -11,7 +11,7 @@
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
 <Bounded

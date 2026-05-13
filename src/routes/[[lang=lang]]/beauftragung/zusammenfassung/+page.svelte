@@ -8,6 +8,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
@@ -548,13 +549,8 @@
 
 		<!-- AGB -->
 		<div class="mb-8">
-			<label class="flex items-start gap-3 cursor-pointer">
-				<input
-					type="checkbox"
-					bind:checked={agbAccepted}
-					class="mt-1 h-5 w-5 cursor-pointer shrink-0"
-					style="accent-color: {pageColor};"
-				/>
+			<label for="agb-accepted" class="flex items-start gap-3 cursor-pointer">
+				<Checkbox id="agb-accepted" bind:checked={agbAccepted} />
 				<span>
 					{t('Ich habe die', lang)}
 					<a href="/agb" class="underline">{t('AGB', lang)}</a>

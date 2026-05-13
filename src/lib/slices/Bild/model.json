@@ -25,10 +25,19 @@
 						]
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"lightbox": {
+					"type": "Boolean",
+					"config": {
+						"label": "Bild als Lightbox öffnen",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -91,7 +100,7 @@
 						]
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -140,7 +149,7 @@
 			"version": "sktwi1xtmkfgx8626",
 			"description": "Image",
 			"primary": {
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -234,7 +243,7 @@
 						"placeholder": "Nachher"
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",

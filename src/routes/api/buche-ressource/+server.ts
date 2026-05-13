@@ -58,7 +58,7 @@ function berechneTotalpreis(
 	return total;
 }
 
-export const POST: RequestHandler = async ({ request, fetch }) => {
+export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	let body: {
 		ressourceUid?: string;
 		von?: string;
@@ -80,7 +80,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const { ressourceUid, von, bis, personen, zimmerauswahl, name, email, telefon, nachricht } = body;
 
 	// Validation
-	if (!ressourceUid || !von || !bis || !personen || !name || !email) {
+	if (!ressourceUid || !von || !bis || !personen || !name || !email || !telefon) {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 	if (von >= bis) {
@@ -147,12 +147,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		buchung = await bucheRessource({
 			ressourceUid,
+			ressourceName,
 			von,
 			bis,
 			personen,
 			zimmerauswahl: zimmerauswahl ?? [],
 			preisCHF,
 			bookedAt: new Date().toISOString(),
+			status: 'pending',
 			name,
 			email,
 			telefon,
@@ -167,58 +169,39 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Buchung konnte nicht gespeichert werden', detail }), { status: 500 });
 	}
 
-	// Send confirmation emails (fire-and-forget)
+	// Vermieter-Benachrichtigung mit Bestätigungslink
 	const resendKey = env.RESEND_API_KEY;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
 	const emailFrom = fromEmail || env.INVOICE_FROM_EMAIL;
+	const adminSecret = env.ADMIN_SECRET;
 
-	if (resendKey && emailFrom && toEmail) {
-		const vonFormatted = new Date(von + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
-		const bisFormatted = new Date(bis + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
+	if (resendKey && emailFrom && toEmail && adminSecret) {
+		const origin = url.origin;
+		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&secret=${adminSecret}`;
+
+		const [vonY, vonM, vonD] = von.split('-');
+		const [bisY, bisM, bisD] = bis.split('-');
+		const vonFormatted = `${vonD}.${vonM}.${vonY}`;
+		const bisFormatted = `${bisD}.${bisM}.${bisY}`;
 		const preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisCHF);
 
 		const zimmerZeilen = (zimmerauswahl ?? []).map(
 			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
 		);
 		const buchungsDetails = [
-			`Ressource: ${ressourceName}`,
+			`Ressource: ${ressourceName} (${ressourceUid})`,
 			`Anreise:   ${vonFormatted}`,
 			`Abreise:   ${bisFormatted}`,
 			`Nächte:    ${anzahlNaechte}`,
 			`Personen:  ${personen}`,
-			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : []),
+			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
 			`Total:     ${preisFormatted}`
 		].join('\n');
 
-		import('resend').then(({ Resend }) => {
+		try {
+			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
-
-			// Confirmation to customer
-			resend.emails.send({
-				from: emailFrom,
-				to: email,
-				subject: `Buchungsbestätigung: ${ressourceName}`,
-				text: [
-					`Guten Tag ${name}`,
-					``,
-					`Ihre Buchung wurde erfolgreich registriert.`,
-					``,
-					buchungsDetails,
-					``,
-					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
-			});
-
-			// Notification to owner
-			resend.emails.send({
+			const { error: mailError } = await resend.emails.send({
 				from: emailFrom,
 				to: toEmail,
 				subject: `Neue Buchungsanfrage: ${ressourceName}`,
@@ -231,12 +214,17 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					`Name:     ${name}`,
 					`E-Mail:   ${email}`,
 					...(telefon ? [`Telefon:  ${telefon}`] : []),
-					...(nachricht ? [``, `Nachricht:`, nachricht] : [])
+					...(nachricht ? [``, `Nachricht:`, nachricht] : []),
+					``,
+					`─────────────────────────────────────`,
+					`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
+					bestaetigungsLink
 				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', e);
 			});
-		}).catch((e) => console.error('Resend import fehlgeschlagen:', e));
+			if (mailError) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', mailError);
+		} catch (e) {
+			console.error('Buchung E-Mail Fehler:', e);
+		}
 	}
 
 	return new Response(

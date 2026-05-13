@@ -94,8 +94,13 @@ export const translations: Record<string, Record<string, string>> = {
 	'Ausgewählte Zimmer bieten Platz für maximal': { 'de-ch': 'Ausgewählte Zimmer bieten Platz für maximal', 'en-us': 'Selected rooms accommodate a maximum of' },
 	Kapazität: { 'de-ch': 'Kapazität', 'en-us': 'Capacity' },
 	Mindestaufenthalt: { 'de-ch': 'Mindestaufenthalt', 'en-us': 'Minimum stay' },
+	'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar': { 'de-ch': 'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar', 'en-us': 'Only individual rooms are available for the selected period' },
 	'Preis pro Nacht ab': { 'de-ch': 'Preis pro Nacht ab', 'en-us': 'Price per night from' },
 	'Jetzt anfragen': { 'de-ch': 'Jetzt anfragen', 'en-us': 'Request now' },
+	'Freundes-Referenz-E-Mail Adresse': { 'de-ch': 'Freundes-Referenz-E-Mail Adresse', 'en-us': 'Friend referral email address' },
+	'Wird geprüft…': { 'de-ch': 'Wird geprüft…', 'en-us': 'Checking…' },
+	'E-Mail gefunden': { 'de-ch': 'E-Mail gefunden', 'en-us': 'Email found' },
+	'E-Mail nicht gefunden': { 'de-ch': 'E-Mail nicht gefunden', 'en-us': 'Email not found' },
 	'Wird gesendet…': { 'de-ch': 'Wird gesendet…', 'en-us': 'Sending…' },
 	'Anfrage erhalten!': { 'de-ch': 'Anfrage erhalten!', 'en-us': 'Request received!' },
 	'Wir melden uns in Kürze bei Ihnen.': { 'de-ch': 'Wir melden uns in Kürze bei Ihnen.', 'en-us': 'We will get back to you shortly.' },
@@ -104,6 +109,12 @@ export const translations: Record<string, Record<string, string>> = {
 	'Dieser Zeitraum ist leider nicht mehr verfügbar': { 'de-ch': 'Dieser Zeitraum ist leider nicht mehr verfügbar', 'en-us': 'This period is unfortunately no longer available' },
 	'Ein Fehler ist aufgetreten': { 'de-ch': 'Ein Fehler ist aufgetreten', 'en-us': 'An error occurred' },
 	'Keine Ressource verknüpft': { 'de-ch': 'Keine Ressource verknüpft', 'en-us': 'No resource linked' },
+	'Ganze Wohnung': { 'de-ch': 'Ganze Wohnung', 'en-us': 'Entire apartment' },
+	Einzelzimmer: { 'de-ch': 'Einzelzimmer', 'en-us': 'Individual room' },
+	Buchungsart: { 'de-ch': 'Buchungsart', 'en-us': 'Booking type' },
+	'Zimmer auswählen': { 'de-ch': 'Zimmer auswählen', 'en-us': 'Select room' },
+	'Zimmer wird geladen…': { 'de-ch': 'Zimmer wird geladen…', 'en-us': 'Loading room…' },
+	'Wohnung auswählen': { 'de-ch': 'Wohnung auswählen', 'en-us': 'Select apartment' },
 
 	// Slice-Namen
 	Akkordeon: { 'de-ch': 'Akkordeon', 'en-us': 'Accordion' },
@@ -456,6 +467,46 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ein Fehler ist aufgetreten.',
 		'en-us': 'An error occurred.'
 	},
+	'Buchungsreferenz': {
+		'de-ch': 'Buchungsreferenz',
+		'en-us': 'Booking reference'
+	},
+	'Check-in ab': {
+		'de-ch': 'Check-in ab',
+		'en-us': 'Check-in from'
+	},
+	'Check-out ab': {
+		'de-ch': 'Check-out ab',
+		'en-us': 'Check-out from'
+	},
+	'Buchungsreferenz nicht gefunden.': {
+		'de-ch': 'Buchungsreferenz nicht gefunden.',
+		'en-us': 'Booking reference not found.'
+	},
+	'Bereits eingecheckt.': {
+		'de-ch': 'Bereits eingecheckt.',
+		'en-us': 'Already checked in.'
+	},
+	'Bereits ausgecheckt.': {
+		'de-ch': 'Bereits ausgecheckt.',
+		'en-us': 'Already checked out.'
+	},
+	'Abschicken': {
+		'de-ch': 'Abschicken',
+		'en-us': 'Submit'
+	},
+	'Kommentar': {
+		'de-ch': 'Kommentar',
+		'en-us': 'Comment'
+	},
+	'Erfolgreich eingecheckt.': {
+		'de-ch': 'Erfolgreich eingecheckt.',
+		'en-us': 'Successfully checked in.'
+	},
+	'Erfolgreich ausgecheckt.': {
+		'de-ch': 'Erfolgreich ausgecheckt.',
+		'en-us': 'Successfully checked out.'
+	},
 	'Verbindungsfehler. Bitte versuchen Sie es erneut.': {
 		'de-ch': 'Verbindungsfehler. Bitte versuchen Sie es erneut.',
 		'en-us': 'Connection error. Please try again.'
@@ -650,6 +701,44 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Zurück zur Startseite',
 		'en-us': 'Back to home'
 	},
+	// Aufgaben Slice
+	'Buchungs-ID': { 'de-ch': 'Buchungs-ID', 'en-us': 'Booking ID' },
+	'Mit Buchungs-ID anmelden': { 'de-ch': 'Mit Buchungs-ID anmelden', 'en-us': 'Log in with booking ID' },
+	Aufgabenliste: { 'de-ch': 'Aufgabenliste', 'en-us': 'Task list' },
+	'Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.': {
+		'de-ch': 'Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.',
+		'en-us': 'Please log in with the booking ID you received by email.'
+	},
+	Aufgaben: { 'de-ch': 'Aufgaben', 'en-us': 'Tasks' },
+	'Aufgabe annehmen': { 'de-ch': 'Aufgabe annehmen', 'en-us': 'Accept task' },
+	'Aufgabe abgeben': { 'de-ch': 'Aufgabe abgeben', 'en-us': 'Submit task' },
+	'Aufgabe bereits angenommen': { 'de-ch': 'Aufgabe bereits angenommen', 'en-us': 'Task already accepted' },
+	'Angenommen': { 'de-ch': 'Angenommen', 'en-us': 'Accepted' },
+	Erledigt: { 'de-ch': 'Erledigt', 'en-us': 'Done' },
+	'Credits verdient': { 'de-ch': 'Credits verdient', 'en-us': 'Credits earned' },
+	'Geleistete Minuten': { 'de-ch': 'Geleistete Minuten', 'en-us': 'Minutes spent' },
+	'Keine Aufgaben verfügbar': { 'de-ch': 'Keine Aufgaben verfügbar', 'en-us': 'No tasks available' },
+	'Aufgabe konnte nicht angenommen werden': { 'de-ch': 'Aufgabe konnte nicht angenommen werden', 'en-us': 'Task could not be accepted' },
+	'Abgabe fehlgeschlagen': { 'de-ch': 'Abgabe fehlgeschlagen', 'en-us': 'Submission failed' },
+	'Einloggen': { 'de-ch': 'Anmelden', 'en-us': 'Log in' },
+	'Ungültige Kombination von Buchungs-ID und E-Mail': { 'de-ch': 'Ungültige Kombination von Buchungs-ID und E-Mail', 'en-us': 'Invalid combination of booking ID and email' },
+	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
+	'Verfügbare Aufgaben': { 'de-ch': 'Verfügbare Aufgaben', 'en-us': 'Available tasks' },
+	'Abmelden': { 'de-ch': 'Abmelden', 'en-us': 'Log out' },
+	'Fest': { 'de-ch': 'Fest', 'en-us': 'Fixed' },
+	'Zeitbasiert': { 'de-ch': 'Zeitbasiert', 'en-us': 'Time-based' },
+	'Credit-Typ': { 'de-ch': 'Credit-Typ', 'en-us': 'Credit type' },
+	'pro Nacht': { 'de-ch': 'pro Nacht', 'en-us': 'per night' },
+	'Minuten eingeben': { 'de-ch': 'Minuten eingeben', 'en-us': 'Enter minutes' },
+	'Benötigte Werkzeuge': { 'de-ch': 'Benötigte Werkzeuge', 'en-us': 'Required tools' },
+	'Kommentar (optional)': { 'de-ch': 'Kommentar (optional)', 'en-us': 'Comment (optional)' },
+	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
+	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
+	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },
+	'gelesen und akzeptiere diesen.': { 'de-ch': 'gelesen und akzeptiere diesen.', 'en-us': 'and accept it.' },
+	Haftungsausschluss: { 'de-ch': 'Haftungsausschluss', 'en-us': 'Disclaimer' },
+	'Wird geladen…': { 'de-ch': 'Wird geladen…', 'en-us': 'Loading…' },
+
 	// GlobaleEvents
 	'Online-Veranstaltung': { 'de-ch': 'Online-Veranstaltung', 'en-us': 'Online Event' },
 	'Auf Karte anzeigen': { 'de-ch': 'Auf Karte anzeigen', 'en-us': 'View on map' },

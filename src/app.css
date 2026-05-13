@@ -416,3 +416,9 @@ p {
     @apply list-decimal list-inside mb-4;
   }
 }
+@media (min-width: 768px) {
+  main {
+    padding-left: var(--toc-sidebar-offset, 0);
+    transition: padding-left 0.25s ease;
+  }
+}

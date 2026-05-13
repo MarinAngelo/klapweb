@@ -483,10 +483,12 @@
 		{@const modalTelegram = registrationTelegram(selectedEvent)}
 		{@const modalTitle = selectedEvent?.title || parentEvent.title || ''}
 		{@const modalRegistrationText = buildRegistrationText(selectedEvent)}
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 		<div
 			class="fixed inset-0 flex items-center justify-center z-50"
 			style="background-color: rgba(0,0,0,0.5);"
 			on:click|self={() => (showRegistrationModal = false)}
+			on:keydown={(e) => e.key === 'Escape' && (showRegistrationModal = false)}
 			role="dialog"
 			aria-modal="true"
 		>

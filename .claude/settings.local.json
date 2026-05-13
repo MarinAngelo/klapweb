@@ -1,1 +1,8 @@
-{"permissions":{"allow":["Bash(*)"]}}
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "mcp__playwright__browser_navigate"
+    ]
+  }
+}

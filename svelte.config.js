@@ -21,7 +21,9 @@ const config = {
 
 				// Echte technische Fehler (500) führen weiterhin zum Abbruch (Sicherheit!)
 				throw new Error(message);
-			}
+			},
+			// Anker-IDs werden client-seitig gesetzt (headingAnchor action) → im SSR-HTML nicht vorhanden
+			handleMissingId: 'ignore'
 		}
 	}
 };

@@ -1,6 +1,5 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
-import { getBelegtePerioden } from '$lib/server/ressourceBuchungen';
 
 export async function load({ params, parent, fetch }: { params: { uid: string; lang?: string }; parent: () => Promise<{ lang: string }>; fetch: typeof globalThis.fetch }) {
 	const { lang } = await parent();
@@ -48,23 +47,17 @@ export async function load({ params, parent, fetch }: { params: { uid: string; l
 			preis_pro_nacht: (s.preis_pro_nacht as number) ?? (d.preis_pro_nacht as number) ?? 0
 		}));
 
-	let bookedRanges: Array<{ von: string; bis: string; zimmer: string[] }> = [];
-	try {
-		bookedRanges = await getBelegtePerioden(linkedUid);
-	} catch {
-		// non-critical, client will fall back to empty
-	}
-
 	return {
 		doc,
 		title: (d.name as string) || '',
-		bookedRanges,
 		ressource: {
 			uid: ressourceDoc.uid as string,
 			name: (d.name as string) ?? '',
+			beschreibung: (d.beschreibung as any[]) ?? [],
 			maxPersonen: (d.max_personen as number) ?? 0,
 			minNaechte: (d.min_naechte as number) ?? 1,
 			preisProNacht: (d.preis_pro_nacht as number) ?? 0,
+			zimmerEinzelbuchbar: (d.zimmer_einzelbuchbar as boolean) ?? false,
 			saisonpreise,
 			schlafzimmer
 		}

@@ -57,9 +57,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{slice.primary.mobile_vollbreite ? 'overflow-x-clip' : ''}"
+	class="{slice.primary.mobile_full_width ? 'overflow-x-clip' : ''}"
 >
-	<div class="{alignClass} {slice.primary.mobile_vollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	<div class="{alignClass} {slice.primary.mobile_full_width ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if slice.variation === 'kauf'}
 			<a
 				href="/beauftragung{$page.params.uid ? `?dienstleistung=${encodeURIComponent($page.params.uid)}` : ''}"
