@@ -17,6 +17,7 @@ $: anim = mapAnimationFromPrimary(slice.primary);
 $: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 $: textColor = (slice.primary as any).color || $theme.pageColor;
 $: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
+$: centered = slice.variation === 'default' && !!(slice.primary as any).centered;
 </script>
 
 {#if visible}
@@ -31,7 +32,8 @@ animationOptions={anim.options}
 >
 <div
 class="{clsx(
-slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16'
+slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16',
+centered && 'text-center'
 )}"
 >
 <PrismicRichText field={slice.primary.text} />

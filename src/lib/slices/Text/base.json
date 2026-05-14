@@ -66,6 +66,13 @@
             ]
           }
         },
+        "centered": {
+          "type": "Boolean",
+          "config": {
+            "label": "Zentrieren",
+            "default_value": false
+          }
+        },
         "bg_color": {
           "type": "Color",
           "config": {
