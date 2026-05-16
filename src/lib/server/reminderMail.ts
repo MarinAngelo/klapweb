@@ -24,6 +24,11 @@ function doorCode(uid: string): string {
 	return (process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '');
 }
 
+function whatsAppLink(tel: string): string {
+	const number = tel.replace(/[^\d]/g, '');
+	return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+}
+
 function dateInDays(n: number): string {
 	const d = new Date();
 	d.setUTCDate(d.getUTCDate() + n);
@@ -45,7 +50,10 @@ export async function maybeSendAnkunftsErinnerung(
 
 	try {
 		const client = createClient({ fetch });
-		const doc = await client.getByUID('ressource', buchung.ressourceUid);
+		const [doc, settings] = await Promise.all([
+			client.getByUID('ressource', buchung.ressourceUid),
+			client.getSingle('settings').catch(() => null)
+		]);
 		const d = doc.data as any;
 
 		const textField = d.reminder_text as prismic.RichTextField | undefined;
@@ -57,12 +65,14 @@ export async function maybeSendAnkunftsErinnerung(
 		const betreff = (d.reminder_betreff as string)?.trim()
 			|| `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;
 
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 		const tokens: Record<string, string> = {
 			Türcode:          doorCode(buchung.ressourceUid),
 			Name:             buchung.name || '',
 			Anreise:          fmtDate(buchung.von),
 			Abreise:          fmtDate(buchung.bis),
-			Buchungsreferenz: buchung.referenz ?? buchung.id
+			Buchungsreferenz: buchung.referenz ?? buchung.id,
+			WhatsApp:         waTel ? whatsAppLink(waTel) : ''
 		};
 
 		const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);

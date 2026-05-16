@@ -199,7 +199,7 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Vor Ankunft – E-Mail Text",
-					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}",
+					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{WhatsApp}}",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
@@ -216,7 +216,7 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Nach Ankunft – E-Mail Text",
-					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}",
+					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{WhatsApp}}",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
@@ -233,7 +233,7 @@
 				"type": "StructuredText",
 				"config": {
 					"label": "Vor Abreise – E-Mail Text",
-					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}",
+					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{WhatsApp}}",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]

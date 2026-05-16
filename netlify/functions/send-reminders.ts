@@ -102,13 +102,22 @@ export default async function handler() {
 	const client = prismic.createClient(repoName);
 	const resend = new Resend(resendKey);
 
+	const settings = await client.getSingle('settings').catch(() => null);
+	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+	function whatsAppLink(): string {
+		if (!waTel) return '';
+		const number = waTel.replace(/[^\d]/g, '');
+		return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+	}
+
 	function tokens(buchung: any, doorCode: string) {
 		return {
 			Türcode:          doorCode,
 			Name:             buchung.name || '',
 			Anreise:          formatDate(buchung.von),
 			Abreise:          formatDate(buchung.bis),
-			Buchungsreferenz: buchung.id   || ''
+			Buchungsreferenz: buchung.referenz || buchung.id || '',
+			WhatsApp:         whatsAppLink()
 		};
 	}
 
