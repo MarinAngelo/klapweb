@@ -282,6 +282,12 @@ export const actions: Actions = {
 			abgerechnet: 'checked_out'
 		};
 		const target = prev[buchung.status];
-		if (target) await updateRessourceBuchungStatus(id, target);
+		if (!target) return;
+		// Zurück auf pending: Reminder-Flags zurücksetzen damit sie bei erneuter Bestätigung neu greifen
+		if (target === 'pending') {
+			await updateRessourceBuchung(id, { status: 'pending', reminderSent: false, nachAnkunftReminderSent: false });
+		} else {
+			await updateRessourceBuchungStatus(id, target);
+		}
 	}
 };
