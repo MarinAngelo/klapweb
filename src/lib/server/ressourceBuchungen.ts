@@ -39,6 +39,9 @@ export interface RessourceBuchung {
 	creditsCHF?: number;         // summe erledigter Aufgaben-Credits
 	abrechnungBetrag?: number;   // freigegebener Endbetrag (manuell korrigierbar)
 	abrechnungFreigegebenAt?: string;
+	reminderSent?: boolean;
+	nachAnkunftReminderSent?: boolean;
+	abreiseReminderSent?: boolean;
 }
 
 function generateReferenz(): string {

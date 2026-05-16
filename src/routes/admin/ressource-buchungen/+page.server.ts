@@ -11,6 +11,7 @@ import {
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
+import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
@@ -235,6 +236,7 @@ export const actions: Actions = {
 		if (!id) return;
 		const buchung = await updateRessourceBuchungStatus(id, 'confirmed');
 		await mailBestaetigung(buchung, fetch).catch(console.error);
+		maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 	},
 
 	// ── Vorwärts: confirmed → checked_in ──────────────────────────────────────

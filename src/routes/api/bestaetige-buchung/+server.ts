@@ -10,6 +10,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
+import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
@@ -46,11 +47,14 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	// Status auf confirmed setzen (nur wenn noch nicht bestätigt)
 	if (buchung.status !== 'confirmed') {
 		try {
-			await updateRessourceBuchungStatus(id, 'confirmed');
+			buchung = await updateRessourceBuchungStatus(id, 'confirmed');
 		} catch (e) {
 			return html(500, `Fehler beim Bestätigen: ${e}`);
 		}
 	}
+
+	// Ankunftserinnerung sofort senden wenn Ankunft < 48h
+	maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 
 	// ── Datums- und Preisformatierung ─────────────────────────────────────────
 	const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
