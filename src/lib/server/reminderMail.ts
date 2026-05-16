@@ -39,14 +39,25 @@ export async function maybeSendAnkunftsErinnerung(
 	buchung: RessourceBuchung,
 	fetch: typeof globalThis.fetch
 ): Promise<void> {
-	if (buchung.reminderSent) return;
+	console.log(`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}`);
 
-	// Nur senden wenn Ankunft innerhalb von 48 Stunden liegt
-	if (buchung.von > dateInDays(1)) return;
+	if (buchung.reminderSent) {
+		console.log('[reminderMail] Übersprungen: reminderSent=true');
+		return;
+	}
+
+	const grenze = dateInDays(2);
+	if (buchung.von > grenze) {
+		console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
+		return;
+	}
 
 	const resendKey = env.RESEND_API_KEY;
 	const emailFrom = env.INVOICE_FROM_EMAIL;
-	if (!resendKey || !emailFrom || !buchung.email) return;
+	if (!resendKey || !emailFrom || !buchung.email) {
+		console.log(`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`);
+		return;
+	}
 
 	try {
 		const client = createClient({ fetch });
@@ -58,9 +69,10 @@ export async function maybeSendAnkunftsErinnerung(
 
 		const textField = d.reminder_text as prismic.RichTextField | undefined;
 		if (!textField?.length) {
-			console.log(`[reminderMail] Kein reminder_text für ${buchung.ressourceUid} — übersprungen`);
+			console.log(`[reminderMail] Übersprungen: reminder_text leer für ${buchung.ressourceUid}`);
 			return;
 		}
+		console.log(`[reminderMail] reminder_text gefunden, length=${textField.length}`);
 
 		const betreff = (d.reminder_betreff as string)?.trim()
 			|| `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;

@@ -236,7 +236,7 @@ export const actions: Actions = {
 		if (!id) return;
 		const buchung = await updateRessourceBuchungStatus(id, 'confirmed');
 		await mailBestaetigung(buchung, fetch).catch(console.error);
-		maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
+		await maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 	},
 
 	// ── Vorwärts: confirmed → checked_in ──────────────────────────────────────

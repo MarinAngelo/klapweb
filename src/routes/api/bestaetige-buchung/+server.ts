@@ -54,7 +54,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	}
 
 	// Ankunftserinnerung sofort senden wenn Ankunft < 48h
-	maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
+	await maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 
 	// ── Datums- und Preisformatierung ─────────────────────────────────────────
 	const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
