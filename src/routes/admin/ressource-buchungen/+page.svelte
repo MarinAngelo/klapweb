@@ -43,6 +43,33 @@
 		erledigt: 'Erledigt'
 	};
 
+	// Buchungs-Status
+	const STATUS_FLOW = ['pending', 'confirmed', 'checked_in', 'checked_out', 'abgerechnet'] as const;
+	type BStatus = typeof STATUS_FLOW[number];
+
+	const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
+		pending:     { label: 'Ausstehend',  bg: '#fef3c7', color: '#92400e' },
+		confirmed:   { label: 'Bestätigt',   bg: '#d1fae5', color: '#065f46' },
+		checked_in:  { label: 'Eingecheckt', bg: '#dbeafe', color: '#1e40af' },
+		checked_out: { label: 'Ausgecheckt', bg: '#f3f4f6', color: '#374151' },
+		abgerechnet: { label: 'Abgerechnet', bg: '#ede9fe', color: '#5b21b6' }
+	};
+
+	// Vorwärts-Action pro Status
+	const NEXT_ACTION: Record<string, string | null> = {
+		pending:     'bestaetigen',
+		confirmed:   'checkin',
+		checked_in:  'checkout',
+		checked_out: null,       // → Link zur Freigabe-Seite
+		abgerechnet: null
+	};
+	const NEXT_LABEL: Record<string, string> = {
+		pending:     '→ Bestätigen + Mail',
+		confirmed:   '→ Check-in + Mail',
+		checked_in:  '→ Check-out + Abrechnungsmail',
+		checked_out: '→ Abrechnung freigeben'
+	};
+
 	let expandedBuchungen = new Set<string>();
 	function toggleExpand(id: string) {
 		if (expandedBuchungen.has(id)) expandedBuchungen.delete(id);
@@ -74,26 +101,19 @@
 				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 					<thead>
 						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', 'Reminder', ''] as col}
+							{#each ['Status', 'Anreise', 'Abreise', 'Nächte', 'Personen', 'Total', 'Zimmer', 'Name', 'E-Mail', 'Telefon', 'Buchungs-ID', 'Gebucht am', 'Reminder', 'Aktionen'] as col}
 								<th style={tdNowrap}>{col}</th>
 							{/each}
 						</tr>
 					</thead>
 					<tbody>
-						{#each buchungen.sort((x, y) => (x.von ?? '').localeCompare(y.von ?? '')) as b}
+						{#each buchungen as b}
 							{@const n = naechte(b.von, b.bis)}
 							{@const isPast = b.bis < new Date().toISOString().slice(0, 10)}
+							{@const s = STATUS_LABELS[b.status] ?? { label: b.status, bg: '#f3f4f6', color: '#374151' }}
 							<tr style="border-bottom: 1px solid #e5e7eb; {isPast ? 'opacity: 0.45;' : ''}">
 								<td style={tdNowrap}>
-									{#if b.status === 'confirmed'}
-										<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Bestätigt</span>
-									{:else if b.status === 'checked_in'}
-										<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Eingecheckt</span>
-									{:else if b.status === 'checked_out'}
-										<span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausgecheckt</span>
-									{:else}
-										<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">Ausstehend</span>
-									{/if}
+									<span style="background:{s.bg};color:{s.color};padding:2px 8px;border-radius:9999px;font-size:0.7rem;font-weight:600;">{s.label}</span>
 								</td>
 								<td style={tdNowrap}>{fmtDate(b.von)}</td>
 								<td style={tdNowrap}>{fmtDate(b.bis)}</td>
@@ -136,30 +156,39 @@
 										<span style="opacity: 0.35; font-size: 0.75rem;">–</span>
 									{/if}
 								</td>
-								<td style="{tdStyle} display: flex; gap: 0.75rem; align-items: center;">
-									{#if b.status === 'pending'}
-										<form method="POST" action="?/bestaetigen&secret={secret}">
+								<td style="{tdStyle} display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+									<!-- Zurück -->
+									{#if b.status !== 'pending'}
+										<form method="POST" action="?/zurueck&secret={secret}">
 											<input type="hidden" name="id" value={b.id} />
-											<button type="submit" style="color: #065f46; font-size: 0.75rem; background: #d1fae5; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
-												✓ Bestätigen
+											<button type="submit" title="Einen Schritt zurück (kein Mail)" style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;">
+												←
 											</button>
 										</form>
 									{/if}
-									{#if b.status === 'checked_in' || b.status === 'checked_out'}
-										<form method="POST" action="?/zuruecksetzen&secret={secret}">
+									<!-- Vorwärts -->
+									{#if NEXT_ACTION[b.status]}
+										<form method="POST" action="?/{NEXT_ACTION[b.status]}&secret={secret}">
 											<input type="hidden" name="id" value={b.id} />
-											<button type="submit" style="color: #6b7280; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
-												↩ Zurücksetzen
+											<button type="submit" style="font-size:0.7rem;background:#1e2d5a;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:2px 8px;font-weight:600;white-space:nowrap;">
+												{NEXT_LABEL[b.status]}
 											</button>
 										</form>
+									{:else if b.status === 'checked_out'}
+										<a
+											href="/api/freigabe-abrechnung?id={encodeURIComponent(b.id)}&secret={secret}"
+											target="_blank"
+											style="font-size:0.7rem;background:#5b21b6;color:#fff;border-radius:4px;padding:2px 8px;font-weight:600;text-decoration:none;white-space:nowrap;"
+										>{NEXT_LABEL[b.status]}</a>
 									{/if}
+									<!-- Löschen -->
 									<form
 										method="POST"
 										action="?/delete&secret={secret}"
 										on:submit={(e) => confirmDelete(e, `${b.ressourceUid} ${fmtDate(b.von)}`)}
 									>
 										<input type="hidden" name="id" value={b.id} />
-										<button type="submit" style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+										<button type="submit" style="color:#dc2626;font-size:0.75rem;background:none;border:none;cursor:pointer;padding:0;">
 											Löschen
 										</button>
 									</form>

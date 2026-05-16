@@ -2,13 +2,21 @@
  * GET /api/bestaetige-buchung?id=...&secret=...
  *
  * Bestätigt eine Buchungsanfrage und sendet die Bestätigungsmail an den Mieter.
- * Der Link wird vom Vermieter per E-Mail erhalten.
+ *
+ * Tokens im CMS-Mailtext: {{Name}}, {{Ressource}}, {{RessourceUid}},
+ *   {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}
  */
 import type { RequestHandler } from '@sveltejs/kit';
 import { getRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
+import { createClient } from '$lib/prismicio';
+import * as prismic from '@prismicio/client';
 import { env } from '$env/dynamic/private';
 
-export const GET: RequestHandler = async ({ url }) => {
+function replaceTokens(html: string, tokens: Record<string, string>): string {
+	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
+}
+
+export const GET: RequestHandler = async ({ url, fetch }) => {
 	const id = url.searchParams.get('id');
 	const secret = url.searchParams.get('secret');
 	const adminSecret = env.ADMIN_SECRET;
@@ -44,73 +52,122 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 	}
 
-	// Bestätigungsmail an Mieter senden
+	// ── Datums- und Preisformatierung ─────────────────────────────────────────
+	const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
+		weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
+	});
+	const bisFormatted = new Date(buchung.bis + 'T12:00:00Z').toLocaleDateString('de-CH', {
+		weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
+	});
+	const naechte = Math.round(
+		(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
+	);
+	const preisFormatted = new Intl.NumberFormat('de-CH', {
+		style: 'currency', currency: 'CHF'
+	}).format(buchung.preisCHF);
+
+	const zimmerauswahl = buchung.zimmerauswahl ?? [];
+	const zimmerHtml = zimmerauswahl.length
+		? `<ul>${zimmerauswahl.map((z) => `<li>${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})</li>`).join('')}</ul>`
+		: 'Ganze Wohnung';
+
+	const tokenMap: Record<string, string> = {
+		Name:             buchung.name ?? '',
+		Ressource:        buchung.ressourceName ?? buchung.ressourceUid,
+		RessourceUid:     buchung.ressourceUid,
+		Anreise:          vonFormatted,
+		Abreise:          bisFormatted,
+		'Nächte':         String(naechte),
+		Personen:         String(buchung.personen),
+		Zimmer:           zimmerHtml,
+		Total:            preisFormatted,
+		Buchungsreferenz: buchung.referenz ?? buchung.id
+	};
+
+	// ── CMS-Template laden (immer, unabhängig von Mail-Env-Vars) ─────────────
+	let betreff = `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`;
+	let mailHtml: string | null = null;
+	let cmsDebug = '';
+
+	try {
+		const client = createClient({ fetch });
+		const doc = await client.getByUID('ressource', buchung.ressourceUid);
+		const d = doc.data as any;
+
+		const cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim();
+		if (cmsBetreff) betreff = replaceTokens(cmsBetreff, tokenMap);
+
+		const cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
+		cmsDebug = `Prismic OK — uid=${buchung.ressourceUid}, betreff="${cmsBetreff ?? '(leer)'}", text.length=${cmsTextField?.length ?? 0}`;
+		if (cmsTextField?.length) {
+			mailHtml = replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap);
+		}
+	} catch (err) {
+		cmsDebug = `Prismic Fehler: ${err}`;
+	}
+
+	// ── Mail senden ───────────────────────────────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
 	const emailFrom = env.INVOICE_FROM_EMAIL;
-
 	let mailGesendet = false;
 	let mailFehler = '';
 
 	if (resendKey && emailFrom && buchung.email) {
-		const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
-		const bisFormatted = new Date(buchung.bis + 'T12:00:00Z').toLocaleDateString('de-CH', {
-			weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
-		const naechte = Math.round(
-			(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
-		);
-		const preisFormatted = new Intl.NumberFormat('de-CH', {
-			style: 'currency', currency: 'CHF'
-		}).format(buchung.preisCHF);
-
-		const zimmerZeilen = (buchung.zimmerauswahl ?? []).map(
-			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
-		);
-		const buchungsDetails = [
-			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid} (${buchung.ressourceUid})`,
-			`Anreise:   ${vonFormatted}`,
-			`Abreise:   ${bisFormatted}`,
-			`Nächte:    ${naechte}`,
-			`Personen:  ${buchung.personen}`,
-			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
-			`Total:     ${preisFormatted}`
-		].join('\n');
-
-		try {
-			const { Resend } = await import('resend');
-			const resend = new Resend(resendKey);
-			const { error: e } = await resend.emails.send({
-				from: emailFrom,
-				to: buchung.email,
-				subject: `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				text: [
-					`Guten Tag ${buchung.name}`,
-					``,
-					`Ihre Buchungsanfrage wurde bestätigt.`,
-					``,
-					buchungsDetails,
-					``,
-					`Ihre Buchungsreferenz:`,
-					``,
-					`${buchung.referenz ?? buchung.id}`,
-					`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
-					``,
-					`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
-			});
-			if (e) {
-				console.error('Bestätigung Kunden-E-Mail fehlgeschlagen:', e);
-				mailFehler = JSON.stringify(e);
-			} else {
-				mailGesendet = true;
+		if (mailHtml) {
+			try {
+				const { Resend } = await import('resend');
+				const { error: e } = await new Resend(resendKey).emails.send({
+					from: emailFrom,
+					to: buchung.email,
+					subject: betreff,
+					html: mailHtml
+				});
+				if (e) { mailFehler = JSON.stringify(e); }
+				else { mailGesendet = true; }
+			} catch (e) {
+				mailFehler = String(e);
 			}
-		} catch (e) {
-			console.error('Resend fehlgeschlagen:', e);
-			mailFehler = String(e);
+		} else {
+			// Fallback: plain text
+			const zimmerZeilen = zimmerauswahl.map(
+				(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
+			);
+			const plainText = [
+				`Guten Tag ${buchung.name}`,
+				``,
+				`Ihre Buchungsanfrage wurde bestätigt.`,
+				``,
+				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid} (${buchung.ressourceUid})`,
+				`Anreise:   ${vonFormatted}`,
+				`Abreise:   ${bisFormatted}`,
+				`Nächte:    ${naechte}`,
+				`Personen:  ${buchung.personen}`,
+				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
+				`Total:     ${preisFormatted}`,
+				``,
+				`Ihre Buchungsreferenz:`,
+				``,
+				`${buchung.referenz ?? buchung.id}`,
+				`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
+				``,
+				`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
+				``,
+				`Freundliche Grüsse`
+			].join('\n');
+
+			try {
+				const { Resend } = await import('resend');
+				const { error: e } = await new Resend(resendKey).emails.send({
+					from: emailFrom,
+					to: buchung.email,
+					subject: betreff,
+					text: plainText
+				});
+				if (e) { mailFehler = JSON.stringify(e); }
+				else { mailGesendet = true; }
+			} catch (e) {
+				mailFehler = String(e);
+			}
 		}
 	}
 
@@ -118,7 +175,15 @@ export const GET: RequestHandler = async ({ url }) => {
 		<strong>Buchung bestätigt ✓</strong><br><br>
 		Mieter: ${buchung.name ?? '–'}<br>
 		Zeitraum: ${buchung.von} – ${buchung.bis}<br>
-		${!buchung.email ? 'Keine E-Mail-Adresse hinterlegt.' : mailGesendet ? `Bestätigungsmail wurde an <strong>${buchung.email}</strong> gesendet.` : `E-Mail fehlgeschlagen: ${mailFehler || '–'}`}
+		${!buchung.email
+			? 'Keine E-Mail-Adresse hinterlegt.'
+			: !resendKey || !emailFrom
+				? '<em>Mail-Env-Vars nicht gesetzt (lokal) — kein Mail gesendet.</em>'
+				: mailGesendet
+					? `Bestätigungsmail wurde an <strong>${buchung.email}</strong> gesendet.`
+					: `E-Mail fehlgeschlagen: ${mailFehler || '–'}`
+		}
+		<p style="margin-top:1.5rem;font-size:0.8rem;color:#888;font-family:monospace;">CMS: ${cmsDebug}</p>
 	`);
 };
 
