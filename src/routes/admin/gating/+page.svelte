@@ -302,6 +302,11 @@
 
 	const tabs: Array<[typeof activeTab, string]> = [['plans', 'Pläne'], ['features', 'Features'], ['slices', 'Slices']];
 
+	function setTab(id: typeof activeTab) {
+		activeTab = id;
+		saveMessage = '';
+	}
+
 	// Styles
 	const btn = 'background: #1e2d5a; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 1rem; font-size: 0.875rem; cursor: pointer;';
 	const btnSmall = 'background: #1e2d5a; color: white; border: none; border-radius: 0.25rem; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer;';
@@ -358,7 +363,7 @@
 	<div style="display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb;">
 		{#each tabs as [id, label]}
 			<button
-				on:click={() => { activeTab = id as typeof activeTab; saveMessage = ''; }}
+				on:click={() => setTab(id)}
 				style="
 					padding: 0.5rem 1.25rem;
 					border: none;
