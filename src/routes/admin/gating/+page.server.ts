@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
