@@ -302,6 +302,29 @@
 
 	const tabs: Array<[typeof activeTab, string]> = [['plans', 'Pläne'], ['features', 'Features'], ['slices', 'Slices']];
 
+	function setPlanLabel(id: string, e: Event) {
+		gating.plans[id].label = (e.target as HTMLInputElement).value;
+		gating = gating;
+	}
+	function setPlanExtends(id: string, e: Event) {
+		const val = (e.target as HTMLSelectElement).value;
+		if (val) gating.plans[id].extends = val;
+		else delete gating.plans[id].extends;
+		gating = gating;
+	}
+	function setFeatureLabel(id: string, e: Event) {
+		gating.features[id].label = (e.target as HTMLInputElement).value;
+		gating = gating;
+	}
+	function setNewVarName(sliceName: string, e: Event) {
+		newVarName[sliceName] = (e.target as HTMLInputElement).value;
+		newVarName = newVarName;
+	}
+	function setNewFieldName(sliceName: string, e: Event) {
+		newFieldName[sliceName] = (e.target as HTMLInputElement).value;
+		newFieldName = newFieldName;
+	}
+
 	function setTab(id: typeof activeTab) {
 		activeTab = id;
 		saveMessage = '';
@@ -401,19 +424,14 @@
 								<input
 									style={input}
 									value={plan.label}
-									on:input={(e) => { gating.plans[id].label = (e.target as HTMLInputElement).value; gating = gating; }}
+									on:input={(e) => setPlanLabel(id, e)}
 								/>
 							</td>
 							<td style={td}>
 								<select
 									style={select}
 									value={plan.extends ?? ''}
-									on:change={(e) => {
-										const val = (e.target as HTMLSelectElement).value;
-										if (val) gating.plans[id].extends = val;
-										else delete gating.plans[id].extends;
-										gating = gating;
-									}}
+									on:change={(e) => setPlanExtends(id, e)}
 								>
 									<option value="">–</option>
 									{#each planIds.filter(p => p !== id) as pid}
@@ -473,7 +491,7 @@
 								<input
 									style={input}
 									value={feature.label}
-									on:input={(e) => { gating.features[id].label = (e.target as HTMLInputElement).value; gating = gating; }}
+									on:input={(e) => setFeatureLabel(id, e)}
 								/>
 							</td>
 							<td style={td}>
@@ -681,7 +699,7 @@
 												style="{input} width: 160px;"
 												placeholder="variation-id"
 												value={newVarName[sliceName] ?? ''}
-												on:input={(e) => { newVarName[sliceName] = (e.target as HTMLInputElement).value; newVarName = newVarName; }}
+												on:input={(e) => setNewVarName(sliceName, e)}
 											/>
 											<button style={btnSmall} on:click={() => addVariation(sliceName)}>+ Variation</button>
 										</div>
@@ -747,7 +765,7 @@
 												style="{input} width: 160px;"
 												placeholder="feld_id"
 												value={newFieldName[sliceName] ?? ''}
-												on:input={(e) => { newFieldName[sliceName] = (e.target as HTMLInputElement).value; newFieldName = newFieldName; }}
+												on:input={(e) => setNewFieldName(sliceName, e)}
 											/>
 											<button style={btnSmall} on:click={() => addField(sliceName)}>+ Feld</button>
 										</div>
