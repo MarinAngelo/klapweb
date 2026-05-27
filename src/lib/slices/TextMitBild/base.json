@@ -149,6 +149,15 @@
             "default_value": true
           }
         },
+        "mobile_image_first": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild zuerst auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
         "text_center_v": {
           "type": "Boolean",
           "config": {
@@ -568,6 +577,15 @@
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": true
+          }
+        },
+        "mobile_image_first": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild zuerst auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_center_v": {

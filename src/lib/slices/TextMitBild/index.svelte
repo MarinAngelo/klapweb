@@ -162,7 +162,7 @@
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
-			mobileTextFirst={!isBildLinks && mobileVollbreite}
+			mobileTextFirst={mobileImageFirst ? false : (!isBildLinks && mobileVollbreite)}
 			{lightbox}
 			{textCenterV}
 			{textCenterH}
