@@ -70,7 +70,7 @@
 
 						<!-- Text: volle Breite -->
 						{#if item.title}
-							<h3 class="mb-1">{item.title}</h3>
+							<h4 class="mb-1">{item.title}</h4>
 						{/if}
 						{#if item.subtitle}
 							<p class="text-sm mb-2 opacity-70">{item.subtitle}</p>
@@ -86,7 +86,7 @@
 						<div class="text-right">
 							{#if isLeft}
 								<div class="inline-block max-w-sm text-left">
-									{#if item.title}<h3 class="mb-1">{item.title}</h3>{/if}
+									{#if item.title}<h4 class="mb-1">{item.title}</h4>{/if}
 									{#if item.subtitle}<p class="text-sm mb-2 opacity-70">{item.subtitle}</p>{/if}
 									{#if item.description}<PrismicRichText field={item.description} />{/if}
 								</div>
@@ -112,7 +112,7 @@
 						<div>
 							{#if !isLeft}
 								<div class="max-w-sm">
-									{#if item.title}<h3 class="mb-1">{item.title}</h3>{/if}
+									{#if item.title}<h4 class="mb-1">{item.title}</h4>{/if}
 									{#if item.subtitle}<p class="text-sm mb-2 opacity-70">{item.subtitle}</p>{/if}
 									{#if item.description}<PrismicRichText field={item.description} />{/if}
 								</div>
