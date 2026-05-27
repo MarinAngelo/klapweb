@@ -499,7 +499,9 @@
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
-					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
+					{#if urlParams.dienstleistung}
+						<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung} />
+					{/if}
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
 						{#each formFields as field}
