@@ -35,7 +35,7 @@
 	}
 
 	const variation = slice.variation as string;
-	const isBildLinks = variation === 'standardBildLinks';
+	$: isBildLinks = (slice.primary as any).image_left ?? false;
 	const isMulti = variation === 'multi';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
