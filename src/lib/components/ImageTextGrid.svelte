@@ -108,7 +108,7 @@
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
-			class="text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''}"
+			class="text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''} {mobileTextFirst ? 'order-last md:order-none' : ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
@@ -117,7 +117,7 @@
 			{/if}
 		</div>
 		<div
-			class="md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? 'order-first md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
 		>
 			{#if activeImages.length > 1}

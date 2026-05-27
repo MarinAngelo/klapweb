@@ -39,7 +39,7 @@
 	const isMulti = variation === 'multi';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? true;
 	$: textCenterV = (slice.primary as any).text_center_v ?? false;
 	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 	$: fullscreen = (slice.primary as any).fullscreen ?? false;
@@ -144,6 +144,7 @@
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
+			mobileTextFirst={!isBildLinks && mobileVollbreite}
 			{lightbox}
 			{textCenterV}
 			{textCenterH}
