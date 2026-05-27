@@ -35,11 +35,12 @@
 	}
 
 	const variation = slice.variation as string;
-	const isBildLinks = variation === 'standardBildLinks';
+	$: isBildLinks = (slice.primary as any).image_left ?? false;
 	const isMulti = variation === 'multi';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? true;
+	$: mobileImageFirst = (slice.primary as any).mobile_image_first ?? false;
 	$: textCenterV = (slice.primary as any).text_center_v ?? false;
 	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 	$: fullscreen = (slice.primary as any).fullscreen ?? false;
@@ -73,6 +74,21 @@
 		gross: '4rem'
 	};
 	$: textPad = textPadMap[(p as any).text_padding ?? 'mittel'] ?? '2rem';
+
+	const ptMobMap: Record<string, string> = { 'kein Abstand': 'pt-0', 'wenig': 'pt-8', 'mittel': 'pt-20', 'gross': 'pt-32' };
+	const ptDeskMap: Record<string, string> = { 'kein Abstand': 'md:pt-0', 'wenig': 'md:pt-10', 'mittel': 'md:pt-28', 'gross': 'md:pt-48' };
+	const pbMobMap: Record<string, string> = { 'kein Abstand': 'pb-0', 'wenig': 'pb-8', 'mittel': 'pb-20', 'gross': 'pb-32' };
+	const pbDeskMap: Record<string, string> = { 'kein Abstand': 'md:pb-0', 'wenig': 'md:pb-10', 'mittel': 'md:pb-28', 'gross': 'md:pb-48' };
+
+	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: computedPaddingTopClass = yPaddingMobileVal
+		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
+		: undefined;
+	$: computedPaddingBottomClass = yPaddingMobileVal
+		? (p.y_padding_same
+			? [pbMobMap[yPaddingMobileVal], p.y_padding ? pbDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
+			: '')
+		: undefined;
 </script>
 
 {#if visible}
@@ -125,6 +141,8 @@
 	yPadding={fullscreen ? 'none' : yPadding}
 	fullHeight={fullscreen}
 	noPadding={mobileVollbreite}
+	paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
+	paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 		? ` min-height: calc(100vh - ${$headerHeight}px);`
@@ -144,6 +162,7 @@
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
+			mobileTextFirst={mobileImageFirst ? false : (!isBildLinks && mobileVollbreite)}
 			{lightbox}
 			{textCenterV}
 			{textCenterH}
