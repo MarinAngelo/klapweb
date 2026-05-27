@@ -40,6 +40,7 @@
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? true;
+	$: mobileImageFirst = (slice.primary as any).mobile_image_first ?? false;
 	$: textCenterV = (slice.primary as any).text_center_v ?? false;
 	$: textCenterH = (slice.primary as any).text_center_h ?? false;
 	$: fullscreen = (slice.primary as any).fullscreen ?? false;
