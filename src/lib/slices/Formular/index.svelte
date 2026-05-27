@@ -366,11 +366,6 @@
 		search.forEach((value, key) => {
 			urlParams = { ...urlParams, [key]: value };
 		});
-		// Fallback: use current page UID if no ?dienstleistung= URL param present
-		if (!urlParams.dienstleistung) {
-			const uid = $page.params.uid;
-			if (uid) urlParams = { ...urlParams, dienstleistung: uid };
-		}
 	});
 
 	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
@@ -497,6 +492,7 @@
 					name={formName}
 					method="POST"
 					data-netlify="true"
+					netlify-honeypot="bot-field"
 					on:submit={handleSubmit}
 					on:input={onFormInput}
 					aria-describedby="form-error"
