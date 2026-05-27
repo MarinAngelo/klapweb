@@ -60,7 +60,7 @@
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 	on:mouseleave={closeDropdown}
 >
-	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} />
+	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} {isOpen} />
 
 	{#if isOpen}
 		<ul

@@ -1,0 +1,102 @@
+{
+	"id": "ressource_buchung",
+	"type": "SharedSlice",
+	"name": "RessourceBuchung",
+	"description": "Buchungsformular für eine Ressource (Ferienhaus, Raum etc.)",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"single": "heading2,heading3"
+					}
+				},
+				"intro": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item",
+						"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Schaltflächen-Text",
+						"placeholder": "Jetzt anfragen"
+					}
+				},
+				"success_heading": {
+					"type": "Text",
+					"config": {
+						"label": "Erfolgsmeldung Titel",
+						"placeholder": "Anfrage erhalten!"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Erfolgsmeldung Text",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong",
+						"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "0"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "600"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

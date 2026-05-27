@@ -166,6 +166,87 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"svg_icons": {
+				"type": "Group",
+				"config": {
+					"label": "SVG-Icons",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Pfeil rechts"
+							}
+						},
+						"svg_code": {
+							"type": "Text",
+							"config": {
+								"label": "SVG-Code",
+								"placeholder": "<svg viewBox=\"0 0 24 24\">...</svg>"
+							}
+						},
+						"image": {
+							"type": "Image",
+							"config": {
+								"label": "Bild (Alternative zu SVG-Code)",
+								"constraint": {},
+								"thumbnails": []
+							}
+						}
+					}
+				}
+			},
+			"button_stile": {
+				"type": "Group",
+				"config": {
+					"label": "Button-Stile",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Hauptbutton"
+							}
+						},
+						"color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"icon": {
+							"type": "Select",
+							"config": {
+								"label": "Symbol",
+								"placeholder": "— Kein Symbol —",
+								"options": ["Externer Link", "Menü", "Schließen", "Pfeil Rechts Oben"]
+							}
+						}
+					}
+				}
+			},
 			"heading_opacity": {
 				"type": "Number",
 				"config": {

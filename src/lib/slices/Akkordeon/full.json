@@ -114,73 +114,6 @@
 						]
 					}
 				},
-				"accordion_items": {
-					"type": "Group",
-					"config": {
-						"label": "Akkordeon Elemente",
-						"repeat": true,
-						"fields": {
-							"label": {
-								"type": "Text",
-								"config": {
-									"label": "Titel",
-									"placeholder": ""
-								}
-							},
-							"content": {
-								"type": "StructuredText",
-								"config": {
-									"label": "Text",
-									"placeholder": "",
-									"allowTargetBlank": true,
-									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-									"labels": [
-										"size-xs",
-										"size-sm",
-										"size-lg",
-										"size-xl",
-										"size-2xl",
-										"size-3xl",
-										"size-4xl",
-										"size-5xl",
-										"size-6xl",
-										"weight-thin",
-										"weight-light",
-										"weight-medium",
-										"weight-semibold",
-										"weight-black",
-										"tracking-tight",
-										"tracking-wide",
-										"tracking-wider",
-										"tracking-widest",
-										"leading-tight",
-										"leading-loose",
-										"uppercase",
-										"lowercase",
-										"capitalize",
-										"underline",
-										"block",
-										"muted",
-										"display-thin",
-										"display-light",
-										"display-bold",
-										"display-black",
-										"giant-thin",
-										"giant-light",
-										"giant-bold",
-										"hero-thin",
-										"hero-light",
-										"hero-bold",
-										"subtitle",
-										"subtitle-bold",
-										"kicker",
-										"overline"
-									]
-								}
-							}
-						}
-					}
-				},
 				"erstes_item_ausgeklappt": {
 					"type": "Boolean",
 					"config": {
@@ -206,13 +139,13 @@
 						"placeholder": "Suchen..."
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
-						"default_value": false
+						"default_value": true
 					}
 				},
 				"animate": {
@@ -288,6 +221,73 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"accordion_items": {
+					"type": "Group",
+					"config": {
+						"label": "Akkordeon Elemente",
+						"repeat": true,
+						"fields": {
+							"label": {
+								"type": "Text",
+								"config": {
+									"label": "Titel",
+									"placeholder": ""
+								}
+							},
+							"content": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text",
+									"placeholder": "",
+									"allowTargetBlank": true,
+									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
+								}
+							}
+						}
 					}
 				}
 			},
@@ -403,6 +403,115 @@
 						]
 					}
 				},
+				"erstes_item_ausgeklappt": {
+					"type": "Boolean",
+					"config": {
+						"label": "Erstes Item ausgeklappt",
+						"placeholder_false": "Eingeklappt",
+						"placeholder_true": "Ausgeklappt",
+						"default_value": true
+					}
+				},
+				"mit_suche": {
+					"type": "Boolean",
+					"config": {
+						"label": "Suche aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"suchfeld_platzhalter": {
+					"type": "Text",
+					"config": {
+						"label": "Suchfeld-Platzhalter",
+						"placeholder": "Suchen..."
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"contrast_amount": {
+					"type": "Number",
+					"config": {
+						"label": "Kontrast-Offset (leer = automatisch)",
+						"placeholder": "0"
+					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Link-Farbe (leer = Seitenfarbe)"
+					}
+				},
+				"border_color": {
+					"type": "Color",
+					"config": {
+						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
+					}
+				},
+				"sektion_rahmen": {
+					"type": "Boolean",
+					"config": {
+						"label": "Rahmen um die Sektion",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"accordion_items": {
 					"type": "Group",
 					"config": {
@@ -496,117 +605,17 @@
 									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
 									"placeholder": "100"
 								}
+							},
+							"bild_lupe": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild-Lupe aktivieren",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
 							}
 						}
-					}
-				},
-				"erstes_item_ausgeklappt": {
-					"type": "Boolean",
-					"config": {
-						"label": "Erstes Item ausgeklappt",
-						"placeholder_false": "Eingeklappt",
-						"placeholder_true": "Ausgeklappt",
-						"default_value": true
-					}
-				},
-				"mit_suche": {
-					"type": "Boolean",
-					"config": {
-						"label": "Suche aktivieren",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"suchfeld_platzhalter": {
-					"type": "Text",
-					"config": {
-						"label": "Suchfeld-Platzhalter",
-						"placeholder": "Suchen..."
-					}
-				},
-				"mobile_vollbreite": {
-					"type": "Boolean",
-					"config": {
-						"label": "Vollbreite auf Mobile",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				},
-				"bg_color": {
-					"type": "Color",
-					"config": {
-						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
-					}
-				},
-				"text_color": {
-					"type": "Color",
-					"config": {
-						"label": "Schriftfarbe (leer = Seitenfarbe)"
-					}
-				},
-				"contrast_amount": {
-					"type": "Number",
-					"config": {
-						"label": "Kontrast-Offset (leer = automatisch)",
-						"placeholder": "0"
-					}
-				},
-				"link_color": {
-					"type": "Color",
-					"config": {
-						"label": "Link-Farbe (leer = Seitenfarbe)"
-					}
-				},
-				"border_color": {
-					"type": "Color",
-					"config": {
-						"label": "Rahmen-Farbe (leer = Schriftfarbe)"
-					}
-				},
-				"sektion_rahmen": {
-					"type": "Boolean",
-					"config": {
-						"label": "Rahmen um die Sektion",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
 					}
 				}
 			},
@@ -639,7 +648,53 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl"
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
 					}
 				},
 				"erstes_item_ausgeklappt": {
@@ -667,7 +722,7 @@
 						"placeholder": "Suchen..."
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",

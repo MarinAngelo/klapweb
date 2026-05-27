@@ -1,5 +1,24 @@
 import { writable } from 'svelte/store';
 
+export interface ButtonStil {
+	/** Auto-generierter Slug aus `label` (z.B. "Hauptbutton" → "hauptbutton") */
+	name: string;
+	label?: string;
+	color?: string;
+	bg_color?: string;
+	hover_color?: string;
+	hover_bg_color?: string;
+	icon?: string;
+}
+
+export interface SvgIcon {
+	name: string;
+	label?: string;
+	svg_code?: string;
+	image_url?: string;
+	image_alt?: string;
+}
+
 // Liest eine CSS-Variable aus dem DOM (nur client-seitig verfügbar)
 function cssVar(name: string): string {
 	if (typeof document === 'undefined') return '';
@@ -65,7 +84,13 @@ export const THEME_DEFAULTS = {
 
 	// Titelbereich Slice spezifisch
 	headerBgOpacity: 1, // Default: voll deckend (wird aus Slice überschrieben)
-	hideHeaderOnLoad: false
+	hideHeaderOnLoad: false,
+
+	// CMS-konfigurierbare Button-Stile
+	buttonStile: [] as ButtonStil[],
+
+	// CMS-konfigurierbare SVG-Icons
+	svgIcons: [] as SvgIcon[]
 };
 
 // Auf dem Client sofort mit den bereits gesetzten CSS-Variablen initialisieren

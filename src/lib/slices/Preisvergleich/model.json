@@ -112,7 +112,18 @@
 						"placeholder": "Jetzt bestellen"
 					}
 				},
-				"mobile_vollbreite": {
+				"button_style": {
+					"type": "Select",
+					"config": {
+						"label": "Button-Stil",
+						"placeholder": "— Standard —",
+						"options": [
+							"Durchstarten",
+							"Den Kunden zum Kauf animieren"
+						]
+					}
+				},
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",

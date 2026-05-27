@@ -37,9 +37,10 @@
 	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
-	$: siteName = settings?.data?.site_name || '';
+	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
 	$: pageTitle =
 		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
@@ -50,7 +51,7 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
-	$: pwaEnabled = settings?.data?.pwa_enabled ?? false;
+	$: appleTouchIconUrl = settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
@@ -223,6 +224,9 @@
 		updateTheme(data);
 	}
 	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	// Läuft bei jeder Navigation ($page.data ändert sich immer).
+	// Ohne Override: globale Farben explizit zurücksetzen (layout `data` ändert
+	// sich bei Client-Navigation nicht zwingend, daher kein Verlassen auf Block 1).
 	$: {
 		const pd = $page.data?.page?.data ?? {};
 		const overrideBg: string | null = pd.page_bg_color ?? null;
@@ -238,6 +242,15 @@
 				if (overrideColor)
 					document.documentElement.style.setProperty('--page-color', overrideColor);
 			}
+		} else {
+			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
+			// Wichtig: CSS-Variablen ZUERST löschen, sonst liest updateTheme via
+			// getCssVar() den alten Override-Wert zurück (zirkuläre Überschreibung).
+			if (typeof document !== 'undefined') {
+				document.documentElement.style.removeProperty('--page-color');
+				document.documentElement.style.removeProperty('--page-bg-color');
+			}
+			updateTheme(data);
 		}
 	}
 	$: pageFontName =
@@ -288,9 +301,17 @@
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
-	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
+	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: stickyHeader =
+		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
+
+	onMount(() => {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		}
+	});
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
@@ -315,13 +336,12 @@
 	<title>{finalTitle}</title>
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
-	{#if pwaEnabled}
-		<link rel="manifest" href="/manifest.webmanifest" />
-		{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-	{/if}
+	{#if appleTouchIconUrl}<link rel="apple-touch-icon" href={appleTouchIconUrl} />{/if}
+	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<link rel="canonical" href={currentUrl} />
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
@@ -343,15 +363,23 @@
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
 	<meta property="og:image" content={finalImage} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:url" content={currentUrl} />
 	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={finalTitle} />
+	<meta name="twitter:description" content={finalDesc} />
+	<meta name="twitter:image" content={finalImage} />
 
 	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
 			{navigation}
 			{settings}
@@ -364,8 +392,8 @@
 		/>
 	{/if}
 
-	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
-		{#if $page.data?.title && !hasBannerOverlap}
+	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
 				style="background-color: var(--page-bg-color); color: var(--page-color);"
@@ -382,7 +410,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>

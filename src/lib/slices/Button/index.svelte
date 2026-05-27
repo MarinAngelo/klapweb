@@ -2,7 +2,6 @@
 	import { isFilled } from '@prismicio/client';
 	import { PrismicLink } from '@prismicio/svelte';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { page } from '$app/stores';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
@@ -42,10 +41,10 @@
 		| 'base-top'
 		| 'lg-top';
 
-	$: buttonColor = p.button_color || get(theme).pageButtonColor;
-	$: buttonBgColor = p.button_bg_color || get(theme).pageButtonBgColor;
-	$: buttonHoverColor = p.button_hover_color || get(theme).pageButtonHoverColor;
-	$: buttonHoverBgColor = p.button_hover_bg_color || get(theme).pageButtonHoverBgColor;
+	$: buttonColor = p.button_color || $theme.pageButtonColor;
+	$: buttonBgColor = p.button_bg_color || $theme.pageButtonBgColor;
+	$: buttonHoverColor = p.button_hover_color || $theme.pageButtonHoverColor;
+	$: buttonHoverBgColor = p.button_hover_bg_color || $theme.pageButtonHoverBgColor;
 	$: beauftragungHref = getBeauftragunHref(p.button_link, $page.params.uid);
 	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 </script>
@@ -57,9 +56,9 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{slice.primary.mobile_vollbreite ? 'overflow-x-clip' : ''}"
+	class="{slice.primary.mobile_full_width ? 'overflow-x-clip' : ''}"
 >
-	<div class="{alignClass} {slice.primary.mobile_vollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	<div class="{alignClass} {slice.primary.mobile_full_width ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if slice.variation === 'kauf'}
 			<a
 				href="/beauftragung{$page.params.uid ? `?dienstleistung=${encodeURIComponent($page.params.uid)}` : ''}"

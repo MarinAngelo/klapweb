@@ -4,7 +4,7 @@
 	import { isFilled } from '@prismicio/helpers';
 	import { filter } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
+
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -230,7 +230,7 @@
 	{:else if parentEvent}
 		<div
 			class="rounded-xl overflow-hidden shadow-sm border"
-			style="border-color: {$theme.pageLinkColor}20; background-color: {$theme.pageBgColor}; color: {$theme.pageColor}"
+			style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent); background-color: var(--page-bg-color); color: var(--page-color)"
 		>
 			<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
 			{#if isFilled.image(parentEvent.image)}
@@ -276,7 +276,7 @@
 								target="_blank"
 								rel="noopener"
 								class="underline ml-1"
-								style="color: {$theme.pageLinkColor}">Link</a
+								style="color: var(--page-link-color)">Link</a
 							>
 						{/if}
 					</div>
@@ -299,7 +299,7 @@
 									target="_blank"
 									rel="noopener"
 									class="underline opacity-70"
-									style="color: {$theme.pageLinkColor}">Auf Karte anzeigen</a
+									style="color: var(--page-link-color)">Auf Karte anzeigen</a
 								>
 							{/if}
 						</div>
@@ -316,10 +316,10 @@
 						<div>
 							<div>{startFormatted}</div>
 							{#if endFormatted && endFormatted !== startFormatted}
-							<div class="opacity-60">{$_('bis')} {endFormatted}</div>
-						{/if}
-						{#if parentEvent.doors_open}
-							<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
+								<div class="opacity-60">{$_('bis')} {endFormatted}</div>
+							{/if}
+							{#if parentEvent.doors_open}
+								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
 							{/if}
 						</div>
 					</div>
@@ -340,12 +340,12 @@
 				{#if parentEvent.is_free || parentEvent.price_text?.length}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
-						<span class="font-medium">{$_('Kostenlos')}</span>
-					{:else}
-						<PrismicRichText field={parentEvent.price_text} />
-					{/if}
-					{#if parentEvent.registration_required}
-						<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
+							<span class="font-medium">{$_('Kostenlos')}</span>
+						{:else}
+							<PrismicRichText field={parentEvent.price_text} />
+						{/if}
+						{#if parentEvent.registration_required}
+							<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
 						{/if}
 					</div>
 				{/if}
@@ -360,7 +360,8 @@
 				<!-- Veranstalter & Kontakt -->
 				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
 					<div class="opacity-60 flex flex-wrap gap-3">
-						{#if parentEvent.organizer}<span>{$_('Veranstalter')}: {parentEvent.organizer}</span>{/if}
+						{#if parentEvent.organizer}<span>{$_('Veranstalter')}: {parentEvent.organizer}</span
+							>{/if}
 						{#if parentEvent.contact_email}<a
 								href="mailto:{parentEvent.contact_email}"
 								class="underline">{parentEvent.contact_email}</a
@@ -373,7 +374,7 @@
 				{#if events.length}
 					<div
 						class="pt-4 border-t flex flex-col gap-3"
-						style="border-color: {$theme.pageLinkColor}20"
+						style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
 					>
 						<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
@@ -384,7 +385,7 @@
 
 							<div
 								class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0"
-								style="border-color: {$theme.pageLinkColor}10"
+								style="border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent)"
 							>
 								<!-- Status -->
 								{#if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
@@ -440,7 +441,7 @@
 									{:else if hasIndividualContact}
 										<Button
 											link={undefined}
-												text={$_('Anmelden')}
+											text={$_('Anmelden')}
 											size="sm"
 											on:click={() => openModal(ev)}
 										/>
@@ -448,7 +449,7 @@
 								{:else if isFilled.link(ev.ticket_url)}
 									<Button
 										link={ev.ticket_url}
-											text={ev.registration_required ? $_('Anmelden') : $_('Tickets')}
+										text={ev.registration_required ? $_('Anmelden') : $_('Tickets')}
 										size="sm"
 									/>
 								{:else if registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
@@ -482,16 +483,18 @@
 		{@const modalTelegram = registrationTelegram(selectedEvent)}
 		{@const modalTitle = selectedEvent?.title || parentEvent.title || ''}
 		{@const modalRegistrationText = buildRegistrationText(selectedEvent)}
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 		<div
 			class="fixed inset-0 flex items-center justify-center z-50"
 			style="background-color: rgba(0,0,0,0.5);"
 			on:click|self={() => (showRegistrationModal = false)}
+			on:keydown={(e) => e.key === 'Escape' && (showRegistrationModal = false)}
 			role="dialog"
 			aria-modal="true"
 		>
 			<div
 				class="rounded-xl shadow-xl p-8 max-w-sm w-full mx-4 flex flex-col gap-4"
-				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor}; border: 1px solid {$theme.pageLinkColor}20"
+				style="background-color: var(--page-bg-color); color: var(--page-color); border: 1px solid color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
 			>
 				<h3 class="mt-0 mb-0">{$_('Anmeldung')}</h3>
 				<p class="opacity-70 mb-0">{$_('Wähle deine bevorzugte Methode zur Anmeldung:')}</p>
@@ -503,7 +506,7 @@
 								modalRegistrationText
 							)}"
 							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: {$theme.pageLinkColor}40"
+							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
 						>
 							<span class="text-xl">✉️</span>
 							<div>
@@ -521,7 +524,7 @@
 							target="_blank"
 							rel="noopener"
 							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: {$theme.pageLinkColor}40"
+							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
 						>
 							<span class="text-xl">💬</span>
 							<div>
@@ -545,7 +548,7 @@
 							target="_blank"
 							rel="noopener"
 							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: {$theme.pageLinkColor}40"
+							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
 						>
 							<span class="text-xl">✈️</span>
 							<div>

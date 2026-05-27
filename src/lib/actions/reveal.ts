@@ -57,6 +57,14 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 					setTimeout(() => {
 						node.style.setProperty('opacity', targetOpacity);
 						node.style.transform = 'translate(0, 0)';
+						const cleanup = (e: TransitionEvent) => {
+							if (e.propertyName === 'transform') {
+								node.style.transform = '';
+								node.style.willChange = '';
+								node.removeEventListener('transitionend', cleanup);
+							}
+						};
+						node.addEventListener('transitionend', cleanup);
 					}, options.delay);
 					observer.unobserve(node);
 				}

@@ -105,20 +105,28 @@
 </script>
 
 <nav
+	aria-label="Hauptnavigation"
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
 	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
 >
 	<div class="block lg:hidden h-full flex items-center">
-		<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
+		<button
+			class="btn btn-square btn-ghost h-10 w-10"
+			on:click={toggleMenu}
+			aria-label="Menü"
+			aria-expanded={$isMenuOpen}
+			aria-controls="main-nav-menu"
+		>
 			{#if $isMenuOpen}
-				<SvgIcon name="close" color={headerLinkColor} />
+				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
-				<SvgIcon name="menu" color={headerLinkColor} />
+				<SvgIcon name="menu" color={headerLinkColor} size="1.5rem" />
 			{/if}
 		</button>
 	</div>
 
 	<div
+		id="main-nav-menu"
 		bind:this={menuEl}
 		class={`${
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'

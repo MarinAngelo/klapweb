@@ -22,7 +22,6 @@
 				name="password"
 				type="password"
 				class="w-full border rounded px-3 py-2 mb-4 text-sm"
-				autofocus
 			/>
 
 			{#if form?.error}

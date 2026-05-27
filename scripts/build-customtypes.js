@@ -8,6 +8,13 @@
  *   plans:       Plan-Hierarchie  (id → { label, extends? })
  *   features:    Feature-Mapping  (id → { label, plans: [...] })
  *   customTypes: Custom-Type-Gate (typeId → { plan?, feature? })  [Dokumentation]
+ *   icons:       Icon-Registry    (slug → { label })
+ *                → Slugs werden als Select-Optionen in theme/button_stile.icon geschrieben
+ *                → Built-ins (external-link, menu, close) + CMS-Icons hier eintragen
+ *   button_stile: Button-Stil-Registry (slug → { label, color?, bgColor?, hoverColor?, hoverBgColor? })
+ *                → Labels werden als Select-Optionen in Slice-Feldern "button_style" geschrieben
+ *                → optionale Farb-Defaults dienen als Fallback wenn Theme-Dokument den Stil nicht kennt
+ *                → Button.svelte sucht Eintrag per label, setzt CSS-Vars per slug
  *   slices:      Slice-Gating     (SliceName → {
  *                  plan?, feature?,            // Slice-Ebene
  *                  fields:     { key → { plan?, feature? } },  // Feld-Ebene
@@ -228,7 +235,51 @@ for (const type of managedTypes) {
 	console.log(`✓ customtypes/${type}/index.json`);
 }
 
-// ── 2. Slice Models ──────────────────────────────────────────────────────────────
+// ── 2. button_style Select-Optionen in Slices synchronisieren ────────────────────
+// Liest gating.json "button_stile" und patcht alle Slice-full.json / model.json
+// die ein "button_style" Select-Feld in ihren Variationen haben.
+{
+	// Labels als Optionen (lesbar im CMS-Dropdown), Slugs bleiben intern in der Theme-Store-Logik
+	const buttonStilOptions = Object.values(gating.button_stile ?? {})
+		.map((v) => v.label)
+		.filter(Boolean);
+	const slicesRoot = join(ROOT, 'src/lib/slices');
+	const sliceDirs = readdirSync(slicesRoot, { withFileTypes: true })
+		.filter((d) => d.isDirectory())
+		.map((d) => d.name);
+
+	for (const sliceName of sliceDirs) {
+		// Versuche zuerst full.json, dann model.json (falls kein build-managed slice)
+		const candidates = [
+			`src/lib/slices/${sliceName}/full.json`,
+			`src/lib/slices/${sliceName}/model.json`
+		];
+		for (const relPath of candidates) {
+			const absPath = join(ROOT, relPath);
+			if (!existsSync(absPath)) continue;
+			const sliceJson = JSON.parse(readFileSync(absPath, 'utf-8'));
+			let changed = false;
+			for (const variation of sliceJson.variations ?? []) {
+				const field = variation.primary?.button_style;
+				if (field?.type === 'Select') {
+					const before = JSON.stringify(field.config.options);
+					field.config.options = buttonStilOptions;
+					if (JSON.stringify(field.config.options) !== before) changed = true;
+				}
+			}
+			if (changed) {
+				writeFileSync(absPath, JSON.stringify(sliceJson, null, '\t') + '\n');
+				console.log(
+					`✓ slices/${sliceName}/${relPath.split('/').pop()}: button_style-Optionen aktualisiert (${buttonStilOptions.join(', ') || '—'})`
+				);
+			}
+			// Nur eine Datei pro Slice patchen (full.json hat Vorrang)
+			break;
+		}
+	}
+}
+
+// ── 3. Slice Models ──────────────────────────────────────────────────────────────
 
 const sliceGatingMap = gating.slices ?? {};
 
@@ -311,7 +362,7 @@ for (const sliceName of allSlices) {
 	}
 }
 
-// ── 3. Feature-only Custom Types ─────────────────────────────────────────────────
+// ── 4. Feature-only Custom Types ─────────────────────────────────────────────────
 
 for (const feature of features) {
 	const ctDir = join(ROOT, `customtypes/_features/${feature}/customtypes`);
@@ -332,7 +383,7 @@ for (const feature of features) {
 
 console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
 
-// ── 4. Gated Custom Types aufräumen ──────────────────────────────────────────────
+// ── 5. Gated Custom Types aufräumen ──────────────────────────────────────────────
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	const active = isActive(gate);
@@ -358,3 +409,63 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	}
 }
 // ── Ende Pre-Build-Check ──────────────────────────────────────────────────────
+
+// ── 6. Theme: button_stile icon-Optionen synchronisieren + icon-labels.ts generieren ─────
+// Liest gating.json "icons" und:
+//   a) schreibt die Labels als Select-Optionen in theme/index.json → button_stile → icon
+//   b) generiert src/lib/config/icon-labels.ts (Label → Slug Mapping für SvgIcons.svelte)
+const themePath = join(ROOT, 'customtypes/theme/index.json');
+const iconsMap = gating.icons ?? {};
+const iconEntries = Object.entries(iconsMap);
+
+// Pflicht-Tabs — diese müssen immer vorhanden sein. Fehlen sie, bricht das Script ab
+// statt eine beschädigte Datei zu schreiben (Kundendaten-Schutz!).
+const REQUIRED_THEME_TABS = ['Generell', 'Kopfzeile', 'Fusszeile'];
+
+// a) Schreibe Labels als Select-Optionen
+if (existsSync(themePath) && iconEntries.length > 0) {
+	const iconLabels = iconEntries.map(([, v]) => v.label).filter(Boolean);
+	const themeJson = JSON.parse(readFileSync(themePath, 'utf-8'));
+
+	// ── Sicherheitscheck: Pflicht-Tabs müssen vorhanden sein ──────────────────
+	const missingTabs = REQUIRED_THEME_TABS.filter((t) => !themeJson?.json?.[t]);
+	if (missingTabs.length > 0) {
+		console.error(`\n❌ KRITISCHER FEHLER: customtypes/theme/index.json ist beschädigt!`);
+		console.error(`   Fehlende Tabs: ${missingTabs.join(', ')}`);
+		console.error(`   Die Datei wird NICHT überschrieben. Bitte aus Git wiederherstellen:\n`);
+		console.error(`   git checkout HEAD -- customtypes/theme/index.json\n`);
+		process.exit(1);
+	}
+
+	const iconField = themeJson?.json?.Generell?.button_stile?.config?.fields?.icon;
+	if (iconField?.type === 'Select') {
+		const before = JSON.stringify(iconField.config.options);
+		iconField.config.options = iconLabels;
+		if (JSON.stringify(iconField.config.options) !== before) {
+			writeFileSync(themePath, JSON.stringify(themeJson, null, '\t') + '\n');
+			console.log(
+				`✓ customtypes/theme/index.json: icon-Optionen aktualisiert (${iconLabels.join(', ')})`
+			);
+		}
+	}
+}
+
+// b) Generiere src/lib/config/icon-labels.ts
+{
+	const entries = iconEntries
+		.filter(([, v]) => v.label)
+		.map(([slug, v]) => `\t${JSON.stringify(v.label)}: ${JSON.stringify(slug)}`)
+		.join(',\n');
+	const content =
+		'// AUTO-GENERATED by build-customtypes.js — nicht committen\n' +
+		'// Änderungen in gating.json vornehmen, dann npm run dev\n' +
+		`export const ICON_SLUG_BY_LABEL: Record<string, string> = {\n${entries}\n};\n`;
+	const configDir = join(ROOT, 'src/lib/config');
+	const outPath = join(configDir, 'icon-labels.ts');
+	mkdirSync(configDir, { recursive: true });
+	const existing = existsSync(outPath) ? readFileSync(outPath, 'utf-8') : '';
+	if (existing !== content) {
+		writeFileSync(outPath, content);
+		console.log(`✓ src/lib/config/icon-labels.ts generiert (${iconEntries.length} Icons)`);
+	}
+}

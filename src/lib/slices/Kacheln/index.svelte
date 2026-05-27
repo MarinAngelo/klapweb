@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicText } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
-	import { currencySelection } from '$lib/stores/currency';
 	import { get } from 'svelte/store';
+	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -11,14 +10,19 @@
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { formatPrice, calcDisplayPrice } from '$lib/pricing';
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
+	import { _ } from '$lib/stores/i18n';
+	import { theme } from '$lib/stores/theme';
+	import Button from '$lib/components/Button.svelte';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import { headingAnchor } from '$lib/actions/headingAnchor';
 
 	export let slice: Content.ImageCardsSlice;
 	export let slices: any = {};
 	export let context: any = {};
 	export let index: number = 0;
 
-	const componentBodyBgColor = slice.primary?.component_body_bg_color || get(theme).pageBgColor;
-	const componentBodyColor = slice.primary?.component_body_color || get(theme).pageColor;
+	const componentBodyBgColor = slice.primary?.component_body_bg_color || 'var(--page-bg-color)';
+	const componentBodyColor = slice.primary?.component_body_color || 'var(--page-color)';
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary?.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
@@ -76,7 +80,7 @@
 			const base: number | null = d.ecommerce_price_chf ?? null;
 			const discount: number | null = d.ecommerce_discount_percent ?? null;
 			const deposit: number | null = d.ecommerce_deposit_percent ?? globalDepositPct;
-			const displayAmount = calcDisplayPrice(base, discount, deposit);
+			const displayAmount = calcDisplayPrice(base, discount, null);
 			const converted =
 				displayAmount !== null ? Math.round(displayAmount * conversionRate * 100) / 100 : null;
 			const billingType: string | null = d.ecommerce_billing_type ?? null;
@@ -92,14 +96,20 @@
 		});
 	})();
 
-	$: cardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
-	$: cardBgColor = (slice.primary as any)?.body_bg_color || get(theme).pageBgColor;
-	$: btnColor = (slice.primary as any)?.button_color || get(theme).pageColor;
-	$: btnBgColor = (slice.primary as any)?.button_bg_color || 'transparent';
-	$: borderColor = (slice.primary as any)?.border_color || get(theme).pageColor;
+	$: cardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
+	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
+	$: btnStyleName = ((slice.primary as any)?.button_style as string | undefined) || undefined;
+	$: btnStileEntry = btnStyleName
+		? ($theme.buttonStile ?? []).find((s) => s.name === btnStyleName || s.label === btnStyleName)
+		: undefined;
+	$: btnStyleSlug = btnStileEntry?.name || btnStyleName;
+	$: btnHighlightColor = btnStyleSlug
+		? `var(--btn-${btnStyleSlug}-color, var(--page-button-color))`
+		: 'var(--page-button-color)';
+	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
 	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
-	$: mobileVollbreite = (slice.primary as any)?.mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any)?.mobile_full_width ?? false;
 
 	// --- Team variation ---
 	$: isTeamVariation = (slice as any).variation === 'team';
@@ -111,7 +121,7 @@
 			: 2;
 	$: isCircle = (slice.primary as any)?.image_shape === 'Kreis';
 	$: teamRound = (slice.primary as any)?.round_corners !== false;
-	$: teamCardColor = (slice.primary as any)?.body_color || get(theme).pageColor;
+	$: teamCardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: teamCardBg = (slice.primary as any)?.body_bg_color || 'transparent';
 	$: teamHeading = (slice.primary as any)?.heading ?? null;
 </script>
@@ -141,9 +151,11 @@
 						style="
 						color: {cardColor};
 						background-color: {plan.highlight ? `${cardBgColor}` : cardBgColor};
-						border-color: {plan.highlight ? borderColor : `${borderColor}44`};
-						border-radius: {roundCorners ? '0.5rem' : '0'};
-						{plan.highlight ? `box-shadow: 0 4px 24px ${borderColor}22;` : ''}
+					border-color: {plan.highlight ? btnHighlightColor : `${borderColor}44`};
+					border-radius: {roundCorners ? '0.5rem' : '0'};
+					{plan.highlight
+							? `box-shadow: 0 4px 24px color-mix(in srgb, ${btnHighlightColor} 13%, transparent);`
+							: ''}
 					"
 					>
 						<!-- Plan name + price -->
@@ -152,9 +164,12 @@
 								{#if plan.pageHref}
 									<a
 										href={plan.pageHref}
-										class="hover:opacity-70 transition-opacity"
+										class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity"
 										style="color: {cardColor};"
-										>{plan.name} <span style="font-size: 0.75em; opacity: 0.6;">↗</span></a
+										>{plan.name}
+										<span class="opacity-60" style="line-height: 0;"
+											><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
+										></a
 									>
 								{:else}
 									{plan.name}
@@ -169,7 +184,21 @@
 								{/if}
 							{/if}
 						</div>
-
+						<!-- CTA: Jetzt bestellen -->
+						{#if plan.href}
+							<div
+								class="mb-4 [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
+							>
+								<Button
+									href={plan.href}
+									text={ctaLabel}
+									styleName={btnStyleName}
+									rounded={roundCorners}
+									mb={false}
+									size="sm"
+								/>
+							</div>
+						{/if}
 						<!-- Feature list -->
 						{#if plan.features.length > 0}
 							<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
@@ -197,20 +226,23 @@
 							</ul>
 						{/if}
 
-						<!-- CTA -->
-						{#if plan.href}
-							<a
-								href={plan.href}
-								class="mt-auto block text-center px-4 py-2 text-sm border transition-opacity hover:opacity-70"
-								style="
-								color: {btnColor};
-								background-color: {btnBgColor};
-								border-color: {btnColor};
-								border-radius: {roundCorners ? '0.25rem' : '0'};
-							"
+						<!-- Details-Button -->
+						{#if plan.pageHref}
+							<div
+								class="mt-auto [&_.button-prismic-link]:block [&_.button-prismic-link]:text-center [&_.button-prismic-link]:w-full"
 							>
-								{ctaLabel}
-							</a>
+								<Button
+									href={plan.pageHref}
+									text={$_('Details')}
+									color="var(--page-link-color)"
+									bgColor="transparent"
+									hoverColor="var(--page-link-hover-color)"
+									hoverBgColor="transparent"
+									rounded={roundCorners}
+									mb={false}
+									size="sm"
+								/>
+							</div>
 						{/if}
 					</div>
 				{/each}
@@ -228,7 +260,7 @@
 		animationOptions={anim.options}
 	>
 		{#if isFilled.richText(teamHeading)}
-			<h2 class="text-center mb-10 custom-color">
+			<h2 use:headingAnchor class="text-center mb-10 custom-color">
 				<PrismicText field={teamHeading} />
 			</h2>
 		{/if}
@@ -332,7 +364,7 @@
 	>
 		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
 			{#if isFilled.richText(slice.primary?.heading)}
-				<h2 class="text-center custom-color">
+				<h2 use:headingAnchor class="text-center custom-color">
 					<PrismicText field={slice.primary?.heading} />
 				</h2>
 			{/if}

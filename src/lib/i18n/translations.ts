@@ -68,6 +68,54 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Wähle einen Slice aus der Navigation',
 		'en-us': 'Select a slice from the navigation'
 	},
+	// RessourceBuchung Slice
+	Anreise: { 'de-ch': 'Anreise', 'en-us': 'Check-in' },
+	Abreise: { 'de-ch': 'Abreise', 'en-us': 'Check-out' },
+	'Anzahl Personen': { 'de-ch': 'Anzahl Personen', 'en-us': 'Number of persons' },
+	Maximal: { 'de-ch': 'Maximal', 'en-us': 'Maximum' },
+	Personen: { 'de-ch': 'Personen', 'en-us': 'persons' },
+	Name: { 'de-ch': 'Name', 'en-us': 'Name' },
+	Nachricht: { 'de-ch': 'Nachricht', 'en-us': 'Message' },
+	Preisvorschau: { 'de-ch': 'Preisvorschau', 'en-us': 'Price preview' },
+	'Verfügbarkeit wird geladen…': { 'de-ch': 'Verfügbarkeit wird geladen…', 'en-us': 'Loading availability…' },
+	Nacht: { 'de-ch': 'Nacht', 'en-us': 'night' },
+	Nächte: { 'de-ch': 'Nächte', 'en-us': 'nights' },
+	Schlafzimmer: { 'de-ch': 'Schlafzimmer', 'en-us': 'Bedrooms' },
+	'Bereits gebucht': { 'de-ch': 'Bereits gebucht', 'en-us': 'Already booked' },
+	'Voll belegt': { 'de-ch': 'Voll belegt', 'en-us': 'Fully booked' },
+	'Teilweise belegt': { 'de-ch': 'Teilweise belegt', 'en-us': 'Partially booked' },
+	'Frei': { 'de-ch': 'Frei', 'en-us': 'Available' },
+	'Gewählter Zeitraum': { 'de-ch': 'Gewählter Zeitraum', 'en-us': 'Selected period' },
+	Zimmerauswahl: { 'de-ch': 'Zimmerauswahl', 'en-us': 'Room selection' },
+	'Ausgewählte Zimmer': { 'de-ch': 'Ausgewählte Zimmer', 'en-us': 'Selected rooms' },
+	Belegt: { 'de-ch': 'Belegt', 'en-us': 'Unavailable' },
+	'Alle gewählten Zimmer sind in diesem Zeitraum belegt': { 'de-ch': 'Alle gewählten Zimmer sind in diesem Zeitraum belegt', 'en-us': 'All selected rooms are booked in this period' },
+	'Bitte mindestens ein Zimmer auswählen': { 'de-ch': 'Bitte mindestens ein Zimmer auswählen', 'en-us': 'Please select at least one room' },
+	'Ausgewählte Zimmer bieten Platz für maximal': { 'de-ch': 'Ausgewählte Zimmer bieten Platz für maximal', 'en-us': 'Selected rooms accommodate a maximum of' },
+	Kapazität: { 'de-ch': 'Kapazität', 'en-us': 'Capacity' },
+	Mindestaufenthalt: { 'de-ch': 'Mindestaufenthalt', 'en-us': 'Minimum stay' },
+	'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar': { 'de-ch': 'Für den gewünschten Zeitraum sind nur noch einzelne Zimmer buchbar', 'en-us': 'Only individual rooms are available for the selected period' },
+	'Preis pro Nacht ab': { 'de-ch': 'Preis pro Nacht ab', 'en-us': 'Price per night from' },
+	'Jetzt anfragen': { 'de-ch': 'Jetzt anfragen', 'en-us': 'Request now' },
+	'Freundes-Referenz-E-Mail Adresse': { 'de-ch': 'Freundes-Referenz-E-Mail Adresse', 'en-us': 'Friend referral email address' },
+	'Wird geprüft…': { 'de-ch': 'Wird geprüft…', 'en-us': 'Checking…' },
+	'E-Mail gefunden': { 'de-ch': 'E-Mail gefunden', 'en-us': 'Email found' },
+	'E-Mail nicht gefunden': { 'de-ch': 'E-Mail nicht gefunden', 'en-us': 'Email not found' },
+	'Wird gesendet…': { 'de-ch': 'Wird gesendet…', 'en-us': 'Sending…' },
+	'Anfrage erhalten!': { 'de-ch': 'Anfrage erhalten!', 'en-us': 'Request received!' },
+	'Wir melden uns in Kürze bei Ihnen.': { 'de-ch': 'Wir melden uns in Kürze bei Ihnen.', 'en-us': 'We will get back to you shortly.' },
+	'Abreise muss nach Anreise liegen': { 'de-ch': 'Abreise muss nach Anreise liegen', 'en-us': 'Check-out must be after check-in' },
+	'Dieser Zeitraum ist bereits belegt': { 'de-ch': 'Dieser Zeitraum ist bereits belegt', 'en-us': 'This period is already booked' },
+	'Dieser Zeitraum ist leider nicht mehr verfügbar': { 'de-ch': 'Dieser Zeitraum ist leider nicht mehr verfügbar', 'en-us': 'This period is unfortunately no longer available' },
+	'Ein Fehler ist aufgetreten': { 'de-ch': 'Ein Fehler ist aufgetreten', 'en-us': 'An error occurred' },
+	'Keine Ressource verknüpft': { 'de-ch': 'Keine Ressource verknüpft', 'en-us': 'No resource linked' },
+	'Ganze Wohnung': { 'de-ch': 'Ganze Wohnung', 'en-us': 'Entire apartment' },
+	Einzelzimmer: { 'de-ch': 'Einzelzimmer', 'en-us': 'Individual room' },
+	Buchungsart: { 'de-ch': 'Buchungsart', 'en-us': 'Booking type' },
+	'Zimmer auswählen': { 'de-ch': 'Zimmer auswählen', 'en-us': 'Select room' },
+	'Zimmer wird geladen…': { 'de-ch': 'Zimmer wird geladen…', 'en-us': 'Loading room…' },
+	'Wohnung auswählen': { 'de-ch': 'Wohnung auswählen', 'en-us': 'Select apartment' },
+
 	// Slice-Namen
 	Akkordeon: { 'de-ch': 'Akkordeon', 'en-us': 'Accordion' },
 	Anleitung: { 'de-ch': 'Anleitung', 'en-us': 'Instructions' },
@@ -106,6 +154,8 @@ export const translations: Record<string, Record<string, string>> = {
 	'Standard Bild links': { 'de-ch': 'Standard Bild links', 'en-us': 'Default Image Left' },
 	'Zwei Spalten': { 'de-ch': 'Zwei Spalten', 'en-us': 'Two Columns' },
 	'Mit Bild Karusell': { 'de-ch': 'Mit Bild Karusell', 'en-us': 'With Image Carousel' },
+	Details: { 'de-ch': 'Details', 'en-us': 'Details' },
+
 	// Funktions-Panel Labels
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
 	'Abstand oben / unten gleich': {
@@ -396,6 +446,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ungültiger Rabatt-Code.',
 		'en-us': 'Invalid discount code.'
 	},
+	'Abgelaufener Rabatt-Code.': {
+		'de-ch': 'Rabatt-Code ist abgelaufen.',
+		'en-us': 'Discount code has expired.'
+	},
 	'Verbindungsfehler bei Code-Prüfung.': {
 		'de-ch': 'Verbindungsfehler bei Code-Prüfung.',
 		'en-us': 'Connection error during code verification.'
@@ -403,6 +457,46 @@ export const translations: Record<string, Record<string, string>> = {
 	'Ein Fehler ist aufgetreten.': {
 		'de-ch': 'Ein Fehler ist aufgetreten.',
 		'en-us': 'An error occurred.'
+	},
+	'Buchungsreferenz': {
+		'de-ch': 'Buchungsreferenz',
+		'en-us': 'Booking reference'
+	},
+	'Check-in ab': {
+		'de-ch': 'Check-in ab',
+		'en-us': 'Check-in from'
+	},
+	'Check-out ab': {
+		'de-ch': 'Check-out ab',
+		'en-us': 'Check-out from'
+	},
+	'Buchungsreferenz nicht gefunden.': {
+		'de-ch': 'Buchungsreferenz nicht gefunden.',
+		'en-us': 'Booking reference not found.'
+	},
+	'Bereits eingecheckt.': {
+		'de-ch': 'Bereits eingecheckt.',
+		'en-us': 'Already checked in.'
+	},
+	'Bereits ausgecheckt.': {
+		'de-ch': 'Bereits ausgecheckt.',
+		'en-us': 'Already checked out.'
+	},
+	'Abschicken': {
+		'de-ch': 'Abschicken',
+		'en-us': 'Submit'
+	},
+	'Kommentar': {
+		'de-ch': 'Kommentar',
+		'en-us': 'Comment'
+	},
+	'Erfolgreich eingecheckt.': {
+		'de-ch': 'Erfolgreich eingecheckt.',
+		'en-us': 'Successfully checked in.'
+	},
+	'Erfolgreich ausgecheckt.': {
+		'de-ch': 'Erfolgreich ausgecheckt.',
+		'en-us': 'Successfully checked out.'
 	},
 	'Verbindungsfehler. Bitte versuchen Sie es erneut.': {
 		'de-ch': 'Verbindungsfehler. Bitte versuchen Sie es erneut.',
@@ -467,6 +561,62 @@ export const translations: Record<string, Record<string, string>> = {
 	'Weiter zum Formular': {
 		'de-ch': 'Weiter zum Formular',
 		'en-us': 'Continue to form'
+	},
+	Vorname: {
+		'de-ch': 'Vorname',
+		'en-us': 'First name'
+	},
+	Nachname: {
+		'de-ch': 'Nachname',
+		'en-us': 'Last name'
+	},
+	Pflichtfelder: {
+		'de-ch': 'Pflichtfelder',
+		'en-us': 'Required fields'
+	},
+	Beauftragung: {
+		'de-ch': 'Beauftragung',
+		'en-us': 'Order'
+	},
+	Firma: {
+		'de-ch': 'Firma',
+		'en-us': 'Company'
+	},
+	'E-Mail': {
+		'de-ch': 'E-Mail',
+		'en-us': 'Email'
+	},
+	Adresse: {
+		'de-ch': 'Adresse',
+		'en-us': 'Address'
+	},
+	PLZ: {
+		'de-ch': 'PLZ',
+		'en-us': 'ZIP code'
+	},
+	Ort: {
+		'de-ch': 'Ort',
+		'en-us': 'City'
+	},
+	Projektname: {
+		'de-ch': 'Projektname',
+		'en-us': 'Project name'
+	},
+	Land: {
+		'de-ch': 'Land',
+		'en-us': 'Country'
+	},
+	'Registrierter Domainname': {
+		'de-ch': 'Registrierter Domainname',
+		'en-us': 'Registered domain name'
+	},
+	'Gewünschter Domainname': {
+		'de-ch': 'Gewünschter Domainname',
+		'en-us': 'Desired domain name'
+	},
+	'Tel. Nr.': {
+		'de-ch': 'Tel. Nr.',
+		'en-us': 'Phone no.'
 	},
 	Rechnungsadresse: {
 		'de-ch': 'Rechnungsadresse',
@@ -538,19 +688,60 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Zurück zur Startseite',
 		'en-us': 'Back to home'
 	},
+	// Aufgaben Slice
+	'Buchungs-ID': { 'de-ch': 'Buchungs-ID', 'en-us': 'Booking ID' },
+	'Mit Buchungs-ID anmelden': { 'de-ch': 'Mit Buchungs-ID anmelden', 'en-us': 'Log in with booking ID' },
+	Aufgabenliste: { 'de-ch': 'Aufgabenliste', 'en-us': 'Task list' },
+	'Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.': {
+		'de-ch': 'Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.',
+		'en-us': 'Please log in with the booking ID you received by email.'
+	},
+	Aufgaben: { 'de-ch': 'Aufgaben', 'en-us': 'Tasks' },
+	'Aufgabe annehmen': { 'de-ch': 'Aufgabe annehmen', 'en-us': 'Accept task' },
+	'Aufgabe abgeben': { 'de-ch': 'Aufgabe abgeben', 'en-us': 'Submit task' },
+	'Aufgabe bereits angenommen': { 'de-ch': 'Aufgabe bereits angenommen', 'en-us': 'Task already accepted' },
+	'Angenommen': { 'de-ch': 'Angenommen', 'en-us': 'Accepted' },
+	Erledigt: { 'de-ch': 'Erledigt', 'en-us': 'Done' },
+	'Credits verdient': { 'de-ch': 'Credits verdient', 'en-us': 'Credits earned' },
+	'Geleistete Minuten': { 'de-ch': 'Geleistete Minuten', 'en-us': 'Minutes spent' },
+	'Keine Aufgaben verfügbar': { 'de-ch': 'Keine Aufgaben verfügbar', 'en-us': 'No tasks available' },
+	'Aufgabe konnte nicht angenommen werden': { 'de-ch': 'Aufgabe konnte nicht angenommen werden', 'en-us': 'Task could not be accepted' },
+	'Abgabe fehlgeschlagen': { 'de-ch': 'Abgabe fehlgeschlagen', 'en-us': 'Submission failed' },
+	'Einloggen': { 'de-ch': 'Anmelden', 'en-us': 'Log in' },
+	'Ungültige Kombination von Buchungs-ID und E-Mail': { 'de-ch': 'Ungültige Kombination von Buchungs-ID und E-Mail', 'en-us': 'Invalid combination of booking ID and email' },
+	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
+	'Verfügbare Aufgaben': { 'de-ch': 'Verfügbare Aufgaben', 'en-us': 'Available tasks' },
+	'Abmelden': { 'de-ch': 'Abmelden', 'en-us': 'Log out' },
+	'Fest': { 'de-ch': 'Fest', 'en-us': 'Fixed' },
+	'Zeitbasiert': { 'de-ch': 'Zeitbasiert', 'en-us': 'Time-based' },
+	'Credit-Typ': { 'de-ch': 'Credit-Typ', 'en-us': 'Credit type' },
+	'pro Nacht': { 'de-ch': 'pro Nacht', 'en-us': 'per night' },
+	'Minuten eingeben': { 'de-ch': 'Minuten eingeben', 'en-us': 'Enter minutes' },
+	'Benötigte Werkzeuge': { 'de-ch': 'Benötigte Werkzeuge', 'en-us': 'Required tools' },
+	'Kommentar (optional)': { 'de-ch': 'Kommentar (optional)', 'en-us': 'Comment (optional)' },
+	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
+	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
+	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },
+	'gelesen und akzeptiere diesen.': { 'de-ch': 'gelesen und akzeptiere diesen.', 'en-us': 'and accept it.' },
+	Haftungsausschluss: { 'de-ch': 'Haftungsausschluss', 'en-us': 'Disclaimer' },
+	'Wird geladen…': { 'de-ch': 'Wird geladen…', 'en-us': 'Loading…' },
+
 	// GlobaleEvents
 	'Online-Veranstaltung': { 'de-ch': 'Online-Veranstaltung', 'en-us': 'Online Event' },
 	'Auf Karte anzeigen': { 'de-ch': 'Auf Karte anzeigen', 'en-us': 'View on map' },
-	'bis': { 'de-ch': 'bis', 'en-us': 'to' },
+	bis: { 'de-ch': 'bis', 'en-us': 'to' },
 	'Einlass ab': { 'de-ch': 'Einlass ab', 'en-us': 'Doors open at' },
-	'Kostenlos': { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
+	Kostenlos: { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
 	'Anmeldung erforderlich': { 'de-ch': 'Anmeldung erforderlich', 'en-us': 'Registration required' },
-	'Anmelden': { 'de-ch': 'Anmelden', 'en-us': 'Register' },
-	'Tickets': { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
-	'Veranstalter': { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
-	'Termine': { 'de-ch': 'Termine', 'en-us': 'Dates' },
-	'Datum noch nicht festgelegt': { 'de-ch': 'Datum noch nicht festgelegt', 'en-us': 'Date not yet set' },
-	'Anmeldung': { 'de-ch': 'Anmeldung', 'en-us': 'Registration' },
+	Anmelden: { 'de-ch': 'Anmelden', 'en-us': 'Register' },
+	Tickets: { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
+	Veranstalter: { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
+	Termine: { 'de-ch': 'Termine', 'en-us': 'Dates' },
+	'Datum noch nicht festgelegt': {
+		'de-ch': 'Datum noch nicht festgelegt',
+		'en-us': 'Date not yet set'
+	},
+	Anmeldung: { 'de-ch': 'Anmeldung', 'en-us': 'Registration' },
 	'Wähle deine bevorzugte Methode zur Anmeldung:': {
 		'de-ch': 'Wähle deine bevorzugte Methode zur Anmeldung:',
 		'en-us': 'Choose your preferred method to register:'
@@ -558,14 +749,32 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per E-Mail': { 'de-ch': 'Per E-Mail', 'en-us': 'Via E-Mail' },
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
-	'Schliessen': { 'de-ch': 'Schliessen', 'en-us': 'Close' },
-	'Link': { 'de-ch': 'Link', 'en-us': 'Link' },
+	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	Link: { 'de-ch': 'Link', 'en-us': 'Link' },
 	// Event Status
-	'Geplant': { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },
-	'Bestätigt': { 'de-ch': 'Bestätigt', 'en-us': 'Confirmed' },
-	'Abgesagt': { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
-	'Verschoben': { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
-	'Ausgebucht': { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' }
+	Geplant: { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },
+	Bestätigt: { 'de-ch': 'Bestätigt', 'en-us': 'Confirmed' },
+	Abgesagt: { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
+	Verschoben: { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
+	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' },
+	Bestellübersicht: { 'de-ch': 'Bestellübersicht', 'en-us': 'Order Summary' },
+	Einmalig: { 'de-ch': 'Einmalig', 'en-us': 'One-time' },
+	Monatlich: { 'de-ch': 'Monatlich', 'en-us': 'Monthly' },
+	Jährlich: { 'de-ch': 'Jährlich', 'en-us': 'Annually' },
+	'auf Anfrage': { 'de-ch': 'auf Anfrage', 'en-us': 'on request' },
+	Total: { 'de-ch': 'Total', 'en-us': 'Total' },
+	Gesamttotal: { 'de-ch': 'Gesamttotal', 'en-us': 'Grand total' },
+	Jahr: { 'de-ch': 'Jahr', 'en-us': 'year' },
+	Monat: { 'de-ch': 'Monat', 'en-us': 'month' },
+	'Abrechnungsart:': { 'de-ch': 'Abrechnungsart:', 'en-us': 'Billing type:' },
+	'exkl. MwSt.': { 'de-ch': 'exkl. MwSt.', 'en-us': 'excl. VAT' },
+	'Code angewendet:': { 'de-ch': 'Code angewendet:', 'en-us': 'Code applied:' },
+	'Ich habe die': { 'de-ch': 'Ich habe die', 'en-us': 'I have read the' },
+	'und die': { 'de-ch': 'und die', 'en-us': 'and the' },
+	'gelesen und akzeptiere diese.': {
+		'de-ch': 'gelesen und akzeptiere diese.',
+		'en-us': 'and accept them.'
+	}
 };
 
 /**

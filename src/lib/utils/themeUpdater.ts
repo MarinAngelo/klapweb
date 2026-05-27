@@ -1,6 +1,7 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
 import { presetFontUrls } from '$lib/utils/presetFonts';
+import gating from '../../../gating.json';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -44,6 +45,21 @@ interface PrismicThemeData {
 	container_width?: string;
 	preset_font?: string;
 	heading_opacity?: number;
+	// CMS-konfigurierbare Button-Stile
+	button_stile?: Array<{
+		label?: string;
+		color?: string;
+		bg_color?: string;
+		hover_color?: string;
+		hover_bg_color?: string;
+		icon?: string;
+	}>;
+	// CMS-konfigurierbare SVG-Icons
+	svg_icons?: Array<{
+		label?: string;
+		svg_code?: string;
+		image?: { url?: string; alt?: string };
+	}>;
 }
 
 interface ThemeUpdateData {
@@ -157,42 +173,115 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageLinkVisitedColor
 	}));
 
-	// NEU: Werte auch als CSS-Variablen setzen
+	// Werte als CSS-Variablen setzen – nur wenn nicht leer, damit die
+	// app.css-Kaskade (z.B. --page-button-color: var(--page-link-color)) greift
 	if (typeof window !== 'undefined') {
 		const root = document.documentElement;
-		root.style.setProperty('--page-color', pageColor);
-		root.style.setProperty('--page-bg-color', pageBgColor);
-		root.style.setProperty('--page-font', pageFont);
-		root.style.setProperty('--page-link-color', pageLinkColor);
-		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
-		root.style.setProperty('--page-button-color', pageButtonColor);
-		root.style.setProperty('--page-button-bg-color', pageButtonBgColor);
-		root.style.setProperty('--page-button-hover-color', pageButtonHoverColor);
-		root.style.setProperty('--page-button-hover-bg-color', pageButtonHoverBgColor);
-		root.style.setProperty('--site-title-font-size', siteTitleFontSize.toString());
-		root.style.setProperty('--site-title-font', siteTitleFont);
-		root.style.setProperty('--site-sub-title-font-size', siteSubtitleFontSize.toString());
-		root.style.setProperty('--header-font-size', headerFontSize.toString());
-		root.style.setProperty('--logo-height', logoHeight.toString());
-		root.style.setProperty('--header-color', headerColor);
-		root.style.setProperty('--header-bg-color', headerBgColor);
+		const set = (prop: string, value: string | number) => {
+			const v = String(value).trim();
+			if (v) root.style.setProperty(prop, v);
+		};
+		set('--page-color', pageColor);
+		set('--page-bg-color', pageBgColor);
+		set('--page-font', pageFont);
+		set('--page-link-color', pageLinkColor);
+		set('--page-link-hover-color', pageLinkHoverColor);
+		set('--page-button-color', pageButtonColor);
+		set('--page-button-bg-color', pageButtonBgColor);
+		set('--page-button-hover-color', pageButtonHoverColor);
+		set('--page-button-hover-bg-color', pageButtonHoverBgColor);
+		set('--site-title-font-size', siteTitleFontSize);
+		set('--site-title-font', siteTitleFont);
+		set('--site-sub-title-font-size', siteSubtitleFontSize);
+		set('--header-font-size', headerFontSize);
+		set('--logo-height', logoHeight);
+		set('--header-color', headerColor);
+		set('--header-bg-color', headerBgColor);
 		// headerBgOpacity: Verwende Theme Store oder CSS-Fallback
 		const currentHeaderBgOpacity =
 			get(theme).headerBgOpacity || parseFloat(getCssVar('--header-bg-opacity'));
-		root.style.setProperty('--header-bg-opacity', currentHeaderBgOpacity.toString());
-		root.style.setProperty('--header-link-color', headerLinkColor);
-		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
-		root.style.setProperty('--header-link-hover-bg-color', headerLinkHoverBgColor);
-		root.style.setProperty('--header-link-font-size', headerLinkFontSize.toString());
-		root.style.setProperty('--header-link-font', headerLinkFont);
-		root.style.setProperty('--footer-color', footerColor);
-		root.style.setProperty('--footer-bg-color', footerBgColor);
-		root.style.setProperty('--footer-font-size-top-bar', footerFontSizeTopBar.toString());
-		root.style.setProperty('--footer-font-size-button-bar', footerFontSizeButtonBar.toString());
-		root.style.setProperty('--footer-link-color', footerLinkColor);
-		root.style.setProperty('--footer-link-hover-color', footerLinkHoverColor);
-		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
-		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
+		set('--header-bg-opacity', currentHeaderBgOpacity);
+		set('--header-link-color', headerLinkColor);
+		set('--header-link-hover-color', headerLinkHoverColor);
+		set('--header-link-hover-bg-color', headerLinkHoverBgColor);
+		set('--header-link-font-size', headerLinkFontSize);
+		set('--header-link-font', headerLinkFont);
+		set('--footer-color', footerColor);
+		set('--footer-bg-color', footerBgColor);
+		set('--footer-font-size-top-bar', footerFontSizeTopBar);
+		set('--footer-font-size-button-bar', footerFontSizeButtonBar);
+		set('--footer-link-color', footerLinkColor);
+		set('--footer-link-hover-color', footerLinkHoverColor);
+		set('--page-link-active-color', pageLinkActiveColor);
+		set('--page-link-visited-color', pageLinkVisitedColor);
+
+		// CMS-konfigurierbare Button-Stile (Repeatable Group)
+		const toSlug = (s: string) =>
+			s
+				.toLowerCase()
+				.replace(/ä/g, 'ae')
+				.replace(/ö/g, 'oe')
+				.replace(/ü/g, 'ue')
+				.replace(/ß/g, 'ss')
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '');
+
+		// Schritt 1: Alle Stile aus gating.json als Basis (Label+Slug, keine Farben)
+		// → Slug wird aus dem Label berechnet (toSlug), nicht aus dem camelCase-Key in gating.json
+		// → Muss identisch mit dem Slug sein, den Theme-Dokument-Labels erzeugen
+		const gatingButtonStile = (gating as any).button_stile ?? {};
+		const buttonStileMap = new Map<
+			string,
+			{
+				name: string;
+				label: string;
+				color?: string;
+				bg_color?: string;
+				hover_color?: string;
+				hover_bg_color?: string;
+				icon?: string;
+			}
+		>(
+			Object.entries(gatingButtonStile).map(([, def]) => {
+				const label = (def as any).label ?? '';
+				const slug = toSlug(label);
+				return [slug, { name: slug, label }];
+			})
+		);
+
+		// Schritt 2: Theme-Dokument-Werte als Override-Layer (Farben sind projekt-spezifisch)
+		for (const s of prismicThemeData.button_stile ?? []) {
+			if (!s.label) continue;
+			const slug = toSlug(s.label);
+			const existing = buttonStileMap.get(slug) ?? { name: slug, label: s.label };
+			buttonStileMap.set(slug, {
+				...existing,
+				color: s.color ?? undefined,
+				bg_color: s.bg_color ?? undefined,
+				hover_color: s.hover_color ?? undefined,
+				hover_bg_color: s.hover_bg_color ?? undefined,
+				icon: s.icon ?? undefined
+			});
+			// Nur gesetzte Farben als CSS-Vars schreiben
+			if (s.color) set(`--btn-${slug}-color`, s.color);
+			if (s.bg_color) set(`--btn-${slug}-bg`, s.bg_color);
+			if (s.hover_color) set(`--btn-${slug}-hover-color`, s.hover_color);
+			if (s.hover_bg_color) set(`--btn-${slug}-hover-bg`, s.hover_bg_color);
+		}
+
+		const buttonStile = [...buttonStileMap.values()];
+		theme.update((t) => ({ ...t, buttonStile }));
+
+		// CMS-konfigurierbare SVG-Icons
+		const svgIcons = (prismicThemeData.svg_icons ?? []).map((s) => ({
+			name: toSlug(s.label ?? ''),
+			label: s.label,
+			svg_code: s.svg_code,
+			image_url: s.image?.url,
+			image_alt: s.image?.alt
+		}));
+		theme.update((t) => ({ ...t, svgIcons }));
+
 		if (
 			prismicThemeData.heading_opacity !== undefined &&
 			prismicThemeData.heading_opacity !== null

@@ -20,7 +20,7 @@
 		p.anim_delay,
 		p.anim_duration
 	);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 
 	const billingTypeSuffix: Record<string, string> = {
 		Einmalig: 'Einmalig',

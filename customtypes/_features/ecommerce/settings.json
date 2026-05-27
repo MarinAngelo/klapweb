@@ -397,6 +397,12 @@
 							"label": "Rabatt (%)",
 							"placeholder": "z.B. 10"
 						}
+					},
+					"expiry_date": {
+						"type": "Timestamp",
+						"config": {
+							"label": "Ablaufdatum (optional)"
+						}
 					}
 				}
 			}
@@ -499,6 +505,13 @@
 			"config": {
 				"label": "Bestellübersicht Titel",
 				"placeholder": "Bestellübersicht"
+			}
+		},
+		"checkout_button_text": {
+			"type": "Text",
+			"config": {
+				"label": "Bestell-Button Text",
+				"placeholder": "Kostenpflichtig bestellen"
 			}
 		},
 		"slices3": {

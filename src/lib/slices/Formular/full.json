@@ -141,6 +141,50 @@
 						]
 					}
 				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				},
 				"form_fields": {
 					"type": "Group",
 					"config": {
@@ -160,6 +204,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -202,14 +247,153 @@
 							}
 						}
 					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "mitTermin",
+			"name": "Mit Termin",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Standard-Formular mit Termin- und Zeitzone-Feld",
+			"imageUrl": "",
+			"primary": {
+				"form_title": {
+					"type": "Text",
+					"config": {
+						"label": "Formular Titel",
+						"placeholder": ""
+					}
 				},
-				"mobile_vollbreite": {
+				"form_instructions": {
+					"type": "StructuredText",
+					"config": {
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"allowTargetBlank": true,
+						"label": "Formular Instruktionen",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
+					}
+				},
+				"submitt_button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Schaltflächen-Text"
+					}
+				},
+				"zwei_spalten": {
 					"type": "Boolean",
 					"config": {
-						"label": "Vollbreite auf Mobile",
+						"label": "2 Spalten",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"submitted_title": {
+					"type": "Text",
+					"config": {
+						"label": "Gesendet Titel",
+						"placeholder": ""
+					}
+				},
+				"submitted_text": {
+					"type": "StructuredText",
+					"config": {
+						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"allowTargetBlank": true,
+						"label": "Gesendet Text",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
 					}
 				},
 				"animate": {
@@ -246,62 +430,6 @@
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
 					}
-				}
-			},
-			"items": {}
-		},
-		{
-			"id": "mitTermin",
-			"name": "Mit Termin",
-			"docURL": "...",
-			"version": "initial",
-			"description": "Standard-Formular mit Termin- und Zeitzone-Feld",
-			"imageUrl": "",
-			"primary": {
-				"form_title": {
-					"type": "Text",
-					"config": {
-						"label": "Formular Titel",
-						"placeholder": ""
-					}
-				},
-				"form_instructions": {
-					"type": "StructuredText",
-					"config": {
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-						"allowTargetBlank": true,
-						"label": "Formular Instruktionen"
-					}
-				},
-				"submitt_button_text": {
-					"type": "Text",
-					"config": {
-						"label": "Senden-Schaltflächen-Text"
-					}
-				},
-				"zwei_spalten": {
-					"type": "Boolean",
-					"config": {
-						"label": "2 Spalten",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"submitted_title": {
-					"type": "Text",
-					"config": {
-						"label": "Gesendet Titel",
-						"placeholder": ""
-					}
-				},
-				"submitted_text": {
-					"type": "StructuredText",
-					"config": {
-						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-						"allowTargetBlank": true,
-						"label": "Gesendet Text"
-					}
 				},
 				"form_fields": {
 					"type": "Group",
@@ -322,6 +450,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -365,41 +494,6 @@
 								}
 							}
 						}
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
 					}
 				}
 			},
@@ -432,6 +526,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -479,6 +574,192 @@
 				}
 			},
 			"items": {}
+		},
+		{
+			"id": "einChecken",
+			"name": "Check-in",
+			"description": "Check-in Checkliste für Ressourcen-Buchungen.",
+			"docURL": "...",
+			"version": "initial",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Check-in"
+					}
+				},
+				"intro_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitungstext",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"buchungsref_label": {
+					"type": "Text",
+					"config": {
+						"label": "Buchungsreferenz Label",
+						"placeholder": "Buchungsreferenz"
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Button Text",
+						"placeholder": "Check-in abschliessen"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Bestätigungstext",
+						"multi": "paragraph,strong,em"
+					}
+				},
+				"error_not_found": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: Referenz nicht gefunden",
+						"placeholder": "Buchungsreferenz nicht gefunden."
+					}
+				},
+				"error_already_done": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: bereits erledigt",
+						"placeholder": "Du bist bereits eingecheckt."
+					}
+				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-in (URL)",
+						"placeholder": "/"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
+					}
+				}
+			},
+			"items": {
+				"checklist_item": {
+					"type": "Text",
+					"config": {
+						"label": "Checklisten-Eintrag"
+					}
+				}
+			}
+		},
+		{
+			"id": "ausChecken",
+			"name": "Check-out",
+			"description": "Check-out Checkliste für Ressourcen-Buchungen.",
+			"docURL": "...",
+			"version": "initial",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Check-out"
+					}
+				},
+				"intro_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitungstext",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item"
+					}
+				},
+				"buchungsref_label": {
+					"type": "Text",
+					"config": {
+						"label": "Buchungsreferenz Label",
+						"placeholder": "Buchungsreferenz"
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Button Text",
+						"placeholder": "Check-out abschliessen"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Bestätigungstext",
+						"multi": "paragraph,strong,em"
+					}
+				},
+				"error_not_found": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: Referenz nicht gefunden",
+						"placeholder": "Buchungsreferenz nicht gefunden."
+					}
+				},
+				"error_already_done": {
+					"type": "Text",
+					"config": {
+						"label": "Fehler: bereits ausgecheckt",
+						"placeholder": "Du bist bereits ausgecheckt."
+					}
+				},
+				"redirect_url": {
+					"type": "Text",
+					"config": {
+						"label": "Weiterleitung nach Check-out (URL)",
+						"placeholder": "/"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": [
+							"kein Abstand",
+							"wenig",
+							"mittel",
+							"gross"
+						]
+					}
+				}
+			},
+			"items": {
+				"checklist_item": {
+					"type": "Text",
+					"config": {
+						"label": "Checklisten-Eintrag"
+					}
+				}
+			}
 		}
 	]
 }
