@@ -67,6 +67,15 @@
 	$: lightbox = !!(slice.primary as Record<string, unknown>).lightbox;
 	$: isFullWidth = !!(slice.primary as Record<string, unknown>).full_width;
 
+	$: defaultSliderImages = (() => {
+		const imgs: any[] = [];
+		if (isFilled.image(p.image)) imgs.push(p.image);
+		for (const item of (slice as any).items ?? []) {
+			if (isFilled.image(item.image)) imgs.push(item.image);
+		}
+		return imgs;
+	})();
+
 	const textPadMap: Record<string, string> = {
 		kein: '0',
 		klein: '1rem',
@@ -156,6 +165,7 @@
 	<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
 		<ImageTextGrid
 			image={isFilled.image(p.image) ? p.image : null}
+			images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
 			text={p.text}
 			imageLeft={isBildLinks}
 			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
