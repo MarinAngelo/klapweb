@@ -28,9 +28,6 @@ export async function load({ params, parent }) {
 	const client = createClient();
 
 	try {
-		// 2. Wir suchen explizit nach der UID 'home' in der ermittelten Sprache
-		console.log(`[Page Load] Suche 'home' für Sprache: ${lang}`);
-
 		const page = await client.getByUID('page', 'home', { lang });
 
 		return {
