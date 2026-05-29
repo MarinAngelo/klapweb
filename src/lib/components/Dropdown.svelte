@@ -26,12 +26,17 @@
 
 	let containerEl: HTMLElement;
 
-	function toggleDropdown() {
+	function openDropdown() {
 		if (!isOpen && typeof window !== 'undefined') {
 			window.dispatchEvent(new CustomEvent('close-dropdown'));
 			dropdownBg = resolveHeaderBg(containerEl);
 		}
-		isOpen = !isOpen;
+		isOpen = true;
+	}
+
+	function toggleDropdown() {
+		if (!isOpen) openDropdown();
+		else closeDropdown();
 	}
 
 	function closeDropdown() {
@@ -58,6 +63,7 @@
 	bind:this={containerEl}
 	class="relative"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
+	on:mouseenter={openDropdown}
 	on:mouseleave={closeDropdown}
 >
 	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} {isOpen} />
@@ -119,10 +125,7 @@
 	}
 
 	:global(.dropdown-link:hover) {
+		color: var(--header-link-hover-color) !important;
 		text-decoration: underline !important;
-	}
-	/* optional: falls du auch Textfarbe beim Hover über Variable steuern willst */
-	:global(.dropdown-link:hover) * {
-		color: inherit;
 	}
 </style>

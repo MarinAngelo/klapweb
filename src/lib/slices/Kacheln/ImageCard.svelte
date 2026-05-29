@@ -57,11 +57,13 @@
 					class="w-full {roundCorners ? 'rounded-t-2xl' : ''}"
 				/>
 			{/if}
+			{#if card.image_overlay_opacity}
 			<ImageOverlay
 				color={card.image_overlay_color || $theme.pageBgColor}
-				opacity={convertNumber(card.image_overlay_opacity || $theme.imageOverlayOpacity)}
+				opacity={convertNumber(card.image_overlay_opacity)}
 				{roundCorners}
 			/>
+		{/if}
 		</div>
 	{/if}
 	<div
