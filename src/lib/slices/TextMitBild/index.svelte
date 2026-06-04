@@ -35,16 +35,16 @@
 	}
 
 	const variation = slice.variation as string;
-	$: isBildLinks = (slice.primary as any).image_left ?? false;
+	$: isBildLinks = p.image_left ?? false;
 	const isMulti = variation === 'multi';
 
-	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? true;
-	$: mobileImageFirst = (slice.primary as any).mobile_image_first ?? false;
-	$: textCenterV = (slice.primary as any).text_center_v ?? false;
-	$: textCenterH = (slice.primary as any).text_center_h ?? false;
-	$: fullscreen = (slice.primary as any).fullscreen ?? false;
-	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
+	$: anim = mapAnimationFromPrimary(p);
+	$: mobileVollbreite = p.mobile_full_width ?? true;
+	$: mobileImageFirst = p.mobile_image_first ?? false;
+	$: textCenterV = p.text_center_v ?? false;
+	$: textCenterH = p.text_center_h ?? false;
+	$: fullscreen = p.fullscreen ?? false;
+	$: visible = isVisibleForPlan(p.feature_gate, $planFilter);
 
 	const rowGapMap: Record<string, string> = {
 		'kein Abstand': '0',
@@ -63,9 +63,9 @@
 		...item,
 		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
 	}));
-	$: imageRound = !!(slice.primary as Record<string, unknown>).image_round;
-	$: lightbox = !!(slice.primary as Record<string, unknown>).lightbox;
-	$: isFullWidth = !!(slice.primary as Record<string, unknown>).full_width;
+	$: imageRound = !!p.image_round;
+	$: lightbox = !!p.lightbox;
+	$: isFullWidth = !!p.full_width;
 
 	$: defaultSliderImages = (() => {
 		const imgs: any[] = [];
