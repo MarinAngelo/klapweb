@@ -62,6 +62,7 @@
 <div
 	bind:this={containerEl}
 	class="relative"
+	role="navigation"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 	on:mouseenter={openDropdown}
 	on:mouseleave={closeDropdown}

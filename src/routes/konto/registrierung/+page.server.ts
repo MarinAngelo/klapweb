@@ -12,6 +12,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
 	default: async ({ request, url }) => {
 		const data = await request.formData();
+		const honeypot = data.get('website') as string;
+		if (honeypot) throw redirect(303, '/konto/anmelden?registered=1');
+
 		const name = (data.get('name') as string)?.trim();
 		const email = (data.get('email') as string)?.trim().toLowerCase();
 		const password = data.get('password') as string;

@@ -10,6 +10,9 @@
 		<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Konto erstellen</h1>
 
 		<form method="POST" style="display: flex; flex-direction: column; gap: 0.75rem;">
+			<!-- Honeypot: von Bots ausgefüllt, von Menschen ignoriert -->
+			<input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" />
+
 			<div style="display: flex; flex-direction: column; gap: 0.25rem;">
 				<label for="name" style="font-size: 0.875rem;">Name</label>
 				<input
