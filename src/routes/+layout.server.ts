@@ -72,6 +72,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
+		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
@@ -176,8 +177,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			lang,
 			mainLang,
 			isMultilangActive,
+			userBackendActive,
 			locales: allLocales,
-			variables
+			variables,
+			user: locals.user ?? null
 		};
 	} catch (e: any) {
 		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter
