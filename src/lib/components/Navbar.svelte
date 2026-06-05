@@ -21,6 +21,8 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let headerLinkFont;
+	export let userBackendActive: boolean = false;
+	export let user: { name: string; email: string } | null = null;
 
 	// const { headerLinkFont } = get(theme);
 
@@ -105,11 +107,18 @@
 </script>
 
 <nav
+	aria-label="Hauptnavigation"
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
 	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
 >
-	<div class="block lg:hidden h-full flex items-center">
-		<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
+	<div class="flex lg:hidden h-full items-center">
+		<button
+			class="btn btn-square btn-ghost h-10 w-10"
+			on:click={toggleMenu}
+			aria-label="Menü"
+			aria-expanded={$isMenuOpen}
+			aria-controls="main-nav-menu"
+		>
 			{#if $isMenuOpen}
 				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
@@ -119,6 +128,7 @@
 	</div>
 
 	<div
+		id="main-nav-menu"
 		bind:this={menuEl}
 		class={`${
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
@@ -181,6 +191,33 @@
 					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4"
 				>
 					<LanguageSwitcher {lang} {locales} {allAlternates} />
+				</li>
+			{/if}
+
+			{#if userBackendActive}
+				<li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2">
+					{#if user}
+						<a
+							href="/konto"
+							on:click={() => isMenuOpen.set(false)}
+							class="nav-link flex items-center gap-1.5 transition"
+							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							title={user.name}
+						>
+							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
+							<span class="lg:hidden">{user.name}</span>
+						</a>
+					{:else}
+						<a
+							href="/konto/anmelden"
+							on:click={() => isMenuOpen.set(false)}
+							class="nav-link flex items-center gap-1.5 transition"
+							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+						>
+							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
+							<span class="lg:hidden">Anmelden</span>
+						</a>
+					{/if}
 				</li>
 			{/if}
 		</ul>

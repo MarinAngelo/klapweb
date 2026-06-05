@@ -422,3 +422,20 @@ p {
     transition: padding-left 0.25s ease;
   }
 }
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: #1e2d5a;
+  color: #fff;
+  font-weight: 600;
+  z-index: 9999;
+  border-radius: 0 0 6px 0;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+.skip-link:focus {
+  top: 0;
+}

@@ -188,6 +188,15 @@
 					"placeholder": "Passwort für passwortgeschützte Seiten"
 				}
 			},
+			"user_backend_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "User-Backend aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"show_language_switcher": {
 				"type": "Boolean",
 				"config": {
@@ -228,8 +237,8 @@
 			"site_name": {
 				"type": "Text",
 				"config": {
-					"label": "Website Name",
-					"placeholder": "Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt."
+					"label": "Website Name (SEO)",
+					"placeholder": "Leer lassen = Website Titel wird verwendet. Nur ausfüllen wenn der SEO-Name kürzer sein soll."
 				}
 			},
 			"meta_title": {

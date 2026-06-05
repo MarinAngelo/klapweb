@@ -121,6 +121,14 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
+	$: textOverlayPaddingMobileVal = (slice.primary as any).text_overlay_padding_mobile as string | null | undefined;
+	$: isFullScreenMobile = $isMobile && textOverlayPaddingMobileVal === 'Ganzer Bildschirm';
+	$: effectiveContentPadding = $isMobile
+		? textOverlayPaddingMobileVal && textOverlayPaddingMobileVal !== 'Ganzer Bildschirm'
+			? (paddingMap[textOverlayPaddingMobileVal] ?? '0')
+			: '0'
+		: textOverlayPadding;
+
 	const textOverlayColor =
 		'text_overlay_color' in slice.primary
 			? slice.primary.text_overlay_color || 'var(--text-color)'
@@ -236,18 +244,21 @@
 		{/if}
 	{/if}
 	<div class="absolute inset-0 z-10 flex items-center justify-center">
+		<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
+		{#if mounted && isFullScreenMobile && !switchOffTextOverlay}
+			<div
+				class="absolute inset-0"
+				style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none;"
+				aria-hidden="true"
+			></div>
+		{/if}
 		<Bounded tag="div" yPadding="none" class="w-full">
 			<div class="relative w-full flex items-center justify-center">
-				<!-- Overlay -->
-				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
+				<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
+				{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay)}
 					<div
 						class="absolute inset-0"
-						style="
-						background-color: {textOverlayColor};
-						opacity: {textOverlayOpacity};
-						pointer-events: none;
-						border-radius: 3rem;
-						"
+						style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -256,15 +267,9 @@
 				<div
 					use:reveal={fadeIn}
 					class="relative z-10 text-center"
-					style="padding: {textOverlayPadding};"
+					style="padding: {effectiveContentPadding};"
 				>
-					<!-- Responsive Anpassung des Paddings -->
 					<style>
-						@media (max-width: 640px) {
-							.relative.z-10.text-center {
-								padding: 0 !important;
-							}
-						}
 						.leading-loose.tracking-wider-all * {
 							margin-bottom: 0 !important;
 						}

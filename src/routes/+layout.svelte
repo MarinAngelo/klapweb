@@ -34,12 +34,13 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
+	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, user } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
-	$: siteName = settings?.data?.site_name || '';
+	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
 	$: pageTitle =
 		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
@@ -307,6 +308,12 @@
 	let studioOpen = false;
 
 	onMount(() => {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		}
+	});
+
+	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
 			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
@@ -369,6 +376,8 @@
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
 	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
@@ -380,10 +389,12 @@
 			{allAlternates}
 			{showSwitcher}
 			mainLang={data.mainLang}
+			{userBackendActive}
+			{user}
 		/>
 	{/if}
 
-	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"

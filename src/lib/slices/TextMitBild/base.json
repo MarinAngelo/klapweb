@@ -6,7 +6,7 @@
   "variations": [
     {
       "id": "default",
-      "name": "Standard Bild rechts",
+      "name": "Standard",
       "docURL": "...",
       "version": "sktwi1xtmkfgx8626",
       "description": "TextWithImage",
@@ -99,8 +99,21 @@
         "y_padding": {
           "type": "Select",
           "config": {
-            "label": "Vertikaler Abstand",
+            "label": "Vertikaler Abstand Desktop",
             "placeholder": "",
+            "options": [
+              "kein Abstand",
+              "wenig",
+              "mittel",
+              "gross"
+            ]
+          }
+        },
+        "y_padding_mobile": {
+          "type": "Select",
+          "config": {
+            "label": "Vertikaler Abstand Mobile",
+            "placeholder": "— Wie Desktop —",
             "options": [
               "kein Abstand",
               "wenig",
@@ -113,6 +126,15 @@
           "type": "Boolean",
           "config": {
             "label": "Bild als Kreis",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
+          }
+        },
+        "image_left": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild links",
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
@@ -134,6 +156,15 @@
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": true
+          }
+        },
+        "mobile_image_first": {
+          "type": "Boolean",
+          "config": {
+            "label": "Bild zuerst auf Mobile",
+            "placeholder_false": "Nein",
+            "placeholder_true": "Ja",
+            "default_value": false
           }
         },
         "text_center_v": {
@@ -213,7 +244,16 @@
           }
         }
       },
-      "items": {},
+      "items": {
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Bild (Slider)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     },
     {
@@ -312,218 +352,6 @@
           "config": {
             "label": "Schriftfarbe",
             "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "lightbox": {
-          "type": "Boolean",
-          "config": {
-            "label": "Bild als Lightbox öffnen",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "mobile_full_width": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbreite auf Mobile",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": true
-          }
-        },
-        "text_center_v": {
-          "type": "Boolean",
-          "config": {
-            "label": "Schrift vertikal zentrieren",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "text_center_h": {
-          "type": "Boolean",
-          "config": {
-            "label": "Schrift horizontal zentrieren",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "fullscreen": {
-          "type": "Boolean",
-          "config": {
-            "label": "Vollbild (100vh)",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "animate": {
-          "type": "Boolean",
-          "config": {
-            "label": "Animation aktivieren",
-            "default_value": false
-          }
-        },
-        "anim_direction": {
-          "type": "Select",
-          "config": {
-            "label": "Animations-Richtung",
-            "options": [
-              "Oben",
-              "Unten",
-              "Links",
-              "Rechts",
-              "Keine"
-            ],
-            "default_value": "Oben"
-          }
-        },
-        "anim_delay": {
-          "type": "Number",
-          "config": {
-            "label": "Verzögerung (ms)",
-            "placeholder": "500"
-          }
-        },
-        "anim_duration": {
-          "type": "Number",
-          "config": {
-            "label": "Animationsdauer (ms)",
-            "placeholder": "2000"
-          }
-        },
-        "feature_gate": {
-          "type": "Select",
-          "config": {
-            "label": "Sichtbar für Leistung (Plan)",
-            "options": [
-              "Terminbuchung",
-              "E-Commerce",
-              "P5.js",
-              "Variablen",
-              "Ressourcen-Buchung",
-              "Globale Events"
-            ]
-          }
-        }
-      },
-      "items": {},
-      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
-    },
-    {
-      "id": "standardBildLinks",
-      "name": "Standard Bild links",
-      "docURL": "...",
-      "version": "sktwi1xtmkfgx8626",
-      "description": "TextWithImage",
-      "primary": {
-        "text": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Text",
-            "placeholder": "",
-            "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
-            "labels": [
-              "size-xs",
-              "size-sm",
-              "size-lg",
-              "size-xl",
-              "size-2xl",
-              "size-3xl",
-              "size-4xl",
-              "size-5xl",
-              "size-6xl",
-              "weight-thin",
-              "weight-light",
-              "weight-medium",
-              "weight-semibold",
-              "weight-black",
-              "tracking-tight",
-              "tracking-wide",
-              "tracking-wider",
-              "tracking-widest",
-              "leading-tight",
-              "leading-loose",
-              "uppercase",
-              "lowercase",
-              "capitalize",
-              "underline",
-              "block",
-              "muted",
-              "display-thin",
-              "display-light",
-              "display-bold",
-              "display-black",
-              "giant-thin",
-              "giant-light",
-              "giant-bold",
-              "hero-thin",
-              "hero-light",
-              "hero-bold",
-              "subtitle",
-              "subtitle-bold",
-              "kicker",
-              "overline"
-            ]
-          }
-        },
-        "image": {
-          "type": "Image",
-          "config": {
-            "label": "Bild",
-            "constraint": {
-              "width": null,
-              "height": null
-            },
-            "thumbnails": []
-          }
-        },
-        "bg_color": {
-          "type": "Color",
-          "config": {
-            "label": "Hintergrundfarbe",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "color": {
-          "type": "Color",
-          "config": {
-            "label": "Schriftfarbe",
-            "placeholder": "Hex-Farbcode (#RRGGBB)"
-          }
-        },
-        "y_padding_same": {
-          "type": "Boolean",
-          "config": {
-            "label": "Abstand oben / unten gleich",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
-          }
-        },
-        "y_padding": {
-          "type": "Select",
-          "config": {
-            "label": "Vertikaler Abstand",
-            "placeholder": "",
-            "options": [
-              "kein Abstand",
-              "wenig",
-              "mittel",
-              "gross"
-            ]
-          }
-        },
-        "image_round": {
-          "type": "Boolean",
-          "config": {
-            "label": "Bild als Kreis",
-            "placeholder_false": "Nein",
-            "placeholder_true": "Ja",
-            "default_value": false
           }
         },
         "lightbox": {
