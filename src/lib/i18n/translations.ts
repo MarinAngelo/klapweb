@@ -788,7 +788,12 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'gelesen und akzeptiere diese.',
 		'en-us': 'and accept them.'
 	},
-	'Gehostet auf': { 'de-ch': 'Gehostet auf', 'en-us': 'Hosted on' }
+	'Gehostet auf': { 'de-ch': 'Gehostet auf', 'en-us': 'Hosted on' },
+	'Chat öffnen': { 'de-ch': 'Chat öffnen', 'en-us': 'Open chat' },
+	'Chat schliessen': { 'de-ch': 'Chat schliessen', 'en-us': 'Close chat' },
+	'Nachricht eingeben': { 'de-ch': 'Nachricht eingeben…', 'en-us': 'Type a message…' },
+	'Senden': { 'de-ch': 'Senden', 'en-us': 'Send' },
+	'Tippt': { 'de-ch': 'Tippt…', 'en-us': 'Typing…' }
 };
 
 /**

@@ -197,6 +197,37 @@
 					"default_value": false
 				}
 			},
+			"chat_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_bot_name": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Name",
+					"placeholder": "Assistent"
+				}
+			},
+			"chat_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Begrüssung",
+					"placeholder": "Hallo! Wie kann ich helfen?"
+				}
+			},
+			"chat_knowledge_base": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis",
+					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
+					"multi": "paragraph,preformatted"
+				}
+			},
 			"show_language_switcher": {
 				"type": "Boolean",
 				"config": {
