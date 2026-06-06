@@ -652,6 +652,42 @@
 						]
 					}
 				},
+				"show_pagination": {
+					"type": "Boolean",
+					"config": {
+						"label": "Seitenzahl anzeigen",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"transition_mode": {
+					"type": "Select",
+					"config": {
+						"label": "Bildwechsel-Modus",
+						"placeholder": "Crossfade",
+						"options": [
+							"Crossfade",
+							"Slide",
+							"Ken Burns"
+						],
+						"default_value": "Crossfade"
+					}
+				},
+				"transition_duration_ms": {
+					"type": "Number",
+					"config": {
+						"label": "Überblendungsdauer (ms)",
+						"placeholder": "8000"
+					}
+				},
+				"display_duration_ms": {
+					"type": "Number",
+					"config": {
+						"label": "Anzeigedauer pro Bild (ms)",
+						"placeholder": "2000"
+					}
+				},
 				"imageMerryGoRound": {
 					"type": "Group",
 					"config": {
@@ -670,6 +706,15 @@
 											"height": 1920
 										}
 									]
+								}
+							},
+							"text": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text (überschreibt Haupt-Text)",
+									"placeholder": "Leer = Haupt-Text wird verwendet",
+									"allowTargetBlank": false,
+									"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em"
 								}
 							}
 						}
