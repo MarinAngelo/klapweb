@@ -411,11 +411,245 @@
 						"default_value": false
 					}
 				},
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": ""
+					}
+				},
+				"preset_font": {
+					"type": "Select",
+					"config": {
+						"label": "Schriftart",
+						"placeholder": "— Keine —",
+						"options": [
+							"Inter",
+							"Roboto",
+							"Open Sans",
+							"Montserrat",
+							"Poppins",
+							"Lato",
+							"Raleway",
+							"Oswald",
+							"Nunito",
+							"DM Sans",
+							"Outfit",
+							"Plus Jakarta Sans",
+							"Josefin Sans",
+							"Quicksand",
+							"Cabin",
+							"Playfair Display",
+							"Merriweather",
+							"Lora",
+							"Cormorant Garamond",
+							"Crimson Pro",
+							"Nunito Sans"
+						]
+					}
+				},
+				"font": {
+					"type": "Link",
+					"config": {
+						"label": "Eigene Schriftart",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "font",
+								"fields": [
+									"name",
+									"provider",
+									"variants",
+									"adobeFontId"
+								]
+							}
+						]
+					}
+				},
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Schaltflächenlink",
+						"placeholder": "",
+						"select": null,
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Schaltflächentext",
+						"placeholder": ""
+					}
+				},
+				"button_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche T & R Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrund Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
 				"overlay_color": {
 					"type": "Color",
 					"config": {
 						"label": "Bild Überlagerungsfarbe",
 						"placeholder": ""
+					}
+				},
+				"overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"banner_height": {
+					"type": "Select",
+					"config": {
+						"label": "Titelbild Höhe",
+						"placeholder": "",
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
+						"default_value": "100 %"
+					}
+				},
+				"text_overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Text Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"text_overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz Text Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"switch_off_text_overlay": {
+					"type": "Boolean",
+					"config": {
+						"label": "Text Hintergrund in Mobile aus",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text_overlay_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse",
+						"placeholder": "",
+						"options": [
+							"klein",
+							"mittel",
+							"gross"
+						]
+					}
+				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
+				"mobile_text_scale": {
+					"type": "Select",
+					"config": {
+						"label": "Textgrösse Mobile",
+						"placeholder": "",
+						"options": [
+							"Normal",
+							"Klein",
+							"Kleiner",
+							"Sehr klein"
+						]
 					}
 				},
 				"imageMerryGoRound": {
