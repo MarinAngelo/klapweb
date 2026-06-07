@@ -1,31 +1,35 @@
 <script>
 	import { theme } from '$lib/stores/theme';
-	import { ICON_SLUG_BY_LABEL } from '$lib/config/icon-labels';
 
 	export let name;
 	export let color = 'currentColor';
 	export let size = '1em';
 
-	// Wenn name ein Label ist (z.B. "Externer Link"), zuerst zum Slug auflösen
-	$: resolvedName = ICON_SLUG_BY_LABEL[name] ?? name;
+	// name ist entweder UID/Slug (z.B. "pfeil-rechts") oder Label (z.B. "Pfeil rechts")
+	$: cmsIcon = $theme.svgIcons?.find((i) => i.name === name || i.label === name);
+	$: resolvedName = cmsIcon?.name ?? name;
 
-	// CMS-Icons aus Theme-Store haben Vorrang vor eingebauten Icons
-	$: cmsIcon = $theme.svgIcons?.find((i) => i.name === resolvedName || i.label === name);
+	// Hardcodierte Farben im SVG-Code durch den übergeben color-Wert ersetzen (ausser "none")
+	$: svgCode = cmsIcon?.svg_code
+		? cmsIcon.svg_code
+				.replace(/fill="(?!none\b)[^"]*"/gi, `fill="${color}"`)
+				.replace(/stroke="(?!none\b)[^"]*"/gi, `stroke="${color}"`)
+		: '';
 </script>
 
 {#if cmsIcon?.svg_code}
 	<!-- SVG-Code kommt aus Prismic-CMS (admin-only → vertrauenswürdig) -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	<span
-		class="inline-flex items-center justify-center"
-		style="width: {size}; height: {size}; color: {color};"
-		aria-hidden="true">{@html cmsIcon.svg_code}</span
+		class="svgicon-cms inline-flex items-center justify-center flex-shrink-0"
+		style="width: {size}; height: {size}; color: {color}; vertical-align: middle;"
+		aria-hidden="true">{@html svgCode}</span
 	>
 {:else if cmsIcon?.image_url}
 	<img
 		src={cmsIcon.image_url}
 		alt={cmsIcon.image_alt || ''}
-		style="width: {size}; height: {size}; object-fit: contain;"
+		style="width: {size}; height: {size}; object-fit: contain; vertical-align: middle;"
 		aria-hidden="true"
 	/>
 {:else if resolvedName === 'menu'}
@@ -124,3 +128,18 @@
 		<path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke={color} stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</svg>
 {/if}
+
+<style>
+	:global(.svgicon-cms svg) {
+		width: 100%;
+		height: 100%;
+	}
+	/* Elemente mit explizitem fill-Attribut (ausser "none") → currentColor */
+	:global(.svgicon-cms svg *[fill]:not([fill='none'])) {
+		fill: currentColor;
+	}
+	/* Elemente mit explizitem stroke-Attribut (ausser "none") → currentColor */
+	:global(.svgicon-cms svg *[stroke]:not([stroke='none'])) {
+		stroke: currentColor;
+	}
+</style>

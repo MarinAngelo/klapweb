@@ -138,7 +138,7 @@
 				fullscreen={false}
 			>
 				{#if item.button_text && isFilled.link(item.button_link)}
-					<Button link={item.button_link} text={item.button_text} mb={false} />
+					<Button link={item.button_link} text={item.button_text} styleName={item.button_style?.uid || undefined} mb={false} />
 				{/if}
 			</ImageTextGrid>
 		{/each}
@@ -179,7 +179,7 @@
 			{fullscreen}
 		>
 			{#if p.buttonText && isFilled.link(p.buttonLink)}
-				<Button link={p.buttonLink} text={p.buttonText} mb={false} />
+				<Button link={p.buttonLink} text={p.buttonText} styleName={p.button_style?.uid || undefined} mb={false} />
 			{/if}
 		</ImageTextGrid>
 	</div>

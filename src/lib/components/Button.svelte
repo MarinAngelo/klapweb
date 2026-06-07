@@ -80,7 +80,7 @@
 				? `var(--btn-${variant}-hover-bg)`
 				: 'var(--page-button-hover-bg-color)');
 
-	$: baseClass = `button-prismic-link inline-block ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
+	$: baseClass = `button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
 	$: baseStyle = `background-color: ${resolvedBgColor}; color: ${resolvedColor}; border-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
 </script>
 
@@ -89,7 +89,7 @@
 		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
-				color="currentColor"
+				color={stileEntry?.color || 'currentColor'}
 			/>{/if}
 	</a>
 {:else if link}
@@ -115,7 +115,7 @@
 		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
-				color="currentColor"
+				color={stileEntry?.color || 'currentColor'}
 			/>{/if}
 	</button>
 {/if}

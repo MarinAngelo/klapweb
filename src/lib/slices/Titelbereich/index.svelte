@@ -87,6 +87,7 @@
 
 	// Button-Farben aus Slice (Type-safe)
 	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
+	$: btnStyleName = 'button_style' in slice.primary ? (slice.primary as any).button_style?.uid || undefined : undefined;
 	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
 	$: buttonHoverColor =
 		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
@@ -339,10 +340,11 @@
 							<Button
 								link={slice.primary.button_link}
 								text={slice.primary.button_text || 'Mehr erfahren'}
-								color={buttonColor || $theme.pageButtonColor}
-								bgColor={buttonBgColor || $theme.pageButtonBgColor}
-								hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
-								hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
+								styleName={btnStyleName}
+								color={buttonColor || undefined}
+								bgColor={buttonBgColor || undefined}
+								hoverColor={buttonHoverColor || undefined}
+								hoverBgColor={buttonHoverBgColor || undefined}
 								size={buttonSize}
 							/>
 						</div>
