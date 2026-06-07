@@ -13,9 +13,12 @@
 	export let mode: 'background' | 'standalone' = 'background';
 	export let transitionMs = 800;
 	export let transitionEasing = cubicOut;
+	export let transitionMode: string = 'Crossfade';
+	export let showPagination: boolean = true;
 
 	// State
-	let current = 0;
+	export let current = 0;
+	let direction = 1;
 	let timer: ReturnType<typeof setInterval> | null = null;
 	let inactivityTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -73,20 +76,38 @@
 		return Boolean(images?.[i]?.image);
 	}
 	function autoplayNext() {
+		direction = 1;
 		if (!len()) return;
 		current = (current + 1) % len();
 	}
 	function next() {
+		direction = 1;
 		stopAutoplay();
 		resetAutoplayTimeout();
 		if (!len()) return;
 		current = (current + 1) % len();
 	}
 	function prev() {
+		direction = -1;
 		stopAutoplay();
 		resetAutoplayTimeout();
 		if (!len()) return;
 		current = (current - 1 + len()) % len();
+	}
+
+	function inTransition(node: Element, { duration }: { duration: number }) {
+		const dir = direction;
+		if (transitionMode === 'Slide') {
+			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)` };
+		}
+		return { duration, css: (t: number) => `opacity: ${t}` };
+	}
+	function outTransition(node: Element, { duration }: { duration: number }) {
+		const dir = direction;
+		if (transitionMode === 'Slide') {
+			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)` };
+		}
+		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
 	function handleKeydown(event: KeyboardEvent) {
 		if (len() <= 1) return;
@@ -163,15 +184,22 @@
 			{#key currentKey}
 				<div
 					class="absolute inset-0 w-full h-full"
-					in:fade={{ duration: transitionMs, easing: transitionEasing }}
-					out:fade={{ duration: transitionMs, easing: transitionEasing }}
+					in:inTransition={{ duration: transitionMs }}
+					out:outTransition={{ duration: transitionMs }}
 				>
 					{#if has(current)}
-						<PrismicImage
-							field={images[current].image}
-							sizes="100vw"
-							class="w-full h-full object-cover select-none pointer-events-none"
-						/>
+						<div
+							class="absolute inset-0"
+							style={transitionMode === 'Ken Burns'
+								? `animation: kb${current % 4} ${intervalMs + transitionMs}ms linear forwards;`
+								: ''}
+						>
+							<PrismicImage
+								field={images[current].image}
+								sizes="100vw"
+								class="w-full h-full object-cover select-none pointer-events-none"
+							/>
+						</div>
 					{:else}
 						<div class="w-full h-full bg-black/10" />
 					{/if}
@@ -196,11 +224,13 @@
 				<span class="text-xl font-bold">&#10095;</span>
 			</button>
 
-			<div
-				class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm pointer-events-none backdrop-blur-md"
-			>
-				{current + 1} / {len()}
-			</div>
+			{#if showPagination}
+				<div
+					class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm pointer-events-none backdrop-blur-md"
+				>
+					{current + 1} / {len()}
+				</div>
+			{/if}
 
 			<div
 				class="swipe-overlay absolute inset-0 z-[60]"
@@ -216,6 +246,23 @@
 {/if}
 
 <style>
+	@keyframes kb0 {
+		from { transform: scale(1.0) translate(0%, 0%); }
+		to   { transform: scale(1.12) translate(0%, 0%); }
+	}
+	@keyframes kb1 {
+		from { transform: scale(1.12) translate(0%, 0%); }
+		to   { transform: scale(1.0) translate(0%, 0%); }
+	}
+	@keyframes kb2 {
+		from { transform: scale(1.08) translate(-1.5%, -0.5%); }
+		to   { transform: scale(1.08) translate(1.5%, 0.5%); }
+	}
+	@keyframes kb3 {
+		from { transform: scale(1.08) translate(1.5%, 0.5%); }
+		to   { transform: scale(1.08) translate(-1.5%, -0.5%); }
+	}
+
 	/* 1. Pfeile ausblenden auf allen Touch-Geräten */
 	@media (pointer: coarse) {
 		.nav-arrow {

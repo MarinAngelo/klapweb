@@ -98,7 +98,7 @@
 
 	$: cardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: cardBgColor = (slice.primary as any)?.body_bg_color || 'var(--page-bg-color)';
-	$: btnStyleName = ((slice.primary as any)?.button_style as string | undefined) || undefined;
+	$: btnStyleName = ((slice.primary as any)?.button_style as any)?.uid || undefined;
 	$: btnStileEntry = btnStyleName
 		? ($theme.buttonStile ?? []).find((s) => s.name === btnStyleName || s.label === btnStyleName)
 		: undefined;

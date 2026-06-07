@@ -113,13 +113,18 @@
 					}
 				},
 				"button_style": {
-					"type": "Select",
+					"type": "Link",
 					"config": {
 						"label": "Button-Stil",
-						"placeholder": "— Standard —",
-						"options": [
-							"Durchstarten",
-							"Den Kunden zum Kauf animieren"
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "button_stil",
+								"fields": [
+									"name"
+								]
+							}
 						]
 					}
 				},
