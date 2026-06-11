@@ -44,7 +44,8 @@
 					"label": "Verantwortliche Adresse",
 					"placeholder": "",
 					"allowTargetBlank": false,
-					"multi": "paragraph"
+					"multi": "paragraph",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
 			"responsible_email": {
@@ -67,6 +68,26 @@
 					"label": "Datenschutzerkärung",
 					"placeholder": "",
 					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"haftungsausschluss": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Haftungsausschluss",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"haftungsausschluss": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Haftungsausschluss",
+					"placeholder": "",
+					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
 				}
 			},
@@ -76,7 +97,8 @@
 					"label": "Impressum",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
 			"contacts": {
@@ -132,7 +154,8 @@
 								"label": "Adresse",
 								"placeholder": "",
 								"allowTargetBlank": false,
-								"multi": "paragraph"
+								"multi": "paragraph",
+								"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 							}
 						}
 					}
@@ -144,7 +167,8 @@
 					"label": "Cookies Text",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
 			"agb": {
@@ -153,7 +177,8 @@
 					"label": "AGB",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
 			"page_password": {
@@ -161,6 +186,15 @@
 				"config": {
 					"label": "Seiten-Passwort",
 					"placeholder": "Passwort für passwortgeschützte Seiten"
+				}
+			},
+			"user_backend_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "User-Backend aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
 				}
 			},
 			"show_language_switcher": {
@@ -186,7 +220,9 @@
 				"config": {
 					"label": "Umleitungs-Seite",
 					"select": "document",
-					"customtypes": ["page"]
+					"customtypes": [
+						"page"
+					]
 				}
 			}
 		},
@@ -201,8 +237,8 @@
 			"site_name": {
 				"type": "Text",
 				"config": {
-					"label": "Website Name",
-					"placeholder": "Der Name der Firma/Brand (z.B. ''). Wird an Seitentitel angehängt."
+					"label": "Website Name (SEO)",
+					"placeholder": "Leer lassen = Website Titel wird verwendet. Nur ausfüllen wenn der SEO-Name kürzer sein soll."
 				}
 			},
 			"meta_title": {
@@ -224,7 +260,7 @@
 			"meta_image": {
 				"type": "Image",
 				"config": {
-					"label": "Standard Social Image",
+					"label": "Social Image (1200 × 630 px, 16:9)",
 					"constraint": {
 						"width": 1200,
 						"height": 630
@@ -242,12 +278,41 @@
 			"favicon": {
 				"type": "Image",
 				"config": {
-					"label": "Favicon",
+					"label": "Favicon (64 × 64 px, quadratisch)",
 					"constraint": {
-						"width": 32,
-						"height": 32
+						"width": 64,
+						"height": 64
 					},
 					"thumbnails": []
+				}
+			},
+			"app_icon": {
+				"type": "Image",
+				"config": {
+					"label": "App-Icon – quadratisch (mind. 512 × 512 px)",
+					"constraint": {
+						"width": 512,
+						"height": 512
+					},
+					"thumbnails": [
+						{
+							"name": "192",
+							"width": 192,
+							"height": 192
+						},
+						{
+							"name": "180",
+							"width": 180,
+							"height": 180
+						}
+					]
+				}
+			},
+			"pwa_theme_color": {
+				"type": "Color",
+				"config": {
+					"label": "App & Browser Statusleisten-Farbe",
+					"placeholder": "Standard: Hintergrundfarbe des aktiven Themes"
 				}
 			}
 		}

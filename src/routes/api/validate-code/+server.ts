@@ -16,12 +16,19 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const client = createClient({ fetch });
 		const settings = await client.getSingle('settings');
-		const codes: Array<{ code?: string; discount_percent?: number }> =
+		const codes: Array<{ code?: string; discount_percent?: number; expiry_date?: string }> =
 			(settings.data as any).discount_codes ?? [];
 
 		const match = codes.find((c) => c.code?.trim() === code.trim());
 		if (!match || match.discount_percent == null) {
 			return new Response(JSON.stringify({ error: 'Ungültiger Code' }), { status: 404 });
+		}
+
+		if (match.expiry_date) {
+			const expiry = new Date(match.expiry_date);
+			if (!isNaN(expiry.getTime()) && expiry < new Date()) {
+				return new Response(JSON.stringify({ error: 'Abgelaufener Code' }), { status: 410 });
+			}
 		}
 
 		return new Response(JSON.stringify({ discount: match.discount_percent }), { status: 200 });

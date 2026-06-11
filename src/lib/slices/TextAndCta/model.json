@@ -39,12 +39,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",

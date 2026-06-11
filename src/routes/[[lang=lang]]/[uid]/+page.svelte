@@ -13,6 +13,7 @@
 		rates: Record<string, number>;
 		globalDepositPct?: number | null;
 		plaeneData?: Record<string, Array<Array<{ label: string; wert: string | null }>>>;
+		pageLeistungen?: any[];
 	};
 
 	$: hasPrice = data.page?.data?.ecommerce_price_chf != null;
@@ -61,5 +62,5 @@
 <SliceZone
 	slices={data.page.data.slices}
 	{components}
-	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {}, pageLeistungen: data.pageLeistungen ?? [] }}
+	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {}, pageLeistungen: data.pageLeistungen ?? [], lang: data.page.lang }}
 />

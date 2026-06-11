@@ -8,6 +8,13 @@
  *   plans:       Plan-Hierarchie  (id → { label, extends? })
  *   features:    Feature-Mapping  (id → { label, plans: [...] })
  *   customTypes: Custom-Type-Gate (typeId → { plan?, feature? })  [Dokumentation]
+ *   icons:       Icon-Registry    (slug → { label })
+ *                → Slugs werden als Select-Optionen in theme/button_stile.icon geschrieben
+ *                → Built-ins (external-link, menu, close) + CMS-Icons hier eintragen
+ *   button_stile: Button-Stil-Registry (slug → { label, color?, bgColor?, hoverColor?, hoverBgColor? })
+ *                → Labels werden als Select-Optionen in Slice-Feldern "button_style" geschrieben
+ *                → optionale Farb-Defaults dienen als Fallback wenn Theme-Dokument den Stil nicht kennt
+ *                → Button.svelte sucht Eintrag per label, setzt CSS-Vars per slug
  *   slices:      Slice-Gating     (SliceName → {
  *                  plan?, feature?,            // Slice-Ebene
  *                  fields:     { key → { plan?, feature? } },  // Feld-Ebene
@@ -36,6 +43,17 @@ function write(path, data) {
 	writeFileSync(fullPath, JSON.stringify(data, null, '\t') + '\n');
 }
 
+function writeIfChanged(path, data) {
+	const fullPath = join(ROOT, path);
+	const newContent = JSON.stringify(data, null, '\t') + '\n';
+	if (existsSync(fullPath)) {
+		const oldContent = readFileSync(fullPath, 'utf-8');
+		if (oldContent === newContent) return; // Keine Änderung, nicht überschreiben
+	}
+	mkdirSync(dirname(fullPath), { recursive: true });
+	writeFileSync(fullPath, newContent);
+}
+
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
 
@@ -48,12 +66,14 @@ function resolvePlanChain(planKey) {
 }
 
 const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
+console.log('DEBUG: activePlanChain =', activePlanChain);
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
 const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
+console.log('DEBUG: features =', features);
 
 console.log(
 	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${features.join(', ') || 'none'}]`
@@ -106,6 +126,19 @@ function applyFilters(model, sliceGating) {
 			.filter(({ id, _meta }) => isActive(varGating[id] ?? _meta)) // gating.json hat Vorrang, _meta als Fallback
 			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) }))
 	};
+}
+
+/**
+ * Filtert Felder eines Custom-Type-Tabs gemäss gating.json customTypes[typeId].fields.
+ */
+function filterTabFields(tab, fieldGating) {
+	if (!fieldGating || Object.keys(fieldGating).length === 0) return tab;
+	const result = {};
+	for (const [key, field] of Object.entries(tab)) {
+		if (!isActive(fieldGating[key])) continue;
+		result[key] = field;
+	}
+	return result;
 }
 
 // ── 1. Custom Types ──────────────────────────────────────────────────────────────
@@ -190,11 +223,19 @@ for (const type of managedTypes) {
 		}
 	}
 
+	// Feld-Gating für Custom Types (gating.json customTypes[typeId].fields)
+	const ctFieldGating = gating.customTypes?.[type]?.fields ?? {};
+	if (Object.keys(ctFieldGating).length > 0) {
+		for (const [tabName, tabContent] of Object.entries(doc.json)) {
+			doc.json[tabName] = filterTabFields(tabContent, ctFieldGating);
+		}
+	}
+
 	write(`customtypes/${type}/index.json`, doc);
 	console.log(`✓ customtypes/${type}/index.json`);
 }
 
-// ── 2. Slice Models ──────────────────────────────────────────────────────────────
+// ── 3. Slice Models ──────────────────────────────────────────────────────────────
 
 const sliceGatingMap = gating.slices ?? {};
 
@@ -253,7 +294,8 @@ for (const sliceName of allSlices) {
 		console.log(`✓ slices/${sliceName}/model.json (+${[...activeExtraIds].join(', ')})`);
 	}
 
-	write(fullModelPath, model);
+	// Schreibe model.json nur bei echter Änderung
+	writeIfChanged(fullModelPath, model);
 
 	// Sync base variation primaries → full.json
 	if (fullExists) {
@@ -276,7 +318,7 @@ for (const sliceName of allSlices) {
 	}
 }
 
-// ── 3. Feature-only Custom Types ─────────────────────────────────────────────────
+// ── 4. Feature-only Custom Types ─────────────────────────────────────────────────
 
 for (const feature of features) {
 	const ctDir = join(ROOT, `customtypes/_features/${feature}/customtypes`);
@@ -297,10 +339,12 @@ for (const feature of features) {
 
 console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
 
-// ── 4. Gated Custom Types aufräumen ──────────────────────────────────────────────
+// ── 5. Gated Custom Types aufräumen ──────────────────────────────────────────────
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
-	if (isActive(gate)) continue;
+	const active = isActive(gate);
+	console.log(`DEBUG: CustomType ${typeId} → isActive = ${active} (gate:`, gate, ')');
+	if (active) continue;
 	const indexPath = join(ROOT, `customtypes/${typeId}/index.json`);
 	if (existsSync(indexPath)) {
 		rmSync(indexPath);
@@ -308,3 +352,17 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 		console.log(`⊘ customtypes/${typeId}/index.json removed (requires ${reason})`);
 	}
 }
+
+// ── Pre-Build-Check: Existenz aller aktiven Custom-Type-Basisdateien ─────────────
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (!isActive(gate)) continue;
+	if (!gate.feature) continue; // managedTypes (page/settings) ohne feature-Gate überspringen
+	// Feature-Ordner-Pfad
+	let basePath = `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`;
+	if (!existsSync(join(ROOT, basePath))) {
+		console.error(`❌ FEHLER: Basisdatei für aktiven Custom Type "${typeId}" fehlt: ${basePath}`);
+		process.exit(1);
+	}
+}
+// ── Ende Pre-Build-Check ──────────────────────────────────────────────────────
+

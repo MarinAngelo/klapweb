@@ -19,9 +19,10 @@
 	export let field: ComponentProps<PrismicRichText>['field'];
 	export let components: ComponentProps<PrismicRichText>['components'] = {};
 
-	$: processedField = replaceTokens(field as any, $variables) as typeof field;
+	$: processedField = field ? replaceTokens(field as any, $variables) as typeof field : field;
 </script>
 
+{#if field && field.length > 0}
 <PrismicRichText
 	field={processedField}
 	components={{
@@ -36,10 +37,8 @@
 		preformatted: Preformatted,
 		strong: Strong,
 		hyperlink: Hyperlink,
-
-		// 👇 NEU: Label-Renderer als Svelte-Komponente
 		label: Label,
-
 		...components
 	}}
 />
+{/if}

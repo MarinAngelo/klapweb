@@ -19,12 +19,6 @@
 						"allowTargetBlank": false,
 						"single": "heading2",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -152,6 +146,50 @@
 						"default_value": true
 					}
 				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				},
 				"cards": {
 					"type": "Group",
 					"config": {
@@ -197,12 +235,6 @@
 									"allowTargetBlank": true,
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 									"labels": [
-										"h1",
-										"h2",
-										"h3",
-										"h4",
-										"h5",
-										"h6",
 										"size-xs",
 										"size-sm",
 										"size-lg",
@@ -264,52 +296,15 @@
 									"label": "Schaltflächen-Text",
 									"placeholder": ""
 								}
+							},
+							"button_anchor": {
+								"type": "Text",
+								"config": {
+									"label": "Schaltflächen-Anker (statt Link)",
+									"placeholder": "#Titel1"
+								}
 							}
 						}
-					}
-				},
-				"mobile_vollbreite": {
-					"type": "Boolean",
-					"config": {
-						"label": "Vollbreite auf Mobile",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
 					}
 				}
 			},
@@ -329,15 +324,7 @@
 						"label": "Titel",
 						"placeholder": "Unsere Pakete",
 						"allowTargetBlank": false,
-						"single": "heading2",
-						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6"
-						]
+						"single": "heading2"
 					}
 				},
 				"hervorhebung": {
@@ -389,18 +376,20 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
-				"button_color": {
-					"type": "Color",
+				"button_style": {
+					"type": "Link",
 					"config": {
-						"label": "Schaltflächen Schriftfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
-				},
-				"button_bg_color": {
-					"type": "Color",
-					"config": {
-						"label": "Schaltflächen Hintergrundfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
+						"label": "Button-Stil",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "button_stil",
+								"fields": [
+									"name"
+								]
+							}
+						]
 					}
 				},
 				"border_color": {
@@ -464,6 +453,210 @@
 						"customtypes": [
 							"page"
 						]
+					}
+				}
+			}
+		},
+		{
+			"id": "team",
+			"name": "Team",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Team-Mitglieder als Porträt-Kacheln",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Titel",
+						"placeholder": "Unser Team",
+						"allowTargetBlank": false,
+						"single": "heading2"
+					}
+				},
+				"component_body_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe Bereich",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"component_body_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe Bereich",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"body_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe Kacheln",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"body_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe Kacheln",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"grid_columns": {
+					"type": "Select",
+					"config": {
+						"label": "Spalten je Reihe",
+						"options": [
+							"2",
+							"3",
+							"4"
+						],
+						"default_value": "3"
+					}
+				},
+				"image_shape": {
+					"type": "Select",
+					"config": {
+						"label": "Bild-Form",
+						"options": [
+							"Quadratisch",
+							"Kreis"
+						],
+						"default_value": "Quadratisch"
+					}
+				},
+				"round_corners": {
+					"type": "Boolean",
+					"config": {
+						"label": "Runde Ecken (Kachel)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {
+				"photo": {
+					"type": "Image",
+					"config": {
+						"label": "Foto",
+						"constraint": {
+							"width": 800,
+							"height": 800
+						},
+						"thumbnails": []
+					}
+				},
+				"name": {
+					"type": "Text",
+					"config": {
+						"label": "Name",
+						"placeholder": "Maria Muster"
+					}
+				},
+				"role": {
+					"type": "Text",
+					"config": {
+						"label": "Funktion / Rolle",
+						"placeholder": "Geschäftsführerin"
+					}
+				},
+				"bio": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Kurzbiografie (optional)",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong,em",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
+					}
+				},
+				"link": {
+					"type": "Link",
+					"config": {
+						"label": "Link (z.B. LinkedIn)",
+						"placeholder": "",
+						"select": null,
+						"allowTargetBlank": true
 					}
 				}
 			}

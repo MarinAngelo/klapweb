@@ -98,11 +98,11 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class={p.mobile_vollbreite ? 'overflow-x-clip' : ''}
+	class={p.mobile_full_width ? 'overflow-x-clip' : ''}
 >
 	<div
 		id="0"
-		class="flex flex-col gap-4 {p.mobile_vollbreite
+		class="flex flex-col gap-4 {p.mobile_full_width
 			? slice.variation === 'bildUndText'
 				? p.sektion_rahmen
 					? '-mx-[1.3rem] md:mx-0'
@@ -111,11 +111,11 @@
 					? '-mx-[1.3rem] md:mx-0'
 					: '-mx-6 md:mx-0'
 			: ''} {p.bg_color
-			? p.mobile_vollbreite
+			? p.mobile_full_width
 				? 'md:rounded-lg'
 				: 'rounded-lg'
 			: ''} {p.sektion_rahmen
-			? 'sektion-rahmen ' + (p.mobile_vollbreite ? 'md:rounded-lg' : 'rounded-lg')
+			? 'sektion-rahmen ' + (p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
 			: ''}"
 		style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ||
 		p.sektion_rahmen
@@ -124,7 +124,7 @@
 	>
 		{#if p.heading || p.description || p.mit_suche}
 			<div
-				class="{p.bg_color || p.sektion_rahmen ? '' : p.mobile_vollbreite ? 'px-6 md:px-0' : ''} flex flex-col gap-4"
+				class="{p.bg_color || p.sektion_rahmen ? '' : p.mobile_full_width ? 'px-6 md:px-0' : ''} flex flex-col gap-4"
 			>
 				{#if p.heading}
 					<PrismicRichText field={p.heading} />
@@ -153,9 +153,9 @@
 						: { direction: 'none' }}
 					class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color
 						? 'px-3'
-						: p.mobile_vollbreite && slice.variation === 'bildUndText'
+						: p.mobile_full_width && slice.variation === 'bildUndText'
 							? 'md:px-3'
-							: p.mobile_vollbreite
+							: p.mobile_full_width
 								? 'px-6 md:px-3'
 								: 'px-3'}"
 					style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
@@ -209,7 +209,7 @@
 						? 'pb-0 md:pb-4'
 						: 'pb-4'} md:rounded-t min-w-0 {p.bg_color || p.sektion_rahmen
 						? 'px-3'
-						: p.mobile_vollbreite
+						: p.mobile_full_width
 							? 'px-0 md:px-3'
 							: 'px-3'}"
 					style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
@@ -218,7 +218,7 @@
 						class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 {slice.variation ===
 						'bildUndText'
 							? 'pb-5 md:pb-1'
-							: ''} {!p.bg_color && p.mobile_vollbreite && !p.sektion_rahmen ? 'px-6 md:px-0' : ''}"
+							: ''} {!p.bg_color && p.mobile_full_width && !p.sektion_rahmen ? 'px-6 md:px-0' : ''}"
 						aria-haspopup="true"
 						aria-expanded={$openIndex === index}
 						on:click={() => toggleItem(index)}
@@ -262,12 +262,13 @@
 										overlayTransparency={'bild_overlay_transparenz' in item
 											? (item.bild_overlay_transparenz ?? 100)
 											: 100}
-										mobilePadding={p.mobile_vollbreite ? '2rem' : ''}
-										mobilePaddingTop={p.mobile_vollbreite ? '1.5rem' : ''}
-										desktopPadding={p.mobile_vollbreite ? '1.5rem' : ''}
+										mobilePadding={p.mobile_full_width ? '2rem' : ''}
+										mobilePaddingTop={p.mobile_full_width ? '1.5rem' : ''}
+										desktopPadding={p.mobile_full_width ? '1.5rem' : ''}
 										desktopPaddingY="1.5rem"
-										noRoundMobile={p.mobile_vollbreite}
-										{theme}
+										noRoundMobile={p.mobile_full_width}
+										noObjectCover
+										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
 									/>
 								{:else}
 									<PrismicRichText field={item.content} />

@@ -36,6 +36,33 @@
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
 
+## Button-Stile
+
+### Workflow: Neuen Button-Stil erfassen
+
+1. In **`gating.json`** → `button_stile`: neuen Eintrag anlegen (nur Slug + Label):
+   ```json
+   "meinStil": {
+     "label": "Mein Stil"
+   }
+   ```
+2. `npm run dev` neu starten → Stil erscheint in Slice-Dropdowns und im Theme-Formular
+3. In Prismic **Theme**-Dokument → Generell → Button-Stile: Eintrag mit gleichem Label + Farben ausfüllen
+4. Committen (nur `gating.json`)
+
+### Nach Branch-Merge mit neuen Button-Stilen
+
+- Neue Stile aus `gating.json` erscheinen nach Neustart automatisch im Dropdown
+- Ohne Theme-Konfiguration greift der CSS-Fallback auf die Standard-Button-Farben des Themes
+- Für projekt-spezifische Farben: Theme-Dokument in Prismic öffnen und Stile ergänzen
+
+### Technisches Konzept
+
+- `gating.json button_stile` = Code-seitige Quelle (git-versioniert): Slug → Label + optionale Defaults
+- Theme-Dokument = Content-seitige Quelle (Prismic): visuelle Overrides
+- `themeUpdater.ts` wendet zuerst gating-Defaults an, dann Theme-Werte als Override
+- Slug-Berechnung: Label → `toSlug()` → CSS-Var-Suffix (z.B. `--btn-mein-stil-color`)
+
 ## Feature-Flag-System
 
 ### Übersicht
@@ -110,3 +137,25 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 2. `npm run dev` → Script generiert neue `model.json` + `index.json`
 3. `git diff` → `slicemachine.config.json` + evtl. `full.json` committen
 4. `slicemachine push`
+
+### Neuen Slice erstellen und allen Branches verfügbar machen
+
+1. Slice via Slice Machine UI erstellen
+2. In Slice Machine UI den Slice der Page-Slice-Zone zuweisen (Custom Type → Page → Slices → Add)
+3. **`customtypes/page/base.json` manuell ergänzen** — das ist der entscheidende Schritt:
+   ```json
+   "slices": { "config": { "choices": {
+     "mein_neuer_slice": { "type": "SharedSlice" }
+   }}}
+   ```
+4. Alles committen: `src/lib/slices/NeuerSlice/` + `customtypes/page/base.json`
+5. `slicemachine push`
+6. Branch in andere Branches mergen → `base.json` bringt den Eintrag automatisch mit
+
+**Warum:** `customtypes/page/index.json` ist gitignored (generiert). Die Slice Machine UI schreibt nur dort hin. Nur `base.json` ist versioniert und damit branch-übergreifend gültig.
+
+**Frühwarnung:** `npm run dev` warnt automatisch wenn `index.json` Slices enthält, die in `base.json` fehlen:
+
+```
+⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
+```

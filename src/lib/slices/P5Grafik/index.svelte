@@ -37,7 +37,8 @@
 		overlayOpacity: p.overlay_opacity != null ? convertNumber(p.overlay_opacity) : 0,
 		bannerOverlap: p.banner_overlap ?? false,
 		bannerHeight: p.banner_height ?? '100 %',
-		color: p.color || null
+		color: p.color || null,
+		imageUrl: p.image?.url || null
 	};
 
 	// Reaktiv aktualisieren wenn sich CMS-Daten ändern

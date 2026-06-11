@@ -34,12 +34,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -105,12 +99,6 @@
 						"allowTargetBlank": true,
 						"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -160,23 +148,7 @@
 						"label": "Google Maps URL"
 					}
 				},
-				"additional_dates": {
-					"type": "Group",
-					"config": {
-						"label": "Weitere Daten",
-						"repeat": true,
-						"fields": {
-							"date": {
-								"type": "Date",
-								"config": {
-									"label": "Datum",
-									"placeholder": ""
-								}
-							}
-						}
-					}
-				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -218,6 +190,22 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"additional_dates": {
+					"type": "Group",
+					"config": {
+						"label": "Weitere Daten",
+						"repeat": true,
+						"fields": {
+							"date": {
+								"type": "Date",
+								"config": {
+									"label": "Datum",
+									"placeholder": ""
+								}
+							}
+						}
 					}
 				}
 			},

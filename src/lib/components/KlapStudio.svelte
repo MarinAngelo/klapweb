@@ -206,7 +206,6 @@
 	}
 
 	function cycleFont(dir: number) {
-		if (!activeSlice) return;
 		currentFontIndex = (currentFontIndex + dir + presetFontNames.length) % presetFontNames.length;
 		const name = presetFontNames[currentFontIndex];
 		const url = presetFontUrls[name];
@@ -216,7 +215,28 @@
 			link.href = url;
 			document.head.appendChild(link);
 		}
-		activeSlice.el.style.fontFamily = `'${name}'`;
+		if (activeSlice && ['hero', 'p5_grafik'].includes(activeSlice.el.dataset.sliceType ?? '')) {
+			activeSlice.el.style.fontFamily = `'${name}'`;
+		}
+		document.documentElement.style.setProperty('--page-font', `'${name}', sans-serif`);
+		// Erzwinge Schriftwechsel auch im Header (überschreibt CMS-Font temporär)
+		// Header-Container überschreiben (Navigation etc.)
+		const headerEl = document.querySelector('.smart-header');
+		if (headerEl) {
+			headerEl.setAttribute(
+				'style',
+				(headerEl.getAttribute('style') || '') +
+					`; font-family: var(--page-font), sans-serif !important;`
+			);
+		}
+		// Logo-Titel und Untertitel explizit überschreiben (span mit font-family aus CMS)
+		document.querySelectorAll('.logo span').forEach((el) => {
+			el.setAttribute(
+				'style',
+				(el.getAttribute('style') || '').replace(/font-family:[^;]+;?/g, '') +
+					'font-family: var(--page-font), sans-serif !important;'
+			);
+		});
 	}
 
 	function formatSliceType(type: string): string {
@@ -263,7 +283,12 @@
 		sketchActive = false;
 		entry.origStyle = entry.el.style.cssText;
 
-		const innerStyled = entry.el.querySelector<HTMLElement>('[style*="background-color"]');
+		// Nur dann ein inneres Element suchen, wenn die Section selbst keine background-color hat.
+		// (z.B. TextMitBild hat background-color direkt auf <section> – ImageTextGrid-Kinder dürfen nicht überschrieben werden)
+		const selfHasBg = entry.el.getAttribute('style')?.includes('background-color') ?? false;
+		const innerStyled = selfHasBg
+			? null
+			: entry.el.querySelector<HTMLElement>('[style*="background-color"]');
 		entry.innerEl = innerStyled ?? null;
 		entry.origInnerStyle = entry.innerEl?.style.cssText ?? '';
 		entry.pageColorEls = Array.from(
@@ -448,6 +473,32 @@
 		{/if}
 
 		<!-- Page-level colors -->
+
+		<div class="divider"></div>
+		<div class="section-label">Standard-Schriftart</div>
+		<label class="row">
+			<span>Schriftwechsel</span>
+			<div style="display: flex; align-items: center; gap: 0.5rem;">
+				<button
+					class="font-cycle-btn"
+					style="min-width: 8rem; font-family: {currentFontIndex >= 0
+						? `'${presetFontNames[currentFontIndex]}', sans-serif`
+						: 'inherit'};"
+					on:click={() => cycleFont(1)}
+					title="Nächste Schriftart wählen"
+				>
+					{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}
+				</button>
+				<button
+					class="copy-btn"
+					on:click={() =>
+						copy(currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '', 'fontname')}
+					title="Fontnamen kopieren"
+				>
+					{copiedField === 'fontname' ? '✓' : '⧉'}
+				</button>
+			</div>
+		</label>
 		<label class="row">
 			<span>Hintergrundfarbe (Page)</span>
 			<div class="color-wrap">
@@ -581,91 +632,135 @@
 				</label>
 			{/if}
 
-		{#if hasPresetFont}
-			<div class="divider"></div>
-			<div class="section-label">Schriftart</div>
-			<div class="row font-cycle-row">
-				<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
-				<span class="font-cycle-name">{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}</span>
-				<button class="font-cycle-btn" on:click={() => cycleFont(1)}>&#8594;</button>
-			</div>
-		{/if}
-
-		{#if isHeroSlice}
-			<div class="divider"></div>
-			<div class="section-label">Verlauf</div>
-
-			<label class="row">
-				<span>Form</span>
-				<select class="studio-select" bind:value={gradType} on:change={reapplyGradient}>
-					<option>Linear</option>
-					<option>Radial</option>
-				</select>
-			</label>
-
-			{#if gradType === 'Linear'}
-				<label class="row">
-					<span>Richtung</span>
-					<select class="studio-select" bind:value={gradAngle} on:change={reapplyGradient}>
-						{#each ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'] as a}
-							<option value={a}>{a.replace('deg', '°')}</option>
-						{/each}
-					</select>
-				</label>
+			{#if hasPresetFont}
+				<div class="divider"></div>
+				<div class="section-label">Schriftart</div>
+				<div class="row font-cycle-row">
+					<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
+					<span class="font-cycle-name"
+						>{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}</span
+					>
+					<button class="font-cycle-btn" on:click={() => cycleFont(1)}>&#8594;</button>
+				</div>
 			{/if}
 
-			<label class="row">
-				<span>Startfarbe</span>
-				<div class="color-wrap">
-					<input type="color" bind:value={gradColor1} on:input={reapplyGradient} />
-					<code>{gradColor1}</code>
-					<button class="copy-btn" on:click={() => copy(gradColor1, 'gc1')} title="Kopieren">
-						{copiedField === 'gc1' ? '✓' : '⧉'}
-					</button>
-				</div>
-			</label>
-			<label class="row">
-				<span>Startfarbe Deckkraft ({gradOpacity1.toFixed(2)})</span>
-				<input type="range" min="0" max="1" step="0.01" bind:value={gradOpacity1} on:input={reapplyGradient} />
-			</label>
-			<label class="row">
-				<span>Startfarbe Position ({gradStop1}%)</span>
-				<input type="range" min="0" max="100" step="1" bind:value={gradStop1} on:input={reapplyGradient} />
-			</label>
+			{#if isHeroSlice}
+				<div class="divider"></div>
+				<div class="section-label">Verlauf</div>
 
+				<label class="row">
+					<span>Form</span>
+					<select class="studio-select" bind:value={gradType} on:change={reapplyGradient}>
+						<option>Linear</option>
+						<option>Radial</option>
+					</select>
+				</label>
+
+				{#if gradType === 'Linear'}
+					<label class="row">
+						<span>Richtung</span>
+						<select class="studio-select" bind:value={gradAngle} on:change={reapplyGradient}>
+							{#each ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'] as a}
+								<option value={a}>{a.replace('deg', '°')}</option>
+							{/each}
+						</select>
+					</label>
+				{/if}
+
+				<label class="row">
+					<span>Startfarbe</span>
+					<div class="color-wrap">
+						<input type="color" bind:value={gradColor1} on:input={reapplyGradient} />
+						<code>{gradColor1}</code>
+						<button class="copy-btn" on:click={() => copy(gradColor1, 'gc1')} title="Kopieren">
+							{copiedField === 'gc1' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+				<label class="row">
+					<span>Startfarbe Deckkraft ({gradOpacity1.toFixed(2)})</span>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.01"
+						bind:value={gradOpacity1}
+						on:input={reapplyGradient}
+					/>
+				</label>
+				<label class="row">
+					<span>Startfarbe Position ({gradStop1}%)</span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						bind:value={gradStop1}
+						on:input={reapplyGradient}
+					/>
+				</label>
+
+				<label class="row">
+					<span>Endfarbe</span>
+					<div class="color-wrap">
+						<input type="color" bind:value={gradColor2} on:input={reapplyGradient} />
+						<code>{gradColor2}</code>
+						<button class="copy-btn" on:click={() => copy(gradColor2, 'gc2')} title="Kopieren">
+							{copiedField === 'gc2' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+				<label class="row">
+					<span>Endfarbe Deckkraft ({gradOpacity2.toFixed(2)})</span>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.01"
+						bind:value={gradOpacity2}
+						on:input={reapplyGradient}
+					/>
+				</label>
+				<label class="row">
+					<span>Endfarbe Position ({gradStop2}%)</span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						bind:value={gradStop2}
+						on:input={reapplyGradient}
+					/>
+				</label>
+			{/if}
+		{/if}
+
+		{#if isAdresseUndMap}
+			<div class="divider"></div>
+			<div class="section-label">Schriftgrösse</div>
 			<label class="row">
-				<span>Endfarbe</span>
-				<div class="color-wrap">
-					<input type="color" bind:value={gradColor2} on:input={reapplyGradient} />
-					<code>{gradColor2}</code>
-					<button class="copy-btn" on:click={() => copy(gradColor2, 'gc2')} title="Kopieren">
-						{copiedField === 'gc2' ? '✓' : '⧉'}
-					</button>
-				</div>
+				<span>Desktop ({zoomDesktop}%)</span>
+				<input
+					type="range"
+					min="50"
+					max="300"
+					step="5"
+					value={zoomDesktop}
+					on:input={setZoomDesktop}
+				/>
 			</label>
 			<label class="row">
-				<span>Endfarbe Deckkraft ({gradOpacity2.toFixed(2)})</span>
-				<input type="range" min="0" max="1" step="0.01" bind:value={gradOpacity2} on:input={reapplyGradient} />
-			</label>
-			<label class="row">
-				<span>Endfarbe Position ({gradStop2}%)</span>
-				<input type="range" min="0" max="100" step="1" bind:value={gradStop2} on:input={reapplyGradient} />
+				<span>Mobile ({zoomMobile}%)</span>
+				<input
+					type="range"
+					min="50"
+					max="300"
+					step="5"
+					value={zoomMobile}
+					on:input={setZoomMobile}
+				/>
 			</label>
 		{/if}
-	{/if}
-
-	{#if isAdresseUndMap}
-		<div class="divider"></div>
-		<div class="section-label">Schriftgrösse</div>
-		<label class="row">
-			<span>Desktop ({zoomDesktop}%)</span>
-			<input type="range" min="50" max="300" step="5" value={zoomDesktop} on:input={setZoomDesktop} />
-		</label>
-		<label class="row">
-			<span>Mobile ({zoomMobile}%)</span>
-			<input type="range" min="50" max="300" step="5" value={zoomMobile} on:input={setZoomMobile} />
-		</label>
-	{/if}
 	</aside>
 {/if}
 

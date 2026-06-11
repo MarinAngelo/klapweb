@@ -11,8 +11,14 @@ export interface RevealOptions {
 }
 
 export function reveal(node: HTMLElement, params: RevealOptions = {}) {
-	if (params.direction === 'none' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-		node.style.opacity = '1';
+	const isHeading = /^H[1-6]$/.test(node.tagName);
+	const targetOpacity = isHeading ? 'var(--heading-opacity, 1)' : '1';
+
+	if (
+		params.direction === 'none' ||
+		window.matchMedia('(prefers-reduced-motion: reduce)').matches
+	) {
+		node.style.setProperty('opacity', targetOpacity);
 		node.style.transform = 'none';
 		return;
 	}
@@ -20,7 +26,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 	const options = {
 		// Wir verringern den threshold für 'down', damit es früher triggert
 		threshold: params.direction === 'down' ? 0.01 : (params.threshold ?? 0.1),
-		delay: params.delay ?? 500,
+		delay: params.delay ?? 100,
 		duration: params.duration ?? 2000,
 		distance: params.distance ?? '40px', // Etwas mehr Distanz macht es sichtbarer
 		direction: params.direction ?? 'up'
@@ -39,7 +45,7 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 		return map[dir] || map.up;
 	};
 
-	// Initialer Zustand – sofort setzen, damit kein Flackern von 1→0 sichtbar ist
+	// Initialer Zustand sicherstellen (SSR setzt bereits opacity:0 via Bounded, hier nur Transform)
 	node.style.opacity = '0';
 	node.style.willChange = 'transform, opacity';
 	node.style.transform = getTransform(options.direction, options.distance);
@@ -49,8 +55,16 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					setTimeout(() => {
-						node.style.opacity = '1';
+						node.style.setProperty('opacity', targetOpacity);
 						node.style.transform = 'translate(0, 0)';
+						const cleanup = (e: TransitionEvent) => {
+							if (e.propertyName === 'transform') {
+								node.style.transform = '';
+								node.style.willChange = '';
+								node.removeEventListener('transitionend', cleanup);
+							}
+						};
+						node.addEventListener('transitionend', cleanup);
 					}, options.delay);
 					observer.unobserve(node);
 				}

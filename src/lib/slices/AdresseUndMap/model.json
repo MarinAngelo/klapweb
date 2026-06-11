@@ -19,7 +19,9 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
-						"labels": ["kompakt"]
+						"labels": [
+							"kompakt"
+						]
 					}
 				},
 				"map_url": {
@@ -89,7 +91,7 @@
 						"default_value": false
 					}
 				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -109,7 +111,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},

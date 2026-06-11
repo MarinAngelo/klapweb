@@ -14,6 +14,8 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 
+	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
+
 	import { updateTheme } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
@@ -23,18 +25,22 @@
 	import { getFontSize } from '$lib/utils/fontMapper';
 	import { reveal } from '$lib/actions/reveal';
 	import { parseCurrencyCode } from '$lib/pricing';
+	import { showCrosshair } from '$lib/stores/showCrosshair';
 
 	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
+	const titleNoAnim = { direction: 'none' as const };
+	$: titleAnimation = prismicTheme?.data?.heading_animation === false ? titleNoAnim : titleFadeIn;
 
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
+	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, user } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
-	$: siteName = settings?.data?.site_name || '';
+	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
 	$: pageTitle =
 		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
@@ -45,6 +51,8 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
+	$: appleTouchIconUrl = settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
+	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
 	// --- DOMAIN & URL ---
@@ -209,8 +217,41 @@
 	}
 
 	// --- THEME & FONTS ---
+	// Sofort synchron ausführen (verhindert Flash beim ersten Render)
+	updateTheme(data);
+	// Reaktiv bei Datenänderungen (z.B. Seitennavigation)
 	$: {
 		updateTheme(data);
+	}
+	// Page-level Farbüberschreibung: überschreibt globale Theme-Farben pro Seite
+	// Läuft bei jeder Navigation ($page.data ändert sich immer).
+	// Ohne Override: globale Farben explizit zurücksetzen (layout `data` ändert
+	// sich bei Client-Navigation nicht zwingend, daher kein Verlassen auf Block 1).
+	$: {
+		const pd = $page.data?.page?.data ?? {};
+		const overrideBg: string | null = pd.page_bg_color ?? null;
+		const overrideColor: string | null = pd.page_color ?? null;
+		if (overrideBg || overrideColor) {
+			theme.update((t) => ({
+				...t,
+				...(overrideBg ? { pageBgColor: overrideBg } : {}),
+				...(overrideColor ? { pageColor: overrideColor } : {})
+			}));
+			if (typeof document !== 'undefined') {
+				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
+				if (overrideColor)
+					document.documentElement.style.setProperty('--page-color', overrideColor);
+			}
+		} else {
+			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
+			// Wichtig: CSS-Variablen ZUERST löschen, sonst liest updateTheme via
+			// getCssVar() den alten Override-Wert zurück (zirkuläre Überschreibung).
+			if (typeof document !== 'undefined') {
+				document.documentElement.style.removeProperty('--page-color');
+				document.documentElement.style.removeProperty('--page-bg-color');
+			}
+			updateTheme(data);
+		}
 	}
 	$: pageFontName =
 		prismicTheme?.data?.page_font?.data?.name ||
@@ -254,14 +295,23 @@
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
+				s.slice_type === 'galerie' ||
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
-	$: stickyHeader = !isLandingPage && !isPreview && (prismicTheme?.data?.sticky_header ?? false);
+	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: stickyHeader =
+		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
+
+	onMount(() => {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {});
+		}
+	});
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
@@ -286,6 +336,12 @@
 	<title>{finalTitle}</title>
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
+	{#if appleTouchIconUrl}<link rel="apple-touch-icon" href={appleTouchIconUrl} />{/if}
+	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<link rel="canonical" href={currentUrl} />
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
@@ -307,15 +363,23 @@
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
 	<meta property="og:image" content={finalImage} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:url" content={currentUrl} />
 	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={finalTitle} />
+	<meta name="twitter:description" content={finalDesc} />
+	<meta name="twitter:image" content={finalImage} />
 
 	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
 	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
 </svelte:head>
 
-<div style="background-color: {$theme.pageBgColor}; min-height: 100vh;">
-	{#if !isLandingPage && !isPreview}
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
+<div style="background-color: var(--page-bg-color); min-height: 100vh;">
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Header
 			{navigation}
 			{settings}
@@ -325,17 +389,19 @@
 			{allAlternates}
 			{showSwitcher}
 			mainLang={data.mainLang}
+			{userBackendActive}
+			{user}
 		/>
 	{/if}
 
-	<main style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
-		{#if $page.data?.title && !hasBannerOverlap}
+	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
-				style="background-color: {$theme.pageBgColor}; color: {$theme.pageColor};"
+				style="background-color: var(--page-bg-color); color: var(--page-color);"
 			>
 				<!--Seiten Titel Page Title-->
-				<h1 use:reveal={titleFadeIn} class="mt-12 mb-4 first:mt-0">
+				<h1 use:reveal={titleAnimation} class="tracking-tight mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
 				</h1>
 			</Bounded>
@@ -346,10 +412,25 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview}
+	{#if !isLandingPage && !isPreview && !isDokuPage}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
+
+<!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
+{#if process.env.NODE_ENV !== 'production'}
+	<style>
+		@import '$lib/components/CrosshairDevTool.css';
+	</style>
+	<button
+		on:click={() => showCrosshair.update((v) => !v)}
+		aria-label={$showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden'}
+		style="position:fixed;top:8px;right:8px;z-index:1000001;width:28px;height:28px;padding:0;background:#fff;border:1px solid #ccc;border-radius:50%;box-shadow:0 2px 8px #0001;font-size:18px;line-height:26px;cursor:pointer;opacity:0.7;display:flex;align-items:center;justify-content:center;"
+	>
+		+
+	</button>
+	<CrosshairDevTool />
+{/if}

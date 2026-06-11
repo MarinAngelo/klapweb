@@ -3,8 +3,10 @@
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content, PrismicDocument } from '@prismicio/client';
+	import { asText } from '@prismicio/client';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
+	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
 	import { hexToRgba } from '$lib/utils/color';
 	import Bounded from './Bounded.svelte';
@@ -18,6 +20,8 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let mainLang: string | undefined;
+	export let userBackendActive: boolean = false;
+	export let user: { name: string; email: string } | null = null;
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -66,6 +70,7 @@
 	$: isSvgLogo = !!prismicTheme?.data?.logo?.url?.toLowerCase().includes('.svg');
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || $theme.siteTitleFontSize;
 	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
+	$: logoLabel = settings?.data?.site_name || asText(settings?.data?.site_title) || 'Startseite';
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
 	$: headerLinkFontSize = prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
@@ -82,6 +87,7 @@
 		const bannerSlice = slices.find(
 			(s: any) =>
 				(s.slice_type === 'hero' ||
+					s.slice_type === 'galerie' ||
 					(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 				s.primary?.banner_overlap === true
 		);
@@ -166,6 +172,8 @@
 <header
 	bind:this={headerEl}
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
+	class:opacity-0={$isLightboxOpen}
+	class:pointer-events-none={$isLightboxOpen}
 	style:position={stickyHeader ? 'fixed' : bannerTop ? 'absolute' : 'relative'}
 	style:top="0"
 	style:left="0"
@@ -182,7 +190,7 @@
 		<div class="flex items-stretch justify-between w-full">
 			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5" aria-label={logoLabel}>
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
@@ -206,14 +214,22 @@
 						href={lang === mainLang ? '/' : `/${lang}`}
 						class="mt-6 mb-6 inline-block"
 						style="color: {headerColor};"
+						aria-label={logoLabel}
 					>
 						<span
-							class="text-xl font-semibold"
-							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont};"
+							class="text-xl font-semibold tracking-tight site-title-text"
+							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont
+								? siteTitleFont
+								: 'var(--page-font), sans-serif'};"
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
-						<span style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont}">
+						<span
+							class="site-title-text"
+							style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont
+								? siteTitleFont
+								: 'var(--page-font), sans-serif'};"
+						>
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>
 					</a>
@@ -233,6 +249,9 @@
 					{locales}
 					{showSwitcher}
 					{allAlternates}
+					{userBackendActive}
+					{user}
+					headerLinkFont={prismicTheme?.data?.header_link_font?.data?.name || $theme.headerLinkFont}
 				/>
 			{/if}
 		</div>

@@ -1,51 +1,168 @@
 {
 	"plans": {
-		"basis": { "label": "Basis" },
-		"professional": { "label": "Professionell", "extends": "basis" },
-		"individuell": { "label": "Individuell", "extends": "professional" }
+		"basis": {
+			"label": "Basis"
+		},
+		"professional": {
+			"label": "Professionell",
+			"extends": "basis"
+		},
+		"individuell": {
+			"label": "Individuell",
+			"extends": "professional"
+		}
 	},
-
 	"features": {
-		"terminbuchung": { "label": "Terminbuchung", "plans": ["professional"] },
-		"ecommerce": { "label": "E-Commerce", "plans": ["individuell"] },
-		"p5js": { "label": "P5.js", "plans": ["individuell"] },
-		"variablen": { "label": "Variablen", "plans": ["individuell"] },
-		"global_events": { "label": "Globale Events", "plans": ["professional"] }
+		"terminbuchung": {
+			"label": "Terminbuchung",
+			"plans": [
+				"professional"
+			]
+		},
+		"ecommerce": {
+			"label": "E-Commerce",
+			"plans": [
+				"individuell"
+			]
+		},
+		"p5js": {
+			"label": "P5.js",
+			"plans": [
+				"individuell"
+			]
+		},
+		"variablen": {
+			"label": "Variablen",
+			"plans": [
+				"individuell"
+			]
+		},
+		"ressourcenbuchung": {
+			"label": "Ressourcen-Buchung",
+			"plans": [
+				"individuell"
+			]
+		},
+		"global_events": {
+			"label": "Globale Events",
+			"plans": [
+				"professional"
+			]
+		}
 	},
-
 	"customTypes": {
-		"terminplanung": { "feature": "terminbuchung" },
-		"leistung": { "feature": "ecommerce" },
-		"variablen": { "feature": "variablen" },
-		"event": { "feature": "global_events" }
+		"terminplanung": {
+			"feature": "terminbuchung"
+		},
+		"leistung": {
+			"feature": "ecommerce"
+		},
+		"variablen": {
+			"feature": "variablen"
+		},
+		"event": {
+			"feature": "global_events"
+		},
+		"ressource": {
+			"feature": "ressourcenbuchung"
+		},
+		"aufgabe": {
+			"feature": "ressourcenbuchung"
+		},
+		"werkzeug": {
+			"feature": "ressourcenbuchung"
+		},
+		"settings": {
+			"fields": {
+				"pwa_enabled": {
+					"plan": "individuell"
+				},
+				"pwa_name": {
+					"plan": "individuell"
+				},
+				"pwa_short_name": {
+					"plan": "individuell"
+				},
+				"pwa_theme_color": {
+					"plan": "individuell"
+				},
+				"pwa_icon": {
+					"plan": "individuell"
+				}
+			}
+		}
 	},
-
 	"slices": {
 		"Akkordeon": {
 			"fields": {
-				"mit_suche": { "plan": "professional" },
-				"suchfeld_platzhalter": { "plan": "professional" }
+				"mit_suche": {
+					"plan": "professional"
+				},
+				"suchfeld_platzhalter": {
+					"plan": "professional"
+				}
 			},
 			"variations": {
-				"leistungen": { "feature": "ecommerce" }
+				"leistungen": {
+					"feature": "ecommerce"
+				}
 			}
 		},
 		"Button": {
 			"variations": {
-				"kauf": { "feature": "ecommerce" }
+				"kauf": {
+					"feature": "ecommerce"
+				}
 			}
 		},
 		"Formular": {
 			"variations": {
-				"mitTermin": { "feature": "terminbuchung" },
-				"kauf": { "feature": "ecommerce" }
+				"mitTermin": {
+					"feature": "terminbuchung"
+				},
+				"kauf": {
+					"feature": "ecommerce"
+				},
+				"einChecken": {
+					"feature": "ressourcenbuchung"
+				},
+				"ausChecken": {
+					"feature": "ressourcenbuchung"
+				}
 			}
 		},
 		"Kacheln": {
 			"variations": {
-				"plaene": { "feature": "ecommerce" }
+				"plaene": {
+					"feature": "ecommerce"
+				}
 			}
 		},
-		"GlobaleEvents": { "feature": "global_events" }
+		"GlobaleEvents": {
+			"feature": "global_events"
+		},
+		"Inhaltsverzeichnis": {
+			"plan": "professional"
+		},
+		"Text": {
+			"fields": {
+				"feature_gate": {
+					"plan": "individuell"
+				}
+			}
+		},
+		"TextMitBild": {
+			"fields": {
+				"feature_gate": {
+					"plan": "individuell"
+				}
+			}
+		},
+		"RessourceBuchung": {
+			"feature": "ressourcenbuchung"
+		},
+		"Aufgaben": {
+			"feature": "ressourcenbuchung"
+		}
 	}
 }

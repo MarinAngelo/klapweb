@@ -16,7 +16,13 @@ customtypes/settings/index.json
 customtypes/leistung/index.json
 customtypes/variablen/index.json
 customtypes/terminplanung/index.json
+customtypes/ressource/index.json
+src/lib/slices/RessourceBuchung/model.json
+src/lib/slices/Text/model.json
+src/lib/slices/TextMitBild/model.json
 src/lib/slices/Akkordeon/model.json
 src/lib/slices/Formular/model.json
 src/lib/slices/Kacheln/model.json
 src/lib/slices/Button/model.json
+src/lib/slices/Titelbereich/model.json
+src/lib/config/icon-labels.ts

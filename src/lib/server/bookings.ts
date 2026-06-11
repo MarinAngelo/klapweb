@@ -54,6 +54,12 @@ export async function listBookings(): Promise<BookingRecord[]> {
 		.sort((a, b) => new Date(a.datum + 'T' + a.uhrzeit).getTime() - new Date(b.datum + 'T' + b.uhrzeit).getTime());
 }
 
+export async function listBookingsByEmail(email: string): Promise<BookingRecord[]> {
+	const all = await listBookings();
+	const normalized = email.trim().toLowerCase();
+	return all.filter((b) => b.email?.trim().toLowerCase() === normalized);
+}
+
 export async function deleteBooking(terminId: string): Promise<void> {
 	const store = getBookingStore();
 	await store.delete(terminId);

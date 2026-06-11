@@ -28,15 +28,12 @@ export async function load({ params, parent }) {
 	const client = createClient();
 
 	try {
-		// 2. Wir suchen explizit nach der UID 'home' in der ermittelten Sprache
-		console.log(`[Page Load] Suche 'home' für Sprache: ${lang}`);
-
 		const page = await client.getByUID('page', 'home', { lang });
 
 		return {
 			page,
-			title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
-			meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
+			title: asText(page.data.title) || '',
+			meta_title: page.data.meta_title || '',
 			meta_description: page.data.meta_description
 		};
 	} catch (e) {

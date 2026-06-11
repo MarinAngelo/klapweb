@@ -6,6 +6,15 @@
 	"status": true,
 	"json": {
 		"Generell": {
+			"activ": {
+				"type": "Boolean",
+				"config": {
+					"label": "Aktiv",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": true
+				}
+			},
 			"theme_name": {
 				"type": "Text",
 				"config": {
@@ -42,7 +51,9 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
 					]
 				}
@@ -52,7 +63,29 @@
 				"config": {
 					"label": "Vorinstallierte Hauptschrift",
 					"placeholder": "— Keine —",
-					"options": ["Inter","Roboto","Open Sans","Montserrat","Poppins","Lato","Raleway","Oswald","Nunito","DM Sans","Outfit","Plus Jakarta Sans","Josefin Sans","Quicksand","Cabin","Playfair Display","Merriweather","Lora","Cormorant Garamond","Crimson Pro","Nunito Sans"]
+					"options": [
+						"Inter",
+						"Roboto",
+						"Open Sans",
+						"Montserrat",
+						"Poppins",
+						"Lato",
+						"Raleway",
+						"Oswald",
+						"Nunito",
+						"DM Sans",
+						"Outfit",
+						"Plus Jakarta Sans",
+						"Josefin Sans",
+						"Quicksand",
+						"Cabin",
+						"Playfair Display",
+						"Merriweather",
+						"Lora",
+						"Cormorant Garamond",
+						"Crimson Pro",
+						"Nunito Sans"
+					]
 				}
 			},
 			"base_font_size_mobile": {
@@ -60,7 +93,13 @@
 				"config": {
 					"label": "Mobile Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+					"options": [
+						"Sehr Klein",
+						"Klein",
+						"Standard",
+						"Gross",
+						"Sehr Gross"
+					]
 				}
 			},
 			"base_font_size_desktop": {
@@ -68,7 +107,13 @@
 				"config": {
 					"label": " Desktop Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
+					"options": [
+						"Sehr Klein",
+						"Klein",
+						"Standard",
+						"Gross",
+						"Sehr Gross"
+					]
 				}
 			},
 			"p_font_offset_mobile": {
@@ -90,7 +135,13 @@
 				"config": {
 					"label": "Container-Breite",
 					"placeholder": "Standard (72rem)",
-					"options": ["Schmal", "Normal", "Standard", "Weit", "Sehr weit"]
+					"options": [
+						"Schmal",
+						"Normal",
+						"Standard",
+						"Weit",
+						"Sehr weit"
+					]
 				}
 			},
 			"page_link_color": {
@@ -135,6 +186,22 @@
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
+			"heading_opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Titel Deckkraft (%)",
+					"placeholder": "0 - 100 (voll = 100)"
+				}
+			},
+			"heading_animation": {
+				"type": "Boolean",
+				"config": {
+					"label": "Titel Einblend-Animation",
+					"placeholder_false": "Aus",
+					"placeholder_true": "Ein",
+					"default_value": true
+				}
+			},
 			"favicon": {
 				"type": "Image",
 				"config": {
@@ -177,7 +244,12 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name", "provider", "variants", "adobeFontId"]
+							"fields": [
+								"name",
+								"provider",
+								"variants",
+								"adobeFontId"
+							]
 						}
 					]
 				}
@@ -248,7 +320,9 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name"]
+							"fields": [
+								"name"
+							]
 						}
 					]
 				}

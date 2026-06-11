@@ -1,0 +1,67 @@
+{
+	"id": "button_stil",
+	"label": "Schaltflächen-Stil",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Allgemein": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "Slug (technischer Name)"
+				}
+			},
+			"name": {
+				"type": "Text",
+				"config": {
+					"label": "Bezeichnung",
+					"placeholder": "z. B. Primär, Kauf, Durchstarten"
+				}
+			},
+			"color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe",
+					"placeholder": ""
+				}
+			},
+			"bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe",
+					"placeholder": ""
+				}
+			},
+			"hover_color": {
+				"type": "Color",
+				"config": {
+					"label": "Textfarbe Hover",
+					"placeholder": ""
+				}
+			},
+			"hover_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Hintergrundfarbe Hover",
+					"placeholder": ""
+				}
+			},
+			"icon": {
+				"type": "Link",
+				"config": {
+					"label": "Icon",
+					"select": "document",
+					"repeat": false,
+					"customtypes": [
+						{
+							"id": "icon",
+							"fields": [
+								"name"
+							]
+						}
+					]
+				}
+			}
+		}
+	}
+}

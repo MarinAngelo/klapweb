@@ -17,7 +17,12 @@
 						"label": "Sketch",
 						"options": [
 							"Orbital Circles",
-							"Particle Flow"
+							"Particle Flow",
+							"My Sketch",
+							"Generative Gestaltung P_1_0_01",
+							"Generative Gestaltung P_1_1_1_01",
+							"Generative Gestaltung P_1_2_1_01",
+							"Generative Gestaltung P_1_2_2_01"
 						],
 						"default_value": "Orbital Circles"
 					}
@@ -29,43 +34,24 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
-				"animate": {
-					"type": "Boolean",
+				"color": {
+					"type": "Color",
 					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
+						"label": "Vordergrundfarbe",
+						"placeholder": ""
 					}
 				},
-				"anim_direction": {
-					"type": "Select",
+				"image": {
+					"type": "Image",
 					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
+						"label": "Bild",
+						"constraint": {},
+						"thumbnails": []
 					}
 				}
 			},
-			"items": {}
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
 		},
 		{
 			"id": "mitTitelbereich",
@@ -80,7 +66,11 @@
 						"label": "Sketch",
 						"options": [
 							"Orbital Circles",
-							"Particle Flow"
+							"Particle Flow",
+							"Generative Gestaltung P_1_0_01",
+							"Generative Gestaltung P_1_1_1_01",
+							"Generative Gestaltung P_1_2_1_01",
+							"Generative Gestaltung P_1_2_2_01"
 						],
 						"default_value": "Orbital Circles"
 					}
@@ -149,14 +139,8 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
 						"labels": [
-							"h1",
-							"h2",
-							"h3",
-							"h4",
-							"h5",
-							"h6",
 							"size-xs",
 							"size-sm",
 							"size-lg",
@@ -350,7 +334,8 @@
 					}
 				}
 			},
-			"items": {}
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
 		}
 	]
 }

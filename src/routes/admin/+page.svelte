@@ -23,7 +23,6 @@
 			type="password"
 			bind:value={secret}
 			placeholder="Passwort"
-			autofocus
 			style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 1rem; outline: none;"
 		/>
 		{#if error}

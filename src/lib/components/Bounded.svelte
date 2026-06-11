@@ -9,6 +9,9 @@
 	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
 	export let paddingTop: string | undefined = undefined;
 	export let paddingBottom: string | undefined = undefined;
+	/** Fertige Tailwind-Klassen (überschreibt paddingTop/paddingBottom komplett) */
+	export let paddingTopClass: string | undefined = undefined;
+	export let paddingBottomClass: string | undefined = undefined;
 	export let collapsible = true;
 	export let specialLayout = false;
 
@@ -16,6 +19,7 @@
 	export let animationOptions: RevealOptions = {};
 
 	export let fullWidth: boolean = false;
+	export let noPadding: boolean = false;
 	export let fullHeight: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
@@ -53,11 +57,11 @@
 		'lg-top': ''
 	};
 
-	$: topClass = paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? '');
-	$: bottomClass = paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? '');
+	$: topClass = paddingTopClass !== undefined ? paddingTopClass : (paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? ''));
+	$: bottomClass = paddingBottomClass !== undefined ? paddingBottomClass : (paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? ''));
 
 	$: finalOptions = animate
-		? { duration: 2000, delay: 500, ...animationOptions }
+		? { duration: 2000, delay: 100, ...animationOptions }
 		: { direction: 'none' as const };
 </script>
 
@@ -67,7 +71,14 @@
 	use:reveal={finalOptions}
 	data-collapsible={collapsible}
 	{...$$restProps}
-	class={clsx('px-6', specialLayout && isMobile && 'px-0', topClass, bottomClass, fullHeight && 'flex flex-col', $$props.class)}
+	class={clsx(
+		!noPadding && 'px-6',
+		specialLayout && isMobile && 'px-0',
+		topClass,
+		bottomClass,
+		fullHeight && 'flex flex-col',
+		$$props.class
+	)}
 >
 	<div
 		class="mx-auto w-full relative overflow-visible"
