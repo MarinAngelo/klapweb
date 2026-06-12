@@ -57,16 +57,21 @@ export const load = ({ cookies }) => {
 
 	const currentPlan = smConfig.plan || 'basis';
 	const activePlanChain = getActivePlanChain(currentPlan, gating.plans);
-	const activeFeatures = getActiveFeatures(activePlanChain, gating.features);
-	const overrideFeatures = (overrides.features ?? []).filter((f: string) => gating.features?.[f]);
+	const basePlanFeatures = getActiveFeatures(activePlanChain, gating.features);
+
+	// Appliziere Overrides: entferne disabled, addiere enabled
+	const enabledFeatures = (overrides.enabled ?? []).filter((f: string) => gating.features?.[f]);
+	const disabledFeatures = (overrides.disabled ?? []);
+	const activeFeatures = [...new Set([...basePlanFeatures.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
 
 	return {
 		authenticated: true,
 		plans: gating.plans,
 		features: gating.features,
 		currentPlan,
-		activeFeatures,
-		overrideFeatures
+		basePlanFeatures, // Base-Plan-Features (ohne Overrides)
+		activeFeatures, // Finale Features (mit Overrides)
+		overrideFeatures: enabledFeatures
 	};
 };
 
@@ -100,19 +105,41 @@ export const actions = {
 	},
 
 	async save({ request, cookies }) {
-		if (!isAuthenticated(cookies)) throw error(403, 'Nicht authentifiziert');
+		// Prüfe Authentication direkt
+		const cookie = cookies.get(AUTH_COOKIE);
+		let authenticated = false;
+		if (cookie) {
+			try {
+				const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
+				authenticated = parsed.exp > Date.now();
+			} catch {
+				authenticated = false;
+			}
+		}
+		if (!authenticated) throw error(403, 'Nicht authentifiziert');
 
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
 		const selectedOverrides = JSON.parse(data.get('overrides') as string);
+
+		// Load gating.json
+		const gating = read(GATING_PATH);
 
 		// 1. Update plan in slicemachine.config.json
 		const smConfig = read(SM_CONFIG_PATH);
 		smConfig.plan = plan;
 		write(SM_CONFIG_PATH, smConfig);
 
-		// 2. Write gating.overrides.json
-		write(OVERRIDES_PATH, { features: selectedOverrides });
+		// 2. Write gating.overrides.json mit enabled + disabled
+		const planChain = getActivePlanChain(plan, gating.plans);
+		const planFeatures = getActiveFeatures(planChain, gating.features);
+		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
+		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
+
+		write(OVERRIDES_PATH, {
+			enabled: enabled,
+			disabled: disabled
+		});
 
 		// 3. Run build-customtypes.js
 		try {

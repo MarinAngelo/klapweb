@@ -4,7 +4,7 @@
 	export let data: PageData;
 
 	let selectedPlan = data.authenticated ? data.currentPlan : '';
-	let selectedOverrides: string[] = data.authenticated ? [...data.overrideFeatures] : [];
+	let selectedFeatures: string[] = data.authenticated ? [...data.activeFeatures] : [];
 	let passwordInput = '';
 	let loginError = '';
 
@@ -18,34 +18,15 @@
 		return Object.entries(data.features ?? {}).map(([id, feature]: [string, any]) => ({
 			id,
 			label: feature.label,
-			inPlan: data.activeFeatures.includes(id)
+			inPlan: data.basePlanFeatures.includes(id)
 		}));
 	}
 
-	function isFeatureActive(featureId: string) {
-		return data.activeFeatures.includes(featureId) || selectedOverrides.includes(featureId);
-	}
-
 	function toggleFeature(featureId: string) {
-		const isCurrentlyActive = isFeatureActive(featureId);
-		const isInPlan = data.activeFeatures.includes(featureId);
-
-		if (isCurrentlyActive) {
-			// Wenn aktiv und im Plan: zu Overrides hinzufügen zum Ausschalten
-			// Wenn aktiv aber nicht im Plan: aus Overrides entfernen
-			if (isInPlan) {
-				selectedOverrides = [...selectedOverrides, featureId];
-			} else {
-				selectedOverrides = selectedOverrides.filter((f) => f !== featureId);
-			}
+		if (selectedFeatures.includes(featureId)) {
+			selectedFeatures = selectedFeatures.filter((f) => f !== featureId);
 		} else {
-			// Wenn nicht aktiv und im Plan: aus Overrides entfernen zum Einschalten
-			// Wenn nicht aktiv und nicht im Plan: zu Overrides hinzufügen
-			if (isInPlan) {
-				selectedOverrides = selectedOverrides.filter((f) => f !== featureId);
-			} else {
-				selectedOverrides = [...selectedOverrides, featureId];
-			}
+			selectedFeatures = [...selectedFeatures, featureId];
 		}
 	}
 
@@ -53,7 +34,8 @@
 		const form = e.currentTarget as HTMLFormElement;
 		const overridesInput = form.querySelector('input[name="overrides"]') as HTMLInputElement;
 		if (overridesInput) {
-			overridesInput.value = JSON.stringify(selectedOverrides);
+			// Sende alle Features die der Benutzer aktiv haben möchte
+			overridesInput.value = JSON.stringify(selectedFeatures);
 		}
 	}
 </script>
@@ -114,7 +96,7 @@
 							<label class="checkbox-label">
 								<input
 									type="checkbox"
-									checked={isFeatureActive(id)}
+									checked={selectedFeatures.includes(id)}
 									on:change={() => toggleFeature(id)}
 								/>
 								<span>
@@ -128,7 +110,7 @@
 					</fieldset>
 				</div>
 
-				<input type="hidden" name="overrides" value="{JSON.stringify(selectedOverrides)}" />
+				<input type="hidden" name="overrides" value="{JSON.stringify(selectedFeatures)}" />
 
 				<button type="submit" class="btn btn-primary">Speichern</button>
 			</form>
@@ -136,11 +118,12 @@
 			<div class="info">
 				<strong>Übersicht:</strong>
 				<p>Plan: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
-				<p>Plan-Features: {data.activeFeatures.join(', ') || 'keine'}</p>
-				<p>Aktiviert in Overrides: {selectedOverrides.filter((f) => !data.activeFeatures.includes(f)).join(', ') || 'keine'}</p>
-				<p>Deaktiviert in Overrides: {selectedOverrides.filter((f) => data.activeFeatures.includes(f)).join(', ') || 'keine'}</p>
-				<hr style="margin: 1rem 0; border: none; border-top: 1px solid #ddd;" />
-				<p><strong>Alle aktiven Features:</strong> {[...new Set([...data.activeFeatures, ...selectedOverrides.filter((f) => !data.activeFeatures.includes(f))])].join(', ')}</p>
+				<p>Plan-Features: {data.basePlanFeatures.join(', ') || 'keine'}</p>
+				<p><strong>Ausgewählte Features:</strong> {selectedFeatures.join(', ') || 'keine'}</p>
+				<p style="color: #666; font-size: 0.9rem;">
+					Zusätzlich: {selectedFeatures.filter((f) => !data.basePlanFeatures.includes(f)).join(', ') || 'keine'} /
+					Entfernt: {data.basePlanFeatures.filter((f) => !selectedFeatures.includes(f)).join(', ') || 'keine'}
+				</p>
 			</div>
 		</div>
 	{/if}
