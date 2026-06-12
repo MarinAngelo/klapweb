@@ -202,7 +202,7 @@
         "contrast_amount": {
           "type": "Number",
           "config": {
-            "label": "Kontrast-Offset (leer = automatisch)",
+            "label": "Kontrast-Offset Balken-Text (-255 bis +255, leer = Seitenfarbe)",
             "placeholder": "0"
           }
         },
@@ -495,7 +495,7 @@
         "contrast_amount": {
           "type": "Number",
           "config": {
-            "label": "Kontrast-Offset (leer = automatisch)",
+            "label": "Kontrast-Offset Balken-Text (-255 bis +255, leer = Seitenfarbe)",
             "placeholder": "0"
           }
         },
