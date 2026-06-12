@@ -472,7 +472,7 @@
 				"label": "Bestätigungstext: Kreditkarte / TWINT",
 				"placeholder": "Text auf der Bestätigungsseite nach Stripe-Zahlung",
 				"allowTargetBlank": false,
-				"multi": "paragraph,heading3,strong,em,list-item,o-list-item"
+				"multi": "paragraph,strong,em,list-item,o-list-item"
 			}
 		},
 		"payment_rechnung_confirmation_text": {
@@ -481,7 +481,7 @@
 				"label": "Bestätigungstext: Gegen Rechnung",
 				"placeholder": "Text auf der Bestätigungsseite nach Rechnung-Bestellung",
 				"allowTargetBlank": false,
-				"multi": "paragraph,heading3,strong,em,list-item,o-list-item"
+				"multi": "paragraph,strong,em,list-item,o-list-item"
 			}
 		},
 		"payment_bar_confirmation_text": {
@@ -490,7 +490,7 @@
 				"label": "Bestätigungstext: Gegen Bar",
 				"placeholder": "Text auf der Bestätigungsseite nach Bar-Bestellung",
 				"allowTargetBlank": false,
-				"multi": "paragraph,heading3,strong,em,list-item,o-list-item"
+				"multi": "paragraph,strong,em,list-item,o-list-item"
 			}
 		},
 		"beauftragung_title": {

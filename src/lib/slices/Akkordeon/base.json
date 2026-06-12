@@ -22,7 +22,7 @@
             "label": "Überschrift",
             "placeholder": "",
             "allowTargetBlank": true,
-            "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+            "single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -73,7 +73,7 @@
             "label": "Beschreibung",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -246,7 +246,7 @@
                   "label": "Text",
                   "placeholder": "",
                   "allowTargetBlank": true,
-                  "multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+                  "multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
                   "labels": [
                     "size-xs",
                     "size-sm",
@@ -315,7 +315,7 @@
             "label": "Überschrift",
             "placeholder": "",
             "allowTargetBlank": true,
-            "single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+            "single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -366,7 +366,7 @@
             "label": "Beschreibung",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -539,7 +539,7 @@
                   "label": "Text",
                   "placeholder": "",
                   "allowTargetBlank": true,
-                  "multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+                  "multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
                   "labels": [
                     "size-xs",
                     "size-sm",
