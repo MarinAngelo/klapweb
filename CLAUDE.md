@@ -6,6 +6,33 @@
 - Antworten auf Deutsch, kurz und direkt
 - Keine Zusammenfassungen am Ende einer Antwort
 
+## Environment Variables
+
+### Lokale Entwicklung (.env)
+
+- `.env` ist **gitignored** — nicht committed
+- Template: `.env.example` zeigt alle erforderlichen Variablen
+- **Lokal:** Kopien Sie `.env.example` → `.env` und füllen Sie mit echten Keys
+- Jeder Developer/Branch kann eigene `.env` haben (z.B. unterschiedliche API-Keys lokal)
+
+### Production (Netlify)
+
+- Env-Vars in **Netlify Site Settings** → **Environment** setzen (nicht via `.env`)
+- Gültig für Production & Branch Deploys
+- Wichtige Vars:
+  - `NETLIFY_SITE_ID`, `NETLIFY_TOKEN` (für Blobs)
+  - `ADMIN_SECRET` (Admin-Panel Auth)
+  - `AGENCY_SECRET` (Gating-Editor Auth)
+  - `RESEND_API_KEY` (E-Mail)
+  - weitere API-Keys
+
+### Secrets vs Config
+
+| Typ | Lokal | Netlify | Committed? |
+|-----|-------|---------|-----------|
+| Echte Secrets (Keys, Tokens) | `.env` | Site Settings | Nein |
+| Config/Doku | `.env.example` | — | Ja |
+
 ## Stack
 
 - SvelteKit, Prismic Slice Machine, Tailwind CSS
