@@ -13,19 +13,39 @@
 		return Object.entries(data.plans ?? {}).map(([id, plan]: [string, any]) => ({ id, label: plan.label }));
 	}
 
-	function getAvailableOverrides() {
+	function getAllFeatures() {
 		if (!data.authenticated) return [];
-		const activePlansFeatures = data.activeFeatures;
-		return Object.entries(data.features ?? {})
-			.filter(([id]) => !activePlansFeatures.includes(id))
-			.map(([id, feature]: [string, any]) => ({ id, label: feature.label }));
+		return Object.entries(data.features ?? {}).map(([id, feature]: [string, any]) => ({
+			id,
+			label: feature.label,
+			inPlan: data.activeFeatures.includes(id)
+		}));
 	}
 
-	function toggleOverride(featureId: string) {
-		if (selectedOverrides.includes(featureId)) {
-			selectedOverrides = selectedOverrides.filter((f) => f !== featureId);
+	function isFeatureActive(featureId: string) {
+		return data.activeFeatures.includes(featureId) || selectedOverrides.includes(featureId);
+	}
+
+	function toggleFeature(featureId: string) {
+		const isCurrentlyActive = isFeatureActive(featureId);
+		const isInPlan = data.activeFeatures.includes(featureId);
+
+		if (isCurrentlyActive) {
+			// Wenn aktiv und im Plan: zu Overrides hinzufügen zum Ausschalten
+			// Wenn aktiv aber nicht im Plan: aus Overrides entfernen
+			if (isInPlan) {
+				selectedOverrides = [...selectedOverrides, featureId];
+			} else {
+				selectedOverrides = selectedOverrides.filter((f) => f !== featureId);
+			}
 		} else {
-			selectedOverrides = [...selectedOverrides, featureId];
+			// Wenn nicht aktiv und im Plan: aus Overrides entfernen zum Einschalten
+			// Wenn nicht aktiv und nicht im Plan: zu Overrides hinzufügen
+			if (isInPlan) {
+				selectedOverrides = selectedOverrides.filter((f) => f !== featureId);
+			} else {
+				selectedOverrides = [...selectedOverrides, featureId];
+			}
 		}
 	}
 
@@ -89,21 +109,22 @@
 
 				<div class="form-group">
 					<fieldset>
-						<legend>Zusätzliche Features (Overrides)</legend>
-						{#if getAvailableOverrides().length === 0}
-							<p class="text-muted">Alle Features bereits im Plan enthalten.</p>
-						{:else}
-							{#each getAvailableOverrides() as { id, label }}
-								<label class="checkbox-label">
-									<input
-										type="checkbox"
-										checked={selectedOverrides.includes(id)}
-										on:change={() => toggleOverride(id)}
-									/>
+						<legend>Features</legend>
+						{#each getAllFeatures() as { id, label, inPlan }}
+							<label class="checkbox-label">
+								<input
+									type="checkbox"
+									checked={isFeatureActive(id)}
+									on:change={() => toggleFeature(id)}
+								/>
+								<span>
 									{label}
-								</label>
-							{/each}
-						{/if}
+									{#if inPlan}
+										<span class="badge">im Plan</span>
+									{/if}
+								</span>
+							</label>
+						{/each}
 					</fieldset>
 				</div>
 
@@ -113,12 +134,13 @@
 			</form>
 
 			<div class="info">
-				<strong>Aktuell aktiv:</strong>
+				<strong>Übersicht:</strong>
 				<p>Plan: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
-				<p>Features: {data.activeFeatures.join(', ') || 'keine'}</p>
-				{#if selectedOverrides.length > 0}
-					<p>Overrides: {selectedOverrides.join(', ')}</p>
-				{/if}
+				<p>Plan-Features: {data.activeFeatures.join(', ') || 'keine'}</p>
+				<p>Aktiviert in Overrides: {selectedOverrides.filter((f) => !data.activeFeatures.includes(f)).join(', ') || 'keine'}</p>
+				<p>Deaktiviert in Overrides: {selectedOverrides.filter((f) => data.activeFeatures.includes(f)).join(', ') || 'keine'}</p>
+				<hr style="margin: 1rem 0; border: none; border-top: 1px solid #ddd;" />
+				<p><strong>Alle aktiven Features:</strong> {[...new Set([...data.activeFeatures, ...selectedOverrides.filter((f) => !data.activeFeatures.includes(f))])].join(', ')}</p>
 			</div>
 		</div>
 	{/if}
@@ -273,6 +295,26 @@
 		padding: 1rem;
 		background-color: #f5f5f5;
 		border-radius: 4px;
+	}
+
+	.info p {
+		margin: 0.5rem 0;
+	}
+
+	.badge {
+		display: inline-block;
+		background-color: #ddd;
+		color: #333;
+		padding: 0.2rem 0.5rem;
+		border-radius: 3px;
+		font-size: 0.8rem;
+		margin-left: 0.5rem;
+		font-weight: normal;
+	}
+
+	.checkbox-label span {
+		display: flex;
+		align-items: center;
 	}
 
 	.info p {
