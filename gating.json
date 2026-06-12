@@ -121,6 +121,11 @@
 			}
 		},
 		"Button": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
 			"variations": {
 				"kauf": {
 					"feature": "ecommerce"
@@ -128,6 +133,11 @@
 			}
 		},
 		"Formular": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
 			"variations": {
 				"mitTermin": {
 					"feature": "terminbuchung"
@@ -156,6 +166,13 @@
 		"Inhaltsverzeichnis": {
 			"plan": "professional"
 		},
+		"Titelbereich": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			}
+		},
 		"Text": {
 			"fields": {
 				"feature_gate": {
@@ -167,6 +184,9 @@
 			"fields": {
 				"feature_gate": {
 					"plan": "individuell"
+				},
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
 				}
 			}
 		},
