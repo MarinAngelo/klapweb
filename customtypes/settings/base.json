@@ -188,15 +188,6 @@
 					"placeholder": "Passwort für passwortgeschützte Seiten"
 				}
 			},
-			"user_backend_active": {
-				"type": "Boolean",
-				"config": {
-					"label": "User-Backend aktivieren",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
 			"show_language_switcher": {
 				"type": "Boolean",
 				"config": {

@@ -318,6 +318,15 @@
 	function handleCodeInput(e: Event) {
 		textValue = (e.target as HTMLInputElement).value.toUpperCase();
 	}
+
+	function sanitizeTel(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const clean = input.value.replace(/[^0-9 \-()]/g, '');
+		if (clean !== input.value) {
+			input.value = clean;
+			localNumber = clean;
+		}
+	}
 </script>
 
 <div class="mb-4">
@@ -405,10 +414,12 @@
 					id={key}
 					bind:value={localNumber}
 					required={field.required}
-					placeholder={field.placeholder ?? ''}
-					pattern={"[0-9 +\\-()]{4,25}"}
+					placeholder={field.placeholder ?? '079 123 45 67'}
+					pattern={"[0-9 \\-()]{4,25}"}
+					inputmode="numeric"
 					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
 					style="color: var(--page-color); border: none;"
+					on:input={sanitizeTel}
 					on:blur
 				/>
 			</div>
@@ -431,9 +442,12 @@
 					id={key}
 					bind:value={localNumber}
 					required={field.required}
-					placeholder={field.placeholder ?? ''}
+					placeholder={field.placeholder ?? '079 123 45 67'}
+					pattern={"[0-9 \\-()]{4,25}"}
+					inputmode="numeric"
 					class="input p-2 flex-1 focus:outline-none focus:ring-0"
 					style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
+					on:input={sanitizeTel}
 					on:blur
 				/>
 			</div>

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { asLink } from '@prismicio/helpers';
-	import type { RTLinkNode } from '@prismicio/client';
+	import { asLink, type RTLinkNode } from '@prismicio/client';
 
 	export let node: RTLinkNode;
 
