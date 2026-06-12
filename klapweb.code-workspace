@@ -17,6 +17,10 @@
       "/^cd /home/angelo/web/klapweb && python3 -c \"\nimport json\nwith open\\('customtypes/settings/base\\.json'\\) as f:\n    d = json\\.load\\(f\\)\nprint\\(json\\.dumps\\(list\\(d\\.get\\('json',\\{\\}\\)\\.keys\\(\\)\\), indent=2\\)\\)\n\"$/": {
         "approve": true,
         "matchCommandLine": true
+      },
+      "/^cd /home/angelo/web/klapweb && python3 -c \"\nimport json\nwith open\\('src/lib/slices/TextMitBild/model\\.json'\\) as f:\n    m = json\\.load\\(f\\)\nfor v in m\\['variations'\\]:\n    if v\\['id'\\] == 'default':\n        print\\(json\\.dumps\\(v\\['primary'\\]\\.get\\('text_center_v'\\), indent=2\\)\\)\n\"$/": {
+        "approve": true,
+        "matchCommandLine": true
       }
     }
   }

@@ -56,20 +56,20 @@
 		if (e.target === dialog) closeLightbox();
 	}
 
-	$: imgClass = `w-full ${noObjectCover ? '' : 'md:h-full md:object-cover'} ${imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}`;
+	$: imgClass = `w-full ${noObjectCover ? '' : `${fullscreen ? 'md:h-full ' : ''}md:object-cover`} ${imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}`;
 </script>
 
 <div class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen ? 'md:h-full' : ''}">
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
-			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen ? 'md:h-full' : ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
 		>
 			{#if activeImages.length > 1}
 				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} {lightbox} />
 			{:else if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style="background-color: {imageBgColor};">
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -97,7 +97,7 @@
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''}"
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV ? 'self-center' : ''} {textCenterH ? 'text-center' : ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
@@ -108,7 +108,7 @@
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
-			class="text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
+			class="text-col flex flex-col {textCenterV ? 'self-center' : ''} {textCenterH ? 'text-center' : ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
@@ -117,13 +117,13 @@
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? '' : 'order-first md:order-none'} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? '' : 'order-first md:order-none'} {fullscreen ? 'md:h-full' : ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
 		>
 			{#if activeImages.length > 1}
 				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} {lightbox} />
 			{:else if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style="background-color: {imageBgColor};">
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
