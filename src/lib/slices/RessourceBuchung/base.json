@@ -18,7 +18,7 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"single": "heading2,heading3"
+						"single": "heading2"
 					}
 				},
 				"intro": {

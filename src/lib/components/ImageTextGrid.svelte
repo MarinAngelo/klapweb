@@ -7,7 +7,7 @@
 
 	export let image: any;
 	export let images: any[] | undefined = undefined;
-	$: activeImages = images?.filter(img => isFilled.image(img)) ?? [];
+	$: activeImages = images?.filter((img) => isFilled.image(img)) ?? [];
 	export let text: any;
 	export let imageLeft: boolean = false;
 	export let imageBgColor: string = '';
@@ -56,24 +56,44 @@
 		if (e.target === dialog) closeLightbox();
 	}
 
-	$: imgClass = `w-full ${noObjectCover ? '' : 'md:h-full md:object-cover'} ${imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}`;
+	$: imgClass = `w-full ${noObjectCover ? '' : `${fullscreen ? 'md:h-full ' : ''}md:object-cover`} ${imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}`;
 </script>
 
-<div class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen ? 'md:h-full' : ''}">
+<div
+	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen
+		? 'md:h-full'
+		: ''}"
+>
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
-			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen
+				? 'md:h-full'
+				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
 		>
 			{#if activeImages.length > 1}
-				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} {lightbox} />
+				<BildSlider
+					images={activeImages}
+					{imageRound}
+					{noRound}
+					{noRoundMobile}
+					{noObjectCover}
+					{lightbox}
+				/>
 			{:else if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div
+					class="relative {fullscreen ? 'md:h-full' : ''}"
+					style="background-color: {imageBgColor};"
+				>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div on:click={() => { if (window.innerWidth < 768) openLightbox(); }}>
+						<div
+							on:click={() => {
+								if (window.innerWidth < 768) openLightbox();
+							}}
+						>
 							<BildLupe imageUrl={image?.url ?? ''}>
 								<PrismicImage field={image} sizes="100vw" class={imgClass} />
 							</BildLupe>
@@ -89,7 +109,13 @@
 					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
-							class="absolute inset-0 {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
+							class="absolute inset-0 {imageRound
+								? 'rounded-full'
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
@@ -97,7 +123,9 @@
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''}"
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV
+				? 'self-center'
+				: ''} {textCenterH ? 'text-center' : ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
@@ -108,7 +136,9 @@
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
-			class="text-col flex flex-col {textCenterV ? 'justify-center' : ''} {textCenterH ? 'text-center' : ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
+			class="text-col flex flex-col {textCenterV ? 'self-center' : ''} {textCenterH
+				? 'text-center'
+				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
 			<PrismicRichText field={text} />
@@ -117,17 +147,33 @@
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? '' : 'order-first md:order-none'} md:h-full {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
+			class="{mobileTextFirst ? '' : 'order-first md:order-none'} {fullscreen
+				? 'md:h-full'
+				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
 			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
 		>
 			{#if activeImages.length > 1}
-				<BildSlider images={activeImages} {imageRound} {noRound} {noRoundMobile} {noObjectCover} {lightbox} />
+				<BildSlider
+					images={activeImages}
+					{imageRound}
+					{noRound}
+					{noRoundMobile}
+					{noObjectCover}
+					{lightbox}
+				/>
 			{:else if image}
-				<div class="relative md:h-full" style="background-color: {imageBgColor};">
+				<div
+					class="relative {fullscreen ? 'md:h-full' : ''}"
+					style="background-color: {imageBgColor};"
+				>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div on:click={() => { if (window.innerWidth < 768) openLightbox(); }}>
+						<div
+							on:click={() => {
+								if (window.innerWidth < 768) openLightbox();
+							}}
+						>
 							<BildLupe imageUrl={image?.url ?? ''}>
 								<PrismicImage field={image} sizes="100vw" class={imgClass} />
 							</BildLupe>
@@ -143,7 +189,13 @@
 					{/if}
 					{#if overlayColor && overlayOpacity > 0}
 						<div
-							class="absolute inset-0 {imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl'}"
+							class="absolute inset-0 {imageRound
+								? 'rounded-full'
+								: noRound
+									? ''
+									: noRoundMobile
+										? 'md:rounded-3xl'
+										: 'rounded-3xl'}"
 							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
 						></div>
 					{/if}
@@ -162,7 +214,9 @@
 		<div class="lb-content" on:click|stopPropagation>
 			<img src={image?.url ?? ''} alt={image?.alt ?? ''} class="lb-img" />
 		</div>
-		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen">×</button>
+		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen"
+			>×</button
+		>
 	</dialog>
 {/if}
 
@@ -233,12 +287,22 @@
 	}
 
 	@keyframes lb-in {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	@keyframes lb-zoom {
-		from { transform: scale(0.92); opacity: 0; }
-		to { transform: scale(1); opacity: 1; }
+		from {
+			transform: scale(0.92);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 </style>
