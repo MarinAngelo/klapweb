@@ -1,11 +1,13 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createUser } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
+import { isFeatureActive } from '$lib/server/features';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ locals }) => {
+	if (!isFeatureActive('terminbuchung')) throw error(404, 'Funktion nicht verfügbar');
 	if (locals.user) throw redirect(303, '/konto');
 };
 
