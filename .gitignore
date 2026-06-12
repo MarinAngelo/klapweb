@@ -25,9 +25,9 @@ src/lib/slices/Formular/model.json
 src/lib/slices/Kacheln/model.json
 src/lib/slices/Button/model.json
 src/lib/slices/Titelbereich/model.json
-src/lib/slices/Zitat/model.json
-src/lib/slices/LinkListe/model.json
-src/lib/slices/Kontakt/model.json
-src/lib/slices/GlobaleEvents/model.json
 src/lib/slices/Aufgaben/model.json
+src/lib/slices/GlobaleEvents/model.json
+src/lib/slices/Kontakt/model.json
+src/lib/slices/LinkListe/model.json
+src/lib/slices/Zitat/model.json
 src/lib/config/icon-labels.ts
