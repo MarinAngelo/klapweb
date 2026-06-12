@@ -56,6 +56,8 @@ function writeIfChanged(path, data) {
 
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
+const overridesPath = join(ROOT, 'gating.overrides.json');
+const overrides = existsSync(overridesPath) ? read('gating.overrides.json') : { enabled: [], disabled: [] };
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
 
@@ -73,10 +75,20 @@ console.log('DEBUG: activePlanChain =', activePlanChain);
 const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
+
+// Zusätzliche Features aus gating.overrides.json (Branch-spezifisch)
+// Format: { enabled: [...], disabled: [...] }
+const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
+const disabledFeatures = (overrides.disabled ?? []);
+const allFeatures = [...new Set([...features.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
+
 console.log('DEBUG: features =', features);
+console.log('DEBUG: enabled =', enabledFeatures);
+console.log('DEBUG: disabled =', disabledFeatures);
+console.log('DEBUG: allFeatures =', allFeatures);
 
 console.log(
-	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${features.join(', ') || 'none'}]`
+	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
 );
 
 // ── Gating-Hilfsfunktionen ───────────────────────────────────────────────────────
@@ -89,7 +101,7 @@ console.log(
 function isActive(gate) {
 	if (!gate) return true;
 	if (gate.plan && activePlanChain.length > 0 && !activePlanChain.includes(gate.plan)) return false;
-	if (gate.feature && !features.includes(gate.feature)) return false;
+	if (gate.feature && !allFeatures.includes(gate.feature)) return false;
 	return true;
 }
 
@@ -187,7 +199,7 @@ for (const type of managedTypes) {
 	const doc = read(basePath);
 	const tabs = doc.json;
 
-	for (const feature of features) {
+	for (const feature of allFeatures) {
 		const featurePath = `customtypes/_features/${feature}/${type}.json`;
 		if (!existsSync(join(ROOT, featurePath))) continue;
 
@@ -320,7 +332,7 @@ for (const sliceName of allSlices) {
 
 // ── 4. Feature-only Custom Types ─────────────────────────────────────────────────
 
-for (const feature of features) {
+for (const feature of allFeatures) {
 	const ctDir = join(ROOT, `customtypes/_features/${feature}/customtypes`);
 	if (!existsSync(ctDir)) continue;
 
@@ -337,7 +349,7 @@ for (const feature of features) {
 	}
 }
 
-console.log(`\nFeatures active: [${features.join(', ') || 'none'}]`);
+console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
 
 // ── 5. Gated Custom Types aufräumen ──────────────────────────────────────────────
 

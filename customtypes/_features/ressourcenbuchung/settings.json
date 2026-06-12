@@ -1,0 +1,14 @@
+{
+	"_meta": {
+		"insertBefore": null
+	},
+	"Ressourcenbuchung": {
+		"whatsapp_tel": {
+			"type": "Text",
+			"config": {
+				"label": "WhatsApp-Nummer",
+				"placeholder": "+41 79 123 45 67"
+			}
+		}
+	}
+}
