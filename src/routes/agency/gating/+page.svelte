@@ -3,14 +3,18 @@
 
 	export let data: PageData;
 
-	let selectedPlan = data.currentPlan;
-	let selectedOverrides: string[] = [...data.overrideFeatures];
+	let selectedPlan = data.authenticated ? data.currentPlan : '';
+	let selectedOverrides: string[] = data.authenticated ? [...data.overrideFeatures] : [];
+	let passwordInput = '';
+	let loginError = '';
 
 	function getPlans() {
+		if (!data.authenticated) return [];
 		return Object.entries(data.plans ?? {}).map(([id, plan]: [string, any]) => ({ id, label: plan.label }));
 	}
 
 	function getAvailableOverrides() {
+		if (!data.authenticated) return [];
 		const activePlansFeatures = data.activeFeatures;
 		return Object.entries(data.features ?? {})
 			.filter(([id]) => !activePlansFeatures.includes(id))
@@ -25,7 +29,7 @@
 		}
 	}
 
-	function handleSubmit(e: Event) {
+	function handleSave(e: Event) {
 		const form = e.currentTarget as HTMLFormElement;
 		const overridesInput = form.querySelector('input[name="overrides"]') as HTMLInputElement;
 		if (overridesInput) {
@@ -35,53 +39,89 @@
 </script>
 
 <div class="container">
-	<h1>Agency Gating Editor</h1>
+	{#if !data.authenticated}
+		<!-- Login Form -->
+		<div class="login-container">
+			<h1>Agency Gating Editor</h1>
+			<p class="intro">Bitte geben Sie das Agentur-Passwort ein:</p>
 
-	<form method="POST" action="?/save" on:submit={handleSubmit} class="form">
-		<div class="form-group">
-			<label for="plan">Plan</label>
-			<select id="plan" name="plan" bind:value={selectedPlan}>
-				{#each getPlans() as { id, label }}
-					<option value={id}>
-						{label}
-					</option>
-				{/each}
-			</select>
-		</div>
+			<form method="POST" action="?/login" class="login-form">
+				<div class="form-group">
+					<label for="secret">Passwort</label>
+					<input
+						id="secret"
+						name="secret"
+						type="password"
+						bind:value={passwordInput}
+						placeholder="Passwort eingeben"
+						required
+					/>
+				</div>
 
-		<div class="form-group">
-			<fieldset>
-				<legend>Zusätzliche Features (Overrides)</legend>
-				{#if getAvailableOverrides().length === 0}
-					<p class="text-muted">Alle Features bereits im Plan enthalten.</p>
-				{:else}
-					{#each getAvailableOverrides() as { id, label }}
-						<label class="checkbox-label">
-							<input
-								type="checkbox"
-								checked={selectedOverrides.includes(id)}
-								on:change={() => toggleOverride(id)}
-							/>
-							{label}
-						</label>
-					{/each}
+				{#if loginError}
+					<div class="error-message">{loginError}</div>
 				{/if}
-			</fieldset>
+
+				<button type="submit" class="btn btn-primary">Anmelden</button>
+			</form>
 		</div>
+	{:else}
+		<!-- Editor -->
+		<div class="editor-container">
+			<div class="header">
+				<h1>Agency Gating Editor</h1>
+				<form method="POST" action="?/logout" style="display: inline;">
+					<button type="submit" class="btn btn-secondary">Abmelden</button>
+				</form>
+			</div>
 
-		<input type="hidden" name="overrides" value="{JSON.stringify(selectedOverrides)}" />
+			<form method="POST" action="?/save" on:submit={handleSave} class="form">
+				<div class="form-group">
+					<label for="plan">Plan</label>
+					<select id="plan" name="plan" bind:value={selectedPlan}>
+						{#each getPlans() as { id, label }}
+							<option value={id}>
+								{label}
+							</option>
+						{/each}
+					</select>
+				</div>
 
-		<button type="submit" class="btn">Speichern</button>
-	</form>
+				<div class="form-group">
+					<fieldset>
+						<legend>Zusätzliche Features (Overrides)</legend>
+						{#if getAvailableOverrides().length === 0}
+							<p class="text-muted">Alle Features bereits im Plan enthalten.</p>
+						{:else}
+							{#each getAvailableOverrides() as { id, label }}
+								<label class="checkbox-label">
+									<input
+										type="checkbox"
+										checked={selectedOverrides.includes(id)}
+										on:change={() => toggleOverride(id)}
+									/>
+									{label}
+								</label>
+							{/each}
+						{/if}
+					</fieldset>
+				</div>
 
-	<div class="info">
-		<strong>Aktuell aktiv:</strong>
-		<p>Plan: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
-		<p>Features: {data.activeFeatures.join(', ') || 'keine'}</p>
-		{#if selectedOverrides.length > 0}
-			<p>Overrides: {selectedOverrides.join(', ')}</p>
-		{/if}
-	</div>
+				<input type="hidden" name="overrides" value="{JSON.stringify(selectedOverrides)}" />
+
+				<button type="submit" class="btn btn-primary">Speichern</button>
+			</form>
+
+			<div class="info">
+				<strong>Aktuell aktiv:</strong>
+				<p>Plan: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
+				<p>Features: {data.activeFeatures.join(', ') || 'keine'}</p>
+				{#if selectedOverrides.length > 0}
+					<p>Overrides: {selectedOverrides.join(', ')}</p>
+				{/if}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -91,10 +131,44 @@
 		padding: 2rem;
 	}
 
+	.login-container {
+		text-align: center;
+	}
+
+	.login-container h1 {
+		margin-bottom: 1rem;
+	}
+
+	.intro {
+		color: #666;
+		margin-bottom: 2rem;
+	}
+
+	.login-form {
+		background: #f9f9f9;
+		padding: 2rem;
+		border-radius: 8px;
+		border: 1px solid #e0e0e0;
+	}
+
+	.editor-container .header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 2px solid #e0e0e0;
+	}
+
+	.editor-container h1 {
+		margin: 0;
+	}
+
 	.form {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+		margin-bottom: 2rem;
 	}
 
 	.form-group {
@@ -105,13 +179,23 @@
 
 	label {
 		font-weight: 600;
+		font-size: 0.95rem;
 	}
 
+	input[type='password'],
 	select {
-		padding: 0.5rem;
+		padding: 0.75rem;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		font-size: 1rem;
+		font-family: inherit;
+	}
+
+	input[type='password']:focus,
+	select:focus {
+		outline: none;
+		border-color: #333;
+		box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
 	}
 
 	fieldset {
@@ -141,23 +225,47 @@
 	.text-muted {
 		color: #666;
 		font-style: italic;
+		margin: 0;
+	}
+
+	.error-message {
+		background: #fee;
+		color: #c33;
+		padding: 0.75rem;
+		border-radius: 4px;
+		margin-bottom: 1rem;
+		font-size: 0.95rem;
 	}
 
 	.btn {
 		padding: 0.75rem 1.5rem;
-		background-color: #333;
-		color: white;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
 		font-size: 1rem;
 		font-weight: 600;
 		transition: background-color 0.2s;
-		align-self: flex-start;
+		font-family: inherit;
 	}
 
-	.btn:hover {
+	.btn-primary {
+		background-color: #333;
+		color: white;
+	}
+
+	.btn-primary:hover {
 		background-color: #555;
+	}
+
+	.btn-secondary {
+		background-color: #999;
+		color: white;
+		padding: 0.5rem 1rem;
+		font-size: 0.9rem;
+	}
+
+	.btn-secondary:hover {
+		background-color: #777;
 	}
 
 	.info {

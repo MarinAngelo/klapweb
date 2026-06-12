@@ -10,12 +10,7 @@ const ROOT = process.cwd();
 const GATING_PATH = join(ROOT, 'gating.json');
 const SM_CONFIG_PATH = join(ROOT, 'slicemachine.config.json');
 const OVERRIDES_PATH = join(ROOT, 'gating.overrides.json');
-
-function checkAuth(url: URL) {
-	const secret = env.AGENCY_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-}
+const AUTH_COOKIE = 'agency_auth';
 
 function read(path: string) {
 	return JSON.parse(readFileSync(path, 'utf-8'));
@@ -25,9 +20,26 @@ function write(path: string, data: unknown) {
 	writeFileSync(path, JSON.stringify(data, null, '\t') + '\n');
 }
 
-export const load = ({ url }) => {
-	checkAuth(url);
+function isAuthenticated(cookies: Record<string, string>): boolean {
+	const cookie = cookies[AUTH_COOKIE];
+	if (!cookie) return false;
+	try {
+		const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
+		// Prüfe ob Cookie nicht älter als 1 Stunde
+		return parsed.exp > Date.now();
+	} catch {
+		return false;
+	}
+}
 
+export const load = ({ cookies }) => {
+	const authenticated = isAuthenticated(cookies);
+
+	if (!authenticated) {
+		return { authenticated: false };
+	}
+
+	// Nur wenn authentifiziert: Daten laden
 	const gating = read(GATING_PATH);
 	const smConfig = read(SM_CONFIG_PATH);
 	const overrides = existsSync(OVERRIDES_PATH) ? read(OVERRIDES_PATH) : { features: [] };
@@ -38,18 +50,46 @@ export const load = ({ url }) => {
 	const overrideFeatures = (overrides.features ?? []).filter((f: string) => gating.features?.[f]);
 
 	return {
+		authenticated: true,
 		plans: gating.plans,
 		features: gating.features,
 		currentPlan,
 		activeFeatures,
-		overrideFeatures,
-		secret: url.searchParams.get('secret')
+		overrideFeatures
 	};
 };
 
 export const actions = {
-	async save({ request, url }) {
-		checkAuth(url);
+	async login({ request, cookies }) {
+		const data = await request.formData();
+		const secret = data.get('secret') as string;
+
+		const expectedSecret = env.AGENCY_SECRET;
+		if (!expectedSecret || secret !== expectedSecret) {
+			return { error: 'Falsches Passwort' };
+		}
+
+		// Setze Auth-Cookie (gültig für 1 Stunde)
+		const exp = Date.now() + 60 * 60 * 1000;
+		const cookieValue = Buffer.from(JSON.stringify({ exp })).toString('base64');
+		cookies.set(AUTH_COOKIE, cookieValue, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'strict',
+			maxAge: 60 * 60 * 1000, // 1 Stunde
+			path: '/'
+		});
+
+		throw redirect(303, '/agency/gating');
+	},
+
+	async logout({ cookies }) {
+		cookies.delete(AUTH_COOKIE, { path: '/' });
+		throw redirect(303, '/agency/gating');
+	},
+
+	async save({ request, cookies }) {
+		if (!isAuthenticated(cookies)) throw error(403, 'Nicht authentifiziert');
 
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
@@ -71,8 +111,7 @@ export const actions = {
 			throw error(500, 'Fehler beim Generieren der Modelle');
 		}
 
-		const secret = url.searchParams.get('secret');
-		throw redirect(303, `/agency/gating?secret=${secret}`);
+		throw redirect(303, '/agency/gating');
 	}
 };
 
