@@ -48,6 +48,12 @@
 			"plans": [
 				"professional"
 			]
+		},
+		"erweiterte_gestaltung": {
+			"label": "Erweiterte Gestaltung",
+			"plans": [
+				"individuell"
+			]
 		}
 	},
 	"customTypes": {
@@ -71,6 +77,12 @@
 		},
 		"werkzeug": {
 			"feature": "ressourcenbuchung"
+		},
+		"button_stil": {
+			"feature": "erweiterte_gestaltung"
+		},
+		"icon": {
+			"feature": "erweiterte_gestaltung"
 		},
 		"settings": {
 			"fields": {
