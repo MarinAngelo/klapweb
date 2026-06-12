@@ -33,7 +33,18 @@ function isAuthenticated(cookies: Record<string, string>): boolean {
 }
 
 export const load = ({ cookies }) => {
-	const authenticated = isAuthenticated(cookies);
+	// Prüfe Authentication direkt
+	const cookie = cookies.get(AUTH_COOKIE);
+	let authenticated = false;
+
+	if (cookie) {
+		try {
+			const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
+			authenticated = parsed.exp > Date.now();
+		} catch {
+			authenticated = false;
+		}
+	}
 
 	if (!authenticated) {
 		return { authenticated: false };
@@ -74,7 +85,7 @@ export const actions = {
 		const cookieValue = Buffer.from(JSON.stringify({ exp })).toString('base64');
 		cookies.set(AUTH_COOKIE, cookieValue, {
 			httpOnly: true,
-			secure: true,
+			secure: false, // Lokal http://localhost erlauben
 			sameSite: 'strict',
 			maxAge: 60 * 60 * 1000, // 1 Stunde
 			path: '/'
