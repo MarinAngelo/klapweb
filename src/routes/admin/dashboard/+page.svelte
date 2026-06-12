@@ -24,6 +24,12 @@
 			icon: '🏠'
 		},
 		{
+			title: 'Gating Editor',
+			description: 'Pläne, Features und Slice-Gates in gating.json verwalten',
+			href: `/admin/gating?secret=${s}`,
+			icon: '⚙️'
+		},
+		{
 			title: 'Aufgaben',
 			description: 'Angenommene Aufgaben bestätigen und als erledigt markieren',
 			href: `/admin/aufgaben?secret=${s}`,
