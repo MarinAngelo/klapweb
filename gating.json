@@ -164,27 +164,5 @@
 		"Aufgaben": {
 			"feature": "ressourcenbuchung"
 		}
-	},
-	"button_stile": {
-		"durchstarten": {
-			"label": "Durchstarten"
-		},
-		"denKundenZumKaufAnimieren": {
-			"label": "Den Kunden zum Kauf animieren"
-		}
-	},
-	"icons": {
-		"external-link": {
-			"label": "Externer Link"
-		},
-		"menu": {
-			"label": "Menü"
-		},
-		"close": {
-			"label": "Schließen"
-		},
-		"pfeil-rechts-oben": {
-			"label": "Pfeil Rechts Oben"
-		}
 	}
 }

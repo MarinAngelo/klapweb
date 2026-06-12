@@ -17,7 +17,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,heading2,heading3,strong,em,hyperlink,image,list-item,o-list-item,heading4,heading5,heading6",
+            "multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item",
             "labels": [
               "highlight",
               "note",
@@ -153,7 +153,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
+            "multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item",
             "labels": [
               "highlight",
               "note",

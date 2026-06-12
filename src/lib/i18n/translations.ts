@@ -775,7 +775,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'gelesen und akzeptiere diese.',
 		'en-us': 'and accept them.'
 	},
-	'Gehostet auf': { 'de-ch': 'Gehostet auf', 'en-us': 'Hosted on' },
+	'Gehostet auf': { 'de-ch': 'Gehostet auf', 'en-us': 'Hosted on' }
 };
 
 /**

@@ -9,6 +9,9 @@
 	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
 	export let paddingTop: string | undefined = undefined;
 	export let paddingBottom: string | undefined = undefined;
+	/** Fertige Tailwind-Klassen (überschreibt paddingTop/paddingBottom komplett) */
+	export let paddingTopClass: string | undefined = undefined;
+	export let paddingBottomClass: string | undefined = undefined;
 	export let collapsible = true;
 	export let specialLayout = false;
 
@@ -54,8 +57,8 @@
 		'lg-top': ''
 	};
 
-	$: topClass = paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? '');
-	$: bottomClass = paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? '');
+	$: topClass = paddingTopClass !== undefined ? paddingTopClass : (paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? ''));
+	$: bottomClass = paddingBottomClass !== undefined ? paddingBottomClass : (paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? ''));
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }

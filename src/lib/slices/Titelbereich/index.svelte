@@ -11,6 +11,7 @@
 	import { createBannerHeight } from '$lib/utils/bannerHeight';
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { fade } from 'svelte/transition';
 	import ResponsivePrismicImage from '$lib/components/ResponsivePrismicImage.svelte';
 	import ImageCarousel from '$lib/components/ImageCarousel.svelte';
 	import ImageCarouselMobile from '../../components/ImageCarouselMobile.svelte';
@@ -86,6 +87,7 @@
 
 	// Button-Farben aus Slice (Type-safe)
 	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
+	$: btnStyleName = 'button_style' in slice.primary ? (slice.primary as any).button_style?.uid || undefined : undefined;
 	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
 	$: buttonHoverColor =
 		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
@@ -121,6 +123,14 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
+	$: textOverlayPaddingMobileVal = (slice.primary as any).text_overlay_padding_mobile as string | null | undefined;
+	$: isFullScreenMobile = $isMobile && textOverlayPaddingMobileVal === 'Ganzer Bildschirm';
+	$: effectiveContentPadding = $isMobile
+		? textOverlayPaddingMobileVal && textOverlayPaddingMobileVal !== 'Ganzer Bildschirm'
+			? (paddingMap[textOverlayPaddingMobileVal] ?? '0')
+			: '0'
+		: textOverlayPadding;
+
 	const textOverlayColor =
 		'text_overlay_color' in slice.primary
 			? slice.primary.text_overlay_color || 'var(--text-color)'
@@ -132,6 +142,40 @@
 		const result = convertNumber(slice.primary.text_overlay_opacity);
 		return result;
 	})();
+
+	// Karusell: aktueller Slide-Index (gebunden an beide Carousel-Komponenten)
+	let carouselCurrent = 0;
+
+	// Übernimmt Block-Typ und Label-Spans aus primary, ersetzt Text + Inline-Spans aus item.
+	function mergeTexts(primary: any[], item: any[]): any[] {
+		if (!primary?.length) return item;
+		return primary.map((pb, i) => {
+			const ib = item?.[i];
+			if (!ib?.text) return pb;
+			const newLen = (ib.text as string).length;
+			const labelSpans = (pb.spans ?? [])
+				.filter((s: any) => s.type === 'label')
+				.map((s: any) => ({ ...s, end: newLen }));
+			const contentSpans = (ib.spans ?? []).filter((s: any) => s.type !== 'label');
+			return { ...pb, text: ib.text, spans: [...labelSpans, ...contentSpans] };
+		});
+	}
+
+	$: carouselItems =
+		slice.variation === 'mitBildKarusell'
+			? ((slice.primary as any).imageMerryGoRound as Array<{ image: any; text: any }> | null) ?? []
+			: [];
+	$: activeItem = carouselItems[carouselCurrent] ?? null;
+	$: primaryText = 'text' in slice.primary ? (slice.primary.text as any[]) : [];
+	$: carouselTransitionMs = (slice.primary as any).transition_duration_ms || 8000;
+	$: carouselDisplayMs = (slice.primary as any).display_duration_ms || 2000;
+	$: carouselIntervalMs = carouselTransitionMs + carouselDisplayMs;
+	$: carouselTransitionMode = (slice.primary as any).transition_mode || 'Crossfade';
+	$: carouselShowPagination = (slice.primary as any).show_pagination !== false;
+	$: activeText =
+		activeItem?.text && isFilled.richText(activeItem.text)
+			? mergeTexts(primaryText, activeItem.text as any[])
+			: primaryText;
 
 	const bannerHeight = createBannerHeight(theme, headerHeight, sliceStore);
 
@@ -224,30 +268,42 @@
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
 		{#if $isMobile}
-			<ImageCarouselMobile images={slice.primary.imageMerryGoRound} />
+			<ImageCarouselMobile
+				images={slice.primary.imageMerryGoRound}
+				bind:current={carouselCurrent}
+				transitionMs={carouselTransitionMs}
+				transitionMode={carouselTransitionMode}
+				showPagination={carouselShowPagination}
+			/>
 		{:else}
 			<ImageCarousel
 				images={slice.primary.imageMerryGoRound}
+				bind:current={carouselCurrent}
 				mode="background"
 				autoplay={!$isMobile}
-				intervalMs={5000}
-				transitionMs={8000}
+				intervalMs={carouselIntervalMs}
+				transitionMs={carouselTransitionMs}
+				transitionMode={carouselTransitionMode}
+				showPagination={carouselShowPagination}
 			/>
 		{/if}
 	{/if}
 	<div class="absolute inset-0 z-10 flex items-center justify-center">
+		<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
+		{#if mounted && isFullScreenMobile && !switchOffTextOverlay}
+			<div
+				class="absolute inset-0"
+				style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none;"
+				aria-hidden="true"
+			></div>
+		{/if}
 		<Bounded tag="div" yPadding="none" class="w-full">
 			<div class="relative w-full flex items-center justify-center">
-				<!-- Overlay -->
-				{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
+				<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
+				{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay)}
 					<div
 						class="absolute inset-0"
-						style="
-						background-color: {textOverlayColor};
-						opacity: {textOverlayOpacity};
-						pointer-events: none;
-						border-radius: 3rem;
-						"
+						style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -256,15 +312,9 @@
 				<div
 					use:reveal={fadeIn}
 					class="relative z-10 text-center"
-					style="padding: {textOverlayPadding};"
+					style="padding: {effectiveContentPadding};"
 				>
-					<!-- Responsive Anpassung des Paddings -->
 					<style>
-						@media (max-width: 640px) {
-							.relative.z-10.text-center {
-								padding: 0 !important;
-							}
-						}
 						.leading-loose.tracking-wider-all * {
 							margin-bottom: 0 !important;
 						}
@@ -274,10 +324,15 @@
 						class="leading-loose tracking-wider-all"
 						style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
 					>
-						{#if 'text' in slice.primary}
-							<div style="--page-color: {color}; color: {color};">
-								<PrismicRichText field={slice.primary.text} />
-							</div>
+						{#if activeText.length}
+							{#key carouselCurrent}
+								<div
+									style="--page-color: {color}; color: {color};"
+									in:fade={{ duration: 600 }}
+								>
+									<PrismicRichText field={activeText} />
+								</div>
+							{/key}
 						{/if}
 					</div>
 					{#if 'button_link' in slice.primary && isFilled.link(slice.primary.button_link)}
@@ -285,10 +340,11 @@
 							<Button
 								link={slice.primary.button_link}
 								text={slice.primary.button_text || 'Mehr erfahren'}
-								color={buttonColor || $theme.pageButtonColor}
-								bgColor={buttonBgColor || $theme.pageButtonBgColor}
-								hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
-								hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
+								styleName={btnStyleName}
+								color={buttonColor || undefined}
+								bgColor={buttonBgColor || undefined}
+								hoverColor={buttonHoverColor || undefined}
+								hoverBgColor={buttonHoverBgColor || undefined}
 								size={buttonSize}
 							/>
 						</div>

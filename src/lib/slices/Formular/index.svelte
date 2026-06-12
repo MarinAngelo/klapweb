@@ -25,6 +25,7 @@
 	$: isEinChecken = (slice.variation as string) === 'einChecken';
 	$: isAusChecken = (slice.variation as string) === 'ausChecken';
 	$: checkPrimary = slice.primary as any;
+	$: submitBtnStyle = (slice.primary as any)?.button_style?.uid || undefined;
 
 	// Check-in / Check-out state
 	let buchungsref = '';
@@ -336,7 +337,7 @@
 
 			// Im Dev-Modus → lokaler Mock-Endpunkt
 			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
-			const endpoint = '/api/form';
+			const endpoint = import.meta.env.DEV ? '/api/form' : '/';
 			const response = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -366,11 +367,6 @@
 		search.forEach((value, key) => {
 			urlParams = { ...urlParams, [key]: value };
 		});
-		// Fallback: use current page UID if no ?dienstleistung= URL param present
-		if (!urlParams.dienstleistung) {
-			const uid = $page.params.uid;
-			if (uid) urlParams = { ...urlParams, dienstleistung: uid };
-		}
 	});
 
 	// Optional: Live-Validierung beim Tippen (löscht die Fehlermeldung, sobald keine Links mehr da sind)
@@ -497,13 +493,16 @@
 					name={formName}
 					method="POST"
 					data-netlify="true"
+					netlify-honeypot="bot-field"
 					on:submit={handleSubmit}
 					on:input={onFormInput}
 					aria-describedby="form-error"
 					novalidate
 				>
 					<input type="hidden" name="form-name" value={formName} />
-					<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung ?? ''} />
+					{#if urlParams.dienstleistung}
+						<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung} />
+					{/if}
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
 					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
 						{#each formFields as field}
@@ -531,6 +530,7 @@
 							text={slice.primary?.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
 							link={undefined}
+							styleName={submitBtnStyle}
 							color={undefined}
 							bgColor={undefined}
 							hoverColor={undefined}

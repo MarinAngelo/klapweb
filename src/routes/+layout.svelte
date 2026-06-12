@@ -34,7 +34,7 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang } = data);
+	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, user } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
@@ -389,6 +389,8 @@
 			{allAlternates}
 			{showSwitcher}
 			mainLang={data.mainLang}
+			{userBackendActive}
+			{user}
 		/>
 	{/if}
 

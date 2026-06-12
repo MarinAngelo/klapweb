@@ -35,15 +35,16 @@
 	}
 
 	const variation = slice.variation as string;
-	const isBildLinks = variation === 'standardBildLinks';
+	$: isBildLinks = p.image_left ?? false;
 	const isMulti = variation === 'multi';
 
-	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
-	$: textCenterV = (slice.primary as any).text_center_v ?? false;
-	$: textCenterH = (slice.primary as any).text_center_h ?? false;
-	$: fullscreen = (slice.primary as any).fullscreen ?? false;
-	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
+	$: anim = mapAnimationFromPrimary(p);
+	$: mobileVollbreite = p.mobile_full_width ?? true;
+	$: mobileImageFirst = p.mobile_image_first ?? false;
+	$: textCenterV = p.text_center_v ?? false;
+	$: textCenterH = p.text_center_h ?? false;
+	$: fullscreen = p.fullscreen ?? false;
+	$: visible = isVisibleForPlan(p.feature_gate, $planFilter);
 
 	const rowGapMap: Record<string, string> = {
 		'kein Abstand': '0',
@@ -62,9 +63,18 @@
 		...item,
 		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
 	}));
-	$: imageRound = !!(slice.primary as Record<string, unknown>).image_round;
-	$: lightbox = !!(slice.primary as Record<string, unknown>).lightbox;
-	$: isFullWidth = !!(slice.primary as Record<string, unknown>).full_width;
+	$: imageRound = !!p.image_round;
+	$: lightbox = !!p.lightbox;
+	$: isFullWidth = !!p.full_width;
+
+	$: defaultSliderImages = (() => {
+		const imgs: any[] = [];
+		if (isFilled.image(p.image)) imgs.push(p.image);
+		for (const item of (slice as any).items ?? []) {
+			if (isFilled.image(item.image)) imgs.push(item.image);
+		}
+		return imgs;
+	})();
 
 	const textPadMap: Record<string, string> = {
 		kein: '0',
@@ -73,6 +83,21 @@
 		gross: '4rem'
 	};
 	$: textPad = textPadMap[(p as any).text_padding ?? 'mittel'] ?? '2rem';
+
+	const ptMobMap: Record<string, string> = { 'kein Abstand': 'pt-0', 'wenig': 'pt-8', 'mittel': 'pt-20', 'gross': 'pt-32' };
+	const ptDeskMap: Record<string, string> = { 'kein Abstand': 'md:pt-0', 'wenig': 'md:pt-10', 'mittel': 'md:pt-28', 'gross': 'md:pt-48' };
+	const pbMobMap: Record<string, string> = { 'kein Abstand': 'pb-0', 'wenig': 'pb-8', 'mittel': 'pb-20', 'gross': 'pb-32' };
+	const pbDeskMap: Record<string, string> = { 'kein Abstand': 'md:pb-0', 'wenig': 'md:pb-10', 'mittel': 'md:pb-28', 'gross': 'md:pb-48' };
+
+	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: computedPaddingTopClass = yPaddingMobileVal
+		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
+		: undefined;
+	$: computedPaddingBottomClass = yPaddingMobileVal
+		? (p.y_padding_same
+			? [pbMobMap[yPaddingMobileVal], p.y_padding ? pbDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
+			: '')
+		: undefined;
 </script>
 
 {#if visible}
@@ -113,7 +138,7 @@
 				fullscreen={false}
 			>
 				{#if item.button_text && isFilled.link(item.button_link)}
-					<Button link={item.button_link} text={item.button_text} mb={false} />
+					<Button link={item.button_link} text={item.button_text} styleName={item.button_style?.uid || undefined} mb={false} />
 				{/if}
 			</ImageTextGrid>
 		{/each}
@@ -125,6 +150,8 @@
 	yPadding={fullscreen ? 'none' : yPadding}
 	fullHeight={fullscreen}
 	noPadding={mobileVollbreite}
+	paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
+	paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 		? ` min-height: calc(100vh - ${$headerHeight}px);`
@@ -138,19 +165,21 @@
 	<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
 		<ImageTextGrid
 			image={isFilled.image(p.image) ? p.image : null}
+			images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
 			text={p.text}
 			imageLeft={isBildLinks}
 			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 			imageRound={p.image_round}
 			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
 			noRoundMobile={mobileVollbreite}
+			mobileTextFirst={mobileImageFirst ? false : (!isBildLinks && mobileVollbreite)}
 			{lightbox}
 			{textCenterV}
 			{textCenterH}
 			{fullscreen}
 		>
 			{#if p.buttonText && isFilled.link(p.buttonLink)}
-				<Button link={p.buttonLink} text={p.buttonText} mb={false} />
+				<Button link={p.buttonLink} text={p.buttonText} styleName={p.button_style?.uid || undefined} mb={false} />
 			{/if}
 		</ImageTextGrid>
 	</div>

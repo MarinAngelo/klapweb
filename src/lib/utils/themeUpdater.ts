@@ -1,7 +1,6 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
 import { presetFontUrls } from '$lib/utils/presetFonts';
-import gating from '../../../gating.json';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -66,6 +65,8 @@ interface ThemeUpdateData {
 	prismicTheme?: {
 		data?: PrismicThemeData;
 	};
+	buttonStilDocs?: Array<any>;
+	iconDocs?: Array<any>;
 }
 
 // Funktion zum Auslesen einer CSS-Variable
@@ -215,70 +216,32 @@ export function updateTheme(data: ThemeUpdateData): void {
 		set('--page-link-active-color', pageLinkActiveColor);
 		set('--page-link-visited-color', pageLinkVisitedColor);
 
-		// CMS-konfigurierbare Button-Stile (Repeatable Group)
-		const toSlug = (s: string) =>
-			s
-				.toLowerCase()
-				.replace(/ä/g, 'ae')
-				.replace(/ö/g, 'oe')
-				.replace(/ü/g, 'ue')
-				.replace(/ß/g, 'ss')
-				.replace(/[^a-z0-9]+/g, '-')
-				.replace(/^-+|-+$/g, '');
-
-		// Schritt 1: Alle Stile aus gating.json als Basis (Label+Slug, keine Farben)
-		// → Slug wird aus dem Label berechnet (toSlug), nicht aus dem camelCase-Key in gating.json
-		// → Muss identisch mit dem Slug sein, den Theme-Dokument-Labels erzeugen
-		const gatingButtonStile = (gating as any).button_stile ?? {};
-		const buttonStileMap = new Map<
-			string,
-			{
-				name: string;
-				label: string;
-				color?: string;
-				bg_color?: string;
-				hover_color?: string;
-				hover_bg_color?: string;
-				icon?: string;
-			}
-		>(
-			Object.entries(gatingButtonStile).map(([, def]) => {
-				const label = (def as any).label ?? '';
-				const slug = toSlug(label);
-				return [slug, { name: slug, label }];
-			})
-		);
-
-		// Schritt 2: Theme-Dokument-Werte als Override-Layer (Farben sind projekt-spezifisch)
-		for (const s of prismicThemeData.button_stile ?? []) {
-			if (!s.label) continue;
-			const slug = toSlug(s.label);
-			const existing = buttonStileMap.get(slug) ?? { name: slug, label: s.label };
-			buttonStileMap.set(slug, {
-				...existing,
-				color: s.color ?? undefined,
-				bg_color: s.bg_color ?? undefined,
-				hover_color: s.hover_color ?? undefined,
-				hover_bg_color: s.hover_bg_color ?? undefined,
-				icon: s.icon ?? undefined
-			});
-			// Nur gesetzte Farben als CSS-Vars schreiben
-			if (s.color) set(`--btn-${slug}-color`, s.color);
-			if (s.bg_color) set(`--btn-${slug}-bg`, s.bg_color);
-			if (s.hover_color) set(`--btn-${slug}-hover-color`, s.hover_color);
-			if (s.hover_bg_color) set(`--btn-${slug}-hover-bg`, s.hover_bg_color);
-		}
-
-		const buttonStile = [...buttonStileMap.values()];
+		// Button-Stile aus button_stil Custom Type Dokumenten
+		const buttonStile = (data.buttonStilDocs ?? []).map((doc: any) => {
+			const slug: string = doc.uid;
+			if (doc.data.color) set(`--btn-${slug}-color`, doc.data.color);
+			if (doc.data.bg_color) set(`--btn-${slug}-bg`, doc.data.bg_color);
+			if (doc.data.hover_color) set(`--btn-${slug}-hover-color`, doc.data.hover_color);
+			if (doc.data.hover_bg_color) set(`--btn-${slug}-hover-bg`, doc.data.hover_bg_color);
+			return {
+				name: slug,
+				label: doc.data.name ?? slug,
+				color: doc.data.color ?? undefined,
+				bg_color: doc.data.bg_color ?? undefined,
+				hover_color: doc.data.hover_color ?? undefined,
+				hover_bg_color: doc.data.hover_bg_color ?? undefined,
+				icon: doc.data.icon?.uid ?? undefined
+			};
+		});
 		theme.update((t) => ({ ...t, buttonStile }));
 
-		// CMS-konfigurierbare SVG-Icons
-		const svgIcons = (prismicThemeData.svg_icons ?? []).map((s) => ({
-			name: toSlug(s.label ?? ''),
-			label: s.label,
-			svg_code: s.svg_code,
-			image_url: s.image?.url,
-			image_alt: s.image?.alt
+		// Icons aus icon Custom Type Dokumenten
+		const svgIcons = (data.iconDocs ?? []).map((doc: any) => ({
+			name: doc.uid,
+			label: doc.data.name ?? doc.uid,
+			svg_code: doc.data.svg_code ?? undefined,
+			image_url: doc.data.image?.url ?? undefined,
+			image_alt: doc.data.image?.alt ?? undefined
 		}));
 		theme.update((t) => ({ ...t, svgIcons }));
 

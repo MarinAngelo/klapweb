@@ -233,7 +233,7 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
 									"labels": [
 										"size-xs",
 										"size-sm",
@@ -377,13 +377,18 @@
 					}
 				},
 				"button_style": {
-					"type": "Select",
+					"type": "Link",
 					"config": {
 						"label": "Button-Stil",
-						"placeholder": "— Standard —",
-						"options": [
-							"Durchstarten",
-							"Den Kunden zum Kauf animieren"
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "button_stil",
+								"fields": [
+									"name"
+								]
+							}
 						]
 					}
 				},
