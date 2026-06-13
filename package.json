@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "node scripts/build-customtypes.js && concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
+		"dev": "node scripts/clear-ports.js && node scripts/build-customtypes.js && concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
 		"vite:dev": "vite dev",
 		"build": "node scripts/build-customtypes.js && vite build",
 		"preview": "vite preview",

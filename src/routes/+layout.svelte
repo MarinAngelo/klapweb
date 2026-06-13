@@ -374,8 +374,22 @@
 	<meta name="twitter:image" content={finalImage} />
 
 	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
-	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
+	{#if adobeFontUrl}
+		<link rel="preconnect" href="https://p.typekit.net" crossorigin />
+		<link rel="dns-prefetch" href="https://p.typekit.net" />
+	{/if}
 </svelte:head>
+
+{#if adobeFontUrl}
+	<script>
+		const link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = `${adobeFontUrl}`;
+		link.crossOrigin = 'anonymous';
+		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
+		document.head.appendChild(link);
+	</script>
+{/if}
 
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 

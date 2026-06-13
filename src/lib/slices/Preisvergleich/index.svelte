@@ -77,7 +77,7 @@
 	const ctaLabel = p.cta_label || 'Jetzt bestellen';
 	const titel = p.titel?.[0]?.text ?? null;
 
-	$: btnStyleName = (p.button_style as string | undefined) || undefined;
+	$: btnStyleName = (p.button_style as any)?.uid || undefined;
 	$: btnHighlightColor = btnStyleName
 		? `var(--btn-${btnStyleName}-color)`
 		: 'var(--page-button-color)';

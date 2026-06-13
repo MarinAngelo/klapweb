@@ -7,7 +7,7 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { reveal } from '$lib/actions/reveal';
-	import { hexLuminance, shadeColor } from '$lib/utils/color';
+	import { shadeColor } from '$lib/utils/color';
 
 	export let slice: Content.AccordionSlice;
 	export let context: any = {};
@@ -70,26 +70,21 @@
 	$: effectiveBorderColor = p.border_color || effectiveTextColor;
 
 	/**
-	 * Steuert die Textfarbe im aufgeklappten Content-Bereich.
+	 * Steuert die Textfarbe des Dropdown-Balkens (klickbare Kopfzeile).
+	 * Der ausgeklappte Body übernimmt immer die Seitenfarben (Hintergrund + Text).
 	 *
 	 * contrast_amount im CMS (oder contrastAmount-Prop) = 0 (Standard):
-	 *   automatische Richtung basierend auf Hintergrundhelligkeit
-	 *   - heller Hintergrund (Luminanz > 0.5) → Text wird um 50 Stufen dunkler
-	 *   - dunkler Hintergrund                 → Text wird um 50 Stufen heller
+	 *   Balken-Text in Seiten-Textfarbe
 	 *
 	 * contrast_amount ≠ 0: manueller Override
-	 *   - negativer Wert (z.B. -40) → Text dunkler
-	 *   - positiver Wert (z.B. +40) → Text heller
-	 *
-	 * Hinweis: wirkt via CSS-Variable --page-color, da p/li in app.css
-	 * explizit color: var(--page-color) setzen (überschreibt normale Vererbung).
+	 *   - negativer Wert (z.B. -40) → Balken-Text dunkler
+	 *   - positiver Wert (z.B. +40) → Balken-Text heller
 	 */
 	export let contrastAmount: number = 0;
 	$: resolvedContrastAmount = p.contrast_amount ?? contrastAmount;
-	$: itemTextColor = shadeColor(
-		effectiveTextColor || '#000000',
-		resolvedContrastAmount || (hexLuminance(effectiveBgColor || '#ffffff') > 0.5 ? -50 : 50)
-	);
+	$: itemTextColor = resolvedContrastAmount
+		? shadeColor(effectiveTextColor || '#000000', resolvedContrastAmount)
+		: effectiveTextColor;
 </script>
 
 <Bounded
@@ -162,6 +157,7 @@
 				>
 					<button
 						class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1"
+						style="color: {itemTextColor};"
 						aria-haspopup="true"
 						aria-expanded={$openIndex === index}
 						on:click={() => toggleItem(index)}
@@ -188,7 +184,7 @@
 						<div class="overflow-hidden">
 							<div
 								class="mt-2 px-3 py-2 rounded"
-								style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};"
+								style="background-color: {effectiveBgColor};"
 							>
 								{#if leistung.beschreibung?.length}
 									<PrismicRichText field={leistung.beschreibung} />
@@ -219,6 +215,7 @@
 						'bildUndText'
 							? 'pb-5 md:pb-1'
 							: ''} {!p.bg_color && p.mobile_full_width && !p.sektion_rahmen ? 'px-6 md:px-0' : ''}"
+						style="color: {itemTextColor};"
 						aria-haspopup="true"
 						aria-expanded={$openIndex === index}
 						on:click={() => toggleItem(index)}
@@ -250,7 +247,7 @@
 									: 'py-2'} {slice.variation === 'bildUndText'
 									? 'rounded md:rounded-3xl'
 									: 'rounded'} {slice.variation === 'bildUndText' ? 'md:px-0' : 'px-3'}"
-								style="background-color: {effectiveTextColor}11; --page-color: {itemTextColor};"
+								style="background-color: {effectiveBgColor};"
 							>
 								{#if slice.variation === 'bildUndText'}
 									<ImageTextGrid

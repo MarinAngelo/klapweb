@@ -17,7 +17,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -269,7 +269,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -330,6 +330,14 @@
           "config": {
             "label": "Button Text",
             "placeholder": ""
+          }
+        },
+        "button_style": {
+          "type": "Link",
+          "config": {
+            "label": "Button-Stil",
+            "select": "document",
+            "customtypes": ["button_stil"]
           }
         },
         "image": {
@@ -643,7 +651,7 @@
             "label": "Text",
             "placeholder": "",
             "allowTargetBlank": true,
-            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,embed,list-item,o-list-item,rtl",
             "labels": [
               "size-xs",
               "size-sm",
@@ -727,6 +735,14 @@
             "placeholder_false": "Nein",
             "placeholder_true": "Ja",
             "default_value": false
+          }
+        },
+        "button_style": {
+          "type": "Link",
+          "config": {
+            "label": "Button-Stil",
+            "select": "document",
+            "customtypes": ["button_stil"]
           }
         },
         "button_text": {

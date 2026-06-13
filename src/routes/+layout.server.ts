@@ -2,6 +2,19 @@ import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 
+// SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
+const _svgCache = new Map<string, string>();
+async function fetchSvgFromUrl(url: string): Promise<string | null> {
+	if (_svgCache.has(url)) return _svgCache.get(url)!;
+	try {
+		const resp = await fetch(url);
+		if (!resp.ok) return null;
+		const text = await resp.text();
+		if (text.includes('<svg')) { _svgCache.set(url, text); return text; }
+	} catch {}
+	return null;
+}
+
 // Repo-Infos (Sprachen) ändern sich selten — einmal pro Prozess cachen.
 // Eliminiert einen seriellen API-Call (~300–500 ms) bei jedem Page-Request.
 let _repoCache: { mainLang: string; allLocales: string[]; at: number } | null = null;
@@ -39,7 +52,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 
 		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
 		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.
-		const [settings, navigation, themes, fonts, variablenDoc, masterSettingsOrNull] =
+		const [settings, navigation, themes, fonts, buttonStilDocs, iconDocs, variablenDoc, masterSettingsOrNull] =
 			await Promise.all([
 				client.getSingle('settings', { lang }).catch(() => {
 					throw error(
@@ -55,6 +68,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 				}),
 				client.getAllByType('theme', { lang: '*' }).catch(() => []),
 				client.getAllByType('font').catch(() => []),
+				client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
+				client.getAllByType('icon', { lang: '*' }).catch(() => []),
 				(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
 				// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
 				lang !== mainLang
@@ -63,6 +78,17 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			]);
 
 		// Bei gleicher Sprache sind Settings == baseSettings; sonst separater Call
+		// SVG-Inhalt aus Bild-Feld nachladen wenn svg_code leer ist
+		const iconDocsResolved = await Promise.all(
+			(iconDocs as any[]).map(async (doc: any) => {
+				if (!doc.data.svg_code && doc.data.image?.url) {
+					const svgCode = await fetchSvgFromUrl(doc.data.image.url);
+					if (svgCode) return { ...doc, data: { ...doc.data, svg_code: svgCode } };
+				}
+				return doc;
+			})
+		);
+
 		const baseSettings = lang !== mainLang ? masterSettingsOrNull : settings;
 		if (!baseSettings) {
 			throw error(
@@ -177,6 +203,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			navigation,
 			prismicTheme,
 			fonts,
+			buttonStilDocs,
+			iconDocs: iconDocsResolved,
 			lang,
 			mainLang,
 			isMultilangActive,

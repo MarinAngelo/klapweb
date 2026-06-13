@@ -64,6 +64,16 @@
 						"default_value": true
 					}
 				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": [
+							"button_stil"
+						]
+					}
+				},
 				"button_color": {
 					"type": "Color",
 					"config": {
