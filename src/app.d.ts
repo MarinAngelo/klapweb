@@ -5,6 +5,12 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			themeColorsCss?: string;
+			user?: {
+				id: string;
+				email: string;
+				name: string;
+				verified: boolean;
+			};
 		}
 		// interface PageData {}
 		// interface Platform {}

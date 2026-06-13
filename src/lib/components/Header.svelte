@@ -20,6 +20,8 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let mainLang: string | undefined;
+	export let userBackendActive: boolean = false;
+	export let user: { name: string; email: string } | null = null;
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -247,6 +249,8 @@
 					{locales}
 					{showSwitcher}
 					{allAlternates}
+					{userBackendActive}
+					{user}
 					headerLinkFont={prismicTheme?.data?.header_link_font?.data?.name || $theme.headerLinkFont}
 				/>
 			{/if}

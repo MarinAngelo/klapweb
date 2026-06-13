@@ -25,6 +25,7 @@
 	$: isEinChecken = (slice.variation as string) === 'einChecken';
 	$: isAusChecken = (slice.variation as string) === 'ausChecken';
 	$: checkPrimary = slice.primary as any;
+	$: submitBtnStyle = (slice.primary as any)?.button_style?.uid || undefined;
 
 	// Check-in / Check-out state
 	let buchungsref = '';
@@ -529,6 +530,7 @@
 							text={slice.primary?.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
 							link={undefined}
+							styleName={submitBtnStyle}
 							color={undefined}
 							bgColor={undefined}
 							hoverColor={undefined}

@@ -27,7 +27,7 @@ export interface RessourceBuchung {
 	zimmerauswahl?: ZimmerAuswahl[]; // leer = ganze Ressource gebucht
 	preisCHF: number;
 	bookedAt: string;
-	status: 'pending' | 'confirmed' | 'checked_in' | 'checked_out';
+	status: 'pending' | 'confirmed' | 'checked_in' | 'checked_out' | 'abgerechnet';
 	name?: string;
 	email?: string;
 	telefon?: string;
@@ -36,6 +36,12 @@ export interface RessourceBuchung {
 	checkOutAt?: string;
 	checkInItems?: string[];
 	checkOutItems?: string[];
+	creditsCHF?: number;         // summe erledigter Aufgaben-Credits
+	abrechnungBetrag?: number;   // freigegebener Endbetrag (manuell korrigierbar)
+	abrechnungFreigegebenAt?: string;
+	reminderSent?: boolean;
+	nachAnkunftReminderSent?: boolean;
+	abreiseReminderSent?: boolean;
 }
 
 function generateReferenz(): string {
@@ -78,7 +84,7 @@ export async function listAlleRessourceBuchungen(): Promise<RessourceBuchung[]> 
 	);
 	return records
 		.filter(Boolean)
-		.sort((a, b) => a.von.localeCompare(b.von));
+		.sort((a, b) => b.bookedAt.localeCompare(a.bookedAt));
 }
 
 /**
@@ -174,17 +180,25 @@ export async function getRessourceBuchung(id: string): Promise<RessourceBuchung 
 	return store.get(id, { type: 'json' }) as Promise<RessourceBuchung | null>;
 }
 
-/** Update booking status. */
-export async function updateRessourceBuchungStatus(
+/** Update booking (partial patch). */
+export async function updateRessourceBuchung(
 	id: string,
-	status: 'pending' | 'confirmed'
+	patch: Partial<RessourceBuchung>
 ): Promise<RessourceBuchung> {
 	const store = getStore_();
 	const existing = await store.get(id, { type: 'json' }) as RessourceBuchung | null;
 	if (!existing) throw new Error('Buchung nicht gefunden');
-	const updated = { ...existing, status };
+	const updated = { ...existing, ...patch };
 	await store.setJSON(id, updated);
 	return updated;
+}
+
+/** Update booking status. */
+export async function updateRessourceBuchungStatus(
+	id: string,
+	status: RessourceBuchung['status']
+): Promise<RessourceBuchung> {
+	return updateRessourceBuchung(id, { status });
 }
 
 /** Delete a booking (admin). */

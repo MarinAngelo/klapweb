@@ -48,6 +48,18 @@
 			"plans": [
 				"professional"
 			]
+		},
+		"erweiterte_gestaltung": {
+			"label": "Erweiterte Gestaltung",
+			"plans": [
+				"individuell"
+			]
+		},
+		"pwa": {
+			"label": "Progressive Web App",
+			"plans": [
+				"individuell"
+			]
 		}
 	},
 	"customTypes": {
@@ -72,22 +84,28 @@
 		"werkzeug": {
 			"feature": "ressourcenbuchung"
 		},
+		"button_stil": {
+			"feature": "erweiterte_gestaltung"
+		},
+		"icon": {
+			"feature": "erweiterte_gestaltung"
+		},
 		"settings": {
 			"fields": {
 				"pwa_enabled": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_name": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_short_name": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_theme_color": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_icon": {
-					"plan": "individuell"
+					"feature": "pwa"
 				}
 			}
 		}
@@ -109,6 +127,11 @@
 			}
 		},
 		"Button": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
 			"variations": {
 				"kauf": {
 					"feature": "ecommerce"
@@ -116,6 +139,11 @@
 			}
 		},
 		"Formular": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
 			"variations": {
 				"mitTermin": {
 					"feature": "terminbuchung"
@@ -144,6 +172,13 @@
 		"Inhaltsverzeichnis": {
 			"plan": "professional"
 		},
+		"Titelbereich": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			}
+		},
 		"Text": {
 			"fields": {
 				"feature_gate": {
@@ -155,6 +190,9 @@
 			"fields": {
 				"feature_gate": {
 					"plan": "individuell"
+				},
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
 				}
 			}
 		},
@@ -163,28 +201,6 @@
 		},
 		"Aufgaben": {
 			"feature": "ressourcenbuchung"
-		}
-	},
-	"button_stile": {
-		"durchstarten": {
-			"label": "Durchstarten"
-		},
-		"denKundenZumKaufAnimieren": {
-			"label": "Den Kunden zum Kauf animieren"
-		}
-	},
-	"icons": {
-		"external-link": {
-			"label": "Externer Link"
-		},
-		"menu": {
-			"label": "Menü"
-		},
-		"close": {
-			"label": "Schließen"
-		},
-		"pfeil-rechts-oben": {
-			"label": "Pfeil Rechts Oben"
 		}
 	}
 }
