@@ -1,6 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
+import { isFeatureActive } from '$lib/server/features';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -102,6 +103,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const chatActive = (baseSettings.data as any)?.chat_active ?? false;
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
+		const klapstudioActive = isFeatureActive('klapstudio');
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
@@ -212,6 +214,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatActive,
 			chatBotName,
 			chatGreeting,
+			klapstudioActive,
 			locales: allLocales,
 			variables,
 			user: locals.user ?? null

@@ -60,6 +60,12 @@
 			"plans": [
 				"individuell"
 			]
+		},
+		"klapstudio": {
+			"label": "KlapStudio Design Panel",
+			"plans": [
+				"professional"
+			]
 		}
 	},
 	"customTypes": {

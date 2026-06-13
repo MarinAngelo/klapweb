@@ -35,7 +35,7 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, chatActive, chatBotName, chatGreeting, user } = data);
+	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, chatActive, chatBotName, chatGreeting, klapstudioActive, user } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
@@ -316,7 +316,7 @@
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
-			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+			if (klapstudioActive && e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
@@ -433,7 +433,9 @@
 </div>
 
 <PrismicPreview {repositoryName} />
-<KlapStudio bind:open={studioOpen} />
+{#if klapstudioActive}
+	<KlapStudio bind:open={studioOpen} />
+{/if}
 {#if chatActive}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} />
 {/if}
