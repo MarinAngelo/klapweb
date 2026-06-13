@@ -383,7 +383,7 @@
 	<script>
 		const link = document.createElement('link');
 		link.rel = 'stylesheet';
-		link.href = '{adobeFontUrl}';
+		link.href = `${adobeFontUrl}`;
 		link.crossOrigin = 'anonymous';
 		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
 		document.head.appendChild(link);
