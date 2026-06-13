@@ -100,7 +100,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
 		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
-		const chatActive = (baseSettings.data as any)?.chat_active ?? false;
+		const chatBotFeatureActive = isFeatureActive('chatbot');
+		const chatActive = chatBotFeatureActive && ((baseSettings.data as any)?.chat_active ?? false);
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
 		const klapstudioActive = isFeatureActive('klapstudio');
