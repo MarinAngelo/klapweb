@@ -10,6 +10,13 @@ export interface AddonRow {
 	billingType: string | null;
 }
 
+export interface PlaeneFeature {
+	label: string;
+	wert: string | null;
+	beschreibung?: string;
+	leistungUid?: string;
+}
+
 export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
 	const client = createClient({ fetch });
@@ -62,14 +69,18 @@ export async function load({ params, parent, fetch, cookies }) {
 		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
 			(page.data as any).leistungen ?? [];
 
-		// Schritt 1: Alle Plan-Seiten parallel laden
+		// Schritt 1: Alle Plan-Seiten + Leistungen parallel laden
 		const planPagesPerSlice: Array<Array<any>> = await Promise.all(
 			plaeneSlices.map((s: any) =>
 				Promise.all(
 					(s.items as Array<{ plan: any }>).map((item) => {
 						const uid = item.plan?.uid;
 						if (!uid) return Promise.resolve(null);
-						return client.getByUID('page', uid, { lang }).catch(() => null);
+						// Versuche erst als Page, dann als Leistung
+						return client
+							.getByUID('page', uid, { lang })
+							.catch(() => client.getByUID('leistung', uid, { lang }))
+							.catch(() => null);
 					})
 				)
 			)
@@ -113,7 +124,8 @@ export async function load({ params, parent, fetch, cookies }) {
 						const beschreibung: string | undefined = blocks.length
 							? (asHTML(blocks) ?? undefined)
 							: undefined;
-						return { label, wert: row.wert ?? null, beschreibung } as PlaeneFeature;
+						const leistungUid = doc?.uid ?? row.leistung?.uid ?? undefined;
+						return { label, wert: row.wert ?? null, beschreibung, leistungUid } as PlaeneFeature;
 					}
 				);
 			});
