@@ -66,6 +66,13 @@
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
 
+## Prismic Link-Felder in Custom Types
+
+- **NIEMALS `"select": "document"` setzen** auf Link-Feldern — das blockiert externe URLs (Web Links) komplett!
+- `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
+- **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
+- **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+
 ## slicemachine.config.json Protection
 
 - **Datei ist Branch-spezifisch** — `main` hat `"plan": "individuell"`, andere Branches können andere Pläne haben
