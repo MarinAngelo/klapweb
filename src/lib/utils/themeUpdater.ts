@@ -33,6 +33,7 @@ interface PrismicThemeData {
 	footer_font_size_button_bar?: number;
 	footer_link_color?: string;
 	footer_link_hover_color?: string;
+	no_margin_top?: boolean;
 	page_link_active_color?: string;
 	page_link_visited_color?: string;
 	highlight_color?: string;
@@ -89,6 +90,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 		return;
 	}
 
+
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
@@ -137,6 +139,7 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const footerLinkColor = prismicThemeData.footer_link_color || getCssVar('--footer-link-color');
 	const footerLinkHoverColor =
 		prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
+	const noMarginTop = prismicThemeData.no_margin_top || false;
 	const pageLinkActiveColor =
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
 	const pageLinkVisitedColor =
@@ -144,8 +147,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const highlightColor = prismicThemeData.highlight_color || getCssVar('--highlight-color');
 	const highlightBgColor = prismicThemeData.highlight_bg_color || getCssVar('--highlight-bg-color');
 
-	theme.update((t) => ({
-		...t,
+	const updateData = {
+		...({} as any),
 		bannerTop,
 		pageColor,
 		pageBgColor,
@@ -174,8 +177,15 @@ export function updateTheme(data: ThemeUpdateData): void {
 		footerFontSizeButtonBar,
 		footerLinkColor,
 		footerLinkHoverColor,
+		noMarginTop,
 		pageLinkActiveColor,
 		pageLinkVisitedColor
+	};
+
+
+	theme.update((t) => ({
+		...t,
+		...updateData
 	}));
 
 	// Werte als CSS-Variablen setzen – nur wenn nicht leer, damit die
