@@ -22,7 +22,7 @@
         "form_instructions": {
           "type": "StructuredText",
           "config": {
-            "multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
             "allowTargetBlank": true,
             "label": "Formular Instruktionen",
             "labels": [
@@ -102,7 +102,7 @@
         "submitted_text": {
           "type": "StructuredText",
           "config": {
-            "multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+            "multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
             "allowTargetBlank": true,
             "label": "Gesendet Text",
             "labels": [
