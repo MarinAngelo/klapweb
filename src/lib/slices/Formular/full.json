@@ -22,7 +22,7 @@
 				"form_instructions": {
 					"type": "StructuredText",
 					"config": {
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"allowTargetBlank": true,
 						"label": "Formular Instruktionen",
 						"labels": [
@@ -104,7 +104,7 @@
 				"submitted_text": {
 					"type": "StructuredText",
 					"config": {
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"allowTargetBlank": true,
 						"label": "Gesendet Text",
 						"labels": [
@@ -279,7 +279,7 @@
 				"form_instructions": {
 					"type": "StructuredText",
 					"config": {
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"allowTargetBlank": true,
 						"label": "Formular Instruktionen",
 						"labels": [
@@ -355,7 +355,7 @@
 				"submitted_text": {
 					"type": "StructuredText",
 					"config": {
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"allowTargetBlank": true,
 						"label": "Gesendet Text",
 						"labels": [
@@ -605,7 +605,7 @@
 					"config": {
 						"label": "Einleitungstext",
 						"allowTargetBlank": true,
-						"multi": "paragraph,strong,em,hyperlink,list-item"
+						"multi": "paragraph,strong,em,hyperlink,list-item,heading1,heading2,heading3,heading4,heading5,heading6"
 					}
 				},
 				"buchungsref_label": {
@@ -626,7 +626,7 @@
 					"type": "StructuredText",
 					"config": {
 						"label": "Bestätigungstext",
-						"multi": "paragraph,strong,em"
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6"
 					}
 				},
 				"error_not_found": {
@@ -698,7 +698,7 @@
 					"config": {
 						"label": "Einleitungstext",
 						"allowTargetBlank": true,
-						"multi": "paragraph,strong,em,hyperlink,list-item"
+						"multi": "paragraph,strong,em,hyperlink,list-item,heading1,heading2,heading3,heading4,heading5,heading6"
 					}
 				},
 				"buchungsref_label": {
@@ -719,7 +719,7 @@
 					"type": "StructuredText",
 					"config": {
 						"label": "Bestätigungstext",
-						"multi": "paragraph,strong,em"
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6"
 					}
 				},
 				"error_not_found": {
