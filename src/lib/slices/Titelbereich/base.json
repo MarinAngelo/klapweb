@@ -48,8 +48,11 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 <<<<<<< HEAD
+<<<<<<< HEAD
 						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
 =======
+=======
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
@@ -350,6 +353,9 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
+<<<<<<< HEAD
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
+=======
 >>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"labels": [
 							"size-xs",

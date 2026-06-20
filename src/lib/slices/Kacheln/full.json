@@ -187,7 +187,11 @@
 									"placeholder": "",
 									"allowTargetBlank": true,
 <<<<<<< HEAD
+<<<<<<< HEAD
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+=======
+									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 =======
 									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 >>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
@@ -529,8 +533,11 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 <<<<<<< HEAD
+<<<<<<< HEAD
 						"multi": "paragraph,strong,em"
 =======
+=======
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"highlight",
