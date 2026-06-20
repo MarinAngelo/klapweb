@@ -43,7 +43,7 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -342,7 +342,7 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -695,7 +695,7 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -1000,7 +1000,7 @@
 									"label": "Text (überschreibt Haupt-Text)",
 									"placeholder": "Leer = Haupt-Text wird verwendet",
 									"allowTargetBlank": false,
-									"multi": "paragraph,strong,em"
+									"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6"
 								}
 							}
 						}
