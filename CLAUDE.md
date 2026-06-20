@@ -57,11 +57,28 @@
 - Import im Template: `import { _ } from '$lib/stores/i18n'` → Verwendung: `{$_('Schlüssel')}`
 - Neuen Key zuerst in `src/lib/i18n/translations.ts` eintragen (Key = deutscher Text, mind. `de-ch` + `en-us`)
 - Gilt auch für interne Tools wie den Katalog
+- **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
+- **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
+- **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
 
 ## Netlify Blobs
 
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
+
+## Prismic Link-Felder in Custom Types
+
+- **NIEMALS `"select": "document"` setzen** auf Link-Feldern — das blockiert externe URLs (Web Links) komplett!
+- `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
+- **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
+- **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+
+## slicemachine.config.json Protection
+
+- **Datei ist Branch-spezifisch** — `main` hat `"plan": "individuell"`, andere Branches können andere Pläne haben
+- **Automatischer Schutz via `.gitattributes`**: `slicemachine.config.json merge=ours` (gitignored, nicht manuell editieren)
+- Git-Merge: Behält immer die lokale Version, nie die Remote-Version übernehmen
+- **Grund:** Ein Merge von klap-web-ch nach main würde den Plan überschreiben und Funktionen sperren
 
 ## Button-Stile
 

@@ -29,7 +29,12 @@ function mockImage(key: string, index: number, config: any, lang: string): any {
 	return img;
 }
 
-function mockGroupItems(fields: Record<string, any>, count: number, lang: string, sliceName: string): any[] {
+function mockGroupItems(
+	fields: Record<string, any>,
+	count: number,
+	lang: string,
+	sliceName: string
+): any[] {
 	return Array.from({ length: count }, (_, i) => {
 		const item: Record<string, any> = {};
 		for (const [k, fd] of Object.entries(fields)) {
@@ -146,10 +151,29 @@ export interface MockSlice {
 	id: string;
 }
 
-export function generateMockSlice(sliceType: string, variation: any, lang = 'de-ch', sliceName = ''): MockSlice {
+export function generateMockSlice(
+	sliceType: string,
+	variation: any,
+	lang = 'de-ch',
+	sliceName = '',
+	mockImages: Record<string, string> = {}
+): MockSlice {
 	const primary: Record<string, any> = {};
 	for (const [key, fieldDef] of Object.entries(variation.primary ?? {})) {
-		primary[key] = mockField(key, fieldDef as any, lang, 0, sliceName);
+		if ((fieldDef as any).type === 'Image' && mockImages[key]) {
+			const cfg = (fieldDef as any).config ?? {};
+			const w = Math.min(cfg.constraint?.width || 800, 1200);
+			const h = Math.min(cfg.constraint?.height || 600, 900);
+			primary[key] = {
+				url: mockImages[key],
+				dimensions: { width: w, height: h },
+				alt: null,
+				copyright: null,
+				edit: { x: 0, y: 0, zoom: 1, background: 'transparent' }
+			};
+		} else {
+			primary[key] = mockField(key, fieldDef as any, lang, 0, sliceName);
+		}
 	}
 
 	const items: any[] = [];
