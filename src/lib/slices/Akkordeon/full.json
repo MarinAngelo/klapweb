@@ -69,7 +69,11 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
+<<<<<<< HEAD
 						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
+=======
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -133,7 +137,11 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
+<<<<<<< HEAD
 									"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+=======
+									"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 									"labels": [
 										"size-xs",
 										"size-sm",
@@ -180,6 +188,122 @@
 							}
 						}
 					}
+<<<<<<< HEAD
+=======
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "bildUndText",
+			"name": "Bild und Text",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"description": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Beschreibung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 				},
 				"erstes_item_ausgeklappt": {
 					"type": "Boolean",
@@ -422,7 +546,11 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
+<<<<<<< HEAD
 									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+=======
+									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 									"labels": [
 										"size-xs",
 										"size-sm",
@@ -499,6 +627,84 @@
 							}
 						}
 					}
+<<<<<<< HEAD
+=======
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "leistungen",
+			"name": "Leistungen",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Leistungs-Dokumente als Akkordeon",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl"
+					}
+				},
+				"description": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Beschreibung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
+					}
+>>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 				},
 				"erstes_item_ausgeklappt": {
 					"type": "Boolean",
