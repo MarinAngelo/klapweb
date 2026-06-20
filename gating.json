@@ -54,6 +54,12 @@
 			"plans": [
 				"individuell"
 			]
+		},
+		"pwa": {
+			"label": "Progressive Web App",
+			"plans": [
+				"individuell"
+			]
 		}
 	},
 	"customTypes": {
@@ -87,19 +93,19 @@
 		"settings": {
 			"fields": {
 				"pwa_enabled": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_name": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_short_name": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_theme_color": {
-					"plan": "individuell"
+					"feature": "pwa"
 				},
 				"pwa_icon": {
-					"plan": "individuell"
+					"feature": "pwa"
 				}
 			}
 		}

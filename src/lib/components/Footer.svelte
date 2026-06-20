@@ -39,6 +39,7 @@
 	};
 
 	$: ({ footerColor } = $theme);
+	$: footerMarginTop = $theme.noMarginTop ? '0' : '10rem';
 
 	$: email = settingsData.e_mail || '';
 	$: responsiblePersonCompany = settingsData.responsible_person_company || '';
@@ -54,7 +55,7 @@
 	<Bounded
 		tag="footer"
 		yPadding="none"
-		style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: 10rem; padding-top: 3rem; padding-bottom: 1rem;"
+		style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: {footerMarginTop}; padding-top: 3rem; padding-bottom: 1rem;"
 	>
 		<footer class="w-full h-full text-inherit">
 			<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">

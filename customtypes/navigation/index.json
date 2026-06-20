@@ -26,7 +26,6 @@
 								"placeholder": "",
 								"allowTargetBlank": false,
 								"allowText": false,
-								"select": "document",
 								"customtypes": ["page"]
 							}
 						},

@@ -51,9 +51,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}
@@ -93,13 +91,7 @@
 				"config": {
 					"label": "Mobile Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": [
-						"Sehr Klein",
-						"Klein",
-						"Standard",
-						"Gross",
-						"Sehr Gross"
-					]
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
 				}
 			},
 			"base_font_size_desktop": {
@@ -107,13 +99,7 @@
 				"config": {
 					"label": " Desktop Basis-Schriftgrösse",
 					"placeholder": "",
-					"options": [
-						"Sehr Klein",
-						"Klein",
-						"Standard",
-						"Gross",
-						"Sehr Gross"
-					]
+					"options": ["Sehr Klein", "Klein", "Standard", "Gross", "Sehr Gross"]
 				}
 			},
 			"p_font_offset_mobile": {
@@ -135,13 +121,7 @@
 				"config": {
 					"label": "Container-Breite",
 					"placeholder": "Standard (72rem)",
-					"options": [
-						"Schmal",
-						"Normal",
-						"Standard",
-						"Weit",
-						"Sehr weit"
-					]
+					"options": ["Schmal", "Normal", "Standard", "Weit", "Sehr weit"]
 				}
 			},
 			"page_link_color": {
@@ -183,6 +163,101 @@
 				"type": "Color",
 				"config": {
 					"label": "Schaltfl. HF wenn Maus drüber",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"svg_icons": {
+				"type": "Group",
+				"config": {
+					"label": "SVG-Icons",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Pfeil rechts"
+							}
+						},
+						"svg_code": {
+							"type": "Text",
+							"config": {
+								"label": "SVG-Code",
+								"placeholder": "<svg viewBox=\"0 0 24 24\">...</svg>"
+							}
+						},
+						"image": {
+							"type": "Image",
+							"config": {
+								"label": "Bild (Alternative zu SVG-Code)",
+								"constraint": {},
+								"thumbnails": []
+							}
+						}
+					}
+				}
+			},
+			"button_stile": {
+				"type": "Group",
+				"config": {
+					"label": "Button-Stile",
+					"fields": {
+						"label": {
+							"type": "Text",
+							"config": {
+								"label": "Bezeichnung",
+								"placeholder": "z.B. Hauptbutton"
+							}
+						},
+						"color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_color": {
+							"type": "Color",
+							"config": {
+								"label": "Schriftfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"hover_bg_color": {
+							"type": "Color",
+							"config": {
+								"label": "Hintergrundfarbe (Hover)",
+								"placeholder": "Hex-Farbcode (#RRGGBB)"
+							}
+						},
+						"icon": {
+							"type": "Select",
+							"config": {
+								"label": "Symbol",
+								"placeholder": "— Kein Symbol —",
+								"options": ["Externer Link", "Menü", "Schließen", "Pfeil Rechts Oben"]
+							}
+						}
+					}
+				}
+			},
+			"highlight_color": {
+				"type": "Color",
+				"config": {
+					"label": "Highlight Schriftfarbe",
+					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"highlight_bg_color": {
+				"type": "Color",
+				"config": {
+					"label": "Highlight Hintergrundfarbe",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
 			},
@@ -244,12 +319,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name",
-								"provider",
-								"variants",
-								"adobeFontId"
-							]
+							"fields": ["name", "provider", "variants", "adobeFontId"]
 						}
 					]
 				}
@@ -320,9 +390,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": [
-								"name"
-							]
+							"fields": ["name"]
 						}
 					]
 				}
@@ -378,6 +446,15 @@
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
+				}
+			},
+			"no_margin_top": {
+				"type": "Boolean",
+				"config": {
+					"label": "Kein oberer Abstand",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
 				}
 			}
 		}

@@ -69,6 +69,7 @@ export const THEME_DEFAULTS = {
 	footerFontSizeButtonBar: 0,
 	footerLinkColor: '',
 	footerLinkHoverColor: '',
+	noMarginTop: false,
 
 	// Weitere Eigenschaften (nicht in app.css)
 	headerLinkActiveColor: '',
@@ -128,6 +129,7 @@ const initialValues = {
 	footerFontSizeButtonBar: parseFloat(cssVar('--footer-font-size-button-bar')) || 0,
 	footerLinkColor: cssVar('--footer-link-color'),
 	footerLinkHoverColor: cssVar('--footer-link-hover-color'),
+	noMarginTop: false,
 	// Buttons
 	buttonBorderRadius: parseFloat(cssVar('--button-border-radius')) || 0,
 	buttonPaddingY: parseFloat(cssVar('--button-padding-y')) || 0,
