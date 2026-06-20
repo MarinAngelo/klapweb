@@ -69,7 +69,7 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -242,7 +242,7 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+									"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 									"labels": [
 										"size-xs",
 										"size-sm",
@@ -358,7 +358,7 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -531,7 +531,7 @@
 									"label": "Text",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 									"labels": [
 										"size-xs",
 										"size-sm",
@@ -648,7 +648,7 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"multi": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"highlight",
 							"note",
