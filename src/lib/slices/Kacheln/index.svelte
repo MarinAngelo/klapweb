@@ -89,10 +89,21 @@
 			const highlight = hervorhebung === `Plan ${i + 1}`;
 			const uid = planDoc?.uid as string | undefined;
 			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
-			const pageHref = uid ? `/${uid}` : null;
+			const pageHref = uid
+				? planDoc?.type === 'leistung'
+					? `/leistung/${uid}`
+					: `/${uid}`
+				: null;
 			const features: Array<{ label: string; wert: string | null; beschreibung?: string }> =
 				plaeneData[i] ?? [];
-			return { name, price: converted, suffix, billingType, highlight, href, pageHref, features };
+
+			// Extrahiere erste Leistung aus Plan-Page (falls vorhanden)
+			const leistungenRefs: Array<{ leistung?: any }> = (d.leistungen ?? []);
+			const firstLeistung = leistungenRefs[0]?.leistung;
+			const leistungHref = firstLeistung?.uid ? `/leistung/${firstLeistung.uid}` : null;
+			const leistungName = firstLeistung?.data?.label || firstLeistung?.uid || null;
+
+			return { name, price: converted, suffix, billingType, highlight, href, pageHref, features, leistungHref, leistungName };
 		});
 	})();
 
@@ -175,6 +186,19 @@
 									{plan.name}
 								{/if}
 							</h4>
+							{#if plan.leistungHref && plan.leistungName}
+								<div class="mt-2 text-sm">
+									<a
+										href={plan.leistungHref}
+										class="inline-flex items-center gap-1 text-primary hover:opacity-70 transition-opacity"
+									>
+										{plan.leistungName}
+										<span style="line-height: 0;">
+											<SvgIcons name="external-link" size="0.7em" color="currentColor" />
+										</span>
+									</a>
+								</div>
+							{/if}
 							{#if plan.price !== null}
 								<div class="text-2xl font-bold mt-1 tabular-nums">
 									{formatPrice(plan.price, activeCurrency)}
@@ -217,7 +241,21 @@
 											<span style="color: {cardColor};">{feat.wert}</span>
 										{/if}
 										<span>
-											{feat.label}{#if feat.beschreibung}&thinsp;<InfoTooltip
+											{#if feat.leistungUid}
+												<a
+													href="/leistung/{feat.leistungUid}"
+													class="hover:opacity-70 transition-opacity inline-flex items-center gap-1"
+													style="color: {cardColor};"
+												>
+													{feat.label}
+													<span style="line-height: 0;"
+														><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
+													>
+												</a>
+											{:else}
+												{feat.label}
+											{/if}
+											{#if feat.beschreibung}&thinsp;<InfoTooltip
 													html={feat.beschreibung}
 												/>{/if}
 										</span>

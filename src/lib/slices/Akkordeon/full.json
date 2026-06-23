@@ -622,10 +622,6 @@
 			"items": {}
 		},
 		{
-			"_meta": {
-				"Beschreibung": "Diese Variante erlaubt es Leistungen, die im Tab Leistungen der page erfasst wurden, anzuzeigen.",
-				"BeschreibungEn": "This variant allows services captured in the Services tab of the page to be displayed."
-			},
 			"id": "leistungen",
 			"name": "Leistungen",
 			"docURL": "...",

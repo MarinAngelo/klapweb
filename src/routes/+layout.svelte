@@ -10,6 +10,7 @@
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
+	import ChatWidget from '$lib/components/ChatWidget.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
@@ -34,7 +35,7 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, user } = data);
+	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, chatActive, chatBotName, chatGreeting, user } = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
@@ -319,6 +320,10 @@
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
+			if (studioOpen && e.key === 'Escape') {
+				e.preventDefault();
+				studioOpen = false;
+			}
 			if (e.altKey && e.shiftKey && e.key === 'A') {
 				e.preventDefault();
 				goto('/admin');
@@ -373,8 +378,22 @@
 	<meta name="twitter:image" content={finalImage} />
 
 	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
-	{#if adobeFontUrl}<link rel="stylesheet" href={adobeFontUrl} />{/if}
+	{#if adobeFontUrl}
+		<link rel="preconnect" href="https://p.typekit.net" crossorigin />
+		<link rel="dns-prefetch" href="https://p.typekit.net" />
+	{/if}
 </svelte:head>
+
+{#if adobeFontUrl}
+	<script>
+		const link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = `${adobeFontUrl}`;
+		link.crossOrigin = 'anonymous';
+		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
+		document.head.appendChild(link);
+	</script>
+{/if}
 
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
@@ -419,6 +438,9 @@
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
+{#if chatActive}
+	<ChatWidget botName={chatBotName} greeting={chatGreeting} />
+{/if}
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
 {#if process.env.NODE_ENV !== 'production'}
