@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { env } from '$env/dynamic/private';
-import { listManualInvoices, saveManualInvoice } from '$lib/server/invoices';
+import { listManualInvoices, saveManualInvoice, deleteManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
 
@@ -44,12 +44,11 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 
 export const actions: Actions = {
 	preview: async ({ request, fetch }) => {
-		const secret = request.headers.get('x-admin-secret');
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
 		if (!secret || secret !== ADMIN_SECRET) {
 			throw error(403, 'Zugang verweigert');
 		}
-
-		const formData = await request.formData();
 		const itemsJson = formData.get('items-json') as string;
 		const items = JSON.parse(itemsJson);
 
@@ -101,12 +100,11 @@ export const actions: Actions = {
 	},
 
 	save: async ({ request, fetch }) => {
-		const secret = request.headers.get('x-admin-secret');
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
 		if (!secret || secret !== ADMIN_SECRET) {
 			throw error(403, 'Zugang verweigert');
 		}
-
-		const formData = await request.formData();
 		const itemsJson = formData.get('items-json') as string;
 		const items = JSON.parse(itemsJson);
 		const invoiceNumber = formData.get('invoice-number') as string;
@@ -150,23 +148,10 @@ export const actions: Actions = {
 
 		const pdfBytes = await generateManualPdf(invoiceNumber, invoiceData, companyInfo);
 
-		await saveManualInvoice({
-			invoiceNumber,
-			date: new Date().toISOString(),
-			vorname: invoiceData.vorname,
-			nachname: invoiceData.nachname,
-			firma: invoiceData.firma,
-			email: invoiceData.email,
-			adresse: invoiceData.adresse,
-			plz: invoiceData.plz,
-			ort: invoiceData.ort,
-			land: invoiceData.land,
-			items,
-			notes: invoiceData.notes,
-			currency: companyInfo.currency
-		});
+		let initialStatus: 'gespeichert' | 'gesendet' = 'gespeichert';
+		let emailSentAt: string | undefined;
 
-		// E-Mail versenden (optional)
+		// E-Mail versenden wenn gewünscht
 		if (sendEmail && invoiceData.email) {
 			const { env: privEnv } = await import('$env/dynamic/private');
 			const resendKey = privEnv.RESEND_API_KEY;
@@ -178,20 +163,257 @@ export const actions: Actions = {
 					const resend = new Resend(resendKey);
 					const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
-					await resend.emails.send({
+					const { error } = await resend.emails.send({
 						from: fromEmail,
 						to: invoiceData.email,
 						subject: `Ihre Rechnung ${invoiceNumber} – ${companyInfo.name}`,
 						text: `Sehr geehrte/r ${invoiceData.vorname} ${invoiceData.nachname},\n\nVielen Dank für Ihren Auftrag. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${companyInfo.name}`,
 						attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
 					});
+
+					if (!error) {
+						initialStatus = 'gesendet';
+						emailSentAt = new Date().toISOString();
+					}
 				} catch (e) {
 					console.error('E-Mail-Versand fehlgeschlagen:', e);
 				}
 			}
 		}
 
-		return { success: true, invoiceNumber };
+		const invoiceId = await saveManualInvoice({
+			invoiceNumber,
+			date: new Date().toISOString(),
+			status: initialStatus,
+			vorname: invoiceData.vorname,
+			nachname: invoiceData.nachname,
+			firma: invoiceData.firma,
+			email: invoiceData.email,
+			adresse: invoiceData.adresse,
+			plz: invoiceData.plz,
+			ort: invoiceData.ort,
+			land: invoiceData.land,
+			items,
+			notes: invoiceData.notes,
+			currency: companyInfo.currency,
+			emailSentAt
+		});
+
+		const savedInvoice = await getManualInvoice(invoiceId);
+		return { success: true, invoiceNumber, invoice: savedInvoice };
+	},
+
+	delete: async ({ request, fetch }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+
+		const invoiceId = formData.get('invoice-id') as string;
+		if (!invoiceId) {
+			throw error(400, 'Rechnung-ID fehlt');
+		}
+
+		try {
+			await deleteManualInvoice(invoiceId);
+			return { success: true };
+		} catch (e) {
+			console.error('Rechnung löschen fehlgeschlagen:', e);
+			throw error(500, 'Rechnung konnte nicht gelöscht werden');
+		}
+	},
+
+	edit: async ({ request, fetch }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+
+		const invoiceId = formData.get('invoice-id') as string;
+		if (!invoiceId) {
+			throw error(400, 'Rechnung-ID fehlt');
+		}
+
+		const invoice = await getManualInvoice(invoiceId);
+		if (!invoice) {
+			throw error(404, 'Rechnung nicht gefunden');
+		}
+
+		return { invoice };
+	},
+
+	updateInvoice: async ({ request, fetch }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+
+		const invoiceId = formData.get('invoice-id') as string;
+		const itemsJson = formData.get('items-json') as string;
+		const items = JSON.parse(itemsJson);
+
+		if (!invoiceId) {
+			throw error(400, 'Rechnung-ID fehlt');
+		}
+
+		try {
+			await updateManualInvoice(invoiceId, {
+				vorname: formData.get('vorname') as string,
+				nachname: formData.get('nachname') as string,
+				firma: (formData.get('firma') as string) || undefined,
+				email: (formData.get('email') as string) || undefined,
+				adresse: (formData.get('adresse') as string) || undefined,
+				plz: (formData.get('plz') as string) || undefined,
+				ort: (formData.get('ort') as string) || undefined,
+				land: (formData.get('land') as string) || undefined,
+				items,
+				notes: (formData.get('notes') as string) || undefined
+			});
+
+			return { success: true };
+		} catch (e) {
+			console.error('Rechnung aktualisieren fehlgeschlagen:', e);
+			throw error(500, 'Rechnung konnte nicht aktualisiert werden');
+		}
+	},
+
+	previewEditPdf: async ({ request, fetch }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+
+		const itemsJson = formData.get('items-json') as string;
+		const items = JSON.parse(itemsJson);
+		const invoiceNumber = formData.get('invoice-number') as string;
+
+		const invoiceData = {
+			vorname: formData.get('vorname') as string,
+			nachname: formData.get('nachname') as string,
+			firma: (formData.get('firma') as string) || undefined,
+			email: (formData.get('email') as string) || undefined,
+			adresse: (formData.get('adresse') as string) || undefined,
+			plz: (formData.get('plz') as string) || undefined,
+			ort: (formData.get('ort') as string) || undefined,
+			land: (formData.get('land') as string) || undefined,
+			items,
+			notes: (formData.get('notes') as string) || undefined
+		};
+
+		const client = createClient({ fetch });
+		const settings = await client.getSingle('settings');
+		const d = settings.data as Record<string, unknown>;
+
+		const companyInfo = {
+			name: (d.responsible_person_company as string) ?? '',
+			address:
+				(Array.isArray(d.responsible_address)
+					? (d.responsible_address as Array<{ text?: string }>)
+							.map((b) => b?.text ?? '')
+							.filter(Boolean)
+							.join('\n')
+					: '') ?? '',
+			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
+			uid: (d.company_identification_number as string) ?? '',
+			iban: (d.invoice_iban as string) ?? '',
+			bank: (d.invoice_bank as string) ?? '',
+			bic: (d.invoice_bic as string) ?? '',
+			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
+			vatRate: (d.invoice_vat_rate as number) ?? null,
+			currency: (d.invoice_currency as string)?.split(' - ')?.[0] ?? 'CHF'
+		};
+
+		const pdfBytes = await generateManualPdf(invoiceNumber, invoiceData, companyInfo);
+		return {
+			pdfBase64: Buffer.from(pdfBytes).toString('base64')
+		};
+	},
+
+	sendInvoiceEmail: async ({ request, fetch }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+
+		const invoiceId = formData.get('invoice-id') as string;
+		if (!invoiceId) {
+			throw error(400, 'Rechnung-ID fehlt');
+		}
+
+		const invoice = await getManualInvoice(invoiceId);
+		if (!invoice) {
+			throw error(404, 'Rechnung nicht gefunden');
+		}
+
+		if (!invoice.email) {
+			throw error(400, 'Keine E-Mail-Adresse vorhanden');
+		}
+
+		// Generiere PDF
+		const client = createClient({ fetch });
+		const settings = await client.getSingle('settings');
+		const d = settings.data as Record<string, unknown>;
+
+		const companyInfo = {
+			name: (d.responsible_person_company as string) ?? '',
+			address:
+				(Array.isArray(d.responsible_address)
+					? (d.responsible_address as Array<{ text?: string }>)
+							.map((b) => b?.text ?? '')
+							.filter(Boolean)
+							.join('\n')
+					: '') ?? '',
+			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
+			uid: (d.company_identification_number as string) ?? '',
+			iban: (d.invoice_iban as string) ?? '',
+			bank: (d.invoice_bank as string) ?? '',
+			bic: (d.invoice_bic as string) ?? '',
+			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
+			vatRate: (d.invoice_vat_rate as number) ?? null,
+			currency: invoice.currency || 'CHF'
+		};
+
+		const pdfBytes = await generateManualPdf(invoice.invoiceNumber, invoice as any, companyInfo);
+		const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+
+		// Versende E-Mail
+		const resendKey = env.RESEND_API_KEY;
+		const fromEmail = env.INVOICE_FROM_EMAIL;
+
+		if (!resendKey || !fromEmail) {
+			throw error(500, 'E-Mail-Konfiguration fehlt');
+		}
+
+		try {
+			const { Resend } = await import('resend');
+			const resend = new Resend(resendKey);
+
+			const customerName = [invoice.vorname, invoice.nachname].filter(Boolean).join(' ');
+
+			await resend.emails.send({
+				from: fromEmail,
+				to: invoice.email,
+				subject: `Ihre Rechnung ${invoice.invoiceNumber} – ${companyInfo.name}`,
+				text: `Sehr geehrte/r ${customerName},\n\nVielen Dank für Ihren Auftrag. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${companyInfo.name}`,
+				attachments: [{ filename: `Rechnung_${invoice.invoiceNumber}.pdf`, content: pdfBase64 }]
+			});
+
+			// Update Status
+			await updateManualInvoice(invoiceId, {
+				status: 'gesendet',
+				emailSentAt: new Date().toISOString()
+			});
+
+			return { success: true };
+		} catch (e) {
+			console.error('E-Mail-Versand fehlgeschlagen:', e);
+			throw error(500, 'E-Mail konnte nicht versendet werden');
+		}
 	}
 };
 

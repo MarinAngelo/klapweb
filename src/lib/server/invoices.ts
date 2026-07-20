@@ -26,6 +26,7 @@ export interface ManualInvoiceRecord {
 	id: string;
 	invoiceNumber: string;
 	date: string;
+	status: 'gespeichert' | 'gesendet';
 	// Billing address / contact
 	vorname: string;
 	nachname: string;
@@ -83,4 +84,14 @@ export async function listManualInvoices(): Promise<ManualInvoiceRecord[]> {
 export async function getManualInvoice(id: string): Promise<ManualInvoiceRecord | null> {
 	const store = getInvoiceStore();
 	return (await store.get(id, { type: 'json' })) as ManualInvoiceRecord | null;
+}
+
+export async function updateManualInvoice(
+	id: string,
+	record: Partial<Omit<ManualInvoiceRecord, 'id'>>
+): Promise<void> {
+	const store = getInvoiceStore();
+	const existing = await getManualInvoice(id);
+	if (!existing) throw new Error('Rechnung nicht gefunden');
+	await store.setJSON(id, { ...existing, ...record });
 }
