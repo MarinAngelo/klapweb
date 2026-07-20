@@ -27,6 +27,8 @@ export interface ManualInvoiceRecord {
 	invoiceNumber: string;
 	date: string;
 	status: 'gespeichert' | 'gesendet';
+	paymentStatus: 'offen' | 'bezahlt';
+	paymentMethod?: 'rechnung' | 'bar';
 	// Billing address / contact
 	vorname: string;
 	nachname: string;

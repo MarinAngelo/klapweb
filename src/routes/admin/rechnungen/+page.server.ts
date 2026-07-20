@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { env } from '$env/dynamic/private';
 import { listManualInvoices, saveManualInvoice, deleteManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import { listCustomers } from '$lib/server/customers';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
 
@@ -13,7 +14,10 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		throw error(403, 'Zugang verweigert');
 	}
 
-	const invoices = await listManualInvoices();
+	const [invoices, customers] = await Promise.all([
+		listManualInvoices(),
+		listCustomers()
+	]);
 
 	// Firmendaten laden
 	const client = createClient({ fetch });
@@ -39,7 +43,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		currency: (d.invoice_currency as string)?.split(' - ')?.[0] ?? 'CHF'
 	};
 
-	return { invoices, companyInfo };
+	return { invoices, customers, companyInfo };
 };
 
 export const actions: Actions = {
@@ -270,7 +274,8 @@ export const actions: Actions = {
 				ort: (formData.get('ort') as string) || undefined,
 				land: (formData.get('land') as string) || undefined,
 				items,
-				notes: (formData.get('notes') as string) || undefined
+				notes: (formData.get('notes') as string) || undefined,
+				paymentStatus: (formData.get('payment-status') as 'offen' | 'bezahlt') || 'offen'
 			});
 
 			return { success: true };

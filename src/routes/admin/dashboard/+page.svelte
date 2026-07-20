@@ -7,7 +7,7 @@
 	const sections = [
 		{
 			title: 'Rechnungen',
-			description: 'Manuelle Rechnungen erstellen, bearbeiten, versenden',
+			description: 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
 			href: `/admin/rechnungen?secret=${s}`,
 			icon: '📄'
 		},

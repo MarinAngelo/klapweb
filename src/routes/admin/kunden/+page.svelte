@@ -6,7 +6,7 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
-	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Dienstleistung', 'Betrag', 'Zahlung', ''];
+	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Adresse', 'Quelle', ''];
 	$: secret = $page.url.searchParams.get('secret') ?? '';
 
 	let isFormOpen = false;
@@ -31,8 +31,9 @@
 			day: '2-digit', month: '2-digit', year: 'numeric',
 			hour: '2-digit', minute: '2-digit'
 		});
-		const amount = c.amount != null ? `${c.amount} ${c.currency}` : '–';
-		return { date, name, email: c.email ?? '–', firma: c.firma ?? '–', service: c.service, amount, method: c.paymentMethod };
+		const adresse = [c.adresse, c.plz, c.ort].filter(Boolean).join(', ') || '–';
+		const quelle = c.paymentMethod === 'manuell' ? 'Manuell erfasst' : 'E-Commerce';
+		return { date, name, email: c.email ?? '–', firma: c.firma ?? '–', adresse, quelle };
 	}
 
 	const handleCreate: SubmitFunction = async ({ formData }) => {
@@ -53,8 +54,12 @@
 				isFormOpen = false;
 				// Reload to show new customer
 				location.reload();
+			} else if (result.type === 'failure') {
+				alert('Fehler beim Erfassen: ' + (result.data?.message || 'Unbekannter Fehler'));
+			} else if (result.type === 'error') {
+				alert('Fehler beim Erfassen: ' + (result.error?.message || 'Server-Fehler'));
 			} else {
-				alert('Fehler beim Erfassen');
+				alert('Fehler beim Erfassen: Unbekannter Fehler');
 			}
 		};
 	};
@@ -82,7 +87,7 @@
 		</button>
 
 		{#if isFormOpen}
-			<form method="POST" action="?/create" use:enhance={handleCreate} style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+			<form method="POST" action="?/create&secret={secret}" use:enhance={handleCreate} style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
 				<input type="hidden" name="secret" value={secret} />
 
 				<div style="grid-column: 1;">
@@ -154,17 +159,8 @@
 							<td style="padding: 0.5rem 0.75rem;">{r.name}</td>
 							<td style="padding: 0.5rem 0.75rem;">{r.email}</td>
 							<td style="padding: 0.5rem 0.75rem;">{r.firma}</td>
-							<td style="padding: 0.5rem 0.75rem;">{r.service}</td>
-							<td style="padding: 0.5rem 0.75rem; white-space: nowrap;">{r.amount}</td>
-							<td style="padding: 0.5rem 0.75rem;">
-								<span style="
-									padding: 0.125rem 0.5rem;
-									border-radius: 999px;
-									font-size: 0.75rem;
-									background: {r.method === 'rechnung' ? '#dbeafe' : r.method === 'bar' ? '#dcfce7' : '#f3e8ff'};
-									color: {r.method === 'rechnung' ? '#1e40af' : r.method === 'bar' ? '#166534' : '#6b21a8'};
-								">{r.method}</span>
-							</td>
+							<td style="padding: 0.5rem 0.75rem;">{r.adresse}</td>
+							<td style="padding: 0.5rem 0.75rem; white-space: nowrap;">{r.quelle}</td>
 							<td style="padding: 0.5rem 0.75rem;">
 								<form
 									method="POST"
