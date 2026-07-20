@@ -2,7 +2,8 @@
 	import type { PageData } from './$types';
 	export let data: PageData;
 
-	import { page, enhance } from '$app/stores';
+	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Dienstleistung', 'Betrag', 'Zahlung', ''];
