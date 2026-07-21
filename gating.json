@@ -19,6 +19,12 @@
 				"professional"
 			]
 		},
+		"manuelle_rechnungen": {
+			"label": "Manuelle Rechnungen",
+			"plans": [
+				"professional"
+			]
+		},
 		"ecommerce": {
 			"label": "E-Commerce",
 			"plans": [

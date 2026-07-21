@@ -203,3 +203,77 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ```
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
+
+## Admin-Panel — Rechnungen & Kunden
+
+### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
+
+**Datenstruktur:** `ManualInvoiceRecord` mit:
+- `id`: eindeutige Blob-ID (`${Date.now()}_${uuid}`)
+- `invoiceNumber`: `INV-${timestamp}` (für PDF/E-Mail)
+- `status`: `'gespeichert' | 'gesendet'` (Versand-Status)
+- `paymentStatus`: `'offen' | 'bezahlt'` (Zahlungs-Status, manuell editierbar)
+- `paymentMethod`: `'rechnung' | 'bar'` (woher die Rechnung kam)
+- `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
+- `items`: Array von Leistungsposten (description, quantity, unitPrice)
+- `notes`: optionale Notizen
+- `emailSentAt`: Timestamp wenn E-Mail versendet wurde
+- `currency`: Währung (z.B. 'CHF')
+
+**Workflows:**
+1. **Manuelle Rechnung erstellen:**
+   - Kunde aus Dropdown wählen (oder "Neuer Kunde" inline erfassen)
+   - Leistungsposten hinzufügen
+   - PDF Vorschau
+   - Speichern (optional: E-Mail versenden)
+
+2. **Existierende Rechnung bearbeiten:**
+   - Tab "Bearbeiten": Kundenangaben, Leistungsposten, Notizen, **Zahlungsstatus** ändern
+   - Tab "Anzeigen": Vorschau der gespeicherten Daten
+   - Tab "PDF": PDF generieren/laden
+
+**Duplikat-Prüfung:**
+- E-Mail ist primäres Merkmal (case-insensitive)
+- Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
+- Verhindert doppelte Kundenerträge
+
+### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
+
+**Datenstruktur:** Kunden aus Netlify Blobs, mit:
+- `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
+- `paymentMethod`: `'manuell' | 'rechnung' | 'bar'` (Quelle)
+- `service`, `amount`, `currency` (legacy E-Commerce Felder, werden nicht angezeigt)
+
+**Spalten:** Datum | Name | E-Mail | Firma | Adresse | **Quelle** (Manuell erfasst / E-Commerce)
+
+**Architektur:**
+- Kunden sind **unabhängig** von Rechnungen
+- Ein Kunde kann mehrere Rechnungen haben
+- Duplikat-Prüfung (E-Mail primär, dann Name) verhindert Mehrfacherfassung
+
+### E-Commerce Checkout-Anpassungen
+
+**"Rechnung"-Zahlungen:**
+- API `/api/invoice` erstellt automatisch Rechnung
+- Speichert Kunde (mit Duplikat-Prüfung)
+- Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'rechnung'`
+- Sendet E-Mail an Kunden + Benachrichtigung an Geschäft (optional)
+
+**"Bar"-Zahlungen:**
+- Neue API `/api/create-invoice-bar` erstellt Rechnung + Kunde
+- Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'bar'`
+- Kein E-Mail-Versand (Zahlung liegt vor)
+
+**Duplikat-Prüfung:**
+- `/api/save-customer`: E-Mail → Name fallback
+- `/api/create-invoice-bar`: gleiche Prüfung
+- Status 409 Conflict wenn Kunde existiert (wird nicht zweimal gespeichert)
+
+### Environment Variables (E-Mail)
+
+Für E-Commerce/Admin Rechnungen erforderlich:
+- `RESEND_API_KEY`: API-Key von resend.com
+- `INVOICE_FROM_EMAIL`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
+
+Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
