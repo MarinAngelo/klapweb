@@ -1320,6 +1320,471 @@
 			</div>
 		</section>
 
+		<section id="arch-admin-rechnungen">
+			<h2>Admin: Rechnungsverwaltung <code class="slice-tag">admin/rechnungen</code></h2>
+			<p>Vollständige Verwaltung von Rechnungen mit automatischer Erstellung aus E-Commerce-Checkouts (Rechnung + Bar) und manueller Erfassung. Rechnungen werden in Netlify Blobs gespeichert und können editiert, versendet und gelöscht werden.</p>
+
+			<p class="table-label">Datenstruktur (ManualInvoiceRecord)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>id</code></td><td>String</td><td>Eindeutige Blob-ID: <code>&#36;&#123;Date.now()&#125;_&#36;&#123;uuid&#125;</code></td></tr>
+					<tr><td><code>invoiceNumber</code></td><td>String</td><td>PDF/E-Mail Label: <code>INV-&#36;&#123;timestamp&#125;</code></td></tr>
+					<tr><td><code>status</code></td><td>'gespeichert' | 'gesendet'</td><td>Versand-Status (automatisch nach E-Mail)</td></tr>
+					<tr><td><code>paymentStatus</code></td><td>'offen' | 'bezahlt'</td><td>Zahlungs-Status (manuell editierbar im Admin)</td></tr>
+					<tr><td><code>paymentMethod</code></td><td>'rechnung' | 'bar'</td><td>Herkunft: E-Commerce oder Bar-Zahlung</td></tr>
+					<tr><td><code>date</code></td><td>ISO String</td><td>Erstellungs-Timestamp</td></tr>
+					<tr><td><code>vorname</code>, <code>nachname</code>, <code>firma</code>, <code>email</code>, <code>adresse</code>, <code>plz</code>, <code>ort</code>, <code>land</code></td><td>String</td><td>Kundendaten</td></tr>
+					<tr><td><code>items</code></td><td>Array</td><td>Leistungsposten: &#123;description, quantity, unitPrice&#125;</td></tr>
+					<tr><td><code>notes</code></td><td>String (optional)</td><td>Interne Notizen</td></tr>
+					<tr><td><code>emailSentAt</code></td><td>ISO String (optional)</td><td>Timestamp E-Mail-Versand</td></tr>
+					<tr><td><code>currency</code></td><td>String</td><td>Währung (z.B. 'CHF')</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Workflows</p>
+			<table>
+				<thead><tr><th>Workflow</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Manuelle Rechnung</strong></td><td>Kunde aus Dropdown wählen (oder inline "Neuer Kunde" erfassen) → Leistungsposten eingeben → PDF Vorschau → Speichern ± E-Mail versenden</td></tr>
+					<tr><td><strong>E-Commerce Rechnung</strong></td><td>Checkout Zahlungsart "Rechnung" → API /api/invoice erstellt automatisch Rechnung + Kunde + E-Mail-Versand</td></tr>
+					<tr><td><strong>Bar-Zahlung</strong></td><td>Checkout Zahlungsart "Bar" → API /api/create-invoice-bar erstellt Rechnung + Kunde (keine E-Mail)</td></tr>
+					<tr><td><strong>Bearbeiten</strong></td><td>Rechnung öffnen → Tab "Bearbeiten" → Kundenangaben / Items / Notizen / Zahlungsstatus ändern → Speichern</td></tr>
+					<tr><td><strong>PDF generieren</strong></td><td>Tab "PDF" → PDF wird live generiert basierend auf aktuellen Daten → herunterladen oder E-Mail versenden</td></tr>
+					<tr><td><strong>Löschen</strong></td><td>Rechnung aus Tabelle entfernen (mit Bestätigung)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Tabs im Detail-Modal</p>
+			<table>
+				<thead><tr><th>Tab</th><th>Funktion</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Anzeigen</strong></td><td>Vorschau der gespeicherten Rechnungsdaten (schreibgeschützt)</td></tr>
+					<tr><td><strong>Bearbeiten</strong></td><td>Kundenangaben, Leistungsposten (Hinzufügen/Löschen), Notizen und Zahlungsstatus ändern</td></tr>
+					<tr><td><strong>PDF</strong></td><td>PDF-Preview der Rechnung (live-generiert) mit Versand-Optionen</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Status-Bedeutung:</strong> <code>status</code> ('gespeichert' / 'gesendet') ist automatisch und zeigt ob E-Mail versendet wurde. <code>paymentStatus</code> ('offen' / 'bezahlt') ist manuell editierbar im Admin und zeigt Zahlungs-Status.
+			</div>
+		</section>
+
+		<section id="arch-admin-kunden">
+			<h2>Admin: Kundenverwaltung <code class="slice-tag">admin/kunden</code></h2>
+			<p>Zentrales Kunden-Management für alle Quellen: E-Commerce Checkouts, manuelle Rechnungen und Bar-Zahlungen. Kunden werden automatisch beim Checkout und manuell beim Erstellen von Rechnungen erfasst. Duplikat-Prävention verhindert doppelte Einträge.</p>
+
+			<p class="table-label">Datenstruktur (Customer)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>date</code></td><td>ISO String</td><td>Erfassungs-Datum</td></tr>
+					<tr><td><code>vorname</code>, <code>nachname</code></td><td>String</td><td>Name (erforderlich)</td></tr>
+					<tr><td><code>firma</code>, <code>email</code>, <code>adresse</code>, <code>plz</code>, <code>ort</code>, <code>land</code></td><td>String (optional)</td><td>Kontaktdaten</td></tr>
+					<tr><td><code>paymentMethod</code></td><td>String</td><td>Quelle: 'manuell' (Admin) | 'rechnung' (E-Commerce) | 'bar' (E-Commerce)</td></tr>
+					<tr><td><code>service</code>, <code>amount</code>, <code>currency</code></td><td>String / Number (optional)</td><td>Nur für E-Commerce (legacy)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Workflows</p>
+			<table>
+				<thead><tr><th>Workflow</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Manuelle Erfassung</strong></td><td>Tab "Kunden" → Form ausfüllen → Speichern. Duplikat-Prüfung (E-Mail primär, Name fallback) verhindert Mehrfacherfassung.</td></tr>
+					<tr><td><strong>E-Commerce Rechnung</strong></td><td>Checkout → Zahlungsart "Rechnung" → API /api/invoice speichert Kunde automatisch mit paymentMethod='rechnung'</td></tr>
+					<tr><td><strong>E-Commerce Bar</strong></td><td>Checkout → Zahlungsart "Bar" → API /api/create-invoice-bar speichert Kunde automatisch mit paymentMethod='bar'</td></tr>
+					<tr><td><strong>Bearbeiten/Löschen</strong></td><td>Kunden-Tabelle: Klick auf Kundennamen/Email zum Löschen (mit Bestätigung)</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Duplikat-Prüfung:</strong> E-Mail ist primäres Merkmal (case-insensitive). Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname). Bei Duplikat: Kunde wird nicht gespeichert, Fehler 409 Conflict.
+			</div>
+		</section>
+
+		<section id="arch-api-create-invoice-bar">
+			<h2>API: Bar-Zahlung <code class="slice-tag">/api/create-invoice-bar</code></h2>
+			<p>Erstellt Rechnung + Kunde für Bar-Zahlungen aus E-Commerce-Checkout. Keine E-Mail-Versand, Rechnung ist sofort bezahlt (paymentStatus: 'offen' aber paymentMethod: 'bar' signalisiert Bar-Zahlung).</p>
+
+			<p class="table-label">Request (POST)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>date</code></td><td>ISO String</td><td>Rechnungs-Datum</td></tr>
+					<tr><td><code>paymentMethod</code></td><td>String</td><td>Fest: 'bar'</td></tr>
+					<tr><td><code>service</code>, <code>amount</code>, <code>currency</code></td><td>String / Number</td><td>Leistung und Betrag</td></tr>
+					<tr><td><code>vorname</code>, <code>nachname</code></td><td>String</td><td>Name (erforderlich)</td></tr>
+					<tr><td><code>firma</code>, <code>email</code>, <code>adresse</code>, <code>plz</code>, <code>ort</code>, <code>land</code></td><td>String (optional)</td><td>Kontaktdaten</td></tr>
+					<tr><td><code>discountCode</code></td><td>String (optional)</td><td>Rabatt-Code (wird in Notizen gespeichert)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Response</p>
+			<table>
+				<thead><tr><th>Status</th><th>Body</th></tr></thead>
+				<tbody>
+					<tr><td>200 OK</td><td><code>&#123;"ok": true, "invoiceNumber": "INV-1719914400000"&#125;</code></td></tr>
+					<tr><td>500 Error</td><td><code>&#123;"ok": false&#125;</code></td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Duplikat-Prüfung:</strong> Kunde wird nur gespeichert wenn nicht bereits existent (E-Mail primär). Rechnung wird immer erstellt.
+			</div>
+		</section>
+
+		<section id="arch-api-invoice">
+			<h2>API: Rechnung (E-Commerce) <code class="slice-tag">/api/invoice</code></h2>
+			<p>Erstellt Rechnung + Kunde für "Rechnung" Zahlungen aus E-Commerce-Checkout. Generiert PDF, versendet E-Mail an Kunden und Geschäft, aktualisiert Status zu 'gesendet'.</p>
+
+			<p class="table-label">Request (POST)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>data</code></td><td>Object</td><td>Checkout-Formular-Daten (Kundendaten + Adresse)</td></tr>
+					<tr><td><code>labels</code></td><td>Object</td><td>i18n-Labels für Rechnungs-PDF</td></tr>
+					<tr><td><code>serviceKey</code></td><td>String</td><td>Leistungs-Schlüssel (z.B. 'webdesign')</td></tr>
+					<tr><td><code>selectedCurrency</code></td><td>String</td><td>Währung (z.B. 'CHF')</td></tr>
+					<tr><td><code>discountCode</code></td><td>String (optional)</td><td>Rabatt-Code</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Response</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Wert</th></tr></thead>
+				<tbody>
+					<tr><td><code>ok</code></td><td>true wenn erfolgreich, false bei Fehler</td></tr>
+					<tr><td><code>invoiceNumber</code></td><td>String (z.B. "INV-1719914400000")</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Automatisch:</strong> PDF-Generierung, Kunden-Speicherung (mit Duplikat-Prüfung), E-Mail an Kunden + Geschäft. Status: 200 OK bei erfolgreicher E-Mail-Versand, 500 Error wenn E-Mail fehlschlägt.
+			</div>
+		</section>
+
+		<section id="arch-api-save-customer">
+			<h2>API: Kunden speichern <code class="slice-tag">/api/save-customer</code></h2>
+			<p>Speichert Kunden mit Duplikat-Prévention. Verwendet von Admin (manuell), E-Commerce Checkout (Rechnung + Bar). Primäre Duplikat-Prüfung nach E-Mail, Fallback nach Name (Vorname + Nachname).</p>
+
+			<p class="table-label">Request (POST)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>date</code></td><td>ISO String</td><td>Erfassungs-Datum</td></tr>
+					<tr><td><code>vorname</code>, <code>nachname</code></td><td>String</td><td>Name (erforderlich)</td></tr>
+					<tr><td><code>firma</code>, <code>email</code>, <code>adresse</code>, <code>plz</code>, <code>ort</code>, <code>land</code></td><td>String (optional)</td><td>Kontaktdaten</td></tr>
+					<tr><td><code>service</code>, <code>amount</code>, <code>currency</code></td><td>String / Number (optional)</td><td>Nur für E-Commerce (legacy)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Response</p>
+			<table>
+				<thead><tr><th>Status</th><th>Body</th></tr></thead>
+				<tbody>
+					<tr><td>200 OK</td><td><code>&#123;"ok": true&#125;</code></td></tr>
+					<tr><td>409 Conflict</td><td><code>&#123;"ok": false, "exists": true, "message": "Kunde existiert bereits"&#125;</code></td></tr>
+					<tr><td>500 Error</td><td><code>&#123;"ok": false&#125;</code></td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Duplikat-Prüfung:</strong> E-Mail ist primäres Merkmal (case-insensitive). Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname). Bei Duplikat: 409 Conflict, Kunde wird nicht gespeichert.
+			</div>
+		</section>
+
+		<section id="arch-ecommerce-checkout">
+			<h2>E-Commerce Checkout-Integration <code class="slice-tag">beauftragung/zusammenfassung</code></h2>
+			<p>Der Checkout-Prozess erstellt automatisch Rechnungen und Kunden basierend auf der gewählten Zahlungsart. Beide Flows nutzen die API-Endpoints mit Duplikat-Prüfung.</p>
+
+			<p class="table-label">Zahlungsart "Rechnung" (Invoice)</p>
+			<table>
+				<thead><tr><th>Schritt</th><th>Aktion</th></tr></thead>
+				<tbody>
+					<tr><td>1. Checkout-Form</td><td>Kundenangaben + Leistung auswählen</td></tr>
+					<tr><td>2. Zahlungsart wählen</td><td>Benutzer wählt "Rechnung"</td></tr>
+					<tr><td>3. API-Call</td><td>POST /api/invoice mit Kundenangaben + Leistung</td></tr>
+					<tr><td>4. Server-Logik</td><td>PDF generieren → Kunde speichern (mit Duplikat-Check) → E-Mail versenden → Status 'gesendet'</td></tr>
+					<tr><td>5. Response</td><td>invoiceNumber zurück an Frontend → Erfolgsseite anzeigen</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Zahlungsart "Bar" (Cash)</p>
+			<table>
+				<thead><tr><th>Schritt</th><th>Aktion</th></tr></thead>
+				<tbody>
+					<tr><td>1. Checkout-Form</td><td>Kundenangaben + Leistung auswählen</td></tr>
+					<tr><td>2. Zahlungsart wählen</td><td>Benutzer wählt "Bar"</td></tr>
+					<tr><td>3. API-Call</td><td>POST /api/create-invoice-bar mit Kundenangaben + Leistung</td></tr>
+					<tr><td>4. Server-Logik</td><td>Rechnung mit paymentMethod='bar' erstellen → Kunde speichern (mit Duplikat-Check) → <strong>keine E-Mail</strong></td></tr>
+					<tr><td>5. Response</td><td>invoiceNumber zurück an Frontend → Erfolgsseite anzeigen</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Duplikat-Prüfung im Flow:</strong> Beide APIs nutzen /api/save-customer intern, die E-Mail als primäres Merkmal prüft. Wenn Kunde existiert, wird er nicht erneut gespeichert, aber die Rechnung wird trotzdem erstellt.
+			</div>
+
+			<div class="callout">
+				<strong>Architektur:</strong> Kunden und Rechnungen sind unabhängig. Ein Kunde kann mehrere Rechnungen haben (z.B. wiederholte Beauftragte vom gleichen Kunden).
+			</div>
+		</section>
+
+		<section id="arch-admin-env">
+			<h2>Admin-Panel: Environment Variables</h2>
+			<p>Konfiguration für Admin-Panel, E-Commerce Rechnungen und E-Mail-Versand.</p>
+
+			<p class="table-label">Erforderliche Variablen (.env / Netlify)</p>
+			<table>
+				<thead><tr><th>Variable</th><th>Wert</th><th>Zweck</th></tr></thead>
+				<tbody>
+					<tr><td><code>ADMIN_SECRET</code></td><td>Beliebig (z.B. UUID)</td><td>Authentifizierung für /admin/* Routes → URL-Parameter: <code>?secret=...&</code></td></tr>
+					<tr><td><code>NETLIFY_SITE_ID</code></td><td>Netlify Site-ID</td><td>Blobs-Zugriff (Rechnungen + Kunden)</td></tr>
+					<tr><td><code>NETLIFY_TOKEN</code></td><td>Netlify API Token</td><td>Blobs-Zugriff (Rechnungen + Kunden)</td></tr>
+					<tr><td><code>RESEND_API_KEY</code></td><td>API-Key von resend.com</td><td>E-Mail-Versand (Rechnungen)</td></tr>
+					<tr><td><code>INVOICE_FROM_EMAIL</code></td><td>z.B. rechnung@klap-web.ch</td><td>Absender-E-Mail (muss in Resend verifiziert sein)</td></tr>
+					<tr><td><code>INVOICE_TO_EMAIL</code></td><td>z.B. billing@klap-web.ch (optional)</td><td>Geschäfts-E-Mail für Benachrichtigungen (bei E-Commerce)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Konfiguration</p>
+			<table>
+				<thead><tr><th>Umgebung</th><th>Methode</th><th>Datei</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Lokale Entwicklung</strong></td><td>Kopiere .env.example → .env und fülle mit echten Keys</td><td>.env (gitignored)</td></tr>
+					<tr><td><strong>Production + Branches</strong></td><td>Netlify Site Settings → Environment → Variablen setzen</td><td>Netlify Dashboard</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Ohne E-Mail-Keys:</strong> Rechnungen werden gespeichert, aber E-Mail nicht versendet. Status bleibt auf 'gespeichert' (nicht 'gesendet').
+			</div>
+		</section>
+
+		<section id="arch-admin-terminverwaltung">
+			<h2>Admin: Terminverwaltung <code class="slice-tag">admin/buchungen</code></h2>
+			<p>Verwaltet zeitbasierte Buchungen (Termine, Slots). Drei Tabellen: gebuchte Termine, freie Termine, gesperrte Termine. Ermöglicht Löschen von Buchungen und Sperren von Zeitslots.</p>
+
+			<p class="table-label">Datenstruktur (BookingRecord)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>terminId</code></td><td>Prismic UID</td><td>Eindeutige Termin-ID (Optional: <code>uid_YYYY-MM-DD</code> für Wiederholungen)</td></tr>
+					<tr><td><code>titel</code></td><td>String</td><td>Termin-Titel</td></tr>
+					<tr><td><code>datum</code>, <code>uhrzeit</code></td><td>String</td><td>Termin-Datum und optionale Uhrzeit</td></tr>
+					<tr><td><code>name</code>, <code>email</code></td><td>String</td><td>Kundendaten</td></tr>
+					<tr><td><code>bookedAt</code></td><td>ISO String</td><td>Buchungs-Zeitstempel</td></tr>
+					<tr><td><code>cancelled_termine</code></td><td>Prismic UID</td><td>Gesperrte Termine (nicht mehr buchbar)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Workflows</p>
+			<table>
+				<thead><tr><th>Workflow</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Gebuchte Termine</strong></td><td>Alle Buchungen anzeigen → Löschen möglich (Termin wird wieder frei)</td></tr>
+					<tr><td><strong>Freie Termine</strong></td><td>Verfügbare Slots (noch nicht gebucht)</td></tr>
+					<tr><td><strong>Gesperrte Termine</strong></td><td>Manuell gesperrte Slots (nicht mehr buchbar)</td></tr>
+					<tr><td><strong>Termin löschen</strong></td><td>Buchung entfernen → Termin wird wieder frei</td></tr>
+					<tr><td><strong>Termin sperren</strong></td><td>Slot blockieren (wird nicht mehr buchbar)</td></tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section id="arch-admin-ressourcebuchungen">
+			<h2>Admin: Ressource-Buchungen <code class="slice-tag">admin/ressource-buchungen</code></h2>
+			<p>Verwaltet Buchungen für Ressourcen wie Ferienwohnungen, Räume, etc. Zeigt Buchungen gruppiert nach Ressource mit Status-Tracking (Ausstehend → Bestätigt → Eingecheckt → Ausgecheckt → Abgerechnet).</p>
+
+			<p class="table-label">Status-Flow</p>
+			<table>
+				<thead><tr><th>Status</th><th>Label</th><th>Aktion</th></tr></thead>
+				<tbody>
+					<tr><td><code>pending</code></td><td>Ausstehend</td><td>→ Bestätigen + Mail</td></tr>
+					<tr><td><code>confirmed</code></td><td>Bestätigt</td><td>→ Check-in + Mail</td></tr>
+					<tr><td><code>checked_in</code></td><td>Eingecheckt</td><td>→ Check-out + Abrechnungsmail</td></tr>
+					<tr><td><code>checked_out</code></td><td>Ausgecheckt</td><td>→ Abrechnung freigeben</td></tr>
+					<tr><td><code>abgerechnet</code></td><td>Abgerechnet</td><td>—</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Datenstruktur (ResourceBookingRecord)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>ressourceUid</code></td><td>Prismic UID</td><td>Ressource (Ferienwohnung, Raum, etc.)</td></tr>
+					<tr><td><code>status</code></td><td>pending | confirmed | checked_in | checked_out | abgerechnet</td><td>Buchungs-Status</td></tr>
+					<tr><td><code>von</code>, <code>bis</code></td><td>ISO String</td><td>Anreise- und Abreise-Datum</td></tr>
+					<tr><td><code>name</code>, <code>email</code>, <code>telefon</code></td><td>String</td><td>Kundendaten</td></tr>
+					<tr><td><code>personen</code>, <code>nächte</code></td><td>Number</td><td>Anzahl Personen und Übernachtungen</td></tr>
+					<tr><td><code>preis</code></td><td>Number</td><td>Gesamtpreis (CHF)</td></tr>
+					<tr><td><code>reminderSent</code></td><td>Boolean</td><td>Erinnerungsmail versendet</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Features</p>
+			<table>
+				<thead><tr><th>Feature</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td>Gruppierung nach Ressource</td><td>Buchungen sind nach Ressource organisiert, expandierbar</td></tr>
+					<tr><td>Status-Transitionen</td><td>Buttons für Zustandsübergänge mit automatischen Mails</td></tr>
+					<tr><td>Konflikt-Check</td><td>Automatische Prüfung auf Zimmer-Überbuchung</td></tr>
+					<tr><td>Saisonpreise</td><td>Preisberechnung basierend auf Saison</td></tr>
+					<tr><td>Erinnerungsmails</td><td>Automatische Check-in/Check-out Benachrichtigungen</td></tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section id="arch-kundenauthentifizierung">
+			<h2>Kunden-Authentifizierung <code class="slice-tag">konto/*</code></h2>
+			<p>User-System für Website-Besucher: Registrierung, Login, Passwort-Reset, E-Mail-Verifikation. Benötigt aktives Feature <code>terminbuchung</code>. Sessions werden in Netlify Blobs gespeichert, Cookies sind HttpOnly + Secure.</p>
+
+			<p class="table-label">Routes</p>
+			<table>
+				<thead><tr><th>Route</th><th>Funktion</th><th>Authentifiziert?</th></tr></thead>
+				<tbody>
+					<tr><td><code>/konto</code></td><td>Konto-Dashboard (Profil, Buchungen)</td><td>Ja ✓</td></tr>
+					<tr><td><code>/konto/registrierung</code></td><td>Registrierung (mit E-Mail-Verifikation)</td><td>Nein</td></tr>
+					<tr><td><code>/konto/anmelden</code></td><td>Login (setzt Session-Cookie)</td><td>Nein</td></tr>
+					<tr><td><code>/konto/abmelden</code></td><td>Logout (löscht Session)</td><td>Ja ✓</td></tr>
+					<tr><td><code>/konto/passwort-reset</code></td><td>Passwort-Zurücksetzen (mit Token)</td><td>Nein</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Datenstruktur (UserRecord)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>id</code></td><td>UUID</td><td>Eindeutige Benutzer-ID</td></tr>
+					<tr><td><code>email</code></td><td>String</td><td>E-Mail (Blob-Key, case-insensitive)</td></tr>
+					<tr><td><code>passwordHash</code></td><td>String</td><td>Gehashtes Passwort (bcrypt, salt 12)</td></tr>
+					<tr><td><code>name</code></td><td>String</td><td>Benutzer-Name</td></tr>
+					<tr><td><code>verified</code></td><td>Boolean</td><td>E-Mail verifiziert?</td></tr>
+					<tr><td><code>createdAt</code></td><td>ISO String</td><td>Registrierungs-Timestamp</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Workflows</p>
+			<table>
+				<thead><tr><th>Workflow</th><th>Schritte</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Registrierung</strong></td><td>Form ausfüllen → User mit Hash erstellt → Verifikations-E-Mail mit Token (24h gültig) → Link bestätigt E-Mail → Umleitung zum Login</td></tr>
+					<tr><td><strong>Login</strong></td><td>E-Mail + Passwort eingeben → Passwort mit Hash verifiziert → Session erstellt (30 Tage TTL) → HttpOnly Cookie gesetzt → /konto Dashboard</td></tr>
+					<tr><td><strong>Logout</strong></td><td>Session löschen → Cookie löschen → Umleitung zu Homepage</td></tr>
+					<tr><td><strong>Passwort-Reset</strong></td><td>E-Mail eingeben → Reset-Token erstellt (24h TTL) → E-Mail mit Link versendet → Token abgerufen → Neues Passwort gespeichert</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Sicherheit</p>
+			<table>
+				<thead><tr><th>Aspekt</th><th>Implementierung</th></tr></thead>
+				<tbody>
+					<tr><td>Passwort-Speicherung</td><td>bcrypt mit Salt 12 (kein Plaintext)</td></tr>
+					<tr><td>Session-Cookie</td><td>HttpOnly + SameSite=Lax (kein JavaScript-Zugriff, CSRF-Schutz)</td></tr>
+					<tr><td>Token-Expiration</td><td>Verify: 24h, Reset: 24h, Sessions: 30 Tage (abgelaufen = automatisch gelöscht)</td></tr>
+					<tr><td>Duplikat-Prüfung</td><td>E-Mail case-insensitive + normalisiert (keine doppelten Accounts)</td></tr>
+					<tr><td>Spam-Schutz</td><td>Honeypot-Feld im Registrierungs-Form</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Feature-Gate:</strong> Registrierung + Login benötigen <code>isFeatureActive('terminbuchung')</code>. Wenn Feature inaktiv: 404 auf diesen Routes.
+			</div>
+
+			<div class="callout">
+				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> + <code>INVOICE_FROM_EMAIL</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt, E-Mail versendet nicht (kein Fehler-Abbruch).
+			</div>
+		</section>
+
+		<section id="arch-agency-gating">
+			<h2>Agency: Gating Editor <code class="slice-tag">agency/gating</code></h2>
+			<p><strong>Nur für Agentur/Developer mit AGENCY_SECRET!</strong> Visual Editor für <code>gating.json</code> — verwaltet Pläne, Features und Slice-Gates. Änderungen werden direkt in die Datei geschrieben und können committed werden.</p>
+
+			<div class="callout callout-warn">
+				<strong>Warnung:</strong> Dieser Editor ist absichtlich <strong>nicht</strong> im öffentlichen Admin-Panel. Der Betreiber darf keinen Zugriff haben, da er sonst bezahlte Features kostenlos freischalten könnte. Route: <code>/agency/gating?secret=&#36;&#123;AGENCY_SECRET&#125;</code>
+			</div>
+
+			<p class="table-label">Verwaltete Bereiche</p>
+			<table>
+				<thead><tr><th>Bereich</th><th>Verwaltung</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Pläne</strong></td><td>Erstelle neue Pläne (starter, professional, individuell), definiere Hierarchie via <code>extends</code></td></tr>
+					<tr><td><strong>Features</strong></td><td>Neue Features anlegen, Pläne zuordnen die das Feature freischalten</td></tr>
+					<tr><td><strong>Slices</strong></td><td>Gating für gesamte Slices oder einzelne Variations/Felder (plan- oder feature-basiert)</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Gate-Typen</p>
+			<table>
+				<thead><tr><th>Typ</th><th>Beschreibung</th><th>Effekt</th></tr></thead>
+				<tbody>
+					<tr><td><code>none</code></td><td>Keine Begrenzung</td><td>Verfügbar in allen Plänen</td></tr>
+					<tr><td><code>plan</code></td><td>Plan-basiert (z.B. "professional")</td><td>Aktiv in diesem Plan + allen übergeordneten Plänen</td></tr>
+					<tr><td><code>feature</code></td><td>Feature-basiert (z.B. "ecommerce")</td><td>Aktiv nur wenn Feature aktiviert ist</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Struktur in gating.json</p>
+			<table>
+				<thead><tr><th>Level</th><th>Beispiel</th><th>Effekt wenn inaktiv</th></tr></thead>
+				<tbody>
+					<tr><td>Slice-Level</td><td><code>slices.Hero.plan = "professional"</code></td><td>Ganzer Hero-Slice wird nicht generiert</td></tr>
+					<tr><td>Variation-Level</td><td><code>slices.Hero.variations.banner.feature = "ecommerce"</code></td><td>Banner-Variation fehlt in model.json</td></tr>
+					<tr><td>Feld-Level</td><td><code>slices.Hero.fields.mit_suche.plan = "professional"</code></td><td>Feld fehlt in allen Variationen</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Auto-Discovery:</strong> Der Editor importiert Slice-Namen vom Dateisystem und vereinigt sie mit gating.json-Einträgen. Neue Slices müssen hier gated werden, bevor sie in Slices Machine verfügbar sind.
+			</div>
+		</section>
+
+		<section id="arch-admin-aufgaben">
+			<h2>Admin: Aufgaben-Annahmen <code class="slice-tag">admin/aufgaben</code></h2>
+			<p>Verwaltet angenommene Aufgaben (Credits, Reviews, etc.) mit Status-Tracking. Zeigt Annahmen gruppiert nach Aufgabe mit Status (Angenommen → Bestätigt → In Bearbeitung → Erledigt).</p>
+
+			<p class="table-label">Status-Flow</p>
+			<table>
+				<thead><tr><th>Status</th><th>Label</th><th>Bedeutung</th></tr></thead>
+				<tbody>
+					<tr><td><code>angenommen</code></td><td>Angenommen</td><td>Aufgabe wurde angenommen, Bestätigung ausstehend</td></tr>
+					<tr><td><code>annahme_bestaetigt</code></td><td>Bestätigt</td><td>Annahme bestätigt, Bearbeitung läuft</td></tr>
+					<tr><td><code>eingereicht</code></td><td>In Bearbeitung</td><td>Aufgabe in aktiver Bearbeitung</td></tr>
+					<tr><td><code>erledigt</code></td><td>Erledigt</td><td>Aufgabe abgeschlossen</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Datenstruktur (AnnahmeRecord)</p>
+			<table>
+				<thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><code>aufgabeUid</code></td><td>Prismic UID</td><td>Aufgabe (z.B. Webdesign, Logo-Redesign)</td></tr>
+					<tr><td><code>aufgabeTitel</code></td><td>String</td><td>Titel der Aufgabe</td></tr>
+					<tr><td><code>status</code></td><td>angenommen | annahme_bestaetigt | eingereicht | erledigt</td><td>Bearbeitungsstatus</td></tr>
+					<tr><td><code>name</code>, <code>email</code></td><td>String</td><td>Kundendaten</td></tr>
+					<tr><td><code>buchungUid</code></td><td>Prismic UID (optional)</td><td>Verknüpfte Buchung</td></tr>
+					<tr><td><code>creditTyp</code></td><td>String</td><td>Art des Credits (z.B. "hours", "meetings")</td></tr>
+					<tr><td><code>credits</code>, <code>minuten</code></td><td>Number</td><td>Anzahl Credits und Minuten</td></tr>
+					<tr><td><code>kommentar</code></td><td>String (optional)</td><td>Notizen zur Aufgabe</td></tr>
+					<tr><td><code>angenommenAm</code>, <code>erledigtAm</code></td><td>ISO String</td><td>Zeitstempel Annahme / Fertigstellung</td></tr>
+				</tbody>
+			</table>
+
+			<p class="table-label">Workflows</p>
+			<table>
+				<thead><tr><th>Workflow</th><th>Beschreibung</th></tr></thead>
+				<tbody>
+					<tr><td><strong>Annahme bestätigen</strong></td><td>Status von "Angenommen" auf "Bestätigt" setzen</td></tr>
+					<tr><td><strong>Bearbeitung markieren</strong></td><td>Status auf "In Bearbeitung" setzen wenn Arbeit startet</td></tr>
+					<tr><td><strong>Als erledigt markieren</strong></td><td>Aufgabe finalisieren und Timestamp speichern</td></tr>
+					<tr><td><strong>Löschen</strong></td><td>Annahme vollständig entfernen</td></tr>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Gruppierung:</strong> Mehrere Annahmen können zur gleichen Aufgabe gehören (z.B. mehrere Kunden nehmen die gleiche Leistung an). Sie sind nach aufgabeUid gruppiert.
+			</div>
+		</section>
+
 	</main>
 </div>
 
