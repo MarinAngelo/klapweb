@@ -57,11 +57,28 @@
 - Import im Template: `import { _ } from '$lib/stores/i18n'` → Verwendung: `{$_('Schlüssel')}`
 - Neuen Key zuerst in `src/lib/i18n/translations.ts` eintragen (Key = deutscher Text, mind. `de-ch` + `en-us`)
 - Gilt auch für interne Tools wie den Katalog
+- **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
+- **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
+- **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
 
 ## Netlify Blobs
 
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
+
+## Prismic Link-Felder in Custom Types
+
+- **NIEMALS `"select": "document"` setzen** auf Link-Feldern — das blockiert externe URLs (Web Links) komplett!
+- `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
+- **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
+- **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+
+## slicemachine.config.json Protection
+
+- **Datei ist Branch-spezifisch** — `main` hat `"plan": "individuell"`, andere Branches können andere Pläne haben
+- **Automatischer Schutz via `.gitattributes`**: `slicemachine.config.json merge=ours` (gitignored, nicht manuell editieren)
+- Git-Merge: Behält immer die lokale Version, nie die Remote-Version übernehmen
+- **Grund:** Ein Merge von klap-web-ch nach main würde den Plan überschreiben und Funktionen sperren
 
 ## Button-Stile
 
@@ -186,3 +203,77 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ```
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
+
+## Admin-Panel — Rechnungen & Kunden
+
+### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
+
+**Datenstruktur:** `ManualInvoiceRecord` mit:
+- `id`: eindeutige Blob-ID (`${Date.now()}_${uuid}`)
+- `invoiceNumber`: `INV-${timestamp}` (für PDF/E-Mail)
+- `status`: `'gespeichert' | 'gesendet'` (Versand-Status)
+- `paymentStatus`: `'offen' | 'bezahlt'` (Zahlungs-Status, manuell editierbar)
+- `paymentMethod`: `'rechnung' | 'bar'` (woher die Rechnung kam)
+- `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
+- `items`: Array von Leistungsposten (description, quantity, unitPrice)
+- `notes`: optionale Notizen
+- `emailSentAt`: Timestamp wenn E-Mail versendet wurde
+- `currency`: Währung (z.B. 'CHF')
+
+**Workflows:**
+1. **Manuelle Rechnung erstellen:**
+   - Kunde aus Dropdown wählen (oder "Neuer Kunde" inline erfassen)
+   - Leistungsposten hinzufügen
+   - PDF Vorschau
+   - Speichern (optional: E-Mail versenden)
+
+2. **Existierende Rechnung bearbeiten:**
+   - Tab "Bearbeiten": Kundenangaben, Leistungsposten, Notizen, **Zahlungsstatus** ändern
+   - Tab "Anzeigen": Vorschau der gespeicherten Daten
+   - Tab "PDF": PDF generieren/laden
+
+**Duplikat-Prüfung:**
+- E-Mail ist primäres Merkmal (case-insensitive)
+- Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
+- Verhindert doppelte Kundenerträge
+
+### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
+
+**Datenstruktur:** Kunden aus Netlify Blobs, mit:
+- `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
+- `paymentMethod`: `'manuell' | 'rechnung' | 'bar'` (Quelle)
+- `service`, `amount`, `currency` (legacy E-Commerce Felder, werden nicht angezeigt)
+
+**Spalten:** Datum | Name | E-Mail | Firma | Adresse | **Quelle** (Manuell erfasst / E-Commerce)
+
+**Architektur:**
+- Kunden sind **unabhängig** von Rechnungen
+- Ein Kunde kann mehrere Rechnungen haben
+- Duplikat-Prüfung (E-Mail primär, dann Name) verhindert Mehrfacherfassung
+
+### E-Commerce Checkout-Anpassungen
+
+**"Rechnung"-Zahlungen:**
+- API `/api/invoice` erstellt automatisch Rechnung
+- Speichert Kunde (mit Duplikat-Prüfung)
+- Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'rechnung'`
+- Sendet E-Mail an Kunden + Benachrichtigung an Geschäft (optional)
+
+**"Bar"-Zahlungen:**
+- Neue API `/api/create-invoice-bar` erstellt Rechnung + Kunde
+- Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'bar'`
+- Kein E-Mail-Versand (Zahlung liegt vor)
+
+**Duplikat-Prüfung:**
+- `/api/save-customer`: E-Mail → Name fallback
+- `/api/create-invoice-bar`: gleiche Prüfung
+- Status 409 Conflict wenn Kunde existiert (wird nicht zweimal gespeichert)
+
+### Environment Variables (E-Mail)
+
+Für E-Commerce/Admin Rechnungen erforderlich:
+- `RESEND_API_KEY`: API-Key von resend.com
+- `INVOICE_FROM_EMAIL`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
+
+Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`

@@ -6,28 +6,28 @@
 
 	const sections = [
 		{
+			title: 'Rechnungen',
+			description: 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
+			href: `/admin/rechnungen?secret=${s}`,
+			icon: '📄'
+		},
+		{
+			title: 'Kunden',
+			description: 'Bestellungen und Kundendaten einsehen, neue Kunden erfassen',
+			href: `/admin/kunden?secret=${s}`,
+			icon: '👥'
+		},
+		{
 			title: 'Terminverwaltung',
 			description: 'Buchungen anzeigen, löschen, Termine sperren',
 			href: `/admin/buchungen?secret=${s}`,
 			icon: '📅'
 		},
 		{
-			title: 'Kunden',
-			description: 'Bestellungen und Kundendaten einsehen',
-			href: `/admin/kunden?secret=${s}`,
-			icon: '👥'
-		},
-		{
 			title: 'Ressource-Buchungen',
 			description: 'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen',
 			href: `/admin/ressource-buchungen?secret=${s}`,
 			icon: '🏠'
-		},
-		{
-			title: 'Gating Editor',
-			description: 'Pläne, Features und Slice-Gates in gating.json verwalten',
-			href: `/admin/gating?secret=${s}`,
-			icon: '⚙️'
 		},
 		{
 			title: 'Aufgaben',

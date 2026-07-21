@@ -222,8 +222,8 @@
 		}
 
 		if (selectedPayment === 'bar') {
-			// Kundendaten speichern (fire-and-forget)
-			fetch('/api/save-customer', {
+			// Rechnung + Kundendaten erstellen
+			fetch('/api/create-invoice-bar', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -287,14 +287,14 @@
 </script>
 
 <svelte:head>
-	<title>{data.pageTitle}</title>
+	<title>{data.pageTitle || t('Bestellübersicht', lang)}</title>
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
 	{#if !checkoutData}
 		<p>{t('Laden…', lang)}</p>
 	{:else}
-		<Heading tag="h1">{data.pageTitle}</Heading>
+		<Heading tag="h1">{data.pageTitle || t('Bestellübersicht', lang)}</Heading>
 
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
@@ -314,7 +314,7 @@
 						</p>
 					{/if}
 				</div>
-				<p class="text-sm opacity-60 mt-0.5">{data.product?.billingType ?? 'Einmalig'}</p>
+				<p class="text-sm opacity-60 mt-0.5">{t(data.product?.billingType ?? 'Einmalig', lang)}</p>
 
 				{#each data.product?.addons ?? [] as addon, i}
 					<div
@@ -327,10 +327,10 @@
 								{formatPrice(addonDisplayPrices[i], selectedCurrency)}
 							</p>
 						{:else}
-							<p class="text-sm opacity-60">auf Anfrage</p>
+							<p class="text-sm opacity-60">{t('auf Anfrage', lang)}</p>
 						{/if}
 					</div>
-					<p class="text-sm opacity-60 mt-0.5">{addon.billingType ?? 'Einmalig'}</p>
+					<p class="text-sm opacity-60 mt-0.5">{t(addon.billingType ?? 'Einmalig', lang)}</p>
 				{/each}
 
 				<!-- Grouped totals + grand total -->
@@ -390,7 +390,7 @@
 			{/if}
 
 			{#if effectiveDisplayPrice !== null}
-				<p class="text-sm opacity-60 mt-2">exkl. MwSt.</p>
+				<p class="text-sm opacity-60 mt-2">{t('exkl. MwSt.', lang)}</p>
 
 				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
@@ -552,11 +552,11 @@
 			<label for="agb-accepted" class="flex items-start gap-3 cursor-pointer">
 				<Checkbox id="agb-accepted" bind:checked={agbAccepted} />
 				<span>
-					Ich habe die
-					<a href="/agb" class="underline">AGB</a>
-					und die
-					<a href="/datenschutzerklaerung" class="underline">Datenschutzerklärung</a>
-					gelesen und akzeptiere diese.
+					{t('Ich habe die', lang)}
+					<a href="/agb" class="underline">{t('AGB', lang)}</a>
+					{t('und die', lang)}
+					<a href="/datenschutzerklaerung" class="underline">{t('Datenschutz', lang)}</a>
+					{t('gelesen und akzeptiere diese.', lang)}
 				</span>
 			</label>
 		</div>
@@ -564,13 +564,6 @@
 		<!-- Fehlermeldung -->
 		{#if orderError}
 			<p class="mb-4 text-red-600 text-sm">{orderError}</p>
-		{/if}
-
-		<!-- DEV-Hinweis -->
-		{#if import.meta.env.DEV}
-			<p class="text-xs mb-3 px-2 py-1 border border-yellow-500 text-yellow-600 inline-block">
-				DEV: Stripe → lokale Erfolgsseite · Rechnung → PDF ohne E-Mail · Bar → kein Netlify-POST
-			</p>
 		{/if}
 
 		<!-- Buttons -->

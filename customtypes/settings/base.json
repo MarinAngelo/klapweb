@@ -68,7 +68,7 @@
 					"label": "Datenschutzerkärung",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
@@ -78,7 +78,7 @@
 					"label": "Haftungsausschluss",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
@@ -88,7 +88,7 @@
 					"label": "Haftungsausschluss",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
 				}
 			},
 			"legal_disclosure": {
@@ -97,7 +97,7 @@
 					"label": "Impressum",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
@@ -167,7 +167,7 @@
 					"label": "Cookies Text",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
@@ -177,7 +177,7 @@
 					"label": "AGB",
 					"placeholder": "",
 					"allowTargetBlank": true,
-					"multi": "paragraph,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
 					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
 				}
 			},
@@ -186,6 +186,46 @@
 				"config": {
 					"label": "Seiten-Passwort",
 					"placeholder": "Passwort für passwortgeschützte Seiten"
+				}
+			},
+			"user_backend_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "User-Backend aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_bot_name": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Name",
+					"placeholder": "Assistent"
+				}
+			},
+			"chat_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Begrüssung",
+					"placeholder": "Hallo! Wie kann ich helfen?"
+				}
+			},
+			"chat_knowledge_base": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis",
+					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
+					"multi": "paragraph,preformatted"
 				}
 			},
 			"show_language_switcher": {
