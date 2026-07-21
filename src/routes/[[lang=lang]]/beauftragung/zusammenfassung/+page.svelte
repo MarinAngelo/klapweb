@@ -222,8 +222,8 @@
 		}
 
 		if (selectedPayment === 'bar') {
-			// Kundendaten speichern (fire-and-forget)
-			fetch('/api/save-customer', {
+			// Rechnung + Kundendaten erstellen
+			fetch('/api/create-invoice-bar', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -564,13 +564,6 @@
 		<!-- Fehlermeldung -->
 		{#if orderError}
 			<p class="mb-4 text-red-600 text-sm">{orderError}</p>
-		{/if}
-
-		<!-- DEV-Hinweis -->
-		{#if import.meta.env.DEV}
-			<p class="text-xs mb-3 px-2 py-1 border border-yellow-500 text-yellow-600 inline-block">
-				DEV: Stripe → lokale Erfolgsseite · Rechnung → PDF ohne E-Mail · Bar → kein Netlify-POST
-			</p>
 		{/if}
 
 		<!-- Buttons -->

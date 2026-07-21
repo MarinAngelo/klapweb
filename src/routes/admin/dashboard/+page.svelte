@@ -6,16 +6,22 @@
 
 	const sections = [
 		{
+			title: 'Rechnungen',
+			description: 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
+			href: `/admin/rechnungen?secret=${s}`,
+			icon: '📄'
+		},
+		{
+			title: 'Kunden',
+			description: 'Bestellungen und Kundendaten einsehen, neue Kunden erfassen',
+			href: `/admin/kunden?secret=${s}`,
+			icon: '👥'
+		},
+		{
 			title: 'Terminverwaltung',
 			description: 'Buchungen anzeigen, löschen, Termine sperren',
 			href: `/admin/buchungen?secret=${s}`,
 			icon: '📅'
-		},
-		{
-			title: 'Kunden',
-			description: 'Bestellungen und Kundendaten einsehen',
-			href: `/admin/kunden?secret=${s}`,
-			icon: '👥'
 		},
 		{
 			title: 'Ressource-Buchungen',

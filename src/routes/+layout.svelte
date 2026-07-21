@@ -320,6 +320,10 @@
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
+			if (studioOpen && e.key === 'Escape') {
+				e.preventDefault();
+				studioOpen = false;
+			}
 			if (e.altKey && e.shiftKey && e.key === 'A') {
 				e.preventDefault();
 				goto('/admin');
