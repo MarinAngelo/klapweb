@@ -48,13 +48,13 @@
 		'lg-top': 'pt-32 md:pt-48'
 	};
 	const yBottom: Record<string, string> = {
-		none: '',
-		sm: 'pb-8 md:pb-10',
-		'sm-top': '',
-		base: 'pb-20 md:pb-28',
-		'base-top': '',
-		lg: 'pb-32 md:pb-48',
-		'lg-top': ''
+		none: 'pb-0',
+		sm: 'md:pb-10',
+		'sm-top': 'pb-0',
+		base: 'md:pb-28',
+		'base-top': 'pb-0',
+		lg: 'md:pb-48',
+		'lg-top': 'pb-0'
 	};
 
 	$: topClass = paddingTopClass !== undefined ? paddingTopClass : (paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? ''));

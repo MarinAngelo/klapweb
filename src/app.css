@@ -185,16 +185,30 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
+a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link) {
+	@apply underline;
+	color: var(--page-link-color);
+}
+
 /* Touch-Zielgrösse für Inline-Links auf Mobile (WCAG 2.5.5 / 44px) */
 @media (max-width: 767px) {
-	a[data-type="prismic-link"] {
+	a[data-type="prismic-link"],
+	a {
 		padding-top: 0.5em;
 		padding-bottom: 0.5em;
 	}
 }
 
-a[data-type="prismic-link"]:hover {
+a[data-type="prismic-link"]:hover,
+a:hover {
 	color: var(--page-link-hover-color) !important;
+}
+
+/* Footer-Link Hover */
+.footer-nav-link:hover,
+.footer-buttonbar-p a:hover,
+a[href^="mailto:"]:hover {
+	color: var(--footer-link-hover-color) !important;
 }
 
 :root {
