@@ -86,7 +86,7 @@
 
 	const ptMobMap: Record<string, string> = { 'kein Abstand': 'pt-0', 'wenig': 'pt-8', 'mittel': 'pt-20', 'gross': 'pt-32' };
 	const ptDeskMap: Record<string, string> = { 'kein Abstand': 'md:pt-0', 'wenig': 'md:pt-10', 'mittel': 'md:pt-28', 'gross': 'md:pt-48' };
-	const pbMobMap: Record<string, string> = { 'kein Abstand': 'pb-0', 'wenig': 'pb-8', 'mittel': 'pb-20', 'gross': 'pb-32' };
+	const pbMobMap: Record<string, string> = { 'kein Abstand': 'pb-0', 'wenig': 'pb-0', 'mittel': 'pb-0', 'gross': 'pb-0' };
 	const pbDeskMap: Record<string, string> = { 'kein Abstand': 'md:pb-0', 'wenig': 'md:pb-10', 'mittel': 'md:pb-28', 'gross': 'md:pb-48' };
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;

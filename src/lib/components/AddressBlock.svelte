@@ -43,10 +43,10 @@
         <p class="text-red-600 font-semibold">{responsible_email}</p>
     {:else if responsible_email}
         <p>
-            E-Mail: <a
+            <strong>E-Mail:</strong> <a
                 href={`mailto:${responsible_email}`}
-                class="hover:underline text-inherit"
-                style="color: inherit;">{responsible_email}</a
+                class="hover:underline"
+                >{responsible_email}</a
             >
         </p>
     {/if}

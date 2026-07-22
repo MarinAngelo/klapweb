@@ -414,7 +414,7 @@
 					id={key}
 					bind:value={localNumber}
 					required={field.required}
-					placeholder={field.placeholder ?? '079 123 45 67'}
+					placeholder={field.placeholder ?? ''}
 					pattern={"[0-9 \\-()]{4,25}"}
 					inputmode="numeric"
 					class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
@@ -442,7 +442,7 @@
 					id={key}
 					bind:value={localNumber}
 					required={field.required}
-					placeholder={field.placeholder ?? '079 123 45 67'}
+					placeholder={field.placeholder ?? ''}
 					pattern={"[0-9 \\-()]{4,25}"}
 					inputmode="numeric"
 					class="input p-2 flex-1 focus:outline-none focus:ring-0"
