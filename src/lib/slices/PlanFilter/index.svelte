@@ -2,6 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { planFilter } from '$lib/stores/planFilter';
 	import gating from '../../../../gating.json';
+	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let slice: any;
 	export let slices: any[] | undefined = undefined;
@@ -17,8 +18,10 @@
 	onDestroy(() => planFilter.set(null));
 </script>
 
-<div
-	class="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b px-6 py-3"
+<Bounded
+	tag="div"
+	yPadding="none"
+	class="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b"
 	style="background-color: var(--page-bg-color, #fff); border-color: color-mix(in srgb, var(--page-color, #000) 15%, transparent);"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
@@ -39,4 +42,4 @@
 			<option value={plan.id}>{plan.label}</option>
 		{/each}
 	</select>
-</div>
+</Bounded>
