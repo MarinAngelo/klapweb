@@ -20,26 +20,28 @@
 
 <Bounded
 	tag="div"
-	yPadding="none"
-	class="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b"
-	style="background-color: var(--page-bg-color, #fff); border-color: color-mix(in srgb, var(--page-color, #000) 15%, transparent);"
+	yPadding="base-top"
+	class="sticky top-0 z-10"
+	style="background-color: var(--page-bg-color, #fff);"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
-	{#if heading}
-		<label for="plan-filter" class="text-sm opacity-60">{heading}</label>
-	{/if}
-
-	<select
-		id="plan-filter"
-		class="rounded border px-3 py-1 text-sm"
-		style="background-color: var(--page-bg-color, #fff); color: var(--page-color, #000); border-color: color-mix(in srgb, var(--page-color, #000) 30%, transparent);"
-		value={$planFilter ?? ''}
-		on:change={(e) => planFilter.set(e.currentTarget.value || null)}
-	>
-		<option value="">Alle Pläne</option>
-		{#each plans as plan}
-			<option value={plan.id}>{plan.label}</option>
-		{/each}
-	</select>
+	<div class="grid grid-cols-2 gap-6">
+		<div class="flex items-center">
+			<label class="size-xl">{heading}</label>
+		</div>
+		<div>
+			<select
+				class="input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0"
+				style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+				value={$planFilter ?? ''}
+				on:change={(e) => planFilter.set(e.currentTarget.value || null)}
+			>
+				<option value="">Alle Pläne</option>
+				{#each plans as plan}
+					<option value={plan.id}>{plan.label}</option>
+				{/each}
+			</select>
+		</div>
+	</div>
 </Bounded>
