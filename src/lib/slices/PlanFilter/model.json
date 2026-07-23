@@ -30,6 +30,13 @@
 					"config": {
 						"label": "Textfarbe"
 					}
+				},
+				"sticky": {
+					"type": "Boolean",
+					"config": {
+						"label": "Sticky Header",
+						"default_value": false
+					}
 				}
 			},
 			"items": {}
