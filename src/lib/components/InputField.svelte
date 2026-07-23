@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { TIMEZONES } from '$lib/utils/timezones';
+	import { theme } from '$lib/stores/theme';
+	import { shadeColor } from '$lib/utils/color';
 	import Checkbox from '$lib/components/Checkbox.svelte';
 
 	export let field: {
@@ -16,6 +18,8 @@
 	};
 	// compact=true: full border + text-sm styling (matches hardcoded invoice fields)
 	export let compact = false;
+	// inline=true: Label und Input nebeneinander statt übereinander
+	export let inline = false;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
 	const typeKeys: Record<string, string> = {
@@ -315,6 +319,8 @@
 	$: if (htmlType === 'number') value = numberValue ?? '';
 	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
 
+	$: selectOptionBg = shadeColor($theme.pageBgColor || '#ffffff', -30);
+
 	function handleCodeInput(e: Event) {
 		textValue = (e.target as HTMLInputElement).value.toUpperCase();
 	}
@@ -329,16 +335,21 @@
 	}
 </script>
 
-<div class="mb-4">
+<div class={inline ? 'w-full contents' : 'mb-4'}>
 	<!-- Label -->
 	{#if htmlType !== 'checkbox'}
 		<label
 			for={key}
-			class={compact ? 'block text-sm font-semibold mb-1' : 'block text-base font-bold'}
+			class={inline
+				? 'text-base font-bold flex-shrink-0'
+				: compact ? 'block text-sm font-semibold mb-1' : 'block text-base font-bold'}
 		>
 			{field.field_name ?? ''}{field.required ? ' *' : ''}
 		</label>
 	{/if}
+
+	<div class={inline ? 'flex-1' : ''}>
+
 
 	{#if htmlType === 'text'}
 		<input
@@ -352,6 +363,7 @@
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:input
 			on:blur
+			on:change
 		/>
 	{:else if htmlType === 'number'}
 		<input
@@ -366,6 +378,7 @@
 			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
+			on:change
 		/>
 	{:else if htmlType === 'code'}
 		<input
@@ -381,6 +394,7 @@
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:input={handleCodeInput}
 			on:blur
+			on:change
 		/>
 	{:else if htmlType === 'email'}
 		<input
@@ -393,6 +407,7 @@
 			class={compact ? 'w-full border px-3 py-2 bg-transparent focus:outline-none' : 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
 			style={compact ? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);' : 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
+			on:change
 		/>
 	{:else if htmlType === 'tel'}
 		{#if compact}
@@ -421,6 +436,7 @@
 					style="color: var(--page-color); border: none;"
 					on:input={sanitizeTel}
 					on:blur
+			on:change
 				/>
 			</div>
 		{:else}
@@ -449,6 +465,7 @@
 					style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
 					on:input={sanitizeTel}
 					on:blur
+			on:change
 				/>
 			</div>
 		{/if}
@@ -464,6 +481,7 @@
 				class="w-full border px-3 py-2 bg-transparent focus:outline-none"
 				style="border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);"
 				on:blur
+			on:change
 			></textarea>
 		{:else}
 			<div class="border-b focus-within:border-b-2" style="border-bottom-color: var(--page-color);">
@@ -476,6 +494,7 @@
 					class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
 					style="background-color: var(--page-bg-color); color: var(--page-color);"
 					on:blur
+			on:change
 				></textarea>
 			</div>
 		{/if}
@@ -491,10 +510,11 @@
 				? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
 				: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
+			on:change
 		>
 			<option value="" disabled selected>Bitte auswählen</option>
 			{#each field.options?.split(',') || [] as option}
-				<option value={option?.trim() ?? ''}>{option?.trim() ?? ''}</option>
+				<option value={option?.trim() ?? ''} style="background-color: {selectOptionBg}; color: var(--page-color);">{option?.trim() ?? ''}</option>
 			{/each}
 		</select>
 	{:else if htmlType === 'radio'}
@@ -524,10 +544,11 @@
 				? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
 				: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
+			on:change
 		>
 			<option value="" disabled selected>Bitte auswählen</option>
 			{#each countries as country}
-				<option value={country}>{country}</option>
+				<option value={country} style="background-color: {selectOptionBg}; color: var(--page-color);">{country}</option>
 			{/each}
 		</select>
 	{:else if htmlType === 'checkbox'}
@@ -559,10 +580,11 @@
 					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
 					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 				on:blur
+			on:change
 			>
 				<option value="">Termin auswählen</option>
 				{#each termine as t}
-					<option value={t.id}>{t.label}</option>
+					<option value={t.id} style="background-color: {selectOptionBg}; color: var(--page-color);">{t.label}</option>
 				{/each}
 			</select>
 		{/if}
@@ -578,16 +600,18 @@
 				? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
 				: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
 			on:blur
+			on:change
 		>
 			<option value="">Zeitzone wählen</option>
 			{#each TIMEZONES as tz}
-				<option value={tz.value}>{tz.label}</option>
+				<option value={tz.value} style="background-color: {selectOptionBg}; color: var(--page-color);">{tz.label}</option>
 			{/each}
 		</select>
 	{/if}
 	{#if field['invalid_feedback-text']}
 		<p class="text-red-500 text-sm mt-1">{field['invalid_feedback-text']}</p>
 	{/if}
+	</div>
 </div>
 
 <!-- Alle globalen styles hier definieren-->
