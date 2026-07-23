@@ -39,3 +39,5 @@ src/lib/slices/Kontakt/model.json
 src/lib/slices/LinkListe/model.json
 src/lib/slices/Zitat/model.json
 src/lib/config/icon-labels.ts
+customtypes/button_stil/index.json
+customtypes/icon/index.json

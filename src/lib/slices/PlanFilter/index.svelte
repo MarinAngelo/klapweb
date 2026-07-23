@@ -21,7 +21,7 @@
 <Bounded
 	tag="div"
 	yPadding="base-top"
-	class="sticky top-0 z-10"
+	class={slice.primary?.sticky ? 'sticky top-0 z-10' : ''}
 	style="background-color: {slice.primary?.bg_color || 'var(--page-bg-color, #fff)'}; color: {slice.primary?.text_color || 'var(--page-color, #000)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
