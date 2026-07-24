@@ -1,70 +1,84 @@
 {
-  "id": "code_einbetten",
-  "type": "SharedSlice",
-  "name": "GoogleMapEinbetten",
-  "description": "CodeEinbetten",
-  "variations": [
-    {
-      "id": "default",
-      "name": "Standard",
-      "docURL": "...",
-      "version": "initial",
-      "description": "Default",
-      "imageUrl": "",
-      "primary": {
-        "html_code": {
-          "type": "StructuredText",
-          "config": {
-            "label": "HTML Code",
-            "placeholder": "",
-            "allowTargetBlank": false,
-            "single": "embed"
-          }
-        },
-        "opacity": {
-          "type": "Number",
-          "config": {
-            "label": "Transparenz",
-            "placeholder": "Zahl zwischen 0 und 80 %"
-          }
-        },
-        "animate": {
-          "type": "Boolean",
-          "config": {
-            "label": "Animation aktivieren",
-            "default_value": false
-          }
-        },
-        "anim_direction": {
-          "type": "Select",
-          "config": {
-            "label": "Animations-Richtung",
-            "options": [
-              "Oben",
-              "Unten",
-              "Links",
-              "Rechts",
-              "Keine"
-            ],
-            "default_value": "Oben"
-          }
-        },
-        "anim_delay": {
-          "type": "Number",
-          "config": {
-            "label": "Verzögerung (ms)",
-            "placeholder": "500"
-          }
-        },
-        "anim_duration": {
-          "type": "Number",
-          "config": {
-            "label": "Animationsdauer (ms)",
-            "placeholder": "2000"
-          }
-        }
-      },
-      "items": {}
-    }
-  ]
+	"id": "code_einbetten",
+	"type": "SharedSlice",
+	"name": "GoogleMapEinbetten",
+	"description": "CodeEinbetten",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"map_url": {
+					"type": "Text",
+					"config": {
+						"label": "Google Maps URL",
+						"placeholder": "Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)"
+					}
+				},
+				"map_height": {
+					"type": "Number",
+					"config": {
+						"label": "Kartenhöhe (px)",
+						"placeholder": "400"
+					}
+				},
+				"opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz",
+						"placeholder": "Zahl zwischen 0 und 80 %"
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
 }

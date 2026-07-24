@@ -24,12 +24,9 @@
 							"config": {
 								"label": "Link",
 								"placeholder": "",
-								"allowTargetBlank": true,
+								"allowTargetBlank": false,
 								"allowText": false,
-								"select": "document",
-								"customtypes": [
-									"page"
-								]
+								"customtypes": ["page"]
 							}
 						},
 						"sub_link": {

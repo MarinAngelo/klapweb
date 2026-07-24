@@ -1,3 +1,35 @@
+# KlapStudio
+
+ctrl+shift+K
+
+# Feature-Flag-Problem für Multi-Client-Monorepos
+
+Funktioniert. Zusammenfassung der Änderungen:
+
+plans.json — neue Datei, definiert Business-Pläne mit ihren Features
+slicemachine.config.json — "features": [...] ersetzt durch "plan": "professional"
+scripts/build-customtypes.js — löst plan → features via plans.json auf; features direkt gesetzt überschreibt plan (Fallback)
+Für einen Client ohne E-Commerce: einfach "plan": "starter" in ihrer slicemachine.config.json.
+
+![Alternativtext](/home/angelo/Pictures/web/Klap-Web-CH/meine doku)
+
+Baue das Feature-Admin-Panel -> Promt für Claude, wenn ich mit dieser Lösung an den Anschlag komme.
+
+customtypes/
+  _features/
+    ecommerce/
+      page.json        ← "Online-Handel" Tab-Definition für page
+      settings.json    ← "Online-Handel" Tab-Definition für settings
+  page/
+    base.json          ← page ohne Online-Handel (committed)
+    index.json         ← generiert, gitignored
+  settings/
+    base.json          ← settings ohne Online-Handel (committed)
+    index.json         ← generiert, gitignored
+scripts/
+  build-customtypes.js
+
+
 # Prismic + SvelteKit Multi-Page Starter
 
 Want to see an example of a multi-page website using [Prismic][prismic] and [SvelteKit][sveltekit]? Look no further! This project provides all the code you need for a personal website with a homepage, information pages, and navigation.

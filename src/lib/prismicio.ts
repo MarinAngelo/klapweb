@@ -20,10 +20,10 @@ const routes: prismic.ClientConfig['routes'] = [
 		path: '/:lang?/:uid'
 	},
 	{
-        type: 'page',
-        uid: 'home',
-        path: '/:lang?', // Homepage-Logik
-    },
+		type: 'page',
+		uid: 'home',
+		path: '/:lang?' // Homepage-Logik
+	},
 	{ type: 'settings', path: '/' },
 	{ type: 'navigation', path: '/' },
 	{ type: 'theme', path: '/' }
@@ -38,6 +38,11 @@ const routes: prismic.ClientConfig['routes'] = [
 export const createClient = ({ cookies, ...config }: CreateClientConfig = {}) => {
 	const client = prismic.createClient(repositoryName, {
 		routes,
+		defaultParams: {
+			fetchOptions: {
+				cache: 'no-store'
+			}
+		},
 		...config
 	});
 

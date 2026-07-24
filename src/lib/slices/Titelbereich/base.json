@@ -1,0 +1,1013 @@
+{
+	"id": "hero",
+	"type": "SharedSlice",
+	"name": "Titelbereich",
+	"description": "Hero",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Hero",
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
+			"primary": {
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": ""
+					}
+				},
+				"preset_font": {
+					"type": "Select",
+					"config": {
+						"label": "Schriftart",
+						"placeholder": "— Keine —",
+						"options": [
+							"Inter",
+							"Roboto",
+							"Open Sans",
+							"Montserrat",
+							"Poppins",
+							"Lato",
+							"Raleway",
+							"Oswald",
+							"Nunito",
+							"DM Sans",
+							"Outfit",
+							"Plus Jakarta Sans",
+							"Josefin Sans",
+							"Quicksand",
+							"Cabin",
+							"Playfair Display",
+							"Merriweather",
+							"Lora",
+							"Cormorant Garamond",
+							"Crimson Pro",
+							"Nunito Sans"
+						]
+					}
+				},
+				"font": {
+					"type": "Link",
+					"config": {
+						"label": "Eigene Schriftart",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "font",
+								"fields": ["name", "provider", "variants", "adobeFontId"]
+							}
+						]
+					}
+				},
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Schaltflächenlink",
+						"placeholder": "",
+						"select": null,
+						"customtypes": ["page"]
+					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Schaltflächentext",
+						"placeholder": ""
+					}
+				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": ["button_stil"]
+					}
+				},
+				"button_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche T & R Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrund Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"backgroundImage": {
+					"type": "Image",
+					"config": {
+						"label": "Hintergrundbild",
+						"constraint": {},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"banner_height": {
+					"type": "Select",
+					"config": {
+						"label": "Titelbild Höhe",
+						"placeholder": "",
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
+						"default_value": "100 %"
+					}
+				},
+				"text_overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Text Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"text_overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz Text Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"switch_off_text_overlay": {
+					"type": "Boolean",
+					"config": {
+						"label": "Text Hintergrund in Mobile aus",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text_overlay_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse",
+						"placeholder": "",
+						"options": [
+							"klein",
+							"mittel",
+							"gross"
+						]
+					}
+				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
+				"mobile_text_scale": {
+					"type": "Select",
+					"config": {
+						"label": "Textgrösse Mobile",
+						"placeholder": "",
+						"options": [
+							"Normal",
+							"Klein",
+							"Kleiner",
+							"Sehr klein"
+						]
+					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "farbverlauf",
+			"name": "Farbverlauf",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Hero",
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
+			"primary": {
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": ""
+					}
+				},
+				"preset_font": {
+					"type": "Select",
+					"config": {
+						"label": "Schriftart",
+						"placeholder": "— Keine —",
+						"options": [
+							"Inter",
+							"Roboto",
+							"Open Sans",
+							"Montserrat",
+							"Poppins",
+							"Lato",
+							"Raleway",
+							"Oswald",
+							"Nunito",
+							"DM Sans",
+							"Outfit",
+							"Plus Jakarta Sans",
+							"Josefin Sans",
+							"Quicksand",
+							"Cabin",
+							"Playfair Display",
+							"Merriweather",
+							"Lora",
+							"Cormorant Garamond",
+							"Crimson Pro",
+							"Nunito Sans"
+						]
+					}
+				},
+				"font": {
+					"type": "Link",
+					"config": {
+						"label": "Eigene Schriftart",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "font",
+								"fields": [
+									"name",
+									"provider",
+									"variants",
+									"adobeFontId"
+								]
+							}
+						]
+					}
+				},
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Schaltflächenlink",
+						"placeholder": "",
+						"select": null,
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Schaltflächentext",
+						"placeholder": ""
+					}
+				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": ["button_stil"]
+					}
+				},
+				"button_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche T & R Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrund Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"backgroundImage": {
+					"type": "Image",
+					"config": {
+						"label": "Hintergrundbild",
+						"constraint": {},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_color_1": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Startfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Position (%)",
+						"placeholder": "0"
+					}
+				},
+				"gradient_opacity_1": {
+					"type": "Number",
+					"config": {
+						"label": "Startfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_color_2": {
+					"type": "Color",
+					"config": {
+						"label": "Verlauf Endfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"gradient_stop_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Position (%)",
+						"placeholder": "100"
+					}
+				},
+				"gradient_opacity_2": {
+					"type": "Number",
+					"config": {
+						"label": "Endfarbe Transparenz (0–1)",
+						"placeholder": "1"
+					}
+				},
+				"gradient_type": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Form",
+						"placeholder": "",
+						"options": ["Linear", "Radial"],
+						"default_value": "Linear"
+					}
+				},
+				"gradient_angle": {
+					"type": "Select",
+					"config": {
+						"label": "Verlauf Richtung (nur Linear)",
+						"placeholder": "",
+						"options": ["0°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"],
+						"default_value": "180°"
+					}
+				},
+				"overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"banner_height": {
+					"type": "Select",
+					"config": {
+						"label": "Titelbild Höhe",
+						"placeholder": "",
+						"options": ["100 %", "50 %", "33 %"],
+						"default_value": "100 %"
+					}
+				},
+				"text_overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Text Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"text_overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz Text Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"switch_off_text_overlay": {
+					"type": "Boolean",
+					"config": {
+						"label": "Text Hintergrund in Mobile aus",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text_overlay_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse",
+						"placeholder": "",
+						"options": ["klein", "mittel", "gross"]
+					}
+				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
+				"mobile_text_scale": {
+					"type": "Select",
+					"config": {
+						"label": "Textgrösse Mobile",
+						"placeholder": "",
+						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
+					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "mitBildKarusell",
+			"name": "Mit Bild Karusell",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Hero",
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
+			"primary": {
+				"banner_overlap": {
+					"type": "Boolean",
+					"config": {
+						"label": "Überlappend mit Kopfzeile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"header_bg_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz überlagerter Kopfzeile",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"hide_header_on_load": {
+					"type": "Boolean",
+					"config": {
+						"label": "Kopfzeile beim Laden ausblenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text",
+						"placeholder": "",
+						"allowTargetBlank": false,
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": ""
+					}
+				},
+				"preset_font": {
+					"type": "Select",
+					"config": {
+						"label": "Schriftart",
+						"placeholder": "— Keine —",
+						"options": [
+							"Inter",
+							"Roboto",
+							"Open Sans",
+							"Montserrat",
+							"Poppins",
+							"Lato",
+							"Raleway",
+							"Oswald",
+							"Nunito",
+							"DM Sans",
+							"Outfit",
+							"Plus Jakarta Sans",
+							"Josefin Sans",
+							"Quicksand",
+							"Cabin",
+							"Playfair Display",
+							"Merriweather",
+							"Lora",
+							"Cormorant Garamond",
+							"Crimson Pro",
+							"Nunito Sans"
+						]
+					}
+				},
+				"font": {
+					"type": "Link",
+					"config": {
+						"label": "Eigene Schriftart",
+						"select": "document",
+						"repeat": false,
+						"customtypes": [
+							{
+								"id": "font",
+								"fields": [
+									"name",
+									"provider",
+									"variants",
+									"adobeFontId"
+								]
+							}
+						]
+					}
+				},
+				"button_link": {
+					"type": "Link",
+					"config": {
+						"label": "Schaltflächenlink",
+						"placeholder": "",
+						"select": null,
+						"customtypes": [
+							"page"
+						]
+					}
+				},
+				"button_text": {
+					"type": "Text",
+					"config": {
+						"label": "Schaltflächentext",
+						"placeholder": ""
+					}
+				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": ["button_stil"]
+					}
+				},
+				"button_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche T & R Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"button_hover_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schaltfläche Hintergrund Mouseover",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz der Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"banner_height": {
+					"type": "Select",
+					"config": {
+						"label": "Titelbild Höhe",
+						"placeholder": "",
+						"options": [
+							"100 %",
+							"50 %",
+							"33 %"
+						],
+						"default_value": "100 %"
+					}
+				},
+				"text_overlay_color": {
+					"type": "Color",
+					"config": {
+						"label": "Text Überlagerungsfarbe",
+						"placeholder": ""
+					}
+				},
+				"text_overlay_opacity": {
+					"type": "Number",
+					"config": {
+						"label": "Transparenz Text Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
+				},
+				"switch_off_text_overlay": {
+					"type": "Boolean",
+					"config": {
+						"label": "Text Hintergrund in Mobile aus",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"text_overlay_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse",
+						"placeholder": "",
+						"options": [
+							"klein",
+							"mittel",
+							"gross"
+						]
+					}
+				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
+				"mobile_text_scale": {
+					"type": "Select",
+					"config": {
+						"label": "Textgrösse Mobile",
+						"placeholder": "",
+						"options": [
+							"Normal",
+							"Klein",
+							"Kleiner",
+							"Sehr klein"
+						]
+					}
+				},
+				"show_pagination": {
+					"type": "Boolean",
+					"config": {
+						"label": "Seitenzahl anzeigen",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"transition_mode": {
+					"type": "Select",
+					"config": {
+						"label": "Bildwechsel-Modus",
+						"placeholder": "Crossfade",
+						"options": [
+							"Crossfade",
+							"Slide",
+							"Ken Burns"
+						],
+						"default_value": "Crossfade"
+					}
+				},
+				"transition_duration_ms": {
+					"type": "Number",
+					"config": {
+						"label": "Überblendungsdauer (ms)",
+						"placeholder": "8000"
+					}
+				},
+				"display_duration_ms": {
+					"type": "Number",
+					"config": {
+						"label": "Anzeigedauer pro Bild (ms)",
+						"placeholder": "2000"
+					}
+				},
+				"imageMerryGoRound": {
+					"type": "Group",
+					"config": {
+						"label": "Bilder Karusell",
+						"repeat": true,
+						"fields": {
+							"image": {
+								"type": "Image",
+								"config": {
+									"label": "Bild",
+									"constraint": {},
+									"thumbnails": [
+										{
+											"name": "mobile",
+											"width": 1080,
+											"height": 1920
+										}
+									]
+								}
+							},
+							"text": {
+								"type": "StructuredText",
+								"config": {
+									"label": "Text (überschreibt Haupt-Text)",
+									"placeholder": "Leer = Haupt-Text wird verwendet",
+									"allowTargetBlank": false,
+									"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6"
+								}
+							}
+						}
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

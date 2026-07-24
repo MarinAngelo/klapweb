@@ -4,91 +4,320 @@
 	import { theme } from '$lib/stores/theme';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { reveal } from '$lib/actions/reveal';
+	import { shadeColor } from '$lib/utils/color';
 
 	export let slice: Content.AccordionSlice;
+	export let context: any = {};
+	const p = slice.primary ?? ({} as any);
 
-	const { openIndex, toggleItem } = useOpenIndex(0);
+	const { openIndex, toggleItem } = useOpenIndex(p?.erstes_item_ausgeklappt === false ? null : 0);
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
 
 	const STAGGER_MS = 150;
+
+	$: leistungenItems = (context?.pageLeistungen ?? []) as Array<{ leistung: any }>;
+	$: isLeistungen = (slice.variation as string) === 'leistungen';
+
+	let searchQuery = '';
+
+	function richTextToPlain(field: { text?: string }[]): string {
+		if (!Array.isArray(field)) return '';
+		return field.map((b) => b.text ?? '').join(' ');
+	}
+
+	$: filteredItems =
+		p.mit_suche && searchQuery.trim()
+			? (p.accordion_items ?? []).filter(
+					(item: { label?: string; content?: { text?: string }[] }) => {
+						const q = searchQuery.toLowerCase();
+						return (
+							(item.label ?? '').toLowerCase().includes(q) ||
+							richTextToPlain(item.content).toLowerCase().includes(q)
+						);
+					}
+				)
+			: (p.accordion_items ?? []);
+
+	/**
+	 * Farb-Override-System: CMS-Felder überschreiben Page-Theme-Farben wenn gesetzt.
+	 * Alle Felder sind optional (leer = Fallback auf globale Seitenfarbe).
+	 *
+	 * bg_color      → Hintergrund des inneren Content-Divs (nicht Bounded-Section).
+	 *                 Auto-Padding + border-radius wenn gesetzt, damit Schrift nicht am Rand klebt.
+	 *                 Angewendet auf: flex-col-Gap-Div (background-color)
+	 *
+	 * text_color    → Schriftfarbe für den gesamten Slice (Titel, Beschreibung, Labels, Body).
+	 *                 Gesetzt via color: + --page-color: (nötig weil app.css h1–h4, p, li auf var(--page-color) zeigen).
+	 *                 Angewendet auf: flex-col-Gap-Div
+	 *
+	 * link_color    → Linkfarbe via --page-link-color CSS-Variable.
+	 *                 Angewendet auf: flex-col-Gap-Div
+	 *
+	 * border_color  → Rahmenfarbe der Akkordeon-Rows + dezenter 11%-Tint als Zeilen-Hintergrund.
+	 *                 Fallback: effectiveTextColor (passt automatisch zur Schriftfarbe).
+	 *                 Angewendet auf: jeden Row-Wrapper (border-color + background-color)
+	 *
+	 * contrast_amount → Offset für itemTextColor im geöffneten Panel (siehe unten).
+	 */
+	$: effectiveBgColor = p.bg_color || $theme.pageBgColor;
+	$: effectiveTextColor = p.text_color || $theme.pageColor;
+	$: effectiveLinkColor = p.link_color || $theme.pageLinkColor;
+	$: effectiveBorderColor = p.border_color || effectiveTextColor;
+
+	/**
+	 * Steuert die Textfarbe des Dropdown-Balkens (klickbare Kopfzeile).
+	 * Der ausgeklappte Body übernimmt immer die Seitenfarben (Hintergrund + Text).
+	 *
+	 * contrast_amount im CMS (oder contrastAmount-Prop) = 0 (Standard):
+	 *   Balken-Text in Seiten-Textfarbe
+	 *
+	 * contrast_amount ≠ 0: manueller Override
+	 *   - negativer Wert (z.B. -40) → Balken-Text dunkler
+	 *   - positiver Wert (z.B. +40) → Balken-Text heller
+	 */
+	export let contrastAmount: number = 0;
+	$: resolvedContrastAmount = p.contrast_amount ?? contrastAmount;
+	$: itemTextColor = resolvedContrastAmount
+		? shadeColor(effectiveTextColor || '#000000', resolvedContrastAmount)
+		: effectiveTextColor;
 </script>
 
 <Bounded
 	tag="section"
-	style="background-color: {$theme.pageBgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class={p.mobile_full_width ? 'overflow-x-clip' : ''}
 >
-	<div class="flex flex-col gap-4" style="color: {$theme.pageColor}">
-		{#if slice.primary.heading}
-			<PrismicRichText field={slice.primary.heading} />
-		{/if}
-
-		{#if slice.primary.description}
-			<div class="mb-4">
-				<PrismicRichText field={slice.primary.description} />
-			</div>
-		{/if}
-
-		{#each slice.primary.accordion_items as item, index}
+	<div
+		id="0"
+		class="flex flex-col gap-4 {p.mobile_full_width
+			? slice.variation === 'bildUndText'
+				? p.sektion_rahmen
+					? '-mx-[1.3rem] md:mx-0'
+					: 'vollbreite-bild-text'
+				: p.sektion_rahmen
+					? '-mx-[1.3rem] md:mx-0'
+					: '-mx-6 md:mx-0'
+			: ''} {p.bg_color
+			? p.mobile_full_width
+				? 'md:rounded-lg'
+				: 'rounded-lg'
+			: ''} {p.sektion_rahmen
+			? 'sektion-rahmen ' + (p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
+			: ''}"
+		style="background-color: {effectiveBgColor}; color: {effectiveTextColor}; --page-color: {effectiveTextColor}; --page-link-color: {effectiveLinkColor};{p.bg_color ||
+		p.sektion_rahmen
+			? 'padding: 1.5rem;'
+			: ''}{p.sektion_rahmen ? `border-color: ${effectiveBorderColor};` : ''}"
+	>
+		{#if p.heading || p.description || p.mit_suche}
 			<div
-				use:reveal={anim.animate
-					? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
-					: { direction: 'none' }}
-				class="border-b pb-4"
-				style="border-color: {$theme.pageColor}"
+				class="{p.bg_color || p.sektion_rahmen ? '' : p.mobile_full_width ? 'px-6 md:px-0' : ''} flex flex-col gap-4"
 			>
-				<button
-					class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3"
-					aria-haspopup="true"
-					aria-expanded={$openIndex === index}
-					on:click={() => toggleItem(index)}
-				>
-					{item.label}
-					<svg
-						class="w-4 h-4 ml-1 fill-current transform transition-transform"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 20 20"
-						class:rotate-180={$openIndex === index}
-					>
-						<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-					</svg>
-				</button>
-
-				{#if $openIndex === index}
-					<div class="mt-2 transition-all">
-						{#if slice.variation === 'bildUndText'}
-							<ImageTextGrid
-								image={'image' in item ? item.image : null}
-								text={item.content}
-								imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
-								{theme}
-							/>
-						{:else}
-							<PrismicRichText field={item.content} />
-						{/if}
-					</div>
+				{#if p.heading}
+					<PrismicRichText field={p.heading} />
+				{/if}
+				{#if p.description}
+					<PrismicRichText field={p.description} />
+				{/if}
+				{#if p.mit_suche}
+					<input
+						type="search"
+						bind:value={searchQuery}
+						placeholder={p.suchfeld_platzhalter || 'Suchen...'}
+						class="search-input w-full px-4 py-2 rounded border"
+						style="border-color: {effectiveBorderColor}; background-color: {effectiveBgColor}; color: {effectiveTextColor};"
+					/>
 				{/if}
 			</div>
-		{/each}
+		{/if}
+
+		{#if isLeistungen}
+			{#each leistungenItems as item, index}
+				{@const leistung = item.leistung?.data ?? {}}
+				<div
+					use:reveal={anim.animate
+						? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
+						: { direction: 'none' }}
+					class="border-b pb-4 md:rounded-t min-w-0 {p.bg_color
+						? 'px-3'
+						: p.mobile_full_width && slice.variation === 'bildUndText'
+							? 'md:px-3'
+							: p.mobile_full_width
+								? 'px-6 md:px-3'
+								: 'px-3'}"
+					style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
+				>
+					<button
+						class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1"
+						style="color: {itemTextColor};"
+						aria-haspopup="true"
+						aria-expanded={$openIndex === index}
+						on:click={() => toggleItem(index)}
+					>
+						{leistung.label ?? ''}
+						<svg
+							class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
+							style="color: var(--page-link-color);"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 20 20"
+							class:rotate-180={$openIndex === index}
+						>
+							<path
+								d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+							/>
+						</svg>
+					</button>
+
+					<div
+						id="2"
+						class="accordion-body"
+						style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};"
+					>
+						<div class="overflow-hidden">
+							<div
+								class="mt-2 px-3 py-2 rounded"
+								style="background-color: {effectiveBgColor};"
+							>
+								{#if leistung.beschreibung?.length}
+									<PrismicRichText field={leistung.beschreibung} />
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+			{/each}
+		{:else}
+			{#each filteredItems as item, index}
+				<div
+					id="1"
+					use:reveal={anim.animate
+						? { ...anim.options, delay: (anim.options.delay ?? 500) + index * STAGGER_MS }
+						: { direction: 'none' }}
+					class="border-b {slice.variation === 'bildUndText'
+						? 'pb-0 md:pb-4'
+						: 'pb-4'} md:rounded-t min-w-0 {p.bg_color || p.sektion_rahmen
+						? 'px-3'
+						: p.mobile_full_width
+							? 'px-0 md:px-3'
+							: 'px-3'}"
+					style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
+				>
+					<button
+						class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 {slice.variation ===
+						'bildUndText'
+							? 'pb-5 md:pb-1'
+							: ''} {!p.bg_color && p.mobile_full_width && !p.sektion_rahmen ? 'px-6 md:px-0' : ''}"
+						style="color: {itemTextColor};"
+						aria-haspopup="true"
+						aria-expanded={$openIndex === index}
+						on:click={() => toggleItem(index)}
+					>
+						{item.label}
+						<svg
+							class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
+							style="color: var(--page-link-color);"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 20 20"
+							class:rotate-180={$openIndex === index}
+						>
+							<path
+								d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+							/>
+						</svg>
+					</button>
+
+					<div
+						id="2"
+						class="accordion-body"
+						style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};"
+					>
+						<div id="3" class="overflow-hidden">
+							<div
+								id="4"
+								class="mt-2 {slice.variation === 'bildUndText'
+									? 'pt-2 md:pt-0'
+									: 'py-2'} {slice.variation === 'bildUndText'
+									? 'rounded md:rounded-3xl'
+									: 'rounded'} {slice.variation === 'bildUndText' ? 'md:px-0' : 'px-3'}"
+								style="background-color: {effectiveBgColor};"
+							>
+								{#if slice.variation === 'bildUndText'}
+									<ImageTextGrid
+										image={'image' in item ? item.image : null}
+										text={item.content}
+										imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
+										imageBgColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
+										overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
+										overlayTransparency={'bild_overlay_transparenz' in item
+											? (item.bild_overlay_transparenz ?? 100)
+											: 100}
+										mobilePadding={p.mobile_full_width ? '2rem' : ''}
+										mobilePaddingTop={p.mobile_full_width ? '1.5rem' : ''}
+										desktopPadding={p.mobile_full_width ? '1.5rem' : ''}
+										desktopPaddingY="1.5rem"
+										noRoundMobile={p.mobile_full_width}
+										noObjectCover
+										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
+									/>
+								{:else}
+									<PrismicRichText field={item.content} />
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+			{/each}
+		{/if}
 	</div>
 </Bounded>
 
 <style>
 	button {
 		text-align: left;
+		min-width: 0;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	@media (max-width: 767px) {
+		.vollbreite-bild-text {
+			margin-left: -1.5rem;
+			margin-right: -1.5rem;
+		}
+	}
+
+	.accordion-body {
+		display: grid;
+		transition: grid-template-rows 300ms ease-out;
+	}
+
+	.sektion-rahmen {
+		border-width: 1px;
+		border-style: solid;
+	}
+
+	@media (max-width: 767px) {
+		.bildtext-fullwidth {
+			margin-left: -1.5rem;
+			margin-right: -1.5rem;
+		}
+	}
+
+	.search-input::placeholder {
+		opacity: 0.5;
+	}
+
+	.search-input:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px currentColor;
 	}
 
 	/* Zwingt Listen-Stile zurück */

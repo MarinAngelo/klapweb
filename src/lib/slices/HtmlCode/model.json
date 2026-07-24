@@ -1,17 +1,17 @@
 {
-  "id": "html_code",
-  "type": "SharedSlice",
-  "name": "HtmlCode",
-  "description": "HtmlCode",
-  "variations": [
-    {
-      "id": "default",
-      "name": "Standard",
-      "docURL": "...",
-      "version": "initial",
-      "description": "Default",
-      "imageUrl": "",
-      "primary": {
+	"id": "html_code",
+	"type": "SharedSlice",
+	"name": "HtmlCode",
+	"description": "HtmlCode",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
 				"html_code": {
 					"type": "StructuredText",
 					"config": {
@@ -19,6 +19,15 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 						"single": "preformatted"
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
 					}
 				},
 				"animate": {
@@ -32,7 +41,13 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
 						"default_value": "Oben"
 					}
 				},
@@ -45,10 +60,13 @@
 				},
 				"anim_duration": {
 					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
-      "items": {}
-    }
-  ]
+			"items": {}
+		}
+	]
 }
