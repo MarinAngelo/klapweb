@@ -276,14 +276,6 @@
 					"placeholder_true": "Ein",
 					"default_value": true
 				}
-			},
-			"favicon": {
-				"type": "Image",
-				"config": {
-					"label": "Favicon",
-					"constraint": {},
-					"thumbnails": []
-				}
 			}
 		},
 		"Kopfzeile": {
