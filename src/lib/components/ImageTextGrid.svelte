@@ -128,9 +128,11 @@
 				: ''} {textCenterH ? 'text-center' : ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
-			<PrismicRichText field={text} />
+			<div class="text-content">
+				<PrismicRichText field={text} />
+			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-4"><slot /></div>
+				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
 			{/if}
 		</div>
 	{:else}
@@ -141,9 +143,11 @@
 				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
 		>
-			<PrismicRichText field={text} />
+			<div class="text-content">
+				<PrismicRichText field={text} />
+			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-4"><slot /></div>
+				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
 			{/if}
 		</div>
 		<div
@@ -273,7 +277,20 @@
 			padding-left: var(--mob-pad, 0);
 			padding-right: var(--mob-pad, 0);
 			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
-			padding-bottom: var(--mob-pad-top, var(--mob-pad, 0));
+			padding-bottom: 0;
+		}
+
+		.text-content p {
+			margin-bottom: 0.5rem !important;
+		}
+
+		.text-content p:last-child {
+			margin-bottom: 0 !important;
+		}
+
+		/* Wenn Text zuerst kommt (mobileTextFirst=true → order-1), brauchen wir Abstand zum Bild */
+		.order-1 .text-content p:last-child {
+			margin-bottom: 1.75rem !important;
 		}
 	}
 

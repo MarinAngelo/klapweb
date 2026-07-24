@@ -525,7 +525,7 @@
 							{linkError}
 						</p>
 					{/if}
-					<div class="mt-8 flex justify-end">
+					<div class="mt-8 flex justify-center md:justify-end">
 						<Button
 							text={slice.primary?.submitt_button_text || 'Absenden'}
 							disabled={!!linkError}
