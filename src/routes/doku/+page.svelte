@@ -1542,8 +1542,8 @@
 					<tr><td><code>NETLIFY_SITE_ID</code></td><td>Netlify Site-ID</td><td>Blobs-Zugriff (Rechnungen + Kunden)</td></tr>
 					<tr><td><code>NETLIFY_TOKEN</code></td><td>Netlify API Token</td><td>Blobs-Zugriff (Rechnungen + Kunden)</td></tr>
 					<tr><td><code>RESEND_API_KEY</code></td><td>API-Key von resend.com</td><td>E-Mail-Versand (Rechnungen)</td></tr>
-					<tr><td><code>INVOICE_FROM_EMAIL</code></td><td>z.B. rechnung@klap-web.ch</td><td>Absender-E-Mail (muss in Resend verifiziert sein)</td></tr>
-					<tr><td><code>INVOICE_TO_EMAIL</code></td><td>z.B. billing@klap-web.ch (optional)</td><td>Geschäfts-E-Mail für Benachrichtigungen (bei E-Commerce)</td></tr>
+					<tr><td><code>INVOICE_FROM_EMAIL</code></td><td>Absender-E-Mail</td><td>Absender-E-Mail (muss in Resend verifiziert sein)</td></tr>
+					<tr><td><code>INVOICE_TO_EMAIL</code></td><td>Geschäfts-E-Mail (optional)</td><td>Geschäfts-E-Mail für Benachrichtigungen (bei E-Commerce)</td></tr>
 				</tbody>
 			</table>
 

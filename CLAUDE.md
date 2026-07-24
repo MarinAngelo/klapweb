@@ -273,7 +273,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 
 Für E-Commerce/Admin Rechnungen erforderlich:
 - `RESEND_API_KEY`: API-Key von resend.com
-- `INVOICE_FROM_EMAIL`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- `INVOICE_FROM_EMAIL`: Absender-E-Mail (muss in Resend verifiziert sein)
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
 Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
