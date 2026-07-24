@@ -110,7 +110,7 @@
 			<div class="mt-4 text-center">
 				<p
 					class=" footer-buttonbar-p"
-					style="font-size: var(--footer-font-size-button-bar-rem);"
+					style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
 				>
 					<a
 						href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
