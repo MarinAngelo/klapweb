@@ -10,6 +10,10 @@
 		"individuell": {
 			"label": "Individuell",
 			"extends": "professional"
+		},
+		"klap-web-ch": {
+			"label": "Klap Web CH",
+			"extends": "individuell"
 		}
 	},
 	"features": {
@@ -76,7 +80,7 @@
 		"chatbot": {
 			"label": "Chat-Bot",
 			"plans": [
-				"individuell"
+				"klap-web-ch"
 			]
 		}
 	},
