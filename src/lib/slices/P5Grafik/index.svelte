@@ -155,6 +155,7 @@
 			background-color: {canvasBg};
 			color: {color};
 			height: {$bannerHeight};
+			min-height: {$bannerHeight === 'auto' ? '100vh' : 'unset'};
 			font-family: {presetFont
 			? `'${presetFont}'`
 			: isFilled.contentRelationship(p.font) && p.font.data?.name
