@@ -1,0 +1,24 @@
+/* Dev-Overlay: Fadenkreuz für Bildschirmmitte */
+.crosshair-def-tool {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 999999;
+}
+.crosshair-def-tool:before,
+.crosshair-def-tool:after {
+  content: "";
+  position: absolute;
+  background: red;
+}
+.crosshair-def-tool:before {
+  left: 50%; top: 0;
+  width: 2px; height: 100%;
+  transform: translateX(-1px);
+}
+.crosshair-def-tool:after {
+  top: 50%; left: 0;
+  height: 2px; width: 100%;
+  transform: translateY(-1px);
+}

@@ -3,55 +3,44 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
-
-	const { openIndex, toggleItem } = useOpenIndex();
+	const p = slice.primary ?? ({} as any);
 
 	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
-<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section">
+<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">
 	<div
-		class="prose max-w-3xl mx-auto"
+		class="prose max-w-3xl mx-auto {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 		data-slice-type="{slice.slice_type}EmbedFieldHandler"
 		data-slice-variation={slice.variation}
 	>
-		{#if slice.primary.title}
-			<h2 class="mb-4 font-bold text-2xl md:text-3xl">{slice.primary.title}</h2>
+		{#if p.title}
+			<h2 class="mb-4 font-bold">{p.title}</h2>
 		{/if}
-		{#if slice.primary.description}
+		{#if p.description}
 			<div class="mb-6">
-				<PrismicRichText field={slice.primary.description} />
+				<PrismicRichText field={p.description} />
 			</div>
 		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url}
+		{#if p.youtube_video && p.youtube_video.embed_url}
 			<div class="mb-8 flex justify-center">
-				{#if slice.primary.youtube_video.embed_url.startsWith('http')}
-					<EmbedFieldHandler embed={slice.primary.youtube_video} />
+				{#if p.youtube_video.embed_url.startsWith('http')}
+					<EmbedFieldHandler embed={p.youtube_video} />
 				{:else}
 					<div class="text-red-600 text-sm">
-						Ungültige Video-URL: {slice.primary.youtube_video.embed_url}
+						Ungültige Video-URL: {p.youtube_video.embed_url}
 					</div>
 				{/if}
 			</div>
 		{/if}
-		{#if slice.primary.youtube_video && slice.primary.youtube_video.embed_url && !slice.primary.youtube_video.embed_url.startsWith('http')}
-			<div class="text-xs text-gray-500">
-				Debug: embed_url = {slice.primary.youtube_video.embed_url}
-			</div>
-		{/if}
-		{#if slice.primary.steps && slice.primary.steps.length > 0}
+		{#if p.steps && p.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
-				{#each slice.primary.steps as step, i}
+				{#each (p.steps ?? []) as step, i}
 					<li>
 						{#if step.step_title}
 							<div class="font-semibold text-lg mb-1">{step.step_title}</div>
@@ -68,11 +57,6 @@
 										Ungültige Video-URL: {step.youtube_video.embed_url}
 									</div>
 								{/if}
-							</div>
-						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url && !step.youtube_video.embed_url.startsWith('http')}
-							<div class="text-xs text-gray-500">
-								Debug: embed_url = {step.youtube_video.embed_url}
 							</div>
 						{/if}
 					</li>

@@ -2,6 +2,7 @@
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import DropdownButton from './DropdownButton.svelte';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+	import { headerHeight } from '$lib/stores/headerHeight';
 
 	export let item;
 	export let subItems;
@@ -13,13 +14,34 @@
 
 	const dispatch = createEventDispatcher();
 	let isOpen = false;
+	let dropdownBg = '';
+	let dropdownTop = 0;
+
+	function resolveHeaderBg(el: HTMLElement): string {
+		const header = el.closest('header');
+		if (header) {
+			const c = getComputedStyle(header).backgroundColor;
+			if (c && c !== 'rgba(0, 0, 0, 0)') return c;
+		}
+		return headerBgColor;
+	}
+
+	let containerEl: HTMLElement;
+
+	function openDropdown() {
+		if (!isOpen && typeof window !== 'undefined') {
+			window.dispatchEvent(new CustomEvent('close-dropdown'));
+			dropdownBg = resolveHeaderBg(containerEl);
+			// Berechne den Abstand zum unteren Rand des Headers
+			const rect = containerEl.getBoundingClientRect();
+			dropdownTop = $headerHeight - rect.bottom;
+		}
+		isOpen = true;
+	}
 
 	function toggleDropdown() {
-		if (!isOpen && typeof window !== 'undefined') {
-			// Alle anderen Dropdowns schließen
-			window.dispatchEvent(new CustomEvent('close-dropdown'));
-		}
-		isOpen = !isOpen;
+		if (!isOpen) openDropdown();
+		else closeDropdown();
 	}
 
 	function closeDropdown() {
@@ -43,21 +65,23 @@
 </script>
 
 <div
+	bind:this={containerEl}
 	class="relative"
+	role="navigation"
 	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
+	on:mouseenter={openDropdown}
+	on:mouseleave={closeDropdown}
 >
-	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} />
+	<DropdownButton {item} {headerLinkColor} {headerLinkFontSize} onClick={toggleDropdown} {isOpen} />
 
 	{#if isOpen}
 		<ul
-			class="dropdown-menu left-0 mt-0 shadow-lg z-40 rounded py-1"
-			style="background-color: {headerBgColor}; min-width: 14rem;"
+			class="dropdown-menu left-0 shadow-lg z-40 rounded pt-4 pb-4"
+			style="background-color: {dropdownBg || headerBgColor}; min-width: 14rem; --dropdown-top: {dropdownTop}px;"
 		>
 			{#each subItems as dropdownItem, index}
 				<li
-					class="{currentPath === dropdownItem.link.url ? 'underline' : ''} {index === 0
-						? 'mt-11'
-						: ''} px-5 py-0 font-semibold tracking-tight block text-left"
+					class="{currentPath === dropdownItem.link.url ? 'underline' : ''} px-5 py-0 font-semibold tracking-tight block text-left"
 					style="
 				font-size: {headerLinkFontSize}rem;
 				white-space: normal;
@@ -95,20 +119,28 @@
 		max-width: 100%;
 	}
 
-	/* Desktop: Absolute positioning to overlay */
-	@media (min-width: 768px) {
+	/* Desktop: Absolute positioning to overlay, aligned to header bottom */
+	@media (min-width: 1024px) {
 		.dropdown-menu {
 			position: absolute;
 			width: max-content;
 			max-width: none;
+			top: calc(100% + var(--dropdown-top, 0px));
+		}
+
+		/* Unsichtbarer Bereich der die Lücke zwischen Button und Dropdown überbrückt */
+		.dropdown-menu::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 100%;
+			height: calc(var(--dropdown-top, 0px) + 1rem);
 		}
 	}
 
 	:global(.dropdown-link:hover) {
+		color: var(--header-link-hover-color) !important;
 		text-decoration: underline !important;
-	}
-	/* optional: falls du auch Textfarbe beim Hover über Variable steuern willst */
-	:global(.dropdown-link:hover) * {
-		color: inherit;
 	}
 </style>

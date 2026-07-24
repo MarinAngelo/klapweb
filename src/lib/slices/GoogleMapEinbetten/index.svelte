@@ -1,44 +1,64 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Content } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { convertNumberInverse } from '$lib/utils/convertNumber';
-	import { mapAnimation } from '$lib/utils/animationMapper';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { convertNumber } from '$lib/utils/convertNumber';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { _ } from '$lib/stores/i18n';
 
-	export let slice: Content.CodeEinbettenSlice;
+	export let slice: any;
 
-	const { openIndex, toggleItem } = useOpenIndex();
+	const p = slice.primary ?? {};
 
-	// Animation aus CMS-Feldern mappen
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: mobileVollbreite = p.mobile_full_width ?? false;
 
-	let isMobile = false;
+	const mapOpacity = convertNumber(p.opacity ?? 100);
+	const mapHeight = p.map_height || 400;
 
-	onMount(() => {
-		isMobile = window.innerWidth <= 768;
+	let embedUrl = '';
+	let resolvedUrl = '';
 
-		// Event-Listener für Fenstergröße
-		const handleResize = () => {
-			isMobile = window.innerWidth <= 768;
-		};
-		window.addEventListener('resize', handleResize);
+	function toDirectionsUrl(resolved: string): string {
+		if (!resolved) return '';
+		const placeMatch = resolved.match(/\/maps\/place\/([^/@?]+)/);
+		if (placeMatch) {
+			const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+			return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place)}`;
+		}
+		const coordMatch = resolved.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+		if (coordMatch) {
+			return `https://www.google.com/maps/dir/?api=1&destination=${coordMatch[1]},${coordMatch[2]}`;
+		}
+		try {
+			const q = new URL(resolved).searchParams.get('q');
+			if (q) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
+		} catch {}
+		return '';
+	}
 
-		// Event-Listener entfernen, wenn die Komponente zerstört wird
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
+	$: directionsUrl = resolvedUrl ? toDirectionsUrl(resolvedUrl) : '';
+
+	onMount(async () => {
+		const raw = p.map_url?.trim();
+		if (!raw) return;
+
+		if (raw.includes('google.com/maps/embed') || raw.includes('output=embed')) {
+			embedUrl = raw;
+			resolvedUrl = raw;
+			return;
+		}
+
+		try {
+			const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(raw)}`);
+			if (res.ok) {
+				const data = await res.json();
+				embedUrl = data.embedUrl;
+				resolvedUrl = data.resolvedUrl || data.embedUrl;
+			}
+		} catch {
+			embedUrl = raw;
+		}
 	});
-
-	const { pageBgColor } = get(theme);
-	const opacity = convertNumberInverse(slice.primary.opacity ?? 0) || 0.5;
 </script>
 
 <Bounded
@@ -47,28 +67,52 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
-	<!-- HTML-Code rendern -->
-	<div class="relative w-full">
-		{#each slice.primary.html_code as code}
-			<div class="relative">
-				<!-- Gerenderter HTML-Code -->
-				<div>
-					{@html code.text
-						.replace(/width="\d+"/g, 'width="100%"')
-						.replace(
-							/style="[^"]*"/g,
-							isMobile
-								? 'style="width: 100%; height: 100vw;"'
-								: 'style="width: 100%; height: 25vw;"'
-						)}
+	<div class="relative {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
+		{#if embedUrl}
+			<div class="flex flex-col gap-3">
+				<div class="relative overflow-hidden {mobileVollbreite ? 'md:rounded-3xl' : 'rounded-3xl'}">
+					<iframe
+						src={embedUrl}
+						width="100%"
+						height={mapHeight}
+						style="border: 0; display: block; min-height: {mapHeight}px;"
+						allowfullscreen={true}
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						title="Google Maps"
+					></iframe>
+					{#if mapOpacity > 0}
+						<div
+							class="absolute inset-0"
+							style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
+						></div>
+					{/if}
 				</div>
-				<!-- Overlay -->
-				<div
-					class="absolute inset-0 bg-opacity-50"
-					style="background-color: {pageBgColor}; opacity: {opacity};"
-				></div>
+				{#if directionsUrl}
+					<a
+						href={directionsUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
+						style="border-color: var(--page-color); color: var(--page-color);"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></svg
+						>
+						{$_('Route planen')}
+					</a>
+				{/if}
 			</div>
-		{/each}
+		{/if}
 	</div>
 </Bounded>

@@ -1,0 +1,351 @@
+{
+	"id": "settings",
+	"label": "Einstellungen",
+	"format": "custom",
+	"repeatable": false,
+	"status": true,
+	"json": {
+		"Main": {
+			"site_title": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Website Titel",
+					"placeholder": "Titel der Website",
+					"allowTargetBlank": false,
+					"single": "heading1"
+				}
+			},
+			"site_sub_title": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Website Untertitel",
+					"placeholder": "",
+					"allowTargetBlank": false,
+					"single": "heading2"
+				}
+			},
+			"responsible_person_company": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortlich (Person/Unternehmen)",
+					"placeholder": ""
+				}
+			},
+			"company_identification_number": {
+				"type": "Text",
+				"config": {
+					"label": "Unternehmenskennnummer",
+					"placeholder": "UID / CHE-Nummer / MWST-Nummer usw."
+				}
+			},
+			"responsible_address": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Verantwortliche Adresse",
+					"placeholder": "",
+					"allowTargetBlank": false,
+					"multi": "paragraph",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"responsible_email": {
+				"type": "Text",
+				"config": {
+					"label": "Verantwortliche E-Mail",
+					"placeholder": ""
+				}
+			},
+			"e_mail": {
+				"type": "Text",
+				"config": {
+					"label": "Korrespondenz E-Mail",
+					"placeholder": ""
+				}
+			},
+			"privacy_policy": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Datenschutzerkärung",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"haftungsausschluss": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Haftungsausschluss",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"haftungsausschluss": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Haftungsausschluss",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+				}
+			},
+			"legal_disclosure": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Impressum",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"contacts": {
+				"type": "Group",
+				"config": {
+					"label": "Kontakte",
+					"repeat": true,
+					"fields": {
+						"impressum": {
+							"type": "Boolean",
+							"config": {
+								"label": "Impressum",
+								"placeholder_false": "Nein",
+								"placeholder_true": "Ja",
+								"default_value": true
+							}
+						},
+						"title": {
+							"type": "Text",
+							"config": {
+								"label": "Titel / Funktion",
+								"placeholder": "z. B. Design"
+							}
+						},
+						"name": {
+							"type": "Text",
+							"config": {
+								"label": "Name",
+								"placeholder": ""
+							}
+						},
+						"email": {
+							"type": "Text",
+							"config": {
+								"label": "E-Mail",
+								"placeholder": ""
+							}
+						},
+						"website": {
+							"type": "Link",
+							"config": {
+								"label": "Website",
+								"placeholder": "",
+								"select": null,
+								"allowTargetBlank": true,
+								"allowText": true,
+								"repeat": false
+							}
+						},
+						"address": {
+							"type": "StructuredText",
+							"config": {
+								"label": "Adresse",
+								"placeholder": "",
+								"allowTargetBlank": false,
+								"multi": "paragraph",
+								"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+							}
+						}
+					}
+				}
+			},
+			"cookies_text": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Cookies Text",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"agb": {
+				"type": "StructuredText",
+				"config": {
+					"label": "AGB",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
+					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+				}
+			},
+			"page_password": {
+				"type": "Text",
+				"config": {
+					"label": "Seiten-Passwort",
+					"placeholder": "Passwort für passwortgeschützte Seiten"
+				}
+			},
+			"user_backend_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "User-Backend aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_bot_name": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Name",
+					"placeholder": "Assistent"
+				}
+			},
+			"chat_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Begrüssung",
+					"placeholder": "Hallo! Wie kann ich helfen?"
+				}
+			},
+			"chat_knowledge_base": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis",
+					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
+					"multi": "paragraph,preformatted"
+				}
+			},
+			"show_language_switcher": {
+				"type": "Boolean",
+				"config": {
+					"label": "Mehrere Sprachen verwenden",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"home_redirect_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Startseite umleiten",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"home_redirect_url": {
+				"type": "Link",
+				"config": {
+					"label": "Umleitungs-Seite",
+					"select": "document",
+					"customtypes": [
+						"page"
+					]
+				}
+			}
+		},
+		"SEO": {
+			"domain": {
+				"type": "Text",
+				"config": {
+					"label": "Website Domain",
+					"placeholder": "Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung."
+				}
+			},
+			"site_name": {
+				"type": "Text",
+				"config": {
+					"label": "Website Name (SEO)",
+					"placeholder": "Leer lassen = Website Titel wird verwendet. Nur ausfüllen wenn der SEO-Name kürzer sein soll."
+				}
+			},
+			"meta_title": {
+				"type": "Text",
+				"config": {
+					"label": "Globaler SEO Titel",
+					"placeholder": "Der Standard-Titel, falls eine Seite keinen eigenen hat (z.B. *'')"
+				}
+			},
+			"meta_description": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Globale Beschreibung",
+					"placeholder": "(150–160 Zeichen) Standard-Suchergebnis-Text für Seiten ohne eigene Beschreibung.",
+					"allowTargetBlank": false,
+					"single": "paragraph"
+				}
+			},
+			"meta_image": {
+				"type": "Image",
+				"config": {
+					"label": "Social Image (1200 × 630 px, 16:9)",
+					"constraint": {
+						"width": 1200,
+						"height": 630
+					},
+					"thumbnails": []
+				}
+			},
+			"adobe_font_id": {
+				"type": "Text",
+				"config": {
+					"label": "Adobe Project ID",
+					"placeholder": "Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy"
+				}
+			},
+			"favicon": {
+				"type": "Image",
+				"config": {
+					"label": "Favicon (64 × 64 px, quadratisch)",
+					"constraint": {
+						"width": 64,
+						"height": 64
+					},
+					"thumbnails": []
+				}
+			},
+			"app_icon": {
+				"type": "Image",
+				"config": {
+					"label": "App-Icon – quadratisch (mind. 512 × 512 px)",
+					"constraint": {
+						"width": 512,
+						"height": 512
+					},
+					"thumbnails": [
+						{
+							"name": "192",
+							"width": 192,
+							"height": 192
+						},
+						{
+							"name": "180",
+							"width": 180,
+							"height": 180
+						}
+					]
+				}
+			},
+			"pwa_theme_color": {
+				"type": "Color",
+				"config": {
+					"label": "App & Browser Statusleisten-Farbe",
+					"placeholder": "Standard: Hintergrundfarbe des aktiven Themes"
+				}
+			}
+		}
+	}
+}

@@ -3,7 +3,15 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			themeColorsCss?: string;
+			user?: {
+				id: string;
+				email: string;
+				name: string;
+				verified: boolean;
+			};
+		}
 		// interface PageData {}
 		// interface Platform {}
 	}

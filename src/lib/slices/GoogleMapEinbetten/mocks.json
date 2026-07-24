@@ -3,20 +3,14 @@
 		"__TYPE__": "SharedSliceContent",
 		"variation": "default",
 		"primary": {
-			"html_code": {
-				"__TYPE__": "StructuredTextContent",
-				"value": [
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Ut ea reprehenderit consectetur id dolor quis adipisicing laborum excepteur dolor. Ullamco excepteur adipisicing proident dolore non aliqua tempor aute adipisicing reprehenderit deserunt elit. Adipisicing est laboris voluptate adipisicing minim commodo qui eiusmod irure."
-						}
-					}
-				]
+			"map_url": {
+				"__TYPE__": "FieldContent",
+				"value": "https://maps.google.com/maps?q=Zurich&output=embed",
+				"type": "Text"
 			},
 			"opacity": {
 				"__TYPE__": "FieldContent",
-				"value": "54",
+				"value": 100,
 				"type": "Number"
 			}
 		},

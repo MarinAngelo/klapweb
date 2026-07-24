@@ -1,17 +1,17 @@
 {
-  "id": "anleitung",
-  "type": "SharedSlice",
-  "name": "Anleitung",
-  "description": "Anleitung",
-  "variations": [
-    {
-      "id": "default",
-      "name": "Default",
-      "docURL": "...",
-      "version": "initial",
-      "description": "Default",
-      "imageUrl": "",
-      "primary": {
+	"id": "anleitung",
+	"type": "SharedSlice",
+	"name": "Anleitung",
+	"description": "Anleitung",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Default",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
 				"title": {
 					"type": "Text",
 					"config": {
@@ -25,7 +25,49 @@
 						"label": "Beschreibung",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading2"
+						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading2",
+						"labels": [
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline"
+						]
 					}
 				},
 				"youtube_video": {
@@ -33,6 +75,50 @@
 					"config": {
 						"label": "YouTube Video",
 						"placeholder": ""
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				},
 				"steps": {
@@ -54,7 +140,49 @@
 									"label": "Beschreibung",
 									"placeholder": "",
 									"allowTargetBlank": true,
-									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+									"multi": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+									"labels": [
+										"size-xs",
+										"size-sm",
+										"size-lg",
+										"size-xl",
+										"size-2xl",
+										"size-3xl",
+										"size-4xl",
+										"size-5xl",
+										"size-6xl",
+										"weight-thin",
+										"weight-light",
+										"weight-medium",
+										"weight-semibold",
+										"weight-black",
+										"tracking-tight",
+										"tracking-wide",
+										"tracking-wider",
+										"tracking-widest",
+										"leading-tight",
+										"leading-loose",
+										"uppercase",
+										"lowercase",
+										"capitalize",
+										"underline",
+										"block",
+										"muted",
+										"display-thin",
+										"display-light",
+										"display-bold",
+										"display-black",
+										"giant-thin",
+										"giant-light",
+										"giant-bold",
+										"hero-thin",
+										"hero-light",
+										"hero-bold",
+										"subtitle",
+										"subtitle-bold",
+										"kicker",
+										"overline"
+									]
 								}
 							},
 							"youtube_video": {
@@ -66,35 +194,9 @@
 							}
 						}
 					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": { "label": "Animationsdauer (ms)", "placeholder": "2000" }
 				}
 			},
-      "items": {}
-    }
-  ]
+			"items": {}
+		}
+	]
 }

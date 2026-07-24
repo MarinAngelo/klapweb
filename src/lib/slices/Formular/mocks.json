@@ -46,13 +46,384 @@
 				"__TYPE__": "FieldContent",
 				"value": "tightly",
 				"type": "Text"
-			},
-			"form_name": {
-				"__TYPE__": "FieldContent",
-				"value": "plural",
-				"type": "Text"
 			}
 		},
 		"items": []
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "mitText",
+		"primary": {
+			"spalten_verhaeltnis": {
+				"__TYPE__": "FieldContent",
+				"value": "Gleich (50/50)",
+				"type": "Select"
+			},
+			"formular_seite": {
+				"__TYPE__": "FieldContent",
+				"value": "Links",
+				"type": "Select"
+			},
+			"text_ausrichtung_v": {
+				"__TYPE__": "FieldContent",
+				"value": "Mitte",
+				"type": "Select"
+			},
+			"text_ausrichtung_h": {
+				"__TYPE__": "FieldContent",
+				"value": "Rechts",
+				"type": "Select"
+			},
+			"text_textausrichtung": {
+				"__TYPE__": "FieldContent",
+				"value": "Mitte",
+				"type": "Select"
+			},
+			"text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Sit ex elit laborum velit pariatur minim amet laboris cillum consequat commodo est nulla ullamco. Veniam Lorem proident ad in nisi et adipisicing minim nostrud eiusmod. Occaecat velit ut sint."
+						}
+					}
+				]
+			},
+			"html_embed": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Eiusmod laborum pariatur nisi deserunt qui deserunt ut proident excepteur voluptate culpa pariatur. Ad anim ut occaecat irure in."
+						}
+					}
+				]
+			},
+			"html_embed_overlay_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#671d5d",
+				"type": "Color"
+			},
+			"html_embed_overlay_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "7",
+				"type": "Number"
+			},
+			"form_title": {
+				"__TYPE__": "FieldContent",
+				"value": "every",
+				"type": "Text"
+			},
+			"form_instructions": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Lorem duis mollit reprehenderit aliquip do cupidatat amet laboris aute fugiat. Amet nulla consectetur reprehenderit irure sunt non non."
+						}
+					}
+				]
+			},
+			"submitt_button_text": {
+				"__TYPE__": "FieldContent",
+				"value": "twice",
+				"type": "Text"
+			},
+			"submitted_title": {
+				"__TYPE__": "FieldContent",
+				"value": "early",
+				"type": "Text"
+			},
+			"submitted_text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Consectetur ullamco commodo dolore est eu ut culpa aliqua excepteur ea ipsum in aliquip. Ipsum Lorem adipisicing consectetur qui qui mollit aliqua consequat dolor magna."
+						}
+					}
+				]
+			},
+			"form_fields": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"field_name",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "other",
+									"type": "Text"
+								}
+							],
+							[
+								"field_type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "Textfeld",
+									"type": "Select"
+								}
+							],
+							[
+								"required",
+								{
+									"__TYPE__": "BooleanContent",
+									"value": true
+								}
+							],
+							[
+								"invalid_feedback_text",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "driving",
+									"type": "Text"
+								}
+							],
+							[
+								"options",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "speed",
+									"type": "Text"
+								}
+							]
+						]
+					}
+				]
+			},
+			"animate": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"anim_direction": {
+				"__TYPE__": "FieldContent",
+				"value": "Oben",
+				"type": "Select"
+			},
+			"anim_delay": {
+				"__TYPE__": "FieldContent",
+				"value": "55",
+				"type": "Number"
+			},
+			"anim_duration": {
+				"__TYPE__": "FieldContent",
+				"value": "84",
+				"type": "Number"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "kauf",
+		"primary": {
+			"form_fields": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"field_name",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "consist",
+									"type": "Text"
+								}
+							],
+							[
+								"field_type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "Textbereich",
+									"type": "Select"
+								}
+							],
+							[
+								"required",
+								{
+									"__TYPE__": "BooleanContent",
+									"value": true
+								}
+							],
+							[
+								"invalid_feedback_text",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "grandfather",
+									"type": "Text"
+								}
+							],
+							[
+								"options",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "father",
+									"type": "Text"
+								}
+							],
+							[
+								"placeholder",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "within",
+									"type": "Text"
+								}
+							]
+						]
+					}
+				]
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "twoColumns",
+		"primary": {
+			"form_title": {
+				"__TYPE__": "FieldContent",
+				"value": "mental",
+				"type": "Text"
+			},
+			"form_instructions": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Est commodo exercitation incididunt est esse eiusmod proident duis eu laborum. Consequat enim laborum mollit sint cillum duis fugiat esse ex proident sunt."
+						}
+					}
+				]
+			},
+			"submitt_button_text": {
+				"__TYPE__": "FieldContent",
+				"value": "impossible",
+				"type": "Text"
+			},
+			"submitted_title": {
+				"__TYPE__": "FieldContent",
+				"value": "differ",
+				"type": "Text"
+			},
+			"submitted_text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Ipsum esse esse aliqua consequat incididunt cupidatat eiusmod ullamco incididunt duis est do ipsum."
+						}
+					}
+				]
+			},
+			"form_fields": {
+				"__TYPE__": "GroupContentType",
+				"value": [
+					{
+						"__TYPE__": "GroupItemContent",
+						"value": [
+							[
+								"field_name",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "body",
+									"type": "Text"
+								}
+							],
+							[
+								"field_type",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "Land",
+									"type": "Select"
+								}
+							],
+							[
+								"required",
+								{
+									"__TYPE__": "BooleanContent",
+									"value": false
+								}
+							],
+							[
+								"invalid_feedback_text",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "dug",
+									"type": "Text"
+								}
+							],
+							[
+								"options",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "globe",
+									"type": "Text"
+								}
+							],
+							[
+								"placeholder",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "realize",
+									"type": "Text"
+								}
+							],
+							[
+								"column",
+								{
+									"__TYPE__": "FieldContent",
+									"value": "Links",
+									"type": "Select"
+								}
+							]
+						]
+					}
+				]
+			},
+			"animate": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"anim_direction": {
+				"__TYPE__": "FieldContent",
+				"value": "Oben",
+				"type": "Select"
+			},
+			"anim_delay": {
+				"__TYPE__": "FieldContent",
+				"value": "44",
+				"type": "Number"
+			},
+			"anim_duration": {
+				"__TYPE__": "FieldContent",
+				"value": "83",
+				"type": "Number"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
 	}
 ]

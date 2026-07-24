@@ -1,0 +1,104 @@
+{
+	"id": "preisaufstellung",
+	"type": "SharedSlice",
+	"name": "Preisaufstellung",
+	"description": "Preisübersicht mit automatischen Token-Berechnungen",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Preisaufstellung",
+			"primary": {
+				"label_preis": {
+					"type": "Text",
+					"config": {
+						"label": "Label Gesamtpreis",
+						"placeholder": "Gesamtpreis"
+					}
+				},
+				"label_rabatt": {
+					"type": "Text",
+					"config": {
+						"label": "Label Rabatt",
+						"placeholder": "Rabatt"
+					}
+				},
+				"label_anzahlung": {
+					"type": "Text",
+					"config": {
+						"label": "Label Anzahlung",
+						"placeholder": "Anzahlung nach Auftragserteilung"
+					}
+				},
+				"label_restbetrag": {
+					"type": "Text",
+					"config": {
+						"label": "Label Restbetrag",
+						"placeholder": "Restpreis nach Veröffentlichung"
+					}
+				},
+				"label_abrechnungsart": {
+					"type": "Text",
+					"config": {
+						"label": "Label Abrechnungsart",
+						"placeholder": "Abrechnungsart"
+					}
+				},
+				"label_total": {
+					"type": "Text",
+					"config": {
+						"label": "Label Total",
+						"placeholder": "Total"
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

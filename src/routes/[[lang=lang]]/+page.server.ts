@@ -1,30 +1,46 @@
-    import { createClient } from '$lib/prismicio';
-    import { error } from '@sveltejs/kit';
-    import { asText } from '@prismicio/client'; // Importiere den Helper
+import { redirect, error } from '@sveltejs/kit';
+import { readFileSync } from 'fs';
+import { createClient } from '$lib/prismicio';
+import { asText, asLink, isFilled } from '@prismicio/client'; // Importiere den Helper
 
-    /** @type {import('./$types').PageServerLoad} */
-    export async function load({ params, parent }) {
-        // 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
-        const { lang } = await parent();
-        const client = createClient();
+function localRedirectDisabled(): boolean {
+	try {
+		const cfg = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
+		return cfg.home_redirect_disabled === true;
+	} catch {
+		return false;
+	}
+}
 
-        try {
-            // 2. Wir suchen explizit nach der UID 'home' in der ermittelten Sprache
-            console.log(`[Page Load] Suche 'home' für Sprache: ${lang}`);
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ params, parent }) {
+	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
+	const { lang, settings } = await parent();
 
-            const page = await client.getByUID('page', 'home', { lang });
+	// CMS-controlled home redirect (local override via slicemachine.config.json: home_redirect_disabled)
+	const sd = settings?.data as Record<string, unknown>;
+	const redirectActive = sd?.home_redirect_active === true;
+	const redirectLink = sd?.home_redirect_url as import('@prismicio/client').LinkField | null | undefined;
+	const redirectUrl = isFilled.link(redirectLink) ? asLink(redirectLink) : null;
+	if (redirectActive && redirectUrl && !localRedirectDisabled()) {
+		throw redirect(302, redirectUrl);
+	}
+	const client = createClient();
 
-        return {
-            page,
-            title: asText(page.data.title) || '', // Seiten Titel: Nutze asText, um den Titel als String zu bekommen
-            meta_title: page.data.meta_title || '', // Optional: Fallback, falls meta_title nicht gesetzt ist
-            meta_description: page.data.meta_description
-        };
-        } catch (e) {
-            console.error(`[Page Load Error] Seite 'home' für Sprache ${lang} nicht gefunden.`);
-            // Wenn 'home' nicht existiert, werfen wir einen 404
-            throw error(404, {
-                message: `Startseite 'home' für Sprache ${lang} nicht gefunden.`
-            });
-        }
-    }
+	try {
+		const page = await client.getByUID('page', 'home', { lang });
+
+		return {
+			page,
+			title: asText(page.data.title) || '',
+			meta_title: page.data.meta_title || '',
+			meta_description: page.data.meta_description
+		};
+	} catch (e) {
+		console.error(`[Page Load Error] Seite 'home' für Sprache ${lang} nicht gefunden.`);
+		// Wenn 'home' nicht existiert, werfen wir einen 404
+		throw error(404, {
+			message: `Startseite 'home' für Sprache ${lang} nicht gefunden.`
+		});
+	}
+}

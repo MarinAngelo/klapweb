@@ -1,0 +1,212 @@
+{
+	"plans": {
+		"basis": {
+			"label": "Basis"
+		},
+		"professional": {
+			"label": "Professionell",
+			"extends": "basis"
+		},
+		"individuell": {
+			"label": "Individuell",
+			"extends": "professional"
+		}
+	},
+	"features": {
+		"terminbuchung": {
+			"label": "Terminbuchung",
+			"plans": [
+				"professional"
+			]
+		},
+		"manuelle_rechnungen": {
+			"label": "Manuelle Rechnungen",
+			"plans": [
+				"professional"
+			]
+		},
+		"ecommerce": {
+			"label": "E-Commerce",
+			"plans": [
+				"individuell"
+			]
+		},
+		"p5js": {
+			"label": "P5.js",
+			"plans": [
+				"individuell"
+			]
+		},
+		"variablen": {
+			"label": "Variablen",
+			"plans": [
+				"individuell"
+			]
+		},
+		"ressourcenbuchung": {
+			"label": "Ressourcen-Buchung",
+			"plans": [
+				"individuell"
+			]
+		},
+		"global_events": {
+			"label": "Globale Events",
+			"plans": [
+				"professional"
+			]
+		},
+		"erweiterte_gestaltung": {
+			"label": "Erweiterte Gestaltung",
+			"plans": [
+				"individuell"
+			]
+		},
+		"pwa": {
+			"label": "Progressive Web App",
+			"plans": [
+				"individuell"
+			]
+		}
+	},
+	"customTypes": {
+		"terminplanung": {
+			"feature": "terminbuchung"
+		},
+		"leistung": {
+			"feature": "ecommerce"
+		},
+		"variablen": {
+			"feature": "variablen"
+		},
+		"event": {
+			"feature": "global_events"
+		},
+		"ressource": {
+			"feature": "ressourcenbuchung"
+		},
+		"aufgabe": {
+			"feature": "ressourcenbuchung"
+		},
+		"werkzeug": {
+			"feature": "ressourcenbuchung"
+		},
+		"button_stil": {
+			"feature": "erweiterte_gestaltung"
+		},
+		"icon": {
+			"feature": "erweiterte_gestaltung"
+		},
+		"settings": {
+			"fields": {
+				"pwa_enabled": {
+					"feature": "pwa"
+				},
+				"pwa_name": {
+					"feature": "pwa"
+				},
+				"pwa_short_name": {
+					"feature": "pwa"
+				},
+				"pwa_theme_color": {
+					"feature": "pwa"
+				},
+				"pwa_icon": {
+					"feature": "pwa"
+				}
+			}
+		}
+	},
+	"slices": {
+		"Akkordeon": {
+			"fields": {
+				"mit_suche": {
+					"plan": "professional"
+				},
+				"suchfeld_platzhalter": {
+					"plan": "professional"
+				}
+			},
+			"variations": {
+				"leistungen": {
+					"feature": "ecommerce"
+				}
+			}
+		},
+		"Button": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
+			"variations": {
+				"kauf": {
+					"feature": "ecommerce"
+				}
+			}
+		},
+		"Formular": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			},
+			"variations": {
+				"mitTermin": {
+					"feature": "terminbuchung"
+				},
+				"kauf": {
+					"feature": "ecommerce"
+				},
+				"einChecken": {
+					"feature": "ressourcenbuchung"
+				},
+				"ausChecken": {
+					"feature": "ressourcenbuchung"
+				}
+			}
+		},
+		"Kacheln": {
+			"variations": {
+				"plaene": {
+					"feature": "ecommerce"
+				}
+			}
+		},
+		"GlobaleEvents": {
+			"feature": "global_events"
+		},
+		"Inhaltsverzeichnis": {
+			"plan": "professional"
+		},
+		"Titelbereich": {
+			"fields": {
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			}
+		},
+		"Text": {
+			"fields": {
+				"feature_gate": {
+					"plan": "individuell"
+				}
+			}
+		},
+		"TextMitBild": {
+			"fields": {
+				"feature_gate": {
+					"plan": "individuell"
+				},
+				"button_style": {
+					"feature": "erweiterte_gestaltung"
+				}
+			}
+		},
+		"RessourceBuchung": {
+			"feature": "ressourcenbuchung"
+		},
+		"Aufgaben": {
+			"feature": "ressourcenbuchung"
+		}
+	}
+}

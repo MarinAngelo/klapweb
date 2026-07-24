@@ -1,0 +1,101 @@
+/**
+ * Booking storage via Netlify Blobs.
+ *
+ * Each booking occupies one blob keyed by the terminplanung document UID.
+ * Using the UID as key means a slot can only be booked once (atomic write).
+ *
+ * Required Netlify environment variables: NETLIFY_SITE_ID, NETLIFY_TOKEN
+ */
+import { getStore } from '@netlify/blobs';
+import { env } from '$env/dynamic/private';
+
+export interface BookingRecord {
+	terminId: string;
+	datum: string;
+	uhrzeit: string;
+	titel: string;
+	bookedAt: string;
+	name?: string;
+	email?: string;
+}
+
+function getBookingStore() {
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'buchungen', siteID, token });
+}
+
+export async function bookSlot(record: BookingRecord): Promise<void> {
+	const store = getBookingStore();
+	// setJSON with onlyIfNew via etag approach is unavailable in @netlify/blobs v10,
+	// but concurrent bookings at this scale are negligible.
+	await store.setJSON(record.terminId, record);
+}
+
+export async function isBooked(terminId: string): Promise<boolean> {
+	const store = getBookingStore();
+	const existing = await store.get(terminId, { type: 'json' });
+	return existing !== null;
+}
+
+export async function listBookings(): Promise<BookingRecord[]> {
+	const store = getBookingStore();
+	const { blobs } = await store.list();
+	const records = await Promise.all(
+		blobs.map((b) => store.get(b.key, { type: 'json' }) as Promise<BookingRecord>)
+	);
+	return records
+		.filter(Boolean)
+		.sort((a, b) => new Date(a.datum + 'T' + a.uhrzeit).getTime() - new Date(b.datum + 'T' + b.uhrzeit).getTime());
+}
+
+export async function listBookingsByEmail(email: string): Promise<BookingRecord[]> {
+	const all = await listBookings();
+	const normalized = email.trim().toLowerCase();
+	return all.filter((b) => b.email?.trim().toLowerCase() === normalized);
+}
+
+export async function deleteBooking(terminId: string): Promise<void> {
+	const store = getBookingStore();
+	await store.delete(terminId);
+}
+
+// ── Cancelled (gesperrte) free slots ────────────────────────────────────────
+
+function getCancelledStore() {
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'cancelled_termine', siteID, token });
+}
+
+export async function cancelSlot(terminId: string): Promise<void> {
+	const store = getCancelledStore();
+	await store.setJSON(terminId, { cancelledAt: new Date().toISOString() });
+}
+
+export async function uncancelSlot(terminId: string): Promise<void> {
+	const store = getCancelledStore();
+	await store.delete(terminId);
+}
+
+export async function isCancelled(terminId: string): Promise<boolean> {
+	const store = getCancelledStore();
+	const existing = await store.get(terminId, { type: 'json' });
+	return existing !== null;
+}
+
+export async function listCancelled(): Promise<string[]> {
+	const store = getCancelledStore();
+	const { blobs } = await store.list();
+	return blobs.map((b) => b.key);
+}

@@ -13,9 +13,12 @@
 	// Transition
 	export let transitionMs = 500;
 	export let transitionEasing = cubicOut;
+	export let transitionMode: string = 'Crossfade';
+	export let showPagination: boolean = true;
 
 	// State
-	let current = 0; // Aktueller Bild-Index
+	export let current = 0; // Aktueller Bild-Index
+	let direction = 1;
 
 	// KRITISCH: Erzwingt den Key-Update im HTML
 	let forceKeyUpdate = 0;
@@ -31,16 +34,47 @@
 	}
 
 	function next() {
+		direction = 1;
 		if (!len()) return;
 		current = (current + 1) % len();
 	}
 	function prev() {
+		direction = -1;
 		if (!len()) return;
 		current = (current - 1 + len()) % len();
 	}
 
+	function inTransition(node: Element, { duration }: { duration: number }) {
+		const dir = direction;
+		if (transitionMode === 'Slide') {
+			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)` };
+		}
+		return { duration, css: (t: number) => `opacity: ${t}` };
+	}
+	function outTransition(node: Element, { duration }: { duration: number }) {
+		const dir = direction;
+		if (transitionMode === 'Slide') {
+			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)` };
+		}
+		return { duration, css: (t: number) => `opacity: ${t}` };
+	}
+
 	// Safety bei dynamischem Nachladen
 	$: if (len() > 0 && current >= len()) current = len() - 1;
+
+	// Orientierung: portrait = Hochformat, landscape = Querformat
+	let isPortrait = browser ? window.matchMedia('(orientation: portrait)').matches : true;
+	function onOrientationChange() {
+		isPortrait = window.matchMedia('(orientation: portrait)').matches;
+	}
+	if (browser) {
+		window.matchMedia('(orientation: portrait)').addEventListener('change', onOrientationChange);
+	}
+
+	// Mobile-Thumbnail nur bei Hochformat verwenden; Querformat → Hauptbild
+	$: currentImage = isPortrait
+		? ((images?.[current]?.image as any)?.mobile ?? images?.[current]?.image)
+		: images?.[current]?.image;
 
 	// Layout-Klassen
 	const outerClass =
@@ -66,7 +100,6 @@
 	const SPEED_THRESHOLD = 0.4;
 
 	function onPointerDown(e: PointerEvent) {
-
 		if (!browser || len() <= 1) return;
 
 		dragging = true;
@@ -117,7 +150,6 @@
 		const isFar = Math.abs(deltaX) > SWIPE_THRESHOLD;
 
 		if (wasHorizontal && isFar) {
-
 			const direction = deltaX < 0 ? 1 : -1;
 
 			let newIndex = (current + direction + len()) % len();
@@ -139,7 +171,7 @@
 {#if len() > 0}
 	<div class={outerClass}>
 		<div
-			class="relative w-full h-full overflow-hidden select-none"
+			class="carousel-inner relative w-full h-full overflow-hidden select-none"
 			role="region"
 			aria-label="Image carousel"
 			style="touch-action: pan-y;"
@@ -147,13 +179,13 @@
 			{#key currentKey}
 				<div
 					class="absolute inset-0 w-full h-full"
-					in:fade={{ duration: transitionDuration, easing: transitionEasing }}
-					out:fade={{ duration: transitionDuration, easing: transitionEasing }}
+					in:inTransition={{ duration: transitionDuration }}
+					out:outTransition={{ duration: transitionDuration }}
 				>
 					{#if has(current)}
 						<PrismicImage
 							key={currentKey}
-							field={images[current].image}
+							field={currentImage}
 							sizes="100vw"
 							class="w-full h-full object-cover select-none"
 						/>
@@ -163,11 +195,13 @@
 				</div>
 			{/key}
 
-			<div
-				class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm"
-			>
-				{current + 1} / {len()}
-			</div>
+			{#if showPagination}
+				<div
+					class="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/60 text-white px-3 py-1 rounded text-sm"
+				>
+					{current + 1} / {len()}
+				</div>
+			{/if}
 
 			<div
 				class="absolute inset-0 z-[60]"
@@ -182,3 +216,17 @@
 {:else}
 	<p class="sr-only">Keine Bilder vorhanden</p>
 {/if}
+
+<style>
+	@media (pointer: coarse) and (orientation: landscape) {
+		.carousel-inner {
+			position: absolute !important;
+			top: 0 !important;
+			left: 50% !important;
+			right: auto !important;
+			margin-left: -50vw !important;
+			width: 100vw !important;
+			height: 100dvh !important;
+		}
+	}
+</style>

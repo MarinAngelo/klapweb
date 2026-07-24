@@ -1,0 +1,530 @@
+{
+	"_meta": {
+		"insertBefore": null
+	},
+	"Online-Handel": {
+		"invoice_currency": {
+			"type": "Select",
+			"config": {
+				"label": "Grundwährung",
+				"options": [
+					"AED - Dirham der Vereinigten Arabischen Emirate",
+					"AFN - Afghani",
+					"ALL - Albanischer Lek",
+					"AMD - Armenischer Dram",
+					"ANG - Niederländisch-Antillianischer Gulden",
+					"AOA - Angolanischer Kwanza",
+					"ARS - Argentinischer Peso",
+					"AUD - Australischer Dollar",
+					"AWG - Arubischer Florin",
+					"AZN - Aserbaidschanischer Manat",
+					"BAM - Bosnisch-Herzegowinische Konvertible Mark",
+					"BBD - Barbadischer Dollar",
+					"BDT - Bangladeschischer Taka",
+					"BGN - Bulgarischer Lew",
+					"BHD - Bahrainischer Dinar",
+					"BIF - Burundischer Franc",
+					"BMD - Bermudischer Dollar",
+					"BND - Bruneischer Dollar",
+					"BOB - Bolivianischer Boliviano",
+					"BRL - Brasilianischer Real",
+					"BSD - Bahamaischer Dollar",
+					"BTN - Bhutanischer Ngultrum",
+					"BWP - Botswanischer Pula",
+					"BYN - Belarussischer Rubel",
+					"BZD - Belizischer Dollar",
+					"CAD - Kanadischer Dollar",
+					"CDF - Kongoläsischer Franc",
+					"CHF - Schweizer Franken",
+					"CLP - Chilenischer Peso",
+					"CNY - Chinesischer Renminbi",
+					"COP - Kolumbianischer Peso",
+					"CRC - Costa-Ricanischer Colon",
+					"CUP - Kubanischer Peso",
+					"CVE - Kap-Verdischer Escudo",
+					"CZK - Tschechische Krone",
+					"DJF - Djiboutischer Franc",
+					"DKK - Dänische Krone",
+					"DOP - Dominikanischer Peso",
+					"DZD - Algerischer Dinar",
+					"EGP - Ägyptisches Pfund",
+					"ERN - Eritreischer Nakfa",
+					"ETB - Äthiopischer Birr",
+					"EUR - Euro",
+					"FJD - Fidschi-Dollar",
+					"FKP - Falkländisches Pfund",
+					"GBP - Britisches Pfund",
+					"GEL - Georgischer Lari",
+					"GHS - Ghanaischer Cedi",
+					"GIP - Gibraltarisches Pfund",
+					"GMD - Gambischer Dalasi",
+					"GNF - Guineischer Franc",
+					"GTQ - Guatemaltekischer Quetzal",
+					"GYD - Guyanischer Dollar",
+					"HKD - Hongkonger Dollar",
+					"HNL - Honduranischer Lempira",
+					"HTG - Haitianische Gourde",
+					"HUF - Ungarischer Forint",
+					"IDR - Indonesische Rupiah",
+					"ILS - Neuer Israelischer Schekel",
+					"INR - Indische Rupie",
+					"IQD - Irakischer Dinar",
+					"IRR - Iranischer Rial",
+					"ISK - Isländische Krone",
+					"JMD - Jamaikanischer Dollar",
+					"JOD - Jordanischer Dinar",
+					"JPY - Japanischer Yen",
+					"KES - Kenianischer Schilling",
+					"KGS - Kirgisischer Som",
+					"KHR - Kambodschanischer Riel",
+					"KMF - Komorischer Franc",
+					"KPW - Nordkoreanischer Won",
+					"KRW - Südkoreanischer Won",
+					"KWD - Kuwaitischer Dinar",
+					"KYD - Kaiman-Dollar",
+					"KZT - Kasachischer Tenge",
+					"LAK - Laotischer Kip",
+					"LBP - Libanesisches Pfund",
+					"LKR - Sri-Lankische Rupie",
+					"LRD - Liberianischer Dollar",
+					"LSL - Lesothischer Loti",
+					"LYD - Libyscher Dinar",
+					"MAD - Marokkanischer Dirham",
+					"MDL - Moldauischer Leu",
+					"MGA - Madagassischer Ariary",
+					"MKD - Nordmazedonischer Denar",
+					"MMK - Myanmarischer Kyat",
+					"MNT - Mongolischer Tögrög",
+					"MOP - Macao-Pataca",
+					"MRU - Mauretanischer Ouguiya",
+					"MUR - Mauritische Rupie",
+					"MVR - Maledivischer Rufiyaa",
+					"MWK - Malawischer Kwacha",
+					"MXN - Mexikanischer Peso",
+					"MYR - Malaysischer Ringgit",
+					"MZN - Mosambikanischer Metical",
+					"NAD - Namibischer Dollar",
+					"NGN - Nigerianische Naira",
+					"NIO - Nicaraguanischer Córdoba",
+					"NOK - Norwegische Krone",
+					"NPR - Nepalesische Rupie",
+					"NZD - Neuseeländischer Dollar",
+					"OMR - Omanischer Rial",
+					"PAB - Panamaischer Balboa",
+					"PEN - Peruanischer Sol",
+					"PGK - Papua-Neuguineischer Kina",
+					"PHP - Philippinischer Peso",
+					"PKR - Pakistanische Rupie",
+					"PLN - Polnischer Zloty",
+					"PYG - Paraguayischer Guaraní",
+					"QAR - Katarischer Riyal",
+					"RON - Rumänischer Leu",
+					"RSD - Serbischer Dinar",
+					"RUB - Russischer Rubel",
+					"RWF - Ruandischer Franc",
+					"SAR - Saudi-Arabischer Riyal",
+					"SBD - Salomonen-Dollar",
+					"SCR - Seychellische Rupie",
+					"SDG - Sudanesisches Pfund",
+					"SEK - Schwedische Krone",
+					"SGD - Singapurischer Dollar",
+					"SHP - St.-Helenisches Pfund",
+					"SLL - Sierraleonischer Leone",
+					"SOS - Somalischer Schilling",
+					"SRD - Surinamischer Dollar",
+					"STN - São-toménsische Dobra",
+					"SVC - El-Salvadorianischer Colón",
+					"SYP - Syrisches Pfund",
+					"SZL - Swasiland-Lilangeni",
+					"THB - Thailändischer Baht",
+					"TJS - Tadschikischer Somoni",
+					"TMT - Turkmenischer Manat",
+					"TND - Tunesischer Dinar",
+					"TOP - Tongaischer Paʻanga",
+					"TRY - Türkische Lira",
+					"TTD - Trinidad-und-Tobago-Dollar",
+					"TWD - Neuer Taiwanischer Dollar",
+					"TZS - Tansanischer Schilling",
+					"UAH - Ukrainische Hrywnja",
+					"UGX - Ugandischer Schilling",
+					"USD - US-Dollar",
+					"UYU - Uruguayischer Peso",
+					"UZS - Usbekischer Sum",
+					"VES - Venezolanischer Bolívar",
+					"VND - Vietnamesischer Dong",
+					"VUV - Vanuatuischer Vatu",
+					"WST - Samoanischer Tala",
+					"XAF - CFA-Franc BEAC",
+					"XCD - Ostkaribischer Dollar",
+					"XOF - CFA-Franc BCEAO",
+					"XPF - CFP-Franc",
+					"YER - Jemenitischer Rial",
+					"ZAR - Südafrikanischer Rand",
+					"ZMW - Sambischer Kwacha",
+					"ZWL - Simbabwischer Dollar"
+				],
+				"default_value": "CHF - Schweizer Franken"
+			}
+		},
+		"invoice_additional_currencies": {
+			"type": "Group",
+			"config": {
+				"label": "Weitere Währungen (Käufer-Auswahl)",
+				"fields": {
+					"waehrung": {
+						"type": "Select",
+						"config": {
+							"label": "Währung",
+							"options": [
+								"AED - Dirham der Vereinigten Arabischen Emirate",
+								"AFN - Afghani",
+								"ALL - Albanischer Lek",
+								"AMD - Armenischer Dram",
+								"ANG - Niederländisch-Antillianischer Gulden",
+								"AOA - Angolanischer Kwanza",
+								"ARS - Argentinischer Peso",
+								"AUD - Australischer Dollar",
+								"AWG - Arubischer Florin",
+								"AZN - Aserbaidschanischer Manat",
+								"BAM - Bosnisch-Herzegowinische Konvertible Mark",
+								"BBD - Barbadischer Dollar",
+								"BDT - Bangladeschischer Taka",
+								"BGN - Bulgarischer Lew",
+								"BHD - Bahrainischer Dinar",
+								"BIF - Burundischer Franc",
+								"BMD - Bermudischer Dollar",
+								"BND - Bruneischer Dollar",
+								"BOB - Bolivianischer Boliviano",
+								"BRL - Brasilianischer Real",
+								"BSD - Bahamaischer Dollar",
+								"BTN - Bhutanischer Ngultrum",
+								"BWP - Botswanischer Pula",
+								"BYN - Belarussischer Rubel",
+								"BZD - Belizischer Dollar",
+								"CAD - Kanadischer Dollar",
+								"CDF - Kongoläsischer Franc",
+								"CHF - Schweizer Franken",
+								"CLP - Chilenischer Peso",
+								"CNY - Chinesischer Renminbi",
+								"COP - Kolumbianischer Peso",
+								"CRC - Costa-Ricanischer Colon",
+								"CUP - Kubanischer Peso",
+								"CVE - Kap-Verdischer Escudo",
+								"CZK - Tschechische Krone",
+								"DJF - Djiboutischer Franc",
+								"DKK - Dänische Krone",
+								"DOP - Dominikanischer Peso",
+								"DZD - Algerischer Dinar",
+								"EGP - Ägyptisches Pfund",
+								"ERN - Eritreischer Nakfa",
+								"ETB - Äthiopischer Birr",
+								"EUR - Euro",
+								"FJD - Fidschi-Dollar",
+								"FKP - Falkländisches Pfund",
+								"GBP - Britisches Pfund",
+								"GEL - Georgischer Lari",
+								"GHS - Ghanaischer Cedi",
+								"GIP - Gibraltarisches Pfund",
+								"GMD - Gambischer Dalasi",
+								"GNF - Guineischer Franc",
+								"GTQ - Guatemaltekischer Quetzal",
+								"GYD - Guyanischer Dollar",
+								"HKD - Hongkonger Dollar",
+								"HNL - Honduranischer Lempira",
+								"HTG - Haitianische Gourde",
+								"HUF - Ungarischer Forint",
+								"IDR - Indonesische Rupiah",
+								"ILS - Neuer Israelischer Schekel",
+								"INR - Indische Rupie",
+								"IQD - Irakischer Dinar",
+								"IRR - Iranischer Rial",
+								"ISK - Isländische Krone",
+								"JMD - Jamaikanischer Dollar",
+								"JOD - Jordanischer Dinar",
+								"JPY - Japanischer Yen",
+								"KES - Kenianischer Schilling",
+								"KGS - Kirgisischer Som",
+								"KHR - Kambodschanischer Riel",
+								"KMF - Komorischer Franc",
+								"KPW - Nordkoreanischer Won",
+								"KRW - Südkoreanischer Won",
+								"KWD - Kuwaitischer Dinar",
+								"KYD - Kaiman-Dollar",
+								"KZT - Kasachischer Tenge",
+								"LAK - Laotischer Kip",
+								"LBP - Libanesisches Pfund",
+								"LKR - Sri-Lankische Rupie",
+								"LRD - Liberianischer Dollar",
+								"LSL - Lesothischer Loti",
+								"LYD - Libyscher Dinar",
+								"MAD - Marokkanischer Dirham",
+								"MDL - Moldauischer Leu",
+								"MGA - Madagassischer Ariary",
+								"MKD - Nordmazedonischer Denar",
+								"MMK - Myanmarischer Kyat",
+								"MNT - Mongolischer Tögrög",
+								"MOP - Macao-Pataca",
+								"MRU - Mauretanischer Ouguiya",
+								"MUR - Mauritische Rupie",
+								"MVR - Maledivischer Rufiyaa",
+								"MWK - Malawischer Kwacha",
+								"MXN - Mexikanischer Peso",
+								"MYR - Malaysischer Ringgit",
+								"MZN - Mosambikanischer Metical",
+								"NAD - Namibischer Dollar",
+								"NGN - Nigerianische Naira",
+								"NIO - Nicaraguanischer Córdoba",
+								"NOK - Norwegische Krone",
+								"NPR - Nepalesische Rupie",
+								"NZD - Neuseeländischer Dollar",
+								"OMR - Omanischer Rial",
+								"PAB - Panamaischer Balboa",
+								"PEN - Peruanischer Sol",
+								"PGK - Papua-Neuguineischer Kina",
+								"PHP - Philippinischer Peso",
+								"PKR - Pakistanische Rupie",
+								"PLN - Polnischer Zloty",
+								"PYG - Paraguayischer Guaraní",
+								"QAR - Katarischer Riyal",
+								"RON - Rumänischer Leu",
+								"RSD - Serbischer Dinar",
+								"RUB - Russischer Rubel",
+								"RWF - Ruandischer Franc",
+								"SAR - Saudi-Arabischer Riyal",
+								"SBD - Salomonen-Dollar",
+								"SCR - Seychellische Rupie",
+								"SDG - Sudanesisches Pfund",
+								"SEK - Schwedische Krone",
+								"SGD - Singapurischer Dollar",
+								"SHP - St.-Helenisches Pfund",
+								"SLL - Sierraleonischer Leone",
+								"SOS - Somalischer Schilling",
+								"SRD - Surinamischer Dollar",
+								"STN - São-toménsische Dobra",
+								"SVC - El-Salvadorianischer Colón",
+								"SYP - Syrisches Pfund",
+								"SZL - Swasiland-Lilangeni",
+								"THB - Thailändischer Baht",
+								"TJS - Tadschikischer Somoni",
+								"TMT - Turkmenischer Manat",
+								"TND - Tunesischer Dinar",
+								"TOP - Tongaischer Paʻanga",
+								"TRY - Türkische Lira",
+								"TTD - Trinidad-und-Tobago-Dollar",
+								"TWD - Neuer Taiwanischer Dollar",
+								"TZS - Tansanischer Schilling",
+								"UAH - Ukrainische Hrywnja",
+								"UGX - Ugandischer Schilling",
+								"USD - US-Dollar",
+								"UYU - Uruguayischer Peso",
+								"UZS - Usbekischer Sum",
+								"VES - Venezolanischer Bolívar",
+								"VND - Vietnamesischer Dong",
+								"VUV - Vanuatuischer Vatu",
+								"WST - Samoanischer Tala",
+								"XAF - CFA-Franc BEAC",
+								"XCD - Ostkaribischer Dollar",
+								"XOF - CFA-Franc BCEAO",
+								"XPF - CFP-Franc",
+								"YER - Jemenitischer Rial",
+								"ZAR - Südafrikanischer Rand",
+								"ZMW - Sambischer Kwacha",
+								"ZWL - Simbabwischer Dollar"
+							]
+						}
+					}
+				}
+			}
+		},
+		"invoice_iban": {
+			"type": "Text",
+			"config": {
+				"label": "IBAN",
+				"placeholder": "CH00 0000 0000 0000 0000 0"
+			}
+		},
+		"invoice_bank": {
+			"type": "Text",
+			"config": {
+				"label": "Bank",
+				"placeholder": "Musterbank"
+			}
+		},
+		"invoice_bic": {
+			"type": "Text",
+			"config": {
+				"label": "BIC / SWIFT",
+				"placeholder": "XXXXXXXX"
+			}
+		},
+		"invoice_payment_terms_days": {
+			"type": "Number",
+			"config": {
+				"label": "Zahlungsfrist (Tage)",
+				"placeholder": "30"
+			}
+		},
+		"invoice_vat_rate": {
+			"type": "Number",
+			"config": {
+				"label": "MWST-Satz (%)",
+				"placeholder": "8.1"
+			}
+		},
+		"global_deposit_percent": {
+			"type": "Number",
+			"config": {
+				"label": "Globale Anzahlung (%)",
+				"placeholder": "z.B. 50 — wird verwendet wenn beim Produkt kein Wert gesetzt ist"
+			}
+		},
+		"discount_codes": {
+			"type": "Group",
+			"config": {
+				"label": "Rabatt-Codes",
+				"repeat": true,
+				"fields": {
+					"code": {
+						"type": "Text",
+						"config": {
+							"label": "Code",
+							"placeholder": "z.B. SOMMER2025"
+						}
+					},
+					"discount_percent": {
+						"type": "Number",
+						"config": {
+							"label": "Rabatt (%)",
+							"placeholder": "z.B. 10"
+						}
+					},
+					"expiry_date": {
+						"type": "Timestamp",
+						"config": {
+							"label": "Ablaufdatum (optional)"
+						}
+					}
+				}
+			}
+		},
+		"payment_stripe_enabled": {
+			"type": "Boolean",
+			"config": {
+				"label": "Zahlung: Kreditkarte / TWINT (Stripe)",
+				"placeholder_false": "Deaktiviert",
+				"placeholder_true": "Aktiv",
+				"default_value": true
+			}
+		},
+		"payment_rechnung_enabled": {
+			"type": "Boolean",
+			"config": {
+				"label": "Zahlung: Gegen Rechnung",
+				"placeholder_false": "Deaktiviert",
+				"placeholder_true": "Aktiv",
+				"default_value": true
+			}
+		},
+		"payment_bar_enabled": {
+			"type": "Boolean",
+			"config": {
+				"label": "Zahlung: Gegen Bar",
+				"placeholder_false": "Deaktiviert",
+				"placeholder_true": "Aktiv",
+				"default_value": true
+			}
+		},
+		"payment_rechnung_email_subject": {
+			"type": "Text",
+			"config": {
+				"label": "Rechnung E-Mail: Betreff",
+				"placeholder": "Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}"
+			}
+		},
+		"payment_rechnung_email_body": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Rechnung E-Mail: Text",
+				"placeholder": "Tokens: {{Rechnungsnummer}} {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}} {{Betrag}} {{Waehrung}} {{Zahlungsfrist}}",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		},
+		"payment_bar_email_subject": {
+			"type": "Text",
+			"config": {
+				"label": "Bar E-Mail: Betreff",
+				"placeholder": "Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}"
+			}
+		},
+		"payment_bar_email_body": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Bar E-Mail: Text",
+				"placeholder": "Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		},
+		"payment_stripe_confirmation_text": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Bestätigungstext: Kreditkarte / TWINT",
+				"placeholder": "Text auf der Bestätigungsseite nach Stripe-Zahlung",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		},
+		"payment_rechnung_confirmation_text": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Bestätigungstext: Gegen Rechnung",
+				"placeholder": "Text auf der Bestätigungsseite nach Rechnung-Bestellung",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		},
+		"payment_bar_confirmation_text": {
+			"type": "StructuredText",
+			"config": {
+				"label": "Bestätigungstext: Gegen Bar",
+				"placeholder": "Text auf der Bestätigungsseite nach Bar-Bestellung",
+				"allowTargetBlank": false,
+				"multi": "paragraph,strong,em,list-item,o-list-item"
+			}
+		},
+		"beauftragung_title": {
+			"type": "Text",
+			"config": {
+				"label": "Beauftragungsseite Titel",
+				"placeholder": "Beauftragung"
+			}
+		},
+		"zusammenfassung_title": {
+			"type": "Text",
+			"config": {
+				"label": "Bestellübersicht Titel",
+				"placeholder": "Bestellübersicht"
+			}
+		},
+		"checkout_button_text": {
+			"type": "Text",
+			"config": {
+				"label": "Bestell-Button Text",
+				"placeholder": "Kostenpflichtig bestellen"
+			}
+		},
+		"slices3": {
+			"type": "Slices",
+			"fieldset": "Checkout-Formular Zusatzfelder",
+			"description": "Formular-Felder die zusätzlich zur Beauftragungsseite erscheinen (z.B. Telefon). Kommen nicht auf die Rechnung.",
+			"config": {
+				"choices": {
+					"form": {
+						"type": "SharedSlice"
+					}
+				}
+			}
+		}
+	}
+}

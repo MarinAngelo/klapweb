@@ -1,0 +1,34 @@
+{
+	"id": "leistung",
+	"label": "Leistung",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID",
+					"placeholder": ""
+				}
+			},
+			"label": {
+				"type": "Text",
+				"config": {
+					"label": "Bezeichnung",
+					"placeholder": "E-Commerce"
+				}
+			},
+			"beschreibung": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Beschreibung",
+					"placeholder": "Kurze Beschreibung dieser Leistung...",
+					"allowTargetBlank": false,
+					"multi": "paragraph,strong,em,hyperlink"
+				}
+			}
+		}
+	}
+}
