@@ -47,6 +47,7 @@ import { mySketch } from './my-sketches';
 import { generativeGestaltungP1_0_01 } from './generative-gestaltung-P1_0_01';
 import { generativeGestaltungP1_1_1_01 } from './generative-gestaltung-P1_1_1_01';
 import { generativeGestaltungP1_2_1_01 } from './generative-gestaltung-P1_2_1_01';
+import { generativeGestaltungP1_2_1_01Touch } from './generative-gestaltung-P1_2_1_01-touch';
 import { generativeGestaltungP1_2_2_01 } from './generative-gestaltung-P1_2_2_01';
 import { generativeGestaltungP2_2_2_01 } from './generative-gestaltung-P2_2_2_01';
 
@@ -54,6 +55,7 @@ export { mySketch } from './my-sketches';
 export { generativeGestaltungP1_0_01 } from './generative-gestaltung-P1_0_01';
 export { generativeGestaltungP1_1_1_01 } from './generative-gestaltung-P1_1_1_01';
 export { generativeGestaltungP1_2_1_01 } from './generative-gestaltung-P1_2_1_01';
+export { generativeGestaltungP1_2_1_01Touch } from './generative-gestaltung-P1_2_1_01-touch';
 export { generativeGestaltungP1_2_2_01 } from './generative-gestaltung-P1_2_2_01';
 export { generativeGestaltungP2_2_2_01 } from './generative-gestaltung-P2_2_2_01';
 
@@ -76,6 +78,7 @@ const registry: Record<string, SketchFactory> = {
 	'Generative Gestaltung P_1_0_01': generativeGestaltungP1_0_01,
 	'Generative Gestaltung P_1_1_1_01': generativeGestaltungP1_1_1_01,
 	'Generative Gestaltung P_1_2_1_01': generativeGestaltungP1_2_1_01,
+	'Generative Gestaltung P_1_2_1_01 Touch': generativeGestaltungP1_2_1_01Touch,
 	'Generative Gestaltung P_1_2_2_01': generativeGestaltungP1_2_2_01,
 	'Generative Gestaltung P_2_2_2_01': generativeGestaltungP2_2_2_01
 };
