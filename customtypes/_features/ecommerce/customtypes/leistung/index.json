@@ -28,6 +28,17 @@
 					"allowTargetBlank": false,
 					"multi": "paragraph,strong,em,hyperlink"
 				}
+			},
+			"slices": {
+				"type": "Slices",
+				"fieldset": "Inhaltsblöcke",
+				"config": {
+					"choices": {
+						"text": {
+							"type": "SharedSlice"
+						}
+					}
+				}
 			}
 		}
 	}

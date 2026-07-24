@@ -66,6 +66,18 @@
 			"plans": [
 				"individuell"
 			]
+		},
+		"klapstudio": {
+			"label": "KlapStudio Design Panel",
+			"plans": [
+				"professional"
+			]
+		},
+		"chatbot": {
+			"label": "Chat-Bot",
+			"plans": [
+				"individuell"
+			]
 		}
 	},
 	"customTypes": {
@@ -112,6 +124,19 @@
 				},
 				"pwa_icon": {
 					"feature": "pwa"
+				}
+,
+				"chat_active": {
+					"feature": "chatbot"
+				},
+				"chat_bot_name": {
+					"feature": "chatbot"
+				},
+				"chat_greeting": {
+					"feature": "chatbot"
+				},
+				"chat_knowledge_base": {
+					"feature": "chatbot"
 				}
 			}
 		}
