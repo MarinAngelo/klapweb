@@ -186,7 +186,7 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
-a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link) {
+a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link):not(.site-title-link) {
 	@apply underline;
 	color: var(--page-link-color);
 }
@@ -200,8 +200,8 @@ a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-l
 	}
 }
 
-a[data-type="prismic-link"]:hover,
-a:hover {
+a[data-type="prismic-link"]:not(.dropdown-link):not(.nav-link):hover,
+a:not(.site-title-link):not(.dropdown-link):not(.nav-link):hover {
 	color: var(--page-link-hover-color) !important;
 }
 
