@@ -447,15 +447,6 @@
 					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
 				}
-			},
-			"no_margin_top": {
-				"type": "Boolean",
-				"config": {
-					"label": "Kein oberer Abstand",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
 			}
 		}
 	}
