@@ -154,9 +154,9 @@
 				: 'inherit'};
 		"
 	>
-		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
+		<!-- p5 canvas als Hintergrund -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<P5Canvas {sketch} width="100%" height={$bannerHeight !== 'auto' ? $bannerHeight : '100vh'} />
+			<P5Canvas {sketch} width="100%" height="100%" />
 		</div>
 
 		<!-- Farb-Overlay über Canvas -->
@@ -169,14 +169,9 @@
 			></div>
 		{/if}
 
-		<!-- Titelbereich-Inhalt -->
-		<Bounded tag="div" yPadding="none" class="relative z-10">
-			<div
-				class="relative flex flex-col items-center justify-center"
-				style="min-height: {$bannerHeight !== 'auto' ? $bannerHeight : '100vh'};{bannerTop
-					? ` margin-top: -${$headerHeight}px;`
-					: ''}"
-			>
+		<!-- Titelbereich-Inhalt — wie im Titelbereich: absolute inset-0 statt margin-top -->
+		<div class="absolute inset-0 z-10 flex items-center justify-center">
+			<Bounded tag="div" yPadding="none" class="w-full">
 				<div class="relative w-full flex items-center justify-center">
 					{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
 						<div
@@ -219,8 +214,8 @@
 						{/if}
 					</div>
 				</div>
-			</div>
-		</Bounded>
+			</Bounded>
+		</div>
 	</section>
 {:else}
 	<!-- ── Standard-Variation: Vollbild ── -->
