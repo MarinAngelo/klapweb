@@ -21,3 +21,9 @@ src/lib/slices/Formular/model.json
 src/lib/slices/Kacheln/model.json
 src/lib/slices/Button/model.json
 src/lib/slices/Titelbereich/model.json
+customtypes/aufgabe/index.json
+customtypes/button_stil/index.json
+customtypes/event/index.json
+customtypes/icon/index.json
+customtypes/ressource/index.json
+customtypes/werkzeug/index.json
