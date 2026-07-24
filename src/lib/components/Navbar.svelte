@@ -178,7 +178,7 @@
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
 							class="transition nav-link"
-							style="color: inherit; font-size: {headerLinkFontSize}rem;"
+							style="color: inherit; font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -228,5 +228,9 @@
 	/* Override global li { mb-4 } — nav li must have no bottom margin for correct flex centering */
 	nav :global(li) {
 		margin-bottom: 0;
+	}
+
+	nav :global(.nav-link:hover) {
+		color: var(--hover-text-color) !important;
 	}
 </style>

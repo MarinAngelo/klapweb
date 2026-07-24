@@ -68,7 +68,7 @@
 	bind:this={containerEl}
 	class="relative"
 	role="navigation"
-	style="--hover-bg-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
+	style="--header-link-hover-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
 	on:mouseenter={openDropdown}
 	on:mouseleave={closeDropdown}
 >
@@ -98,10 +98,7 @@
 							dispatch('click');
 						}}
 						class="block w-full transition-colors dropdown-link"
-						style="
-					color: {headerLinkColor};
-					
-				"
+						style="color: {headerLinkColor}; --header-link-hover-color: {headerLinkHoverColor};"
 					>
 						<PrismicText field={dropdownItem.label} />
 					</PrismicLink>

@@ -212,8 +212,8 @@
 				{:else if settings?.data}
 					<a
 						href={lang === mainLang ? '/' : `/${lang}`}
-						class="mt-6 mb-6 inline-block"
-						style="color: {headerColor};"
+						class="site-title-link mt-6 mb-6 inline-block"
+						style="color: {headerLinkColor};"
 						aria-label={logoLabel}
 					>
 						<span
