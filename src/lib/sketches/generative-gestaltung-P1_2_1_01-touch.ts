@@ -81,14 +81,22 @@ export function generativeGestaltungP1_2_1_01Touch(
 			}
 		};
 
-		p5.mouseReleased = () => { shakeColors(); };
+		p5.mouseReleased = () => {
+			shakeColors();
+		};
 
-		p5.touchEnded = () => { shakeColors(); return false; };
+		p5.touchEnded = () => {
+			shakeColors();
+			return false;
+		};
 
-		p5.touchMoved = () => { return false; };
+		p5.touchMoved = () => {
+			return false;
+		};
 
 		p5.keyPressed = () => {
-			if (p5.key === 's' || p5.key === 'S') p5.saveCanvas('generative-gestaltung-' + Date.now(), 'png');
+			if (p5.key === 's' || p5.key === 'S')
+				p5.saveCanvas('generative-gestaltung-' + Date.now(), 'png');
 			if (p5.key === '1') interpolateShortest = true;
 			if (p5.key === '2') interpolateShortest = false;
 		};
