@@ -9,6 +9,9 @@
 	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
 	export let paddingTop: string | undefined = undefined;
 	export let paddingBottom: string | undefined = undefined;
+	/** Fertige Tailwind-Klassen (überschreibt paddingTop/paddingBottom komplett) */
+	export let paddingTopClass: string | undefined = undefined;
+	export let paddingBottomClass: string | undefined = undefined;
 	export let collapsible = true;
 	export let specialLayout = false;
 
@@ -16,6 +19,7 @@
 	export let animationOptions: RevealOptions = {};
 
 	export let fullWidth: boolean = false;
+	export let noPadding: boolean = false;
 	export let fullHeight: boolean = false;
 	export let elementRef: HTMLElement | null = null;
 
@@ -44,17 +48,17 @@
 		'lg-top': 'pt-32 md:pt-48'
 	};
 	const yBottom: Record<string, string> = {
-		none: '',
-		sm: 'pb-8 md:pb-10',
-		'sm-top': '',
-		base: 'pb-20 md:pb-28',
-		'base-top': '',
-		lg: 'pb-32 md:pb-48',
-		'lg-top': ''
+		none: 'pb-0',
+		sm: 'md:pb-10',
+		'sm-top': 'pb-0',
+		base: 'md:pb-28',
+		'base-top': 'pb-0',
+		lg: 'md:pb-48',
+		'lg-top': 'pb-0'
 	};
 
-	$: topClass = paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? '');
-	$: bottomClass = paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? '');
+	$: topClass = paddingTopClass !== undefined ? paddingTopClass : (paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? ''));
+	$: bottomClass = paddingBottomClass !== undefined ? paddingBottomClass : (paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? ''));
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }
@@ -68,7 +72,7 @@
 	data-collapsible={collapsible}
 	{...$$restProps}
 	class={clsx(
-		'px-6',
+		!noPadding && 'px-6',
 		specialLayout && isMobile && 'px-0',
 		topClass,
 		bottomClass,

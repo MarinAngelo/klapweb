@@ -33,8 +33,11 @@ interface PrismicThemeData {
 	footer_font_size_button_bar?: number;
 	footer_link_color?: string;
 	footer_link_hover_color?: string;
+	no_margin_top?: boolean;
 	page_link_active_color?: string;
 	page_link_visited_color?: string;
+	highlight_color?: string;
+	highlight_bg_color?: string;
 	button_active_color?: string;
 	button_visited_color?: string;
 	button_active_bg_color?: string;
@@ -44,12 +47,29 @@ interface PrismicThemeData {
 	container_width?: string;
 	preset_font?: string;
 	heading_opacity?: number;
+	// CMS-konfigurierbare Button-Stile
+	button_stile?: Array<{
+		label?: string;
+		color?: string;
+		bg_color?: string;
+		hover_color?: string;
+		hover_bg_color?: string;
+		icon?: string;
+	}>;
+	// CMS-konfigurierbare SVG-Icons
+	svg_icons?: Array<{
+		label?: string;
+		svg_code?: string;
+		image?: { url?: string; alt?: string };
+	}>;
 }
 
 interface ThemeUpdateData {
 	prismicTheme?: {
 		data?: PrismicThemeData;
 	};
+	buttonStilDocs?: Array<any>;
+	iconDocs?: Array<any>;
 }
 
 // Funktion zum Auslesen einer CSS-Variable
@@ -61,6 +81,31 @@ const getCssVar = (name: string): string => {
 	return ''; // Fallback für SSR (Server-Side Rendering)
 };
 
+// Adobe Fonts benötigen Gewichtssuffixe (z.B. "Soleil Regular" statt nur "Soleil")
+// Diese Fonts müssen IMMER mit Suffix eingegeben werden
+const ADOBE_FONTS_REQUIRING_SUFFIX = ['Soleil'];
+
+// Normalisiert Font-Namen: Fügt "Regular" hinzu falls kein Suffix vorhanden ist
+const normalizeAdobeFont = (fontName: string): string => {
+	if (!fontName) return fontName;
+
+	const trimmed = fontName.trim();
+
+	// Prüfe ob Font in der Liste ist und kein Suffix hat
+	const needsSuffix = ADOBE_FONTS_REQUIRING_SUFFIX.some(name =>
+		trimmed.startsWith(name) && trimmed.length === name.length
+	);
+
+	// Häufige Gewichtssuffixe
+	const hasSuffix = /\s+(Regular|Bold|Light|Thin|Medium|SemiBold|ExtraBold|Black|Italic)(\s+Italic)?$/i.test(trimmed);
+
+	if (needsSuffix && !hasSuffix) {
+		return `${trimmed} Regular`;
+	}
+
+	return trimmed;
+};
+
 export function updateTheme(data: ThemeUpdateData): void {
 	const prismicThemeData = data.prismicTheme?.data;
 
@@ -70,13 +115,15 @@ export function updateTheme(data: ThemeUpdateData): void {
 		return;
 	}
 
+
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
-	const pageFont =
+	const pageFont = normalizeAdobeFont(
 		prismicThemeData.page_font?.data?.name ||
 		prismicThemeData.preset_font ||
-		getCssVar('--page-font');
+		getCssVar('--page-font')
+	);
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColor =
 		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
@@ -89,8 +136,9 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
 	const siteTitleFontSize =
 		prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
-	const siteTitleFont =
-		prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font');
+	const siteTitleFont = normalizeAdobeFont(
+		prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font')
+	);
 	const siteSubtitleFontSize =
 		prismicThemeData.site_subtitle_font_size || parseFloat(getCssVar('--site-sub-title-font-size'));
 	const headerFontSize =
@@ -105,8 +153,9 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
 	const headerLinkFontSize =
 		prismicThemeData.header_link_font_size || parseFloat(getCssVar('--header-link-font-size'));
-	const headerLinkFont =
-		prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font');
+	const headerLinkFont = normalizeAdobeFont(
+		prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font')
+	);
 	const footerColor = prismicThemeData.footer_color || getCssVar('--footer-color');
 	const footerBgColor = prismicThemeData.footer_bg_color || getCssVar('--footer-bg-color');
 	const footerFontSizeTopBar =
@@ -118,13 +167,16 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const footerLinkColor = prismicThemeData.footer_link_color || getCssVar('--footer-link-color');
 	const footerLinkHoverColor =
 		prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
+	const noMarginTop = prismicThemeData.no_margin_top || false;
 	const pageLinkActiveColor =
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
 	const pageLinkVisitedColor =
 		prismicThemeData.page_link_visited_color || getCssVar('--page-link-visited-color');
+	const highlightColor = prismicThemeData.highlight_color || getCssVar('--highlight-color');
+	const highlightBgColor = prismicThemeData.highlight_bg_color || getCssVar('--highlight-bg-color');
 
-	theme.update((t) => ({
-		...t,
+	const updateData = {
+		...({} as any),
 		bannerTop,
 		pageColor,
 		pageBgColor,
@@ -153,46 +205,90 @@ export function updateTheme(data: ThemeUpdateData): void {
 		footerFontSizeButtonBar,
 		footerLinkColor,
 		footerLinkHoverColor,
+		noMarginTop,
 		pageLinkActiveColor,
 		pageLinkVisitedColor
+	};
+
+
+	theme.update((t) => ({
+		...t,
+		...updateData
 	}));
 
-	// NEU: Werte auch als CSS-Variablen setzen
+	// Werte als CSS-Variablen setzen – nur wenn nicht leer, damit die
+	// app.css-Kaskade (z.B. --page-button-color: var(--page-link-color)) greift
 	if (typeof window !== 'undefined') {
 		const root = document.documentElement;
-		root.style.setProperty('--page-color', pageColor);
-		root.style.setProperty('--page-bg-color', pageBgColor);
-		root.style.setProperty('--page-font', pageFont);
-		root.style.setProperty('--page-link-color', pageLinkColor);
-		root.style.setProperty('--page-link-hover-color', pageLinkHoverColor);
-		root.style.setProperty('--page-button-color', pageButtonColor);
-		root.style.setProperty('--page-button-bg-color', pageButtonBgColor);
-		root.style.setProperty('--page-button-hover-color', pageButtonHoverColor);
-		root.style.setProperty('--page-button-hover-bg-color', pageButtonHoverBgColor);
-		root.style.setProperty('--site-title-font-size', siteTitleFontSize.toString());
-		root.style.setProperty('--site-title-font', siteTitleFont);
-		root.style.setProperty('--site-sub-title-font-size', siteSubtitleFontSize.toString());
-		root.style.setProperty('--header-font-size', headerFontSize.toString());
-		root.style.setProperty('--logo-height', logoHeight.toString());
-		root.style.setProperty('--header-color', headerColor);
-		root.style.setProperty('--header-bg-color', headerBgColor);
+		const set = (prop: string, value: string | number) => {
+			const v = String(value).trim();
+			if (v) root.style.setProperty(prop, v);
+		};
+		set('--page-color', pageColor);
+		set('--page-bg-color', pageBgColor);
+		set('--page-font', pageFont);
+		set('--page-link-color', pageLinkColor);
+		set('--page-link-hover-color', pageLinkHoverColor);
+		set('--page-button-color', pageButtonColor);
+		set('--page-button-bg-color', pageButtonBgColor);
+		set('--page-button-hover-color', pageButtonHoverColor);
+		set('--page-button-hover-bg-color', pageButtonHoverBgColor);
+		set('--site-title-font-size', siteTitleFontSize);
+		set('--site-title-font', siteTitleFont);
+		set('--site-sub-title-font-size', siteSubtitleFontSize);
+		set('--header-font-size', headerFontSize);
+		set('--logo-height', logoHeight);
+		set('--header-color', headerColor);
+		set('--header-bg-color', headerBgColor);
 		// headerBgOpacity: Verwende Theme Store oder CSS-Fallback
 		const currentHeaderBgOpacity =
 			get(theme).headerBgOpacity || parseFloat(getCssVar('--header-bg-opacity'));
-		root.style.setProperty('--header-bg-opacity', currentHeaderBgOpacity.toString());
-		root.style.setProperty('--header-link-color', headerLinkColor);
-		root.style.setProperty('--header-link-hover-color', headerLinkHoverColor);
-		root.style.setProperty('--header-link-hover-bg-color', headerLinkHoverBgColor);
-		root.style.setProperty('--header-link-font-size', headerLinkFontSize.toString());
-		root.style.setProperty('--header-link-font', headerLinkFont);
-		root.style.setProperty('--footer-color', footerColor);
-		root.style.setProperty('--footer-bg-color', footerBgColor);
-		root.style.setProperty('--footer-font-size-top-bar', footerFontSizeTopBar.toString());
-		root.style.setProperty('--footer-font-size-button-bar', footerFontSizeButtonBar.toString());
-		root.style.setProperty('--footer-link-color', footerLinkColor);
-		root.style.setProperty('--footer-link-hover-color', footerLinkHoverColor);
-		root.style.setProperty('--page-link-active-color', pageLinkActiveColor);
-		root.style.setProperty('--page-link-visited-color', pageLinkVisitedColor);
+		set('--header-bg-opacity', currentHeaderBgOpacity);
+		set('--header-link-color', headerLinkColor);
+		set('--header-link-hover-color', headerLinkHoverColor);
+		set('--header-link-hover-bg-color', headerLinkHoverBgColor);
+		set('--header-link-font-size', headerLinkFontSize);
+		set('--header-link-font', headerLinkFont);
+		set('--footer-color', footerColor);
+		set('--footer-bg-color', footerBgColor);
+		set('--footer-font-size-top-bar', footerFontSizeTopBar);
+		set('--footer-font-size-button-bar', footerFontSizeButtonBar);
+		set('--footer-link-color', footerLinkColor);
+		set('--footer-link-hover-color', footerLinkHoverColor);
+		set('--page-link-active-color', pageLinkActiveColor);
+		set('--page-link-visited-color', pageLinkVisitedColor);
+		set('--highlight-color', highlightColor);
+		set('--highlight-bg-color', highlightBgColor);
+
+		// Button-Stile aus button_stil Custom Type Dokumenten
+		const buttonStile = (data.buttonStilDocs ?? []).map((doc: any) => {
+			const slug: string = doc.uid;
+			if (doc.data.color) set(`--btn-${slug}-color`, doc.data.color);
+			if (doc.data.bg_color) set(`--btn-${slug}-bg`, doc.data.bg_color);
+			if (doc.data.hover_color) set(`--btn-${slug}-hover-color`, doc.data.hover_color);
+			if (doc.data.hover_bg_color) set(`--btn-${slug}-hover-bg`, doc.data.hover_bg_color);
+			return {
+				name: slug,
+				label: doc.data.name ?? slug,
+				color: doc.data.color ?? undefined,
+				bg_color: doc.data.bg_color ?? undefined,
+				hover_color: doc.data.hover_color ?? undefined,
+				hover_bg_color: doc.data.hover_bg_color ?? undefined,
+				icon: doc.data.icon?.uid ?? undefined
+			};
+		});
+		theme.update((t) => ({ ...t, buttonStile }));
+
+		// Icons aus icon Custom Type Dokumenten
+		const svgIcons = (data.iconDocs ?? []).map((doc: any) => ({
+			name: doc.uid,
+			label: doc.data.name ?? doc.uid,
+			svg_code: doc.data.svg_code ?? undefined,
+			image_url: doc.data.image?.url ?? undefined,
+			image_alt: doc.data.image?.alt ?? undefined
+		}));
+		theme.update((t) => ({ ...t, svgIcons }));
+
 		if (
 			prismicThemeData.heading_opacity !== undefined &&
 			prismicThemeData.heading_opacity !== null

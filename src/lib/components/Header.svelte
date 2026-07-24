@@ -3,6 +3,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content, PrismicDocument } from '@prismicio/client';
+	import { asText } from '@prismicio/client';
 	import { onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
@@ -19,6 +20,8 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let mainLang: string | undefined;
+	export let userBackendActive: boolean = false;
+	export let user: { name: string; email: string } | null = null;
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
@@ -67,6 +70,7 @@
 	$: isSvgLogo = !!prismicTheme?.data?.logo?.url?.toLowerCase().includes('.svg');
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || $theme.siteTitleFontSize;
 	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
+	$: logoLabel = settings?.data?.site_name || asText(settings?.data?.site_title) || 'Startseite';
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
 	$: headerLinkFontSize = prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
@@ -186,7 +190,7 @@
 		<div class="flex items-stretch justify-between w-full">
 			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5">
+					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5" aria-label={logoLabel}>
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
@@ -210,6 +214,7 @@
 						href={lang === mainLang ? '/' : `/${lang}`}
 						class="mt-6 mb-6 inline-block"
 						style="color: {headerColor};"
+						aria-label={logoLabel}
 					>
 						<span
 							class="text-xl font-semibold tracking-tight site-title-text"
@@ -244,6 +249,8 @@
 					{locales}
 					{showSwitcher}
 					{allAlternates}
+					{userBackendActive}
+					{user}
 					headerLinkFont={prismicTheme?.data?.header_link_font?.data?.name || $theme.headerLinkFont}
 				/>
 			{/if}

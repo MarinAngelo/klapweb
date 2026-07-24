@@ -28,7 +28,7 @@
 			"y_padding_same": true,
 			"y_padding": "mittel",
 			"map_left": false,
-			"mobile_vollbreite": false,
+			"mobile_full_width": false,
 			"animate": false,
 			"anim_direction": "Oben",
 			"anim_delay": null,

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import { theme } from '$lib/stores/theme';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { sanitizeHtml } from '$lib/utils/sanitizeHtml';
 
@@ -12,7 +11,7 @@
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = (slice.primary as any).mobile_vollbreite ?? false;
+	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
 <Bounded
@@ -21,9 +20,12 @@
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
-	<div class="html-code-container {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}" style="--hr-color: {$theme.pageColor};">
+	<div
+		class="html-code-container {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
+		style="--hr-color: var(--page-color);"
+	>
 		{@html sanitizedHtmlCode}
 	</div>
 </Bounded>

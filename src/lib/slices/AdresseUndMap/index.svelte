@@ -8,14 +8,14 @@
 	import { _ } from '$lib/stores/i18n';
 
 	export let slice: any;
-	export let slices: unknown[] | undefined = undefined;
+	export let slices: any[] | undefined = undefined;
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 
 	const p = slice.primary ?? {};
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: mobileVollbreite = p.mobile_vollbreite ?? false;
+	$: mobileVollbreite = p.mobile_full_width ?? false;
 	$: mapLeft = p.map_left ?? false;
 	$: mapHeight = p.map_height || 400;
 	$: textCenterH = p.text_center_h ?? false;

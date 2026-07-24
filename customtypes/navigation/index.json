@@ -24,9 +24,9 @@
 							"config": {
 								"label": "Link",
 								"placeholder": "",
-								"allowTargetBlank": true,
+								"allowTargetBlank": false,
 								"allowText": false,
-								"select": null
+								"customtypes": ["page"]
 							}
 						},
 						"sub_link": {

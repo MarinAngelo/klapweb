@@ -21,6 +21,11 @@
 
 	// CMS-Felder können null objects sein - prüfe auf echten Wert
 	const hasBorderColor = !!(borderColor && borderColor !== null && borderColor !== '');
+	$: anchor = (() => {
+		const raw = (card as any).button_anchor?.trim() || '';
+		if (!raw) return '';
+		return raw.startsWith('#') ? raw : `#${raw}`;
+	})();
 	const actualBorderColor = hasBorderColor ? borderColor : null;
 </script>
 
@@ -52,11 +57,13 @@
 					class="w-full {roundCorners ? 'rounded-t-2xl' : ''}"
 				/>
 			{/if}
+			{#if card.image_overlay_opacity}
 			<ImageOverlay
 				color={card.image_overlay_color || $theme.pageBgColor}
-				opacity={convertNumber(card.image_overlay_opacity || $theme.imageOverlayOpacity)}
+				opacity={convertNumber(card.image_overlay_opacity)}
 				{roundCorners}
 			/>
+		{/if}
 		</div>
 	{/if}
 	<div
@@ -66,7 +73,18 @@
 	>
 		<PrismicRichText field={card.text} />
 	</div>
-	{#if isFilled.link(card.buttonLink)}
+	{#if anchor}
+		<div class="pl-6 pr-6">
+			<Button
+				href={anchor}
+				text={card.buttonText || 'Mehr erfahren'}
+				color={buttonColor || $theme.pageButtonColor}
+				bgColor={buttonBgColor || $theme.pageButtonBgColor}
+				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
+				hoverBgColor={buttonHoverBgColor || $theme.pageButtonHoverBgColor}
+			/>
+		</div>
+	{:else if isFilled.link(card.buttonLink)}
 		<div class="pl-6 pr-6">
 			<Button
 				link={card.buttonLink}

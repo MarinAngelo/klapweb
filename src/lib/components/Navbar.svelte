@@ -21,37 +21,67 @@
 	export let showSwitcher: boolean | undefined;
 	export let allAlternates: any[] = [];
 	export let headerLinkFont;
+	export let userBackendActive: boolean = false;
+	export let user: { name: string; email: string } | null = null;
 
 	// const { headerLinkFont } = get(theme);
 
-	// 1. REAKTIVER FIX FÜR DAS SCHLIESSEN
-	// Sobald sich der Pfad ändert (z.B. durch Sprachwechsel), schließt das Menü.
-	$: if ($page.url.pathname) {
-		isMenuOpen.set(false);
+	// Pfad ohne Locale-Prefix ermitteln
+	function pathWithoutLocale(pathname: string, knownLocales: string[]): string {
+		const segments = pathname.split('/').filter(Boolean);
+		if (segments.length > 0 && knownLocales.includes(segments[0])) {
+			return '/' + segments.slice(1).join('/');
+		}
+		return pathname;
+	}
+
+	// Menü schließen bei echten Seitennavigationen, aber NICHT bei Sprachwechsel
+	let prevContentPath = '';
+	$: {
+		const currentContentPath = pathWithoutLocale($page.url.pathname, locales ?? []);
+		if (prevContentPath && currentContentPath !== prevContentPath) {
+			isMenuOpen.set(false);
+		}
+		prevContentPath = currentContentPath;
 	}
 
 	function toggleMenu() {
 		isMenuOpen.update((open) => !open);
 	}
 
-	// Schließt das Menü bei Scroll oder Touch-Bewegung
-	function handleCloseInteraction() {
-		if ($isMenuOpen) {
+	let menuEl: HTMLDivElement | null = null;
+
+	// Body-Scroll-Lock wenn Menü offen: verhindert dass Seiten-Scroll window.scroll triggert
+	$: if (typeof document !== 'undefined') {
+		document.body.style.overflow = $isMenuOpen ? 'hidden' : '';
+	}
+
+	// Seiten-Scroll (window.scroll feuert nicht bei internem Menü-Scroll)
+	function handleWindowScroll() {
+		if ($isMenuOpen) isMenuOpen.set(false);
+	}
+
+	// Touch-Bewegung: nur schließen wenn der Touch außerhalb des Menü-Containers ist
+	function handleTouchmove(e: TouchEvent) {
+		if ($isMenuOpen && !menuEl?.contains(e.target as Node)) {
 			isMenuOpen.set(false);
 		}
 	}
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
-			window.addEventListener('scroll', handleCloseInteraction);
-			window.addEventListener('touchmove', handleCloseInteraction); // NEU: Für Mobile Wischen
+			window.addEventListener('scroll', handleWindowScroll, { passive: true });
+			window.addEventListener('touchmove', handleTouchmove, { passive: true });
 		}
 	});
 
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
-			window.removeEventListener('scroll', handleCloseInteraction);
-			window.removeEventListener('touchmove', handleCloseInteraction);
+			window.removeEventListener('scroll', handleWindowScroll);
+			window.removeEventListener('touchmove', handleTouchmove);
+		}
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = '';
 		}
 	});
 
@@ -77,25 +107,34 @@
 </script>
 
 <nav
+	aria-label="Hauptnavigation"
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
 	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
 >
-	<div class="block lg:hidden h-full flex items-center">
-		<button class="btn btn-square btn-ghost h-10 w-10" on:click={toggleMenu} aria-label="Menu">
+	<div class="flex lg:hidden h-full items-center">
+		<button
+			class="btn btn-square btn-ghost h-10 w-10"
+			on:click={toggleMenu}
+			aria-label="Menü"
+			aria-expanded={$isMenuOpen}
+			aria-controls="main-nav-menu"
+		>
 			{#if $isMenuOpen}
-				<SvgIcon name="close" color={headerLinkColor} />
+				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
-				<SvgIcon name="menu" color={headerLinkColor} />
+				<SvgIcon name="menu" color={headerLinkColor} size="1.5rem" />
 			{/if}
 		</button>
 	</div>
 
 	<div
+		id="main-nav-menu"
+		bind:this={menuEl}
 		class={`${
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
 		style={$isMenuOpen
-			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor};`
+			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
 			: ''}
 	>
 		<ul
@@ -152,6 +191,33 @@
 					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4"
 				>
 					<LanguageSwitcher {lang} {locales} {allAlternates} />
+				</li>
+			{/if}
+
+			{#if userBackendActive}
+				<li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2">
+					{#if user}
+						<a
+							href="/konto"
+							on:click={() => isMenuOpen.set(false)}
+							class="nav-link flex items-center gap-1.5 transition"
+							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							title={user.name}
+						>
+							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
+							<span class="lg:hidden">{user.name}</span>
+						</a>
+					{:else}
+						<a
+							href="/konto/anmelden"
+							on:click={() => isMenuOpen.set(false)}
+							class="nav-link flex items-center gap-1.5 transition"
+							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+						>
+							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
+							<span class="lg:hidden">Anmelden</span>
+						</a>
+					{/if}
 				</li>
 			{/if}
 		</ul>

@@ -22,15 +22,7 @@
 				"form_instructions": {
 					"type": "StructuredText",
 					"config": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-=======
 						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
-=======
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"allowTargetBlank": true,
 						"label": "Formular Instruktionen",
 						"labels": [
@@ -83,6 +75,16 @@
 						"label": "Senden-Schaltflächen-Text"
 					}
 				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": [
+							"button_stil"
+						]
+					}
+				},
 				"zwei_spalten": {
 					"type": "Boolean",
 					"config": {
@@ -102,15 +104,7 @@
 				"submitted_text": {
 					"type": "StructuredText",
 					"config": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-=======
 						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
-=======
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"allowTargetBlank": true,
 						"label": "Gesendet Text",
 						"labels": [
@@ -157,6 +151,50 @@
 						]
 					}
 				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": [
+							"Oben",
+							"Unten",
+							"Links",
+							"Rechts",
+							"Keine"
+						],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				},
 				"form_fields": {
 					"type": "Group",
 					"config": {
@@ -176,6 +214,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -218,10 +257,25 @@
 							}
 						}
 					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "mitTermin",
+			"name": "Mit Termin",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Standard-Formular mit Termin- und Zeitzone-Feld",
+			"imageUrl": "",
+			"primary": {
+				"form_title": {
+					"type": "Text",
+					"config": {
+						"label": "Formular Titel",
+						"placeholder": ""
+					}
 				},
-<<<<<<< HEAD
-				"mobile_vollbreite": {
-=======
 				"form_instructions": {
 					"type": "StructuredText",
 					"config": {
@@ -283,17 +337,14 @@
 					}
 				},
 				"zwei_spalten": {
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 					"type": "Boolean",
 					"config": {
-						"label": "Vollbreite auf Mobile",
+						"label": "2 Spalten",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
 					}
 				},
-<<<<<<< HEAD
-=======
 				"submitted_title": {
 					"type": "Text",
 					"config": {
@@ -355,7 +406,6 @@
 						]
 					}
 				},
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -390,62 +440,6 @@
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
 					}
-				}
-			},
-			"items": {}
-		},
-		{
-			"id": "mitTermin",
-			"name": "Mit Termin",
-			"docURL": "...",
-			"version": "initial",
-			"description": "Standard-Formular mit Termin- und Zeitzone-Feld",
-			"imageUrl": "",
-			"primary": {
-				"form_title": {
-					"type": "Text",
-					"config": {
-						"label": "Formular Titel",
-						"placeholder": ""
-					}
-				},
-				"form_instructions": {
-					"type": "StructuredText",
-					"config": {
-						"multi": "paragraph,preformatted,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-						"allowTargetBlank": true,
-						"label": "Formular Instruktionen"
-					}
-				},
-				"submitt_button_text": {
-					"type": "Text",
-					"config": {
-						"label": "Senden-Schaltflächen-Text"
-					}
-				},
-				"zwei_spalten": {
-					"type": "Boolean",
-					"config": {
-						"label": "2 Spalten",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"submitted_title": {
-					"type": "Text",
-					"config": {
-						"label": "Gesendet Titel",
-						"placeholder": ""
-					}
-				},
-				"submitted_text": {
-					"type": "StructuredText",
-					"config": {
-						"multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
-						"allowTargetBlank": true,
-						"label": "Gesendet Text"
-					}
 				},
 				"form_fields": {
 					"type": "Group",
@@ -466,6 +460,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -509,41 +504,6 @@
 								}
 							}
 						}
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
 					}
 				}
 			},
@@ -576,6 +536,7 @@
 									"placeholder": "",
 									"options": [
 										"Textfeld",
+										"Zahl",
 										"E-Mail",
 										"Telefon",
 										"Textbereich",
@@ -623,8 +584,6 @@
 				}
 			},
 			"items": {}
-<<<<<<< HEAD
-=======
 		},
 		{
 			"id": "einChecken",
@@ -811,7 +770,6 @@
 					}
 				}
 			}
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 		}
 	]
 }

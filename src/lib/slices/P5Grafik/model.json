@@ -22,7 +22,8 @@
 							"Generative Gestaltung P_1_0_01",
 							"Generative Gestaltung P_1_1_1_01",
 							"Generative Gestaltung P_1_2_1_01",
-							"Generative Gestaltung P_1_2_2_01"
+							"Generative Gestaltung P_1_2_2_01",
+							"Generative Gestaltung P_2_2_2_01"
 						],
 						"default_value": "Orbital Circles"
 					}
@@ -70,7 +71,8 @@
 							"Generative Gestaltung P_1_0_01",
 							"Generative Gestaltung P_1_1_1_01",
 							"Generative Gestaltung P_1_2_1_01",
-							"Generative Gestaltung P_1_2_2_01"
+							"Generative Gestaltung P_1_2_2_01",
+							"Generative Gestaltung P_2_2_2_01"
 						],
 						"default_value": "Orbital Circles"
 					}
@@ -139,7 +141,7 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "paragraph,strong,em",
+						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
 						"labels": [
 							"size-xs",
 							"size-sm",

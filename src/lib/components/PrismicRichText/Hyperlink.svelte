@@ -1,23 +1,30 @@
 <script lang="ts">
-	import { asLink } from '@prismicio/helpers';
-	import type { RTLinkNode } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
+	import { asLink, type RTLinkNode } from '@prismicio/client';
 
 	export let node: RTLinkNode;
-
-	let isHover = false;
 
 	const href = asLink(node.data as any); // node.data ist das eigentliche Link-Feld
 </script>
 
 <a
-	href={href}
+	{href}
 	target={node.data && 'target' in node.data ? node.data.target : undefined}
-	rel={node.data && typeof node.data === 'object' && 'target' in node.data && node.data.target === '_blank' ? 'noopener noreferrer' : undefined}
-	on:mouseenter={() => (isHover = true)}
-	on:mouseleave={() => (isHover = false)}
+	rel={node.data &&
+	typeof node.data === 'object' &&
+	'target' in node.data &&
+	node.data.target === '_blank'
+		? 'noopener noreferrer'
+		: undefined}
 	class="underline decoration-1 underline-offset-2 transition-colors duration-200 italic"
-	style="color: {isHover ? $theme.pageLinkHoverColor : $theme.pageLinkColor};"
 >
 	<slot />
 </a>
+
+<style>
+	a {
+		color: var(--page-link-color);
+	}
+	a:hover {
+		color: var(--page-link-hover-color);
+	}
+</style>

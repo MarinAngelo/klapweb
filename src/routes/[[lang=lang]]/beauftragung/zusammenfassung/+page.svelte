@@ -8,12 +8,14 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Checkbox from '$lib/components/Checkbox.svelte';
 	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
 	export let data: {
 		product: ProductData | null;
 		pageTitle: string;
+		checkoutButtonText: string;
 		baseCurrency: string;
 		additionalCodes: string[];
 		rates: Record<string, number>;
@@ -27,7 +29,12 @@
 
 	let checkoutData: CheckoutData | null = null;
 	let agbAccepted = false;
-	let selectedPayment: 'stripe' | 'rechnung' | 'bar' | null = null;
+	// Wenn nur eine Zahlungsart aktiv ist, automatisch vorauswählen
+	const availableMethods = (['stripe', 'rechnung', 'bar'] as const).filter(
+		(m) => data.paymentMethods[m]
+	);
+	let selectedPayment: 'stripe' | 'rechnung' | 'bar' | null =
+		availableMethods.length === 1 ? availableMethods[0] : null;
 	let isLoading = false;
 	let orderError: string | null = null;
 	let selectedCurrency: string = data.baseCurrency;
@@ -55,6 +62,10 @@
 				appliedCode = code;
 				codeDiscountPct = result.discount;
 				codeError = null;
+			} else if (resp.status === 410) {
+				appliedCode = '';
+				codeDiscountPct = 0;
+				codeError = t('Abgelaufener Rabatt-Code.', lang);
 			} else {
 				appliedCode = '';
 				codeDiscountPct = 0;
@@ -158,14 +169,9 @@
 		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}`
 		: stripeUrl;
 
-	$: buttonText =
-		selectedPayment === 'stripe'
-			? t('Kostenpflichtig bestellen', lang)
-			: selectedPayment === 'rechnung'
-				? t('Rechnung anfordern', lang)
-				: selectedPayment === 'bar'
-					? t('Bestellung absenden', lang)
-					: t('Bitte Zahlungsart wählen', lang);
+	$: buttonText = isLoading
+		? t('Bitte warten…', lang)
+		: data.checkoutButtonText || t('Kostenpflichtig bestellen', lang);
 
 	$: canOrder = agbAccepted && selectedPayment !== null && !isLoading;
 
@@ -204,8 +210,10 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
-			sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`);
+				sessionStorage.removeItem('preferredCurrency');
+				goto(
+					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`
+				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;
@@ -214,8 +222,8 @@
 		}
 
 		if (selectedPayment === 'bar') {
-			// Kundendaten speichern (fire-and-forget)
-			fetch('/api/save-customer', {
+			// Rechnung + Kundendaten erstellen
+			fetch('/api/create-invoice-bar', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -239,7 +247,7 @@
 			// Dev-Modus: Netlify-POST überspringen
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');
-			sessionStorage.removeItem('preferredCurrency');
+				sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 				return;
 			}
@@ -248,6 +256,9 @@
 				params.set('form-name', 'beauftragung_bar');
 				for (const [k, v] of Object.entries(checkoutData.data)) {
 					params.set(k, v);
+				}
+				if (grandTotal !== null) {
+					params.set('preis', formatPrice(grandTotal, selectedCurrency));
 				}
 				const resp = await fetch('/', {
 					method: 'POST',
@@ -260,7 +271,7 @@
 					return;
 				}
 				sessionStorage.removeItem('checkoutData');
-			sessionStorage.removeItem('preferredCurrency');
+				sessionStorage.removeItem('preferredCurrency');
 				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
@@ -276,14 +287,14 @@
 </script>
 
 <svelte:head>
-	<title>{data.pageTitle}</title>
+	<title>{data.pageTitle || t('Bestellübersicht', lang)}</title>
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
 	{#if !checkoutData}
 		<p>{t('Laden…', lang)}</p>
 	{:else}
-		<Heading tag="h1">{data.pageTitle}</Heading>
+		<Heading tag="h1">{data.pageTitle || t('Bestellübersicht', lang)}</Heading>
 
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
@@ -292,25 +303,34 @@
 			{#if hasAddons}
 				<!-- Row layout: main product + addons side by side -->
 				<div class="flex items-baseline justify-between gap-4 mt-2">
-					<p class="text-lg font-semibold">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
+					<p class="text-lg font-semibold">
+						{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
+					</p>
 					{#if effectiveDisplayPrice !== null}
 						<p class="text-lg font-semibold tabular-nums shrink-0">
-							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1">{formatPrice(displayPrice, selectedCurrency)}</span>{/if}{formatPrice(effectiveDisplayPrice, selectedCurrency)}
+							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1"
+									>{formatPrice(displayPrice, selectedCurrency)}</span
+								>{/if}{formatPrice(effectiveDisplayPrice, selectedCurrency)}
 						</p>
 					{/if}
 				</div>
-				<p class="text-sm opacity-60 mt-0.5">{data.product?.billingType ?? 'Einmalig'}</p>
+				<p class="text-sm opacity-60 mt-0.5">{t(data.product?.billingType ?? 'Einmalig', lang)}</p>
 
 				{#each data.product?.addons ?? [] as addon, i}
-					<div class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t" style="border-color: {borderColor}44;">
+					<div
+						class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t"
+						style="border-color: {borderColor}44;"
+					>
 						<p class="text-base opacity-80">+ {addon.label}</p>
 						{#if addonDisplayPrices[i] !== null}
-							<p class="text-base tabular-nums shrink-0 opacity-80">{formatPrice(addonDisplayPrices[i], selectedCurrency)}</p>
+							<p class="text-base tabular-nums shrink-0 opacity-80">
+								{formatPrice(addonDisplayPrices[i], selectedCurrency)}
+							</p>
 						{:else}
-							<p class="text-sm opacity-60">auf Anfrage</p>
+							<p class="text-sm opacity-60">{t('auf Anfrage', lang)}</p>
 						{/if}
 					</div>
-					<p class="text-sm opacity-60 mt-0.5">{addon.billingType ?? 'Einmalig'}</p>
+					<p class="text-sm opacity-60 mt-0.5">{t(addon.billingType ?? 'Einmalig', lang)}</p>
 				{/each}
 
 				<!-- Grouped totals + grand total -->
@@ -318,36 +338,59 @@
 					<div class="mt-4 pt-3 border-t" style="border-color: {borderColor};">
 						{#each groupedTotals as [type, total]}
 							<div class="flex justify-between text-sm mt-1">
-								<span class="opacity-60">Total {type}:</span>
-								<span class="font-semibold tabular-nums">{formatPrice(total, selectedCurrency)}</span>
+								<span class="opacity-60">{t('Total', lang)} {t(type, lang)}:</span>
+								<span class="font-semibold tabular-nums"
+									>{formatPrice(total, selectedCurrency)}</span
+								>
 							</div>
 						{/each}
 						{#if grandTotal !== null && groupedTotals.length > 1}
-							<div class="flex justify-between mt-2 pt-2 border-t" style="border-color: {borderColor}44;">
-								<span class="font-bold">Total</span>
-								<span class="font-bold tabular-nums">{formatPrice(grandTotal, selectedCurrency)}</span>
+							<div
+								class="flex justify-between mt-2 pt-2 border-t"
+								style="border-color: {borderColor}44;"
+							>
+								<span class="font-bold">{t('Total', lang)}</span>
+								<span class="font-bold tabular-nums"
+									>{formatPrice(grandTotal, selectedCurrency)}</span
+								>
 							</div>
 						{/if}
 					</div>
 				{/if}
 			{:else}
 				<!-- Simple single-product layout -->
-				<p class="text-xl font-semibold mt-2">{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}</p>
+				<p class="text-xl font-semibold mt-2">
+					{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
+				</p>
 				{#if effectiveDisplayPrice !== null}
 					{#if codeDiscountPct > 0}
-						<p class="text-lg line-through opacity-40 mt-1">{formatPrice(displayPrice, selectedCurrency)}</p>
+						<p class="text-lg line-through opacity-40 mt-1">
+							{formatPrice(displayPrice, selectedCurrency)}
+						</p>
 					{/if}
 					<p class="text-3xl font-bold mt-1">
-						{formatPrice(effectiveDisplayPrice, selectedCurrency)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ Jahr{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ Monat{/if}
+						{formatPrice(
+							effectiveDisplayPrice,
+							selectedCurrency
+						)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ {t(
+								'Jahr',
+								lang
+							)}{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ {t(
+								'Monat',
+								lang
+							)}{/if}
 					</p>
 				{/if}
 				{#if data.product?.billingType}
-					<p class="text-sm opacity-60 mt-0.5">Abrechnungsart: <span class="font-medium" style="opacity: 1;">{data.product.billingType}</span></p>
+					<p class="text-sm opacity-60 mt-0.5">
+						{t('Abrechnungsart:', lang)}
+						<span class="font-medium" style="opacity: 1;">{t(data.product.billingType, lang)}</span>
+					</p>
 				{/if}
 			{/if}
 
 			{#if effectiveDisplayPrice !== null}
-				<p class="text-sm opacity-60 mt-2">exkl. MwSt.</p>
+				<p class="text-sm opacity-60 mt-2">{t('exkl. MwSt.', lang)}</p>
 
 				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
@@ -374,7 +417,7 @@
 					{#if appliedCode}
 						<div class="flex items-center gap-3">
 							<span class="text-sm" style="color: {pageColor};">
-								Code «{appliedCode}» angewendet: -{codeDiscountPct}%
+								{t('Code angewendet:', lang)} «{appliedCode}» -{codeDiscountPct}%
 							</span>
 							<button
 								type="button"
@@ -449,7 +492,9 @@
 						/>
 						<div>
 							<p class="font-semibold">{t('Kreditkarte / TWINT', lang)}</p>
-							<p class="text-sm opacity-60 mt-0.5">{t('Sofortige, sichere Zahlung via Stripe.', lang)}</p>
+							<p class="text-sm opacity-60 mt-0.5">
+								{t('Sofortige, sichere Zahlung via Stripe.', lang)}
+							</p>
 						</div>
 					</label>
 				{/if}
@@ -493,7 +538,9 @@
 						/>
 						<div>
 							<p class="font-semibold">{t('Gegen Bar', lang)}</p>
-							<p class="text-sm opacity-60 mt-0.5">{t('Wir melden uns zur Terminvereinbarung.', lang)}</p>
+							<p class="text-sm opacity-60 mt-0.5">
+								{t('Wir melden uns zur Terminvereinbarung.', lang)}
+							</p>
 						</div>
 					</label>
 				{/if}
@@ -502,19 +549,14 @@
 
 		<!-- AGB -->
 		<div class="mb-8">
-			<label class="flex items-start gap-3 cursor-pointer">
-				<input
-					type="checkbox"
-					bind:checked={agbAccepted}
-					class="mt-1 h-5 w-5 cursor-pointer shrink-0"
-					style="accent-color: {pageColor};"
-				/>
+			<label for="agb-accepted" class="flex items-start gap-3 cursor-pointer">
+				<Checkbox id="agb-accepted" bind:checked={agbAccepted} />
 				<span>
-					Ich habe die
-					<a href="/agb" class="underline">AGB</a>
-					und die
-					<a href="/datenschutzerklaerung" class="underline">Datenschutzerklärung</a>
-					gelesen und akzeptiere diese.
+					{t('Ich habe die', lang)}
+					<a href="/agb" class="underline">{t('AGB', lang)}</a>
+					{t('und die', lang)}
+					<a href="/datenschutzerklaerung" class="underline">{t('Datenschutz', lang)}</a>
+					{t('gelesen und akzeptiere diese.', lang)}
 				</span>
 			</label>
 		</div>
@@ -522,13 +564,6 @@
 		<!-- Fehlermeldung -->
 		{#if orderError}
 			<p class="mb-4 text-red-600 text-sm">{orderError}</p>
-		{/if}
-
-		<!-- DEV-Hinweis -->
-		{#if import.meta.env.DEV}
-			<p class="text-xs mb-3 px-2 py-1 border border-yellow-500 text-yellow-600 inline-block">
-				DEV: Stripe → lokale Erfolgsseite · Rechnung → PDF ohne E-Mail · Bar → kein Netlify-POST
-			</p>
 		{/if}
 
 		<!-- Buttons -->

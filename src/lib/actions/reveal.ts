@@ -46,9 +46,12 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 	};
 
 	// Initialer Zustand sicherstellen (SSR setzt bereits opacity:0 via Bounded, hier nur Transform)
-	node.style.opacity = '0';
-	node.style.willChange = 'transform, opacity';
-	node.style.transform = getTransform(options.direction, options.distance);
+	const applyInitialState = () => {
+		node.style.opacity = '0';
+		node.style.willChange = 'transform, opacity';
+		node.style.transform = getTransform(options.direction, options.distance);
+	};
+	applyInitialState();
 
 	const observer = new IntersectionObserver(
 		(entries) => {
@@ -57,6 +60,14 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 					setTimeout(() => {
 						node.style.setProperty('opacity', targetOpacity);
 						node.style.transform = 'translate(0, 0)';
+						const cleanup = (e: TransitionEvent) => {
+							if (e.propertyName === 'transform') {
+								node.style.transform = '';
+								node.style.willChange = '';
+								node.removeEventListener('transitionend', cleanup);
+							}
+						};
+						node.addEventListener('transitionend', cleanup);
 					}, options.delay);
 					observer.unobserve(node);
 				}
@@ -69,6 +80,10 @@ export function reveal(node: HTMLElement, params: RevealOptions = {}) {
 	// initialen Zustand (opacity: 0) committed hat, bevor Transition und
 	// Observer aktiviert werden – verhindert die Race Condition.
 	requestAnimationFrame(() => {
+		// Svelte schreibt bei der Hydration das style-Attribut von Elementen mit
+		// Spread-Attributen ({...$$restProps} in Bounded) komplett neu und löscht
+		// dabei die oben gesetzten Inline-Styles → hier erneut anwenden.
+		applyInitialState();
 		requestAnimationFrame(() => {
 			node.style.transition = `opacity ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
                                  transform ${options.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;

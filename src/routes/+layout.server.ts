@@ -2,6 +2,35 @@ import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 
+// SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
+const _svgCache = new Map<string, string>();
+async function fetchSvgFromUrl(url: string): Promise<string | null> {
+	if (_svgCache.has(url)) return _svgCache.get(url)!;
+	try {
+		const resp = await fetch(url);
+		if (!resp.ok) return null;
+		const text = await resp.text();
+		if (text.includes('<svg')) { _svgCache.set(url, text); return text; }
+	} catch {}
+	return null;
+}
+
+// Repo-Infos (Sprachen) ändern sich selten — einmal pro Prozess cachen.
+// Eliminiert einen seriellen API-Call (~300–500 ms) bei jedem Page-Request.
+let _repoCache: { mainLang: string; allLocales: string[]; at: number } | null = null;
+const REPO_CACHE_TTL_MS = 5 * 60 * 1000; // 5 Minuten
+
+async function getRepoInfo(client: ReturnType<typeof createClient>) {
+	const now = Date.now();
+	if (_repoCache && now - _repoCache.at < REPO_CACHE_TTL_MS) return _repoCache;
+	const repo = await client.getRepository();
+	const mainLang =
+		repo.languages.find((l: any) => l.is_master === true)?.id ?? repo.languages[0].id;
+	const allLocales = repo.languages.map((l: any) => l.id);
+	_repoCache = { mainLang, allLocales, at: now };
+	return _repoCache;
+}
+
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url, locals }) {
@@ -13,16 +42,54 @@ export async function load({ params, fetch, cookies, url, locals }) {
 	const client = createClient({ fetch, cookies });
 
 	try {
-		// 1. Repo-Infos (Master-Ermittlung)
-		const repo = await client.getRepository();
-		const technicalMaster =
-			repo.languages.find((l) => l.is_master === true)?.id || repo.languages[0].id;
-		const allLocales = repo.languages.map((l) => l.id);
-		const mainLang = technicalMaster;
+		// 1. Repo-Infos (gecacht – kein serieller API-Call mehr bei jedem Request)
+		const { mainLang, allLocales } = await getRepoInfo(client);
 
-		// 2. Basis-Settings laden (vom Master)
-		const baseSettings = await client.getSingle('settings', { lang: mainLang }).catch(() => null);
+		// 2. Sprach-Ermittlung der aktuellen Route
+		const segments = url.pathname.split('/').filter(Boolean);
+		const firstSegment = segments[0];
+		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
 
+		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
+		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.
+		const [settings, navigation, themes, fonts, buttonStilDocs, iconDocs, variablenDoc, masterSettingsOrNull] =
+			await Promise.all([
+				client.getSingle('settings', { lang }).catch(() => {
+					throw error(
+						404,
+						`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
+					);
+				}),
+				client.getSingle('navigation', { lang }).catch(() => {
+					throw error(
+						404,
+						`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
+					);
+				}),
+				client.getAllByType('theme', { lang: '*' }).catch(() => []),
+				client.getAllByType('font').catch(() => []),
+				client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
+				client.getAllByType('icon', { lang: '*' }).catch(() => []),
+				(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
+				// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
+				lang !== mainLang
+					? client.getSingle('settings', { lang: mainLang }).catch(() => null)
+					: Promise.resolve(null)
+			]);
+
+		// Bei gleicher Sprache sind Settings == baseSettings; sonst separater Call
+		// SVG-Inhalt aus Bild-Feld nachladen wenn svg_code leer ist
+		const iconDocsResolved = await Promise.all(
+			(iconDocs as any[]).map(async (doc: any) => {
+				if (!doc.data.svg_code && doc.data.image?.url) {
+					const svgCode = await fetchSvgFromUrl(doc.data.image.url);
+					if (svgCode) return { ...doc, data: { ...doc.data, svg_code: svgCode } };
+				}
+				return doc;
+			})
+		);
+
+		const baseSettings = lang !== mainLang ? masterSettingsOrNull : settings;
 		if (!baseSettings) {
 			throw error(
 				404,
@@ -30,44 +97,14 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			);
 		}
 
-		// 3. Multilang-Check
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
-
-		// 4. Sprach-Ermittlung der aktuellen Route
-		const segments = url.pathname.split('/').filter(Boolean);
-		const firstSegment = segments[0];
-		let lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
-
-		// 5. Schutz-Mauer (Falls Multilang deaktiviert)
+		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
+		const chatActive = (baseSettings.data as any)?.chat_active ?? false;
+		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
+		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
-
-		// 6. Paralleles Laden der globalen Daten mit klaren Fehlermeldungen
-		const [settings, navigation, themes, fonts, variablenDoc] = await Promise.all([
-			// Aktuelle Settings (müssen für jede Sprache existieren)
-			client.getSingle('settings', { lang }).catch(() => {
-				throw error(
-					404,
-					`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
-				);
-			}),
-
-			// Navigation (muss für jede Sprache existieren)
-			client.getSingle('navigation', { lang }).catch(() => {
-				throw error(
-					404,
-					`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
-				);
-			}),
-
-			// Alle Themes (Global)
-			client.getAllByType('theme', { lang: '*' }).catch(() => []),
-			client.getAllByType('font').catch(() => []),
-
-			// Variablen & Preise (Global, optional) — cast: type generated after Prismic push
-			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null)
-		]);
 
 		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
 
@@ -166,11 +203,18 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			navigation,
 			prismicTheme,
 			fonts,
+			buttonStilDocs,
+			iconDocs: iconDocsResolved,
 			lang,
 			mainLang,
 			isMultilangActive,
+			userBackendActive,
+			chatActive,
+			chatBotName,
+			chatGreeting,
 			locales: allLocales,
-			variables
+			variables,
+			user: locals.user ?? null
 		};
 	} catch (e: any) {
 		// Reiche SvelteKit-Errors (404 mit unseren Nachrichten) direkt weiter

@@ -1,8 +1,4 @@
 {
-	"_meta": {
-		"Beschreibung": "Grosser Titelbereich mit Bild, Text und optionaler Schaltfläche.",
-		"BeschreibungEn": "Large hero section with image, text, and optional button."
-	},
 	"id": "hero",
 	"type": "SharedSlice",
 	"name": "Titelbereich",
@@ -47,12 +43,6 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-<<<<<<< HEAD
-<<<<<<< HEAD
-						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
-=======
-=======
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
@@ -353,10 +343,6 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
-<<<<<<< HEAD
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
-=======
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -475,6 +461,14 @@
 						"placeholder": ""
 					}
 				},
+				"button_style": {
+					"type": "Link",
+					"config": {
+						"label": "Button-Stil",
+						"select": "document",
+						"customtypes": ["button_stil"]
+					}
+				},
 				"button_color": {
 					"type": "Color",
 					"config": {
@@ -571,10 +565,7 @@
 					"config": {
 						"label": "Verlauf Form",
 						"placeholder": "",
-						"options": [
-							"Linear",
-							"Radial"
-						],
+						"options": ["Linear", "Radial"],
 						"default_value": "Linear"
 					}
 				},
@@ -583,16 +574,7 @@
 					"config": {
 						"label": "Verlauf Richtung (nur Linear)",
 						"placeholder": "",
-						"options": [
-							"0°",
-							"45°",
-							"90°",
-							"135°",
-							"180°",
-							"225°",
-							"270°",
-							"315°"
-						],
+						"options": ["0°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"],
 						"default_value": "180°"
 					}
 				},
@@ -615,8 +597,6 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
-<<<<<<< HEAD
-=======
 						"options": ["100 %", "50 %", "33 %"],
 						"default_value": "100 %"
 					}
@@ -889,7 +869,6 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 						"options": [
 							"100 %",
 							"50 %",
@@ -933,6 +912,19 @@
 						]
 					}
 				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
 				"mobile_text_scale": {
 					"type": "Select",
 					"config": {
@@ -945,48 +937,41 @@
 							"Sehr klein"
 						]
 					}
-				}
-			},
-			"items": {}
-		},
-		{
-			"id": "mitBildKarusell",
-			"name": "Mit Bild Karusell",
-			"docURL": "...",
-			"version": "sktwi1xtmkfgx8626",
-			"description": "Hero",
-			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format",
-			"primary": {
-				"banner_overlap": {
+				},
+				"show_pagination": {
 					"type": "Boolean",
 					"config": {
-						"label": "Überlappend mit Kopfzeile",
+						"label": "Seitenzahl anzeigen",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
-						"default_value": false
+						"default_value": true
 					}
 				},
-				"header_bg_opacity": {
+				"transition_mode": {
+					"type": "Select",
+					"config": {
+						"label": "Bildwechsel-Modus",
+						"placeholder": "Crossfade",
+						"options": [
+							"Crossfade",
+							"Slide",
+							"Ken Burns"
+						],
+						"default_value": "Crossfade"
+					}
+				},
+				"transition_duration_ms": {
 					"type": "Number",
 					"config": {
-						"label": "Transparenz überlagerter Kopfzeile",
-						"placeholder": "0 - 100 %"
+						"label": "Überblendungsdauer (ms)",
+						"placeholder": "8000"
 					}
 				},
-				"hide_header_on_load": {
-					"type": "Boolean",
+				"display_duration_ms": {
+					"type": "Number",
 					"config": {
-						"label": "Kopfzeile beim Laden ausblenden",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
-				"overlay_color": {
-					"type": "Color",
-					"config": {
-						"label": "Bild Überlagerungsfarbe",
-						"placeholder": ""
+						"label": "Anzeigedauer pro Bild (ms)",
+						"placeholder": "2000"
 					}
 				},
 				"imageMerryGoRound": {
@@ -1008,8 +993,6 @@
 										}
 									]
 								}
-<<<<<<< HEAD
-=======
 							},
 							"text": {
 								"type": "StructuredText",
@@ -1019,7 +1002,6 @@
 									"allowTargetBlank": false,
 									"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6"
 								}
->>>>>>> dd142f29 (Fix: h1-h6 zurück in Format Dropdown aller RichText Slices)
 							}
 						}
 					}

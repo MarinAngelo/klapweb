@@ -148,23 +148,7 @@
 						"label": "Google Maps URL"
 					}
 				},
-				"additional_dates": {
-					"type": "Group",
-					"config": {
-						"label": "Weitere Daten",
-						"repeat": true,
-						"fields": {
-							"date": {
-								"type": "Date",
-								"config": {
-									"label": "Datum",
-									"placeholder": ""
-								}
-							}
-						}
-					}
-				},
-				"mobile_vollbreite": {
+				"mobile_full_width": {
 					"type": "Boolean",
 					"config": {
 						"label": "Vollbreite auf Mobile",
@@ -206,6 +190,22 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"additional_dates": {
+					"type": "Group",
+					"config": {
+						"label": "Weitere Daten",
+						"repeat": true,
+						"fields": {
+							"date": {
+								"type": "Date",
+								"config": {
+									"label": "Datum",
+									"placeholder": ""
+								}
+							}
+						}
 					}
 				}
 			},

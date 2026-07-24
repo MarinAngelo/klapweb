@@ -58,6 +58,10 @@
 			},
 			"image_round": {
 				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"mobile_full_width": {
+				"__TYPE__": "BooleanContent",
 				"value": true
 			}
 		},

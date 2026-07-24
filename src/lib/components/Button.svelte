@@ -1,21 +1,32 @@
 <script lang="ts">
 	import { PrismicLink } from '@prismicio/svelte';
-	import { theme } from '$lib/stores/theme';
 	import { page } from '$app/stores';
 	import { t } from '$lib/i18n/translations';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
+	import { theme } from '$lib/stores/theme';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 
-	export let link: any;
+	export let link: any = undefined;
+	// Für plain-URL-Fälle (kein Prismic-Link-Objekt)
+	export let href: string | undefined = undefined;
 
 	// Wir initialisieren text als undefined, um den Default reaktiv zu setzen
 	export let text: string | undefined = undefined;
 
-	// Props für Farbüberschreibungen
-	export let color: string | undefined;
-	export let bgColor: string | undefined;
-	export let hoverColor: string | undefined;
-	export let hoverBgColor: string | undefined;
+	// Props für Farbüberschreibungen — wenn nicht übergeben, greifen die CSS-Variablen
+	export let color: string | undefined = undefined;
+	export let bgColor: string | undefined = undefined;
+	export let hoverColor: string | undefined = undefined;
+	export let hoverBgColor: string | undefined = undefined;
+	// CMS-konfigurierter Button-Stil (Name aus Theme › Button-Stile Gruppe)
+	export let styleName: string | undefined = undefined;
+	// Globaler Button-Stil via CSS-Var-Nummer (Legacy, bleibt für Abwärtskompatibilität)
+	export let variant: '1' | '2' | '3' | 'link' | undefined = undefined;
 	export let size: 'sm' | 'md' | 'lg' = 'md';
+	// Runde Ecken: true = rounded-full (Standard), false = leicht abgerundet
+	export let rounded: boolean = true;
+	// Abstand unten (mb-6 Standard, false = kein Abstand)
+	export let mb: boolean = true;
 
 	$: sizeClass =
 		size === 'sm'
@@ -24,66 +35,88 @@
 				? 'px-10 py-4 text-lg'
 				: 'px-6 py-3 text-base';
 
+	$: roundedClass = rounded ? 'rounded-full' : 'rounded';
+	$: mbClass = mb ? 'mb-6' : '';
+
 	// Ermittle aktuelle Sprache für den Standard-Text
 	$: lang = $page.data.lang || 'de-ch';
 	$: finalText = text || t('Mehr erfahren', lang);
 
 	$: beauftragungHref = getBeauftragunHref(link, $page.params.uid);
 
-	$: resolvedColor = color ?? $theme.pageButtonColor;
-	$: resolvedBgColor = bgColor ?? $theme.pageButtonBgColor;
-	$: resolvedHoverColor = hoverColor ?? $theme.pageButtonHoverColor;
-	$: resolvedHoverBgColor = hoverBgColor ?? $theme.pageButtonHoverBgColor;
+	// CMS Button-Stil Lookup — findet Eintrag per Slug (legacy) oder Label (neuer CMS-Wert)
+	$: stileEntry = styleName
+		? ($theme.buttonStile ?? []).find((s) => s.name === styleName || s.label === styleName)
+		: undefined;
+	$: resolvedStyleSlug = stileEntry?.name || styleName;
+	$: resolvedIcon = stileEntry?.icon || undefined;
+
+	$: resolvedColor =
+		color ||
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-color, var(--page-button-color))`
+			: variant
+				? `var(--btn-${variant}-color)`
+				: 'var(--page-button-color)');
+	$: resolvedBgColor =
+		bgColor ||
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-bg, var(--page-button-bg-color))`
+			: variant
+				? `var(--btn-${variant}-bg)`
+				: 'var(--page-button-bg-color)');
+	$: resolvedHoverColor =
+		hoverColor ||
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-hover-color, var(--page-button-hover-color))`
+			: variant
+				? `var(--btn-${variant}-hover-color)`
+				: 'var(--page-button-hover-color)');
+	$: resolvedHoverBgColor =
+		hoverBgColor ||
+		(resolvedStyleSlug
+			? `var(--btn-${resolvedStyleSlug}-hover-bg, var(--page-button-hover-bg-color))`
+			: variant
+				? `var(--btn-${variant}-hover-bg)`
+				: 'var(--page-button-hover-bg-color)');
+
+	$: baseClass = `button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
+	$: baseStyle = `background-color: ${resolvedBgColor}; color: ${resolvedColor}; border-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
 </script>
 
-{#if link}
+{#if href}
+	<a {href} class={baseClass} style={baseStyle}>
+		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+				name={resolvedIcon}
+				size="1em"
+				color={stileEntry?.color || 'currentColor'}
+			/>{/if}
+	</a>
+{:else if link}
 	{#if beauftragungHref}
-		<a
-			href={beauftragungHref}
-			class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
-			style={`
-                background-color: ${resolvedBgColor};
-                color: ${resolvedColor};
-                border-color: ${resolvedColor};
-                --hover-text-color: ${resolvedHoverColor};
-                --hover-bg-color: ${resolvedHoverBgColor};
-                --focus-ring-color: ${resolvedColor};
-            `}
-		>
-			{finalText}
+		<a href={beauftragungHref} class={baseClass} style={baseStyle}>
+			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+					name={resolvedIcon}
+					size="1em"
+					color="currentColor"
+				/>{/if}
 		</a>
 	{:else}
-		<PrismicLink
-			field={link}
-			class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
-			style={`
-                background-color: ${resolvedBgColor};
-                color: ${resolvedColor};
-                border-color: ${resolvedColor};
-                --hover-text-color: ${resolvedHoverColor};
-                --hover-bg-color: ${resolvedHoverBgColor};
-                --focus-ring-color: ${resolvedColor};
-            `}
-		>
-			{finalText}
+		<PrismicLink field={link} class={baseClass} style={baseStyle}>
+			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+					name={resolvedIcon}
+					size="1em"
+					color="currentColor"
+				/>{/if}
 		</PrismicLink>
 	{/if}
 {:else}
-	<button
-		type="submit"
-		class="button-prismic-link inline-block {sizeClass} font-semibold rounded-full mb-6 border transition duration-200 ease-in-out focus:outline-none focus:ring-0"
-		style={`
-            background-color: ${resolvedBgColor};
-            color: ${resolvedColor};
-            border-color: ${resolvedColor};
-            --hover-text-color: ${resolvedHoverColor};
-            --hover-bg-color: ${resolvedHoverBgColor};
-            --focus-ring-color: ${resolvedColor};
-        `}
-		disabled={$$props.disabled}
-		on:click
-	>
-		{finalText}
+	<button type="submit" class={baseClass} style={baseStyle} disabled={$$props.disabled} on:click>
+		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+				name={resolvedIcon}
+				size="1em"
+				color={stileEntry?.color || 'currentColor'}
+			/>{/if}
 	</button>
 {/if}
 

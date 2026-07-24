@@ -10,6 +10,13 @@ export interface AddonRow {
 	billingType: string | null;
 }
 
+export interface PlaeneFeature {
+	label: string;
+	wert: string | null;
+	beschreibung?: string;
+	leistungUid?: string;
+}
+
 export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
 	const client = createClient({ fetch });
@@ -53,67 +60,92 @@ export async function load({ params, parent, fetch, cookies }) {
 				? await fetchExchangeRates(baseCurrency, additionalCodes)
 				: {};
 
-		// Resolve plan leistungen for image_cards/plaene slices
+		// Resolve plan leistungen + Seiten-Leistungen (optimiert: Batch-Fetch statt N+1)
 		type PlaeneFeature = { label: string; wert: string | null; beschreibung?: string };
 		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
 		const plaeneSlices = ((page.data as any).slices ?? []).filter(
 			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
 		);
-		await Promise.all(
-			plaeneSlices.map(async (s: any) => {
-				const planDocs = await Promise.all(
-					(s.items as Array<{ plan: any }>).map(async (item) => {
-						const uid = item.plan?.uid;
-						if (!uid) return [];
-						try {
-							const planPage = await client.getByUID('page', uid, { lang });
-							const leistungen: Array<{ leistung?: any; wert?: string }> =
-								(planPage.data as any).leistungen ?? [];
-							return await Promise.all(
-								leistungen.map(async (row) => {
-									const lUid = row.leistung?.uid;
-									let beschreibung: string | undefined;
-									let label = row.leistung?.uid ?? '';
-									if (lUid) {
-										try {
-											const doc = await client.getByUID('leistung', lUid, { lang });
-											label = (doc.data as any).label ?? label;
-											const blocks = (doc.data as any).beschreibung ?? [];
-											beschreibung = blocks.length ? (asHTML(blocks) ?? undefined) : undefined;
-										} catch { /* ignore */ }
-									}
-									return { label, wert: row.wert ?? null, beschreibung } as PlaeneFeature;
-								})
-							);
-						} catch {
-							return [] as PlaeneFeature[];
-						}
-					})
-				);
-				plaeneData[s.id] = planDocs;
-			})
-		);
-
-		// Resolve page's own leistungen with full beschreibung (fetchLinks only returns first block)
 		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
 			(page.data as any).leistungen ?? [];
-		const pageLeistungen = await Promise.all(
-			leistungenRefs.map(async (row) => {
-				const uid = row.leistung?.uid;
-				if (!uid) return null;
-				try {
-					const doc = await client.getByUID('leistung', uid, { lang });
-					return { leistung: doc, wert: row.wert ?? null };
-				} catch {
-					return null;
+
+		// Schritt 1: Alle Plan-Seiten + Leistungen parallel laden
+		const planPagesPerSlice: Array<Array<any>> = await Promise.all(
+			plaeneSlices.map((s: any) =>
+				Promise.all(
+					(s.items as Array<{ plan: any }>).map((item) => {
+						const uid = item.plan?.uid;
+						if (!uid) return Promise.resolve(null);
+						// Versuche erst als Page, dann als Leistung
+						return client
+							.getByUID('page', uid, { lang })
+							.catch(() => client.getByUID('leistung', uid, { lang }))
+							.catch(() => null);
+					})
+				)
+			)
+		);
+
+		// Schritt 2: Alle Leistungs-IDs sammeln (Pläne + direkte Seiten-Leistungen)
+		const allLeistungIds: string[] = [];
+		for (const planPages of planPagesPerSlice) {
+			for (const planPage of planPages) {
+				for (const row of ((planPage?.data as any)?.leistungen ?? []) as Array<{
+					leistung?: any;
+				}>) {
+					if (row.leistung?.id) allLeistungIds.push(row.leistung.id);
 				}
+			}
+		}
+		for (const row of leistungenRefs) {
+			if (row.leistung?.id) allLeistungIds.push(row.leistung.id);
+		}
+
+		// Schritt 3: Alle Leistungen in EINEM einzigen API-Call laden
+		const uniqueLeistungIds = [...new Set(allLeistungIds)];
+		const leistungDocs =
+			uniqueLeistungIds.length > 0
+				? await client.getAllByIDs(uniqueLeistungIds, { lang }).catch(() => [] as any[])
+				: [];
+		const leistungById = new Map<string, any>(leistungDocs.map((d: any) => [d.id, d]));
+
+		// Schritt 4: plaeneData aus gecachten Dokumenten aufbauen (keine weiteren API-Calls)
+		for (let i = 0; i < plaeneSlices.length; i++) {
+			const s = plaeneSlices[i];
+			plaeneData[s.id] = planPagesPerSlice[i].map((planPage: any) => {
+				if (!planPage) return [] as PlaeneFeature[];
+				return ((planPage.data as any).leistungen ?? []).map(
+					(row: { leistung?: any; wert?: string }) => {
+						const doc = row.leistung?.id ? leistungById.get(row.leistung.id) : null;
+						const label = doc
+							? ((doc.data as any).label ?? row.leistung?.uid ?? '')
+							: (row.leistung?.uid ?? '');
+						const blocks = doc ? ((doc.data as any).beschreibung ?? []) : [];
+						const beschreibung: string | undefined = blocks.length
+							? (asHTML(blocks) ?? undefined)
+							: undefined;
+						const leistungUid = doc?.uid ?? row.leistung?.uid ?? undefined;
+						return { label, wert: row.wert ?? null, beschreibung, leistungUid } as PlaeneFeature;
+					}
+				);
+			});
+		}
+
+		// Seiten-Leistungen aus gecachten Dokumenten zusammenstellen
+		const pageLeistungen = leistungenRefs
+			.map((row) => {
+				const doc = row.leistung?.id ? leistungById.get(row.leistung.id) : null;
+				if (!doc) return null;
+				return { leistung: doc, wert: row.wert ?? null };
 			})
-		).then((rows) => rows.filter(Boolean));
+			.filter(Boolean);
 
 		// Resolve addon pages for ecommerce products
 		const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
 		const addonRefs =
-			((page.data as any).ecommerce_addons as Array<{ addon_page?: { uid?: string } }> | undefined) ?? [];
+			((page.data as any).ecommerce_addons as
+				| Array<{ addon_page?: { uid?: string } }>
+				| undefined) ?? [];
 		const addonRows: AddonRow[] = (
 			await Promise.all(
 				addonRefs.map(async (ref) => {

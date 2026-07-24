@@ -12,6 +12,11 @@
 }
 :root, html, body {
   font-family: var(--page-font);
+  color: var(--page-color);
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height, 80px) + 1rem);
 }
 @tailwind base;
 @tailwind components;
@@ -84,15 +89,15 @@
       @apply list-decimal list-inside mb-4;
     }
 
-span.rt-size-4xl    { font-size: clamp(2rem,    6vw,    4rem);    }
-span.rt-size-5xl    { font-size: clamp(2.25rem, 7.5vw,  5.5rem);  }
-span.rt-size-6xl    { font-size: clamp(2.75rem, 10vw,   7rem);    }
-span.rt-size-2xl    { font-size: clamp(1.5rem, 4vw, 2.25rem);    }
-span.rt-size-3xl    { font-size: clamp(1.875rem, 5vw, 3rem);    }
+span.rt-size-4xl    { font-size: clamp(2.25rem, 5vw,   3rem);     }  /* 36–48px */
+span.rt-size-5xl    { font-size: clamp(3rem,    7.5vw, 4.5rem);   }  /* 48–72px */
+span.rt-size-6xl    { font-size: clamp(4.5rem,  10vw,  7rem);     }  /* 72–112px */
+span.rt-size-2xl, .size-2xl { font-size: clamp(1.5rem,  2.5vw, 1.75rem);  }  /* 24–28px */
+span.rt-size-3xl    { font-size: clamp(1.75rem, 4vw,   2.25rem);  }  /* 28–36px */
 span.rt-size-xs     { font-size: 0.75rem;    }
 span.rt-size-sm     { font-size: 0.875rem;   }
 span.rt-size-lg     { font-size: 1.125rem;   }
-span.rt-size-xl     { font-size: 1.25rem;    }
+span.rt-size-xl, .size-xl { font-size: 1.25rem;    }
 
 /* Kombinations-Labels */
 /* Display — 4rem desktop, 3rem mobil */
@@ -181,16 +186,30 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
+a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link) {
+	@apply underline;
+	color: var(--page-link-color);
+}
+
 /* Touch-Zielgrösse für Inline-Links auf Mobile (WCAG 2.5.5 / 44px) */
 @media (max-width: 767px) {
-	a[data-type="prismic-link"] {
+	a[data-type="prismic-link"],
+	a {
 		padding-top: 0.5em;
 		padding-bottom: 0.5em;
 	}
 }
 
-a[data-type="prismic-link"]:hover {
+a[data-type="prismic-link"]:hover,
+a:hover {
 	color: var(--page-link-hover-color) !important;
+}
+
+/* Footer-Link Hover */
+.footer-nav-link:hover,
+.footer-buttonbar-p a:hover,
+a[href^="mailto:"]:hover {
+	color: var(--footer-link-hover-color) !important;
 }
 
 :root {
@@ -212,6 +231,28 @@ a[data-type="prismic-link"]:hover {
   --page-button-bg-color: transparent;
   --page-button-hover-color: var(--page-link-hover-color);
   --page-button-hover-bg-color: transparent;
+
+  /* Globale Button-Stile (Varianten 1–3 + link) */
+  /* Stil 1 = Standard-Button (alias auf page-button-*) */
+  --btn-1-color: var(--page-button-color);
+  --btn-1-bg: var(--page-button-bg-color);
+  --btn-1-hover-color: var(--page-button-hover-color);
+  --btn-1-hover-bg: var(--page-button-hover-bg-color);
+  /* Stil 2 — Outline: gefüllte Hover-Variante (via Theme-Dok überschreibbar) */
+  --btn-2-color: var(--page-button-color);
+  --btn-2-bg: transparent;
+  --btn-2-hover-color: var(--page-bg-color);
+  --btn-2-hover-bg: var(--page-button-color);
+  /* Stil 3 — Invertiert: gefüllt, invertierte Hover (via Theme-Dok überschreibbar) */
+  --btn-3-color: var(--page-bg-color);
+  --btn-3-bg: var(--page-button-color);
+  --btn-3-hover-color: var(--page-button-color);
+  --btn-3-hover-bg: var(--page-bg-color);
+  /* Stil "link" = immer page-link-* Farben */
+  --btn-link-color: var(--page-link-color);
+  --btn-link-bg: transparent;
+  --btn-link-hover-color: var(--page-link-hover-color);
+  --btn-link-hover-bg: transparent;
 
   /* Kopfzeile Farben */
   --site-title-font-size: 1.5; /* in rem */
@@ -257,6 +298,33 @@ a[data-type="prismic-link"]:hover {
   --hover-text-color: var(--page-button-color);
   --focus-ring-color: var(--hover-text-color);
   --hover-bg-color: var(--page-button-hover-bg-color);
+
+  /* ── Dev-Dokumentation /doku ── */
+  --doku-bg:                #0f0f13;
+  --doku-sidebar-bg:        #0a0a0f;
+  --doku-border:            #1e1e2e;
+  --doku-surface:           #1e1e2e;
+  --doku-surface-border:    #2d2d3e;
+
+  --doku-text:              #e2e8f0;
+  --doku-text-muted:        #cbd5e1;
+  --doku-text-dim:          #6b7280;
+  --doku-text-faint:        #4b5563;
+  --doku-heading:           var(--header-bg-color);
+  --doku-nav-link:          #9ca3af;
+  --doku-nav-active:        #a78bfa;
+  --doku-table-header:      #94a3b8;
+
+  --doku-code-bg:           #1e1e2e;
+  --doku-code-color:        #c084fc;
+  --doku-pre-color:         #a5f3fc;
+
+  --doku-callout-bg:        #1e2a3a;
+  --doku-callout-border:    #3b82f6;
+  --doku-callout-text:      #93c5fd;
+  --doku-callout-warn-bg:   #2a1f10;
+  --doku-callout-warn-border: #f59e0b;
+  --doku-callout-warn-text: #fcd34d;
 
 }
 
@@ -362,4 +430,27 @@ p {
   ol:not([class]) {
     @apply list-decimal list-inside mb-4;
   }
+}
+@media (min-width: 768px) {
+  main {
+    padding-left: var(--toc-sidebar-offset, 0);
+    transition: padding-left 0.25s ease;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background: #1e2d5a;
+  color: #fff;
+  font-weight: 600;
+  z-index: 9999;
+  border-radius: 0 0 6px 0;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+.skip-link:focus {
+  top: 0;
 }

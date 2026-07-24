@@ -75,53 +75,31 @@ export function generativeGestaltungP1_2_2_01(params: SketchParams): (p5: p5Type
       }
       tileCount = p5.floor(p5.width / Math.max(p5.mouseX, 5));
       rectSize = p5.width / tileCount;
-      // --- Bild skalieren wie background-size: contain (ohne Verzerrung, Seitenverhältnis bleibt) ---
-      // Berechne das Seitenverhältnis von Canvas und Bild
-      const canvasRatio = p5.width / p5.height;
-      const imgRatio = img.width / img.height;
-      let drawW, drawH, offsetX, offsetY;
-      if (canvasRatio > imgRatio) {
-        // Canvas breiter: Bildhöhe = Canvas-Höhe, Bild wird horizontal zentriert
-        drawH = p5.height;
-        drawW = img.width * (p5.height / img.height);
-        offsetX = (p5.width - drawW) / 2;
-        offsetY = 0;
-      } else {
-        // Canvas höher: Bildbreite = Canvas-Breite, Bild wird vertikal zentriert
-        drawW = p5.width;
-        drawH = img.height * (p5.width / img.width);
-        offsetX = 0;
-        offsetY = (p5.height - drawH) / 2;
-      }
+      const tileW = p5.width  / tileCount;
+      const tileH = p5.height / tileCount;
       img.loadPixels();
       colors = [];
       for (let gridY = 0; gridY < tileCount; gridY++) {
         for (let gridX = 0; gridX < tileCount; gridX++) {
-          // Sampling-Koordinaten im Bild (proportional, nicht verzerrt)
           const u = gridX / (tileCount - 1);
           const v = gridY / (tileCount - 1);
-          // Mapping auf Bildkoordinaten
-          const px = p5.int(u * (img.width - 1));
+          const px = p5.int(u * (img.width  - 1));
           const py = p5.int(v * (img.height - 1));
           const i = (py * img.width + px) * 4;
-          const c = p5.color(
+          colors.push(p5.color(
             img.pixels[i],
             img.pixels[i + 1],
             img.pixels[i + 2],
             img.pixels[i + 3]
-          );
-          colors.push(c);
+          ));
         }
       }
       sortColors(colors, sortMode, p5);
       let i = 0;
       for (let gridY = 0; gridY < tileCount; gridY++) {
         for (let gridX = 0; gridX < tileCount; gridX++) {
-          // Zeichne die Tiles im richtigen Bereich (zentriert, Seitenverhältnis bleibt)
-          const x = offsetX + gridX * (drawW / tileCount);
-          const y = offsetY + gridY * (drawH / tileCount);
           p5.fill(colors[i]);
-          p5.rect(x, y, drawW / tileCount, drawH / tileCount);
+          p5.rect(gridX * tileW, gridY * tileH, tileW, tileH);
           i++;
         }
       }
