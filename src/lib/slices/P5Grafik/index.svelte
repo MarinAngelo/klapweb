@@ -214,14 +214,16 @@
 							{/if}
 						</div>
 						{#if isFilled.link(p.button_link)}
-							<Button
-								link={p.button_link}
-								text={p.button_text || 'Mehr erfahren'}
-								color={buttonColor || get(theme).pageButtonColor}
-								bgColor={buttonBgColor || get(theme).pageButtonBgColor}
-								hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
-								hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
-							/>
+							<div class="mt-10">
+								<Button
+									link={p.button_link}
+									text={p.button_text || 'Mehr erfahren'}
+									color={buttonColor || get(theme).pageButtonColor}
+									bgColor={buttonBgColor || get(theme).pageButtonBgColor}
+									hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
+									hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
+								/>
+							</div>
 						{/if}
 					</div>
 				</div>
