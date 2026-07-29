@@ -322,6 +322,19 @@
 						]
 					}
 				},
+				"text_overlay_padding_mobile": {
+					"type": "Select",
+					"config": {
+						"label": "Text Überlagerungsfeld Grösse Mobile",
+						"placeholder": "— Wie Desktop —",
+						"options": [
+							"klein",
+							"mittel",
+							"gross",
+							"Ganzer Bildschirm"
+						]
+					}
+				},
 				"mobile_text_scale": {
 					"type": "Select",
 					"config": {

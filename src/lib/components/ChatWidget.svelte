@@ -52,14 +52,31 @@
 		}
 	}
 
-	import { tick } from 'svelte';
+	import { tick, onMount } from 'svelte';
+
+	let visible = false;
+
+	onMount(() => {
+		const threshold = window.innerHeight;
+		function onScroll() {
+			visible = window.scrollY >= threshold;
+		}
+		onScroll();
+		window.addEventListener('scroll', onScroll, { passive: true });
+		return () => window.removeEventListener('scroll', onScroll);
+	});
 </script>
 
-<div style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9000; display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
-
+<div
+	style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9000; display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; transition: opacity 0.3s, transform 0.3s; opacity: {visible
+		? 1
+		: 0}; transform: {visible ? 'translateY(0)' : 'translateY(1rem)'}; pointer-events: {visible
+		? 'auto'
+		: 'none'};"
+>
 	{#if isOpen}
-	<div
-		style="
+		<div
+			style="
 			width: 340px;
 			max-width: calc(100vw - 3rem);
 			background: white;
@@ -70,29 +87,41 @@
 			overflow: hidden;
 			max-height: 480px;
 		"
-	>
-		<!-- Header -->
-		<div style="background: #111827; color: white; padding: 0.875rem 1rem; display: flex; align-items: center; justify-content: space-between;">
-			<span style="font-weight: 600; font-size: 0.9375rem;">{botName}</span>
-			<button
-				on:click={() => (isOpen = false)}
-				aria-label={$_('Chat schliessen')}
-				style="background: none; border: none; color: white; cursor: pointer; line-height: 1; padding: 0.25rem; opacity: 0.8;"
-			>
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-					<path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-				</svg>
-			</button>
-		</div>
-
-		<!-- Messages -->
-		<div
-			bind:this={messagesEl}
-			style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.625rem; min-height: 200px;"
 		>
-			{#each messages as msg}
-				<div style="display: flex; justify-content: {msg.role === 'user' ? 'flex-end' : 'flex-start'};">
-					<div style="
+			<!-- Header -->
+			<div
+				style="background: #111827; color: white; padding: 0.875rem 1rem; display: flex; align-items: center; justify-content: space-between;"
+			>
+				<span style="font-weight: 600; font-size: 0.9375rem;">{botName}</span>
+				<button
+					on:click={() => (isOpen = false)}
+					aria-label={$_('Chat schliessen')}
+					style="background: none; border: none; color: white; cursor: pointer; line-height: 1; padding: 0.25rem; opacity: 0.8;"
+				>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+						<path
+							d="M2 2L14 14M14 2L2 14"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Messages -->
+			<div
+				bind:this={messagesEl}
+				style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.625rem; min-height: 200px;"
+			>
+				{#each messages as msg}
+					<div
+						style="display: flex; justify-content: {msg.role === 'user'
+							? 'flex-end'
+							: 'flex-start'};"
+					>
+						<div
+							style="
 						max-width: 80%;
 						padding: 0.5rem 0.75rem;
 						border-radius: {msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem'};
@@ -101,31 +130,34 @@
 						font-size: 0.875rem;
 						line-height: 1.5;
 						white-space: pre-wrap;
-					">
-						{msg.text}
+					"
+						>
+							{msg.text}
+						</div>
 					</div>
-				</div>
-			{/each}
+				{/each}
 
-			{#if loading}
-				<div style="display: flex; justify-content: flex-start;">
-					<div style="padding: 0.5rem 0.75rem; border-radius: 1rem 1rem 1rem 0.25rem; background: #f3f4f6; font-size: 0.875rem; color: #6b7280;">
-						{$_('Tippt')}
+				{#if loading}
+					<div style="display: flex; justify-content: flex-start;">
+						<div
+							style="padding: 0.5rem 0.75rem; border-radius: 1rem 1rem 1rem 0.25rem; background: #f3f4f6; font-size: 0.875rem; color: #6b7280;"
+						>
+							{$_('Tippt')}
+						</div>
 					</div>
-				</div>
-			{/if}
-		</div>
+				{/if}
+			</div>
 
-		<!-- Input -->
-		<div style="padding: 0.75rem; border-top: 1px solid #f3f4f6; display: flex; gap: 0.5rem;">
-			<input
-				type="text"
-				bind:value={input}
-				on:keydown={handleKeydown}
-				placeholder={$_('Nachricht eingeben')}
-				maxlength="1000"
-				disabled={loading}
-				style="
+			<!-- Input -->
+			<div style="padding: 0.75rem; border-top: 1px solid #f3f4f6; display: flex; gap: 0.5rem;">
+				<input
+					type="text"
+					bind:value={input}
+					on:keydown={handleKeydown}
+					placeholder={$_('Nachricht eingeben')}
+					maxlength="1000"
+					disabled={loading}
+					style="
 					flex: 1;
 					border: 1px solid #d1d5db;
 					border-radius: 0.375rem;
@@ -134,12 +166,12 @@
 					outline: none;
 					font-family: inherit;
 				"
-			/>
-			<button
-				on:click={send}
-				disabled={loading || !input.trim()}
-				aria-label={$_('Senden')}
-				style="
+				/>
+				<button
+					on:click={send}
+					disabled={loading || !input.trim()}
+					aria-label={$_('Senden')}
+					style="
 					background: #111827;
 					color: white;
 					border: none;
@@ -150,13 +182,13 @@
 					opacity: {loading || !input.trim() ? '0.5' : '1'};
 					transition: opacity 0.15s;
 				"
-			>
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-					<path d="M14 8L2 2L5 8L2 14L14 8Z" fill="currentColor"/>
-				</svg>
-			</button>
+				>
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+						<path d="M14 8L2 2L5 8L2 14L14 8Z" fill="currentColor" />
+					</svg>
+				</button>
+			</div>
 		</div>
-	</div>
 	{/if}
 
 	<!-- Toggle button -->
@@ -180,13 +212,22 @@
 	>
 		{#if isOpen}
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-				<path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+				<path
+					d="M4 4L16 16M16 4L4 16"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+				/>
 			</svg>
 		{:else}
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-				<path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v7a2 2 0 01-2 2H7l-4 3V5z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+				<path
+					d="M2 5a2 2 0 012-2h12a2 2 0 012 2v7a2 2 0 01-2 2H7l-4 3V5z"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linejoin="round"
+				/>
 			</svg>
 		{/if}
 	</button>
-
 </div>
