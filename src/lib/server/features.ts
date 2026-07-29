@@ -1,11 +1,7 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
-const ROOT = process.cwd();
+import gating from '../../../gating.json' assert { type: 'json' };
+import config from '../../../slicemachine.config.json' assert { type: 'json' };
 
 export function isFeatureActive(featureName: string): boolean {
-	const gating = JSON.parse(readFileSync(join(ROOT, 'gating.json'), 'utf-8'));
-	const config = JSON.parse(readFileSync(join(ROOT, 'slicemachine.config.json'), 'utf-8'));
 
 	const plan = config.plan || 'basis';
 	const planChain = [plan];
