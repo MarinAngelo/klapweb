@@ -3,6 +3,6 @@
 	"adapter": "@slicemachine/adapter-sveltekit",
 	"libraries": ["./src/lib/slices"],
 	"localSliceSimulatorURL": "http://localhost:5173/slice-simulator",
-	"home_redirect_disabled": true,
+	"home_redirect_disabled": false,
 	"plan": "klap-web-ch"
 }
