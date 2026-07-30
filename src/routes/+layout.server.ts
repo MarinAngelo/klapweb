@@ -1,6 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
+import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO } from '$lib/server/features';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -10,7 +11,10 @@ async function fetchSvgFromUrl(url: string): Promise<string | null> {
 		const resp = await fetch(url);
 		if (!resp.ok) return null;
 		const text = await resp.text();
-		if (text.includes('<svg')) { _svgCache.set(url, text); return text; }
+		if (text.includes('<svg')) {
+			_svgCache.set(url, text);
+			return text;
+		}
 	} catch {}
 	return null;
 }
@@ -52,30 +56,38 @@ export async function load({ params, fetch, cookies, url, locals }) {
 
 		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
 		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.
-		const [settings, navigation, themes, fonts, buttonStilDocs, iconDocs, variablenDoc, masterSettingsOrNull] =
-			await Promise.all([
-				client.getSingle('settings', { lang }).catch(() => {
-					throw error(
-						404,
-						`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
-					);
-				}),
-				client.getSingle('navigation', { lang }).catch(() => {
-					throw error(
-						404,
-						`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
-					);
-				}),
-				client.getAllByType('theme', { lang: '*' }).catch(() => []),
-				client.getAllByType('font').catch(() => []),
-				client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
-				client.getAllByType('icon', { lang: '*' }).catch(() => []),
-				(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
-				// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
-				lang !== mainLang
-					? client.getSingle('settings', { lang: mainLang }).catch(() => null)
-					: Promise.resolve(null)
-			]);
+		const [
+			settings,
+			navigation,
+			themes,
+			fonts,
+			buttonStilDocs,
+			iconDocs,
+			variablenDoc,
+			masterSettingsOrNull
+		] = await Promise.all([
+			client.getSingle('settings', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
+				);
+			}),
+			client.getSingle('navigation', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
+				);
+			}),
+			client.getAllByType('theme', { lang: '*' }).catch(() => []),
+			client.getAllByType('font').catch(() => []),
+			client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
+			client.getAllByType('icon', { lang: '*' }).catch(() => []),
+			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
+			// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
+			lang !== mainLang
+				? client.getSingle('settings', { lang: mainLang }).catch(() => null)
+				: Promise.resolve(null)
+		]);
 
 		// Bei gleicher Sprache sind Settings == baseSettings; sonst separater Call
 		// SVG-Inhalt aus Bild-Feld nachladen wenn svg_code leer ist
@@ -99,9 +111,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
 		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
-		const chatActive = (baseSettings.data as any)?.chat_active ?? false;
+		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
+		const klapstudioActive = FEATURE_KLAPSTUDIO;
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}

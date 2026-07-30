@@ -6,6 +6,22 @@
 - Antworten auf Deutsch, kurz und direkt
 - Keine Zusammenfassungen am Ende einer Antwort
 
+## SSR-Regel
+
+**SSR (`+page.server.ts`, `+layout.server.ts`) darf nur verwendet werden, wenn es absolut keine andere Lösung gibt.**
+
+Gründe gegen unnötiges SSR:
+
+- Jede SSR-Seite läuft als Netlify Function – mit Cold Starts, Laufzeit-Overhead und Fehlerrisiko
+- Das Layout (`+layout.server.ts`) läuft bei **jedem** Request aller Seiten – Fehler dort betreffen das gesamte Projekt
+- Statisch generierbare Seiten (`prerender = true`) sind schneller, günstiger und zuverlässiger
+
+Konkrete Regeln:
+
+- Feature-Flags (`FEATURE_*`) sind Build-Zeit-Konstanten – niemals zur Laufzeit berechnen
+- Werte die sich nie ändern (Plan, Konfiguration) gehören in statische Imports, nicht in `readFileSync` oder API-Calls
+- Vor jedem neuen `+page.server.ts`: prüfen ob `prerender = true` + clientseitiges Laden reicht
+
 ## Environment Variables
 
 ### Lokale Entwicklung (.env)
@@ -28,10 +44,10 @@
 
 ### Secrets vs Config
 
-| Typ | Lokal | Netlify | Committed? |
-|-----|-------|---------|-----------|
-| Echte Secrets (Keys, Tokens) | `.env` | Site Settings | Nein |
-| Config/Doku | `.env.example` | — | Ja |
+| Typ                          | Lokal          | Netlify       | Committed? |
+| ---------------------------- | -------------- | ------------- | ---------- |
+| Echte Secrets (Keys, Tokens) | `.env`         | Site Settings | Nein       |
+| Config/Doku                  | `.env.example` | —             | Ja         |
 
 ## Stack
 
@@ -209,6 +225,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
 
 **Datenstruktur:** `ManualInvoiceRecord` mit:
+
 - `id`: eindeutige Blob-ID (`${Date.now()}_${uuid}`)
 - `invoiceNumber`: `INV-${timestamp}` (für PDF/E-Mail)
 - `status`: `'gespeichert' | 'gesendet'` (Versand-Status)
@@ -221,6 +238,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - `currency`: Währung (z.B. 'CHF')
 
 **Workflows:**
+
 1. **Manuelle Rechnung erstellen:**
    - Kunde aus Dropdown wählen (oder "Neuer Kunde" inline erfassen)
    - Leistungsposten hinzufügen
@@ -233,6 +251,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
    - Tab "PDF": PDF generieren/laden
 
 **Duplikat-Prüfung:**
+
 - E-Mail ist primäres Merkmal (case-insensitive)
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
@@ -240,6 +259,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
 
 **Datenstruktur:** Kunden aus Netlify Blobs, mit:
+
 - `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
 - `paymentMethod`: `'manuell' | 'rechnung' | 'bar'` (Quelle)
 - `service`, `amount`, `currency` (legacy E-Commerce Felder, werden nicht angezeigt)
@@ -247,6 +267,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 **Spalten:** Datum | Name | E-Mail | Firma | Adresse | **Quelle** (Manuell erfasst / E-Commerce)
 
 **Architektur:**
+
 - Kunden sind **unabhängig** von Rechnungen
 - Ein Kunde kann mehrere Rechnungen haben
 - Duplikat-Prüfung (E-Mail primär, dann Name) verhindert Mehrfacherfassung
@@ -254,17 +275,20 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ### E-Commerce Checkout-Anpassungen
 
 **"Rechnung"-Zahlungen:**
+
 - API `/api/invoice` erstellt automatisch Rechnung
 - Speichert Kunde (mit Duplikat-Prüfung)
 - Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'rechnung'`
 - Sendet E-Mail an Kunden + Benachrichtigung an Geschäft (optional)
 
 **"Bar"-Zahlungen:**
+
 - Neue API `/api/create-invoice-bar` erstellt Rechnung + Kunde
 - Rechnung mit `paymentStatus: 'offen'`, `paymentMethod: 'bar'`
 - Kein E-Mail-Versand (Zahlung liegt vor)
 
 **Duplikat-Prüfung:**
+
 - `/api/save-customer`: E-Mail → Name fallback
 - `/api/create-invoice-bar`: gleiche Prüfung
 - Status 409 Conflict wenn Kunde existiert (wird nicht zweimal gespeichert)
@@ -272,6 +296,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ### Environment Variables (E-Mail)
 
 Für E-Commerce/Admin Rechnungen erforderlich:
+
 - `RESEND_API_KEY`: API-Key von resend.com
 - `INVOICE_FROM_EMAIL`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
