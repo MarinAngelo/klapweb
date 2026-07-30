@@ -56,6 +56,8 @@ function mockField(key: string, fieldDef: any, lang: string, index = 0, sliceNam
 			if (lk.includes('titel') || lk.includes('title') || lk.includes('heading'))
 				return exampleHeading;
 			if (lk.includes('name') && !lk.includes('field')) return t('Max Mustermann', lang);
+			if (lk === 'map_url')
+				return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2702.4!2d8.5417!3d47.3769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47900b9749bea219%3A0xe66e8df1e71fdc03!2sZ%C3%BCrich!5e0!3m2!1sde!2sch!4v1234567890';
 			if (lk.includes('url') || lk === 'link') return '#';
 			if (lk.includes('label')) return t('Beispiel-Label', lang);
 			if (lk.includes('preis') || lk.includes('price')) return "1'200";
