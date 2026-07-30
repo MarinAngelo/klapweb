@@ -67,6 +67,16 @@ function mockField(key: string, fieldDef: any, lang: string, index = 0, sliceNam
 		}
 
 		case 'StructuredText': {
+			// Slice-spezifische Mock-Texte
+			if (sliceName === 'AdresseUndMap' && key === 'text') {
+				return [
+					{ type: 'heading3', text: t('Beispiel Firma GmbH', lang), spans: [] },
+					{ type: 'paragraph', text: 'Musterstrasse 12', spans: [] },
+					{ type: 'paragraph', text: '8001 Zürich', spans: [] },
+					{ type: 'paragraph', text: '+41 44 123 45 67', spans: [] },
+					{ type: 'paragraph', text: 'info@beispiel.ch', spans: [] }
+				];
+			}
 			const placeholder = config?.placeholder || '';
 			const singleMatch = (config?.single ?? '').match(/heading(\d)/);
 			if (singleMatch) {
