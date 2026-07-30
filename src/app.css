@@ -186,7 +186,7 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
-a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link):not(.site-title-link) {
+a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link):not(.site-title-link):not(.no-underline) {
 	@apply underline;
 	color: var(--page-link-color);
 }
