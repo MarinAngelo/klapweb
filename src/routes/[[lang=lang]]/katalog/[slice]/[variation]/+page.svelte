@@ -87,17 +87,47 @@
 				<button
 					on:click={() => (viewMode = 'desktop')}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
-					style="font-size: 13px; background-color: {viewMode === 'desktop' ? fgMuted + '33' : 'transparent'}; color: {viewMode === 'desktop' ? fg : fgMuted};"
+					style="font-size: 13px; background-color: {viewMode === 'desktop'
+						? fgMuted + '33'
+						: 'transparent'}; color: {viewMode === 'desktop' ? fg : fgMuted};"
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M0 21h24" /></svg>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M0 21h24" /></svg
+					>
 					{$_('Laptop')}
 				</button>
 				<button
 					on:click={() => (viewMode = 'mobile')}
 					class="flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors"
-					style="font-size: 13px; background-color: {viewMode === 'mobile' ? fgMuted + '33' : 'transparent'}; color: {viewMode === 'mobile' ? fg : fgMuted};"
+					style="font-size: 13px; background-color: {viewMode === 'mobile'
+						? fgMuted + '33'
+						: 'transparent'}; color: {viewMode === 'mobile' ? fg : fgMuted};"
 				>
-					<svg width="14" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><circle cx="12" cy="18" r="1" fill="currentColor" stroke="none" /></svg>
+					<svg
+						width="14"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						><rect x="5" y="2" width="14" height="20" rx="2" /><circle
+							cx="12"
+							cy="18"
+							r="1"
+							fill="currentColor"
+							stroke="none"
+						/></svg
+					>
 					{$_('Telefon')}
 				</button>
 			</div>
@@ -130,8 +160,15 @@
 		{/if}
 
 		<!-- Preview -->
-		<div style="background-color: {previewBg}; color: {previewColor}; {data.previewBg ? `--page-bg-color: ${previewBg}; --page-color: ${previewColor};` : ''}">
-			<div style="{viewMode === 'mobile' ? 'max-width: 390px; margin: 0 auto;' : ''}">
+		<div
+			style="background-color: {previewBg}; color: {previewColor}; {data.previewBg
+				? `--page-bg-color: ${previewBg}; --page-color: ${previewColor};`
+				: ''}"
+		>
+			<div
+				class={viewMode === 'mobile' ? 'preview-mobile' : ''}
+				style={viewMode === 'mobile' ? 'max-width: 390px; margin: 0 auto;' : ''}
+			>
 				{#key mockSlice}
 					{#if Component}
 						<svelte:component
@@ -220,4 +257,15 @@
 	{/if}
 </div>
 
-
+<style>
+	.preview-mobile :global([class*='md:grid-cols-']) {
+		grid-template-columns: 1fr !important;
+	}
+	.preview-mobile :global([class*='md:flex-row']) {
+		flex-direction: column !important;
+	}
+	.preview-mobile :global(.md\:px-6) {
+		padding-left: 1.5rem !important;
+		padding-right: 1.5rem !important;
+	}
+</style>
