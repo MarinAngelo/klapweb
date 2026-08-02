@@ -1,3 +1,7 @@
+[build.environment]
+  # INVOICE_FROM_EMAIL ist eine öffentliche Absender-Adresse, kein echtes Secret
+  SECRETS_SCAN_OMIT_KEYS = "INVOICE_FROM_EMAIL"
+
 [dev]
   command = "npm run vite:dev"
   port = 8888
