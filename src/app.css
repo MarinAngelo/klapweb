@@ -12,6 +12,7 @@
 }
 :root, html, body {
   font-family: var(--page-font);
+  color: var(--page-color);
 }
 html {
   scroll-behavior: smooth;
@@ -91,12 +92,12 @@ html {
 span.rt-size-4xl    { font-size: clamp(2.25rem, 5vw,   3rem);     }  /* 36–48px */
 span.rt-size-5xl    { font-size: clamp(3rem,    7.5vw, 4.5rem);   }  /* 48–72px */
 span.rt-size-6xl    { font-size: clamp(4.5rem,  10vw,  7rem);     }  /* 72–112px */
-span.rt-size-2xl    { font-size: clamp(1.5rem,  2.5vw, 1.75rem);  }  /* 24–28px */
+span.rt-size-2xl, .size-2xl { font-size: clamp(1.5rem,  2.5vw, 1.75rem);  }  /* 24–28px */
 span.rt-size-3xl    { font-size: clamp(1.75rem, 4vw,   2.25rem);  }  /* 28–36px */
 span.rt-size-xs     { font-size: 0.75rem;    }
 span.rt-size-sm     { font-size: 0.875rem;   }
 span.rt-size-lg     { font-size: 1.125rem;   }
-span.rt-size-xl     { font-size: 1.25rem;    }
+span.rt-size-xl, .size-xl { font-size: 1.25rem;    }
 
 /* Kombinations-Labels */
 /* Display — 4rem desktop, 3rem mobil */
@@ -185,16 +186,30 @@ a[data-type="prismic-link"] {
 	color: var(--page-link-color);
 }
 
+a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link):not(.site-title-link):not(.no-underline) {
+	@apply underline;
+	color: var(--page-link-color);
+}
+
 /* Touch-Zielgrösse für Inline-Links auf Mobile (WCAG 2.5.5 / 44px) */
 @media (max-width: 767px) {
-	a[data-type="prismic-link"] {
+	a[data-type="prismic-link"],
+	a {
 		padding-top: 0.5em;
 		padding-bottom: 0.5em;
 	}
 }
 
-a[data-type="prismic-link"]:hover {
+a[data-type="prismic-link"]:not(.dropdown-link):not(.nav-link):hover,
+a:not(.site-title-link):not(.dropdown-link):not(.nav-link):hover {
 	color: var(--page-link-hover-color) !important;
+}
+
+/* Footer-Link Hover */
+.footer-nav-link:hover,
+.footer-buttonbar-p a:hover,
+a[href^="mailto:"]:hover {
+	color: var(--footer-link-hover-color) !important;
 }
 
 :root {

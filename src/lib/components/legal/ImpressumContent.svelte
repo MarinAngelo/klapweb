@@ -45,18 +45,18 @@
 		<p>
 			Marinus Angelo Klap<br />
 			<strong>Website:</strong>
-			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline text-inherit">
+			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline">
 				Klap Web
 			</a><br />
 			<strong>E-Mail:</strong>
-			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline text-inherit">marinus.angelo@klap-web.ch</a>
+			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline">marinus.angelo@klap-web.ch</a>
 		</p>
 
 		{#if contacts.length > 0}
 			{#each contacts as contact, i (contact)}
-				<div class={i < contacts.length - 1 ? 'mb-6' : ''}>
+				<div class={i < contacts.length - 1 ? 'mb-6' : 'mt-6'}>
 					{#if contact.title}
-						<p class="font-semibold">{contact.title}</p>
+						<h3 class="font-semibold">{contact.title}</h3>
 					{/if}
 					<AddressBlock
 						responsible_person_company={contact.name ?? ''}
@@ -65,10 +65,10 @@
 					/>
 					{#if contact.website?.url}
 						<p>
-							Website: <a
+							<strong>Website:</strong> <a
 								href={contact.website.url}
 								target="_blank"
-								class="hover:underline text-inherit"
+								class="hover:underline"
 							>
 								{contact.website.text || contact.website.url}
 							</a>

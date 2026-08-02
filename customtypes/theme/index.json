@@ -276,14 +276,6 @@
 					"placeholder_true": "Ein",
 					"default_value": true
 				}
-			},
-			"favicon": {
-				"type": "Image",
-				"config": {
-					"label": "Favicon",
-					"constraint": {},
-					"thumbnails": []
-				}
 			}
 		},
 		"Kopfzeile": {
@@ -446,15 +438,6 @@
 				"config": {
 					"label": "Linkfarbe wenn Maus darüber",
 					"placeholder": "Hex-Farbcode (#RRGGBB)"
-				}
-			},
-			"no_margin_top": {
-				"type": "Boolean",
-				"config": {
-					"label": "Kein oberer Abstand",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
 				}
 			}
 		}

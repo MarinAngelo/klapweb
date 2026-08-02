@@ -106,7 +106,7 @@
 						href={h}
 						target={ext ? '_blank' : undefined}
 						rel={ext ? 'noopener noreferrer' : undefined}
-						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl"
+						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl no-underline"
 						style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); background: color-mix(in srgb, currentColor 5%, transparent);"
 					>
 						<div class="aspect-video w-full overflow-hidden bg-current/5 relative">
@@ -142,7 +142,7 @@
 							href={h}
 							target={ext ? '_blank' : undefined}
 							rel={ext ? 'noopener noreferrer' : undefined}
-							class="flex items-center gap-3 py-2.5 hover:opacity-70 transition-opacity"
+							class="flex items-center gap-3 py-2.5 hover:opacity-70 transition-opacity no-underline"
 						>
 							<img
 								src="https://www.google.com/s2/favicons?domain={domain(item)}&sz=32"
@@ -171,7 +171,7 @@
 							href={h}
 							target={ext ? '_blank' : undefined}
 							rel={ext ? 'noopener noreferrer' : undefined}
-							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md"
+							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md no-underline"
 							style="background: color-mix(in srgb, currentColor 4%, transparent);"
 						>
 							<div
