@@ -2,12 +2,12 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { verifyPassword } from '$lib/server/users';
 import { createSession } from '$lib/server/sessions';
-import { isFeatureActive } from '$lib/server/features';
+import { FEATURE_TERMINBUCHUNG } from '$lib/server/features';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!isFeatureActive('terminbuchung')) throw error(404, 'Funktion nicht verfügbar');
+	if (!FEATURE_TERMINBUCHUNG) throw error(404, 'Funktion nicht verfügbar');
 	if (locals.user) throw redirect(303, '/konto');
 };
 
