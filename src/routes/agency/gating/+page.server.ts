@@ -125,10 +125,13 @@ export const actions = {
 		// Load gating.json
 		const gating = read(GATING_PATH);
 
-		// 1. Update plan in slicemachine.config.json
+		// 1. Update plan in slicemachine.config.json (nur bei Änderung)
 		const smConfig = read(SM_CONFIG_PATH);
-		smConfig.plan = plan;
-		write(SM_CONFIG_PATH, smConfig);
+		const planChanged = smConfig.plan !== plan;
+		if (planChanged) {
+			smConfig.plan = plan;
+			write(SM_CONFIG_PATH, smConfig);
+		}
 
 		// 2. Write gating.overrides.json mit enabled + disabled
 		const planChain = getActivePlanChain(plan, gating.plans);
@@ -136,12 +139,17 @@ export const actions = {
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
 		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
 
-		write(OVERRIDES_PATH, {
-			enabled: enabled,
-			disabled: disabled
-		});
+		const existingOverrides = existsSync(OVERRIDES_PATH) ? read(OVERRIDES_PATH) : { enabled: [], disabled: [] };
+		const overridesChanged =
+			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !== JSON.stringify([...enabled].sort()) ||
+			JSON.stringify([...(existingOverrides.disabled ?? [])].sort()) !== JSON.stringify([...disabled].sort());
 
-		// 3. Run build-customtypes.js
+		write(OVERRIDES_PATH, { enabled, disabled });
+
+		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
+		if (!planChanged && !overridesChanged) {
+			throw redirect(303, '/agency/gating');
+		}
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
 		} catch (e) {
