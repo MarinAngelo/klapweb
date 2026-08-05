@@ -55,7 +55,7 @@
 			// Einzeltermin
 			const dateStr = formatEventDateTime(
 				ev.start_date,
-				ev.all_day ?? false,
+				false,
 				$page.data.lang || 'de-CH'
 			);
 			const tpl =
@@ -185,6 +185,7 @@
 					.flatMap((d: any) => expandRecurrence(d.data))
 					.map((e: any) => mergeChildOverParent(parent, e))
 					.filter((e: any) => isFuture(e.start_date));
+				console.log('[GlobaleEvents] events:', events.map((e: any) => ({ start: e.start_date, end: e.end_date })));
 			} catch (e) {
 				console.warn('Serien-Events konnten nicht geladen werden.', e);
 			} finally {
@@ -297,11 +298,10 @@
 
 				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
 				{#if parentEvent.start_date}
-					{@const allDay = parentEvent.all_day ?? false}
 					{@const dateRange = formatEventDateRange(
 						parentEvent.start_date,
 						parentEvent.end_date,
-						allDay,
+						false,
 						$page.data.lang || 'de-CH',
 						$_('bis')
 					)}
@@ -309,6 +309,9 @@
 						<span class="mt-0.5 shrink-0">📅</span>
 						<div>
 							<div>{dateRange}</div>
+							{#if parentEvent.timezone}
+								<div class="opacity-60">{parentEvent.timezone}</div>
+							{/if}
 							{#if parentEvent.doors_open}
 								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
 							{/if}
@@ -370,11 +373,10 @@
 						<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
 						{#each events as ev}
-							{@const allDay = ev.all_day ?? false}
-							{@const dateRange = formatEventDateRange(
-								ev.start_date,
-								ev.end_date,
-								allDay,
+{@const dateRange = formatEventDateRange(
+					ev.start_date,
+					ev.end_date,
+					false,
 								$page.data.lang || 'de-CH',
 								$_('bis')
 							)}
@@ -396,8 +398,9 @@
 									<span class="shrink-0 mt-0.5">📅</span>
 									<div>
 										{#if dateRange}
-											<div>{dateRange}</div>
-											{#if ev.doors_open}
+											<div>{dateRange}</div>										{#if ev.timezone}
+											<div class="opacity-60">{ev.timezone}</div>
+										{/if}											{#if ev.doors_open}
 												<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
 											{/if}
 										{:else}
