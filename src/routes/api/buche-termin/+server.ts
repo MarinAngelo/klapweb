@@ -2,17 +2,10 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { bookSlot, isBooked } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { formatDateWithWeekday } from '$lib/utils/formatDate';
 
 function fmtDate(datum: string, uhrzeit: string): string {
-	if (!datum) return '–';
-	const d = new Date(datum + 'T12:00:00Z');
-	const formatted = d.toLocaleDateString('de-CH', {
-		weekday: 'long',
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-		timeZone: 'UTC'
-	});
+	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
 	return uhrzeit ? `${formatted}, ${uhrzeit} Uhr` : formatted;
 }
 
@@ -20,7 +13,10 @@ function applyTokens(str: string, tokens: Record<string, string>): string {
 	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
 }
 
-function richTextToPlain(blocks: Array<{ text?: string }> | null | undefined, tokens: Record<string, string>): string {
+function richTextToPlain(
+	blocks: Array<{ text?: string }> | null | undefined,
+	tokens: Record<string, string>
+): string {
 	if (!blocks?.length) return '';
 	return blocks
 		.filter((b) => b.text)
@@ -45,7 +41,13 @@ function addMinutes(datum: string, uhrzeit: string, minutes: number): string {
 	return `${datum.replace(/-/g, '')}T${time}`;
 }
 
-function generateICS(terminId: string, titel: string, datum: string, uhrzeit: string, sessionLaenge: number | null): string {
+function generateICS(
+	terminId: string,
+	titel: string,
+	datum: string,
+	uhrzeit: string,
+	sessionLaenge: number | null
+): string {
 	if (!datum) return '';
 	const now = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
 	const uid = `${terminId}@klapweb`;
@@ -78,7 +80,12 @@ function generateICS(terminId: string, titel: string, datum: string, uhrzeit: st
 	].join('\r\n');
 }
 
-function googleCalendarUrl(titel: string, datum: string, uhrzeit: string, sessionLaenge: number | null): string {
+function googleCalendarUrl(
+	titel: string,
+	datum: string,
+	uhrzeit: string,
+	sessionLaenge: number | null
+): string {
 	if (!datum) return '';
 	let dates: string;
 	if (uhrzeit) {
@@ -98,16 +105,34 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 	const [h, mi] = uhrzeit.split(':').map(Number);
 	const utcGuess = Date.UTC(y, mo - 1, d, h, mi);
 	const parts = new Intl.DateTimeFormat('en-US', {
-		timeZone: fromTz, year: 'numeric', month: '2-digit',
-		day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+		timeZone: fromTz,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
 	}).formatToParts(new Date(utcGuess));
 	const get = (t: string) => parseInt(parts.find((p) => p.type === t)?.value ?? '0');
-	const fromTzUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') === 24 ? 0 : get('hour'), get('minute'));
+	const fromTzUtc = Date.UTC(
+		get('year'),
+		get('month') - 1,
+		get('day'),
+		get('hour') === 24 ? 0 : get('hour'),
+		get('minute')
+	);
 	const actualUtc = utcGuess + (utcGuess - fromTzUtc);
-	return new Intl.DateTimeFormat('de-CH', {
-		timeZone: toTz, weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
-		hour: '2-digit', minute: '2-digit'
-	}).format(new Date(actualUtc)) + ' Uhr';
+	return (
+		new Intl.DateTimeFormat('de-CH', {
+			timeZone: toTz,
+			weekday: 'long',
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
+		}).format(new Date(actualUtc)) + ' Uhr'
+	);
 }
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
@@ -157,7 +182,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		]);
 
 		const d = doc.data as any;
-		datum = occurrenceDate ?? (d.datum ?? '');
+		datum = occurrenceDate ?? d.datum ?? '';
 		uhrzeit = d.uhrzeit ?? '';
 		titel = d.titel ?? baseUid;
 		sessionLaenge = d.session_laenge ?? null;
@@ -200,11 +225,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		const tokens: Record<string, string> = {
 			Titel: titel,
-			Datum: datum
-				? new Date(datum + 'T12:00:00Z').toLocaleDateString('de-CH', {
-						weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-					})
-				: '–',
+			Datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–',
 			Uhrzeit: uhrzeit || '–',
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
@@ -225,18 +246,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? `\nDer Termin in Ihrer Zeitzone (${customerTimezone}): ${convertedTime}`
 			: '';
 
-		const bodyText = richTextToPlain(custEmailBody, tokens) || [
-			`Guten Tag${name ? ' ' + name : ''}`,
-			``,
-			`Ihr Termin wurde erfolgreich gebucht.`,
-			``,
-			`Termin: ${terminLine}`,
-			``,
-			`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
-			``,
-			`Freundliche Grüsse`,
-			companyName
-		].join('\n');
+		const bodyText =
+			richTextToPlain(custEmailBody, tokens) ||
+			[
+				`Guten Tag${name ? ' ' + name : ''}`,
+				``,
+				`Ihr Termin wurde erfolgreich gebucht.`,
+				``,
+				`Termin: ${terminLine}`,
+				``,
+				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
+				``,
+				`Freundliche Grüsse`,
+				companyName
+			].join('\n');
 
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
@@ -246,46 +269,57 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		// Provider ICS includes customer name in title
 		const providerTitel = name ? `${titel} – ${name}` : titel;
 		const providerGcalUrl = googleCalendarUrl(providerTitel, datum, uhrzeit, sessionLaenge);
-		const providerCalendarLine = providerGcalUrl ? `\nZum Kalender hinzufügen: ${providerGcalUrl}` : '';
+		const providerCalendarLine = providerGcalUrl
+			? `\nZum Kalender hinzufügen: ${providerGcalUrl}`
+			: '';
 		const providerIcsContent = generateICS(terminId, providerTitel, datum, uhrzeit, sessionLaenge);
 		const providerIcsAttachment = providerIcsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(providerIcsContent).toString('base64') }]
 			: [];
 
-		import('resend').then(({ Resend }) => {
-			const resend = new Resend(resendKey);
+		import('resend')
+			.then(({ Resend }) => {
+				const resend = new Resend(resendKey);
 
-			// E-Mail an Kunden
-			if (email) {
-				resend.emails.send({
-					from: fromEmail,
-					to: email,
-					subject,
-					text: bodyText + customerTzLine + calendarLine,
-					attachments: icsAttachment
-				}).then(({ error: e }) => {
-					if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
-				});
-			}
+				// E-Mail an Kunden
+				if (email) {
+					resend.emails
+						.send({
+							from: fromEmail,
+							to: email,
+							subject,
+							text: bodyText + customerTzLine + calendarLine,
+							attachments: icsAttachment
+						})
+						.then(({ error: e }) => {
+							if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
+						});
+				}
 
-			// Benachrichtigung an Anbieter
-			resend.emails.send({
-				from: fromEmail,
-				to: toEmail,
-				subject: `Neue Buchung: ${titel}`,
-				text: [
-					`Neue Buchung eingegangen.`,
-					``,
-					`Termin: ${terminLine}`,
-					`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
-				].join('\n') + providerCalendarLine,
-				attachments: providerIcsAttachment
-			}).then(({ error: e }) => {
-				if (e) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', e);
-			});
-		}).catch((e) => console.error('Resend import fehlgeschlagen:', e));
+				// Benachrichtigung an Anbieter
+				resend.emails
+					.send({
+						from: fromEmail,
+						to: toEmail,
+						subject: `Neue Buchung: ${titel}`,
+						text:
+							[
+								`Neue Buchung eingegangen.`,
+								``,
+								`Termin: ${terminLine}`,
+								`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
+							].join('\n') + providerCalendarLine,
+						attachments: providerIcsAttachment
+					})
+					.then(({ error: e }) => {
+						if (e) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', e);
+					});
+			})
+			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
-		console.warn('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet');
+		console.warn(
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet'
+		);
 	}
 
 	return new Response(JSON.stringify({ ok: true }), { status: 200 });

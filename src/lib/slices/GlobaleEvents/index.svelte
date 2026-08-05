@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { formatEventDateTime, formatEventDateRange } from '$lib/utils/formatDate';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -52,28 +53,16 @@
 			return tpl.replace(/\{\{Event-Name\}\}/g, eventName);
 		} else {
 			// Einzeltermin
-			const dateStr = formatDateTime(ev.start_date, ev.all_day ?? false);
+			const dateStr = formatEventDateTime(
+				ev.start_date,
+				ev.all_day ?? false,
+				$page.data.lang || 'de-CH'
+			);
 			const tpl =
 				parentEvent?.registration_text_single ||
 				`Hallo, ich möchte mich für den Termin vom {{Datum}} von "{{Event-Name}}" anmelden.`;
 			return tpl.replace(/\{\{Datum\}\}/g, dateStr).replace(/\{\{Event-Name\}\}/g, eventName);
 		}
-	}
-
-	function formatDateTime(ts: string | null | undefined, allDay: boolean, locale?: string): string {
-		if (!ts) return '';
-		const d = new Date(ts);
-		const loc = locale || $page.data.lang || 'de-CH';
-		if (allDay) {
-			return d.toLocaleDateString(loc, { day: '2-digit', month: 'long', year: 'numeric' });
-		}
-		return d.toLocaleDateString(loc, {
-			day: '2-digit',
-			month: 'long',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
 	}
 
 	function isFuture(ts: string | null | undefined): boolean {
@@ -309,15 +298,17 @@
 				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
 				{#if parentEvent.start_date}
 					{@const allDay = parentEvent.all_day ?? false}
-					{@const startFormatted = formatDateTime(parentEvent.start_date, allDay)}
-					{@const endFormatted = formatDateTime(parentEvent.end_date, allDay)}
+					{@const dateRange = formatEventDateRange(
+						parentEvent.start_date,
+						parentEvent.end_date,
+						allDay,
+						$page.data.lang || 'de-CH',
+						$_('bis')
+					)}
 					<div class="flex items-start gap-2">
 						<span class="mt-0.5 shrink-0">📅</span>
 						<div>
-							<div>{startFormatted}</div>
-							{#if endFormatted && endFormatted !== startFormatted}
-								<div class="opacity-60">{$_('bis')} {endFormatted}</div>
-							{/if}
+							<div>{dateRange}</div>
 							{#if parentEvent.doors_open}
 								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
 							{/if}
@@ -380,8 +371,13 @@
 
 						{#each events as ev}
 							{@const allDay = ev.all_day ?? false}
-							{@const startFormatted = formatDateTime(ev.start_date, allDay)}
-							{@const endFormatted = formatDateTime(ev.end_date, allDay)}
+							{@const dateRange = formatEventDateRange(
+								ev.start_date,
+								ev.end_date,
+								allDay,
+								$page.data.lang || 'de-CH',
+								$_('bis')
+							)}
 
 							<div
 								class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0"
@@ -399,11 +395,8 @@
 								<div class="flex items-start gap-2 grow">
 									<span class="shrink-0 mt-0.5">📅</span>
 									<div>
-										{#if startFormatted}
-											<div>{startFormatted}</div>
-											{#if endFormatted && endFormatted !== startFormatted}
-												<div class="opacity-60">{$_('bis')} {endFormatted}</div>
-											{/if}
+										{#if dateRange}
+											<div>{dateRange}</div>
 											{#if ev.doors_open}
 												<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
 											{/if}
