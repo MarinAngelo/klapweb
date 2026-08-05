@@ -257,6 +257,13 @@
 					{/if}
 				</div>
 
+				<!-- Beschreibung -->
+				{#if parentEvent.description?.length}
+					<div class="opacity-80">
+						<PrismicRichText field={parentEvent.description} />
+					</div>
+				{/if}
+
 				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
 				{#if parentEvent.start_date}
 					{@const dateRange = formatEventDateRange(
@@ -343,19 +350,9 @@
 					</details>
 				{/if}
 
-				<!-- Beschreibung -->
-				{#if parentEvent.description?.length}
-					<div class="opacity-80 leading-relaxed">
-						{#each parentEvent.description as block}
-							{#if block.type === 'paragraph'}
-								<p class="mb-2">{block.text}</p>
-							{/if}
-						{/each}
-					</div>
-				{/if}
+				<!-- Kurzbeschreibung -->
+				{#if parentEvent.short_description?.length}
 
-				<!-- Preis -->
-				{#if parentEvent.is_free || parentEvent.price_text?.length}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
 							<span class="font-medium">{$_('Kostenlos')}</span>
