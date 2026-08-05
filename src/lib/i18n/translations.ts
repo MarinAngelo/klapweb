@@ -749,6 +749,13 @@ export const translations: Record<string, Record<string, string>> = {
 	Anmelden: { 'de-ch': 'Anmelden', 'en-us': 'Register' },
 	Tickets: { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
 	Veranstalter: { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
+	Sprache: { 'de-ch': 'Sprache', 'en-us': 'Language' },
+	Zielgruppe: { 'de-ch': 'Zielgruppe', 'en-us': 'Target audience' },
+	Mindestalter: { 'de-ch': 'Mindestalter', 'en-us': 'Minimum age' },
+	'Mind. Teilnehmer': { 'de-ch': 'Mind. Teilnehmer', 'en-us': 'Min. participants' },
+	'Max. Teilnehmer': { 'de-ch': 'Max. Teilnehmer', 'en-us': 'Max. participants' },
+	'Als PDF herunterladen': { 'de-ch': 'Als PDF herunterladen', 'en-us': 'Download as PDF' },
+	Status: { 'de-ch': 'Status', 'en-us': 'Status' },
 	Termine: { 'de-ch': 'Termine', 'en-us': 'Dates' },
 	'Datum noch nicht festgelegt': {
 		'de-ch': 'Datum noch nicht festgelegt',

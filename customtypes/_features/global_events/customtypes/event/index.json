@@ -121,15 +121,6 @@
 					"default_value": false
 				}
 			},
-			"status": {
-				"type": "Select",
-				"config": {
-					"label": "Status",
-					"placeholder": "Status wählen",
-					"options": ["Kein", "Geplant", "Bestätigt", "Abgesagt", "Verschoben", "Ausgebucht"],
-					"default_value": "Geplant"
-				}
-			},
 			"slices": {
 				"type": "Slices",
 				"fieldset": "Inhalt",
@@ -165,166 +156,33 @@
 				"config": {
 					"label": "Zeitzone",
 					"placeholder": "Zeitzone wählen",
-					"options": ["Europe/Zurich", "Europe/Berlin", "Europe/Vienna", "UTC"],
+					"options": [
+						"Europe/Zurich",
+						"Europe/Berlin",
+						"Europe/Vienna",
+						"UTC"
+					],
 					"default_value": "Europe/Zurich"
 				}
 			}
 		},
-		"Ort": {
-			"online_event": {
-				"type": "Boolean",
-				"config": {
-					"label": "Online-Veranstaltung",
-					"placeholder_true": "Ja",
-					"placeholder_false": "Nein",
-					"default_value": false
-				}
-			},
-			"online_url": {
-				"type": "Link",
-				"config": {
-					"label": "Online-Link / Stream",
-					"allowTargetBlank": true,
-					"placeholder": "https://..."
-				}
-			},
-			"location_name": {
-				"type": "Text",
-				"config": {
-					"label": "Veranstaltungsort / Bezeichnung",
-					"placeholder": "z.B. Stadthalle, Café XY, Studio 4"
-				}
-			},
-			"location_room": {
-				"type": "Text",
-				"config": {
-					"label": "Raum / Saal",
-					"placeholder": "z.B. Saal A, Erdgeschoss"
-				}
-			},
-			"location_address": {
-				"type": "Text",
-				"config": {
-					"label": "Strasse & Hausnummer",
-					"placeholder": "z.B. Musterstrasse 12"
-				}
-			},
-			"location_zip": {
-				"type": "Text",
-				"config": {
-					"label": "PLZ",
-					"placeholder": "z.B. 8001"
-				}
-			},
-			"location_city": {
-				"type": "Text",
-				"config": {
-					"label": "Ort",
-					"placeholder": "z.B. Zürich"
-				}
-			},
-			"location_country": {
+		"Details": {
+			"status": {
 				"type": "Select",
 				"config": {
-					"label": "Land",
-					"placeholder": "Land wählen",
-					"options": ["Schweiz", "Deutschland", "Österreich", "Liechtenstein", "Sonstiges"],
-					"default_value": "Schweiz"
+					"label": "Status",
+					"placeholder": "Status wählen",
+					"options": [
+						"Kein",
+						"Geplant",
+						"Bestätigt",
+						"Abgesagt",
+						"Verschoben",
+						"Ausgebucht"
+					],
+					"default_value": "Geplant"
 				}
 			},
-			"location_map_url": {
-				"type": "Text",
-				"config": {
-					"label": "Karte / Google Maps",
-					"placeholder": "https://maps.google.com/..."
-				}
-			},
-			"map_height": {
-				"type": "Number",
-				"config": {
-					"label": "Kartenhöhe (px)",
-					"placeholder": "400"
-				}
-			},
-			"opacity": {
-				"type": "Number",
-				"config": {
-					"label": "Transparenz",
-					"placeholder": "Zahl zwischen 0 und 80 %"
-				}
-			},
-			"mobile_full_width": {
-				"type": "Boolean",
-				"config": {
-					"label": "Vollbreite auf Mobile",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"website": {
-				"type": "Link",
-				"config": {
-					"label": "Website",
-					"allowTargetBlank": true
-				}
-			},
-			"directions": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Wegbeschreibung",
-					"allowTargetBlank": true,
-					"multi": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,preformatted",
-					"labels": [
-						"highlight",
-						"note",
-						"quote",
-						"size-xs",
-						"size-sm",
-						"size-lg",
-						"size-xl",
-						"size-2xl",
-						"size-3xl",
-						"size-4xl",
-						"size-5xl",
-						"size-6xl",
-						"weight-thin",
-						"weight-light",
-						"weight-medium",
-						"weight-semibold",
-						"weight-black",
-						"tracking-tight",
-						"tracking-wide",
-						"tracking-wider",
-						"tracking-widest",
-						"leading-tight",
-						"leading-loose",
-						"uppercase",
-						"lowercase",
-						"capitalize",
-						"underline",
-						"block",
-						"muted",
-						"display-thin",
-						"display-light",
-						"display-bold",
-						"display-black",
-						"giant-thin",
-						"giant-light",
-						"giant-bold",
-						"hero-thin",
-						"hero-light",
-						"hero-bold",
-						"subtitle",
-						"subtitle-bold",
-						"kicker",
-						"overline",
-						"invisible"
-					]
-				}
-			}
-		},
-		"Details": {
 			"event_type": {
 				"type": "Select",
 				"config": {
@@ -423,6 +281,187 @@
 					"allowTargetBlank": false,
 					"multi": "paragraph,strong,em,list-item"
 				}
+			},
+			"max_participants": {
+				"type": "Number",
+				"config": {
+					"label": "Max. Teilnehmerzahl",
+					"placeholder": "z.B. 30"
+				}
+			},
+			"min_participants": {
+				"type": "Number",
+				"config": {
+					"label": "Mindest-Teilnehmerzahl",
+					"placeholder": "z.B. 5"
+				}
+			}
+		},
+		"Ort": {
+			"online_event": {
+				"type": "Boolean",
+				"config": {
+					"label": "Online-Veranstaltung",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"online_url": {
+				"type": "Link",
+				"config": {
+					"label": "Online-Link / Stream",
+					"allowTargetBlank": true,
+					"placeholder": "https://..."
+				}
+			},
+			"location_name": {
+				"type": "Text",
+				"config": {
+					"label": "Veranstaltungsort / Bezeichnung",
+					"placeholder": "z.B. Stadthalle, Café XY, Studio 4"
+				}
+			},
+			"location_room": {
+				"type": "Text",
+				"config": {
+					"label": "Raum / Saal",
+					"placeholder": "z.B. Saal A, Erdgeschoss"
+				}
+			},
+			"location_address": {
+				"type": "Text",
+				"config": {
+					"label": "Strasse & Hausnummer",
+					"placeholder": "z.B. Musterstrasse 12"
+				}
+			},
+			"location_zip": {
+				"type": "Text",
+				"config": {
+					"label": "PLZ",
+					"placeholder": "z.B. 8001"
+				}
+			},
+			"location_city": {
+				"type": "Text",
+				"config": {
+					"label": "Ort",
+					"placeholder": "z.B. Zürich"
+				}
+			},
+			"location_country": {
+				"type": "Select",
+				"config": {
+					"label": "Land",
+					"placeholder": "Land wählen",
+					"options": [
+						"Schweiz",
+						"Deutschland",
+						"Österreich",
+						"Liechtenstein",
+						"Sonstiges"
+					],
+					"default_value": "Schweiz"
+				}
+			},
+			"location_map_url": {
+				"type": "Text",
+				"config": {
+					"label": "Karte / Google Maps",
+					"placeholder": "https://maps.google.com/..."
+				}
+			},
+			"map_height": {
+				"type": "Number",
+				"config": {
+					"label": "Kartenhöhe (px)",
+					"placeholder": "400"
+				}
+			},
+			"opacity": {
+				"type": "Number",
+				"config": {
+					"label": "Transparenz",
+					"placeholder": "Zahl zwischen 0 und 80 %"
+				}
+			},
+			"mobile_full_width": {
+				"type": "Boolean",
+				"config": {
+					"label": "Vollbreite auf Mobile",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"website": {
+				"type": "Link",
+				"config": {
+					"label": "Website",
+					"allowTargetBlank": true
+				}
+			},
+			"directions": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Wegbeschreibung",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,preformatted",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible"
+					]
+				}
+			},
+			"directions_pdf_button": {
+				"type": "Boolean",
+				"config": {
+					"label": "Wegbeschreibung als PDF-Button anzeigen",
+					"default_value": false
+				}
 			}
 		},
 		"Tickets & Anmeldung": {
@@ -511,20 +550,6 @@
 				"type": "Date",
 				"config": {
 					"label": "Anmeldeschluss"
-				}
-			},
-			"max_participants": {
-				"type": "Number",
-				"config": {
-					"label": "Max. Teilnehmerzahl",
-					"placeholder": "z.B. 30"
-				}
-			},
-			"min_participants": {
-				"type": "Number",
-				"config": {
-					"label": "Mindest-Teilnehmerzahl",
-					"placeholder": "z.B. 5"
 				}
 			},
 			"registration_email": {

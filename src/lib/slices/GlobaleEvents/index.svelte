@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { createClient } from '$lib/prismicio';
 	import { isFilled } from '@prismicio/helpers';
-	import { filter } from '@prismicio/client';
+	import { filter, asHTML } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
 
 	import { page } from '$app/stores';
@@ -31,6 +31,19 @@
 	function openModal(ev?: Record<string, any>) {
 		selectedEvent = ev ?? null;
 		showRegistrationModal = true;
+	}
+
+	function printDirectionsPdf(title: string, directions: any[]) {
+		const html = asHTML({ value: directions } as any) ?? '';
+		const win = window.open('', '_blank');
+		if (!win) return;
+		win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>${title}</title>
+<style>body{font-family:sans-serif;max-width:720px;margin:2cm auto;font-size:14px;line-height:1.6}h1{font-size:1.4em;margin-bottom:1em}@media print{body{margin:1cm}}</style>
+</head><body><h1>${title}</h1>${html}</body></html>`);
+		win.document.close();
+		win.focus();
+		win.print();
 	}
 
 	// Anmelde-Kontaktdaten: Kind-spezifisch (individual_*) oder Eltern-Fallback
@@ -220,34 +233,25 @@
 			></span>
 		</div>
 	{:else if parentEvent}
-		<div
-			class="-mx-6 md:mx-0 rounded-none md:rounded-xl overflow-hidden shadow-sm"
-			style="background-color: var(--page-bg-color); color: var(--page-color)"
-		>
-			<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
-			{#if isFilled.image(parentEvent.image)}
-				<div class="w-full aspect-[16/7] overflow-hidden">
-					<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
+		<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
+		{#if isFilled.image(parentEvent.image)}
+			<div class="aspect-[16/7] overflow-hidden -mx-6" style="width: calc(100% + 3rem)">
+				<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
+			</div>
+		{/if}
+
+		<div class="flex flex-col gap-8">
+<!-- Typ -->
+			{#if parentEvent.event_type}
+				<div>
+					<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500"
+						>{parentEvent.event_type}</span
+					>
 				</div>
 			{/if}
 
-			<div class="p-6 md:p-8 flex flex-col gap-4">
-				<!-- Typ + Status -->
-				{#if parentEvent.event_type || (parentEvent.status && parentEvent.status !== 'Kein')}
-					<div class="flex flex-wrap gap-2">
-						{#if parentEvent.status && parentEvent.status !== 'Kein'}
-							<span
-								class="px-2.5 py-1 rounded-full font-medium {statusColor[parentEvent.status] ??
-									'bg-gray-100 text-gray-600'}">{$_(parentEvent.status)}</span
-							>
-						{/if}
-						{#if parentEvent.event_type}
-							<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500"
-								>{parentEvent.event_type}</span
-							>
-						{/if}
-					</div>
-				{/if}
+			<!-- Status: absolut oben rechts, über dem Bild falls vorhanden -->
+			<!-- Status wurde nach Details verschoben -->
 
 				<!-- Titel & Untertitel -->
 				<div>
@@ -264,6 +268,65 @@
 					</div>
 				{/if}
 
+				<!-- Kurzbeschreibung -->
+				{#if parentEvent.short_description?.length}
+					<div class="opacity-80">
+						<PrismicRichText field={parentEvent.short_description} />
+					</div>
+				{/if}
+
+				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+
+				<!-- Veranstalter & Kontakt -->
+			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein')}
+			{#if parentEvent.status && parentEvent.status !== 'Kein'}
+				<div class="flex items-center gap-2">
+					<span class="opacity-50 text-sm">{$_('Status')}:</span>
+					<span class="px-2.5 py-1 rounded-full text-sm font-medium {statusColor[parentEvent.status] ?? 'bg-gray-100 text-gray-600'}">{$_(parentEvent.status)}</span>
+				</div>
+			{/if}
+				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
+					<div class="opacity-60 flex flex-wrap gap-3">
+						{#if parentEvent.organizer}
+							<span>
+								{$_('Veranstalter')}:
+								{#if isFilled.link(parentEvent.organizer_url)}
+									<a href={parentEvent.organizer_url.url} target="_blank" rel="noopener" class="underline">{parentEvent.organizer}</a>
+								{:else}
+									{parentEvent.organizer}
+								{/if}
+							</span>
+						{/if}
+						{#if parentEvent.contact_email}<a href="mailto:{parentEvent.contact_email}" class="underline">{parentEvent.contact_email}</a>{/if}
+						{#if parentEvent.contact_phone}<span>{parentEvent.contact_phone}</span>{/if}
+					</div>
+				{/if}
+
+				<!-- Weitere Details -->
+				{#if parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.max_participants || parentEvent.min_participants}
+					{@const detailCount = [parentEvent.event_language, parentEvent.target_audience, parentEvent.min_age, parentEvent.accessibility_info, parentEvent.max_participants, parentEvent.min_participants].filter(Boolean).length}
+					<ul class="opacity-60 text-sm flex flex-col gap-1 {detailCount === 1 ? 'list-none pl-0' : 'list-disc pl-4'}">
+						{#if parentEvent.event_language}<li><strong>{$_('Sprache')}</strong>: {parentEvent.event_language}</li>{/if}
+						{#if parentEvent.target_audience}<li><strong>{$_('Zielgruppe')}</strong>: {parentEvent.target_audience}</li>{/if}
+						{#if parentEvent.min_age}<li><strong>{$_('Mindestalter')}</strong>: {parentEvent.min_age}</li>{/if}
+						{#if parentEvent.max_participants}<li><strong>{$_('Max. Teilnehmer')}</strong>: {parentEvent.max_participants}</li>{/if}
+						{#if parentEvent.min_participants}<li><strong>{$_('Mind. Teilnehmer')}</strong>: {parentEvent.min_participants}</li>{/if}
+						{#if parentEvent.accessibility_info}<li><strong>♿</strong> {parentEvent.accessibility_info}</li>{/if}
+					</ul>
+				{/if}
+
+				<!-- Weitere Hinweise -->
+				{#if parentEvent.additional_info?.length}
+					<div class="opacity-70 text-sm">
+						<PrismicRichText field={parentEvent.additional_info} />
+					</div>
+				{/if}
+
+				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+				{/if}
+
+				<!-- Datum & Ort (gruppiert) -->
+				<div class="flex flex-col gap-3">
 				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
 				{#if parentEvent.start_date}
 					{@const dateRange = formatEventDateRange(
@@ -346,13 +409,33 @@
 							style="border-top: 1px solid color-mix(in srgb, var(--page-color) 8%, transparent);"
 						>
 							<PrismicRichText field={parentEvent.directions} />
+							{#if parentEvent.directions_pdf_button}
+								<Button
+									text={$_('Als PDF herunterladen')}
+									size="sm"
+									mb={false}
+									on:click={() => printDirectionsPdf(parentEvent?.title ?? $_('Wegbeschreibung'), parentEvent?.directions ?? [])}
+								/>
+							{/if}
 						</div>
 					</details>
 				{/if}
+				{#if parentEvent.location_map_url}
+				<div class="-mx-6">
+						<GoogleMap
+							mapUrl={parentEvent.location_map_url}
+							mapHeight={parentEvent.map_height || 250}
+							mapOpacity={convertNumber(parentEvent.opacity ?? 0)}
+							roundCorners={false}
+						/>
+					</div>
+				{/if}
+				</div>
 
-				<!-- Kurzbeschreibung -->
-				{#if parentEvent.short_description?.length}
+				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
+				<!-- Preis -->
+				{#if parentEvent.is_free || parentEvent.price_text?.length}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
 							<span class="font-medium">{$_('Kostenlos')}</span>
@@ -369,19 +452,6 @@
 				{#if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
 					<div>
 						<Button link={undefined} text={$_('Anmelden')} on:click={() => openModal()} />
-					</div>
-				{/if}
-
-				<!-- Veranstalter & Kontakt -->
-				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
-					<div class="opacity-60 flex flex-wrap gap-3">
-						{#if parentEvent.organizer}<span>{$_('Veranstalter')}: {parentEvent.organizer}</span
-							>{/if}
-						{#if parentEvent.contact_email}<a
-								href="mailto:{parentEvent.contact_email}"
-								class="underline">{parentEvent.contact_email}</a
-							>{/if}
-						{#if parentEvent.contact_phone}<span>{parentEvent.contact_phone}</span>{/if}
 					</div>
 				{/if}
 
@@ -484,17 +554,6 @@
 					</div>
 				{/if}
 			</div>
-			{#if parentEvent.location_map_url}
-				<div class="md:px-8 md:pb-8">
-					<GoogleMap
-						mapUrl={parentEvent.location_map_url}
-						mapHeight={parentEvent.map_height || 250}
-						mapOpacity={convertNumber(parentEvent.opacity ?? 0)}
-						roundCorners={false}
-					/>
-				</div>
-			{/if}
-		</div>
 	{:else if !isFilled.contentRelationship(p.events) && $page.url.hostname === 'localhost'}
 		<div class="p-4 border border-dashed border-gray-300 text-center opacity-40">
 			[Globale Events: Kein Serien-Dokument verknüpft]
