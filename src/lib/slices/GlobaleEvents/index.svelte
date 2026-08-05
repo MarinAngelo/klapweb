@@ -8,11 +8,13 @@
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { convertNumber } from '$lib/utils/convertNumber';
 	import { formatEventDateTime, formatEventDateRange } from '$lib/utils/formatDate';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import GoogleMap from '$lib/components/GoogleMap.svelte';
 
 	export let slice: any;
 	const p = slice.primary ?? ({} as any);
@@ -53,11 +55,7 @@
 			return tpl.replace(/\{\{Event-Name\}\}/g, eventName);
 		} else {
 			// Einzeltermin
-			const dateStr = formatEventDateTime(
-				ev.start_date,
-				false,
-				$page.data.lang || 'de-CH'
-			);
+			const dateStr = formatEventDateTime(ev.start_date, false, $page.data.lang || 'de-CH');
 			const tpl =
 				parentEvent?.registration_text_single ||
 				`Hallo, ich möchte mich für den Termin vom {{Datum}} von "{{Event-Name}}" anmelden.`;
@@ -185,7 +183,10 @@
 					.flatMap((d: any) => expandRecurrence(d.data))
 					.map((e: any) => mergeChildOverParent(parent, e))
 					.filter((e: any) => isFuture(e.start_date));
-				console.log('[GlobaleEvents] events:', events.map((e: any) => ({ start: e.start_date, end: e.end_date })));
+				console.log(
+					'[GlobaleEvents] events:',
+					events.map((e: any) => ({ start: e.start_date, end: e.end_date }))
+				);
 			} catch (e) {
 				console.warn('Serien-Events konnten nicht geladen werden.', e);
 			} finally {
@@ -210,6 +211,7 @@
 	animationOptions={anim.options}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
+	class="overflow-x-clip"
 >
 	{#if loading}
 		<div class="flex items-center justify-center py-10">
@@ -219,8 +221,8 @@
 		</div>
 	{:else if parentEvent}
 		<div
-			class="rounded-xl overflow-hidden shadow-sm border"
-			style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent); background-color: var(--page-bg-color); color: var(--page-color)"
+			class="-mx-6 md:mx-0 rounded-none md:rounded-xl overflow-hidden shadow-sm"
+			style="background-color: var(--page-bg-color); color: var(--page-color)"
 		>
 			<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
 			{#if isFilled.image(parentEvent.image)}
@@ -255,6 +257,29 @@
 					{/if}
 				</div>
 
+				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
+				{#if parentEvent.start_date}
+					{@const dateRange = formatEventDateRange(
+						parentEvent.start_date,
+						parentEvent.end_date,
+						false,
+						$page.data.lang || 'de-CH',
+						$_('bis')
+					)}
+					<div class="flex items-start gap-2">
+						<span class="mt-0.5 shrink-0">📅</span>
+						<div>
+							<div>{dateRange}</div>
+							{#if parentEvent.timezone}
+								<div class="opacity-60">{parentEvent.timezone}</div>
+							{/if}
+							{#if parentEvent.doors_open}
+								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
+							{/if}
+						</div>
+					</div>
+				{/if}
+
 				<!-- Ort -->
 				{#if parentEvent.online_event}
 					<div class="flex items-center gap-2">
@@ -281,42 +306,41 @@
 						.join(', ')}
 					<div class="flex items-start gap-2">
 						<span class="mt-0.5 shrink-0">📍</span>
-						<div>
-							<div>{locationLine}</div>
-							{#if isFilled.link(parentEvent.location_map_url)}
-								<a
-									href={parentEvent.location_map_url.url}
-									target="_blank"
-									rel="noopener"
-									class="underline opacity-70"
-									style="color: var(--page-link-color)">Auf Karte anzeigen</a
-								>
-							{/if}
-						</div>
+						<span>{locationLine}</span>
 					</div>
 				{/if}
 
-				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
-				{#if parentEvent.start_date}
-					{@const dateRange = formatEventDateRange(
-						parentEvent.start_date,
-						parentEvent.end_date,
-						false,
-						$page.data.lang || 'de-CH',
-						$_('bis')
-					)}
-					<div class="flex items-start gap-2">
-						<span class="mt-0.5 shrink-0">📅</span>
-						<div>
-							<div>{dateRange}</div>
-							{#if parentEvent.timezone}
-								<div class="opacity-60">{parentEvent.timezone}</div>
-							{/if}
-							{#if parentEvent.doors_open}
-								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
-							{/if}
-						</div>
+				<!-- Website -->
+				{#if isFilled.link(parentEvent.website)}
+					<div class="flex items-center gap-2">
+						<span class="shrink-0">🔗</span>
+						<a
+							href={parentEvent.website.url}
+							target={parentEvent.website.target ?? '_blank'}
+							rel="noopener"
+							class="underline"
+							style="color: var(--page-link-color)">{parentEvent.website.url}</a
+						>
 					</div>
+				{/if}
+
+				<!-- Wegbeschreibung -->
+				{#if parentEvent.directions?.length}
+					<details
+						class="rounded overflow-hidden"
+						style="border: 1px solid color-mix(in srgb, var(--page-color) 15%, transparent);"
+					>
+						<summary class="flex items-center justify-between px-3 py-2 cursor-pointer list-none">
+							<span>{$_('Wegbeschreibung')}</span>
+							<span class="text-xs opacity-60">▾</span>
+						</summary>
+						<div
+							class="px-3 pb-3 pt-2 opacity-80"
+							style="border-top: 1px solid color-mix(in srgb, var(--page-color) 8%, transparent);"
+						>
+							<PrismicRichText field={parentEvent.directions} />
+						</div>
+					</details>
 				{/if}
 
 				<!-- Beschreibung -->
@@ -373,10 +397,10 @@
 						<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
 						{#each events as ev}
-{@const dateRange = formatEventDateRange(
-					ev.start_date,
-					ev.end_date,
-					false,
+							{@const dateRange = formatEventDateRange(
+								ev.start_date,
+								ev.end_date,
+								false,
 								$page.data.lang || 'de-CH',
 								$_('bis')
 							)}
@@ -398,9 +422,11 @@
 									<span class="shrink-0 mt-0.5">📅</span>
 									<div>
 										{#if dateRange}
-											<div>{dateRange}</div>										{#if ev.timezone}
-											<div class="opacity-60">{ev.timezone}</div>
-										{/if}											{#if ev.doors_open}
+											<div>{dateRange}</div>
+											{#if ev.timezone}
+												<div class="opacity-60">{ev.timezone}</div>
+											{/if}
+											{#if ev.doors_open}
 												<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
 											{/if}
 										{:else}
@@ -461,6 +487,16 @@
 					</div>
 				{/if}
 			</div>
+			{#if parentEvent.location_map_url}
+				<div class="md:px-8 md:pb-8">
+					<GoogleMap
+						mapUrl={parentEvent.location_map_url}
+						mapHeight={parentEvent.map_height || 250}
+						mapOpacity={convertNumber(parentEvent.opacity ?? 0)}
+						roundCorners={false}
+					/>
+				</div>
+			{/if}
 		</div>
 	{:else if !isFilled.contentRelationship(p.events) && $page.url.hostname === 'localhost'}
 		<div class="p-4 border border-dashed border-gray-300 text-center opacity-40">
