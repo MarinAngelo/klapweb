@@ -106,15 +106,6 @@
           "placeholder": "Enddatum und -uhrzeit"
         }
       },
-      "all_day": {
-        "type": "Boolean",
-        "config": {
-          "label": "Ganztägig",
-          "placeholder_true": "Ja",
-          "placeholder_false": "Nein",
-          "default_value": false
-        }
-      },
       "doors_open": {
         "type": "Text",
         "config": {

@@ -72,13 +72,11 @@ export function formatEventDateTime(
 	if (allDay) {
 		return d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 	}
-	return d.toLocaleDateString(locale, {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit'
-	});
+	return (
+		d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) +
+		', ' +
+		d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+	);
 }
 
 /**
@@ -108,7 +106,13 @@ export function formatEventDateRange(
 	const fullOpts: Intl.DateTimeFormatOptions = allDay
 		? { day: 'numeric', month: 'long', year: 'numeric' }
 		: { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-	const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) => d.toLocaleDateString(locale, opts);
+	const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) => {
+		if ('hour' in opts) {
+			const { hour, minute, ...dateOpts } = opts;
+			return `${d.toLocaleDateString(locale, dateOpts)}, ${d.toLocaleTimeString(locale, { hour, minute })}`;
+		}
+		return d.toLocaleDateString(locale, opts);
+	};
 
 	if (!end || isNaN(end.getTime())) return fmt(start, fullOpts);
 
