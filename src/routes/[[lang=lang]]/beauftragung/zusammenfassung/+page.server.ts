@@ -42,6 +42,7 @@ export async function load({ fetch, url, parent }) {
 	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
 
 	const serviceUid = url.searchParams.get('service') ?? '';
+	const isEventCheckout = url.searchParams.get('event_checkout') === 'true';
 	if (!serviceUid)
 		return {
 			product: null,
@@ -54,6 +55,32 @@ export async function load({ fetch, url, parent }) {
 		};
 	try {
 		const client = createClient({ fetch });
+
+		if (isEventCheckout) {
+			const eventDoc = await client.getByUID('event', serviceUid, { lang });
+			const d = eventDoc.data as Record<string, unknown>;
+			const basePrice = (d.ticket_price_chf as number) ?? null;
+			const displayAmount = calcDisplayPrice(basePrice, null, null);
+			return {
+				product: {
+					label: (d.title as Array<{ text: string }>)?.[0]?.text ?? serviceUid,
+					price: basePrice,
+					displayAmount,
+					stripeUrl: null,
+					billingType: 'Einmalig',
+					addons: []
+				} satisfies ProductData,
+				pageTitle,
+				checkoutButtonText,
+				baseCurrency,
+				additionalCodes,
+				rates,
+				paymentMethods,
+				isEventCheckout: true,
+				eventUid: serviceUid
+			};
+		}
+
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
 		const d = pageDoc.data as Record<string, unknown>;
 		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
@@ -105,7 +132,9 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			isEventCheckout: false,
+			eventUid: ''
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
@@ -116,7 +145,9 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			isEventCheckout: false,
+			eventUid: ''
 		};
 	}
 }

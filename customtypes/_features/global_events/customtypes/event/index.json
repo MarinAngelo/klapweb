@@ -586,6 +586,29 @@
 					"label": "Anmeldung per Telegram (Username oder Nummer)",
 					"placeholder": "@username oder +41..."
 				}
+			},
+			"use_checkout_flow": {
+				"type": "Boolean",
+				"config": {
+					"label": "Checkout-Flow verwenden (Ticketkauf über Website)",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"ticket_price_chf": {
+				"type": "Number",
+				"config": {
+					"label": "Ticketpreis (CHF)",
+					"placeholder": "z.B. 25"
+				}
+			},
+			"ticket_button_label": {
+				"type": "Text",
+				"config": {
+					"label": "Button-Beschriftung",
+					"placeholder": "Ticket"
+				}
 			}
 		},
 		"Serie & Wiederholung": {

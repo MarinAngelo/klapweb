@@ -11,6 +11,7 @@
 	export let data: {
 		dienstleistung: string;
 		pageTitle: string;
+		eventCheckout: boolean;
 		extraFields: Array<{
 			field_name: string | null;
 			field_type: string | null;
@@ -22,7 +23,7 @@
 	};
 
 	// Hardcoded invoice fields (always required, always on invoice)
-	const invoiceFields = [
+	const allInvoiceFields = [
 		{ key: 'vorname',   label: 'Vorname',    type: 'text',  required: true,  span: 1 },
 		{ key: 'nachname',  label: 'Nachname',   type: 'text',  required: true,  span: 1 },
 		{ key: 'firma',     label: 'Firma',      type: 'text',  required: false, span: 1 },
@@ -36,6 +37,11 @@
 		{ key: 'registrierter_domainname', label: 'Registrierter Domainname', type: 'text', required: false, span: 1 },
 		{ key: 'gewuenschter_domainname', label: 'Gewünschter Domainname', type: 'text', required: false, span: 1 }
 	];
+
+	const eventOnlyFields = new Set(['projektname', 'registrierter_domainname', 'gewuenschter_domainname']);
+	$: invoiceFields = data.eventCheckout
+		? allInvoiceFields.filter((f) => !eventOnlyFields.has(f.key))
+		: allInvoiceFields;
 
 	// Map extra fields (from Settings slices3) to InputField-compatible shape
 const vorwahlen = [
@@ -237,7 +243,9 @@ const vorwahlen = [
 		}
 
 		sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-		goto(`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}`);
+		const eventParam = data.eventCheckout ? '&event_checkout=true' : '';
+		const noChromeParam = $page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
+		goto(`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}`);
 	}
 
 	$: lang = $page.data.lang || 'de-ch';

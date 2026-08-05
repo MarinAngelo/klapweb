@@ -303,8 +303,9 @@
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: isNoChrome = $page.url.searchParams.get('no_chrome') === 'true';
 	$: stickyHeader =
-		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
+		!isLandingPage && !isPreview && !isDokuPage && !isNoChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -398,7 +399,7 @@
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview && !isDokuPage}
+	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
 		<Header
 			{navigation}
 			{settings}
@@ -431,7 +432,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview && !isDokuPage}
+	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>

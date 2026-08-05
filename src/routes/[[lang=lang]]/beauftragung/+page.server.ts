@@ -3,6 +3,7 @@ export const prerender = false;
 export async function load({ url, parent }) {
 	const { settings } = await parent();
 	const dienstleistung = url.searchParams.get('dienstleistung') ?? '';
+	const eventCheckout = url.searchParams.get('event_checkout') === 'true';
 
 	// Extra fields from first form-slice in Settings E-Commerce tab
 	const formSlice = (settings.data as any).slices3?.[0];
@@ -17,5 +18,5 @@ export async function load({ url, parent }) {
 
 	const pageTitle: string = (settings.data as any).beauftragung_title?.trim() || '';
 
-	return { dienstleistung, extraFields, pageTitle };
+	return { dienstleistung, extraFields, pageTitle, eventCheckout };
 }
