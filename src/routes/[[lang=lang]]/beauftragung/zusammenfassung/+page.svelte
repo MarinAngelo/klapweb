@@ -260,7 +260,9 @@
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`);
+				goto(
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`
+				);
 				return;
 			}
 			try {
@@ -291,7 +293,9 @@
 				}
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`);
+				goto(
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`
+				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;

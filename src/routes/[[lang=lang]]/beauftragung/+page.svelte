@@ -24,27 +24,43 @@
 
 	// Hardcoded invoice fields (always required, always on invoice)
 	const allInvoiceFields = [
-		{ key: 'vorname',   label: 'Vorname',    type: 'text',  required: true,  span: 1 },
-		{ key: 'nachname',  label: 'Nachname',   type: 'text',  required: true,  span: 1 },
-		{ key: 'firma',     label: 'Firma',      type: 'text',  required: false, span: 1 },
-		{ key: 'email',     label: 'E-Mail',     type: 'email', required: true,  span: 1 },
-		{ key: 'adresse',   label: 'Adresse',    type: 'text',  required: true,  span: 2 },
-		{ key: 'plz',       label: 'PLZ',        type: 'text',  required: true,  span: 1 },
-		{ key: 'ort',       label: 'Ort',        type: 'text',  required: true,  span: 1 },
-		{ key: 'land',      label: 'Land',       type: 'select', required: true,  span: 1 },
-		{ key: 'tel',       label: 'Tel. Nr.',   type: 'tel',    required: true,  span: 1 },
+		{ key: 'vorname', label: 'Vorname', type: 'text', required: true, span: 1 },
+		{ key: 'nachname', label: 'Nachname', type: 'text', required: true, span: 1 },
+		{ key: 'firma', label: 'Firma', type: 'text', required: false, span: 1 },
+		{ key: 'email', label: 'E-Mail', type: 'email', required: true, span: 1 },
+		{ key: 'adresse', label: 'Adresse', type: 'text', required: true, span: 2 },
+		{ key: 'plz', label: 'PLZ', type: 'text', required: true, span: 1 },
+		{ key: 'ort', label: 'Ort', type: 'text', required: true, span: 1 },
+		{ key: 'land', label: 'Land', type: 'select', required: true, span: 1 },
+		{ key: 'tel', label: 'Tel. Nr.', type: 'tel', required: true, span: 1 },
 		{ key: 'projektname', label: 'Projektname', type: 'text', required: true, span: 1 },
-		{ key: 'registrierter_domainname', label: 'Registrierter Domainname', type: 'text', required: false, span: 1 },
-		{ key: 'gewuenschter_domainname', label: 'Gewünschter Domainname', type: 'text', required: false, span: 1 }
+		{
+			key: 'registrierter_domainname',
+			label: 'Registrierter Domainname',
+			type: 'text',
+			required: false,
+			span: 1
+		},
+		{
+			key: 'gewuenschter_domainname',
+			label: 'Gewünschter Domainname',
+			type: 'text',
+			required: false,
+			span: 1
+		}
 	];
 
-	const eventOnlyFields = new Set(['projektname', 'registrierter_domainname', 'gewuenschter_domainname']);
+	const eventOnlyFields = new Set([
+		'projektname',
+		'registrierter_domainname',
+		'gewuenschter_domainname'
+	]);
 	$: invoiceFields = data.eventCheckout
 		? allInvoiceFields.filter((f) => !eventOnlyFields.has(f.key))
 		: allInvoiceFields;
 
 	// Map extra fields (from Settings slices3) to InputField-compatible shape
-const vorwahlen = [
+	const vorwahlen = [
 		{ code: '+41', label: '🇨🇭 +41' },
 		{ code: '+49', label: '🇩🇪 +49' },
 		{ code: '+43', label: '🇦🇹 +43' },
@@ -129,14 +145,122 @@ const vorwahlen = [
 		{ code: '+995', label: '🇬🇪 +995' },
 		{ code: '+998', label: '🇺🇿 +998' },
 		{ code: '+7', label: '🇰🇿 +7 (KZ)' },
-		{ code: '+964', label: '🇮🇶 +964' },
-];
-	const laender = ['Schweiz', 'Deutschland', 'Österreich', 'Liechtenstein', '—', 'Afghanistan', 'Albanien', 'Algerien', 'Andorra', 'Angola', 'Argentinien', 'Armenien', 'Australien', 'Aserbaidschan', 'Bahrain', 'Bangladesch', 'Belarus', 'Belgien', 'Bolivien', 'Bosnien und Herzegowina', 'Brasilien', 'Bulgarien', 'Chile', 'China', 'Costa Rica', 'Dänemark', 'Ecuador', 'Estland', 'Finnland', 'Frankreich', 'Georgien', 'Ghana', 'Griechenland', 'Grossbritannien', 'Guatemala', 'Honduras', 'Hong Kong', 'Indien', 'Indonesien', 'Irak', 'Iran', 'Irland', 'Island', 'Israel', 'Italien', 'Japan', 'Jordanien', 'Kasachstan', 'Kenia', 'Kolumbien', 'Kroatien', 'Kuwait', 'Lettland', 'Libanon', 'Litauen', 'Luxemburg', 'Malaysia', 'Malta', 'Marokko', 'Mexiko', 'Moldau', 'Montenegro', 'Neuseeland', 'Niederlande', 'Nigeria', 'Nordmazedonien', 'Norwegen', 'Pakistan', 'Panama', 'Paraguay', 'Peru', 'Philippinen', 'Polen', 'Portugal', 'Rumänien', 'Russland', 'Saudi-Arabien', 'Schweden', 'Serbien', 'Singapur', 'Slowakei', 'Slowenien', 'Spanien', 'Sri Lanka', 'Südafrika', 'Südkorea', 'Taiwan', 'Thailand', 'Tschechien', 'Tunesien', 'Türkei', 'Ukraine', 'Ungarn', 'Uruguay', 'USA', 'Usbekistan', 'Venezuela', 'Vietnam', 'Zypern'];
-	const typeKeys: Record<string, string> = { 'E-Mail': 'email', Textbereich: 'message', Land: 'land' };
-	function extraFieldKey(f: typeof data.extraFields[0]): string {
-		return typeKeys[f.field_type ?? ''] || (f.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+		{ code: '+964', label: '🇮🇶 +964' }
+	];
+	const laender = [
+		'Schweiz',
+		'Deutschland',
+		'Österreich',
+		'Liechtenstein',
+		'—',
+		'Afghanistan',
+		'Albanien',
+		'Algerien',
+		'Andorra',
+		'Angola',
+		'Argentinien',
+		'Armenien',
+		'Australien',
+		'Aserbaidschan',
+		'Bahrain',
+		'Bangladesch',
+		'Belarus',
+		'Belgien',
+		'Bolivien',
+		'Bosnien und Herzegowina',
+		'Brasilien',
+		'Bulgarien',
+		'Chile',
+		'China',
+		'Costa Rica',
+		'Dänemark',
+		'Ecuador',
+		'Estland',
+		'Finnland',
+		'Frankreich',
+		'Georgien',
+		'Ghana',
+		'Griechenland',
+		'Grossbritannien',
+		'Guatemala',
+		'Honduras',
+		'Hong Kong',
+		'Indien',
+		'Indonesien',
+		'Irak',
+		'Iran',
+		'Irland',
+		'Island',
+		'Israel',
+		'Italien',
+		'Japan',
+		'Jordanien',
+		'Kasachstan',
+		'Kenia',
+		'Kolumbien',
+		'Kroatien',
+		'Kuwait',
+		'Lettland',
+		'Libanon',
+		'Litauen',
+		'Luxemburg',
+		'Malaysia',
+		'Malta',
+		'Marokko',
+		'Mexiko',
+		'Moldau',
+		'Montenegro',
+		'Neuseeland',
+		'Niederlande',
+		'Nigeria',
+		'Nordmazedonien',
+		'Norwegen',
+		'Pakistan',
+		'Panama',
+		'Paraguay',
+		'Peru',
+		'Philippinen',
+		'Polen',
+		'Portugal',
+		'Rumänien',
+		'Russland',
+		'Saudi-Arabien',
+		'Schweden',
+		'Serbien',
+		'Singapur',
+		'Slowakei',
+		'Slowenien',
+		'Spanien',
+		'Sri Lanka',
+		'Südafrika',
+		'Südkorea',
+		'Taiwan',
+		'Thailand',
+		'Tschechien',
+		'Tunesien',
+		'Türkei',
+		'Ukraine',
+		'Ungarn',
+		'Uruguay',
+		'USA',
+		'Usbekistan',
+		'Venezuela',
+		'Vietnam',
+		'Zypern'
+	];
+	const typeKeys: Record<string, string> = {
+		'E-Mail': 'email',
+		Textbereich: 'message',
+		Land: 'land'
+	};
+	function extraFieldKey(f: (typeof data.extraFields)[0]): string {
+		return (
+			typeKeys[f.field_type ?? ''] ||
+			(f.field_name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') ||
+			''
+		);
 	}
-	function extraFieldSpan(f: typeof data.extraFields[0]): number {
+	function extraFieldSpan(f: (typeof data.extraFields)[0]): number {
 		return f.field_type === 'Textbereich' ? 2 : 1;
 	}
 
@@ -146,9 +270,9 @@ const vorwahlen = [
 	let fieldErrors: Record<string, string> = {};
 	let isSubmitting = false;
 
-	$: invoiceKeys = new Set(invoiceFields.map(f => f.key));
-	$: hasInvoiceErrors = Object.keys(fieldErrors).some(k => invoiceKeys.has(k) && fieldErrors[k]);
-	$: hasExtraErrors = Object.keys(fieldErrors).some(k => !invoiceKeys.has(k) && fieldErrors[k]);
+	$: invoiceKeys = new Set(invoiceFields.map((f) => f.key));
+	$: hasInvoiceErrors = Object.keys(fieldErrors).some((k) => invoiceKeys.has(k) && fieldErrors[k]);
+	$: hasExtraErrors = Object.keys(fieldErrors).some((k) => !invoiceKeys.has(k) && fieldErrors[k]);
 
 	function validateInvoice(): boolean {
 		const errors: Record<string, string> = {};
@@ -173,7 +297,8 @@ const vorwahlen = [
 				const key = extraFieldKey(f);
 				if (key) {
 					const el = document.querySelector<HTMLInputElement>(`[name="${key}"]`);
-					if (!el?.value.trim()) errors[key] = f.invalid_feedback_text || t('Bitte ausfüllen', lang);
+					if (!el?.value.trim())
+						errors[key] = f.invalid_feedback_text || t('Bitte ausfüllen', lang);
 				}
 			}
 		}
@@ -194,7 +319,10 @@ const vorwahlen = [
 		// Tab 2 or no tabs → validate everything
 		const invoiceOk = validateInvoice();
 		const extraOk = validateExtra();
-		if (!invoiceOk) { activeTab = 'rechnung'; return; }
+		if (!invoiceOk) {
+			activeTab = 'rechnung';
+			return;
+		}
 		if (!extraOk) return;
 
 		isSubmitting = true;
@@ -244,8 +372,11 @@ const vorwahlen = [
 
 		sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
 		const eventParam = data.eventCheckout ? '&event_checkout=true' : '';
-		const noChromeParam = $page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
-		goto(`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}`);
+		const noChromeParam =
+			$page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
+		goto(
+			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}`
+		);
 	}
 
 	$: lang = $page.data.lang || 'de-ch';
@@ -258,10 +389,9 @@ const vorwahlen = [
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
-<Heading tag="h1">{data.pageTitle || t('Beauftragung', lang)}</Heading>
+	<Heading tag="h1">{data.pageTitle || t('Beauftragung', lang)}</Heading>
 
 	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6">
-
 		<!-- Tab navigation (only when extra fields exist) -->
 		{#if hasTabs}
 			<div class="flex border-b" style="border-color: {pageColor}33;">
@@ -269,7 +399,9 @@ const vorwahlen = [
 					type="button"
 					on:click={() => (activeTab = 'rechnung')}
 					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
-					style="border-color: {activeTab === 'rechnung' ? pageColor : 'transparent'}; opacity: {activeTab === 'rechnung' ? 1 : 0.5};"
+					style="border-color: {activeTab === 'rechnung'
+						? pageColor
+						: 'transparent'}; opacity: {activeTab === 'rechnung' ? 1 : 0.5};"
 				>
 					{t('Rechnungsadresse', lang)}{hasInvoiceErrors ? ' ●' : ''}
 				</button>
@@ -277,7 +409,9 @@ const vorwahlen = [
 					type="button"
 					on:click={() => (activeTab = 'weitere')}
 					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
-					style="border-color: {activeTab === 'weitere' ? pageColor : 'transparent'}; opacity: {activeTab === 'weitere' ? 1 : 0.5};"
+					style="border-color: {activeTab === 'weitere'
+						? pageColor
+						: 'transparent'}; opacity: {activeTab === 'weitere' ? 1 : 0.5};"
 				>
 					{t('Weitere Angaben', lang)}{hasExtraErrors ? ' ●' : ''}
 				</button>
@@ -287,13 +421,15 @@ const vorwahlen = [
 		<!-- Rechnungsadresse -->
 		<fieldset class:hidden={hasTabs && activeTab !== 'rechnung'}>
 			{#if !hasTabs}
-				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4">{t('Rechnungsadresse', lang)}</legend>
+				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4"
+					>{t('Rechnungsadresse', lang)}</legend
+				>
 			{/if}
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 				{#each invoiceFields as f}
 					<div class="mb-4 {f.span === 2 ? 'sm:col-span-2' : ''}">
 						<label class="block text-base font-bold" for={f.key}>
-								{t(f.label, lang)}{f.required ? ' *' : ''}
+							{t(f.label, lang)}{f.required ? ' *' : ''}
 						</label>
 						{#if f.type === 'tel'}
 							<div class="flex mt-1">
@@ -303,7 +439,9 @@ const vorwahlen = [
 									style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px; width: 110px;"
 								>
 									{#each vorwahlen as v}
-										{#if v.code === '—'}<option disabled>──────────</option>{:else}<option value={v.code}>{v.label}</option>{/if}
+										{#if v.code === '—'}<option disabled>──────────</option>{:else}<option
+												value={v.code}>{v.label}</option
+											>{/if}
 									{/each}
 								</select>
 								<input
@@ -324,7 +462,9 @@ const vorwahlen = [
 							>
 								<option value="">{t('Bitte wählen', lang)}</option>
 								{#each laender as l}
-									{#if l === '—'}<option disabled>──────────</option>{:else}<option value={l}>{l}</option>{/if}
+									{#if l === '—'}<option disabled>──────────</option>{:else}<option value={l}
+											>{l}</option
+										>{/if}
 								{/each}
 							</select>
 						{:else}
@@ -385,9 +525,14 @@ const vorwahlen = [
 			type="submit"
 			disabled={isSubmitting}
 			class="button-prismic-link inline-block px-6 py-3 font-semibold rounded-full border transition duration-200 ease-in-out"
-			style="background-color: {get(theme).pageButtonBgColor}; color: {get(theme).pageButtonColor}; border-color: {get(theme).pageButtonColor};"
+			style="background-color: {get(theme).pageButtonBgColor}; color: {get(theme)
+				.pageButtonColor}; border-color: {get(theme).pageButtonColor};"
 		>
-			{isSubmitting ? t('Bitte warten…', lang) : (hasTabs && activeTab === 'rechnung') ? t('Weiter', lang) : t('Weiter zur Übersicht', lang)}
+			{isSubmitting
+				? t('Bitte warten…', lang)
+				: hasTabs && activeTab === 'rechnung'
+					? t('Weiter', lang)
+					: t('Weiter zur Übersicht', lang)}
 		</button>
 	</form>
 </Bounded>

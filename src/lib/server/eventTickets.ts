@@ -28,7 +28,10 @@ export async function incrementTicketCount(eventUid: string): Promise<number> {
 	return newCount;
 }
 
-export async function isFullyBooked(eventUid: string, maxParticipants: number | null): Promise<boolean> {
+export async function isFullyBooked(
+	eventUid: string,
+	maxParticipants: number | null
+): Promise<boolean> {
 	if (!maxParticipants || maxParticipants <= 0) return false;
 	const count = await getTicketCount(eventUid);
 	return count >= maxParticipants;
