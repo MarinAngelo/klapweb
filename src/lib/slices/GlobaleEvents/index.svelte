@@ -23,8 +23,12 @@
 
 	let events: Record<string, any>[] = [];
 	let parentEvent: Record<string, any> | null = null;
+	let parentEventUid = '';
 	let seriesName = '';
 	let loading = true;
+	let ticketCount: number | null = null;
+	let ticketMax: number | null = null;
+	$: isFullyBooked = ticketCount !== null && ticketMax !== null && ticketMax > 0 && ticketCount >= ticketMax;
 	let showRegistrationModal = false;
 	let selectedEvent: Record<string, any> | null = null;
 
@@ -170,7 +174,19 @@
 				}
 				const parent = parentDoc.data as Record<string, any>;
 				parentEvent = parent;
+				parentEventUid = parentDoc.uid ?? '';
 				seriesName = parent.series_name || parent.title || '';
+
+				// Ticket-Count laden wenn Checkout-Flow aktiv
+				if (parentDoc.uid && parent.use_checkout_flow) {
+					fetch(`/api/event-ticket?uid=${encodeURIComponent(parentDoc.uid)}`)
+						.then((r) => r.json())
+						.then((d: { count?: number; maxParticipants?: number | null }) => {
+							ticketCount = d.count ?? 0;
+							ticketMax = d.maxParticipants ?? null;
+						})
+						.catch(() => {});
+				}
 
 				// Kind-Events laden (enthalten Datum + Wiederholungsregeln)
 				let childDocs = await client
@@ -435,11 +451,13 @@
 				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
 				<!-- Preis -->
-				{#if parentEvent.is_free || parentEvent.price_text?.length}
+				{#if parentEvent.is_free || parentEvent.price_text?.length || parentEvent.ticket_price_chf}
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
 							<span class="font-medium">{$_('Kostenlos')}</span>
-						{:else}
+						{:else if parentEvent.use_checkout_flow && parentEvent.ticket_price_chf}
+							<span class="font-medium">CHF {parentEvent.ticket_price_chf}</span>
+						{:else if parentEvent.price_text?.length}
 							<PrismicRichText field={parentEvent.price_text} />
 						{/if}
 						{#if parentEvent.registration_required}
@@ -448,8 +466,21 @@
 					</div>
 				{/if}
 
-				<!-- Anmelden-Button -->
-				{#if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
+				<!-- Checkout-Flow oder klassische Anmeldung -->
+				{#if parentEvent.use_checkout_flow}
+					<div>
+						{#if isFullyBooked}
+							<span
+								class="inline-block rounded-full px-4 py-2 text-sm font-semibold {statusColor['Ausgebucht']}"
+							>{$_('Ausgebucht')}</span>
+						{:else}
+							<Button
+								link={{ url: `/beauftragung?dienstleistung=${encodeURIComponent(parentEventUid)}&event_checkout=true${$page.data?.page?.data?.landing_page ? '&no_chrome=true' : ''}`, link_type: 'Web' }}
+								text={parentEvent.ticket_button_label || $_('Ticket')}
+							/>
+						{/if}
+					</div>
+				{:else if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
 					<div>
 						<Button link={undefined} text={$_('Anmelden')} on:click={() => openModal()} />
 					</div>

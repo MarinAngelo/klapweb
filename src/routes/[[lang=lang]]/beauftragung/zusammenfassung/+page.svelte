@@ -20,6 +20,8 @@
 		additionalCodes: string[];
 		rates: Record<string, number>;
 		paymentMethods: { stripe: boolean; rechnung: boolean; bar: boolean };
+		isEventCheckout: boolean;
+		eventUid: string;
 	};
 
 	interface CheckoutData {
@@ -165,8 +167,11 @@
 			? `${data.product.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
 			: (data.product?.stripeUrl ?? '');
 
+	$: noChrome = $page.url.searchParams.get('no_chrome') === 'true';
+	$: noChromeParam = noChrome ? '&no_chrome=true' : '';
+
 	$: stripeTarget = import.meta.env.DEV
-		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}`
+		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}${noChromeParam}`
 		: stripeUrl;
 
 	$: buttonText = isLoading
@@ -209,10 +214,17 @@
 					isLoading = false;
 					return;
 				}
+				if (data.isEventCheckout && data.eventUid) {
+					fetch('/api/event-ticket', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ eventUid: data.eventUid })
+					}).catch(() => {});
+				}
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
-					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`
+					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}${noChromeParam}`
 				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
@@ -248,7 +260,7 @@
 			if (import.meta.env.DEV) {
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
+				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`);
 				return;
 			}
 			try {
@@ -270,9 +282,16 @@
 					isLoading = false;
 					return;
 				}
+				if (data.isEventCheckout && data.eventUid) {
+					fetch('/api/event-ticket', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ eventUid: data.eventUid })
+					}).catch(() => {});
+				}
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
+				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}`);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;
