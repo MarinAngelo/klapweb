@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
+import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import {
 	listAlleRessourceBuchungen,
 	deleteRessourceBuchung,
@@ -24,7 +25,8 @@ function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
 }
 function fmtD(iso: string) {
-	const [y, m, d] = iso.split('-'); return `${d}.${m}.${y}`;
+	const [y, m, d] = iso.split('-');
+	return `${d}.${m}.${y}`;
 }
 
 function checkAuth(url: URL) {
@@ -47,8 +49,11 @@ export const load: PageServerLoad = async ({ url }) => {
 	const annahmenMap: Record<string, Awaited<ReturnType<typeof listAnnahmenFuerBuchung>>> = {};
 	await Promise.all(
 		buchungen.map(async (b) => {
-			try { annahmenMap[b.id] = await listAnnahmenFuerBuchung(b.id); }
-			catch { annahmenMap[b.id] = []; }
+			try {
+				annahmenMap[b.id] = await listAnnahmenFuerBuchung(b.id);
+			} catch {
+				annahmenMap[b.id] = [];
+			}
 		})
 	);
 
@@ -62,14 +67,12 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	const emailFrom = env.INVOICE_FROM_EMAIL;
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
-	const naechte = Math.round((new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000);
+	const naechte = Math.round(
+		(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
+	);
 
-	const vonFormatted = new Date(buchung.von + 'T12:00:00Z').toLocaleDateString('de-CH', {
-		weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-	});
-	const bisFormatted = new Date(buchung.bis + 'T12:00:00Z').toLocaleDateString('de-CH', {
-		weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-	});
+	const vonFormatted = formatDateWithWeekday(buchung.von, null, 'de-CH', 'long');
+	const bisFormatted = formatDateWithWeekday(buchung.bis, null, 'de-CH', 'long');
 
 	const zimmerauswahl = buchung.zimmerauswahl ?? [];
 	const zimmerHtml = zimmerauswahl.length
@@ -77,15 +80,15 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 		: 'Ganze Wohnung';
 
 	const tokenMap: Record<string, string> = {
-		Name:             buchung.name ?? '',
-		Ressource:        buchung.ressourceName ?? buchung.ressourceUid,
-		RessourceUid:     buchung.ressourceUid,
-		Anreise:          vonFormatted,
-		Abreise:          bisFormatted,
-		'Nächte':         String(naechte),
-		Personen:         String(buchung.personen),
-		Zimmer:           zimmerHtml,
-		Total:            fmt(buchung.preisCHF),
+		Name: buchung.name ?? '',
+		Ressource: buchung.ressourceName ?? buchung.ressourceUid,
+		RessourceUid: buchung.ressourceUid,
+		Anreise: vonFormatted,
+		Abreise: bisFormatted,
+		Nächte: String(naechte),
+		Personen: String(buchung.personen),
+		Zimmer: zimmerHtml,
+		Total: fmt(buchung.preisCHF),
 		Buchungsreferenz: buchung.referenz ?? buchung.id
 	};
 
@@ -222,7 +225,6 @@ async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freiga
 // ── Actions ────────────────────────────────────────────────────────────────────
 
 export const actions: Actions = {
-
 	delete: async ({ request, url }) => {
 		checkAuth(url);
 		const id = (await request.formData()).get('id');
@@ -276,8 +278,8 @@ export const actions: Actions = {
 		const buchung = await getRessourceBuchung(id);
 		if (!buchung) return;
 		const prev: Record<string, RessourceBuchung['status']> = {
-			confirmed:   'pending',
-			checked_in:  'confirmed',
+			confirmed: 'pending',
+			checked_in: 'confirmed',
 			checked_out: 'checked_in',
 			abgerechnet: 'checked_out'
 		};
@@ -285,7 +287,11 @@ export const actions: Actions = {
 		if (!target) return;
 		// Zurück auf pending: Reminder-Flags zurücksetzen damit sie bei erneuter Bestätigung neu greifen
 		if (target === 'pending') {
-			await updateRessourceBuchung(id, { status: 'pending', reminderSent: false, nachAnkunftReminderSent: false });
+			await updateRessourceBuchung(id, {
+				status: 'pending',
+				reminderSent: false,
+				nachAnkunftReminderSent: false
+			});
 		} else {
 			await updateRessourceBuchungStatus(id, target);
 		}
