@@ -35,7 +35,20 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, chatActive, chatBotName, chatGreeting, user } = data);
+	$: ({
+		settings,
+		navigation,
+		prismicTheme,
+		fonts,
+		lang,
+		locales,
+		mainLang,
+		userBackendActive,
+		chatActive,
+		chatBotName,
+		chatGreeting,
+		user
+	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
@@ -52,7 +65,8 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
-	$: appleTouchIconUrl = settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
+	$: appleTouchIconUrl =
+		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
@@ -305,7 +319,11 @@
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = $page.url.searchParams.get('no_chrome') === 'true';
 	$: stickyHeader =
-		!isLandingPage && !isPreview && !isDokuPage && !isNoChrome && (prismicTheme?.data?.sticky_header ?? false);
+		!isLandingPage &&
+		!isPreview &&
+		!isDokuPage &&
+		!isNoChrome &&
+		(prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -414,7 +432,10 @@
 		/>
 	{/if}
 
-	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+	<main
+		id="main-content"
+		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
+	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"

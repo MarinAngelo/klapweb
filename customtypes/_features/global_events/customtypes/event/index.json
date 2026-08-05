@@ -156,12 +156,7 @@
 				"config": {
 					"label": "Zeitzone",
 					"placeholder": "Zeitzone wählen",
-					"options": [
-						"Europe/Zurich",
-						"Europe/Berlin",
-						"Europe/Vienna",
-						"UTC"
-					],
+					"options": ["Europe/Zurich", "Europe/Berlin", "Europe/Vienna", "UTC"],
 					"default_value": "Europe/Zurich"
 				}
 			}
@@ -172,14 +167,7 @@
 				"config": {
 					"label": "Status",
 					"placeholder": "Status wählen",
-					"options": [
-						"Kein",
-						"Geplant",
-						"Bestätigt",
-						"Abgesagt",
-						"Verschoben",
-						"Ausgebucht"
-					],
+					"options": ["Kein", "Geplant", "Bestätigt", "Abgesagt", "Verschoben", "Ausgebucht"],
 					"default_value": "Geplant"
 				}
 			},
@@ -355,13 +343,7 @@
 				"config": {
 					"label": "Land",
 					"placeholder": "Land wählen",
-					"options": [
-						"Schweiz",
-						"Deutschland",
-						"Österreich",
-						"Liechtenstein",
-						"Sonstiges"
-					],
+					"options": ["Schweiz", "Deutschland", "Österreich", "Liechtenstein", "Sonstiges"],
 					"default_value": "Schweiz"
 				}
 			},

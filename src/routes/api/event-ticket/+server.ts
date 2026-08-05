@@ -14,7 +14,8 @@ export async function GET({ url, fetch }) {
 		try {
 			const client = createClient({ fetch });
 			const doc = await client.getByUID('event', uid);
-			maxParticipants = (doc.data as Record<string, unknown>).max_participants as number | null ?? null;
+			maxParticipants =
+				((doc.data as Record<string, unknown>).max_participants as number | null) ?? null;
 		} catch {
 			// Event nicht gefunden – kein max bekannt
 		}
