@@ -27,7 +27,24 @@ export async function load({ url, parent, fetch, cookies }) {
 			(eventDoc?.data as any)?.checkout_title?.trim() ||
 			(eventDoc?.data as any)?.title?.trim() ||
 			'Anmeldung';
+		return {
+			dienstleistung,
+			extraFields,
+			pageTitle,
+			eventCheckout,
+			showFirmaField: (eventDoc?.data as any)?.show_company_field === true,
+			showAddressFields: (eventDoc?.data as any)?.show_address_fields === true,
+			showCommentField: (eventDoc?.data as any)?.show_comment_field === true
+		};
 	}
 
-	return { dienstleistung, extraFields, pageTitle, eventCheckout };
+	return {
+		dienstleistung,
+		extraFields,
+		pageTitle,
+		eventCheckout,
+		showFirmaField: true,
+		showAddressFields: true,
+		showCommentField: true
+	};
 }

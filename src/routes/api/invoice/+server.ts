@@ -13,6 +13,10 @@ interface InvoiceRequest {
 	serviceKey: string;
 	selectedCurrency?: string;
 	discountCode?: string;
+	isEventCheckout?: boolean;
+	eventPrice?: number | null;
+	eventLabel?: string;
+	eventManagerEmail?: string | null;
 }
 
 interface EmailTemplate {
@@ -533,12 +537,29 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { data, labels, serviceKey, selectedCurrency, discountCode } = body;
+	const {
+		data,
+		labels,
+		serviceKey,
+		selectedCurrency,
+		discountCode,
+		isEventCheckout,
+		eventPrice,
+		eventLabel,
+		eventManagerEmail
+	} = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
 	// Firmendaten + Produktdaten laden
 	const co = await fetchCompanyInfo(fetch);
-	const product = await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+	const product = isEventCheckout
+		? {
+				label: eventLabel || serviceKey,
+				price: eventPrice ?? null,
+				billingType: 'Einmalig' as const,
+				addons: []
+			}
+		: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
 
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
@@ -635,7 +656,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					unitPrice: invoicePrice ?? 0
 				}
 			],
-			notes: codeDiscountInfo ? `Rabatt-Code: ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)` : '',
+			notes: codeDiscountInfo
+				? `Rabatt-Code: ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)`
+				: '',
 			emailSentAt: null,
 			currency: invoiceCurrency
 		});
@@ -666,8 +689,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				const nachname = data['nachname']?.trim().toLowerCase();
 				if (vorname && nachname) {
 					const existingCustomer = existingCustomers.find(
-						(c) =>
-							c.vorname?.toLowerCase() === vorname && c.nachname?.toLowerCase() === nachname
+						(c) => c.vorname?.toLowerCase() === vorname && c.nachname?.toLowerCase() === nachname
 					);
 					if (existingCustomer) {
 						console.log(`Kunde ${vorname} ${nachname} existiert bereits.`);
@@ -700,12 +722,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;
 	const fromEmail = env.INVOICE_FROM_EMAIL;
-	const businessEmail = co.email; // Aus CMS-Settings
+	const businessEmail = isEventCheckout && eventManagerEmail ? eventManagerEmail : co.email;
 
 	if (!resendKey || !fromEmail) {
-		console.error(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL)'
-		);
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL)');
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 

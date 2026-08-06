@@ -78,9 +78,13 @@ export async function load({ fetch, url, parent }) {
 				barLabel: (d.payment_bar_label as string)?.trim() || null,
 				barDescription: (d.payment_bar_description as string)?.trim() || null
 			};
+			const priceRange = (d.ticket_price_chf_range as number) ?? null;
+			const additionalCostChf = (d.additional_costs_chf as number) ?? null;
+			const additionalCostLabel = (d.additional_costs_label as string)?.trim() || null;
+			const eventManagerEmail = (d.event_manager_email as string)?.trim() || null;
 			return {
 				product: {
-					label: (d.title as Array<{ text: string }>)?.[0]?.text ?? serviceUid,
+					label: (d.title as string) || serviceUid,
 					price: basePrice,
 					displayAmount,
 					stripeUrl: null,
@@ -95,7 +99,11 @@ export async function load({ fetch, url, parent }) {
 				paymentMethods: eventPaymentMethods,
 				eventTexts,
 				isEventCheckout: true,
-				eventUid: serviceUid
+				eventUid: serviceUid,
+				priceRange,
+				additionalCostChf,
+				additionalCostLabel,
+				eventManagerEmail
 			};
 		}
 

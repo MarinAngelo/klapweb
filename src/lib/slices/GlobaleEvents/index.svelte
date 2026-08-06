@@ -40,9 +40,16 @@
 
 	$: priceDisplay = (() => {
 		if (!parentEvent?.ticket_price_chf) return null;
-		if (displayCurrency === 'EUR' && eurRate !== null)
-			return formatPrice(Math.ceil(parentEvent.ticket_price_chf * eurRate), 'EUR');
-		return formatPriceChf(parentEvent.ticket_price_chf);
+		if (displayCurrency === 'EUR' && eurRate !== null) {
+			const from = formatPrice(Math.ceil(parentEvent.ticket_price_chf * eurRate), 'EUR');
+			if (parentEvent.ticket_price_chf_range)
+				return `${from} – ${formatPrice(Math.ceil(parentEvent.ticket_price_chf_range * eurRate), 'EUR')}`;
+			return from;
+		}
+		const from = formatPriceChf(parentEvent.ticket_price_chf);
+		if (parentEvent.ticket_price_chf_range)
+			return `${from} – ${formatPriceChf(parentEvent.ticket_price_chf_range)}`;
+		return from;
 	})();
 
 	function openModal(ev?: Record<string, any>) {
@@ -516,37 +523,47 @@
 			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
 			<!-- Preis -->
-			{#if parentEvent.is_free || parentEvent.price_text?.length || parentEvent.ticket_price_chf}
-				<div class="flex flex-wrap items-center gap-2">
-					{#if parentEvent.is_free}
-						<span class="font-medium">{$_('Kostenlos')}</span>
-					{:else if parentEvent.ticket_price_chf}
-						{#if parentEvent.ticket_price_label}<span class="opacity-60"
-								>{parentEvent.ticket_price_label}:</span
-							>{/if}
-						<span class="font-medium"
-							>{priceDisplay}{#if parentEvent.payment_rechnung_enabled !== false || parentEvent.payment_bar_enabled !== false},&nbsp;<span
-									class="font-normal opacity-60"
-									>{[
-										parentEvent.payment_rechnung_enabled !== false
-											? parentEvent.payment_rechnung_label || $_('Gegen Rechnung')
-											: null,
-										parentEvent.payment_bar_enabled !== false
-											? parentEvent.payment_bar_label || $_('Gegen Bar')
-											: null
-									]
-										.filter(Boolean)
-										.join(', ')}</span
-								>{/if}</span
-						>
-						{#if parentEvent.price_show_eur && eurRate !== null}
-							{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
-									>{parentEvent.price_eur_label}</span
+			{#if parentEvent.is_free || parentEvent.price_text?.length || parentEvent.ticket_price_chf || parentEvent.additional_costs_chf}
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						{#if parentEvent.is_free}
+							<span class="font-medium">{$_('Kostenlos')}</span>
+						{:else if parentEvent.ticket_price_chf}
+							{#if parentEvent.ticket_price_label}<span class="opacity-60"
+									>{parentEvent.ticket_price_label}:</span
 								>{/if}
-							<SelectField bind:value={displayCurrency} options={['CHF', 'EUR']} />
+							<span class="font-medium"
+								>{priceDisplay}{#if parentEvent.payment_rechnung_enabled !== false || parentEvent.payment_bar_enabled !== false},&nbsp;<span
+										class="font-normal opacity-60"
+										>{[
+											parentEvent.payment_rechnung_enabled !== false
+												? parentEvent.payment_rechnung_label || $_('Gegen Rechnung')
+												: null,
+											parentEvent.payment_bar_enabled !== false
+												? parentEvent.payment_bar_label || $_('Gegen Bar')
+												: null
+										]
+											.filter(Boolean)
+											.join(', ')}</span
+									>{/if}</span
+							>
+							{#if parentEvent.price_show_eur && eurRate !== null}
+								{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
+										>{parentEvent.price_eur_label}</span
+									>{/if}
+								<SelectField bind:value={displayCurrency} options={['CHF', 'EUR']} />
+							{/if}
+						{:else if parentEvent.price_text?.length}
+							<PrismicRichText field={parentEvent.price_text} />
 						{/if}
-					{:else if parentEvent.price_text?.length}
-						<PrismicRichText field={parentEvent.price_text} />
+					</div>
+					{#if parentEvent.additional_costs_chf}
+						<div class="flex flex-wrap items-center gap-2">
+							{#if parentEvent.additional_costs_label}<span class="opacity-60"
+									>{parentEvent.additional_costs_label}:</span
+								>{/if}
+							<span class="font-medium">{formatPriceChf(parentEvent.additional_costs_chf)}</span>
+						</div>
 					{/if}
 					{#if parentEvent.registration_required}
 						<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>

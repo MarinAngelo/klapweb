@@ -34,6 +34,10 @@
 		} | null;
 		isEventCheckout: boolean;
 		eventUid: string;
+		priceRange?: number | null;
+		additionalCostChf?: number | null;
+		additionalCostLabel?: string | null;
+		eventManagerEmail?: string | null;
 	};
 
 	interface CheckoutData {
@@ -52,6 +56,12 @@
 	let isLoading = false;
 	let orderError: string | null = null;
 	let selectedCurrency: string = data.baseCurrency;
+	// User-defined price for range-priced events
+	let customEventPrice: number = data.priceRange ?? data.product?.price ?? 0;
+	const minEventPrice = data.product?.price ?? 0;
+	function clampEventPrice() {
+		if (customEventPrice < minEventPrice) customEventPrice = minEventPrice;
+	}
 
 	// Discount code
 	let discountCodeInput = '';
@@ -123,7 +133,14 @@
 
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
 	$: displayLabel = data.product?.label ?? serviceKey;
-	$: baseDisplayPrice = data.product?.displayAmount ?? null;
+	$: baseDisplayPrice = data.priceRange ? customEventPrice : (data.product?.displayAmount ?? null);
+	// Additional costs converted to selected currency
+	$: additionalCostDisplay = (() => {
+		if (!data.additionalCostChf) return null;
+		if (selectedCurrency === data.baseCurrency) return data.additionalCostChf;
+		const rate = data.rates[selectedCurrency];
+		return rate ? Math.round(data.additionalCostChf * rate * 100) / 100 : data.additionalCostChf;
+	})();
 
 	// Convert base price to selected currency using pre-fetched rates
 	$: displayPrice = (() => {
@@ -171,7 +188,7 @@
 	$: grandTotal = (() => {
 		if (effectiveDisplayPrice === null) return null;
 		const addonSum = addonDisplayPrices.reduce((s, p) => s + (p ?? 0), 0);
-		return effectiveDisplayPrice + addonSum;
+		return effectiveDisplayPrice + addonSum + (additionalCostDisplay ?? 0);
 	})();
 
 	$: stripeUrl =
@@ -218,7 +235,13 @@
 						labels: checkoutData.labels,
 						serviceKey,
 						selectedCurrency,
-						discountCode: appliedCode || undefined
+						discountCode: appliedCode || undefined,
+						...(data.isEventCheckout && {
+							isEventCheckout: true,
+							eventPrice: grandTotal,
+							eventLabel: displayLabel,
+							eventManagerEmail: data.eventManagerEmail ?? null
+						})
 					})
 				});
 				if (!resp.ok) {
@@ -265,7 +288,12 @@
 					adresse: checkoutData.data['adresse'],
 					plz: checkoutData.data['plz'],
 					ort: checkoutData.data['ort'],
-					land: checkoutData.data['land']
+					land: checkoutData.data['land'],
+					...(data.isEventCheckout && {
+						isEventCheckout: true,
+						eventManagerEmail: data.eventManagerEmail ?? null,
+						labels: checkoutData.labels
+					})
 				})
 			}).catch(() => {});
 
@@ -400,6 +428,25 @@
 				<p class="text-lg font-semibold mt-2">
 					{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
 				</p>
+				{#if data.priceRange && data.product?.price != null}
+					<div class="mt-3 pt-3 border-t" style="border-color: {borderColor};">
+						<label class="block text-sm opacity-60 mb-1" for="custom-event-price"
+							>{t('Preis', lang)} ({data.baseCurrency}
+							{data.product.price} – {data.priceRange})</label
+						>
+						<input
+							id="custom-event-price"
+							type="number"
+							min={data.product.price}
+							max={data.priceRange}
+							step="1"
+							bind:value={customEventPrice}
+							on:change={clampEventPrice}
+							class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 w-32"
+							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+						/>
+					</div>
+				{/if}
 				{#if effectiveDisplayPrice !== null}
 					<div class="flex justify-between mt-3 pt-3 border-t" style="border-color: {borderColor};">
 						<span class="opacity-60">{data.eventTexts?.priceLabel ?? t('Preis', lang)}</span>
@@ -440,6 +487,22 @@
 			{/if}
 
 			{#if effectiveDisplayPrice !== null}
+				{#if additionalCostDisplay}
+					<div
+						class="flex justify-between mt-2 pt-2 border-t"
+						style="border-color: {borderColor}44;"
+					>
+						<span class="opacity-60">{data.additionalCostLabel ?? t('Zusatzkosten', lang)}</span>
+						<span class="tabular-nums">{formatPrice(additionalCostDisplay, selectedCurrency)}</span>
+					</div>
+					<div
+						class="flex justify-between mt-2 pt-2 border-t font-semibold"
+						style="border-color: {borderColor};"
+					>
+						<span>{t('Total', lang)}</span>
+						<span class="tabular-nums">{formatPrice(grandTotal, selectedCurrency)}</span>
+					</div>
+				{/if}
 				<p class="text-sm opacity-60 mt-2">{t('exkl. MwSt.', lang)}</p>
 
 				<!-- Currency selector -->
@@ -473,13 +536,13 @@
 							</button>
 						</div>
 					{:else}
-						<div class="flex items-center gap-2">
+						<div class="flex items-end gap-2">
 							<input
 								type="text"
 								bind:value={discountCodeInput}
 								placeholder={t('Rabatt-Code', lang)}
-								class="text-sm px-2 py-1 border"
-								style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44; width: 160px;"
+								class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm"
+								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color); width: 160px;"
 								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
 							/>
 							<button
