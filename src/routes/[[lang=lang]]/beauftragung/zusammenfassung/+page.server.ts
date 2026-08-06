@@ -51,7 +51,9 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			barDescription: null,
+			eventTexts: null
 		};
 	try {
 		const client = createClient({ fetch });
@@ -61,6 +63,21 @@ export async function load({ fetch, url, parent }) {
 			const d = eventDoc.data as Record<string, unknown>;
 			const basePrice = (d.ticket_price_chf as number) ?? null;
 			const displayAmount = calcDisplayPrice(basePrice, null, null);
+			const eventPaymentMethods = {
+				stripe: false,
+				rechnung: (d.payment_rechnung_enabled as boolean) !== false,
+				bar: (d.payment_bar_enabled as boolean) !== false
+			};
+			const eventTexts = {
+				summaryTitle: (d.checkout_summary_title as string)?.trim() || null,
+				orderLabel: (d.checkout_order_label as string)?.trim() || null,
+				priceLabel: (d.checkout_price_label as string)?.trim() || null,
+				checkoutButtonText: (d.checkout_button_text as string)?.trim() || null,
+				rechnungLabel: (d.payment_rechnung_label as string)?.trim() || null,
+				rechnungDescription: (d.payment_rechnung_description as string)?.trim() || null,
+				barLabel: (d.payment_bar_label as string)?.trim() || null,
+				barDescription: (d.payment_bar_description as string)?.trim() || null
+			};
 			return {
 				product: {
 					label: (d.title as Array<{ text: string }>)?.[0]?.text ?? serviceUid,
@@ -70,12 +87,13 @@ export async function load({ fetch, url, parent }) {
 					billingType: 'Einmalig',
 					addons: []
 				} satisfies ProductData,
-				pageTitle,
-				checkoutButtonText,
+				pageTitle: eventTexts.summaryTitle || pageTitle,
+				checkoutButtonText: eventTexts.checkoutButtonText || checkoutButtonText,
 				baseCurrency,
 				additionalCodes,
 				rates,
-				paymentMethods,
+				paymentMethods: eventPaymentMethods,
+				eventTexts,
 				isEventCheckout: true,
 				eventUid: serviceUid
 			};
@@ -133,6 +151,8 @@ export async function load({ fetch, url, parent }) {
 			additionalCodes,
 			rates,
 			paymentMethods,
+			barDescription: null,
+			eventTexts: null,
 			isEventCheckout: false,
 			eventUid: ''
 		};
@@ -146,6 +166,8 @@ export async function load({ fetch, url, parent }) {
 			additionalCodes,
 			rates,
 			paymentMethods,
+			barDescription: null,
+			eventTexts: null,
 			isEventCheckout: false,
 			eventUid: ''
 		};

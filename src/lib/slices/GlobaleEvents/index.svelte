@@ -7,14 +7,17 @@
 
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
+	import { theme } from '$lib/stores/theme';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { convertNumber } from '$lib/utils/convertNumber';
 	import { formatEventDateTime, formatEventDateRange } from '$lib/utils/formatDate';
+	import { formatPrice, formatPriceChf } from '$lib/pricing';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import GoogleMap from '$lib/components/GoogleMap.svelte';
+	import SelectField from '$lib/components/SelectField.svelte';
 
 	export let slice: any;
 	const p = slice.primary ?? ({} as any);
@@ -32,6 +35,15 @@
 		ticketCount !== null && ticketMax !== null && ticketMax > 0 && ticketCount >= ticketMax;
 	let showRegistrationModal = false;
 	let selectedEvent: Record<string, any> | null = null;
+	let eurRate: number | null = null;
+	let displayCurrency = 'CHF';
+
+	$: priceDisplay = (() => {
+		if (!parentEvent?.ticket_price_chf) return null;
+		if (displayCurrency === 'EUR' && eurRate !== null)
+			return formatPrice(Math.ceil(parentEvent.ticket_price_chf * eurRate), 'EUR');
+		return formatPriceChf(parentEvent.ticket_price_chf);
+	})();
 
 	function openModal(ev?: Record<string, any>) {
 		selectedEvent = ev ?? null;
@@ -178,6 +190,16 @@
 				parentEventUid = parentDoc.uid ?? '';
 				seriesName = parent.series_name || parent.title || '';
 
+				// EUR-Kurs vorladen wenn aktiviert
+				if (parent.price_show_eur && parent.ticket_price_chf) {
+					fetch('https://open.er-api.com/v6/latest/CHF')
+						.then((r) => r.json())
+						.then((d) => {
+							eurRate = d.rates?.EUR ?? null;
+						})
+						.catch(() => {});
+				}
+
 				// Ticket-Count laden wenn Checkout-Flow aktiv
 				if (parentDoc.uid && parent.use_checkout_flow) {
 					fetch(`/api/event-ticket?uid=${encodeURIComponent(parentDoc.uid)}`)
@@ -241,7 +263,6 @@
 	animationOptions={anim.options}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
-	class="overflow-x-clip"
 >
 	{#if loading}
 		<div class="flex items-center justify-center py-10">
@@ -252,8 +273,11 @@
 	{:else if parentEvent}
 		<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
 		{#if isFilled.image(parentEvent.image)}
-			<div class="aspect-[16/7] overflow-hidden -mx-6" style="width: calc(100% + 3rem)">
-				<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
+			<!-- overflow-x-hidden hier statt am Bounded-Parent, damit native selects korrekt positioniert werden -->
+			<div class="overflow-x-hidden">
+				<div class="aspect-[16/7] overflow-hidden -mx-6" style="width: calc(100% + 3rem)">
+					<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
+				</div>
 			</div>
 		{/if}
 
@@ -496,8 +520,31 @@
 				<div class="flex flex-wrap items-center gap-2">
 					{#if parentEvent.is_free}
 						<span class="font-medium">{$_('Kostenlos')}</span>
-					{:else if parentEvent.use_checkout_flow && parentEvent.ticket_price_chf}
-						<span class="font-medium">CHF {parentEvent.ticket_price_chf}</span>
+					{:else if parentEvent.ticket_price_chf}
+						{#if parentEvent.ticket_price_label}<span class="opacity-60"
+								>{parentEvent.ticket_price_label}:</span
+							>{/if}
+						<span class="font-medium"
+							>{priceDisplay}{#if parentEvent.payment_rechnung_enabled !== false || parentEvent.payment_bar_enabled !== false},&nbsp;<span
+									class="font-normal opacity-60"
+									>{[
+										parentEvent.payment_rechnung_enabled !== false
+											? parentEvent.payment_rechnung_label || $_('Gegen Rechnung')
+											: null,
+										parentEvent.payment_bar_enabled !== false
+											? parentEvent.payment_bar_label || $_('Gegen Bar')
+											: null
+									]
+										.filter(Boolean)
+										.join(', ')}</span
+								>{/if}</span
+						>
+						{#if parentEvent.price_show_eur && eurRate !== null}
+							{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
+									>{parentEvent.price_eur_label}</span
+								>{/if}
+							<SelectField bind:value={displayCurrency} options={['CHF', 'EUR']} />
+						{/if}
 					{:else if parentEvent.price_text?.length}
 						<PrismicRichText field={parentEvent.price_text} />
 					{/if}

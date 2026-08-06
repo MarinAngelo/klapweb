@@ -30,6 +30,7 @@
 - **Fontgrößen**: Mapping über `getFontSize()` (deutsche Labels → px)
 - **Komponentenstruktur**: Subfolder für thematische Gruppierung (z.B. `legal/`, `PrismicRichText/`)
 - **Utils**: Hilfsfunktionen in `src/lib/utils/` (z.B. `color.ts`, `addMarginIfLastIsHeading.ts`)
+- **UI-Elemente (Input, Select, Textarea)**: Immer zuerst `src/lib/components/InputField.svelte` als Referenz lesen — kein eigenes Styling erfinden. Select/Input korrekt: `border-b` (nicht `border`!), `background-color: var(--page-bg-color)`, `color: var(--page-color)`, `border-bottom-color: var(--page-color)`. Optionen: `background-color: {shadeColor($theme.pageBgColor, -30)}`. Vor jeder Implementierung existierende Verwendungen im Projekt per grep suchen.
 
 ## Beispiele & Patterns
 
