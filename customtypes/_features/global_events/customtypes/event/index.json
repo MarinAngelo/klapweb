@@ -585,11 +585,145 @@
 					"placeholder": "z.B. 25"
 				}
 			},
+			"ticket_price_label": {
+				"type": "Text",
+				"config": {
+					"label": "Preis-Label",
+					"placeholder": "z.B. Preis"
+				}
+			},
+			"price_show_eur": {
+				"type": "Boolean",
+				"config": {
+					"label": "EUR-Umrechnung anbieten",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"price_eur_label": {
+				"type": "Text",
+				"config": {
+					"label": "EUR-Dropdown Label",
+					"placeholder": "z.B. Bezahlung in weiterer Währung möglich"
+				}
+			},
 			"ticket_button_label": {
 				"type": "Text",
 				"config": {
 					"label": "Button-Beschriftung",
 					"placeholder": "Ticket"
+				}
+			},
+			"checkout_title": {
+				"type": "Text",
+				"config": {
+					"label": "Titel der Bestellseite",
+					"placeholder": "z.B. Anmeldung"
+				}
+			},
+			"checkout_summary_title": {
+				"type": "Text",
+				"config": {
+					"label": "Titel der Übersichtsseite",
+					"placeholder": "z.B. Anmeldungsübersicht"
+				}
+			},
+			"checkout_order_label": {
+				"type": "Text",
+				"config": {
+					"label": "Label \"Ihre Bestellung\"",
+					"placeholder": "z.B. Ihre Anmeldung"
+				}
+			},
+			"checkout_price_label": {
+				"type": "Text",
+				"config": {
+					"label": "Label \"Preis\"",
+					"placeholder": "z.B. Kursbeitrag"
+				}
+			},
+			"checkout_button_text": {
+				"type": "Text",
+				"config": {
+					"label": "Button-Text (Abschluss)",
+					"placeholder": "z.B. Verbindlich anmelden"
+				}
+			},
+			"payment_rechnung_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Zahlung per Rechnung",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": true
+				}
+			},
+			"payment_rechnung_label": {
+				"type": "Text",
+				"config": {
+					"label": "Rechnung: Label",
+					"placeholder": "z.B. Gegen Rechnung"
+				}
+			},
+			"payment_rechnung_description": {
+				"type": "Text",
+				"config": {
+					"label": "Rechnung: Beschreibungstext",
+					"placeholder": "z.B. Sie erhalten eine PDF-Rechnung per E-Mail."
+				}
+			},
+			"payment_bar_enabled": {
+				"type": "Boolean",
+				"config": {
+					"label": "Barzahlung",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": true
+				}
+			},
+			"payment_bar_label": {
+				"type": "Text",
+				"config": {
+					"label": "Bar: Label",
+					"placeholder": "z.B. Gegen Bar"
+				}
+			},
+			"payment_bar_description": {
+				"type": "Text",
+				"config": {
+					"label": "Barzahlung Beschreibungstext",
+					"placeholder": "Wir melden uns zur Terminvereinbarung."
+				}
+			},
+			"confirmation_heading": {
+				"type": "Text",
+				"config": {
+					"label": "Bestätigung: Überschrift",
+					"placeholder": "Vielen Dank für Ihre Anmeldung!"
+				}
+			},
+			"confirmation_intro": {
+				"type": "Text",
+				"config": {
+					"label": "Bestätigung: Intro-Text",
+					"placeholder": "Ihre Anmeldung ist bei uns eingegangen."
+				}
+			},
+			"confirmation_text_rechnung": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Bestätigung: Text (Rechnung)",
+					"allowTargetBlank": true,
+					"multi": "paragraph,strong,em,hyperlink,list-item"
+				}
+			},
+			"confirmation_text_bar": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Bestätigung: Text (Bar)",
+					"allowTargetBlank": true,
+					"multi": "paragraph,strong,em,hyperlink,list-item"
 				}
 			}
 		},

@@ -11,6 +11,8 @@
 
 	export let data: {
 		confirmationTexts: { stripe: unknown; rechnung: unknown; bar: unknown };
+		confirmationHeading: string | null;
+		confirmationIntro: string | null;
 	};
 
 	$: isSimulated = $page.url.searchParams.get('simulated') === 'true';
@@ -32,13 +34,14 @@
 </svelte:head>
 
 <Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
-
 	{#if isSimulated}
 		<div class="mb-8 px-4 py-3 border border-yellow-500 text-yellow-600 text-sm">
 			<strong>DEV-Simulation:</strong> Zahlungsart: <code>{method}</code>
 			{#if method === 'stripe'}
 				— In Production würde der User nach erfolgter Stripe-Zahlung hier landen.
-				<code class="block mt-1">/beauftragung/bestaetigung?session_id=&#123;CHECKOUT_SESSION_ID&#125;</code>
+				<code class="block mt-1"
+					>/beauftragung/bestaetigung?session_id=&#123;CHECKOUT_SESSION_ID&#125;</code
+				>
 			{:else if method === 'rechnung'}
 				— In Production wird die PDF-Rechnung per E-Mail verschickt (Resend).
 			{:else if method === 'bar'}
@@ -47,10 +50,16 @@
 		</div>
 	{/if}
 
-	<Heading tag="h1">{t('Vielen Dank für Ihre Bestellung!', lang)}</Heading>
+	<Heading tag="h1"
+		>{data.confirmationHeading ?? t('Vielen Dank für Ihre Bestellung!', lang)}</Heading
+	>
 
 	<p class="text-lg mb-6">
-		Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
+		{#if data.confirmationIntro}
+			{data.confirmationIntro}
+		{:else}
+			Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
+		{/if}
 	</p>
 
 	<div class="mb-8 p-6 border" style="border-color: {borderColor};">
@@ -64,14 +73,24 @@
 			</p>
 		{:else if method === 'bar'}
 			<p class="font-semibold mb-2">{t('Zahlung gegen Bar', lang)}</p>
-			<p>{t('Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.', lang)}</p>
-			<p class="mt-2 opacity-70 text-sm">{t('Die Zahlung erfolgt bei persönlicher Übergabe.', lang)}</p>
+			<p>
+				{t(
+					'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.',
+					lang
+				)}
+			</p>
+			<p class="mt-2 opacity-70 text-sm">
+				{t('Die Zahlung erfolgt bei persönlicher Übergabe.', lang)}
+			</p>
 		{:else}
 			<p>{t('Sie erhalten in Kürze eine Bestätigungs-E-Mail.', lang)}</p>
-			<p class="mt-2 opacity-70 text-sm">{t('Bei Fragen stehen wir Ihnen gerne zur Verfügung.', lang)}</p>
+			<p class="mt-2 opacity-70 text-sm">
+				{t('Bei Fragen stehen wir Ihnen gerne zur Verfügung.', lang)}
+			</p>
 		{/if}
 	</div>
 
-	<a href="/" class="underline text-sm opacity-70 hover:opacity-100">{t('Zurück zur Startseite', lang)}</a>
-
+	<a href="/" class="underline text-sm opacity-70 hover:opacity-100"
+		>{t('Zurück zur Startseite', lang)}</a
+	>
 </Bounded>

@@ -246,16 +246,20 @@
 		const pd = $page.data?.page?.data ?? {};
 		const overrideBg: string | null = pd.page_bg_color ?? null;
 		const overrideColor: string | null = pd.page_color ?? null;
-		if (overrideBg || overrideColor) {
+		const overrideLinkColor: string | null = pd.page_link_color ?? null;
+		if (overrideBg || overrideColor || overrideLinkColor) {
 			theme.update((t) => ({
 				...t,
 				...(overrideBg ? { pageBgColor: overrideBg } : {}),
-				...(overrideColor ? { pageColor: overrideColor } : {})
+				...(overrideColor ? { pageColor: overrideColor } : {}),
+				...(overrideLinkColor ? { pageLinkColor: overrideLinkColor } : {})
 			}));
 			if (typeof document !== 'undefined') {
 				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
 				if (overrideColor)
 					document.documentElement.style.setProperty('--page-color', overrideColor);
+				if (overrideLinkColor)
+					document.documentElement.style.setProperty('--page-link-color', overrideLinkColor);
 			}
 		} else {
 			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
@@ -264,6 +268,7 @@
 			if (typeof document !== 'undefined') {
 				document.documentElement.style.removeProperty('--page-color');
 				document.documentElement.style.removeProperty('--page-bg-color');
+				document.documentElement.style.removeProperty('--page-link-color');
 			}
 			updateTheme(data);
 		}
@@ -435,6 +440,7 @@
 	<main
 		id="main-content"
 		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
+		class={isLandingPage ? 'pb-24' : ''}
 	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded

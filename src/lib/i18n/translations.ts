@@ -683,6 +683,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Weiter zur Übersicht',
 		'en-us': 'Continue to summary'
 	},
+	Preis: {
+		'de-ch': 'Preis',
+		'en-us': 'Price'
+	},
 	'Preis wird bei Rückfrage mitgeteilt.': {
 		'de-ch': 'Preis wird bei Rückfrage mitgeteilt.',
 		'en-us': 'Price will be communicated upon request.'

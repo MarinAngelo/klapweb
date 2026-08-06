@@ -1,6 +1,8 @@
+import { createClient } from '$lib/prismicio';
+
 export const prerender = false;
 
-export async function load({ url, parent }) {
+export async function load({ url, parent, fetch, cookies }) {
 	const { settings } = await parent();
 	const dienstleistung = url.searchParams.get('dienstleistung') ?? '';
 	const eventCheckout = url.searchParams.get('event_checkout') === 'true';
@@ -16,7 +18,16 @@ export async function load({ url, parent }) {
 		invalid_feedback_text?: string | null;
 	}> = formSlice?.primary?.form_fields ?? [];
 
-	const pageTitle: string = (settings.data as any).beauftragung_title?.trim() || '';
+	let pageTitle: string = (settings.data as any).beauftragung_title?.trim() || '';
+
+	if (eventCheckout && dienstleistung) {
+		const client = createClient({ fetch, cookies });
+		const eventDoc = await client.getByUID('event', dienstleistung).catch(() => null);
+		pageTitle =
+			(eventDoc?.data as any)?.checkout_title?.trim() ||
+			(eventDoc?.data as any)?.title?.trim() ||
+			'Anmeldung';
+	}
 
 	return { dienstleistung, extraFields, pageTitle, eventCheckout };
 }
