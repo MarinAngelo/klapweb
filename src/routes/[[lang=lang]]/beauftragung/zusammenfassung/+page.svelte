@@ -695,13 +695,6 @@
 				hoverBgColor={undefined}
 				on:click={handleOrder}
 			/>
-			<button
-				type="button"
-				class="text-sm underline opacity-60 hover:opacity-100"
-				on:click={() => history.back()}
-			>
-				{t('Weiter zum Formular', lang)}
-			</button>
 		</div>
 	{/if}
 </Bounded>
