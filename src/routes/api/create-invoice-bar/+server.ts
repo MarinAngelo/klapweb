@@ -134,7 +134,7 @@ export const POST: RequestHandler = async ({ request }) => {
 							from: fromWithName,
 							to: email,
 							subject: `Anmeldebestätigung – ${service}`,
-							text: `Guten Tag ${customerName}\n\nVielen Dank für Ihre Anmeldung zu «${service}».\n\nBetrag: ${fmt(amount ?? 0)}\nZahlungsart: Barzahlung\n\nWir freuen uns auf Ihre Teilnahme!`
+							text: `Hallo ${customerName}\n\nVielen Dank für deine Anmeldung zu «${service}».\n\nBetrag: ${fmt(amount ?? 0)}\nZahlungsart: Barzahlung\n\nIch freue mich auf deine Teilnahme!`
 						});
 					}
 
