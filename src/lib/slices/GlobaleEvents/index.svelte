@@ -31,8 +31,7 @@
 	let loading = true;
 	let ticketCount: number | null = null;
 	let ticketMax: number | null = null;
-	$: isFullyBooked =
-		ticketCount !== null && ticketMax !== null && ticketMax > 0 && ticketCount >= ticketMax;
+	let isFullyBooked = false;
 	let showRegistrationModal = false;
 	let selectedEvent: Record<string, any> | null = null;
 	let eurRate: number | null = null;
@@ -209,13 +208,29 @@
 
 				// Ticket-Count laden wenn Checkout-Flow aktiv
 				if (parentDoc.uid && parent.use_checkout_flow) {
-					fetch(`/api/event-ticket?uid=${encodeURIComponent(parentDoc.uid)}`)
+					const maxParam = parent.max_participants ? `&max=${parent.max_participants}` : '';
+					console.log('[GlobaleEvents] ticket fetch', {
+						uid: parentDoc.uid,
+						max: parent.max_participants
+					});
+					fetch(`/api/event-ticket?uid=${encodeURIComponent(parentDoc.uid)}${maxParam}`)
 						.then((r) => r.json())
-						.then((d: { count?: number; maxParticipants?: number | null }) => {
-							ticketCount = d.count ?? 0;
-							ticketMax = d.maxParticipants ?? null;
-						})
-						.catch(() => {});
+						.then(
+							(d: { count?: number; maxParticipants?: number | null; fullyBooked?: boolean }) => {
+								console.log('[GlobaleEvents] ticket response', d);
+								ticketCount = d.count ?? 0;
+								ticketMax = d.maxParticipants ?? null;
+								isFullyBooked = d.fullyBooked ?? false;
+							}
+						)
+						.catch((e) => {
+							console.error('[GlobaleEvents] ticket fetch error', e);
+						});
+				} else {
+					console.log('[GlobaleEvents] ticket fetch SKIPPED', {
+						uid: parentDoc.uid,
+						use_checkout_flow: parent.use_checkout_flow
+					});
 				}
 
 				// Kind-Events laden (enthalten Datum + Wiederholungsregeln)
@@ -326,14 +341,15 @@
 			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
 			<!-- Veranstalter & Kontakt -->
-			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein')}
-				{#if parentEvent.status && parentEvent.status !== 'Kein'}
+			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein') || isFullyBooked}
+				{#if isFullyBooked || (parentEvent.status && parentEvent.status !== 'Kein')}
 					<div class="flex items-center gap-2">
 						<span class="opacity-50 text-sm">{$_('Status')}:</span>
 						<span
 							class="px-2.5 py-1 rounded-full text-sm font-medium {statusColor[
-								parentEvent.status
-							] ?? 'bg-gray-100 text-gray-600'}">{$_(parentEvent.status)}</span
+								isFullyBooked ? 'Ausgebucht' : parentEvent.status
+							] ?? 'bg-gray-100 text-gray-600'}"
+							>{$_(isFullyBooked ? 'Ausgebucht' : parentEvent.status)}</span
 						>
 					</div>
 				{/if}
@@ -618,7 +634,12 @@
 							style="border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent)"
 						>
 							<!-- Status -->
-							{#if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
+							{#if isFullyBooked}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor['Ausgebucht']}"
+									>{$_('Ausgebucht')}</span
+								>
+							{:else if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
 								<span
 									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[ev.status] ??
 										'bg-gray-100 text-gray-600'}">{$_(ev.status)}</span
