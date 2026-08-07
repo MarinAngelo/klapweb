@@ -199,9 +199,11 @@
 	$: noChrome = $page.url.searchParams.get('no_chrome') === 'true';
 	$: noChromeParam = noChrome ? '&no_chrome=true' : '';
 	$: eventCheckoutParam = data.isEventCheckout ? '&event_checkout=true' : '';
+	$: returnUrlRaw = $page.url.searchParams.get('return_url');
+	$: returnUrlParam = returnUrlRaw ? `&return_url=${encodeURIComponent(returnUrlRaw)}` : '';
 
 	$: stripeTarget = import.meta.env.DEV
-		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}${noChromeParam}${eventCheckoutParam}`
+		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 		: stripeUrl;
 
 	$: buttonText = isLoading
@@ -260,7 +262,7 @@
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
-					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}`
+					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
@@ -300,11 +302,11 @@
 			}).catch(() => {});
 
 			// Dev-Modus: Netlify-POST überspringen
-			if (import.meta.env.DEV) {
+			if (import.meta.env.DEV || data.isEventCheckout) {
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
-					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}`
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 				);
 				return;
 			}
@@ -337,7 +339,7 @@
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
-					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}`
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);

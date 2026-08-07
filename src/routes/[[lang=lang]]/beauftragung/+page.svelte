@@ -382,8 +382,10 @@
 		const eventParam = data.eventCheckout ? '&event_checkout=true' : '';
 		const noChromeParam =
 			$page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
+		const returnUrl = $page.url.searchParams.get('return_url');
+		const returnUrlParam = returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : '';
 		goto(
-			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}`
+			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}${returnUrlParam}`
 		);
 	}
 

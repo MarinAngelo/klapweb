@@ -583,7 +583,7 @@
 					{:else}
 						<Button
 							link={{
-								url: `/beauftragung?dienstleistung=${encodeURIComponent(parentEventUid)}&event_checkout=true${$page.data?.page?.data?.landing_page ? '&no_chrome=true' : ''}`,
+								url: `/beauftragung?dienstleistung=${encodeURIComponent(parentEventUid)}&event_checkout=true${$page.data?.page?.data?.landing_page ? '&no_chrome=true' : ''}&return_url=${encodeURIComponent($page.url.pathname)}`,
 								link_type: 'Web'
 							}}
 							text={parentEvent.ticket_button_label || $_('Ticket')}

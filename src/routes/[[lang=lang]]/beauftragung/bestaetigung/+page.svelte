@@ -27,6 +27,9 @@
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
 	$: borderColor = get(theme).pageColor;
+
+	$: returnUrlRaw = $page.url.searchParams.get('return_url') ?? '';
+	$: backHref = returnUrlRaw.startsWith('/') ? returnUrlRaw : '/';
 </script>
 
 <svelte:head>
@@ -90,7 +93,7 @@
 		{/if}
 	</div>
 
-	<a href="/" class="underline text-sm opacity-70 hover:opacity-100"
+	<a href={backHref} class="underline text-sm opacity-70 hover:opacity-100"
 		>{t('Zurück zur Startseite', lang)}</a
 	>
 </Bounded>
