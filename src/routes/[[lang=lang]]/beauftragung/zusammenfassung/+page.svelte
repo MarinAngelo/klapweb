@@ -291,6 +291,8 @@
 					land: checkoutData.data['land'],
 					...(data.isEventCheckout && {
 						isEventCheckout: true,
+						eventUid: serviceKey,
+						eventLabel: displayLabel,
 						eventManagerEmail: data.eventManagerEmail ?? null,
 						labels: checkoutData.labels
 					})
@@ -541,7 +543,7 @@
 								type="text"
 								bind:value={discountCodeInput}
 								placeholder={t('Rabatt-Code', lang)}
-								class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm"
+								class="themed-input p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm"
 								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color); width: 160px;"
 								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
 							/>
@@ -701,3 +703,10 @@
 		</div>
 	{/if}
 </Bounded>
+
+<style>
+	.themed-input::placeholder {
+		color: var(--page-color);
+		opacity: 0.5;
+	}
+</style>

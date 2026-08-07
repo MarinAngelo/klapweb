@@ -34,6 +34,12 @@
 			description: 'Angenommene Aufgaben bestätigen und als erledigt markieren',
 			href: `/admin/aufgaben?secret=${s}`,
 			icon: '✅'
+		},
+		{
+			title: 'Event Anmeldungen',
+			description: 'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event',
+			href: `/admin/event-anmeldungen?secret=${s}`,
+			icon: '🎟️'
 		}
 	];
 </script>
@@ -55,7 +61,9 @@
 					<span style="font-size: 1.75rem; line-height: 1;">{section.icon}</span>
 					<div>
 						<div style="font-weight: 600; font-size: 1rem;">{section.title}</div>
-						<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem;">{section.description}</div>
+						<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem;">
+							{section.description}
+						</div>
 					</div>
 					<span style="margin-left: auto; color: #9ca3af; font-size: 1.25rem;">→</span>
 				</a>

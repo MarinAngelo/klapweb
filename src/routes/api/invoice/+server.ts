@@ -6,6 +6,7 @@ import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 import { saveCustomer, listCustomers } from '$lib/server/customers';
 import { saveManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import { saveEventRegistration } from '$lib/server/eventRegistrations';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -766,11 +767,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const { Resend } = await import('resend');
 		const resend = new Resend(resendKey);
+		const fromWithName = co.name ? `${co.name} <${fromEmail}>` : fromEmail;
 
 		// E-Mail an Kunden
 		if (customerEmail) {
 			const { error: custErr } = await resend.emails.send({
-				from: fromEmail,
+				from: fromWithName,
 				to: customerEmail,
 				subject: custSubject,
 				text: custText,
@@ -782,7 +784,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		// Benachrichtigung an Geschäft (optional, wenn in CMS gesetzt)
 		if (businessEmail) {
 			const { error: bizErr } = await resend.emails.send({
-				from: fromEmail,
+				from: fromWithName,
 				to: businessEmail,
 				subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
 				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
@@ -811,6 +813,26 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			});
 		} catch (e) {
 			console.error('Rechnung-Status konnte nicht aktualisiert werden:', e);
+		}
+	}
+
+	if (isEventCheckout) {
+		try {
+			await saveEventRegistration({
+				eventUid: serviceKey,
+				eventLabel: eventLabel || serviceKey,
+				date: new Date().toISOString(),
+				vorname: data['vorname'] ?? '',
+				nachname: data['nachname'] ?? '',
+				email: data['email'] ?? null,
+				firma: data['firma'] ?? null,
+				paymentMethod: 'rechnung',
+				amount: eventPrice ?? null,
+				currency: invoiceCurrency,
+				invoiceNumber
+			});
+		} catch (e) {
+			console.error('Event-Registrierung konnte nicht gespeichert werden:', e);
 		}
 	}
 

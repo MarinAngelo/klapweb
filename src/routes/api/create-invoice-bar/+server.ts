@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { saveManualInvoice } from '$lib/server/invoices';
 import { listCustomers, saveCustomer } from '$lib/server/customers';
+import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -23,6 +24,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			ort,
 			land,
 			isEventCheckout,
+			eventUid,
+			eventLabel,
 			eventManagerEmail,
 			labels
 		} = body;
@@ -90,12 +93,32 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// E-Mail für Event-Checkout
 		if (isEventCheckout) {
+			try {
+				await saveEventRegistration({
+					eventUid: eventUid ?? service ?? '',
+					eventLabel: eventLabel ?? service ?? '',
+					date: new Date().toISOString(),
+					vorname: vorname ?? '',
+					nachname: nachname ?? '',
+					email: email ?? null,
+					firma: firma ?? null,
+					paymentMethod: 'bar',
+					amount: amount ?? null,
+					currency: currency || 'CHF',
+					invoiceNumber
+				});
+			} catch (e) {
+				console.error('Event-Registrierung konnte nicht gespeichert werden:', e);
+			}
+
 			const resendKey = env.RESEND_API_KEY;
 			const fromEmail = env.INVOICE_FROM_EMAIL;
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');
 					const resend = new Resend(resendKey);
+					const fromName = env.INVOICE_FROM_NAME;
+					const fromWithName = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
 					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
 					const fmt = (n: number) =>
 						new Intl.NumberFormat('de-CH', {
@@ -108,7 +131,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					// Bestätigung an Teilnehmer/in
 					if (email) {
 						await resend.emails.send({
-							from: fromEmail,
+							from: fromWithName,
 							to: email,
 							subject: `Anmeldebestätigung – ${service}`,
 							text: `Guten Tag ${customerName}\n\nVielen Dank für Ihre Anmeldung zu «${service}».\n\nBetrag: ${fmt(amount ?? 0)}\nZahlungsart: Barzahlung\n\nWir freuen uns auf Ihre Teilnahme!`
@@ -125,7 +148,7 @@ export const POST: RequestHandler = async ({ request }) => {
 									.join('\n')
 							: `Name: ${customerName}\nE-Mail: ${email ?? '—'}`;
 						await resend.emails.send({
-							from: fromEmail,
+							from: fromWithName,
 							to: notifyEmail,
 							subject: `Neue Anmeldung (Bar): ${service} – ${invoiceNumber}`,
 							text: `Neue Bar-Anmeldung eingegangen.\n\nVeranstaltung: ${service}\nRechnungsnummer: ${invoiceNumber}\nBetrag: ${fmt(amount ?? 0)}\n\n${fieldLines}`
