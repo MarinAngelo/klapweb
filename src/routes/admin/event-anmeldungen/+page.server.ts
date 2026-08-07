@@ -47,5 +47,14 @@ export const actions: Actions = {
 		const id = form.get('id') as string;
 		if (id) await deleteEventRegistration(id);
 		return { ok: true };
+	},
+
+	deleteAll: async ({ url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+		const all = await listEventRegistrations();
+		await Promise.all(all.map((r) => deleteEventRegistration(r.id)));
+		return { ok: true };
 	}
 };

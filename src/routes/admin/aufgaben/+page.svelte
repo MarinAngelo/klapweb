@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
 	import { formatDateTimeShort } from '$lib/utils/formatDate';
 	export let data: PageData;
@@ -41,12 +42,39 @@
 <svelte:head><title>Aufgaben-Annahmen</title></svelte:head>
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1200px; margin: 0 auto;">
-	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 2rem;">
-		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;"
-			>← Dashboard</a
-		>
-		<h1 style="font-size: 1.5rem; font-weight: bold;">Aufgaben-Annahmen</h1>
+	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Aufgaben-Annahmen</h1>
 		<span style="font-size: 0.875rem; color: #6b7280;">{data.annahmen.length} Einträge</span>
+		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+			<Button
+				href="/admin/dashboard?secret={secret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={secret}"
+				on:submit={(e) => {
+					if (!confirm('Alle Aufgaben löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={secret} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	{#if data.blobError}

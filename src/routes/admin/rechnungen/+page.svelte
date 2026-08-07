@@ -4,6 +4,7 @@
 	import type { PageData, SubmitFunction } from './$types';
 	import { onMount } from 'svelte';
 	import { formatDateShort } from '$lib/utils/formatDate';
+	import Button from '$lib/components/Button.svelte';
 
 	export let data: PageData;
 
@@ -395,11 +396,37 @@
 
 <div class="container mx-auto p-6">
 	<div class="flex items-center gap-4 mb-6">
-		<a
-			href="/admin/dashboard?secret={adminSecret}"
-			class="text-sm text-gray-600 hover:text-gray-900">← Dashboard</a
-		>
 		<h1 class="text-3xl font-bold">Rechnungen</h1>
+		<div class="ml-auto flex items-center gap-2">
+			<Button
+				href="/admin/dashboard?secret={adminSecret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={adminSecret}"
+				on:submit={(e) => {
+					if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={adminSecret} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	<!-- Übersicht Rechnungen -->
@@ -475,12 +502,16 @@
 
 	<!-- Neue Rechnung erstellen -->
 	<div class="bg-white rounded-lg shadow p-6">
-		<button
+		<Button
+			text={isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
+			color="#ffffff"
+			bgColor="#2563eb"
+			hoverColor="#ffffff"
+			hoverBgColor="#1d4ed8"
+			size="sm"
+			mb={false}
 			on:click={() => (isFormOpen = !isFormOpen)}
-			class="bg-blue-600 text-white px-4 py-2 rounded mb-4 hover:bg-blue-700"
-		>
-			{isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
-		</button>
+		/>
 
 		{#if isFormOpen}
 			<form method="POST" action="?/preview" use:enhance={handlePreview} class="space-y-4">

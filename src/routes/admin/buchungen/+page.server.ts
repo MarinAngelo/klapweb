@@ -1,6 +1,12 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
-import { listBookings, deleteBooking, cancelSlot, uncancelSlot, listCancelled } from '$lib/server/bookings';
+import {
+	listBookings,
+	deleteBooking,
+	cancelSlot,
+	uncancelSlot,
+	listCancelled
+} from '$lib/server/bookings';
 import { expandDoc } from '$lib/server/terminSlots';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
@@ -25,9 +31,10 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	]);
 
 	const bookings = bookingsResult.status === 'fulfilled' ? bookingsResult.value : [];
-	const blobError = bookingsResult.status === 'rejected'
-		? String((bookingsResult as PromiseRejectedResult).reason)
-		: null;
+	const blobError =
+		bookingsResult.status === 'rejected'
+			? String((bookingsResult as PromiseRejectedResult).reason)
+			: null;
 
 	const allSlots = slotsResult.status === 'fulfilled' ? slotsResult.value : [];
 	const cancelledIds = new Set(cancelledResult.status === 'fulfilled' ? cancelledResult.value : []);
@@ -79,5 +86,14 @@ export const actions: Actions = {
 		if (typeof id === 'string' && id) {
 			await uncancelSlot(id);
 		}
+	},
+
+	deleteAll: async ({ url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+		const all = await listBookings();
+		await Promise.all(all.map((b) => deleteBooking(b.terminId)));
+		return { ok: true };
 	}
 };

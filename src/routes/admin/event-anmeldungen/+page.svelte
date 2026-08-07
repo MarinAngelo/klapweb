@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Button from '$lib/components/Button.svelte';
 	import type { EventRegistration } from '$lib/server/eventRegistrations';
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -61,6 +62,41 @@
 			minimumFractionDigits: 2
 		}).format(amount);
 	}
+
+	function downloadCsv(group: (typeof groups)[0]) {
+		const cols = [
+			'Datum',
+			'Vorname',
+			'Nachname',
+			'E-Mail',
+			'Betrag',
+			'Währung',
+			'Zahlungsart',
+			'Rechnungsnr.'
+		];
+		const esc = (v: string | null | undefined) => `"${(v ?? '').replace(/"/g, '""')}"`;
+		const rows = group.registrations.map((r) =>
+			[
+				fmtDate(r.date),
+				r.vorname,
+				r.nachname,
+				r.email ?? '',
+				r.amount?.toString() ?? '',
+				r.currency,
+				r.paymentMethod,
+				r.invoiceNumber ?? ''
+			]
+				.map(esc)
+				.join(';')
+		);
+		const csv = [cols.map(esc).join(';'), ...rows].join('\n');
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+		a.download = `${group.label}-${new Date().toISOString().slice(0, 10)}.csv`;
+		a.click();
+	}
+
+	let openDownloadMenu: string | null = null;
 </script>
 
 <svelte:head><title>Event Anmeldungen – Admin</title></svelte:head>
@@ -71,11 +107,37 @@
 	style="font-family: sans-serif; min-height: 100vh; background: #f9fafb;"
 >
 	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-		<a
-			href="/admin/dashboard?secret={s}"
-			style="color: #6b7280; text-decoration: none; font-size: 0.875rem;">← Dashboard</a
-		>
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Event Anmeldungen</h1>
+		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+			<Button
+				href="/admin/dashboard?secret={s}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={s}"
+				on:submit={(e) => {
+					if (!confirm('Alle Anmeldungen löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={s} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	{#if data.registrations.length === 0}
@@ -99,11 +161,48 @@
 							</span>
 						{/if}
 					</div>
-					<span style="font-size: 0.875rem; color: #374151;"
-						>{group.registrations.length} Anmeldung{group.registrations.length !== 1
-							? 'en'
-							: ''}</span
-					>
+					<div style="display: flex; align-items: center; gap: 0.75rem;">
+						<span style="font-size: 0.875rem; color: #374151;"
+							>{group.registrations.length} Anmeldung{group.registrations.length !== 1
+								? 'en'
+								: ''}</span
+						>
+						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<div style="position: relative;" on:mouseleave={() => (openDownloadMenu = null)}>
+							<Button
+								text="↓ Liste ▾"
+								color="#065f46"
+								bgColor="transparent"
+								hoverColor="#064e3b"
+								hoverBgColor="transparent"
+								size="sm"
+								mb={false}
+								on:click={() =>
+									(openDownloadMenu = openDownloadMenu === group.uid ? null : group.uid)}
+							/>
+							{#if openDownloadMenu === group.uid}
+								<div
+									style="position: absolute; right: 0; top: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 110px; z-index: 50;"
+								>
+									<button
+										on:click={() => {
+											downloadCsv(group);
+											openDownloadMenu = null;
+										}}
+										style="display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; font-size: 0.875rem; background: none; border: none; cursor: pointer; font-family: sans-serif;"
+										>CSV</button
+									>
+									<a
+										href="/admin/event-anmeldungen/download?secret={s}&uid={encodeURIComponent(
+											group.uid
+										)}"
+										style="display: block; padding: 0.5rem 1rem; font-size: 0.875rem; color: inherit; text-decoration: none;"
+										on:click={() => (openDownloadMenu = null)}>PDF</a
+									>
+								</div>
+							{/if}
+						</div>
+					</div>
 				</div>
 
 				<div style="overflow-x: auto;">
