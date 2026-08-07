@@ -82,6 +82,17 @@ export async function load({ fetch, url, parent }) {
 			const additionalCostChf = (d.additional_costs_chf as number) ?? null;
 			const additionalCostLabel = (d.additional_costs_label as string)?.trim() || null;
 			const eventManagerEmail = (d.event_manager_email as string)?.trim() || null;
+
+			// Wenn das Event EUR-Anzeige aktiviert hat, EUR zu additionalCodes + rates hinzufügen
+			const showEur = d.price_show_eur === true;
+			let eventAdditionalCodes = [...additionalCodes];
+			let eventRates = { ...rates };
+			if (showEur && !eventAdditionalCodes.includes('EUR')) {
+				eventAdditionalCodes = [...eventAdditionalCodes, 'EUR'];
+				const eurRates = await fetchExchangeRates(baseCurrency, ['EUR']);
+				if (eurRates['EUR']) eventRates['EUR'] = eurRates['EUR'];
+			}
+
 			return {
 				product: {
 					label: (d.title as string) || serviceUid,
@@ -94,8 +105,8 @@ export async function load({ fetch, url, parent }) {
 				pageTitle: eventTexts.summaryTitle || pageTitle,
 				checkoutButtonText: eventTexts.checkoutButtonText || checkoutButtonText,
 				baseCurrency,
-				additionalCodes,
-				rates,
+				additionalCodes: eventAdditionalCodes,
+				rates: eventRates,
 				paymentMethods: eventPaymentMethods,
 				eventTexts,
 				isEventCheckout: true,

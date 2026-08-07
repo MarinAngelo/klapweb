@@ -641,6 +641,10 @@
 								link_type: 'Web'
 							}}
 							text={parentEvent.ticket_button_label || $_('Ticket')}
+							on:click={() => {
+								if (displayCurrency !== 'CHF')
+									sessionStorage.setItem('preferredCurrency', displayCurrency);
+							}}
 						/>
 					{/if}
 				</div>
