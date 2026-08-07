@@ -32,6 +32,16 @@
 	let ticketCount: number | null = null;
 	let ticketMax: number | null = null;
 	let isFullyBooked = false;
+	$: deadlineExpired =
+		!isFullyBooked &&
+		!!parentEvent?.registration_deadline &&
+		new Date(parentEvent.registration_deadline) < new Date();
+	$: isConfirmed =
+		!isFullyBooked &&
+		!deadlineExpired &&
+		ticketCount !== null &&
+		(parentEvent?.min_participants ?? 0) > 0 &&
+		ticketCount >= parentEvent.min_participants;
 	let showRegistrationModal = false;
 	let selectedEvent: Record<string, any> | null = null;
 	let eurRate: number | null = null;
@@ -49,6 +59,13 @@
 		if (parentEvent.ticket_price_chf_range)
 			return `${from} – ${formatPriceChf(parentEvent.ticket_price_chf_range)}`;
 		return from;
+	})();
+
+	$: additionalCostsDisplay = (() => {
+		if (!parentEvent?.additional_costs_chf) return null;
+		if (displayCurrency === 'EUR' && eurRate !== null)
+			return formatPrice(Math.ceil(parentEvent.additional_costs_chf * eurRate), 'EUR');
+		return formatPriceChf(parentEvent.additional_costs_chf);
 	})();
 
 	function openModal(ev?: Record<string, any>) {
@@ -276,7 +293,8 @@
 		Bestätigt: 'bg-green-100 text-green-700',
 		Abgesagt: 'bg-red-100 text-red-700',
 		Verschoben: 'bg-yellow-100 text-yellow-700',
-		Ausgebucht: 'bg-orange-100 text-orange-700'
+		Ausgebucht: 'bg-orange-100 text-orange-700',
+		'Anmeldefrist abgelaufen': 'bg-yellow-100 text-yellow-700'
 	};
 </script>
 
@@ -341,15 +359,29 @@
 			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
 			<!-- Veranstalter & Kontakt -->
-			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein') || isFullyBooked}
-				{#if isFullyBooked || (parentEvent.status && parentEvent.status !== 'Kein')}
+			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein') || isFullyBooked || deadlineExpired || isConfirmed}
+				{#if isFullyBooked || deadlineExpired || isConfirmed || (parentEvent.status && parentEvent.status !== 'Kein')}
 					<div class="flex items-center gap-2">
 						<span class="opacity-50 text-sm">{$_('Status')}:</span>
 						<span
 							class="px-2.5 py-1 rounded-full text-sm font-medium {statusColor[
-								isFullyBooked ? 'Ausgebucht' : parentEvent.status
+								isFullyBooked
+									? 'Ausgebucht'
+									: deadlineExpired
+										? 'Anmeldefrist abgelaufen'
+										: isConfirmed
+											? 'Bestätigt'
+											: parentEvent.status
 							] ?? 'bg-gray-100 text-gray-600'}"
-							>{$_(isFullyBooked ? 'Ausgebucht' : parentEvent.status)}</span
+							>{$_(
+								isFullyBooked
+									? 'Ausgebucht'
+									: deadlineExpired
+										? 'Anmeldefrist abgelaufen'
+										: isConfirmed
+											? 'Bestätigt'
+											: parentEvent.status
+							)}</span
 						>
 					</div>
 				{/if}
@@ -578,7 +610,7 @@
 							{#if parentEvent.additional_costs_label}<span class="opacity-60"
 									>{parentEvent.additional_costs_label}:</span
 								>{/if}
-							<span class="font-medium">{formatPriceChf(parentEvent.additional_costs_chf)}</span>
+							<span class="font-medium">{additionalCostsDisplay}</span>
 						</div>
 					{/if}
 					{#if parentEvent.registration_required}
@@ -595,6 +627,12 @@
 							class="inline-block rounded-full px-4 py-2 text-sm font-semibold {statusColor[
 								'Ausgebucht'
 							]}">{$_('Ausgebucht')}</span
+						>
+					{:else if deadlineExpired}
+						<span
+							class="inline-block rounded-full px-4 py-2 text-sm font-semibold {statusColor[
+								'Anmeldefrist abgelaufen'
+							]}">{$_('Anmeldefrist abgelaufen')}</span
 						>
 					{:else}
 						<Button
@@ -638,6 +676,17 @@
 								<span
 									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor['Ausgebucht']}"
 									>{$_('Ausgebucht')}</span
+								>
+							{:else if deadlineExpired}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[
+										'Anmeldefrist abgelaufen'
+									]}">{$_('Anmeldefrist abgelaufen')}</span
+								>
+							{:else if isConfirmed}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor['Bestätigt']}"
+									>{$_('Bestätigt')}</span
 								>
 							{:else if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
 								<span

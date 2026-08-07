@@ -167,7 +167,15 @@
 				"config": {
 					"label": "Status",
 					"placeholder": "Status wählen",
-					"options": ["Kein", "Geplant", "Bestätigt", "Abgesagt", "Verschoben", "Ausgebucht"],
+					"options": [
+						"Kein",
+						"Geplant",
+						"Bestätigt",
+						"Abgesagt",
+						"Verschoben",
+						"Ausgebucht",
+						"Anmeldefrist abgelaufen"
+					],
 					"default_value": "Geplant"
 				}
 			},

@@ -837,6 +837,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Abgesagt: { 'de-ch': 'Abgesagt', 'en-us': 'Cancelled' },
 	Verschoben: { 'de-ch': 'Verschoben', 'en-us': 'Postponed' },
 	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold Out' },
+	'Anmeldefrist abgelaufen': { 'de-ch': 'Anmeldefrist abgelaufen', 'en-us': 'Registration closed' },
 	Bestellübersicht: { 'de-ch': 'Bestellübersicht', 'en-us': 'Order Summary' },
 	Einmalig: { 'de-ch': 'Einmalig', 'en-us': 'One-time' },
 	Monatlich: { 'de-ch': 'Monatlich', 'en-us': 'Monthly' },
