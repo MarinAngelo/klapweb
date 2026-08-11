@@ -61,17 +61,27 @@ export const load = ({ cookies }) => {
 
 	// Appliziere Overrides: entferne disabled, addiere enabled
 	const enabledFeatures = (overrides.enabled ?? []).filter((f: string) => gating.features?.[f]);
-	const disabledFeatures = (overrides.disabled ?? []);
-	const activeFeatures = [...new Set([...basePlanFeatures.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
+	const disabledFeatures = overrides.disabled ?? [];
+	const activeFeatures = [
+		...new Set([
+			...basePlanFeatures.filter((f) => !disabledFeatures.includes(f)),
+			...enabledFeatures
+		])
+	];
+
+	const adminSections = gating.admin_sections ?? {};
+	const adminSectionsDisabled: string[] = overrides.admin_sections_disabled ?? [];
 
 	return {
 		authenticated: true,
 		plans: gating.plans,
 		features: gating.features,
 		currentPlan,
-		basePlanFeatures, // Base-Plan-Features (ohne Overrides)
-		activeFeatures, // Finale Features (mit Overrides)
-		overrideFeatures: enabledFeatures
+		basePlanFeatures,
+		activeFeatures,
+		overrideFeatures: enabledFeatures,
+		adminSections,
+		adminSectionsDisabled
 	};
 };
 
@@ -121,6 +131,7 @@ export const actions = {
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
 		const selectedOverrides = JSON.parse(data.get('overrides') as string);
+		const sectionsDisabled = JSON.parse((data.get('admin_sections_disabled') as string) || '[]');
 
 		// Load gating.json
 		const gating = read(GATING_PATH);
@@ -139,12 +150,18 @@ export const actions = {
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
 		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
 
-		const existingOverrides = existsSync(OVERRIDES_PATH) ? read(OVERRIDES_PATH) : { enabled: [], disabled: [] };
+		const existingOverrides = existsSync(OVERRIDES_PATH)
+			? read(OVERRIDES_PATH)
+			: { enabled: [], disabled: [], admin_sections_disabled: [] };
 		const overridesChanged =
-			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !== JSON.stringify([...enabled].sort()) ||
-			JSON.stringify([...(existingOverrides.disabled ?? [])].sort()) !== JSON.stringify([...disabled].sort());
+			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !==
+				JSON.stringify([...enabled].sort()) ||
+			JSON.stringify([...(existingOverrides.disabled ?? [])].sort()) !==
+				JSON.stringify([...disabled].sort()) ||
+			JSON.stringify([...(existingOverrides.admin_sections_disabled ?? [])].sort()) !==
+				JSON.stringify([...sectionsDisabled].sort());
 
-		write(OVERRIDES_PATH, { enabled, disabled });
+		write(OVERRIDES_PATH, { enabled, disabled, admin_sections_disabled: sectionsDisabled });
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
 		if (!planChanged && !overridesChanged) {
@@ -161,7 +178,10 @@ export const actions = {
 	}
 };
 
-function getActivePlanChain(planKey: string, plans: Record<string, { extends?: string }>): string[] {
+function getActivePlanChain(
+	planKey: string,
+	plans: Record<string, { extends?: string }>
+): string[] {
 	if (!planKey || !plans[planKey]) return planKey ? [planKey] : [];
 	const parent = plans[planKey]?.extends;
 	return [planKey, ...(parent ? getActivePlanChain(parent, plans) : [])];

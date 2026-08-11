@@ -1,24 +1,18 @@
 import { json } from '@sveltejs/kit';
-import { getTicketCount, incrementTicketCount } from '$lib/server/eventTickets';
-import { createClient } from '$lib/prismicio';
+import { incrementTicketCount } from '$lib/server/eventTickets';
+import { listEventRegistrations } from '$lib/server/eventRegistrations';
 
-export async function GET({ url, fetch }) {
+export async function GET({ url }) {
 	const uid = url.searchParams.get('uid');
 	if (!uid) return json({ error: 'uid fehlt' }, { status: 400 });
 
 	try {
-		const count = await getTicketCount(uid);
+		// Direkt aus event-registrations zählen — immer korrekt
+		const all = await listEventRegistrations();
+		const count = all.filter((r) => r.eventUid === uid).length;
 
-		// Optional: max_participants aus Prismic laden für fullyBooked-Flag
-		let maxParticipants: number | null = null;
-		try {
-			const client = createClient({ fetch });
-			const doc = await client.getByUID('event', uid);
-			maxParticipants =
-				((doc.data as Record<string, unknown>).max_participants as number | null) ?? null;
-		} catch {
-			// Event nicht gefunden – kein max bekannt
-		}
+		const maxParam = url.searchParams.get('max');
+		const maxParticipants: number | null = maxParam ? parseInt(maxParam) : null;
 
 		const fullyBooked = maxParticipants !== null && maxParticipants > 0 && count >= maxParticipants;
 		return json({ count, maxParticipants, fullyBooked });

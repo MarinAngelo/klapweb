@@ -167,7 +167,15 @@
 				"config": {
 					"label": "Status",
 					"placeholder": "Status wählen",
-					"options": ["Kein", "Geplant", "Bestätigt", "Abgesagt", "Verschoben", "Ausgebucht"],
+					"options": [
+						"Kein",
+						"Geplant",
+						"Bestätigt",
+						"Abgesagt",
+						"Verschoben",
+						"Ausgebucht",
+						"Anmeldefrist abgelaufen"
+					],
 					"default_value": "Geplant"
 				}
 			},
@@ -245,6 +253,13 @@
 				"config": {
 					"label": "Kontakt E-Mail",
 					"placeholder": "info@beispiel.ch"
+				}
+			},
+			"event_manager_email": {
+				"type": "Text",
+				"config": {
+					"label": "E-Mail Eventverantwortliche/r",
+					"placeholder": "verantwortliche@beispiel.ch"
 				}
 			},
 			"contact_phone": {
@@ -585,6 +600,13 @@
 					"placeholder": "z.B. 25"
 				}
 			},
+			"ticket_price_chf_range": {
+				"type": "Number",
+				"config": {
+					"label": "Ticketpreis (CHF) bis",
+					"placeholder": "z.B. 50"
+				}
+			},
 			"ticket_price_label": {
 				"type": "Text",
 				"config": {
@@ -608,6 +630,20 @@
 					"placeholder": "z.B. Bezahlung in weiterer Währung möglich"
 				}
 			},
+			"additional_costs_chf": {
+				"type": "Number",
+				"config": {
+					"label": "Zusätzliche Kosten (CHF)",
+					"placeholder": "z.B. 5"
+				}
+			},
+			"additional_costs_label": {
+				"type": "Text",
+				"config": {
+					"label": "Label Zusatzkosten",
+					"placeholder": "z.B. zzgl. Materialkosten"
+				}
+			},
 			"ticket_button_label": {
 				"type": "Text",
 				"config": {
@@ -620,6 +656,33 @@
 				"config": {
 					"label": "Titel der Bestellseite",
 					"placeholder": "z.B. Anmeldung"
+				}
+			},
+			"show_company_field": {
+				"type": "Boolean",
+				"config": {
+					"label": "Feld \"Firma\" anzeigen",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"show_address_fields": {
+				"type": "Boolean",
+				"config": {
+					"label": "Felder Adresse / PLZ / Ort / Land anzeigen",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
+				}
+			},
+			"show_comment_field": {
+				"type": "Boolean",
+				"config": {
+					"label": "Feld \"Kommentare\" anzeigen",
+					"placeholder_true": "Ja",
+					"placeholder_false": "Nein",
+					"default_value": false
 				}
 			},
 			"checkout_summary_title": {

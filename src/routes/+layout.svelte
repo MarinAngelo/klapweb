@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { building } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
@@ -322,7 +323,7 @@
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
-	$: isNoChrome = $page.url.searchParams.get('no_chrome') === 'true';
+	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
 	$: stickyHeader =
 		!isLandingPage &&
 		!isPreview &&

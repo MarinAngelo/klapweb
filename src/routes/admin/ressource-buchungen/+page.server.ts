@@ -295,5 +295,14 @@ export const actions: Actions = {
 		} else {
 			await updateRessourceBuchungStatus(id, target);
 		}
+	},
+
+	deleteAll: async ({ url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+		const all = await listAlleRessourceBuchungen();
+		await Promise.all(all.map((b) => deleteRessourceBuchung(b.id)));
+		return { ok: true };
 	}
 };

@@ -20,6 +20,9 @@
 			placeholder?: string | null;
 			invalid_feedback_text?: string | null;
 		}>;
+		showFirmaField: boolean;
+		showAddressFields: boolean;
+		showCommentField: boolean;
 	};
 
 	// Hardcoded invoice fields (always required, always on invoice)
@@ -56,7 +59,12 @@
 		'gewuenschter_domainname'
 	]);
 	$: invoiceFields = data.eventCheckout
-		? allInvoiceFields.filter((f) => !eventOnlyFields.has(f.key))
+		? allInvoiceFields.filter((f) => {
+				if (eventOnlyFields.has(f.key)) return false;
+				if (f.key === 'firma') return data.showFirmaField;
+				if (['adresse', 'plz', 'ort', 'land'].includes(f.key)) return data.showAddressFields;
+				return true;
+			})
 		: allInvoiceFields;
 
 	// Map extra fields (from Settings slices3) to InputField-compatible shape
@@ -374,8 +382,10 @@
 		const eventParam = data.eventCheckout ? '&event_checkout=true' : '';
 		const noChromeParam =
 			$page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
+		const returnUrl = $page.url.searchParams.get('return_url');
+		const returnUrlParam = returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : '';
 		goto(
-			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}`
+			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}${returnUrlParam}`
 		);
 	}
 
@@ -420,11 +430,6 @@
 
 		<!-- Rechnungsadresse -->
 		<fieldset class:hidden={hasTabs && activeTab !== 'rechnung'}>
-			{#if !hasTabs}
-				<legend class="text-sm uppercase tracking-wide opacity-60 mb-4"
-					>{t('Rechnungsadresse', lang)}</legend
-				>
-			{/if}
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
 				{#each invoiceFields as f}
 					<div class="mb-4 {f.span === 2 ? 'sm:col-span-2' : ''}">
@@ -449,6 +454,8 @@
 									name={f.key}
 									type="tel"
 									required={f.required}
+									inputmode="numeric"
+									pattern="[0-9\s\-\+\(\)]*"
 									class="p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
 									style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
 								/>
@@ -506,18 +513,20 @@
 		{/if}
 
 		<!-- Kommentare (immer sichtbar) -->
-		<div>
-			<label class="block text-base font-bold mb-1" for="kommentare">
-				{t('Kommentare', lang)}
-			</label>
-			<textarea
-				id="kommentare"
-				name="kommentare"
-				rows="4"
-				class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 resize-none"
-				style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
-			></textarea>
-		</div>
+		{#if !data.eventCheckout || data.showCommentField}
+			<div>
+				<label class="block text-base font-bold mb-1" for="kommentare">
+					{t('Kommentare', lang)}
+				</label>
+				<textarea
+					id="kommentare"
+					name="kommentare"
+					rows="4"
+					class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 resize-none"
+					style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+				></textarea>
+			</div>
+		{/if}
 
 		<p class="text-xs opacity-60">* {t('Pflichtfelder', lang)}</p>
 

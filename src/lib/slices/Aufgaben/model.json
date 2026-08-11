@@ -1,0 +1,95 @@
+{
+	"id": "aufgaben",
+	"type": "SharedSlice",
+	"name": "Aufgaben",
+	"description": "Aufgaben-Liste: Nutzer loggt sich mit Buchungs-ID + E-Mail ein und nimmt Aufgaben an",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Default",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "Ihre Aufgaben",
+						"allowTargetBlank": false,
+						"single": "heading2"
+					}
+				},
+				"intro": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitung",
+						"placeholder": "",
+						"allowTargetBlank": true,
+						"multi": "paragraph,strong,em,hyperlink,list-item",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible"
+						]
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe (leer = Seitenfarbe)"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe (leer = Seitenfarbe)"
+					}
+				}
+			},
+			"items": {}
+		}
+	]
+}

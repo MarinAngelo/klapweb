@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Button from '$lib/components/Button.svelte';
 	export let data: PageData;
 
 	import { page } from '$app/stores';
@@ -28,8 +29,11 @@
 	function fmt(c: (typeof data.customers)[0]) {
 		const name = [c.vorname, c.nachname].filter(Boolean).join(' ') || '–';
 		const date = new Date(c.date).toLocaleString('de-CH', {
-			day: '2-digit', month: '2-digit', year: 'numeric',
-			hour: '2-digit', minute: '2-digit'
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
 		});
 		const adresse = [c.adresse, c.plz, c.ort].filter(Boolean).join(', ') || '–';
 		const quelle = c.paymentMethod === 'manuell' ? 'Manuell erfasst' : 'E-Commerce';
@@ -68,9 +72,40 @@
 <svelte:head><title>Kundenliste</title></svelte:head>
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1200px; margin: 0 auto;">
-	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 1.5rem;">
-		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">← Dashboard</a>
-		<h1 style="font-size: 1.5rem; font-weight: bold;">Kunden ({data.customers.length})</h1>
+	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">
+			Kunden ({data.customers.length})
+		</h1>
+		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+			<Button
+				href="/admin/dashboard?secret={secret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={secret}"
+				on:submit={(e) => {
+					if (!confirm('Alle Kunden löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={secret} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	{#if data.blobError}
@@ -78,7 +113,9 @@
 	{/if}
 
 	<!-- Neuer Kunde Form -->
-	<div style="margin-bottom: 2rem; background: #f9fafb; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+	<div
+		style="margin-bottom: 2rem; background: #f9fafb; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e5e7eb;"
+	>
 		<button
 			on:click={() => (isFormOpen = !isFormOpen)}
 			style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 500;"
@@ -87,51 +124,126 @@
 		</button>
 
 		{#if isFormOpen}
-			<form method="POST" action="?/create&secret={secret}" use:enhance={handleCreate} style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+			<form
+				method="POST"
+				action="?/create&secret={secret}"
+				use:enhance={handleCreate}
+				style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;"
+			>
 				<input type="hidden" name="secret" value={secret} />
 
 				<div style="grid-column: 1;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Vorname *</label>
-					<input type="text" name="vorname" bind:value={vorname} required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Vorname *</label
+					>
+					<input
+						type="text"
+						name="vorname"
+						bind:value={vorname}
+						required
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 2;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Nachname *</label>
-					<input type="text" name="nachname" bind:value={nachname} required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Nachname *</label
+					>
+					<input
+						type="text"
+						name="nachname"
+						bind:value={nachname}
+						required
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 1;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Firma</label>
-					<input type="text" name="firma" bind:value={firma} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Firma</label
+					>
+					<input
+						type="text"
+						name="firma"
+						bind:value={firma}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 2;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">E-Mail</label>
-					<input type="email" name="email" bind:value={email} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>E-Mail</label
+					>
+					<input
+						type="email"
+						name="email"
+						bind:value={email}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 1 / -1;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Adresse</label>
-					<input type="text" name="adresse" bind:value={adresse} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Adresse</label
+					>
+					<input
+						type="text"
+						name="adresse"
+						bind:value={adresse}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 1;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">PLZ</label>
-					<input type="text" name="plz" bind:value={plz} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>PLZ</label
+					>
+					<input
+						type="text"
+						name="plz"
+						bind:value={plz}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 2;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Ort</label>
-					<input type="text" name="ort" bind:value={ort} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Ort</label
+					>
+					<input
+						type="text"
+						name="ort"
+						bind:value={ort}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 1;">
-					<label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Land</label>
-					<input type="text" name="land" bind:value={land} style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;" />
+					<label
+						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
+						>Land</label
+					>
+					<input
+						type="text"
+						name="land"
+						bind:value={land}
+						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+					/>
 				</div>
 
 				<div style="grid-column: 1 / -1; display: flex; gap: 0.5rem;">
-					<button type="submit" disabled={isLoading} style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 500; disabled-opacity: 0.5;">
+					<button
+						type="submit"
+						disabled={isLoading}
+						style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 500; disabled-opacity: 0.5;"
+					>
 						{isLoading ? 'Wird gespeichert...' : '✓ Speichern'}
 					</button>
 				</div>
@@ -168,7 +280,10 @@
 									on:submit|preventDefault={(e) => confirmDelete(e, r.name)}
 								>
 									<input type="hidden" name="id" value={c.id} />
-									<button type="submit" style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+									<button
+										type="submit"
+										style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
+									>
 										Löschen
 									</button>
 								</form>
