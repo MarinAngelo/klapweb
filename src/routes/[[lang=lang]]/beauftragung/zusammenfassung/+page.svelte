@@ -9,6 +9,7 @@
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
+	import SelectField from '$lib/components/SelectField.svelte';
 	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
@@ -20,6 +21,23 @@
 		additionalCodes: string[];
 		rates: Record<string, number>;
 		paymentMethods: { stripe: boolean; rechnung: boolean; bar: boolean };
+		barDescription: string | null;
+		eventTexts: {
+			summaryTitle: string | null;
+			orderLabel: string | null;
+			priceLabel: string | null;
+			checkoutButtonText: string | null;
+			rechnungLabel: string | null;
+			rechnungDescription: string | null;
+			barLabel: string | null;
+			barDescription: string | null;
+		} | null;
+		isEventCheckout: boolean;
+		eventUid: string;
+		priceRange?: number | null;
+		additionalCostChf?: number | null;
+		additionalCostLabel?: string | null;
+		eventManagerEmail?: string | null;
 	};
 
 	interface CheckoutData {
@@ -38,6 +56,12 @@
 	let isLoading = false;
 	let orderError: string | null = null;
 	let selectedCurrency: string = data.baseCurrency;
+	// User-defined price for range-priced events
+	let customEventPrice: number = data.priceRange ?? data.product?.price ?? 0;
+	const minEventPrice = data.product?.price ?? 0;
+	function clampEventPrice() {
+		if (customEventPrice < minEventPrice) customEventPrice = minEventPrice;
+	}
 
 	// Discount code
 	let discountCodeInput = '';
@@ -109,7 +133,14 @@
 
 	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
 	$: displayLabel = data.product?.label ?? serviceKey;
-	$: baseDisplayPrice = data.product?.displayAmount ?? null;
+	$: baseDisplayPrice = data.priceRange ? customEventPrice : (data.product?.displayAmount ?? null);
+	// Additional costs converted to selected currency
+	$: additionalCostDisplay = (() => {
+		if (!data.additionalCostChf) return null;
+		if (selectedCurrency === data.baseCurrency) return data.additionalCostChf;
+		const rate = data.rates[selectedCurrency];
+		return rate ? Math.round(data.additionalCostChf * rate * 100) / 100 : data.additionalCostChf;
+	})();
 
 	// Convert base price to selected currency using pre-fetched rates
 	$: displayPrice = (() => {
@@ -157,7 +188,7 @@
 	$: grandTotal = (() => {
 		if (effectiveDisplayPrice === null) return null;
 		const addonSum = addonDisplayPrices.reduce((s, p) => s + (p ?? 0), 0);
-		return effectiveDisplayPrice + addonSum;
+		return effectiveDisplayPrice + addonSum + (additionalCostDisplay ?? 0);
 	})();
 
 	$: stripeUrl =
@@ -165,8 +196,14 @@
 			? `${data.product.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
 			: (data.product?.stripeUrl ?? '');
 
+	$: noChrome = $page.url.searchParams.get('no_chrome') === 'true';
+	$: noChromeParam = noChrome ? '&no_chrome=true' : '';
+	$: eventCheckoutParam = data.isEventCheckout ? '&event_checkout=true' : '';
+	$: returnUrlRaw = $page.url.searchParams.get('return_url');
+	$: returnUrlParam = returnUrlRaw ? `&return_url=${encodeURIComponent(returnUrlRaw)}` : '';
+
 	$: stripeTarget = import.meta.env.DEV
-		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}`
+		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 		: stripeUrl;
 
 	$: buttonText = isLoading
@@ -200,7 +237,13 @@
 						labels: checkoutData.labels,
 						serviceKey,
 						selectedCurrency,
-						discountCode: appliedCode || undefined
+						discountCode: appliedCode || undefined,
+						...(data.isEventCheckout && {
+							isEventCheckout: true,
+							eventPrice: grandTotal,
+							eventLabel: displayLabel,
+							eventManagerEmail: data.eventManagerEmail ?? null
+						})
 					})
 				});
 				if (!resp.ok) {
@@ -209,10 +252,17 @@
 					isLoading = false;
 					return;
 				}
+				if (data.isEventCheckout && data.eventUid) {
+					fetch('/api/event-ticket', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ eventUid: data.eventUid })
+					}).catch(() => {});
+				}
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
-					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}`
+					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
 				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
@@ -240,15 +290,24 @@
 					adresse: checkoutData.data['adresse'],
 					plz: checkoutData.data['plz'],
 					ort: checkoutData.data['ort'],
-					land: checkoutData.data['land']
+					land: checkoutData.data['land'],
+					...(data.isEventCheckout && {
+						isEventCheckout: true,
+						eventUid: serviceKey,
+						eventLabel: displayLabel,
+						eventManagerEmail: data.eventManagerEmail ?? null,
+						labels: checkoutData.labels
+					})
 				})
 			}).catch(() => {});
 
 			// Dev-Modus: Netlify-POST überspringen
-			if (import.meta.env.DEV) {
+			if (import.meta.env.DEV || data.isEventCheckout) {
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
+				goto(
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
+				);
 				return;
 			}
 			try {
@@ -270,9 +329,18 @@
 					isLoading = false;
 					return;
 				}
+				if (data.isEventCheckout && data.eventUid) {
+					fetch('/api/event-ticket', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ eventUid: data.eventUid })
+					}).catch(() => {});
+				}
 				sessionStorage.removeItem('checkoutData');
 				sessionStorage.removeItem('preferredCurrency');
-				goto(`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}`);
+				goto(
+					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
+				);
 			} catch {
 				orderError = t('Verbindungsfehler. Bitte versuchen Sie es erneut.', lang);
 				isLoading = false;
@@ -298,7 +366,9 @@
 
 		<!-- Dienstleistung + Preis -->
 		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
-			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">{t('Ihre Bestellung', lang)}</p>
+			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">
+				{data.eventTexts?.orderLabel ?? t('Ihre Bestellung', lang)}
+			</p>
 
 			{#if hasAddons}
 				<!-- Row layout: main product + addons side by side -->
@@ -359,27 +429,58 @@
 				{/if}
 			{:else}
 				<!-- Simple single-product layout -->
-				<p class="text-xl font-semibold mt-2">
+				<p class="text-lg font-semibold mt-2">
 					{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
 				</p>
+				{#if data.priceRange && data.product?.price != null}
+					<div class="mt-3 pt-3 border-t" style="border-color: {borderColor};">
+						<label class="block text-sm opacity-60 mb-1" for="custom-event-price"
+							>{t('Preis', lang)} ({data.baseCurrency}
+							{data.product.price} – {data.priceRange})</label
+						>
+						<input
+							id="custom-event-price"
+							type="number"
+							min={data.product.price}
+							max={data.priceRange}
+							step="1"
+							bind:value={customEventPrice}
+							on:change={clampEventPrice}
+							class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 w-32"
+							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+						/>
+					</div>
+				{/if}
 				{#if effectiveDisplayPrice !== null}
-					{#if codeDiscountPct > 0}
-						<p class="text-lg line-through opacity-40 mt-1">
-							{formatPrice(displayPrice, selectedCurrency)}
-						</p>
-					{/if}
-					<p class="text-3xl font-bold mt-1">
-						{formatPrice(
-							effectiveDisplayPrice,
-							selectedCurrency
-						)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ {t(
-								'Jahr',
-								lang
-							)}{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ {t(
-								'Monat',
-								lang
-							)}{/if}
-					</p>
+					<div class="flex justify-between mt-3 pt-3 border-t" style="border-color: {borderColor};">
+						<span class="opacity-60">{data.eventTexts?.priceLabel ?? t('Preis', lang)}</span>
+						<span class="font-semibold tabular-nums">
+							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1"
+									>{formatPrice(displayPrice, selectedCurrency)}</span
+								>{/if}{formatPrice(
+								effectiveDisplayPrice,
+								selectedCurrency
+							)}{#if data.product?.billingType === 'Jährlich'}&thinsp;/ {t(
+									'Jahr',
+									lang
+								)}{:else if data.product?.billingType === 'Monatlich'}&thinsp;/ {t(
+									'Monat',
+									lang
+								)}{/if}{#if data.paymentMethods.rechnung || data.paymentMethods.bar},&nbsp;<span
+									class="font-normal opacity-60"
+									>{[
+										data.paymentMethods.rechnung
+											? (data.eventTexts?.rechnungLabel ?? t('Gegen Rechnung', lang))
+											: null,
+										data.paymentMethods.bar
+											? (data.eventTexts?.barLabel ?? t('Gegen Bar', lang))
+											: null
+									]
+										.filter(Boolean)
+										.join(', ')}</span
+								>{/if}
+						</span>
+					</div>
 				{/if}
 				{#if data.product?.billingType}
 					<p class="text-sm opacity-60 mt-0.5">
@@ -390,25 +491,36 @@
 			{/if}
 
 			{#if effectiveDisplayPrice !== null}
+				{#if additionalCostDisplay}
+					<div
+						class="flex justify-between mt-2 pt-2 border-t"
+						style="border-color: {borderColor}44;"
+					>
+						<span class="opacity-60">{data.additionalCostLabel ?? t('Zusatzkosten', lang)}</span>
+						<span class="tabular-nums">{formatPrice(additionalCostDisplay, selectedCurrency)}</span>
+					</div>
+					<div
+						class="flex justify-between mt-2 pt-2 border-t font-semibold"
+						style="border-color: {borderColor};"
+					>
+						<span>{t('Total', lang)}</span>
+						<span class="tabular-nums">{formatPrice(grandTotal, selectedCurrency)}</span>
+					</div>
+				{/if}
 				<p class="text-sm opacity-60 mt-2">{t('exkl. MwSt.', lang)}</p>
 
 				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
 						<label for="currency-select" class="text-sm opacity-60">{t('Währung:', lang)}</label>
-						<select
+						<SelectField
 							id="currency-select"
 							bind:value={selectedCurrency}
-							class="text-sm px-2 py-1 border rounded-none"
-							style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44;"
-						>
-							<option value={data.baseCurrency}>{data.baseCurrency}</option>
-							{#each data.additionalCodes as code}
-								{#if data.rates[code] != null}
-									<option value={code}>{code}</option>
-								{/if}
-							{/each}
-						</select>
+							options={[
+								data.baseCurrency,
+								...data.additionalCodes.filter((c) => data.rates[c] != null)
+							]}
+						/>
 					</div>
 				{/if}
 
@@ -428,13 +540,13 @@
 							</button>
 						</div>
 					{:else}
-						<div class="flex items-center gap-2">
+						<div class="flex items-end gap-2">
 							<input
 								type="text"
 								bind:value={discountCodeInput}
 								placeholder={t('Rabatt-Code', lang)}
-								class="text-sm px-2 py-1 border"
-								style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44; width: 160px;"
+								class="themed-input p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm"
+								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color); width: 160px;"
 								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
 							/>
 							<button
@@ -514,9 +626,12 @@
 							style="accent-color: {pageColor};"
 						/>
 						<div>
-							<p class="font-semibold">{t('Gegen Rechnung', lang)}</p>
+							<p class="font-semibold">
+								{data.eventTexts?.rechnungLabel ?? t('Gegen Rechnung', lang)}
+							</p>
 							<p class="text-sm opacity-60 mt-0.5">
-								{t('Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.', lang)}
+								{data.eventTexts?.rechnungDescription ??
+									t('Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.', lang)}
 							</p>
 						</div>
 					</label>
@@ -537,9 +652,11 @@
 							style="accent-color: {pageColor};"
 						/>
 						<div>
-							<p class="font-semibold">{t('Gegen Bar', lang)}</p>
+							<p class="font-semibold">{data.eventTexts?.barLabel ?? t('Gegen Bar', lang)}</p>
 							<p class="text-sm opacity-60 mt-0.5">
-								{t('Wir melden uns zur Terminvereinbarung.', lang)}
+								{data.eventTexts?.barDescription ??
+									data.barDescription ??
+									t('Wir melden uns zur Terminvereinbarung.', lang)}
 							</p>
 						</div>
 					</label>
@@ -578,13 +695,13 @@
 				hoverBgColor={undefined}
 				on:click={handleOrder}
 			/>
-			<button
-				type="button"
-				class="text-sm underline opacity-60 hover:opacity-100"
-				on:click={() => history.back()}
-			>
-				{t('Weiter zum Formular', lang)}
-			</button>
 		</div>
 	{/if}
 </Bounded>
+
+<style>
+	.themed-input::placeholder {
+		color: var(--page-color);
+		opacity: 0.5;
+	}
+</style>

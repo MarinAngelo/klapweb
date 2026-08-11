@@ -92,12 +92,15 @@ const normalizeAdobeFont = (fontName: string): string => {
 	const trimmed = fontName.trim();
 
 	// Prüfe ob Font in der Liste ist und kein Suffix hat
-	const needsSuffix = ADOBE_FONTS_REQUIRING_SUFFIX.some(name =>
-		trimmed.startsWith(name) && trimmed.length === name.length
+	const needsSuffix = ADOBE_FONTS_REQUIRING_SUFFIX.some(
+		(name) => trimmed.startsWith(name) && trimmed.length === name.length
 	);
 
 	// Häufige Gewichtssuffixe
-	const hasSuffix = /\s+(Regular|Bold|Light|Thin|Medium|SemiBold|ExtraBold|Black|Italic)(\s+Italic)?$/i.test(trimmed);
+	const hasSuffix =
+		/\s+(Regular|Bold|Light|Thin|Medium|SemiBold|ExtraBold|Black|Italic)(\s+Italic)?$/i.test(
+			trimmed
+		);
 
 	if (needsSuffix && !hasSuffix) {
 		return `${trimmed} Regular`;
@@ -115,25 +118,22 @@ export function updateTheme(data: ThemeUpdateData): void {
 		return;
 	}
 
-
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
 	const pageFont = normalizeAdobeFont(
 		prismicThemeData.page_font?.data?.name ||
-		prismicThemeData.preset_font ||
-		getCssVar('--page-font')
+			prismicThemeData.preset_font ||
+			getCssVar('--page-font')
 	);
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColor =
 		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
-	const pageButtonColor = prismicThemeData.page_button_color || getCssVar('--page-button-color');
-	const pageButtonBgColor =
-		prismicThemeData.page_button_bg_color || getCssVar('--page-button-bg-color');
-	const pageButtonHoverColor =
-		prismicThemeData.page_button_hover_color || getCssVar('--page-button-hover-color');
-	const pageButtonHoverBgColor =
-		prismicThemeData.page_button_hover_bg_color || getCssVar('--page-button-hover-bg-color');
+	// Kein getCssVar-Fallback: app.css-Kaskade (--page-button-color: var(--page-link-color)) muss greifen
+	const pageButtonColor = prismicThemeData.page_button_color || '';
+	const pageButtonBgColor = prismicThemeData.page_button_bg_color || '';
+	const pageButtonHoverColor = prismicThemeData.page_button_hover_color || '';
+	const pageButtonHoverBgColor = prismicThemeData.page_button_hover_bg_color || '';
 	const siteTitleFontSize =
 		prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
 	const siteTitleFont = normalizeAdobeFont(
@@ -209,7 +209,6 @@ export function updateTheme(data: ThemeUpdateData): void {
 		pageLinkActiveColor,
 		pageLinkVisitedColor
 	};
-
 
 	theme.update((t) => ({
 		...t,

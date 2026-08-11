@@ -1,6 +1,12 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
-import { listAlleAnnahmen, updateAnnahme, deleteAnnahme, getAnnahme, berechneCredits } from '$lib/server/aufgaben';
+import {
+	listAlleAnnahmen,
+	updateAnnahme,
+	deleteAnnahme,
+	getAnnahme,
+	berechneCredits
+} from '$lib/server/aufgaben';
 import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { env } from '$env/dynamic/private';
 
@@ -36,7 +42,10 @@ export const actions: Actions = {
 		const annahme = await getAnnahme(id);
 		if (!annahme) return;
 
-		await updateAnnahme(id, { status: 'annahme_bestaetigt', bestaetgtAt: new Date().toISOString() });
+		await updateAnnahme(id, {
+			status: 'annahme_bestaetigt',
+			bestaetgtAt: new Date().toISOString()
+		});
 
 		const resendKey = env.RESEND_API_KEY;
 		const emailFrom = env.INVOICE_FROM_EMAIL;
@@ -44,26 +53,28 @@ export const actions: Actions = {
 		if (resendKey && emailFrom && annahme.email) {
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
-			await resend.emails.send({
-				from: emailFrom,
-				to: annahme.email,
-				subject: `Aufgabe bestätigt: ${annahme.aufgabeTitel}`,
-				text: [
-					`Guten Tag ${annahme.name}`,
-					``,
-					`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
-					``,
-					`Aufgabe: ${annahme.aufgabeTitel}`,
-					`Credits: ${annahme.creditTyp === 'fest' ? `${annahme.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
-					``,
-					`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
-					`Buchungs-ID: ${annahme.buchungId}`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Aufgabe Bestätigungs-Mail fehlgeschlagen:', e);
-			});
+			await resend.emails
+				.send({
+					from: emailFrom,
+					to: annahme.email,
+					subject: `Aufgabe bestätigt: ${annahme.aufgabeTitel}`,
+					text: [
+						`Guten Tag ${annahme.name}`,
+						``,
+						`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
+						``,
+						`Aufgabe: ${annahme.aufgabeTitel}`,
+						`Credits: ${annahme.creditTyp === 'fest' ? `${annahme.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
+						``,
+						`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
+						`Buchungs-ID: ${annahme.buchungId}`,
+						``,
+						`Freundliche Grüsse`
+					].join('\n')
+				})
+				.then(({ error: e }) => {
+					if (e) console.error('Aufgabe Bestätigungs-Mail fehlgeschlagen:', e);
+				});
 		}
 	},
 
@@ -97,13 +108,16 @@ export const actions: Actions = {
 
 		if (resendKey && emailFrom && annahme.email) {
 			try {
-				const fmt = (n: number) => new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(n);
+				const fmt = (n: number) =>
+					new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(n);
 
 				let buchungspreis: number | null = null;
 				try {
 					const buchung = await getRessourceBuchung(annahme.buchungId);
 					if (buchung) buchungspreis = buchung.preisCHF;
-				} catch { /* non-critical */ }
+				} catch {
+					/* non-critical */
+				}
 
 				const finalCredits = updated.credits ?? 0;
 				const diff = adjustment;
@@ -117,12 +131,14 @@ export const actions: Actions = {
 					`Berechnete Credits:  ${fmt(baseCredits)}`,
 					...(diff !== 0 ? [`Anpassung:           ${diff > 0 ? '+' : ''}${fmt(diff)}`] : []),
 					`Credits total:       ${fmt(finalCredits)}`,
-					...(buchungspreis != null ? [
-						``,
-						`Buchungspreis:       ${fmt(buchungspreis)}`,
-						`Abzug Credits:       ${fmt(finalCredits)}`,
-						`Restbetrag:          ${fmt(Math.max(0, buchungspreis - finalCredits))}`
-					] : [])
+					...(buchungspreis != null
+						? [
+								``,
+								`Buchungspreis:       ${fmt(buchungspreis)}`,
+								`Abzug Credits:       ${fmt(finalCredits)}`,
+								`Restbetrag:          ${fmt(Math.max(0, buchungspreis - finalCredits))}`
+							]
+						: [])
 				].join('\n');
 
 				const { Resend } = await import('resend');
@@ -137,7 +153,9 @@ export const actions: Actions = {
 						`Ihre Aufgabe wurde vom Betreiber geprüft und freigegeben.`,
 						``,
 						abrechnungsZeilen,
-						...(betreiberAntwort ? [``, `─────────────────────────────`, `Antwort des Betreibers:`, betreiberAntwort] : []),
+						...(betreiberAntwort
+							? [``, `─────────────────────────────`, `Antwort des Betreibers:`, betreiberAntwort]
+							: []),
 						``,
 						`Freundliche Grüsse`
 					].join('\n')
@@ -186,7 +204,13 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
-			await updateAnnahme(id, { status: 'angenommen', bestaetgtAt: undefined, erledigtAt: undefined, minuten: undefined, credits: undefined });
+			await updateAnnahme(id, {
+				status: 'angenommen',
+				bestaetgtAt: undefined,
+				erledigtAt: undefined,
+				minuten: undefined,
+				credits: undefined
+			});
 		}
 	},
 
@@ -200,5 +224,14 @@ export const actions: Actions = {
 		if (typeof id === 'string' && id) {
 			await deleteAnnahme(id);
 		}
+	},
+
+	deleteAll: async ({ url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+		const all = await listAlleAnnahmen();
+		await Promise.all(all.map((a) => deleteAnnahme(a.id)));
+		return { ok: true };
 	}
 };

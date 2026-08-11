@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import type { PageData, SubmitFunction } from './$types';
 	import { onMount } from 'svelte';
+	import { formatDateShort } from '$lib/utils/formatDate';
+	import Button from '$lib/components/Button.svelte';
 
 	export let data: PageData;
 
@@ -130,7 +132,9 @@
 		return async ({ result }) => {
 			isLoading = false;
 			if (result.type === 'success') {
-				alert(`Rechnung ${result.data?.invoiceNumber} gespeichert${sendEmail ? ' und E-Mail gesendet' : ''}.`);
+				alert(
+					`Rechnung ${result.data?.invoiceNumber} gespeichert${sendEmail ? ' und E-Mail gesendet' : ''}.`
+				);
 
 				if (result.data?.invoice) {
 					data.invoices = [result.data.invoice, ...data.invoices];
@@ -338,8 +342,9 @@
 		} else {
 			// Falls keine E-Mail, dann nach Name prüfen
 			existingCustomer = data.customers.find(
-				(c) => c.vorname.toLowerCase() === newCustomerForm.vorname.toLowerCase() &&
-				       c.nachname.toLowerCase() === newCustomerForm.nachname.toLowerCase()
+				(c) =>
+					c.vorname.toLowerCase() === newCustomerForm.vorname.toLowerCase() &&
+					c.nachname.toLowerCase() === newCustomerForm.nachname.toLowerCase()
 			);
 		}
 
@@ -391,8 +396,37 @@
 
 <div class="container mx-auto p-6">
 	<div class="flex items-center gap-4 mb-6">
-		<a href="/admin/dashboard?secret={adminSecret}" class="text-sm text-gray-600 hover:text-gray-900">← Dashboard</a>
 		<h1 class="text-3xl font-bold">Rechnungen</h1>
+		<div class="ml-auto flex items-center gap-2">
+			<Button
+				href="/admin/dashboard?secret={adminSecret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={adminSecret}"
+				on:submit={(e) => {
+					if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={adminSecret} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	<!-- Übersicht Rechnungen -->
@@ -411,8 +445,8 @@
 							<th class="text-left py-2">Kunde</th>
 							<th class="text-left py-2">E-Mail</th>
 							<th class="text-left py-2">Versand</th>
-								<th class="text-left py-2">Zahlung</th>
-								<th class="text-left py-2">Zahlungsart</th>
+							<th class="text-left py-2">Zahlung</th>
+							<th class="text-left py-2">Zahlungsart</th>
 							<th class="text-left py-2">Aktion</th>
 						</tr>
 					</thead>
@@ -420,40 +454,44 @@
 						{#each data.invoices as inv}
 							<tr class="border-b hover:bg-gray-50">
 								<td class="py-2 font-mono text-blue-600">{inv.invoiceNumber}</td>
-								<td class="py-2">{new Date(inv.date).toLocaleDateString('de-CH')}</td>
+								<td class="py-2">{formatDateShort(inv.date?.slice(0, 10))}</td>
 								<td class="py-2">{inv.vorname} {inv.nachname}</td>
 								<td class="py-2 text-gray-600">{inv.email || '—'}</td>
 								<td class="py-2">
-									<span class={`inline-block px-2 py-1 rounded text-xs font-medium ${
-										inv.status === 'gesendet'
-											? 'bg-green-100 text-green-800'
-											: 'bg-yellow-100 text-yellow-800'
-									}`}>
+									<span
+										class={`inline-block px-2 py-1 rounded text-xs font-medium ${
+											inv.status === 'gesendet'
+												? 'bg-green-100 text-green-800'
+												: 'bg-yellow-100 text-yellow-800'
+										}`}
+									>
 										{inv.status === 'gesendet' ? '✓ gesendet' : '● gespeichert'}
 									</span>
 								</td>
 								<td class="py-2">
-									<span class={`inline-block px-2 py-1 rounded text-xs font-medium ${inv.paymentStatus === 'bezahlt' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+									<span
+										class={`inline-block px-2 py-1 rounded text-xs font-medium ${inv.paymentStatus === 'bezahlt' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+									>
 										{inv.paymentStatus === 'bezahlt' ? '✓ bezahlt' : '⏱ offen'}
 									</span>
-							</td>
-							<td class="py-2">
-								<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
-							</td>
-							<td class="py-2 space-x-2">
-								<button
-									on:click={() => openEdit(inv.id)}
-									class="text-blue-600 hover:text-blue-800 font-medium"
-								>
-									Bearbeiten
-								</button>
-								<button
-									on:click={() => deleteInvoice(inv.id, inv.invoiceNumber)}
-									class="text-red-600 hover:text-red-800 font-medium"
-								>
-									Löschen
-								</button>
-							</td>
+								</td>
+								<td class="py-2">
+									<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
+								</td>
+								<td class="py-2 space-x-2">
+									<button
+										on:click={() => openEdit(inv.id)}
+										class="text-blue-600 hover:text-blue-800 font-medium"
+									>
+										Bearbeiten
+									</button>
+									<button
+										on:click={() => deleteInvoice(inv.id, inv.invoiceNumber)}
+										class="text-red-600 hover:text-red-800 font-medium"
+									>
+										Löschen
+									</button>
+								</td>
 							</tr>
 						{/each}
 					</tbody>
@@ -464,12 +502,16 @@
 
 	<!-- Neue Rechnung erstellen -->
 	<div class="bg-white rounded-lg shadow p-6">
-		<button
+		<Button
+			text={isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
+			color="#ffffff"
+			bgColor="#2563eb"
+			hoverColor="#ffffff"
+			hoverBgColor="#1d4ed8"
+			size="sm"
+			mb={false}
 			on:click={() => (isFormOpen = !isFormOpen)}
-			class="bg-blue-600 text-white px-4 py-2 rounded mb-4 hover:bg-blue-700"
-		>
-			{isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
-		</button>
+		/>
 
 		{#if isFormOpen}
 			<form method="POST" action="?/preview" use:enhance={handlePreview} class="space-y-4">
@@ -486,7 +528,8 @@
 								<option value="">-- Kunde auswählen --</option>
 								{#each data.customers as customer}
 									<option value={customer.id}>
-										{customer.vorname} {customer.nachname}
+										{customer.vorname}
+										{customer.nachname}
 										{#if customer.firma}
 											({customer.firma})
 										{/if}
@@ -585,7 +628,8 @@
 					</button>
 
 					<div class="mt-4 pt-4 border-t font-bold text-lg">
-						Total: {data.companyInfo.currency} {total.toFixed(2)}
+						Total: {data.companyInfo.currency}
+						{total.toFixed(2)}
 					</div>
 				</fieldset>
 
@@ -851,9 +895,7 @@
 											<button
 												type="button"
 												on:click={() => {
-													editingInvoice.items = editingInvoice.items.filter(
-														(_, i) => i !== idx
-													);
+													editingInvoice.items = editingInvoice.items.filter((_, i) => i !== idx);
 												}}
 												class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
 											>
@@ -904,20 +946,25 @@
 						<div class="space-y-4 text-sm">
 							<div class="grid grid-cols-2 gap-4">
 								<div>
-									<strong>Kunde:</strong> {editingInvoice.vorname} {editingInvoice.nachname}
+									<strong>Kunde:</strong>
+									{editingInvoice.vorname}
+									{editingInvoice.nachname}
 								</div>
 								{#if editingInvoice.firma}
 									<div>
-										<strong>Firma:</strong> {editingInvoice.firma}
+										<strong>Firma:</strong>
+										{editingInvoice.firma}
 									</div>
 								{/if}
 								{#if editingInvoice.email}
 									<div>
-										<strong>E-Mail:</strong> {editingInvoice.email}
+										<strong>E-Mail:</strong>
+										{editingInvoice.email}
 									</div>
 								{/if}
 								<div>
-									<strong>Datum:</strong> {new Date(editingInvoice.date).toLocaleDateString('de-CH')}
+									<strong>Datum:</strong>
+									{formatDateShort(editingInvoice.date?.slice(0, 10))}
 								</div>
 							</div>
 
