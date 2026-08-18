@@ -805,7 +805,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Kostenlos: { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
 	'Anmeldung erforderlich': { 'de-ch': 'Anmeldung erforderlich', 'en-us': 'Registration required' },
 	Anmelden: { 'de-ch': 'Anmelden', 'en-us': 'Register' },
-	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold out' },
 	Ticket: { 'de-ch': 'Ticket', 'en-us': 'Ticket' },
 	Tickets: { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
 	Veranstalter: { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },

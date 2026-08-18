@@ -68,7 +68,6 @@ function resolvePlanChain(planKey) {
 }
 
 const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
-console.log('DEBUG: activePlanChain =', activePlanChain);
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
@@ -81,11 +80,6 @@ const features = Object.entries(gating.features ?? {})
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
 const disabledFeatures = (overrides.disabled ?? []);
 const allFeatures = [...new Set([...features.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
-
-console.log('DEBUG: features =', features);
-console.log('DEBUG: enabled =', enabledFeatures);
-console.log('DEBUG: disabled =', disabledFeatures);
-console.log('DEBUG: allFeatures =', allFeatures);
 
 console.log(
 	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
@@ -355,7 +349,6 @@ console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	const active = isActive(gate);
-	console.log(`DEBUG: CustomType ${typeId} → isActive = ${active} (gate:`, gate, ')');
 	if (active) continue;
 	const indexPath = join(ROOT, `customtypes/${typeId}/index.json`);
 	if (existsSync(indexPath)) {
