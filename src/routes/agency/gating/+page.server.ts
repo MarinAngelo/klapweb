@@ -61,17 +61,27 @@ export const load = ({ cookies }) => {
 
 	// Appliziere Overrides: entferne disabled, addiere enabled
 	const enabledFeatures = (overrides.enabled ?? []).filter((f: string) => gating.features?.[f]);
-	const disabledFeatures = (overrides.disabled ?? []);
-	const activeFeatures = [...new Set([...basePlanFeatures.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
+	const disabledFeatures = overrides.disabled ?? [];
+	const activeFeatures = [
+		...new Set([
+			...basePlanFeatures.filter((f) => !disabledFeatures.includes(f)),
+			...enabledFeatures
+		])
+	];
+
+	const adminSections = gating.admin_sections ?? {};
+	const adminSectionsDisabled: string[] = overrides.admin_sections_disabled ?? [];
 
 	return {
 		authenticated: true,
 		plans: gating.plans,
 		features: gating.features,
 		currentPlan,
-		basePlanFeatures, // Base-Plan-Features (ohne Overrides)
-		activeFeatures, // Finale Features (mit Overrides)
-		overrideFeatures: enabledFeatures
+		basePlanFeatures,
+		activeFeatures,
+		overrideFeatures: enabledFeatures,
+		adminSections,
+		adminSectionsDisabled
 	};
 };
 
@@ -121,14 +131,18 @@ export const actions = {
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
 		const selectedOverrides = JSON.parse(data.get('overrides') as string);
+		const sectionsDisabled = JSON.parse((data.get('admin_sections_disabled') as string) || '[]');
 
 		// Load gating.json
 		const gating = read(GATING_PATH);
 
-		// 1. Update plan in slicemachine.config.json
+		// 1. Update plan in slicemachine.config.json (nur bei Änderung)
 		const smConfig = read(SM_CONFIG_PATH);
-		smConfig.plan = plan;
-		write(SM_CONFIG_PATH, smConfig);
+		const planChanged = smConfig.plan !== plan;
+		if (planChanged) {
+			smConfig.plan = plan;
+			write(SM_CONFIG_PATH, smConfig);
+		}
 
 		// 2. Write gating.overrides.json mit enabled + disabled
 		const planChain = getActivePlanChain(plan, gating.plans);
@@ -136,12 +150,23 @@ export const actions = {
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
 		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
 
-		write(OVERRIDES_PATH, {
-			enabled: enabled,
-			disabled: disabled
-		});
+		const existingOverrides = existsSync(OVERRIDES_PATH)
+			? read(OVERRIDES_PATH)
+			: { enabled: [], disabled: [], admin_sections_disabled: [] };
+		const overridesChanged =
+			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !==
+				JSON.stringify([...enabled].sort()) ||
+			JSON.stringify([...(existingOverrides.disabled ?? [])].sort()) !==
+				JSON.stringify([...disabled].sort()) ||
+			JSON.stringify([...(existingOverrides.admin_sections_disabled ?? [])].sort()) !==
+				JSON.stringify([...sectionsDisabled].sort());
 
-		// 3. Run build-customtypes.js
+		write(OVERRIDES_PATH, { enabled, disabled, admin_sections_disabled: sectionsDisabled });
+
+		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
+		if (!planChanged && !overridesChanged) {
+			throw redirect(303, '/agency/gating');
+		}
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
 		} catch (e) {
@@ -153,7 +178,10 @@ export const actions = {
 	}
 };
 
-function getActivePlanChain(planKey: string, plans: Record<string, { extends?: string }>): string[] {
+function getActivePlanChain(
+	planKey: string,
+	plans: Record<string, { extends?: string }>
+): string[] {
 	if (!planKey || !plans[planKey]) return planKey ? [planKey] : [];
 	const parent = plans[planKey]?.extends;
 	return [planKey, ...(parent ? getActivePlanChain(parent, plans) : [])];

@@ -66,5 +66,14 @@ export const actions: Actions = {
 		if (typeof id === 'string' && id) {
 			await deleteCustomer(id);
 		}
+	},
+
+	deleteAll: async ({ url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+		const all = await listCustomers();
+		await Promise.all(all.map((c) => deleteCustomer(c.id)));
+		return { ok: true };
 	}
 };

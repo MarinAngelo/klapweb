@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData, ActionData } from './$types';
+	import Button from '$lib/components/Button.svelte';
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 
@@ -12,12 +13,15 @@
 	let gating = structuredClone(data.gating) as {
 		plans: Record<string, { label: string; extends?: string }>;
 		features: Record<string, { label: string; plans: string[] }>;
-		slices: Record<string, {
-			plan?: string;
-			feature?: string;
-			variations?: Record<string, { plan?: string; feature?: string }>;
-			fields?: Record<string, { plan?: string; feature?: string }>;
-		}>;
+		slices: Record<
+			string,
+			{
+				plan?: string;
+				feature?: string;
+				variations?: Record<string, { plan?: string; feature?: string }>;
+				fields?: Record<string, { plan?: string; feature?: string }>;
+			}
+		>;
 	};
 
 	// Active tab
@@ -33,11 +37,11 @@
 	$: featureIds = Object.keys(gating.features);
 
 	// All slice names: union of filesystem + gating.json
-	$: allSliceNames = [
-		...new Set([...data.sliceNames, ...Object.keys(gating.slices)])
-	].sort();
+	$: allSliceNames = [...new Set([...data.sliceNames, ...Object.keys(gating.slices)])].sort();
 
-	function getGateType(obj: { plan?: string; feature?: string } | undefined): 'none' | 'plan' | 'feature' {
+	function getGateType(
+		obj: { plan?: string; feature?: string } | undefined
+	): 'none' | 'plan' | 'feature' {
 		if (!obj) return 'none';
 		if (obj.plan) return 'plan';
 		if (obj.feature) return 'feature';
@@ -77,7 +81,10 @@
 		const id = newPlanId.trim();
 		const label = newPlanLabel.trim();
 		if (!id || !label) return;
-		if (gating.plans[id]) { alert('Plan-ID existiert bereits.'); return; }
+		if (gating.plans[id]) {
+			alert('Plan-ID existiert bereits.');
+			return;
+		}
 		gating.plans[id] = { label };
 		if (newPlanExtends) gating.plans[id].extends = newPlanExtends;
 		gating = gating;
@@ -105,7 +112,10 @@
 		const id = newFeatureId.trim();
 		const label = newFeatureLabel.trim();
 		if (!id || !label) return;
-		if (gating.features[id]) { alert('Feature-ID existiert bereits.'); return; }
+		if (gating.features[id]) {
+			alert('Feature-ID existiert bereits.');
+			return;
+		}
 		gating.features[id] = { label, plans: [] };
 		gating = gating;
 		newFeatureId = '';
@@ -142,7 +152,7 @@
 	function setSliceGateType(name: string, type: 'none' | 'plan' | 'feature') {
 		ensureSlice(name);
 		const s = gating.slices[name];
-		applyGate(s, type, type === 'plan' ? planIds[0] ?? '' : featureIds[0] ?? '');
+		applyGate(s, type, type === 'plan' ? (planIds[0] ?? '') : (featureIds[0] ?? ''));
 		gating = gating;
 	}
 
@@ -293,14 +303,22 @@
 	}
 
 	function buildPayload() {
-		return JSON.stringify({
-			plans: gating.plans,
-			features: gating.features,
-			slices: cleanedSlices()
-		}, null, '\t');
+		return JSON.stringify(
+			{
+				plans: gating.plans,
+				features: gating.features,
+				slices: cleanedSlices()
+			},
+			null,
+			'\t'
+		);
 	}
 
-	const tabs: Array<[typeof activeTab, string]> = [['plans', 'Pläne'], ['features', 'Features'], ['slices', 'Slices']];
+	const tabs: Array<[typeof activeTab, string]> = [
+		['plans', 'Pläne'],
+		['features', 'Features'],
+		['slices', 'Slices']
+	];
 
 	function setPlanLabel(id: string, e: Event) {
 		gating.plans[id].label = (e.target as HTMLInputElement).value;
@@ -331,33 +349,52 @@
 	}
 
 	// Styles
-	const btn = 'background: #1e2d5a; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 1rem; font-size: 0.875rem; cursor: pointer;';
-	const btnSmall = 'background: #1e2d5a; color: white; border: none; border-radius: 0.25rem; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer;';
-	const btnDanger = 'background: none; border: none; color: #dc2626; font-size: 0.75rem; cursor: pointer; padding: 0;';
-	const input = 'border: 1px solid #d1d5db; border-radius: 0.25rem; padding: 0.3rem 0.5rem; font-size: 0.875rem; font-family: sans-serif;';
-	const select = 'border: 1px solid #d1d5db; border-radius: 0.25rem; padding: 0.25rem 0.4rem; font-size: 0.8rem; font-family: sans-serif; background: white;';
+	const btn =
+		'background: #1e2d5a; color: white; border: none; border-radius: 0.375rem; padding: 0.4rem 1rem; font-size: 0.875rem; cursor: pointer;';
+	const btnSmall =
+		'background: #1e2d5a; color: white; border: none; border-radius: 0.25rem; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer;';
+	const btnDanger =
+		'background: none; border: none; color: #dc2626; font-size: 0.75rem; cursor: pointer; padding: 0;';
+	const input =
+		'border: 1px solid #d1d5db; border-radius: 0.25rem; padding: 0.3rem 0.5rem; font-size: 0.875rem; font-family: sans-serif;';
+	const select =
+		'border: 1px solid #d1d5db; border-radius: 0.25rem; padding: 0.25rem 0.4rem; font-size: 0.8rem; font-family: sans-serif; background: white;';
 	const td = 'padding: 0.5rem 0.75rem; vertical-align: middle;';
-	const th = 'padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; font-size: 0.8rem; color: #374151; background: #f9fafb; border-bottom: 2px solid #e5e7eb;';
+	const th =
+		'padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; font-size: 0.8rem; color: #374151; background: #f9fafb; border-bottom: 2px solid #e5e7eb;';
 	const subTd = 'padding: 0.35rem 0.75rem; vertical-align: middle; background: #fafafa;';
-	const subTh = 'padding: 0.35rem 0.75rem; text-align: left; font-weight: 500; font-size: 0.75rem; color: #6b7280; background: #f3f4f6; border-bottom: 1px solid #e5e7eb;';
+	const subTh =
+		'padding: 0.35rem 0.75rem; text-align: left; font-weight: 500; font-size: 0.75rem; color: #6b7280; background: #f3f4f6; border-bottom: 1px solid #e5e7eb;';
 </script>
 
 <svelte:head><title>Gating Editor</title></svelte:head>
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1100px; margin: 0 auto;">
-
 	<!-- Header -->
-	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 1.5rem;">
-		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">← Dashboard</a>
+	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">gating.json Editor</h1>
 		<span style="font-size: 0.8rem; color: #6b7280;">
 			Aktiver Plan: <strong style="color: #1e2d5a;">{data.activePlan}</strong>
 			<span style="opacity: 0.6;">(in slicemachine.config.json)</span>
 		</span>
+		<div style="margin-left: auto;">
+			<Button
+				href="/admin/dashboard?secret={secret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+		</div>
 	</div>
 
 	{#if form?.success || saveMessage === 'ok'}
-		<div style="background: #d1fae5; color: #065f46; border-radius: 0.375rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.875rem;">
+		<div
+			style="background: #d1fae5; color: #065f46; border-radius: 0.375rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.875rem;"
+		>
 			Gespeichert. Der Dev-Server liest gating.json beim nächsten Rebuild.
 		</div>
 	{/if}
@@ -398,8 +435,8 @@
 					color: {activeTab === id ? '#1e2d5a' : '#6b7280'};
 					cursor: pointer;
 					font-family: sans-serif;
-				"
-			>{label}</button>
+				">{label}</button
+			>
 		{/each}
 	</div>
 
@@ -421,11 +458,7 @@
 						<tr style="border-bottom: 1px solid #e5e7eb;">
 							<td style="{td} font-family: monospace; color: #1e2d5a;">{id}</td>
 							<td style={td}>
-								<input
-									style={input}
-									value={plan.label}
-									on:input={(e) => setPlanLabel(id, e)}
-								/>
+								<input style={input} value={plan.label} on:input={(e) => setPlanLabel(id, e)} />
 							</td>
 							<td style={td}>
 								<select
@@ -434,7 +467,7 @@
 									on:change={(e) => setPlanExtends(id, e)}
 								>
 									<option value="">–</option>
-									{#each planIds.filter(p => p !== id) as pid}
+									{#each planIds.filter((p) => p !== id) as pid}
 										<option value={pid}>{pid}</option>
 									{/each}
 								</select>
@@ -497,7 +530,9 @@
 							<td style={td}>
 								<div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
 									{#each planIds as pid}
-										<label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer; font-size: 0.8rem;">
+										<label
+											style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer; font-size: 0.8rem;"
+										>
 											<input
 												type="checkbox"
 												checked={feature.plans.includes(pid)}
@@ -523,7 +558,9 @@
 							<input style={input} placeholder="Label" bind:value={newFeatureLabel} />
 						</td>
 						<td style={td}>
-							<span style="font-size: 0.75rem; color: #9ca3af;">Pläne nach dem Erstellen auswählen</span>
+							<span style="font-size: 0.75rem; color: #9ca3af;"
+								>Pläne nach dem Erstellen auswählen</span
+							>
 						</td>
 						<td style={td}>
 							<button style={btnSmall} on:click={addFeature}>+ Hinzufügen</button>
@@ -538,7 +575,8 @@
 
 	{#if activeTab === 'slices'}
 		<div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 1rem;">
-			{allSliceNames.length} Slices (Filesystem + gating.json vereint). Slices ohne Gate werden beim Speichern nicht in gating.json geschrieben.
+			{allSliceNames.length} Slices (Filesystem + gating.json vereint). Slices ohne Gate werden beim Speichern
+			nicht in gating.json geschrieben.
 		</div>
 
 		<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
@@ -569,7 +607,11 @@
 
 						<!-- Gate type -->
 						<td style={td}>
-							<select style={select} value={gateType} on:change={(e) => sliceGateTypeChanged(sliceName, e)}>
+							<select
+								style={select}
+								value={gateType}
+								on:change={(e) => sliceGateTypeChanged(sliceName, e)}
+							>
 								<option value="none">Kein Gate</option>
 								<option value="plan">Plan</option>
 								<option value="feature">Feature</option>
@@ -579,13 +621,21 @@
 						<!-- Gate value -->
 						<td style={td}>
 							{#if gateType === 'plan'}
-								<select style={select} value={gateValue} on:change={(e) => sliceGateValueChanged(sliceName, e)}>
+								<select
+									style={select}
+									value={gateValue}
+									on:change={(e) => sliceGateValueChanged(sliceName, e)}
+								>
 									{#each planIds as pid}
 										<option value={pid}>{pid}</option>
 									{/each}
 								</select>
 							{:else if gateType === 'feature'}
-								<select style={select} value={gateValue} on:change={(e) => sliceGateValueChanged(sliceName, e)}>
+								<select
+									style={select}
+									value={gateValue}
+									on:change={(e) => sliceGateValueChanged(sliceName, e)}
+								>
 									{#each featureIds as fid}
 										<option value={fid}>{fid}</option>
 									{/each}
@@ -602,7 +652,8 @@
 									on:click={() => toggleExpand(sliceName)}
 									style="background: none; border: none; cursor: pointer; font-size: 0.75rem; color: #4b5563; padding: 0.2rem 0.5rem; border-radius: 0.25rem; background: #e5e7eb;"
 								>
-									{varCount} {isExpanded ? '▲' : '▼'}
+									{varCount}
+									{isExpanded ? '▲' : '▼'}
 								</button>
 							{:else}
 								<span style="color: #9ca3af; font-size: 0.75rem;">–</span>
@@ -615,7 +666,8 @@
 									on:click={() => toggleExpand(sliceName)}
 									style="background: none; border: none; cursor: pointer; font-size: 0.75rem; color: #4b5563; padding: 0.2rem 0.5rem; border-radius: 0.25rem; background: #e5e7eb;"
 								>
-									{fieldCount} {isExpanded ? '▲' : '▼'}
+									{fieldCount}
+									{isExpanded ? '▲' : '▼'}
 								</button>
 							{:else}
 								<span style="color: #9ca3af; font-size: 0.75rem;">–</span>
@@ -637,13 +689,20 @@
 					{#if isExpanded}
 						<tr>
 							<td colspan="6" style="padding: 0; border-bottom: 1px solid #e5e7eb;">
-								<div style="margin: 0 0 0 1.5rem; border-left: 3px solid #e5e7eb; padding: 0.75rem 1rem;">
-
+								<div
+									style="margin: 0 0 0 1.5rem; border-left: 3px solid #e5e7eb; padding: 0.75rem 1rem;"
+								>
 									<!-- Variations -->
 									<div style="margin-bottom: 0.75rem;">
-										<div style="font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;">Variationen</div>
+										<div
+											style="font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;"
+										>
+											Variationen
+										</div>
 										{#if Object.keys(s?.variations ?? {}).length > 0}
-											<table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.5rem;">
+											<table
+												style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.5rem;"
+											>
 												<thead>
 													<tr>
 														<th style={subTh}>ID</th>
@@ -659,7 +718,11 @@
 														<tr style="border-bottom: 1px solid #e5e7eb;">
 															<td style="{subTd} font-family: monospace;">{varId}</td>
 															<td style={subTd}>
-																<select style={select} value={vType} on:change={(e) => varGateTypeChanged(sliceName, varId, e)}>
+																<select
+																	style={select}
+																	value={vType}
+																	on:change={(e) => varGateTypeChanged(sliceName, varId, e)}
+																>
 																	<option value="none">Kein Gate</option>
 																	<option value="plan">Plan</option>
 																	<option value="feature">Feature</option>
@@ -667,13 +730,21 @@
 															</td>
 															<td style={subTd}>
 																{#if vType === 'plan'}
-																	<select style={select} value={vValue} on:change={(e) => varGateValueChanged(sliceName, varId, e)}>
+																	<select
+																		style={select}
+																		value={vValue}
+																		on:change={(e) => varGateValueChanged(sliceName, varId, e)}
+																	>
 																		{#each planIds as pid}
 																			<option value={pid}>{pid}</option>
 																		{/each}
 																	</select>
 																{:else if vType === 'feature'}
-																	<select style={select} value={vValue} on:change={(e) => varGateValueChanged(sliceName, varId, e)}>
+																	<select
+																		style={select}
+																		value={vValue}
+																		on:change={(e) => varGateValueChanged(sliceName, varId, e)}
+																	>
 																		{#each featureIds as fid}
 																			<option value={fid}>{fid}</option>
 																		{/each}
@@ -683,14 +754,20 @@
 																{/if}
 															</td>
 															<td style={subTd}>
-																<button style={btnDanger} on:click={() => deleteVariation(sliceName, varId)}>Entfernen</button>
+																<button
+																	style={btnDanger}
+																	on:click={() => deleteVariation(sliceName, varId)}
+																	>Entfernen</button
+																>
 															</td>
 														</tr>
 													{/each}
 												</tbody>
 											</table>
 										{:else}
-											<p style="font-size: 0.75rem; color: #9ca3af; margin: 0 0 0.5rem;">Keine Variationen.</p>
+											<p style="font-size: 0.75rem; color: #9ca3af; margin: 0 0 0.5rem;">
+												Keine Variationen.
+											</p>
 										{/if}
 
 										<!-- Add variation -->
@@ -701,15 +778,23 @@
 												value={newVarName[sliceName] ?? ''}
 												on:input={(e) => setNewVarName(sliceName, e)}
 											/>
-											<button style={btnSmall} on:click={() => addVariation(sliceName)}>+ Variation</button>
+											<button style={btnSmall} on:click={() => addVariation(sliceName)}
+												>+ Variation</button
+											>
 										</div>
 									</div>
 
 									<!-- Fields -->
 									<div>
-										<div style="font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;">Felder</div>
+										<div
+											style="font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;"
+										>
+											Felder
+										</div>
 										{#if Object.keys(s?.fields ?? {}).length > 0}
-											<table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.5rem;">
+											<table
+												style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.5rem;"
+											>
 												<thead>
 													<tr>
 														<th style={subTh}>Feld-ID</th>
@@ -725,7 +810,11 @@
 														<tr style="border-bottom: 1px solid #e5e7eb;">
 															<td style="{subTd} font-family: monospace;">{fieldId}</td>
 															<td style={subTd}>
-																<select style={select} value={fType} on:change={(e) => fieldGateTypeChanged(sliceName, fieldId, e)}>
+																<select
+																	style={select}
+																	value={fType}
+																	on:change={(e) => fieldGateTypeChanged(sliceName, fieldId, e)}
+																>
 																	<option value="none">Kein Gate</option>
 																	<option value="plan">Plan</option>
 																	<option value="feature">Feature</option>
@@ -733,13 +822,21 @@
 															</td>
 															<td style={subTd}>
 																{#if fType === 'plan'}
-																	<select style={select} value={fValue} on:change={(e) => fieldGateValueChanged(sliceName, fieldId, e)}>
+																	<select
+																		style={select}
+																		value={fValue}
+																		on:change={(e) => fieldGateValueChanged(sliceName, fieldId, e)}
+																	>
 																		{#each planIds as pid}
 																			<option value={pid}>{pid}</option>
 																		{/each}
 																	</select>
 																{:else if fType === 'feature'}
-																	<select style={select} value={fValue} on:change={(e) => fieldGateValueChanged(sliceName, fieldId, e)}>
+																	<select
+																		style={select}
+																		value={fValue}
+																		on:change={(e) => fieldGateValueChanged(sliceName, fieldId, e)}
+																	>
 																		{#each featureIds as fid}
 																			<option value={fid}>{fid}</option>
 																		{/each}
@@ -749,14 +846,19 @@
 																{/if}
 															</td>
 															<td style={subTd}>
-																<button style={btnDanger} on:click={() => deleteField(sliceName, fieldId)}>Entfernen</button>
+																<button
+																	style={btnDanger}
+																	on:click={() => deleteField(sliceName, fieldId)}>Entfernen</button
+																>
 															</td>
 														</tr>
 													{/each}
 												</tbody>
 											</table>
 										{:else}
-											<p style="font-size: 0.75rem; color: #9ca3af; margin: 0 0 0.5rem;">Keine Felder.</p>
+											<p style="font-size: 0.75rem; color: #9ca3af; margin: 0 0 0.5rem;">
+												Keine Felder.
+											</p>
 										{/if}
 
 										<!-- Add field -->
@@ -770,7 +872,6 @@
 											<button style={btnSmall} on:click={() => addField(sliceName)}>+ Feld</button>
 										</div>
 									</div>
-
 								</div>
 							</td>
 						</tr>
@@ -802,5 +903,4 @@
 			</button>
 		</form>
 	</div>
-
 </div>

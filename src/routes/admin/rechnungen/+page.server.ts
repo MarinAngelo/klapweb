@@ -1,7 +1,13 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { env } from '$env/dynamic/private';
-import { listManualInvoices, saveManualInvoice, deleteManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import {
+	listManualInvoices,
+	saveManualInvoice,
+	deleteManualInvoice,
+	getManualInvoice,
+	updateManualInvoice
+} from '$lib/server/invoices';
 import { listCustomers } from '$lib/server/customers';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
@@ -14,10 +20,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		throw error(403, 'Zugang verweigert');
 	}
 
-	const [invoices, customers] = await Promise.all([
-		listManualInvoices(),
-		listCustomers()
-	]);
+	const [invoices, customers] = await Promise.all([listManualInvoices(), listCustomers()]);
 
 	// Firmendaten laden
 	const client = createClient({ fetch });
@@ -226,6 +229,17 @@ export const actions: Actions = {
 			console.error('Rechnung löschen fehlgeschlagen:', e);
 			throw error(500, 'Rechnung konnte nicht gelöscht werden');
 		}
+	},
+
+	deleteAll: async ({ request }) => {
+		const formData = await request.formData();
+		const secret = formData.get('secret') as string;
+		if (!secret || secret !== ADMIN_SECRET) {
+			throw error(403, 'Zugang verweigert');
+		}
+		const all = await listManualInvoices();
+		await Promise.all(all.map((inv) => deleteManualInvoice(inv.id)));
+		return { success: true };
 	},
 
 	edit: async ({ request, fetch }) => {
@@ -489,7 +503,13 @@ async function generateManualPdf(
 		y -= 14;
 	}
 	if (companyInfo.uid) {
-		page.drawText(`UID: ${companyInfo.uid}`, { x: marginL, y, size: 9, font: fontRegular, color: gray });
+		page.drawText(`UID: ${companyInfo.uid}`, {
+			x: marginL,
+			y,
+			size: 9,
+			font: fontRegular,
+			color: gray
+		});
 		y -= 14;
 	}
 	if (companyInfo.email) {
@@ -594,7 +614,13 @@ async function generateManualPdf(
 	// --- Line items ---
 	let subtotal = 0;
 	for (const item of data.items) {
-		page.drawText(item.description, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		page.drawText(item.description, {
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontRegular,
+			color: black
+		});
 
 		const qtyStr = item.quantity.toString();
 		const qtyWidth = fontRegular.widthOfTextAtSize(qtyStr, 10);

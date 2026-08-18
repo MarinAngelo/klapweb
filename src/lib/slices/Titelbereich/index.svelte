@@ -87,7 +87,10 @@
 
 	// Button-Farben aus Slice (Type-safe)
 	// WICHTIG: $: verwenden, damit Updates vom CMS übernommen werden
-	$: btnStyleName = 'button_style' in slice.primary ? (slice.primary as any).button_style?.uid || undefined : undefined;
+	$: btnStyleName =
+		'button_style' in slice.primary
+			? (slice.primary as any).button_style?.uid || undefined
+			: undefined;
 	$: buttonColor = 'button_color' in slice.primary ? (slice.primary as any).button_color : null;
 	$: buttonHoverColor =
 		'button_hover_color' in slice.primary ? (slice.primary as any).button_hover_color : null;
@@ -123,7 +126,10 @@
 			? paddingMap[slice.primary.text_overlay_padding ?? '']
 			: paddingMap['mittel'];
 
-	$: textOverlayPaddingMobileVal = (slice.primary as any).text_overlay_padding_mobile as string | null | undefined;
+	$: textOverlayPaddingMobileVal = (slice.primary as any).text_overlay_padding_mobile as
+		| string
+		| null
+		| undefined;
 	$: isFullScreenMobile = $isMobile && textOverlayPaddingMobileVal === 'Ganzer Bildschirm';
 	$: effectiveContentPadding = $isMobile
 		? textOverlayPaddingMobileVal && textOverlayPaddingMobileVal !== 'Ganzer Bildschirm'
@@ -163,7 +169,8 @@
 
 	$: carouselItems =
 		slice.variation === 'mitBildKarusell'
-			? ((slice.primary as any).imageMerryGoRound as Array<{ image: any; text: any }> | null) ?? []
+			? (((slice.primary as any).imageMerryGoRound as Array<{ image: any; text: any }> | null) ??
+				[])
 			: [];
 	$: activeItem = carouselItems[carouselCurrent] ?? null;
 	$: primaryText = 'text' in slice.primary ? (slice.primary.text as any[]) : [];
@@ -227,6 +234,7 @@
 	data-slice-type={slice.slice_type}
 	style="color: {color};
 		height: {$bannerHeight};
+		{$bannerHeight === 'auto' ? 'min-height: 100vh;' : ''}
 		font-family: {presetFont
 		? `'${presetFont}'`
 		: ('font' in slice.primary &&
@@ -326,10 +334,7 @@
 					>
 						{#if activeText.length}
 							{#key carouselCurrent}
-								<div
-									style="--page-color: {color}; color: {color};"
-									in:fade={{ duration: 600 }}
-								>
+								<div style="--page-color: {color}; color: {color};" in:fade={{ duration: 600 }}>
 									<PrismicRichText field={activeText} />
 								</div>
 							{/key}

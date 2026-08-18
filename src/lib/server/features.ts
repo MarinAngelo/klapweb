@@ -18,6 +18,7 @@ function _check(featureName: string): boolean {
 export const FEATURE_CHATBOT = _check('chatbot');
 export const FEATURE_KLAPSTUDIO = _check('klapstudio');
 export const FEATURE_TERMINBUCHUNG = _check('terminbuchung');
+export const FEATURE_ECOMMERCE = _check('ecommerce');
 
 /** @deprecated Verwende die FEATURE_* Konstanten direkt */
 export function isFeatureActive(featureName: string): boolean {
