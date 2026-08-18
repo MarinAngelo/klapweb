@@ -48,12 +48,21 @@
 		kaution_bank: '',
 
 		ist_untermiete: false,
-		untermieter1_vorname: '', untermieter1_name: '', untermieter1_geburtsdatum: '',
-		untermieter1_adresse: '', untermieter1_plz_ort: '',
-		untermieter2_vorname: '', untermieter2_name: '', untermieter2_geburtsdatum: '',
-		untermieter2_adresse: '', untermieter2_plz_ort: '',
-		untermieter3_vorname: '', untermieter3_name: '', untermieter3_geburtsdatum: '',
-		untermieter3_adresse: '', untermieter3_plz_ort: '',
+		untermieter1_vorname: '',
+		untermieter1_name: '',
+		untermieter1_geburtsdatum: '',
+		untermieter1_adresse: '',
+		untermieter1_plz_ort: '',
+		untermieter2_vorname: '',
+		untermieter2_name: '',
+		untermieter2_geburtsdatum: '',
+		untermieter2_adresse: '',
+		untermieter2_plz_ort: '',
+		untermieter3_vorname: '',
+		untermieter3_name: '',
+		untermieter3_geburtsdatum: '',
+		untermieter3_adresse: '',
+		untermieter3_plz_ort: '',
 		untermiet_raeume: '',
 		untermiet_zins: '',
 
@@ -62,14 +71,14 @@
 
 		ort: '',
 		datum: today,
-		bemerkungen: '',
+		bemerkungen: ''
 	};
 
 	$: d.ist_untermiete = untermiete;
 	$: if (!untermiete) untermietersAnzahl = 1;
 
 	$: brutto = (() => {
-		const n  = parseFloat(d.nettomiete);
+		const n = parseFloat(d.nettomiete);
 		const nk = parseFloat(d.nebenkosten);
 		if (!isNaN(n) && !isNaN(nk)) return (n + nk).toFixed(2);
 		if (!isNaN(n)) return n.toFixed(2);
@@ -83,15 +92,16 @@
 			const res = await fetch('/api/mietvertrag', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(d),
+				body: JSON.stringify(d)
 			});
 			if (!res.ok) throw new Error(await res.text());
 			const blob = await res.blob();
-			const url  = URL.createObjectURL(blob);
-			const a    = document.createElement('a');
-			const name = res.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1]
-				?? 'Mietvertrag.pdf';
-			a.href     = url;
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			const name =
+				res.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1] ??
+				'Mietvertrag.pdf';
+			a.href = url;
 			a.download = name;
 			a.click();
 			URL.revokeObjectURL(url);
@@ -109,7 +119,6 @@
 </svelte:head>
 
 <div class="min-h-screen" style="background:#f4f5f7; font-family: inherit;">
-
 	<!-- Header -->
 	<div style="background:#1e2d5a; color:#fff; padding:2rem 0;">
 		<div class="mx-auto px-6" style="max-width:800px;">
@@ -122,16 +131,18 @@
 		</div>
 	</div>
 
-	<form on:submit|preventDefault={submit}
-		class="mx-auto px-6 py-8" style="max-width:800px;">
-
+	<form on:submit|preventDefault={submit} class="mx-auto px-6 py-8" style="max-width:800px;">
 		<!-- ── Vermieter ──────────────────────────────────────────────────── -->
 		<section class="card">
 			<h2 class="section-title">Vermieter</h2>
 			<div class="grid2">
 				<div class="field span2">
 					<label>Name / Firma <span class="req">*</span></label>
-					<input bind:value={d.vermieter_name} required placeholder="Max Mustermann / Mustermann Immobilien AG" />
+					<input
+						bind:value={d.vermieter_name}
+						required
+						placeholder="Max Mustermann / Mustermann Immobilien AG"
+					/>
 				</div>
 				<div class="field span2">
 					<label>Strasse und Hausnummer <span class="req">*</span></label>
@@ -143,7 +154,13 @@
 				</div>
 				<div class="field">
 					<label>Telefon</label>
-					<input bind:value={d.vermieter_telefon} type="tel" placeholder="+41 44 000 00 00" />
+					<input
+						bind:value={d.vermieter_telefon}
+						type="tel"
+						inputmode="numeric"
+						pattern="[0-9\s\-\+\(\)]*"
+						placeholder="+41 44 000 00 00"
+					/>
 				</div>
 				<div class="field span2">
 					<label>E-Mail</label>
@@ -179,7 +196,13 @@
 				</div>
 				<div class="field">
 					<label>Telefon</label>
-					<input bind:value={d.mieter1_telefon} type="tel" placeholder="+41 79 000 00 00" />
+					<input
+						bind:value={d.mieter1_telefon}
+						type="tel"
+						inputmode="numeric"
+						pattern="[0-9\s\-\+\(\)]*"
+						placeholder="+41 79 000 00 00"
+					/>
 				</div>
 				<div class="field span2">
 					<label>E-Mail</label>
@@ -209,7 +232,9 @@
 			<div class="toggle-header">
 				<div>
 					<h2 class="section-title" style="margin:0; border:none; padding:0;">Untermiete</h2>
-					<p class="hint" style="margin:.2rem 0 0;">Hauptmieter vermietet Teile weiter (OR Art. 262)</p>
+					<p class="hint" style="margin:.2rem 0 0;">
+						Hauptmieter vermietet Teile weiter (OR Art. 262)
+					</p>
 				</div>
 				<label class="toggle-switch">
 					<input type="checkbox" bind:checked={untermiete} />
@@ -219,14 +244,18 @@
 
 			{#if untermiete}
 				<div style="margin-top:1.25rem;">
-					{#each Array.from({length: untermietersAnzahl}, (_, i) => i + 1) as nr}
+					{#each Array.from({ length: untermietersAnzahl }, (_, i) => i + 1) as nr}
 						<div class="untermieter-block">
 							<p class="hint">Untermieter/in {nr}{nr === 1 ? ' *' : ' (optional)'}</p>
 							<div class="grid3">
 								<div class="field">
 									<label>Vorname{nr === 1 ? ' *' : ''}</label>
 									{#if nr === 1}
-										<input bind:value={d.untermieter1_vorname} required={untermiete} placeholder="Anna" />
+										<input
+											bind:value={d.untermieter1_vorname}
+											required={untermiete}
+											placeholder="Anna"
+										/>
 									{:else if nr === 2}
 										<input bind:value={d.untermieter2_vorname} placeholder="Beat" />
 									{:else}
@@ -236,7 +265,11 @@
 								<div class="field">
 									<label>Name{nr === 1 ? ' *' : ''}</label>
 									{#if nr === 1}
-										<input bind:value={d.untermieter1_name} required={untermiete} placeholder="Muster" />
+										<input
+											bind:value={d.untermieter1_name}
+											required={untermiete}
+											placeholder="Muster"
+										/>
 									{:else if nr === 2}
 										<input bind:value={d.untermieter2_name} placeholder="Muster" />
 									{:else}
@@ -279,14 +312,20 @@
 
 					<div class="btn-row">
 						{#if untermietersAnzahl < 3}
-							<button type="button" class="btn-add"
-								on:click={() => untermietersAnzahl = Math.min(3, untermietersAnzahl + 1)}>
+							<button
+								type="button"
+								class="btn-add"
+								on:click={() => (untermietersAnzahl = Math.min(3, untermietersAnzahl + 1))}
+							>
 								+ Weiteren Untermieter hinzufügen
 							</button>
 						{/if}
 						{#if untermietersAnzahl > 1}
-							<button type="button" class="btn-remove"
-								on:click={() => untermietersAnzahl = Math.max(1, untermietersAnzahl - 1)}>
+							<button
+								type="button"
+								class="btn-remove"
+								on:click={() => (untermietersAnzahl = Math.max(1, untermietersAnzahl - 1))}
+							>
 								− Letzten entfernen
 							</button>
 						{/if}
@@ -295,20 +334,30 @@
 					<div class="grid2" style="margin-top:1rem;">
 						<div class="field span2">
 							<label>Untervermietete Räume / Teile <span class="req">*</span></label>
-							<input bind:value={d.untermiet_raeume} required={untermiete}
-								placeholder="z.B. Zimmer 2 (ca. 14 m²), Mitbenutzung Küche und Bad" />
+							<input
+								bind:value={d.untermiet_raeume}
+								required={untermiete}
+								placeholder="z.B. Zimmer 2 (ca. 14 m²), Mitbenutzung Küche und Bad"
+							/>
 						</div>
 						<div class="field">
 							<label>Untermietzins CHF/Monat <span class="req">*</span></label>
 							<div class="input-prefix">
 								<span>CHF</span>
-								<input bind:value={d.untermiet_zins} type="number" min="0" step="0.05"
-									required={untermiete} placeholder="800.00" />
+								<input
+									bind:value={d.untermiet_zins}
+									type="number"
+									min="0"
+									step="0.05"
+									required={untermiete}
+									placeholder="800.00"
+								/>
 							</div>
 						</div>
 						<div class="field" style="align-self:end;">
 							<p class="hint" style="margin:0; font-size:.75rem; line-height:1.4;">
-								Darf den anteiligen Hauptmietzins nicht übermässig übersteigen (OR Art. 262 Abs. 2 lit. b).
+								Darf den anteiligen Hauptmietzins nicht übermässig übersteigen (OR Art. 262 Abs. 2
+								lit. b).
 							</p>
 						</div>
 					</div>
@@ -352,8 +401,10 @@
 				</div>
 				<div class="field span2">
 					<label>Nebenräume</label>
-					<input bind:value={d.objekt_nebenraeume}
-						placeholder="Keller Nr. 4, Estrichanteil, Autoeinstellplatz Nr. 7" />
+					<input
+						bind:value={d.objekt_nebenraeume}
+						placeholder="Keller Nr. 4, Estrichanteil, Autoeinstellplatz Nr. 7"
+					/>
 				</div>
 			</div>
 		</section>
@@ -396,8 +447,7 @@
 				{/if}
 				<div class="field span3">
 					<label>Kündigungstermine</label>
-					<input bind:value={d.kuendigungstermine}
-						placeholder="1. April und 1. Oktober" />
+					<input bind:value={d.kuendigungstermine} placeholder="1. April und 1. Oktober" />
 				</div>
 			</div>
 		</section>
@@ -410,16 +460,27 @@
 					<label>Nettomiete CHF/Monat <span class="req">*</span></label>
 					<div class="input-prefix">
 						<span>CHF</span>
-						<input bind:value={d.nettomiete} type="number" min="0" step="0.05"
-							required placeholder="1500.00" />
+						<input
+							bind:value={d.nettomiete}
+							type="number"
+							min="0"
+							step="0.05"
+							required
+							placeholder="1500.00"
+						/>
 					</div>
 				</div>
 				<div class="field">
 					<label>Nebenkosten Akonto CHF/Monat</label>
 					<div class="input-prefix">
 						<span>CHF</span>
-						<input bind:value={d.nebenkosten} type="number" min="0" step="0.05"
-							placeholder="200.00" />
+						<input
+							bind:value={d.nebenkosten}
+							type="number"
+							min="0"
+							step="0.05"
+							placeholder="200.00"
+						/>
 					</div>
 				</div>
 				<div class="field">
@@ -432,7 +493,7 @@
 				<div class="field">
 					<label>Zahlbar am … des Monats</label>
 					<select bind:value={d.zahlungstag}>
-						{#each Array.from({length:28}, (_,i)=>`${i+1}`) as t}
+						{#each Array.from({ length: 28 }, (_, i) => `${i + 1}`) as t}
 							<option value={t}>{t}.</option>
 						{/each}
 					</select>
@@ -449,8 +510,13 @@
 					<label>Kautionsbetrag CHF</label>
 					<div class="input-prefix">
 						<span>CHF</span>
-						<input bind:value={d.kaution_betrag} type="number" min="0" step="0.05"
-							placeholder="4500.00" />
+						<input
+							bind:value={d.kaution_betrag}
+							type="number"
+							min="0"
+							step="0.05"
+							placeholder="4500.00"
+						/>
 					</div>
 				</div>
 				<div class="field">
@@ -493,8 +559,11 @@
 			<h2 class="section-title">Besondere Vereinbarungen</h2>
 			<div class="field">
 				<label>Zusätzliche Abmachungen (optional)</label>
-				<textarea bind:value={d.bemerkungen} rows="4"
-					placeholder="z.B. Haustiere erlaubt, Gartenpflege durch Mieter, …"></textarea>
+				<textarea
+					bind:value={d.bemerkungen}
+					rows="4"
+					placeholder="z.B. Haustiere erlaubt, Gartenpflege durch Mieter, …"
+				></textarea>
 			</div>
 		</section>
 
@@ -534,66 +603,109 @@
 </div>
 
 <style>
-	:global(body) { margin: 0; }
+	:global(body) {
+		margin: 0;
+	}
 
 	.card {
 		background: #fff;
 		border-radius: 10px;
 		padding: 1.5rem 1.75rem;
 		margin-bottom: 1.25rem;
-		box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+		box-shadow:
+			0 1px 4px rgba(0, 0, 0, 0.06),
+			0 0 0 1px rgba(0, 0, 0, 0.04);
 	}
 
 	.section-title {
 		margin: 0 0 1.1rem;
-		font-size: .8rem;
+		font-size: 0.8rem;
 		font-weight: 700;
-		letter-spacing: .08em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: #1e2d5a;
-		padding-bottom: .6rem;
+		padding-bottom: 0.6rem;
 		border-bottom: 2px solid #1e2d5a18;
 	}
 
 	.hint {
-		margin: -.4rem 0 .9rem;
-		font-size: .8rem;
+		margin: -0.4rem 0 0.9rem;
+		font-size: 0.8rem;
 		color: #888;
 	}
 
-	.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem 1.25rem; }
-	.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .85rem 1.25rem; }
-	.span2 { grid-column: span 2; }
-	.span3 { grid-column: span 3; }
-
-	@media (max-width: 600px) {
-		.grid2, .grid3 { grid-template-columns: 1fr; }
-		.span2, .span3 { grid-column: span 1; }
+	.grid2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.85rem 1.25rem;
+	}
+	.grid3 {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 0.85rem 1.25rem;
+	}
+	.span2 {
+		grid-column: span 2;
+	}
+	.span3 {
+		grid-column: span 3;
 	}
 
-	.field { display: flex; flex-direction: column; gap: .3rem; }
-	.field label { font-size: .78rem; font-weight: 600; color: #555; }
-	.req { color: #c0392b; }
+	@media (max-width: 600px) {
+		.grid2,
+		.grid3 {
+			grid-template-columns: 1fr;
+		}
+		.span2,
+		.span3 {
+			grid-column: span 1;
+		}
+	}
 
-	input, select, textarea {
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.field label {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: #555;
+	}
+	.req {
+		color: #c0392b;
+	}
+
+	input,
+	select,
+	textarea {
 		width: 100%;
 		box-sizing: border-box;
-		padding: .52rem .7rem;
+		padding: 0.52rem 0.7rem;
 		border: 1.5px solid #dde;
 		border-radius: 6px;
-		font-size: .92rem;
+		font-size: 0.92rem;
 		font-family: inherit;
 		color: #1a1a2e;
 		background: #fafbfc;
-		transition: border-color .15s;
+		transition: border-color 0.15s;
 		outline: none;
 	}
-	input:focus, select:focus, textarea:focus {
+	input:focus,
+	select:focus,
+	textarea:focus {
 		border-color: #1e2d5a;
 		background: #fff;
 	}
-	input[readonly] { background: #f0f2f5; color: #555; cursor: default; }
-	textarea { resize: vertical; min-height: 90px; }
+	input[readonly] {
+		background: #f0f2f5;
+		color: #555;
+		cursor: default;
+	}
+	textarea {
+		resize: vertical;
+		min-height: 90px;
+	}
 
 	.input-prefix {
 		display: flex;
@@ -603,11 +715,16 @@
 		overflow: hidden;
 		background: #fafbfc;
 	}
-	.input-prefix:focus-within { border-color: #1e2d5a; background: #fff; }
-	.input-prefix.readonly { background: #f0f2f5; }
+	.input-prefix:focus-within {
+		border-color: #1e2d5a;
+		background: #fff;
+	}
+	.input-prefix.readonly {
+		background: #f0f2f5;
+	}
 	.input-prefix span {
-		padding: 0 .6rem;
-		font-size: .82rem;
+		padding: 0 0.6rem;
+		font-size: 0.82rem;
 		font-weight: 600;
 		color: #888;
 		background: #f0f2f5;
@@ -620,17 +737,32 @@
 		background: transparent;
 		flex: 1;
 	}
-	.input-prefix input:focus { box-shadow: none; }
+	.input-prefix input:focus {
+		box-shadow: none;
+	}
 
-	.radio-group { display: flex; gap: 1.2rem; padding: .4rem 0; }
-	.radio { display: flex; align-items: center; gap: .4rem; font-size: .9rem; cursor: pointer; color: #333; }
-	.radio input { width: auto; }
+	.radio-group {
+		display: flex;
+		gap: 1.2rem;
+		padding: 0.4rem 0;
+	}
+	.radio {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.9rem;
+		cursor: pointer;
+		color: #333;
+	}
+	.radio input {
+		width: auto;
+	}
 
 	.btn-primary {
 		display: inline-flex;
 		align-items: center;
-		gap: .6rem;
-		padding: .85rem 2.5rem;
+		gap: 0.6rem;
+		padding: 0.85rem 2.5rem;
 		background: #1e2d5a;
 		color: #fff;
 		border: none;
@@ -638,30 +770,43 @@
 		font-size: 1rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: background .15s, transform .1s;
+		transition:
+			background 0.15s,
+			transform 0.1s;
 		font-family: inherit;
 	}
-	.btn-primary:hover:not(:disabled) { background: #2a3f7a; transform: translateY(-1px); }
-	.btn-primary:disabled { opacity: .65; cursor: not-allowed; }
+	.btn-primary:hover:not(:disabled) {
+		background: #2a3f7a;
+		transform: translateY(-1px);
+	}
+	.btn-primary:disabled {
+		opacity: 0.65;
+		cursor: not-allowed;
+	}
 
 	.spinner {
-		width: 16px; height: 16px;
-		border: 2px solid rgba(255,255,255,.4);
+		width: 16px;
+		height: 16px;
+		border: 2px solid rgba(255, 255, 255, 0.4);
 		border-top-color: #fff;
 		border-radius: 50%;
-		animation: spin .7s linear infinite;
+		animation: spin 0.7s linear infinite;
 		display: inline-block;
 	}
-	@keyframes spin { to { transform: rotate(360deg); } }
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
 
 	.error {
 		background: #fdecea;
 		border: 1px solid #f5c6c2;
 		color: #c0392b;
-		padding: .75rem 1rem;
+		padding: 0.75rem 1rem;
 		border-radius: 6px;
 		margin-bottom: 1rem;
-		font-size: .9rem;
+		font-size: 0.9rem;
 	}
 
 	.toggle-header {
@@ -677,7 +822,9 @@
 		display: flex;
 		align-items: center;
 	}
-	.toggle-switch input { display: none; }
+	.toggle-switch input {
+		display: none;
+	}
 
 	.toggle-track {
 		display: block;
@@ -686,9 +833,11 @@
 		border-radius: 12px;
 		background: #d1d5db;
 		position: relative;
-		transition: background .2s;
+		transition: background 0.2s;
 	}
-	.toggle-switch input:checked ~ .toggle-track { background: #1e2d5a; }
+	.toggle-switch input:checked ~ .toggle-track {
+		background: #1e2d5a;
+	}
 
 	.toggle-thumb {
 		display: block;
@@ -699,34 +848,60 @@
 		position: absolute;
 		top: 3px;
 		left: 3px;
-		transition: left .2s;
-		box-shadow: 0 1px 3px rgba(0,0,0,.2);
+		transition: left 0.2s;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 	}
-	.toggle-switch input:checked ~ .toggle-track .toggle-thumb { left: 23px; }
+	.toggle-switch input:checked ~ .toggle-track .toggle-thumb {
+		left: 23px;
+	}
 
 	.untermieter-block {
-		padding: .75rem 0;
+		padding: 0.75rem 0;
 		border-bottom: 1px solid #f0f0f0;
-		margin-bottom: .5rem;
+		margin-bottom: 0.5rem;
 	}
-	.untermieter-block:last-of-type { border-bottom: none; }
+	.untermieter-block:last-of-type {
+		border-bottom: none;
+	}
 
-	.btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin: .5rem 0; }
+	.btn-row {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		margin: 0.5rem 0;
+	}
 
-	.btn-add, .btn-remove {
+	.btn-add,
+	.btn-remove {
 		display: inline-flex;
 		align-items: center;
-		padding: .4rem .9rem;
+		padding: 0.4rem 0.9rem;
 		border-radius: 6px;
-		font-size: .82rem;
+		font-size: 0.82rem;
 		font-weight: 600;
 		font-family: inherit;
 		cursor: pointer;
 		border: 1.5px solid;
-		transition: background .15s, color .15s;
+		transition:
+			background 0.15s,
+			color 0.15s;
 	}
-	.btn-add { background: #f0f3fa; color: #1e2d5a; border-color: #1e2d5a30; }
-	.btn-add:hover { background: #1e2d5a; color: #fff; }
-	.btn-remove { background: #fdf0f0; color: #c0392b; border-color: #c0392b30; }
-	.btn-remove:hover { background: #c0392b; color: #fff; }
+	.btn-add {
+		background: #f0f3fa;
+		color: #1e2d5a;
+		border-color: #1e2d5a30;
+	}
+	.btn-add:hover {
+		background: #1e2d5a;
+		color: #fff;
+	}
+	.btn-remove {
+		background: #fdf0f0;
+		color: #c0392b;
+		border-color: #c0392b30;
+	}
+	.btn-remove:hover {
+		background: #c0392b;
+		color: #fff;
+	}
 </style>

@@ -201,6 +201,11 @@
 								"name": "mobile",
 								"width": 1080,
 								"height": 1920
+							},
+							{
+								"name": "desktop",
+								"width": 1920,
+								"height": 1080
 							}
 						]
 					}
@@ -231,11 +236,7 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
-						"options": [
-							"100 %",
-							"50 %",
-							"33 %"
-						],
+						"options": ["100 %", "50 %", "33 %"],
 						"default_value": "100 %"
 					}
 				},
@@ -267,11 +268,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
 						"placeholder": "",
-						"options": [
-							"klein",
-							"mittel",
-							"gross"
-						]
+						"options": ["klein", "mittel", "gross"]
 					}
 				},
 				"text_overlay_padding_mobile": {
@@ -279,12 +276,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse Mobile",
 						"placeholder": "— Wie Desktop —",
-						"options": [
-							"klein",
-							"mittel",
-							"gross",
-							"Ganzer Bildschirm"
-						]
+						"options": ["klein", "mittel", "gross", "Ganzer Bildschirm"]
 					}
 				},
 				"mobile_text_scale": {
@@ -292,12 +284,7 @@
 					"config": {
 						"label": "Textgrösse Mobile",
 						"placeholder": "",
-						"options": [
-							"Normal",
-							"Klein",
-							"Kleiner",
-							"Sehr klein"
-						]
+						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
 					}
 				}
 			},
@@ -433,12 +420,7 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": [
-									"name",
-									"provider",
-									"variants",
-									"adobeFontId"
-								]
+								"fields": ["name", "provider", "variants", "adobeFontId"]
 							}
 						]
 					}
@@ -449,9 +431,7 @@
 						"label": "Schaltflächenlink",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
@@ -507,6 +487,11 @@
 								"name": "mobile",
 								"width": 1080,
 								"height": 1920
+							},
+							{
+								"name": "desktop",
+								"width": 1920,
+								"height": 1080
 							}
 						]
 					}
@@ -637,12 +622,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse Mobile",
 						"placeholder": "— Wie Desktop —",
-						"options": [
-							"klein",
-							"mittel",
-							"gross",
-							"Ganzer Bildschirm"
-						]
+						"options": ["klein", "mittel", "gross", "Ganzer Bildschirm"]
 					}
 				},
 				"mobile_text_scale": {
@@ -786,12 +766,7 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": [
-									"name",
-									"provider",
-									"variants",
-									"adobeFontId"
-								]
+								"fields": ["name", "provider", "variants", "adobeFontId"]
 							}
 						]
 					}
@@ -802,9 +777,7 @@
 						"label": "Schaltflächenlink",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
@@ -869,11 +842,7 @@
 					"config": {
 						"label": "Titelbild Höhe",
 						"placeholder": "",
-						"options": [
-							"100 %",
-							"50 %",
-							"33 %"
-						],
+						"options": ["100 %", "50 %", "33 %"],
 						"default_value": "100 %"
 					}
 				},
@@ -905,11 +874,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
 						"placeholder": "",
-						"options": [
-							"klein",
-							"mittel",
-							"gross"
-						]
+						"options": ["klein", "mittel", "gross"]
 					}
 				},
 				"text_overlay_padding_mobile": {
@@ -917,12 +882,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse Mobile",
 						"placeholder": "— Wie Desktop —",
-						"options": [
-							"klein",
-							"mittel",
-							"gross",
-							"Ganzer Bildschirm"
-						]
+						"options": ["klein", "mittel", "gross", "Ganzer Bildschirm"]
 					}
 				},
 				"mobile_text_scale": {
@@ -930,12 +890,7 @@
 					"config": {
 						"label": "Textgrösse Mobile",
 						"placeholder": "",
-						"options": [
-							"Normal",
-							"Klein",
-							"Kleiner",
-							"Sehr klein"
-						]
+						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
 					}
 				},
 				"show_pagination": {
@@ -952,11 +907,7 @@
 					"config": {
 						"label": "Bildwechsel-Modus",
 						"placeholder": "Crossfade",
-						"options": [
-							"Crossfade",
-							"Slide",
-							"Ken Burns"
-						],
+						"options": ["Crossfade", "Slide", "Ken Burns"],
 						"default_value": "Crossfade"
 					}
 				},

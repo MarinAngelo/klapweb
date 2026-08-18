@@ -10,56 +10,56 @@
 		"individuell": {
 			"label": "Individuell",
 			"extends": "professional"
+		},
+		"klap-web-ch": {
+			"label": "Klap Web CH",
+			"extends": "individuell"
 		}
 	},
 	"features": {
 		"terminbuchung": {
 			"label": "Terminbuchung",
-			"plans": [
-				"professional"
-			]
+			"plans": ["professional"]
+		},
+		"manuelle_rechnungen": {
+			"label": "Manuelle Rechnungen",
+			"plans": ["professional"]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
 		},
 		"p5js": {
 			"label": "P5.js",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
 		},
 		"variablen": {
 			"label": "Variablen",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
 		},
 		"ressourcenbuchung": {
 			"label": "Ressourcen-Buchung",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
 		},
 		"global_events": {
 			"label": "Globale Events",
-			"plans": [
-				"professional"
-			]
+			"plans": ["professional"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
 		},
 		"pwa": {
 			"label": "Progressive Web App",
-			"plans": [
-				"individuell"
-			]
+			"plans": ["individuell"]
+		},
+		"klapstudio": {
+			"label": "KlapStudio Design Panel",
+			"plans": ["professional"]
+		},
+		"chatbot": {
+			"label": "Chat-Bot",
+			"plans": ["klap-web-ch"]
 		}
 	},
 	"customTypes": {
@@ -106,6 +106,18 @@
 				},
 				"pwa_icon": {
 					"feature": "pwa"
+				},
+				"chat_active": {
+					"feature": "chatbot"
+				},
+				"chat_bot_name": {
+					"feature": "chatbot"
+				},
+				"chat_greeting": {
+					"feature": "chatbot"
+				},
+				"chat_knowledge_base": {
+					"feature": "chatbot"
 				}
 			}
 		}
@@ -201,6 +213,26 @@
 		},
 		"Aufgaben": {
 			"feature": "ressourcenbuchung"
+		}
+	},
+	"admin_sections": {
+		"rechnungen": {
+			"label": "Rechnungen"
+		},
+		"kunden": {
+			"label": "Kunden"
+		},
+		"buchungen": {
+			"label": "Terminverwaltung"
+		},
+		"ressource-buchungen": {
+			"label": "Ressource-Buchungen"
+		},
+		"aufgaben": {
+			"label": "Aufgaben"
+		},
+		"event-anmeldungen": {
+			"label": "Event Anmeldungen"
 		}
 	}
 }

@@ -14,14 +14,17 @@ export interface TerminSlot {
 	label: string;
 }
 
-function makeLabel(datum: string, uhrzeit: string, titel: string, sessionLaenge: number | null): string {
+import { formatDateWithWeekday } from '$lib/utils/formatDate';
+
+function makeLabel(
+	datum: string,
+	uhrzeit: string,
+	titel: string,
+	sessionLaenge: number | null
+): string {
 	if (!datum) return titel;
-	const date = new Date(datum + 'T12:00:00Z');
-	const formatted = date.toLocaleDateString('de-CH', {
-		weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-	});
+	const formatted = formatDateWithWeekday(datum, uhrzeit || null);
 	let label = formatted;
-	if (uhrzeit) label += `, ${uhrzeit}`;
 	if (titel) label += ` – ${titel}`;
 	if (sessionLaenge) label += ` (${sessionLaenge} min)`;
 	return label;
@@ -49,16 +52,18 @@ export function expandDoc(doc: any, fromDate: string): TerminSlot[] {
 
 	if (!wiederholung || wiederholung === 'Keine') {
 		if (startDatum < fromDate) return [];
-		return [{
-			id: doc.uid,
-			baseUid: doc.uid,
-			titel,
-			datum: startDatum,
-			uhrzeit,
-			sessionLaenge,
-			zeitzone,
-			label: makeLabel(startDatum, uhrzeit, titel, sessionLaenge)
-		}];
+		return [
+			{
+				id: doc.uid,
+				baseUid: doc.uid,
+				titel,
+				datum: startDatum,
+				uhrzeit,
+				sessionLaenge,
+				zeitzone,
+				label: makeLabel(startDatum, uhrzeit, titel, sessionLaenge)
+			}
+		];
 	}
 
 	const bis: string | null = d.wiederholung_bis ?? null;

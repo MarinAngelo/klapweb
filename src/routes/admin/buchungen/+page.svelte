@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Button from '$lib/components/Button.svelte';
+	import { formatDateWithWeekday } from '$lib/utils/formatDate';
 	export let data: PageData;
 
 	import { page } from '$app/stores';
@@ -16,14 +18,7 @@
 		(e.currentTarget as HTMLFormElement).submit();
 	}
 
-	function fmtDate(datum: string, uhrzeit: string) {
-		if (!datum) return '–';
-		const d = new Date(datum + 'T12:00:00Z');
-		const formatted = d.toLocaleDateString('de-CH', {
-			weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
-		});
-		return uhrzeit ? `${formatted}, ${uhrzeit}` : formatted;
-	}
+	const fmtDate = (datum: string, uhrzeit: string) => formatDateWithWeekday(datum, uhrzeit || null);
 
 	const tdStyle = 'padding: 0.5rem 0.75rem;';
 	const tdNowrap = tdStyle + ' white-space: nowrap;';
@@ -32,14 +27,44 @@
 <svelte:head><title>Buchungen</title></svelte:head>
 
 <div style="font-family: sans-serif; padding: 2rem; max-width: 1100px; margin: 0 auto;">
-	<div style="display: flex; align-items: baseline; gap: 2rem; margin-bottom: 2rem;">
-		<a href="/admin/dashboard?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">← Dashboard</a>
-		<h1 style="font-size: 1.5rem; font-weight: bold;">Terminverwaltung</h1>
-		<a href="/admin/kunden?secret={secret}" style="font-size: 0.875rem; color: #6b7280;">→ Kunden</a>
+	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Terminverwaltung</h1>
+		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+			<Button
+				href="/admin/dashboard?secret={secret}"
+				text="← Dashboard"
+				color="#374151"
+				bgColor="transparent"
+				hoverColor="#111827"
+				hoverBgColor="transparent"
+				size="sm"
+				mb={false}
+			/>
+			<form
+				method="POST"
+				action="?/deleteAll&secret={secret}"
+				on:submit={(e) => {
+					if (!confirm('Alle Buchungen löschen?')) e.preventDefault();
+				}}
+			>
+				<input type="hidden" name="secret" value={secret} />
+				<Button
+					text="Alle löschen"
+					color="#dc2626"
+					bgColor="transparent"
+					hoverColor="#991b1b"
+					hoverBgColor="transparent"
+					size="sm"
+					mb={false}
+				/>
+			</form>
+		</div>
 	</div>
 
 	{#if data.blobError}
-		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">Fehler: {data.blobError}</p>
+		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">
+			Fehler: {data.blobError}
+		</p>
 	{/if}
 
 	<!-- Gebuchte Termine -->
@@ -67,7 +92,13 @@
 							<td style={tdStyle}>{b.name ?? '–'}</td>
 							<td style={tdStyle}>{b.email ?? '–'}</td>
 							<td style="{tdNowrap} opacity: 0.6;">
-								{new Date(b.bookedAt).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+								{new Date(b.bookedAt).toLocaleString('de-CH', {
+									day: '2-digit',
+									month: '2-digit',
+									year: 'numeric',
+									hour: '2-digit',
+									minute: '2-digit'
+								})}
 							</td>
 							<td style={tdStyle}>
 								<form
@@ -76,7 +107,10 @@
 									on:submit|preventDefault={(e) => confirmDelete(e, b.titel || b.terminId)}
 								>
 									<input type="hidden" name="id" value={b.terminId} />
-									<button type="submit" style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+									<button
+										type="submit"
+										style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
+									>
 										Löschen
 									</button>
 								</form>
@@ -119,7 +153,10 @@
 									on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
 								>
 									<input type="hidden" name="id" value={s.id} />
-									<button type="submit" style="color: #d97706; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+									<button
+										type="submit"
+										style="color: #d97706; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
+									>
 										Sperren
 									</button>
 								</form>
@@ -148,13 +185,18 @@
 				<tbody>
 					{#each data.cancelledSlots as s}
 						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style="{tdNowrap} text-decoration: line-through;">{fmtDate(s.datum, s.uhrzeit)}</td>
+							<td style="{tdNowrap} text-decoration: line-through;"
+								>{fmtDate(s.datum, s.uhrzeit)}</td
+							>
 							<td style="{tdStyle} text-decoration: line-through;">{s.titel}</td>
 							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
 							<td style={tdStyle}>
 								<form method="POST" action="?/uncancel&secret={secret}">
 									<input type="hidden" name="id" value={s.id} />
-									<button type="submit" style="color: #059669; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;">
+									<button
+										type="submit"
+										style="color: #059669; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
+									>
 										Freigeben
 									</button>
 								</form>

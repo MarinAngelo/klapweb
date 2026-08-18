@@ -178,7 +178,7 @@
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
 							class="transition nav-link"
-							style="color: inherit; font-size: {headerLinkFontSize}rem;"
+							style="color: inherit; font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -195,7 +195,9 @@
 			{/if}
 
 			{#if userBackendActive}
-				<li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2">
+				<li
+					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2"
+				>
 					{#if user}
 						<a
 							href="/konto"
@@ -228,5 +230,9 @@
 	/* Override global li { mb-4 } — nav li must have no bottom margin for correct flex centering */
 	nav :global(li) {
 		margin-bottom: 0;
+	}
+
+	nav :global(.nav-link:hover) {
+		color: var(--hover-text-color) !important;
 	}
 </style>

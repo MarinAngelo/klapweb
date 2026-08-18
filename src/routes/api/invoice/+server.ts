@@ -4,7 +4,9 @@ import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
-import { saveCustomer } from '$lib/server/customers';
+import { saveCustomer, listCustomers } from '$lib/server/customers';
+import { saveManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import { saveEventRegistration } from '$lib/server/eventRegistrations';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -12,6 +14,10 @@ interface InvoiceRequest {
 	serviceKey: string;
 	selectedCurrency?: string;
 	discountCode?: string;
+	isEventCheckout?: boolean;
+	eventPrice?: number | null;
+	eventLabel?: string;
+	eventManagerEmail?: string | null;
 }
 
 interface EmailTemplate {
@@ -532,12 +538,29 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { data, labels, serviceKey, selectedCurrency, discountCode } = body;
+	const {
+		data,
+		labels,
+		serviceKey,
+		selectedCurrency,
+		discountCode,
+		isEventCheckout,
+		eventPrice,
+		eventLabel,
+		eventManagerEmail
+	} = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
 	// Firmendaten + Produktdaten laden
 	const co = await fetchCompanyInfo(fetch);
-	const product = await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+	const product = isEventCheckout
+		? {
+				label: eventLabel || serviceKey,
+				price: eventPrice ?? null,
+				billingType: 'Einmalig' as const,
+				addons: []
+			}
+		: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
 
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
@@ -610,44 +633,100 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		});
 	}
 
-	// Dev-Modus: E-Mail überspringen
-	if (import.meta.env.DEV) {
-		console.log(
-			`[DEV] Rechnung ${invoiceNumber} generiert (${pdfBytes.length} Bytes). E-Mail nicht gesendet.`
-		);
-		return new Response(JSON.stringify({ invoiceNumber }), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json' }
+	// Speichere Rechnung in Blobs (vor Dev-Modus, damit sie auch lokal funktioniert)
+	let invoiceId: string | null = null;
+	try {
+		invoiceId = await saveManualInvoice({
+			invoiceNumber,
+			date: new Date().toISOString(),
+			status: 'gespeichert',
+			paymentStatus: 'offen',
+			paymentMethod: 'rechnung',
+			vorname: data['vorname'],
+			nachname: data['nachname'],
+			firma: data['firma'] || undefined,
+			email: data['email'] || undefined,
+			adresse: data['adresse'] || undefined,
+			plz: data['plz'] || undefined,
+			ort: data['ort'] || undefined,
+			land: data['land'] || undefined,
+			items: [
+				{
+					description: pdfServiceLabel,
+					quantity: 1,
+					unitPrice: invoicePrice ?? 0
+				}
+			],
+			notes: codeDiscountInfo
+				? `Rabatt-Code: ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)`
+				: '',
+			emailSentAt: null,
+			currency: invoiceCurrency
 		});
+	} catch (e) {
+		console.error('Rechnung konnte nicht in Blobs gespeichert werden:', e);
 	}
 
-	// Kundendaten speichern (fire-and-forget — Fehler sollen die Response nicht blockieren)
-	saveCustomer({
-		date: new Date().toISOString(),
-		paymentMethod: 'rechnung',
-		service: product.label,
-		amount: finalPrice,
-		currency: invoiceCurrency,
-		discountCode: codeDiscountInfo?.code,
-		vorname: data['vorname'],
-		nachname: data['nachname'],
-		firma: data['firma'],
-		email: data['email'],
-		adresse: data['adresse'],
-		plz: data['plz'],
-		ort: data['ort'],
-		land: data['land']
-	}).catch((e) => console.error('Kunde konnte nicht gespeichert werden:', e));
+	// Kundendaten speichern (mit Duplikat-Prüfung)
+	(async () => {
+		try {
+			const email = data['email']?.trim().toLowerCase();
+			const existingCustomers = await listCustomers();
+
+			// Prüfe E-Mail (primär)
+			if (email) {
+				const existingCustomer = existingCustomers.find(
+					(c) => c.email && c.email.toLowerCase() === email
+				);
+				if (existingCustomer) {
+					console.log(`Kunde mit E-Mail ${email} existiert bereits.`);
+					return;
+				}
+			}
+
+			// Falls keine E-Mail, prüfe Name
+			if (!email) {
+				const vorname = data['vorname']?.trim().toLowerCase();
+				const nachname = data['nachname']?.trim().toLowerCase();
+				if (vorname && nachname) {
+					const existingCustomer = existingCustomers.find(
+						(c) => c.vorname?.toLowerCase() === vorname && c.nachname?.toLowerCase() === nachname
+					);
+					if (existingCustomer) {
+						console.log(`Kunde ${vorname} ${nachname} existiert bereits.`);
+						return;
+					}
+				}
+			}
+
+			await saveCustomer({
+				date: new Date().toISOString(),
+				paymentMethod: 'rechnung',
+				service: product.label,
+				amount: finalPrice,
+				currency: invoiceCurrency,
+				discountCode: codeDiscountInfo?.code,
+				vorname: data['vorname'],
+				nachname: data['nachname'],
+				firma: data['firma'],
+				email: data['email'],
+				adresse: data['adresse'],
+				plz: data['plz'],
+				ort: data['ort'],
+				land: data['land']
+			});
+		} catch (e) {
+			console.error('Kunde konnte nicht gespeichert werden:', e);
+		}
+	})();
 
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;
 	const fromEmail = env.INVOICE_FROM_EMAIL;
-	const toEmail = env.INVOICE_TO_EMAIL;
+	const businessEmail = isEventCheckout && eventManagerEmail ? eventManagerEmail : co.email;
 
-	if (!resendKey || !fromEmail || !toEmail) {
-		console.error(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL)'
-		);
+	if (!resendKey || !fromEmail) {
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL)');
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 
@@ -688,11 +767,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const { Resend } = await import('resend');
 		const resend = new Resend(resendKey);
+		const fromWithName = co.name ? `${co.name} <${fromEmail}>` : fromEmail;
 
 		// E-Mail an Kunden
 		if (customerEmail) {
 			const { error: custErr } = await resend.emails.send({
-				from: fromEmail,
+				from: fromWithName,
 				to: customerEmail,
 				subject: custSubject,
 				text: custText,
@@ -701,30 +781,59 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);
 		}
 
-		// Benachrichtigung an Geschäft
-		const { error: bizErr } = await resend.emails.send({
-			from: fromEmail,
-			to: toEmail,
-			subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
-			text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
-				data
-			)
-				.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
-				.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
-				.join('\n')}`,
-			attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
-		});
-		if (bizErr) {
-			console.error('Geschäfts-E-Mail fehlgeschlagen:', bizErr);
-			return new Response(JSON.stringify({ error: 'E-Mail konnte nicht gesendet werden' }), {
-				status: 500
+		// Benachrichtigung an Geschäft (optional, wenn in CMS gesetzt)
+		if (businessEmail) {
+			const { error: bizErr } = await resend.emails.send({
+				from: fromWithName,
+				to: businessEmail,
+				subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
+				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
+					data
+				)
+					.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
+					.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
+					.join('\n')}`,
+				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
 			});
+			if (bizErr) console.error('Geschäfts-E-Mail fehlgeschlagen:', bizErr);
 		}
 	} catch (e) {
 		console.error('E-Mail-Versand fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'E-Mail konnte nicht gesendet werden' }), {
 			status: 500
 		});
+	}
+
+	// Aktualisiere Status zu 'gesendet' und setze emailSentAt
+	if (invoiceId) {
+		try {
+			await updateManualInvoice(invoiceId, {
+				status: 'gesendet',
+				emailSentAt: new Date().toISOString()
+			});
+		} catch (e) {
+			console.error('Rechnung-Status konnte nicht aktualisiert werden:', e);
+		}
+	}
+
+	if (isEventCheckout) {
+		try {
+			await saveEventRegistration({
+				eventUid: serviceKey,
+				eventLabel: eventLabel || serviceKey,
+				date: new Date().toISOString(),
+				vorname: data['vorname'] ?? '',
+				nachname: data['nachname'] ?? '',
+				email: data['email'] ?? null,
+				firma: data['firma'] ?? null,
+				paymentMethod: 'rechnung',
+				amount: eventPrice ?? null,
+				currency: invoiceCurrency,
+				invoiceNumber
+			});
+		} catch (e) {
+			console.error('Event-Registrierung konnte nicht gespeichert werden:', e);
+		}
 	}
 
 	return new Response(JSON.stringify({ invoiceNumber }), {

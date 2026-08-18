@@ -3,6 +3,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { planFilter } from '$lib/stores/planFilter';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import Collapsible from '$lib/components/Collapsible.svelte';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: any;
@@ -50,6 +51,7 @@
 	let dismissed = false;
 	let dismissedAtY = 0;
 	let mobileOpen = false;
+	let openDropdowns: Set<string> = new Set();
 
 	const toSlug = (s: string) =>
 		s
@@ -135,10 +137,9 @@
 	});
 </script>
 
-
 <Bounded
 	as="nav"
-	yPadding="sm"
+	yPadding="base-top"
 	class="toc-slice {linksMode ? 'toc-links-mode' : ''}"
 	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor}; font-family: var(--page-font);"
 	data-slice-type={slice.slice_type}
@@ -187,47 +188,69 @@
 				</ul>
 			</nav>
 		{:else}
-			<!-- Oben-Modus: Gruppierte Spalten (Desktop) -->
+			<!-- Oben-Modus: Gruppierte Spalten mit H3-Dropdowns -->
 			<div class="hidden md:block">
 				{#if tocTitle}
-					<p class="text-xs font-semibold uppercase tracking-widest mb-4" style="opacity: 0.5;">
-						{tocTitle}
-					</p>
+					<h3>{tocTitle}</h3>
 				{/if}
 				<ul class="flex flex-wrap gap-x-8 gap-y-4 text-sm items-start">
 					{#each tocGroups as group}
 						<li class="flex flex-col gap-1">
-							<!-- H2 -->
-							<a
-								href="#{group.h2.id}"
-								class="toc-link transition-all"
-								style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
-									.id === activeId
-									? '700'
-									: '500'}; border-bottom: {group.h2.id === activeId
-									? '2px solid currentColor'
-									: '2px solid transparent'};"
-							>
-								{group.h2.text}
-							</a>
-							<!-- H3-Unterpunkte -->
 							{#if group.h3s.length > 0}
-								<ul
-									class="flex flex-col gap-0.5 pl-3 border-l"
-									style="border-color: currentColor; opacity: 0.4;"
+								<Collapsible
+									isOpen={openDropdowns.has(group.h2.id)}
+									onToggle={() => {
+										if (openDropdowns.has(group.h2.id)) {
+											openDropdowns.delete(group.h2.id);
+										} else {
+											openDropdowns.add(group.h2.id);
+										}
+										openDropdowns = openDropdowns;
+									}}
 								>
-									{#each group.h3s as sub}
-										<li style="opacity: {sub.id === activeId ? '1' : '0.85'};">
-											<a
-												href="#{sub.id}"
-												class="toc-link transition-all block"
-												style="font-weight: {sub.id === activeId ? '600' : '400'};"
-											>
-												{sub.text}
-											</a>
-										</li>
-									{/each}
-								</ul>
+									<a
+										slot="trigger"
+										href="#{group.h2.id}"
+										class="toc-link transition-all"
+										style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
+											.id === activeId
+											? '700'
+											: '500'}; border-bottom: {group.h2.id === activeId
+											? '2px solid currentColor'
+											: '2px solid transparent'};"
+									>
+										{group.h2.text}
+									</a>
+									<ul
+										class="flex flex-col gap-0.5 pl-3 border-l mt-1"
+										style="border-color: currentColor; opacity: 0.6;"
+									>
+										{#each group.h3s as sub}
+											<li style="opacity: {sub.id === activeId ? '1' : '0.85'};">
+												<a
+													href="#{sub.id}"
+													class="toc-link transition-all block"
+													style="font-weight: {sub.id === activeId ? '600' : '400'};"
+												>
+													{sub.text}
+												</a>
+											</li>
+										{/each}
+									</ul>
+								</Collapsible>
+							{:else}
+								<a
+									href="#{group.h2.id}"
+									class="toc-link transition-all"
+									style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
+										.id === activeId
+										? '700'
+										: '500'}; border-bottom: {group.h2.id === activeId
+										? '2px solid currentColor'
+										: '2px solid transparent'};"
+								>
+									{group.h2.text}
+								</a>
 							{/if}
 						</li>
 					{/each}

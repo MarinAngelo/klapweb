@@ -5,6 +5,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import SelectField from '$lib/components/SelectField.svelte';
 
 	export let data: {
 		page: any;
@@ -33,6 +34,10 @@
 
 	$: bgColor = get(theme).pageBgColor;
 	$: pageColor = get(theme).pageColor;
+	$: currencyOptions = [
+		data.baseCurrency,
+		...data.additionalCodes.filter((c) => data.rates[c] != null)
+	];
 </script>
 
 {#if showSelector}
@@ -42,19 +47,11 @@
 			style="color: {pageColor}; opacity: 0.7;"
 		>
 			<span>Währung:</span>
-			<select
+			<SelectField
 				bind:value={selectedCurrency}
+				options={currencyOptions}
 				on:change={onCurrencyChange}
-				class="px-2 py-1 border"
-				style="background-color: {bgColor}; color: {pageColor}; border-color: {pageColor}44;"
-			>
-				<option value={data.baseCurrency}>{data.baseCurrency}</option>
-				{#each data.additionalCodes as code}
-					{#if data.rates[code] != null}
-						<option value={code}>{code}</option>
-					{/if}
-				{/each}
-			</select>
+			/>
 		</div>
 	</Bounded>
 {/if}
@@ -62,5 +59,11 @@
 <SliceZone
 	slices={data.page.data.slices}
 	{components}
-	context={{ baseCurrency: data.baseCurrency, globalDepositPct: data.globalDepositPct ?? null, plaeneData: data.plaeneData ?? {}, pageLeistungen: data.pageLeistungen ?? [], lang: data.page.lang }}
+	context={{
+		baseCurrency: data.baseCurrency,
+		globalDepositPct: data.globalDepositPct ?? null,
+		plaeneData: data.plaeneData ?? {},
+		pageLeistungen: data.pageLeistungen ?? [],
+		lang: data.page.lang
+	}}
 />

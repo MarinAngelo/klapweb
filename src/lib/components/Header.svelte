@@ -190,7 +190,11 @@
 		<div class="flex items-stretch justify-between w-full">
 			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5" aria-label={logoLabel}>
+					<a
+						href={lang === mainLang ? '/' : `/${lang}`}
+						class="flex items-center mt-5 mb-5"
+						aria-label={logoLabel}
+					>
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
@@ -212,8 +216,8 @@
 				{:else if settings?.data}
 					<a
 						href={lang === mainLang ? '/' : `/${lang}`}
-						class="mt-6 mb-6 inline-block"
-						style="color: {headerColor};"
+						class="site-title-link mt-6 mb-6 inline-block"
+						style="color: {headerLinkColor};"
 						aria-label={logoLabel}
 					>
 						<span

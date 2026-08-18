@@ -15,7 +15,9 @@
 	export let index: number | undefined = undefined;
 	const p: any = slice.primary ?? {};
 
-	let yPadding: 'base' | 'base-top' | 'none' | 'sm' | 'sm-top' | 'lg' | 'lg-top' = p.y_padding_same ? 'base' : 'base-top';
+	let yPadding: 'base' | 'base-top' | 'none' | 'sm' | 'sm-top' | 'lg' | 'lg-top' = p.y_padding_same
+		? 'base'
+		: 'base-top';
 
 	if (p.y_padding) {
 		switch (p.y_padding) {
@@ -48,9 +50,9 @@
 
 	const rowGapMap: Record<string, string> = {
 		'kein Abstand': '0',
-		'wenig': '1rem',
-		'mittel': '3rem',
-		'gross': '6rem'
+		wenig: '1rem',
+		mittel: '3rem',
+		gross: '6rem'
 	};
 	$: columnGapVal = (p as any).column_gap ?? 'mittel';
 	$: rowGap = isMulti
@@ -61,7 +63,9 @@
 	$: multiItems = isMulti ? ((slice as any).items ?? []) : [];
 	$: multiItemsWithImages = multiItems.map((item: any) => ({
 		...item,
-		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) => isFilled.image(img))
+		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) =>
+			isFilled.image(img)
+		)
 	}));
 	$: imageRound = !!p.image_round;
 	$: lightbox = !!p.lightbox;
@@ -84,105 +88,140 @@
 	};
 	$: textPad = textPadMap[(p as any).text_padding ?? 'mittel'] ?? '2rem';
 
-	const ptMobMap: Record<string, string> = { 'kein Abstand': 'pt-0', 'wenig': 'pt-8', 'mittel': 'pt-20', 'gross': 'pt-32' };
-	const ptDeskMap: Record<string, string> = { 'kein Abstand': 'md:pt-0', 'wenig': 'md:pt-10', 'mittel': 'md:pt-28', 'gross': 'md:pt-48' };
-	const pbMobMap: Record<string, string> = { 'kein Abstand': 'pb-0', 'wenig': 'pb-8', 'mittel': 'pb-20', 'gross': 'pb-32' };
-	const pbDeskMap: Record<string, string> = { 'kein Abstand': 'md:pb-0', 'wenig': 'md:pb-10', 'mittel': 'md:pb-28', 'gross': 'md:pb-48' };
+	const ptMobMap: Record<string, string> = {
+		'kein Abstand': 'pt-0',
+		wenig: 'pt-8',
+		mittel: 'pt-20',
+		gross: 'pt-32'
+	};
+	const ptDeskMap: Record<string, string> = {
+		'kein Abstand': 'md:pt-0',
+		wenig: 'md:pt-10',
+		mittel: 'md:pt-28',
+		gross: 'md:pt-48'
+	};
+	const pbMobMap: Record<string, string> = {
+		'kein Abstand': 'pb-0',
+		wenig: 'pb-0',
+		mittel: 'pb-0',
+		gross: 'pb-0'
+	};
+	const pbDeskMap: Record<string, string> = {
+		'kein Abstand': 'md:pb-0',
+		wenig: 'md:pb-10',
+		mittel: 'md:pb-28',
+		gross: 'md:pb-48'
+	};
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
 	$: computedPaddingTopClass = yPaddingMobileVal
-		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
+		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
+				.filter(Boolean)
+				.join(' ')
 		: undefined;
 	$: computedPaddingBottomClass = yPaddingMobileVal
-		? (p.y_padding_same
-			? [pbMobMap[yPaddingMobileVal], p.y_padding ? pbDeskMap[p.y_padding as string] : ''].filter(Boolean).join(' ')
-			: '')
+		? p.y_padding_same
+			? [pbMobMap[yPaddingMobileVal], p.y_padding ? pbDeskMap[p.y_padding as string] : '']
+					.filter(Boolean)
+					.join(' ')
+			: ''
 		: undefined;
 </script>
 
 {#if visible}
-{#if isMulti}
-<Bounded
-	as="section"
-	yPadding={yPadding}
-	fullWidth={isFullWidth}
-	noPadding={isFullWidth}
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
-	animate={anim.animate}
-	animationOptions={anim.options}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
->
-	{#if p.section_title}
-		<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
-	{/if}
-	<div class="flex flex-col" style="gap: {rowGap};">
-		{#each multiItemsWithImages as item, i}
-			<ImageTextGrid
-				image={isFilled.image(item.image) ? item.image : null}
-				images={item.sliderImages.length > 1 ? item.sliderImages : undefined}
-				text={item.text}
-				imageLeft={item.bild_links ?? false}
-				imageBgColor={p.bg_color || 'var(--page-bg-color)'}
-				imageRound={imageRound}
-				noRound={!imageRound}
-				mobileTextFirst={true}
-				columnGap={columnGapVal}
-				mobilePadding={textPad}
-				mobilePaddingTop={textPad}
-				desktopPadding={textPad}
-				desktopPaddingY={i === 0 ? '0' : textPad}
-				{textCenterV}
-				{textCenterH}
-				{lightbox}
-				fullscreen={false}
-			>
-				{#if item.button_text && isFilled.link(item.button_link)}
-					<Button link={item.button_link} text={item.button_text} styleName={item.button_style?.uid || undefined} mb={false} />
-				{/if}
-			</ImageTextGrid>
-		{/each}
-	</div>
-</Bounded>
-{:else}
-<Bounded
-	as="section"
-	yPadding={fullscreen ? 'none' : yPadding}
-	fullHeight={fullscreen}
-	noPadding={mobileVollbreite}
-	paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
-	paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-		'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
-		? ` min-height: calc(100vh - ${$headerHeight}px);`
-		: ''}"
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
-	animate={anim.animate}
-	animationOptions={anim.options}
-	class={mobileVollbreite ? 'md:px-6' : ''}
->
-	<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
-		<ImageTextGrid
-			image={isFilled.image(p.image) ? p.image : null}
-			images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
-			text={p.text}
-			imageLeft={isBildLinks}
-			imageBgColor={p.bg_color || 'var(--page-bg-color)'}
-			imageRound={p.image_round}
-			mobilePadding={mobileVollbreite ? '1.5rem' : ''}
-			noRoundMobile={mobileVollbreite}
-			mobileTextFirst={mobileImageFirst ? false : (!isBildLinks && mobileVollbreite)}
-			{lightbox}
-			{textCenterV}
-			{textCenterH}
-			{fullscreen}
+	{#if isMulti}
+		<Bounded
+			as="section"
+			{yPadding}
+			fullWidth={isFullWidth}
+			noPadding={isFullWidth}
+			data-slice-type={slice.slice_type}
+			data-slice-variation={slice.variation}
+			animate={anim.animate}
+			animationOptions={anim.options}
+			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
+				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
 		>
-			{#if p.buttonText && isFilled.link(p.buttonLink)}
-				<Button link={p.buttonLink} text={p.buttonText} styleName={p.button_style?.uid || undefined} mb={false} />
+			{#if p.section_title}
+				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 			{/if}
-		</ImageTextGrid>
-	</div>
-</Bounded>
-{/if}
+			<div class="flex flex-col" style="gap: {rowGap};">
+				{#each multiItemsWithImages as item, i}
+					<ImageTextGrid
+						image={isFilled.image(item.image) ? item.image : null}
+						images={item.sliderImages.length > 1 ? item.sliderImages : undefined}
+						text={item.text}
+						imageLeft={item.bild_links ?? false}
+						imageBgColor={p.bg_color || 'var(--page-bg-color)'}
+						{imageRound}
+						noRound={!imageRound}
+						mobileTextFirst={true}
+						columnGap={columnGapVal}
+						mobilePadding={textPad}
+						mobilePaddingTop={textPad}
+						desktopPadding={textPad}
+						desktopPaddingY={i === 0 ? '0' : textPad}
+						{textCenterV}
+						{textCenterH}
+						{lightbox}
+						fullscreen={false}
+					>
+						{#if item.button_text && isFilled.link(item.button_link)}
+							<Button
+								link={item.button_link}
+								text={item.button_text}
+								styleName={item.button_style?.uid || undefined}
+								mb={false}
+							/>
+						{/if}
+					</ImageTextGrid>
+				{/each}
+			</div>
+		</Bounded>
+	{:else}
+		<Bounded
+			as="section"
+			yPadding={fullscreen ? 'none' : yPadding}
+			fullHeight={fullscreen}
+			noPadding={mobileVollbreite}
+			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
+			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
+			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
+				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
+				? ` min-height: calc(100vh - ${$headerHeight}px);`
+				: ''}"
+			data-slice-type={slice.slice_type}
+			data-slice-variation={slice.variation}
+			animate={anim.animate}
+			animationOptions={anim.options}
+			class={mobileVollbreite ? 'md:px-6' : ''}
+		>
+			<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
+				<ImageTextGrid
+					image={isFilled.image(p.image) ? p.image : null}
+					images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
+					text={p.text}
+					imageLeft={isBildLinks}
+					imageBgColor={p.bg_color || 'var(--page-bg-color)'}
+					imageRound={p.image_round}
+					mobilePadding={mobileVollbreite ? '1.5rem' : ''}
+					noRoundMobile={mobileVollbreite}
+					mobileTextFirst={mobileImageFirst ? false : !isBildLinks && mobileVollbreite}
+					{lightbox}
+					{textCenterV}
+					{textCenterH}
+					{fullscreen}
+				>
+					{#if p.buttonText && isFilled.link(p.buttonLink)}
+						<Button
+							link={p.buttonLink}
+							text={p.buttonText}
+							styleName={p.button_style?.uid || undefined}
+							mb={false}
+						/>
+					{/if}
+				</ImageTextGrid>
+			</div>
+		</Bounded>
+	{/if}
 {/if}

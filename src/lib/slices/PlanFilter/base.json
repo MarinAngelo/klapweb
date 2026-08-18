@@ -18,6 +18,25 @@
 						"label": "Beschriftung",
 						"placeholder": "Inhalte filtern nach Plan:"
 					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"text_color": {
+					"type": "Color",
+					"config": {
+						"label": "Textfarbe"
+					}
+				},
+				"sticky": {
+					"type": "Boolean",
+					"config": {
+						"label": "Sticky Header",
+						"default_value": false
+					}
 				}
 			},
 			"items": {}

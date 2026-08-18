@@ -57,9 +57,9 @@
 		yPadding="none"
 		style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: {footerMarginTop}; padding-top: 3rem; padding-bottom: 1rem;"
 	>
-		<footer class="w-full h-full text-inherit">
+		<footer class="w-full h-full">
 			<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
-				<ul class="flex flex-col items-center gap-0 mb-10 text-inherit">
+				<ul class="flex flex-col items-center gap-0 mb-10">
 					{#each navigationLinks as link}
 						{#if link.footer_sec_nav === true}
 							{@const webUrl = getWebUrl(link.link)}
@@ -95,7 +95,7 @@
 						{$_('Kontakt')}:
 						<a
 							href={`mailto:${email}`}
-							class="text-center text-inherit hover:underline"
+							class="text-center hover:underline"
 							style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
 							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -110,12 +110,12 @@
 
 			<div class="mt-4 text-center">
 				<p
-					class="text-inherit footer-buttonbar-p"
-					style="font-size: var(--footer-font-size-button-bar-rem);"
+					class=" footer-buttonbar-p"
+					style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
 				>
 					<a
 						href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);"
 						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 						on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -127,7 +127,7 @@
 
 					<a
 						href={getStaticHref('impressum', 'legal-notice')}
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);"
 						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 						on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -139,7 +139,7 @@
 						&nbsp;|&nbsp;
 						<a
 							href={getStaticHref('agb', 'terms-and-conditions')}
-							class="hover:underline text-inherit"
+							class="hover:underline"
 							style="color: var(--footer-link-color);"
 							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -151,7 +151,7 @@
 						&nbsp;|&nbsp;
 						<a
 							href={getStaticHref('haftungsausschluss', 'disclaimer')}
-							class="hover:underline text-inherit"
+							class="hover:underline"
 							style="color: var(--footer-link-color);"
 							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -162,15 +162,15 @@
 				</p>
 
 				<p
-					class="text-inherit footer-buttonbar-p"
-					style="font-size: var(--footer-font-size-button-bar-rem);"
+					class=" footer-buttonbar-p"
+					style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
 				>
 					{$_('Website erstellt mit')}
 					<a
 						href="https://svelte.dev"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);">Svelte</a
 					>
 					&nbsp;|&nbsp;
@@ -178,20 +178,20 @@
 						href="https://prismic.io"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);">Prismic</a
 					>
 				</p>
 				<p
-					class="text-inherit footer-buttonbar-p"
-					style="font-size: var(--footer-font-size-button-bar-rem);"
+					class=" footer-buttonbar-p"
+					style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
 				>
 					{$_('Gehostet auf')}
 					<a
 						href="https://www.netlify.com/"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);">Netlify</a
 					>
 					&nbsp;|&nbsp;
@@ -199,14 +199,14 @@
 						href="https://resend.com/"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline text-inherit"
+						class="hover:underline"
 						style="color: var(--footer-link-color);">Resend</a
 					>
 				</p>
 
 				<p
-					class="text-inherit footer-buttonbar-p"
-					style="font-size: var(--footer-font-size-button-bar-rem);"
+					class=" footer-buttonbar-p"
+					style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
 				>
 					&copy; {currentYear}
 					{responsiblePersonCompany}. {$_('Alle Rechte vorbehalten.')}

@@ -2,16 +2,22 @@
 	import { onMount } from 'svelte';
 	import { createClient } from '$lib/prismicio';
 	import { isFilled } from '@prismicio/helpers';
-	import { filter } from '@prismicio/client';
+	import { filter, asHTML } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
 
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
+	import { theme } from '$lib/stores/theme';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { convertNumber } from '$lib/utils/convertNumber';
+	import { formatEventDateTime, formatEventDateRange } from '$lib/utils/formatDate';
+	import { formatPrice, formatPriceChf } from '$lib/pricing';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import GoogleMap from '$lib/components/GoogleMap.svelte';
+	import SelectField from '$lib/components/SelectField.svelte';
 
 	export let slice: any;
 	const p = slice.primary ?? ({} as any);
@@ -20,14 +26,64 @@
 
 	let events: Record<string, any>[] = [];
 	let parentEvent: Record<string, any> | null = null;
+	let parentEventUid = '';
 	let seriesName = '';
 	let loading = true;
+	let ticketCount: number | null = null;
+	let ticketMax: number | null = null;
+	let isFullyBooked = false;
+	$: deadlineExpired =
+		!isFullyBooked &&
+		!!parentEvent?.registration_deadline &&
+		new Date(parentEvent.registration_deadline) < new Date();
+	$: isConfirmed =
+		!isFullyBooked &&
+		!deadlineExpired &&
+		ticketCount !== null &&
+		(parentEvent?.min_participants ?? 0) > 0 &&
+		ticketCount >= parentEvent.min_participants;
 	let showRegistrationModal = false;
 	let selectedEvent: Record<string, any> | null = null;
+	let eurRate: number | null = null;
+	let displayCurrency = 'CHF';
+
+	$: priceDisplay = (() => {
+		if (!parentEvent?.ticket_price_chf) return null;
+		if (displayCurrency === 'EUR' && eurRate !== null) {
+			const from = formatPrice(Math.ceil(parentEvent.ticket_price_chf * eurRate), 'EUR');
+			if (parentEvent.ticket_price_chf_range)
+				return `${from} – ${formatPrice(Math.ceil(parentEvent.ticket_price_chf_range * eurRate), 'EUR')}`;
+			return from;
+		}
+		const from = formatPriceChf(parentEvent.ticket_price_chf);
+		if (parentEvent.ticket_price_chf_range)
+			return `${from} – ${formatPriceChf(parentEvent.ticket_price_chf_range)}`;
+		return from;
+	})();
+
+	$: additionalCostsDisplay = (() => {
+		if (!parentEvent?.additional_costs_chf) return null;
+		if (displayCurrency === 'EUR' && eurRate !== null)
+			return formatPrice(Math.ceil(parentEvent.additional_costs_chf * eurRate), 'EUR');
+		return formatPriceChf(parentEvent.additional_costs_chf);
+	})();
 
 	function openModal(ev?: Record<string, any>) {
 		selectedEvent = ev ?? null;
 		showRegistrationModal = true;
+	}
+
+	function printDirectionsPdf(title: string, directions: any[]) {
+		const html = asHTML({ value: directions } as any) ?? '';
+		const win = window.open('', '_blank');
+		if (!win) return;
+		win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>${title}</title>
+<style>body{font-family:sans-serif;max-width:720px;margin:2cm auto;font-size:14px;line-height:1.6}h1{font-size:1.4em;margin-bottom:1em}@media print{body{margin:1cm}}</style>
+</head><body><h1>${title}</h1>${html}</body></html>`);
+		win.document.close();
+		win.focus();
+		win.print();
 	}
 
 	// Anmelde-Kontaktdaten: Kind-spezifisch (individual_*) oder Eltern-Fallback
@@ -52,28 +108,12 @@
 			return tpl.replace(/\{\{Event-Name\}\}/g, eventName);
 		} else {
 			// Einzeltermin
-			const dateStr = formatDateTime(ev.start_date, ev.all_day ?? false);
+			const dateStr = formatEventDateTime(ev.start_date, false, $page.data.lang || 'de-CH');
 			const tpl =
 				parentEvent?.registration_text_single ||
 				`Hallo, ich möchte mich für den Termin vom {{Datum}} von "{{Event-Name}}" anmelden.`;
 			return tpl.replace(/\{\{Datum\}\}/g, dateStr).replace(/\{\{Event-Name\}\}/g, eventName);
 		}
-	}
-
-	function formatDateTime(ts: string | null | undefined, allDay: boolean, locale?: string): string {
-		if (!ts) return '';
-		const d = new Date(ts);
-		const loc = locale || $page.data.lang || 'de-CH';
-		if (allDay) {
-			return d.toLocaleDateString(loc, { day: '2-digit', month: 'long', year: 'numeric' });
-		}
-		return d.toLocaleDateString(loc, {
-			day: '2-digit',
-			month: 'long',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
 	}
 
 	function isFuture(ts: string | null | undefined): boolean {
@@ -170,7 +210,33 @@
 				}
 				const parent = parentDoc.data as Record<string, any>;
 				parentEvent = parent;
+				parentEventUid = parentDoc.uid ?? '';
 				seriesName = parent.series_name || parent.title || '';
+
+				// EUR-Kurs vorladen wenn aktiviert
+				if (parent.price_show_eur && parent.ticket_price_chf) {
+					fetch('https://open.er-api.com/v6/latest/CHF')
+						.then((r) => r.json())
+						.then((d) => {
+							eurRate = d.rates?.EUR ?? null;
+						})
+						.catch(() => {});
+				}
+
+				// Ticket-Count laden wenn Checkout-Flow aktiv
+				if (parentDoc.uid && parent.use_checkout_flow) {
+					const maxParam = parent.max_participants ? `&max=${parent.max_participants}` : '';
+					fetch(`/api/event-ticket?uid=${encodeURIComponent(parentDoc.uid)}${maxParam}`)
+						.then((r) => r.json())
+						.then(
+							(d: { count?: number; maxParticipants?: number | null; fullyBooked?: boolean }) => {
+								ticketCount = d.count ?? 0;
+								ticketMax = d.maxParticipants ?? null;
+								isFullyBooked = d.fullyBooked ?? false;
+							}
+						)
+						.catch(() => {});
+				}
 
 				// Kind-Events laden (enthalten Datum + Wiederholungsregeln)
 				let childDocs = await client
@@ -211,7 +277,8 @@
 		Bestätigt: 'bg-green-100 text-green-700',
 		Abgesagt: 'bg-red-100 text-red-700',
 		Verschoben: 'bg-yellow-100 text-yellow-700',
-		Ausgebucht: 'bg-orange-100 text-orange-700'
+		Ausgebucht: 'bg-orange-100 text-orange-700',
+		'Anmeldefrist abgelaufen': 'bg-yellow-100 text-yellow-700'
 	};
 </script>
 
@@ -228,42 +295,176 @@
 			></span>
 		</div>
 	{:else if parentEvent}
-		<div
-			class="rounded-xl overflow-hidden shadow-sm border"
-			style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent); background-color: var(--page-bg-color); color: var(--page-color)"
-		>
-			<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
-			{#if isFilled.image(parentEvent.image)}
-				<div class="w-full aspect-[16/7] overflow-hidden">
+		<!-- ── OBERER BEREICH: Globale Infos vom Eltern-Event ── -->
+		{#if isFilled.image(parentEvent.image)}
+			<!-- overflow-x-hidden hier statt am Bounded-Parent, damit native selects korrekt positioniert werden -->
+			<div class="overflow-x-hidden">
+				<div class="aspect-[16/7] overflow-hidden -mx-6" style="width: calc(100% + 3rem)">
 					<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
+				</div>
+			</div>
+		{/if}
+
+		<div class="flex flex-col gap-8">
+			<!-- Typ -->
+			{#if parentEvent.event_type}
+				<div>
+					<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500"
+						>{parentEvent.event_type}</span
+					>
 				</div>
 			{/if}
 
-			<div class="p-6 md:p-8 flex flex-col gap-4">
-				<!-- Typ + Status -->
-				{#if parentEvent.event_type || (parentEvent.status && parentEvent.status !== 'Kein')}
-					<div class="flex flex-wrap gap-2">
-						{#if parentEvent.status && parentEvent.status !== 'Kein'}
-							<span
-								class="px-2.5 py-1 rounded-full font-medium {statusColor[parentEvent.status] ??
-									'bg-gray-100 text-gray-600'}">{$_(parentEvent.status)}</span
-							>
+			<!-- Status: absolut oben rechts, über dem Bild falls vorhanden -->
+			<!-- Status wurde nach Details verschoben -->
+
+			<!-- Titel & Untertitel -->
+			<div>
+				<h2 class="mt-0 mb-1">{parentEvent.title ?? ''}</h2>
+				{#if parentEvent.subtitle}
+					<p class="opacity-70 mb-0">{parentEvent.subtitle}</p>
+				{/if}
+			</div>
+
+			<!-- Beschreibung -->
+			{#if parentEvent.description?.length}
+				<div class="opacity-80">
+					<PrismicRichText field={parentEvent.description} />
+				</div>
+			{/if}
+
+			<!-- Kurzbeschreibung -->
+			{#if parentEvent.short_description?.length}
+				<div class="opacity-80">
+					<PrismicRichText field={parentEvent.short_description} />
+				</div>
+			{/if}
+
+			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+
+			<!-- Veranstalter & Kontakt -->
+			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein') || isFullyBooked || deadlineExpired || isConfirmed}
+				{#if isFullyBooked || deadlineExpired || isConfirmed || (parentEvent.status && parentEvent.status !== 'Kein')}
+					<div class="flex items-center gap-2">
+						<span class="opacity-50 text-sm">{$_('Status')}:</span>
+						<span
+							class="px-2.5 py-1 rounded-full text-sm font-medium {statusColor[
+								isFullyBooked
+									? 'Ausgebucht'
+									: deadlineExpired
+										? 'Anmeldefrist abgelaufen'
+										: isConfirmed
+											? 'Bestätigt'
+											: parentEvent.status
+							] ?? 'bg-gray-100 text-gray-600'}"
+							>{$_(
+								isFullyBooked
+									? 'Ausgebucht'
+									: deadlineExpired
+										? 'Anmeldefrist abgelaufen'
+										: isConfirmed
+											? 'Bestätigt'
+											: parentEvent.status
+							)}</span
+						>
+					</div>
+				{/if}
+				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
+					<div class="opacity-60 flex flex-wrap gap-3">
+						{#if parentEvent.organizer}
+							<span>
+								{$_('Veranstalter')}:
+								{#if isFilled.link(parentEvent.organizer_url)}
+									<a
+										href={parentEvent.organizer_url.url}
+										target="_blank"
+										rel="noopener"
+										class="underline">{parentEvent.organizer}</a
+									>
+								{:else}
+									{parentEvent.organizer}
+								{/if}
+							</span>
 						{/if}
-						{#if parentEvent.event_type}
-							<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500"
-								>{parentEvent.event_type}</span
-							>
-						{/if}
+						{#if parentEvent.contact_email}<a
+								href="mailto:{parentEvent.contact_email}"
+								class="underline">{parentEvent.contact_email}</a
+							>{/if}
+						{#if parentEvent.contact_phone}<span>{parentEvent.contact_phone}</span>{/if}
 					</div>
 				{/if}
 
-				<!-- Titel & Untertitel -->
-				<div>
-					<h2 class="mt-0 mb-1">{parentEvent.title ?? ''}</h2>
-					{#if parentEvent.subtitle}
-						<p class="opacity-70 mb-0">{parentEvent.subtitle}</p>
-					{/if}
-				</div>
+				<!-- Weitere Details -->
+				{#if parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.max_participants || parentEvent.min_participants}
+					{@const detailCount = [
+						parentEvent.event_language,
+						parentEvent.target_audience,
+						parentEvent.min_age,
+						parentEvent.accessibility_info,
+						parentEvent.max_participants,
+						parentEvent.min_participants
+					].filter(Boolean).length}
+					<ul
+						class="opacity-60 text-sm flex flex-col gap-1 {detailCount === 1
+							? 'list-none pl-0'
+							: 'list-disc pl-4'}"
+					>
+						{#if parentEvent.event_language}<li>
+								<strong>{$_('Sprache')}</strong>: {parentEvent.event_language}
+							</li>{/if}
+						{#if parentEvent.target_audience}<li>
+								<strong>{$_('Zielgruppe')}</strong>: {parentEvent.target_audience}
+							</li>{/if}
+						{#if parentEvent.min_age}<li>
+								<strong>{$_('Mindestalter')}</strong>: {parentEvent.min_age}
+							</li>{/if}
+						{#if parentEvent.max_participants}<li>
+								<strong>{$_('Max. Teilnehmer')}</strong>: {parentEvent.max_participants}
+							</li>{/if}
+						{#if parentEvent.min_participants}<li>
+								<strong>{$_('Mind. Teilnehmer')}</strong>: {parentEvent.min_participants}
+							</li>{/if}
+						{#if parentEvent.accessibility_info}<li>
+								<strong>♿</strong>
+								{parentEvent.accessibility_info}
+							</li>{/if}
+					</ul>
+				{/if}
+
+				<!-- Weitere Hinweise -->
+				{#if parentEvent.additional_info?.length}
+					<div class="opacity-70 text-sm">
+						<PrismicRichText field={parentEvent.additional_info} />
+					</div>
+				{/if}
+
+				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+			{/if}
+
+			<!-- Datum & Ort (gruppiert) -->
+			<div class="flex flex-col gap-3">
+				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
+				{#if parentEvent.start_date}
+					{@const dateRange = formatEventDateRange(
+						parentEvent.start_date,
+						parentEvent.end_date,
+						false,
+						$page.data.lang || 'de-CH',
+						$_('bis')
+					)}
+					<div class="flex items-start gap-2">
+						<span class="mt-0.5 shrink-0">📅</span>
+						<div>
+							<div>{dateRange}</div>
+							{#if parentEvent.timezone}
+								<div class="opacity-60">{parentEvent.timezone}</div>
+							{/if}
+							{#if parentEvent.doors_open}
+								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
+							{/if}
+						</div>
+					</div>
+				{/if}
 
 				<!-- Ort -->
 				{#if parentEvent.online_event}
@@ -291,168 +492,241 @@
 						.join(', ')}
 					<div class="flex items-start gap-2">
 						<span class="mt-0.5 shrink-0">📍</span>
-						<div>
-							<div>{locationLine}</div>
-							{#if isFilled.link(parentEvent.location_map_url)}
-								<a
-									href={parentEvent.location_map_url.url}
-									target="_blank"
-									rel="noopener"
-									class="underline opacity-70"
-									style="color: var(--page-link-color)">Auf Karte anzeigen</a
-								>
+						<span>{locationLine}</span>
+					</div>
+				{/if}
+
+				<!-- Website -->
+				{#if isFilled.link(parentEvent.website)}
+					<div class="flex items-center gap-2">
+						<span class="shrink-0">🔗</span>
+						<a
+							href={parentEvent.website.url}
+							target={parentEvent.website.target ?? '_blank'}
+							rel="noopener"
+							class="underline"
+							style="color: var(--page-link-color)">{parentEvent.website.url}</a
+						>
+					</div>
+				{/if}
+
+				<!-- Wegbeschreibung -->
+				{#if parentEvent.directions?.length}
+					<details
+						class="rounded overflow-hidden"
+						style="border: 1px solid color-mix(in srgb, var(--page-color) 15%, transparent);"
+					>
+						<summary class="flex items-center justify-between px-3 py-2 cursor-pointer list-none">
+							<span>{$_('Wegbeschreibung')}</span>
+							<span class="text-xs opacity-60">▾</span>
+						</summary>
+						<div
+							class="px-3 pb-3 pt-2 opacity-80"
+							style="border-top: 1px solid color-mix(in srgb, var(--page-color) 8%, transparent);"
+						>
+							<PrismicRichText field={parentEvent.directions} />
+							{#if parentEvent.directions_pdf_button}
+								<Button
+									text={$_('Als PDF herunterladen')}
+									size="sm"
+									mb={false}
+									on:click={() =>
+										printDirectionsPdf(
+											parentEvent?.title ?? $_('Wegbeschreibung'),
+											parentEvent?.directions ?? []
+										)}
+								/>
 							{/if}
 						</div>
+					</details>
+				{/if}
+				{#if parentEvent.location_map_url}
+					<div class="-mx-6">
+						<GoogleMap
+							mapUrl={parentEvent.location_map_url}
+							mapHeight={parentEvent.map_height || 250}
+							mapOpacity={convertNumber(parentEvent.opacity ?? 0)}
+							roundCorners={false}
+						/>
 					</div>
 				{/if}
+			</div>
 
-				<!-- Datum & Zeit (aus Eltern-Event, falls gesetzt) -->
-				{#if parentEvent.start_date}
-					{@const allDay = parentEvent.all_day ?? false}
-					{@const startFormatted = formatDateTime(parentEvent.start_date, allDay)}
-					{@const endFormatted = formatDateTime(parentEvent.end_date, allDay)}
-					<div class="flex items-start gap-2">
-						<span class="mt-0.5 shrink-0">📅</span>
-						<div>
-							<div>{startFormatted}</div>
-							{#if endFormatted && endFormatted !== startFormatted}
-								<div class="opacity-60">{$_('bis')} {endFormatted}</div>
-							{/if}
-							{#if parentEvent.doors_open}
-								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
-							{/if}
-						</div>
-					</div>
-				{/if}
+			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
 
-				<!-- Beschreibung -->
-				{#if parentEvent.description?.length}
-					<div class="opacity-80 leading-relaxed">
-						{#each parentEvent.description as block}
-							{#if block.type === 'paragraph'}
-								<p class="mb-2">{block.text}</p>
-							{/if}
-						{/each}
-					</div>
-				{/if}
-
-				<!-- Preis -->
-				{#if parentEvent.is_free || parentEvent.price_text?.length}
+			<!-- Preis -->
+			{#if parentEvent.is_free || parentEvent.price_text?.length || parentEvent.ticket_price_chf || parentEvent.additional_costs_chf}
+				<div class="flex flex-col gap-1">
 					<div class="flex flex-wrap items-center gap-2">
 						{#if parentEvent.is_free}
 							<span class="font-medium">{$_('Kostenlos')}</span>
-						{:else}
+						{:else if parentEvent.ticket_price_chf}
+							{#if parentEvent.ticket_price_label}<span class="opacity-60"
+									>{parentEvent.ticket_price_label}:</span
+								>{/if}
+							<span class="font-medium"
+								>{priceDisplay}{#if parentEvent.payment_rechnung_enabled !== false || parentEvent.payment_bar_enabled !== false},&nbsp;<span
+										class="font-normal opacity-60"
+										>{[
+											parentEvent.payment_rechnung_enabled !== false
+												? parentEvent.payment_rechnung_label || $_('Gegen Rechnung')
+												: null,
+											parentEvent.payment_bar_enabled !== false
+												? parentEvent.payment_bar_label || $_('Gegen Bar')
+												: null
+										]
+											.filter(Boolean)
+											.join(', ')}</span
+									>{/if}</span
+							>
+							{#if parentEvent.price_show_eur && eurRate !== null}
+								{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
+										>{parentEvent.price_eur_label}</span
+									>{/if}
+								<SelectField bind:value={displayCurrency} options={['CHF', 'EUR']} />
+							{/if}
+						{:else if parentEvent.price_text?.length}
 							<PrismicRichText field={parentEvent.price_text} />
 						{/if}
-						{#if parentEvent.registration_required}
-							<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
-						{/if}
 					</div>
-				{/if}
+					{#if parentEvent.additional_costs_chf}
+						<div class="flex flex-wrap items-center gap-2">
+							{#if parentEvent.additional_costs_label}<span class="opacity-60"
+									>{parentEvent.additional_costs_label}:</span
+								>{/if}
+							<span class="font-medium">{additionalCostsDisplay}</span>
+						</div>
+					{/if}
+					{#if parentEvent.registration_required}
+						<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
+					{/if}
+				</div>
+			{/if}
 
-				<!-- Anmelden-Button -->
-				{#if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
-					<div>
-						<Button link={undefined} text={$_('Anmelden')} on:click={() => openModal()} />
-					</div>
-				{/if}
+			<!-- Checkout-Flow oder klassische Anmeldung -->
+			{#if parentEvent.use_checkout_flow}
+				<div>
+					{#if isFullyBooked}
+						<span
+							class="inline-block rounded-full px-4 py-2 text-sm font-semibold {statusColor[
+								'Ausgebucht'
+							]}">{$_('Ausgebucht')}</span
+						>
+					{:else if deadlineExpired}
+						<span
+							class="inline-block rounded-full px-4 py-2 text-sm font-semibold {statusColor[
+								'Anmeldefrist abgelaufen'
+							]}">{$_('Anmeldefrist abgelaufen')}</span
+						>
+					{:else}
+						<Button
+							link={{
+								url: `/beauftragung?dienstleistung=${encodeURIComponent(parentEventUid)}&event_checkout=true${$page.data?.page?.data?.landing_page ? '&no_chrome=true' : ''}&return_url=${encodeURIComponent($page.url.pathname)}`,
+								link_type: 'Web'
+							}}
+							text={parentEvent.ticket_button_label || $_('Ticket')}
+							on:click={() => {
+								if (displayCurrency !== 'CHF')
+									sessionStorage.setItem('preferredCurrency', displayCurrency);
+							}}
+						/>
+					{/if}
+				</div>
+			{:else if parentEvent.registration_email || parentEvent.registration_whatsapp || parentEvent.registration_telegram}
+				<div>
+					<Button link={undefined} text={$_('Anmelden')} on:click={() => openModal()} />
+				</div>
+			{/if}
 
-				<!-- Veranstalter & Kontakt -->
-				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
-					<div class="opacity-60 flex flex-wrap gap-3">
-						{#if parentEvent.organizer}<span>{$_('Veranstalter')}: {parentEvent.organizer}</span
-							>{/if}
-						{#if parentEvent.contact_email}<a
-								href="mailto:{parentEvent.contact_email}"
-								class="underline">{parentEvent.contact_email}</a
-							>{/if}
-						{#if parentEvent.contact_phone}<span>{parentEvent.contact_phone}</span>{/if}
-					</div>
-				{/if}
+			<!-- ── UNTERER BEREICH: Termine ── -->
+			{#if events.length}
+				<div
+					class="pt-4 border-t flex flex-col gap-3"
+					style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
+				>
+					<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
-				<!-- ── UNTERER BEREICH: Termine ── -->
-				{#if events.length}
-					<div
-						class="pt-4 border-t flex flex-col gap-3"
-						style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
-					>
-						<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
+					{#each events as ev}
+						{@const dateRange = formatEventDateRange(
+							ev.start_date,
+							ev.end_date,
+							false,
+							$page.data.lang || 'de-CH',
+							$_('bis')
+						)}
 
-						{#each events as ev}
-							{@const allDay = ev.all_day ?? false}
-							{@const startFormatted = formatDateTime(ev.start_date, allDay)}
-							{@const endFormatted = formatDateTime(ev.end_date, allDay)}
+						<div
+							class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0"
+							style="border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent)"
+						>
+							<!-- Status -->
+							{#if isFullyBooked}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor['Ausgebucht']}"
+									>{$_('Ausgebucht')}</span
+								>
+							{:else if deadlineExpired}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[
+										'Anmeldefrist abgelaufen'
+									]}">{$_('Anmeldefrist abgelaufen')}</span
+								>
+							{:else if isConfirmed}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor['Bestätigt']}"
+									>{$_('Bestätigt')}</span
+								>
+							{:else if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
+								<span
+									class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[ev.status] ??
+										'bg-gray-100 text-gray-600'}">{$_(ev.status)}</span
+								>
+							{/if}
 
-							<div
-								class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0"
-								style="border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent)"
-							>
-								<!-- Status -->
-								{#if ev.status && ev.status !== 'Bestätigt' && ev.status !== 'Kein'}
-									<span
-										class="shrink-0 px-2 py-0.5 rounded-full font-medium {statusColor[ev.status] ??
-											'bg-gray-100 text-gray-600'}">{$_(ev.status)}</span
-									>
-								{/if}
-
-								<!-- Datum & Zeit -->
-								<div class="flex items-start gap-2 grow">
-									<span class="shrink-0 mt-0.5">📅</span>
-									<div>
-										{#if startFormatted}
-											<div>{startFormatted}</div>
-											{#if endFormatted && endFormatted !== startFormatted}
-												<div class="opacity-60">{$_('bis')} {endFormatted}</div>
-											{/if}
-											{#if ev.doors_open}
-												<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
-											{/if}
-										{:else}
-											<div class="opacity-40">{$_('Datum noch nicht festgelegt')}</div>
+							<!-- Datum & Zeit -->
+							<div class="flex items-start gap-2 grow">
+								<span class="shrink-0 mt-0.5">📅</span>
+								<div>
+									{#if dateRange}
+										<div>{dateRange}</div>
+										{#if ev.timezone}
+											<div class="opacity-60">{ev.timezone}</div>
 										{/if}
-									</div>
-								</div>
-
-								<!-- Preis -->
-								{#if ev.individually_bookable && (ev.individual_is_free || ev.individual_price_text?.length)}
-									<div class="shrink-0 opacity-70">
-										{#if ev.individual_is_free}
-											{$_('Kostenlos')}
-										{:else}
-											<PrismicRichText field={ev.individual_price_text} />
+										{#if ev.doors_open}
+											<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
 										{/if}
-									</div>
-								{:else if !ev.individually_bookable && (ev.is_free || ev.price_text?.length)}
-									<div class="shrink-0 opacity-70">
-										{#if ev.is_free}
-											{$_('Kostenlos')}
-										{:else}
-											<PrismicRichText field={ev.price_text} />
-										{/if}
-									</div>
-								{/if}
-
-								<!-- Ticket-Button oder Einzel-Anmelden -->
-								{#if ev.individually_bookable}
-									{@const hasIndividualContact =
-										registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
-									{#if isFilled.link(ev.individual_ticket_url)}
-										\<Button link={ev.individual_ticket_url} text={$_('Tickets')} size="sm" />
-									{:else if hasIndividualContact}
-										<Button
-											link={undefined}
-											text={$_('Anmelden')}
-											size="sm"
-											on:click={() => openModal(ev)}
-										/>
+									{:else}
+										<div class="opacity-40">{$_('Datum noch nicht festgelegt')}</div>
 									{/if}
-								{:else if isFilled.link(ev.ticket_url)}
-									<Button
-										link={ev.ticket_url}
-										text={ev.registration_required ? $_('Anmelden') : $_('Tickets')}
-										size="sm"
-									/>
-								{:else if registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
+								</div>
+							</div>
+
+							<!-- Preis -->
+							{#if ev.individually_bookable && (ev.individual_is_free || ev.individual_price_text?.length)}
+								<div class="shrink-0 opacity-70">
+									{#if ev.individual_is_free}
+										{$_('Kostenlos')}
+									{:else}
+										<PrismicRichText field={ev.individual_price_text} />
+									{/if}
+								</div>
+							{:else if !ev.individually_bookable && (ev.is_free || ev.price_text?.length)}
+								<div class="shrink-0 opacity-70">
+									{#if ev.is_free}
+										{$_('Kostenlos')}
+									{:else}
+										<PrismicRichText field={ev.price_text} />
+									{/if}
+								</div>
+							{/if}
+
+							<!-- Ticket-Button oder Einzel-Anmelden -->
+							{#if ev.individually_bookable}
+								{@const hasIndividualContact =
+									registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
+								{#if isFilled.link(ev.individual_ticket_url)}
+									\<Button link={ev.individual_ticket_url} text={$_('Tickets')} size="sm" />
+								{:else if hasIndividualContact}
 									<Button
 										link={undefined}
 										text={$_('Anmelden')}
@@ -460,11 +734,24 @@
 										on:click={() => openModal(ev)}
 									/>
 								{/if}
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</div>
+							{:else if isFilled.link(ev.ticket_url)}
+								<Button
+									link={ev.ticket_url}
+									text={ev.registration_required ? $_('Anmelden') : $_('Tickets')}
+									size="sm"
+								/>
+							{:else if registrationEmail(ev) || registrationWhatsapp(ev) || registrationTelegram(ev)}
+								<Button
+									link={undefined}
+									text={$_('Anmelden')}
+									size="sm"
+									on:click={() => openModal(ev)}
+								/>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{:else if !isFilled.contentRelationship(p.events) && $page.url.hostname === 'localhost'}
 		<div class="p-4 border border-dashed border-gray-300 text-center opacity-40">

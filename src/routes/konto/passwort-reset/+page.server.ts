@@ -2,12 +2,12 @@ import { fail, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { setResetToken, resetPassword } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
-import { isFeatureActive } from '$lib/server/features';
+import { FEATURE_TERMINBUCHUNG } from '$lib/server/features';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ url }) => {
-	if (!isFeatureActive('terminbuchung')) throw error(404, 'Funktion nicht verfügbar');
+	if (!FEATURE_TERMINBUCHUNG) throw error(404, 'Funktion nicht verfügbar');
 	return { token: url.searchParams.get('token') ?? '' };
 };
 
@@ -55,8 +55,10 @@ export const actions: Actions = {
 		const passwordConfirm = data.get('password_confirm') as string;
 
 		if (!token || !password) return fail(400, { step: 'reset', error: 'Ungültige Anfrage' });
-		if (password.length < 8) return fail(400, { step: 'reset', error: 'Passwort muss mindestens 8 Zeichen lang sein' });
-		if (password !== passwordConfirm) return fail(400, { step: 'reset', error: 'Passwörter stimmen nicht überein' });
+		if (password.length < 8)
+			return fail(400, { step: 'reset', error: 'Passwort muss mindestens 8 Zeichen lang sein' });
+		if (password !== passwordConfirm)
+			return fail(400, { step: 'reset', error: 'Passwörter stimmen nicht überein' });
 
 		const success = await resetPassword(token, password).catch(() => false);
 		if (!success) return fail(400, { step: 'reset', error: 'Link ungültig oder abgelaufen' });
