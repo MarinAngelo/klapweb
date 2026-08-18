@@ -50,7 +50,7 @@
 		"vite": "^5.3.1"
 	},
 	"simple-git-hooks": {
-		"pre-commit": "npx lint-staged"
+		"pre-commit": "./node_modules/.bin/lint-staged"
 	},
 	"lint-staged": {
 		"*.{js,ts,svelte,css,json,md}": "prettier --write"

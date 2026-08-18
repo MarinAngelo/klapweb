@@ -57,7 +57,9 @@ function writeIfChanged(path, data) {
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
 const overridesPath = join(ROOT, 'gating.overrides.json');
-const overrides = existsSync(overridesPath) ? read('gating.overrides.json') : { enabled: [], disabled: [] };
+const overrides = existsSync(overridesPath)
+	? read('gating.overrides.json')
+	: { enabled: [], disabled: [] };
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
 
@@ -68,7 +70,6 @@ function resolvePlanChain(planKey) {
 }
 
 const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
-console.log('DEBUG: activePlanChain =', activePlanChain);
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
@@ -79,13 +80,10 @@ const features = Object.entries(gating.features ?? {})
 // Zusätzliche Features aus gating.overrides.json (Branch-spezifisch)
 // Format: { enabled: [...], disabled: [...] }
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
-const disabledFeatures = (overrides.disabled ?? []);
-const allFeatures = [...new Set([...features.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
-
-console.log('DEBUG: features =', features);
-console.log('DEBUG: enabled =', enabledFeatures);
-console.log('DEBUG: disabled =', disabledFeatures);
-console.log('DEBUG: allFeatures =', allFeatures);
+const disabledFeatures = overrides.disabled ?? [];
+const allFeatures = [
+	...new Set([...features.filter((f) => !disabledFeatures.includes(f)), ...enabledFeatures])
+];
 
 console.log(
 	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
@@ -355,7 +353,6 @@ console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	const active = isActive(gate);
-	console.log(`DEBUG: CustomType ${typeId} → isActive = ${active} (gate:`, gate, ')');
 	if (active) continue;
 	const indexPath = join(ROOT, `customtypes/${typeId}/index.json`);
 	if (existsSync(indexPath)) {
@@ -377,4 +374,3 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	}
 }
 // ── Ende Pre-Build-Check ──────────────────────────────────────────────────────
-
