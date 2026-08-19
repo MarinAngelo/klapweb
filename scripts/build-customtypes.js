@@ -57,7 +57,9 @@ function writeIfChanged(path, data) {
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
 const overridesPath = join(ROOT, 'gating.overrides.json');
-const overrides = existsSync(overridesPath) ? read('gating.overrides.json') : { enabled: [], disabled: [] };
+const overrides = existsSync(overridesPath)
+	? read('gating.overrides.json')
+	: { enabled: [], disabled: [] };
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
 
@@ -78,8 +80,10 @@ const features = Object.entries(gating.features ?? {})
 // Zusätzliche Features aus gating.overrides.json (Branch-spezifisch)
 // Format: { enabled: [...], disabled: [...] }
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
-const disabledFeatures = (overrides.disabled ?? []);
-const allFeatures = [...new Set([...features.filter(f => !disabledFeatures.includes(f)), ...enabledFeatures])];
+const disabledFeatures = overrides.disabled ?? [];
+const allFeatures = [
+	...new Set([...features.filter((f) => !disabledFeatures.includes(f)), ...enabledFeatures])
+];
 
 console.log(
 	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
@@ -370,4 +374,3 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	}
 }
 // ── Ende Pre-Build-Check ──────────────────────────────────────────────────────
-
