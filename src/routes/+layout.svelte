@@ -28,6 +28,7 @@
 	import { reveal } from '$lib/actions/reveal';
 	import { parseCurrencyCode } from '$lib/pricing';
 	import { showCrosshair } from '$lib/stores/showCrosshair';
+	import { errorPageLanding } from '$lib/stores/errorPageLanding';
 
 	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 	const titleNoAnim = { direction: 'none' as const };
@@ -320,7 +321,7 @@
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
-	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
+	$: isLandingPage = $page.data?.page?.data?.landing_page === true || $errorPageLanding;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
