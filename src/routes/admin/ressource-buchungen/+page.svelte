@@ -77,6 +77,8 @@
 		else expandedBuchungen.add(id);
 		expandedBuchungen = expandedBuchungen;
 	}
+
+	let showCreate = false;
 </script>
 
 <svelte:head><title>Ressource-Buchungen</title></svelte:head>
@@ -85,6 +87,12 @@
 	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Ressource-Buchungen</h1>
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
+			<button
+				type="button"
+				on:click={() => (showCreate = !showCreate)}
+				style="font-size:0.8rem;background:#1e2d5a;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:4px 10px;font-weight:600;"
+				>+ Neue Buchung</button
+			>
 			<Button
 				href="/admin/dashboard?secret={secret}"
 				text="← Dashboard"
@@ -120,6 +128,54 @@
 		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">
 			Fehler: {data.blobError}
 		</p>
+	{/if}
+
+	{#if showCreate}
+		<form
+			method="POST"
+			action="?/create&secret={secret}"
+			style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:1.25rem;margin-bottom:2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem;"
+		>
+			<h3 style="grid-column:1/-1;margin:0 0 0.25rem;font-size:0.95rem;font-weight:700;">
+				Neue Buchung erfassen
+			</h3>
+			{#each [{ name: 'ressourceUid', label: 'Ressource UID *', type: 'text' }, { name: 'von', label: 'Anreise *', type: 'date' }, { name: 'bis', label: 'Abreise *', type: 'date' }, { name: 'personen', label: 'Personen *', type: 'number' }, { name: 'name', label: 'Name *', type: 'text' }, { name: 'email', label: 'E-Mail *', type: 'email' }, { name: 'telefon', label: 'Telefon', type: 'text' }, { name: 'preisCHF', label: 'Preis CHF', type: 'number' }, { name: 'nachricht', label: 'Nachricht', type: 'text' }] as f}
+				<label style="font-size:0.8rem;display:flex;flex-direction:column;gap:2px;">
+					{f.label}
+					<input
+						name={f.name}
+						type={f.type}
+						min={f.name === 'personen' ? 1 : f.name === 'preisCHF' ? 0 : undefined}
+						step={f.name === 'preisCHF' ? '0.01' : undefined}
+						style="border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;font-size:0.8rem;width:100%;"
+					/>
+				</label>
+			{/each}
+			<label style="font-size:0.8rem;display:flex;flex-direction:column;gap:2px;">
+				Status
+				<select
+					name="status"
+					style="border:1px solid #d1d5db;border-radius:4px;padding:4px 6px;font-size:0.8rem;"
+				>
+					<option value="confirmed">Bestätigt</option>
+					<option value="pending">Ausstehend</option>
+					<option value="checked_in">Eingecheckt</option>
+				</select>
+			</label>
+			<div style="grid-column:1/-1;display:flex;gap:0.5rem;margin-top:0.25rem;">
+				<button
+					type="submit"
+					style="background:#1e2d5a;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 14px;font-size:0.8rem;font-weight:600;"
+					>Speichern</button
+				>
+				<button
+					type="button"
+					on:click={() => (showCreate = false)}
+					style="background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:5px 14px;font-size:0.8rem;"
+					>Abbrechen</button
+				>
+			</div>
+		</form>
 	{/if}
 
 	{#if data.buchungen.length === 0}
