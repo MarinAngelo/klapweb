@@ -57,9 +57,9 @@
 		yPadding="none"
 		style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: {footerMarginTop}; padding-top: 3rem; padding-bottom: 1rem;"
 	>
-		<footer class="w-full h-full ">
+		<div class="w-full h-full">
 			<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
-				<ul class="flex flex-col items-center gap-0 mb-10 ">
+				<ul class="flex flex-col items-center gap-0 mb-10">
 					{#each navigationLinks as link}
 						{#if link.footer_sec_nav === true}
 							{@const webUrl = getWebUrl(link.link)}
@@ -95,7 +95,7 @@
 						{$_('Kontakt')}:
 						<a
 							href={`mailto:${email}`}
-							class="text-center  hover:underline"
+							class="text-center hover:underline"
 							style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
 							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
 							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
@@ -212,6 +212,6 @@
 					{responsiblePersonCompany}. {$_('Alle Rechte vorbehalten.')}
 				</p>
 			</div>
-		</footer>
+		</div>
 	</Bounded>
 {/if}

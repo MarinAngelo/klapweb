@@ -98,14 +98,22 @@
 	function inTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
 	function outTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
@@ -196,6 +204,7 @@
 						>
 							<PrismicImage
 								field={images[current].image}
+								alt={images[current].image?.alt || ''}
 								sizes="100vw"
 								class="w-full h-full object-cover select-none pointer-events-none"
 							/>
@@ -237,7 +246,9 @@
 				style="touch-action: pan-y;"
 				on:pointerdown={onPointerDown}
 				on:pointerup={onPointerUp}
-				on:pointercancel={() => { swiping = false; }}
+				on:pointercancel={() => {
+					swiping = false;
+				}}
 			/>
 		</div>
 	</div>
@@ -247,20 +258,36 @@
 
 <style>
 	@keyframes kb0 {
-		from { transform: scale(1.0) translate(0%, 0%); }
-		to   { transform: scale(1.12) translate(0%, 0%); }
+		from {
+			transform: scale(1) translate(0%, 0%);
+		}
+		to {
+			transform: scale(1.12) translate(0%, 0%);
+		}
 	}
 	@keyframes kb1 {
-		from { transform: scale(1.12) translate(0%, 0%); }
-		to   { transform: scale(1.0) translate(0%, 0%); }
+		from {
+			transform: scale(1.12) translate(0%, 0%);
+		}
+		to {
+			transform: scale(1) translate(0%, 0%);
+		}
 	}
 	@keyframes kb2 {
-		from { transform: scale(1.08) translate(-1.5%, -0.5%); }
-		to   { transform: scale(1.08) translate(1.5%, 0.5%); }
+		from {
+			transform: scale(1.08) translate(-1.5%, -0.5%);
+		}
+		to {
+			transform: scale(1.08) translate(1.5%, 0.5%);
+		}
 	}
 	@keyframes kb3 {
-		from { transform: scale(1.08) translate(1.5%, 0.5%); }
-		to   { transform: scale(1.08) translate(-1.5%, -0.5%); }
+		from {
+			transform: scale(1.08) translate(1.5%, 0.5%);
+		}
+		to {
+			transform: scale(1.08) translate(-1.5%, -0.5%);
+		}
 	}
 
 	/* 1. Pfeile ausblenden auf allen Touch-Geräten */
