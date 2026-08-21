@@ -4,6 +4,7 @@ import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
+import { env } from '$env/dynamic/private';
 
 export interface AddonRow {
 	label: string;
@@ -18,7 +19,7 @@ export interface PlaeneFeature {
 	leistungUid?: string;
 }
 
-export async function load({ params, parent, fetch, cookies }) {
+export async function load({ params, parent, fetch, cookies, url }) {
 	const { lang, settings } = await parent();
 	const client = createClient({ fetch });
 
@@ -40,13 +41,19 @@ export async function load({ params, parent, fetch, cookies }) {
 				: []
 		});
 
-		// Password protection
+		// Password protection – Admin-Bypass wenn ?admin_secret=<ADMIN_SECRET>
 		if ((page.data as any).password_protected === true) {
-			const pagePassword = (settings.data as any).page_password as string | null;
-			const authCookie = cookies.get('klap_auth');
-			if (!pagePassword || authCookie !== pagePassword) {
-				const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
-				throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+			const adminSecret = env.ADMIN_SECRET;
+			const bypassParam = url.searchParams.get('admin_secret');
+			const isAdminBypass = adminSecret && bypassParam === adminSecret;
+
+			if (!isAdminBypass) {
+				const pagePassword = (settings.data as any).page_password as string | null;
+				const authCookie = cookies.get('klap_auth');
+				if (!pagePassword || authCookie !== pagePassword) {
+					const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
+					throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+				}
 			}
 		}
 
