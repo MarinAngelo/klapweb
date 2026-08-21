@@ -43,9 +43,10 @@
 	{#if isFilled.image(card.image)}
 		<div class="relative">
 			{#if isFilled.link(card.buttonLink)}
-				<PrismicLink field={card.buttonLink} tabindex={-1}>
+				<PrismicLink field={card.buttonLink} tabindex={-1} aria-hidden="true">
 					<PrismicImage
 						field={card.image}
+						alt={card.image?.alt || ''}
 						sizes="100vw"
 						class="w-full {roundCorners ? 'rounded-t-2xl' : ''}"
 					/>
@@ -53,17 +54,18 @@
 			{:else}
 				<PrismicImage
 					field={card.image}
+					alt={card.image?.alt || ''}
 					sizes="100vw"
 					class="w-full {roundCorners ? 'rounded-t-2xl' : ''}"
 				/>
 			{/if}
 			{#if card.image_overlay_opacity}
-			<ImageOverlay
-				color={card.image_overlay_color || $theme.pageBgColor}
-				opacity={convertNumber(card.image_overlay_opacity)}
-				{roundCorners}
-			/>
-		{/if}
+				<ImageOverlay
+					color={card.image_overlay_color || $theme.pageBgColor}
+					opacity={convertNumber(card.image_overlay_opacity)}
+					{roundCorners}
+				/>
+			{/if}
 		</div>
 	{/if}
 	<div
