@@ -32,16 +32,8 @@
 		}
 	})() as 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top';
 
-	$: gridCols =
-		spalten === '2'
-			? 'repeat(auto-fill, minmax(min(100%, 26rem), 1fr))'
-			: spalten === '4'
-				? 'repeat(auto-fill, minmax(min(100%, 16rem), 1fr))'
-				: 'repeat(auto-fill, minmax(min(100%, 20rem), 1fr))';
-
 	type Group = { name: string; items: any[] };
 	$: grouped = (() => {
-		if (!p.group_by) return [{ name: '', items: allItems }] as Group[];
 		const map = new Map<string, any[]>();
 		for (const item of allItems) {
 			const key = (item.gruppe as string) || '';
@@ -103,16 +95,22 @@
 		<h2 class="mb-10">{p.heading[0]?.text ?? ''}</h2>
 	{/if}
 
-	{#each grouped as group}
+	{#each grouped as group, gi}
 		{#if group.name}
-			<h3 class="mb-4 mt-10 first:mt-0 opacity-60 uppercase tracking-wider text-sm font-semibold">
-				{group.name}
-			</h3>
+			<h3 class={gi > 0 ? 'mt-12' : ''}>{group.name}</h3>
+		{:else if gi > 0}
+			<div class="mt-12"></div>
 		{/if}
 
 		{#if layout === 'Kacheln'}
 			<!-- ── Kacheln ── -->
-			<div class="grid gap-5" style="grid-template-columns: {gridCols};">
+			<div
+				class="grid gap-5 {spalten === '2'
+					? 'sm:grid-cols-2'
+					: spalten === '4'
+						? 'sm:grid-cols-4'
+						: 'sm:grid-cols-3'}"
+			>
 				{#each group.items as item}
 					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
@@ -146,7 +144,7 @@
 							{#if item.beschreibung}
 								<p class="leading-snug">{item.beschreibung}</p>
 							{/if}
-							<p class="text-xs opacity-35 mt-1">{domain(item)}</p>
+							<h6>{domain(item)}</h6>
 						</div>
 					</a>
 				{/each}
@@ -177,7 +175,7 @@
 							{#if item.beschreibung}
 								<span class="hidden md:inline">— {item.beschreibung}</span>
 							{/if}
-							<span class="ml-auto text-xs opacity-30">{domain(item)}</span>
+							<h6 class="ml-auto">{domain(item)}</h6>
 						</a>
 					</li>
 				{/each}
@@ -219,7 +217,7 @@
 								{#if item.beschreibung}
 									<p class="leading-snug line-clamp-2">{item.beschreibung}</p>
 								{/if}
-								<p class="text-xs opacity-35 mt-0.5">{domain(item)}</p>
+								<h6>{domain(item)}</h6>
 							</div>
 							<svg
 								class="ml-auto flex-shrink-0 w-4 h-4 opacity-25 group-hover:opacity-60 transition-opacity"
