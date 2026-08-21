@@ -21,21 +21,19 @@
 	$: yPadding = (() => {
 		const same = p.y_padding_same ?? false;
 		switch (p.y_padding) {
-			case 'kein Abstand': return 'none';
-			case 'wenig': return same ? 'sm' : 'sm-top';
-			case 'gross': return same ? 'lg' : 'lg-top';
-			default: return same ? 'base' : 'base-top';
+			case 'kein Abstand':
+				return 'none';
+			case 'wenig':
+				return same ? 'sm' : 'sm-top';
+			case 'gross':
+				return same ? 'lg' : 'lg-top';
+			default:
+				return same ? 'base' : 'base-top';
 		}
 	})() as 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top';
 
-	$: gridCols =
-		spalten === '2' ? 'repeat(auto-fill, minmax(min(100%, 26rem), 1fr))' :
-		spalten === '4' ? 'repeat(auto-fill, minmax(min(100%, 16rem), 1fr))' :
-		'repeat(auto-fill, minmax(min(100%, 20rem), 1fr))';
-
 	type Group = { name: string; items: any[] };
 	$: grouped = (() => {
-		if (!p.group_by) return [{ name: '', items: allItems }] as Group[];
 		const map = new Map<string, any[]>();
 		for (const item of allItems) {
 			const key = (item.gruppe as string) || '';
@@ -51,7 +49,11 @@
 
 	function domain(item: any): string {
 		const h = href(item);
-		try { return new URL(h).hostname.replace(/^www\./, ''); } catch { return h; }
+		try {
+			return new URL(h).hostname.replace(/^www\./, '');
+		} catch {
+			return h;
+		}
 	}
 
 	type OgData = { image: string | null; title: string | null };
@@ -62,8 +64,10 @@
 			const h = href(item);
 			if (!h || h === '#') return;
 			fetch(`/api/og?url=${encodeURIComponent(h)}`)
-				.then(r => r.json())
-				.then((d: OgData) => { ogData = { ...ogData, [i]: d }; })
+				.then((r) => r.json())
+				.then((d: OgData) => {
+					ogData = { ...ogData, [i]: d };
+				})
 				.catch(() => {});
 		});
 	});
@@ -79,8 +83,9 @@
 
 <Bounded
 	as="section"
-	yPadding={yPadding}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};"
+	{yPadding}
+	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
+		'var(--page-color)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -90,14 +95,22 @@
 		<h2 class="mb-10">{p.heading[0]?.text ?? ''}</h2>
 	{/if}
 
-	{#each grouped as group}
+	{#each grouped as group, gi}
 		{#if group.name}
-			<h3 class="mb-4 mt-10 first:mt-0 opacity-60 uppercase tracking-wider text-sm font-semibold">{group.name}</h3>
+			<h3 class={gi > 0 ? 'mt-12' : ''}>{group.name}</h3>
+		{:else if gi > 0}
+			<div class="mt-12"></div>
 		{/if}
 
 		{#if layout === 'Kacheln'}
 			<!-- ── Kacheln ── -->
-			<div class="grid gap-5" style="grid-template-columns: {gridCols};">
+			<div
+				class="grid gap-5 {spalten === '2'
+					? 'sm:grid-cols-2'
+					: spalten === '4'
+						? 'sm:grid-cols-4'
+						: 'sm:grid-cols-3'}"
+			>
 				{#each group.items as item}
 					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
@@ -116,23 +129,32 @@
 									class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
 								/>
 							{:else if h && h !== '#'}
-								<OgBild src={ogData[gi]?.image ?? null} alt={label(item, gi)} hostname={domain(item)} done={gi in ogData} />
+								<OgBild
+									src={ogData[gi]?.image ?? null}
+									alt={label(item, gi)}
+									hostname={domain(item)}
+									done={gi in ogData}
+								/>
 							{/if}
 						</div>
 						<div class="p-4 flex flex-col gap-1">
-							<p class="font-semibold leading-tight">{item.titel || ogData[gi]?.title || domain(item)}</p>
+							<p class="font-semibold leading-tight">
+								{item.titel || ogData[gi]?.title || domain(item)}
+							</p>
 							{#if item.beschreibung}
 								<p class="leading-snug">{item.beschreibung}</p>
 							{/if}
-							<p class="text-xs opacity-35 mt-1">{domain(item)}</p>
+							<h6>{domain(item)}</h6>
 						</div>
 					</a>
 				{/each}
 			</div>
-
 		{:else if layout === 'Kompakt'}
 			<!-- ── Kompakt ── -->
-			<ul class="flex flex-col divide-y" style="border-color: color-mix(in srgb, currentColor 10%, transparent);">
+			<ul
+				class="flex flex-col divide-y"
+				style="border-color: color-mix(in srgb, currentColor 10%, transparent);"
+			>
 				{#each group.items as item}
 					{@const gi = allItems.indexOf(item)}
 					{@const h = href(item)}
@@ -153,12 +175,11 @@
 							{#if item.beschreibung}
 								<span class="hidden md:inline">— {item.beschreibung}</span>
 							{/if}
-							<span class="ml-auto text-xs opacity-30">{domain(item)}</span>
+							<h6 class="ml-auto">{domain(item)}</h6>
 						</a>
 					</li>
 				{/each}
 			</ul>
-
 		{:else}
 			<!-- ── Liste (Standard) ── -->
 			<ul class="flex flex-col gap-3">
@@ -179,23 +200,37 @@
 								style="background: color-mix(in srgb, currentColor 8%, transparent);"
 							>
 								{#if isFilled.image(item.bild)}
-									<PrismicImage
-										field={item.bild}
-										class="w-full h-full object-cover"
-									/>
+									<PrismicImage field={item.bild} class="w-full h-full object-cover" />
 								{:else if h && h !== '#'}
-									<OgBild src={ogData[gi]?.image ?? null} alt={label(item, gi)} hostname={domain(item)} done={gi in ogData} />
+									<OgBild
+										src={ogData[gi]?.image ?? null}
+										alt={label(item, gi)}
+										hostname={domain(item)}
+										done={gi in ogData}
+									/>
 								{/if}
 							</div>
 							<div class="flex flex-col gap-0.5 min-w-0">
-								<p class="font-semibold leading-tight truncate">{item.titel || ogData[gi]?.title || domain(item)}</p>
+								<p class="font-semibold leading-tight truncate">
+									{item.titel || ogData[gi]?.title || domain(item)}
+								</p>
 								{#if item.beschreibung}
 									<p class="leading-snug line-clamp-2">{item.beschreibung}</p>
 								{/if}
-								<p class="text-xs opacity-35 mt-0.5">{domain(item)}</p>
+								<h6>{domain(item)}</h6>
 							</div>
-							<svg class="ml-auto flex-shrink-0 w-4 h-4 opacity-25 group-hover:opacity-60 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+							<svg
+								class="ml-auto flex-shrink-0 w-4 h-4 opacity-25 group-hover:opacity-60 transition-opacity"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+								/>
 							</svg>
 						</a>
 					</li>

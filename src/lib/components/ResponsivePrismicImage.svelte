@@ -59,6 +59,7 @@
 				dimensions: image.dimensions,
 				edit: image.edit
 			}}
+			alt={image.alt || ''}
 			{widths}
 			{sizes}
 			class={className}

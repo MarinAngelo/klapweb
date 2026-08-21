@@ -6,25 +6,22 @@ declare const self: ServiceWorkerGlobalScope;
 import { build, files, version } from '$service-worker';
 
 const CACHE_NAME = `cache-${version}`;
-const ASSETS = [...build, ...files];
+const ASSETS = new Set([...build, ...files]);
 
 self.addEventListener('install', (event) => {
-	event.waitUntil(
-		caches.open(CACHE_NAME).then((cache) => {
-			cache.addAll(ASSETS);
-		})
-	);
+	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([...ASSETS])));
+	// Neuer SW übernimmt sofort, ohne auf Tab-Schließen zu warten
+	self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
-		caches.keys().then((keys) => {
-			return Promise.all(
-				keys
-					.filter((key) => key !== CACHE_NAME)
-					.map((key) => caches.delete(key))
-			);
-		})
+		caches
+			.keys()
+			.then((keys) =>
+				Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+			)
+			.then(() => self.clients.claim()) // alle offenen Tabs sofort übernehmen
 	);
 });
 
@@ -32,43 +29,31 @@ self.addEventListener('fetch', (event) => {
 	const { request } = event;
 	const url = new URL(request.url);
 
-	// Skip non-GET requests
+	// Nur GET-Requests behandeln
 	if (request.method !== 'GET') return;
 
-	// Skip external domains (typekit, google fonts, etc.)
-	if (url.origin !== self.location.origin) {
-		event.respondWith(
-			fetch(request).catch(() => {
-				// Return offline response or empty response
-				return new Response('Offline', { status: 503 });
-			})
-		);
+	// Externe Domains nicht abfangen – Browser handhabt diese direkt
+	if (url.origin !== self.location.origin) return;
+
+	// Statische Assets: Cache-First
+	if (ASSETS.has(url.pathname)) {
+		event.respondWith(caches.match(request).then((cached) => cached ?? fetch(request)));
 		return;
 	}
 
-	// For internal assets, use cache-first strategy
-	if (ASSETS.includes(url.pathname)) {
-		event.respondWith(
-			caches.match(request).then((cached) => {
-				return cached || fetch(request);
-			})
-		);
-		return;
-	}
-
-	// For everything else, use network-first strategy
+	// Alles andere: Network-First mit Cache-Fallback
 	event.respondWith(
 		fetch(request)
 			.then((response) => {
-				if (!response || response.status !== 200) {
-					return response;
+				if (response.ok) {
+					const clone = response.clone();
+					caches.open(CACHE_NAME).then((c) => c.put(request, clone));
 				}
-				const cache = caches.open(CACHE_NAME);
-				cache.then((c) => c.put(request, response.clone()));
 				return response;
 			})
-			.catch(() => {
-				return caches.match(request) || new Response('Offline', { status: 503 });
+			.catch(async () => {
+				const cached = await caches.match(request);
+				return cached ?? new Response('Offline', { status: 503 });
 			})
 	);
 });
