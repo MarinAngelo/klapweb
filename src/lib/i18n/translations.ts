@@ -860,7 +860,26 @@ export const translations: Record<string, Record<string, string>> = {
 	'Chat schliessen': { 'de-ch': 'Chat schliessen', 'en-us': 'Close chat' },
 	'Nachricht eingeben': { 'de-ch': 'Nachricht eingeben…', 'en-us': 'Type a message…' },
 	Senden: { 'de-ch': 'Senden', 'en-us': 'Send' },
-	Tippt: { 'de-ch': 'Tippt…', 'en-us': 'Typing…' }
+	Tippt: { 'de-ch': 'Tippt…', 'en-us': 'Typing…' },
+	'Beispiel Firma GmbH': { 'de-ch': 'Beispiel Firma GmbH', 'en-us': 'Example Corp Ltd' },
+	'Check-in': { 'de-ch': 'Check-in', 'en-us': 'Check-in' },
+	'Check-out': { 'de-ch': 'Check-out', 'en-us': 'Check-out' },
+	LinkListe: { 'de-ch': 'LinkListe', 'en-us': 'Link List' },
+	PlanFilter: { 'de-ch': 'PlanFilter', 'en-us': 'Plan Filter' },
+	RessourceBuchung: { 'de-ch': 'RessourceBuchung', 'en-us': 'Resource Booking' },
+	'Multi (Mehrere Zeilen)': {
+		'de-ch': 'Multi (Mehrere Zeilen)',
+		'en-us': 'Multi (Multiple Lines)'
+	},
+	Farbverlauf: { 'de-ch': 'Farbverlauf', 'en-us': 'Gradient' },
+	Einzelzitat: { 'de-ch': 'Einzelzitat', 'en-us': 'Single Quote' },
+	Testimonials: { 'de-ch': 'Testimonials', 'en-us': 'Testimonials' },
+	'Kartenhöhe (px)': { 'de-ch': 'Kartenhöhe (px)', 'en-us': 'Card Height (px)' },
+	'Schrift horizontal zentrieren': {
+		'de-ch': 'Schrift horizontal zentrieren',
+		'en-us': 'Center text horizontally'
+	},
+	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' }
 };
 
 /**
