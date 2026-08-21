@@ -213,6 +213,9 @@
 		},
 		"Aufgaben": {
 			"feature": "ressourcenbuchung"
+		},
+		"P5Grafik": {
+			"feature": "p5js"
 		}
 	},
 	"admin_sections": {

@@ -1,0 +1,289 @@
+{
+	"id": "image",
+	"type": "SharedSlice",
+	"name": "Bild",
+	"description": "Image",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Image",
+			"primary": {
+				"image": {
+					"type": "Image",
+					"config": {
+						"label": "Bild",
+						"constraint": {},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"lightbox": {
+					"type": "Boolean",
+					"config": {
+						"label": "Bild als Lightbox öffnen",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		},
+		{
+			"id": "banner",
+			"name": "Banner",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Image",
+			"primary": {
+				"image": {
+					"type": "Image",
+					"config": {
+						"label": "Bild",
+						"constraint": {
+							"width": 3000,
+							"height": 1000
+						},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		},
+		{
+			"id": "carousel",
+			"name": "Karussell",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Image",
+			"primary": {
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {
+				"image": {
+					"type": "Image",
+					"config": {
+						"label": "Bild",
+						"constraint": {},
+						"thumbnails": [
+							{
+								"name": "mobile",
+								"width": 1080,
+								"height": 1920
+							}
+						]
+					}
+				}
+			},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		},
+		{
+			"id": "vorherNachher",
+			"name": "Vorher/Nachher",
+			"docURL": "...",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "Vorher/Nachher Vergleich",
+			"primary": {
+				"bild_links": {
+					"type": "Image",
+					"config": {
+						"label": "Bild Links (Vorher)",
+						"constraint": {},
+						"thumbnails": []
+					}
+				},
+				"text_links": {
+					"type": "Text",
+					"config": {
+						"label": "Beschriftung Links",
+						"placeholder": "Vorher"
+					}
+				},
+				"bild_rechts": {
+					"type": "Image",
+					"config": {
+						"label": "Bild Rechts (Nachher)",
+						"constraint": {},
+						"thumbnails": []
+					}
+				},
+				"text_rechts": {
+					"type": "Text",
+					"config": {
+						"label": "Beschriftung Rechts",
+						"placeholder": "Nachher"
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {},
+			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+		}
+	]
+}

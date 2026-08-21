@@ -254,6 +254,17 @@ const allSlices = readdirSync(slicesDir, { withFileTypes: true })
 	.filter((d) => d.isDirectory())
 	.map((d) => d.name);
 
+// Warnung: Slice-Verzeichnis vorhanden aber kein base.json → model.json kann nicht generiert werden.
+// Passiert wenn ein alter committed model.json durch einen Gitignore-Merge gelöscht wurde.
+const slicesWithoutBase = allSlices.filter(
+	(n) => n !== 'index.ts' && !existsSync(join(ROOT, `src/lib/slices/${n}/base.json`))
+);
+if (slicesWithoutBase.length > 0) {
+	console.warn(`⚠ Slice-Verzeichnisse ohne base.json (werden nicht generiert):`);
+	console.warn(`  → ${slicesWithoutBase.join(', ')}`);
+	console.warn(`  Lösung: base.json aus Git-History restaurieren oder neu erstellen.`);
+}
+
 for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue;
