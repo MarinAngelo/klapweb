@@ -13,9 +13,15 @@
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
-<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">
+<Bounded
+	yPadding="sm"
+	animate={anim.animate}
+	animationOptions={anim.options}
+	tag="section"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+>
 	<div
-		class="prose max-w-3xl mx-auto {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
+		class="prose max-w-3xl {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 		data-slice-type="{slice.slice_type}EmbedFieldHandler"
 		data-slice-variation={slice.variation}
 	>
@@ -40,7 +46,7 @@
 		{/if}
 		{#if p.steps && p.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
-				{#each (p.steps ?? []) as step, i}
+				{#each p.steps ?? [] as step, i}
 					<li>
 						{#if step.step_title}
 							<div class="font-semibold text-lg mb-1">{step.step_title}</div>
