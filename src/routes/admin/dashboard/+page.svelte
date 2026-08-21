@@ -46,6 +46,13 @@
 			description: 'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event',
 			href: `/admin/event-anmeldungen?secret=${s}`,
 			icon: '🎟️'
+		},
+		{
+			id: 'seiten',
+			title: 'Passwortgeschützte Seiten',
+			description: 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',
+			href: `/admin/seiten?secret=${s}`,
+			icon: '🔒'
 		}
 	];
 
