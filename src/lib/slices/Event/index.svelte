@@ -12,14 +12,10 @@
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
 
+	import { formatEventDateTime } from '$lib/utils/formatDate';
+
 	// Datum formatieren
-	const formatDateTime = (date: string | null) => {
-		if (!date) return '';
-		return new Intl.DateTimeFormat('de-CH', {
-			dateStyle: 'long',
-			timeStyle: 'short'
-		}).format(new Date(date));
-	};
+	const formatDateTime = (date: string | null) => formatEventDateTime(date, false);
 
 	// Uhrzeit formatieren
 	const formatTime = (date: string | null) => {

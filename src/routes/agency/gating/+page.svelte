@@ -5,12 +5,18 @@
 
 	let selectedPlan = data.authenticated ? data.currentPlan : '';
 	let selectedFeatures: string[] = data.authenticated ? [...data.activeFeatures] : [];
+	let disabledSections: string[] = data.authenticated
+		? [...(data.adminSectionsDisabled ?? [])]
+		: [];
 	let passwordInput = '';
 	let loginError = '';
 
 	function getPlans() {
 		if (!data.authenticated) return [];
-		return Object.entries(data.plans ?? {}).map(([id, plan]: [string, any]) => ({ id, label: plan.label }));
+		return Object.entries(data.plans ?? {}).map(([id, plan]: [string, any]) => ({
+			id,
+			label: plan.label
+		}));
 	}
 
 	function getAllFeatures() {
@@ -30,12 +36,33 @@
 		}
 	}
 
+	function toggleSection(id: string) {
+		if (disabledSections.includes(id)) {
+			disabledSections = disabledSections.filter((s) => s !== id);
+		} else {
+			disabledSections = [...disabledSections, id];
+		}
+	}
+
+	function getAllAdminSections() {
+		if (!data.authenticated) return [];
+		return Object.entries(data.adminSections ?? {}).map(([id, s]: [string, any]) => ({
+			id,
+			label: s.label
+		}));
+	}
+
 	function handleSave(e: Event) {
 		const form = e.currentTarget as HTMLFormElement;
 		const overridesInput = form.querySelector('input[name="overrides"]') as HTMLInputElement;
 		if (overridesInput) {
-			// Sende alle Features die der Benutzer aktiv haben möchte
 			overridesInput.value = JSON.stringify(selectedFeatures);
+		}
+		const sectionsInput = form.querySelector(
+			'input[name="admin_sections_disabled"]'
+		) as HTMLInputElement;
+		if (sectionsInput) {
+			sectionsInput.value = JSON.stringify(disabledSections);
 		}
 	}
 </script>
@@ -110,7 +137,28 @@
 					</fieldset>
 				</div>
 
-				<input type="hidden" name="overrides" value="{JSON.stringify(selectedFeatures)}" />
+				<input type="hidden" name="overrides" value={JSON.stringify(selectedFeatures)} />
+				<input
+					type="hidden"
+					name="admin_sections_disabled"
+					value={JSON.stringify(disabledSections)}
+				/>
+
+				<div class="form-group">
+					<fieldset>
+						<legend>Admin-Bereiche</legend>
+						{#each getAllAdminSections() as { id, label }}
+							<label class="checkbox-label">
+								<input
+									type="checkbox"
+									checked={!disabledSections.includes(id)}
+									on:change={() => toggleSection(id)}
+								/>
+								<span>{label}</span>
+							</label>
+						{/each}
+					</fieldset>
+				</div>
 
 				<button type="submit" class="btn btn-primary">Speichern</button>
 			</form>
@@ -121,8 +169,11 @@
 				<p>Plan-Features: {data.basePlanFeatures.join(', ') || 'keine'}</p>
 				<p><strong>Ausgewählte Features:</strong> {selectedFeatures.join(', ') || 'keine'}</p>
 				<p style="color: #666; font-size: 0.9rem;">
-					Zusätzlich: {selectedFeatures.filter((f) => !data.basePlanFeatures.includes(f)).join(', ') || 'keine'} /
-					Entfernt: {data.basePlanFeatures.filter((f) => !selectedFeatures.includes(f)).join(', ') || 'keine'}
+					Zusätzlich: {selectedFeatures
+						.filter((f) => !data.basePlanFeatures.includes(f))
+						.join(', ') || 'keine'} / Entfernt: {data.basePlanFeatures
+						.filter((f) => !selectedFeatures.includes(f))
+						.join(', ') || 'keine'}
 				</p>
 			</div>
 		</div>

@@ -42,6 +42,7 @@ export async function load({ fetch, url, parent }) {
 	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
 
 	const serviceUid = url.searchParams.get('service') ?? '';
+	const isEventCheckout = url.searchParams.get('event_checkout') === 'true';
 	if (!serviceUid)
 		return {
 			product: null,
@@ -50,10 +51,73 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			barDescription: null,
+			eventTexts: null
 		};
 	try {
 		const client = createClient({ fetch });
+
+		if (isEventCheckout) {
+			const eventDoc = await client.getByUID('event', serviceUid, { lang });
+			const d = eventDoc.data as Record<string, unknown>;
+			const basePrice = (d.ticket_price_chf as number) ?? null;
+			const displayAmount = calcDisplayPrice(basePrice, null, null);
+			const eventPaymentMethods = {
+				stripe: false,
+				rechnung: (d.payment_rechnung_enabled as boolean) !== false,
+				bar: (d.payment_bar_enabled as boolean) !== false
+			};
+			const eventTexts = {
+				summaryTitle: (d.checkout_summary_title as string)?.trim() || null,
+				orderLabel: (d.checkout_order_label as string)?.trim() || null,
+				priceLabel: (d.checkout_price_label as string)?.trim() || null,
+				checkoutButtonText: (d.checkout_button_text as string)?.trim() || null,
+				rechnungLabel: (d.payment_rechnung_label as string)?.trim() || null,
+				rechnungDescription: (d.payment_rechnung_description as string)?.trim() || null,
+				barLabel: (d.payment_bar_label as string)?.trim() || null,
+				barDescription: (d.payment_bar_description as string)?.trim() || null
+			};
+			const priceRange = (d.ticket_price_chf_range as number) ?? null;
+			const additionalCostChf = (d.additional_costs_chf as number) ?? null;
+			const additionalCostLabel = (d.additional_costs_label as string)?.trim() || null;
+			const eventManagerEmail = (d.event_manager_email as string)?.trim() || null;
+
+			// Wenn das Event EUR-Anzeige aktiviert hat, EUR zu additionalCodes + rates hinzufügen
+			const showEur = d.price_show_eur === true;
+			let eventAdditionalCodes = [...additionalCodes];
+			let eventRates = { ...rates };
+			if (showEur && !eventAdditionalCodes.includes('EUR')) {
+				eventAdditionalCodes = [...eventAdditionalCodes, 'EUR'];
+				const eurRates = await fetchExchangeRates(baseCurrency, ['EUR']);
+				if (eurRates['EUR']) eventRates['EUR'] = eurRates['EUR'];
+			}
+
+			return {
+				product: {
+					label: (d.title as string) || serviceUid,
+					price: basePrice,
+					displayAmount,
+					stripeUrl: null,
+					billingType: 'Einmalig',
+					addons: []
+				} satisfies ProductData,
+				pageTitle: eventTexts.summaryTitle || pageTitle,
+				checkoutButtonText: eventTexts.checkoutButtonText || checkoutButtonText,
+				baseCurrency,
+				additionalCodes: eventAdditionalCodes,
+				rates: eventRates,
+				paymentMethods: eventPaymentMethods,
+				eventTexts,
+				isEventCheckout: true,
+				eventUid: serviceUid,
+				priceRange,
+				additionalCostChf,
+				additionalCostLabel,
+				eventManagerEmail
+			};
+		}
+
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
 		const d = pageDoc.data as Record<string, unknown>;
 		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
@@ -105,7 +169,11 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			barDescription: null,
+			eventTexts: null,
+			isEventCheckout: false,
+			eventUid: ''
 		};
 	} catch (e) {
 		console.error('[zusammenfassung] Fehler beim Laden von UID:', serviceUid, e);
@@ -116,7 +184,11 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			paymentMethods
+			paymentMethods,
+			barDescription: null,
+			eventTexts: null,
+			isEventCheckout: false,
+			eventUid: ''
 		};
 	}
 }

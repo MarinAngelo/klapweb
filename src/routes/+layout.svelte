@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { building } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
@@ -27,6 +28,7 @@
 	import { reveal } from '$lib/actions/reveal';
 	import { parseCurrencyCode } from '$lib/pricing';
 	import { showCrosshair } from '$lib/stores/showCrosshair';
+	import { errorPageLanding } from '$lib/stores/errorPageLanding';
 
 	const titleFadeIn = { direction: 'up' as const, distance: '0px', duration: 2000, delay: 200 };
 	const titleNoAnim = { direction: 'none' as const };
@@ -35,7 +37,21 @@
 	export let data: any;
 
 	// 1. REAKTIVE DATEN
-	$: ({ settings, navigation, prismicTheme, fonts, lang, locales, mainLang, userBackendActive, chatActive, chatBotName, chatGreeting, klapstudioActive, user } = data);
+	$: ({
+		settings,
+		navigation,
+		prismicTheme,
+		fonts,
+		lang,
+		locales,
+		mainLang,
+		userBackendActive,
+		chatActive,
+		chatBotName,
+		chatGreeting,
+		klapstudioActive,
+		user
+	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
@@ -52,7 +68,8 @@
 		settings?.data?.meta_image?.url ||
 		'';
 	$: faviconUrl = settings?.data?.favicon?.url || '/favicon.png';
-	$: appleTouchIconUrl = settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
+	$: appleTouchIconUrl =
+		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	$: noIndex = $page.data?.no_index || false;
 
@@ -232,16 +249,20 @@
 		const pd = $page.data?.page?.data ?? {};
 		const overrideBg: string | null = pd.page_bg_color ?? null;
 		const overrideColor: string | null = pd.page_color ?? null;
-		if (overrideBg || overrideColor) {
+		const overrideLinkColor: string | null = pd.page_link_color ?? null;
+		if (overrideBg || overrideColor || overrideLinkColor) {
 			theme.update((t) => ({
 				...t,
 				...(overrideBg ? { pageBgColor: overrideBg } : {}),
-				...(overrideColor ? { pageColor: overrideColor } : {})
+				...(overrideColor ? { pageColor: overrideColor } : {}),
+				...(overrideLinkColor ? { pageLinkColor: overrideLinkColor } : {})
 			}));
 			if (typeof document !== 'undefined') {
 				if (overrideBg) document.documentElement.style.setProperty('--page-bg-color', overrideBg);
 				if (overrideColor)
 					document.documentElement.style.setProperty('--page-color', overrideColor);
+				if (overrideLinkColor)
+					document.documentElement.style.setProperty('--page-link-color', overrideLinkColor);
 			}
 		} else {
 			// Keine seiten-spezifischen Farben → globale Theme-Farben wiederherstellen.
@@ -250,6 +271,7 @@
 			if (typeof document !== 'undefined') {
 				document.documentElement.style.removeProperty('--page-color');
 				document.documentElement.style.removeProperty('--page-bg-color');
+				document.documentElement.style.removeProperty('--page-link-color');
 			}
 			updateTheme(data);
 		}
@@ -300,11 +322,16 @@
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
-	$: isLandingPage = $page.data?.page?.data?.landing_page === true;
+	$: isLandingPage = $page.data?.page?.data?.landing_page === true || $errorPageLanding;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
+	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
 	$: stickyHeader =
-		!isLandingPage && !isPreview && !isDokuPage && (prismicTheme?.data?.sticky_header ?? false);
+		!isLandingPage &&
+		!isPreview &&
+		!isDokuPage &&
+		!isNoChrome &&
+		(prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -398,7 +425,7 @@
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview && !isDokuPage}
+	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
 		<Header
 			{navigation}
 			{settings}
@@ -413,7 +440,11 @@
 		/>
 	{/if}
 
-	<main id="main-content" style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}>
+	<main
+		id="main-content"
+		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
+		class={isLandingPage ? 'pb-24' : ''}
+	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded
 				as="section"
@@ -431,7 +462,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview && !isDokuPage}
+	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>

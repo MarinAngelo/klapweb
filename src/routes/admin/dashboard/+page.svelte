@@ -4,38 +4,52 @@
 
 	const s = data.secret;
 
-	const sections = [
+	const allSections = [
 		{
+			id: 'rechnungen',
 			title: 'Rechnungen',
 			description: 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
 			href: `/admin/rechnungen?secret=${s}`,
 			icon: '📄'
 		},
 		{
+			id: 'kunden',
 			title: 'Kunden',
 			description: 'Bestellungen und Kundendaten einsehen, neue Kunden erfassen',
 			href: `/admin/kunden?secret=${s}`,
 			icon: '👥'
 		},
 		{
+			id: 'buchungen',
 			title: 'Terminverwaltung',
 			description: 'Buchungen anzeigen, löschen, Termine sperren',
 			href: `/admin/buchungen?secret=${s}`,
 			icon: '📅'
 		},
 		{
+			id: 'ressource-buchungen',
 			title: 'Ressource-Buchungen',
 			description: 'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen',
 			href: `/admin/ressource-buchungen?secret=${s}`,
 			icon: '🏠'
 		},
 		{
+			id: 'aufgaben',
 			title: 'Aufgaben',
 			description: 'Angenommene Aufgaben bestätigen und als erledigt markieren',
 			href: `/admin/aufgaben?secret=${s}`,
 			icon: '✅'
+		},
+		{
+			id: 'event-anmeldungen',
+			title: 'Event Anmeldungen',
+			description: 'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event',
+			href: `/admin/event-anmeldungen?secret=${s}`,
+			icon: '🎟️'
 		}
 	];
+
+	$: sections = allSections.filter((s) => !data.disabledSections.includes(s.id));
 </script>
 
 <svelte:head><title>Admin Dashboard</title></svelte:head>
@@ -55,7 +69,9 @@
 					<span style="font-size: 1.75rem; line-height: 1;">{section.icon}</span>
 					<div>
 						<div style="font-weight: 600; font-size: 1rem;">{section.title}</div>
-						<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem;">{section.description}</div>
+						<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem;">
+							{section.description}
+						</div>
 					</div>
 					<span style="margin-left: auto; color: #9ca3af; font-size: 1.25rem;">→</span>
 				</a>

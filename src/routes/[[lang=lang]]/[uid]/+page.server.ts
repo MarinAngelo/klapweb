@@ -3,6 +3,7 @@ import { error, redirect, isRedirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
+import { FEATURE_ECOMMERCE } from '$lib/server/features';
 
 export interface AddonRow {
 	label: string;
@@ -25,15 +26,18 @@ export async function load({ params, parent, fetch, cookies }) {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
 		const page = await client.getByUID('page', params.uid, {
 			lang,
-			fetchLinks: [
-				'page.title',
-				'page.ecommerce_price_chf',
-				'page.ecommerce_billing_type',
-				'page.ecommerce_discount_percent',
-				'page.ecommerce_deposit_percent',
-				'leistung.label',
-				'leistung.beschreibung'
-			]
+			// fetchLinks nur laden wenn E-Commerce-Feature aktiv ist
+			fetchLinks: FEATURE_ECOMMERCE
+				? [
+						'page.title',
+						'page.ecommerce_price_chf',
+						'page.ecommerce_billing_type',
+						'page.ecommerce_discount_percent',
+						'page.ecommerce_deposit_percent',
+						'leistung.label',
+						'leistung.beschreibung'
+					]
+				: []
 		});
 
 		// Password protection
@@ -46,8 +50,49 @@ export async function load({ params, parent, fetch, cookies }) {
 			}
 		}
 
-		// Currency config (only relevant for ecommerce pages)
+		// Guard 1 (Plan-Level): E-Commerce-Feature im aktiven Plan nicht verfügbar
+		if (!FEATURE_ECOMMERCE) {
+			return {
+				page,
+				title: asText(page.data.title) || '',
+				meta_title: page.data.meta_title || '',
+				meta_description: page.data.meta_description,
+				baseCurrency: 'CHF',
+				additionalCodes: [] as string[],
+				rates: {} as Record<string, number>,
+				addonRows: [] as AddonRow[],
+				globalDepositPct: null,
+				plaeneData: {} as Record<string, Array<Array<PlaeneFeature>>>,
+				pageLeistungen: [] as Array<{ leistung: any; wert: string | null }>
+			};
+		}
+
+		// Guard 2 (Slice-Level): Seite hat keine E-Commerce-Slices oder -Felder
+		const slices: any[] = (page.data as any).slices ?? [];
+		const hasEcommerceSlices = slices.some(
+			(s) => s.slice_type === 'image_cards' && s.variation === 'plaene'
+		);
 		const hasPrice = (page.data as any).ecommerce_price_chf != null;
+		const hasLeistungen = ((page.data as any).leistungen ?? []).length > 0;
+		const hasAddons = ((page.data as any).ecommerce_addons ?? []).length > 0;
+
+		if (!hasEcommerceSlices && !hasPrice && !hasLeistungen && !hasAddons) {
+			return {
+				page,
+				title: asText(page.data.title) || '',
+				meta_title: page.data.meta_title || '',
+				meta_description: page.data.meta_description,
+				baseCurrency: 'CHF',
+				additionalCodes: [] as string[],
+				rates: {} as Record<string, number>,
+				addonRows: [] as AddonRow[],
+				globalDepositPct: null,
+				plaeneData: {} as Record<string, Array<Array<PlaeneFeature>>>,
+				pageLeistungen: [] as Array<{ leistung: any; wert: string | null }>
+			};
+		}
+
+		// Currency config (only relevant for ecommerce pages)
 		const baseCurrency: string =
 			parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 		const additionalEntries: Array<{ waehrung?: string }> =
@@ -63,7 +108,7 @@ export async function load({ params, parent, fetch, cookies }) {
 		// Resolve plan leistungen + Seiten-Leistungen (optimiert: Batch-Fetch statt N+1)
 		type PlaeneFeature = { label: string; wert: string | null; beschreibung?: string };
 		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
-		const plaeneSlices = ((page.data as any).slices ?? []).filter(
+		const plaeneSlices = slices.filter(
 			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
 		);
 		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
