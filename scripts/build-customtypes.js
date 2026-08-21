@@ -241,6 +241,22 @@ for (const type of managedTypes) {
 		}
 	}
 
+	// Slice-Choice-Gating: Choices entfernen deren Slice-Gate inaktiv ist
+	for (const tabContent of Object.values(doc.json)) {
+		for (const field of Object.values(tabContent)) {
+			if (field.type !== 'Slices') continue;
+			const choices = field.config?.choices ?? {};
+			for (const choiceId of Object.keys(choices)) {
+				// snake_case → PascalCase um gating.slices-Key zu finden
+				const pascal = choiceId.replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase());
+				const sliceGate = gating.slices?.[pascal];
+				if (sliceGate && !isActive(sliceGate)) {
+					delete choices[choiceId];
+				}
+			}
+		}
+	}
+
 	write(`customtypes/${type}/index.json`, doc);
 	console.log(`✓ customtypes/${type}/index.json`);
 }
