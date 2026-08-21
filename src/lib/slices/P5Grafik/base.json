@@ -2,19 +2,21 @@
 	"id": "p5_grafik",
 	"type": "SharedSlice",
 	"name": "P5Grafik",
-	"description": "Interaktive p5.js Grafik / Animation",
+	"description": "P5.js Grafik",
 	"variations": [
 		{
 			"id": "default",
-			"name": "Standard (Vollbild)",
+			"name": "Standard",
 			"docURL": "...",
-			"version": "initial",
-			"description": "P5Grafik als Vollbild-Hintergrund ohne Text",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "P5.js Vollbild-Grafik",
+			"imageUrl": "...",
 			"primary": {
 				"sketch_name": {
 					"type": "Select",
 					"config": {
 						"label": "Sketch",
+						"placeholder": "— Sketch wählen —",
 						"options": [
 							"Orbital Circles",
 							"Particle Flow",
@@ -31,43 +33,74 @@
 				"hintergrundfarbe": {
 					"type": "Color",
 					"config": {
-						"label": "Hintergrundfarbe Canvas",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
+						"label": "Hintergrundfarbe",
+						"placeholder": ""
 					}
 				},
 				"color": {
 					"type": "Color",
 					"config": {
-						"label": "Vordergrundfarbe",
+						"label": "Akzentfarbe",
 						"placeholder": ""
 					}
 				},
 				"image": {
 					"type": "Image",
 					"config": {
-						"label": "Bild",
+						"label": "Bild (für bildbasierte Sketches)",
 						"constraint": {},
 						"thumbnails": []
 					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Einblendanimation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
 				}
 			},
-			"items": {},
-			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+			"items": {}
 		},
 		{
 			"id": "mitTitelbereich",
 			"name": "Mit Titelbereich",
 			"docURL": "...",
-			"version": "initial",
-			"description": "P5Grafik als Hintergrund mit Titel, Text und Schaltfläche",
+			"version": "sktwi1xtmkfgx8626",
+			"description": "P5.js Grafik als Titelbereich-Hintergrund",
+			"imageUrl": "...",
 			"primary": {
 				"sketch_name": {
 					"type": "Select",
 					"config": {
 						"label": "Sketch",
+						"placeholder": "— Sketch wählen —",
 						"options": [
 							"Orbital Circles",
 							"Particle Flow",
+							"My Sketch",
 							"Generative Gestaltung P_1_0_01",
 							"Generative Gestaltung P_1_1_1_01",
 							"Generative Gestaltung P_1_2_1_01",
@@ -106,32 +139,29 @@
 					"type": "Select",
 					"config": {
 						"label": "Titelbild Höhe",
-						"options": [
-							"100 %",
-							"50 %",
-							"33 %"
-						],
+						"placeholder": "",
+						"options": ["100 %", "50 %", "33 %"],
 						"default_value": "100 %"
 					}
 				},
 				"hintergrundfarbe": {
 					"type": "Color",
 					"config": {
-						"label": "Hintergrundfarbe Canvas",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
+						"label": "Hintergrundfarbe",
+						"placeholder": ""
 					}
 				},
 				"overlay_color": {
 					"type": "Color",
 					"config": {
-						"label": "Überlagerungsfarbe (über Canvas)",
+						"label": "Canvas Überlagerungsfarbe",
 						"placeholder": ""
 					}
 				},
 				"overlay_opacity": {
 					"type": "Number",
 					"config": {
-						"label": "Transparenz der Überlagerung",
+						"label": "Transparenz Canvas-Überlagerung",
 						"placeholder": "0 - 100 %"
 					}
 				},
@@ -141,7 +171,7 @@
 						"label": "Text",
 						"placeholder": "",
 						"allowTargetBlank": false,
-						"multi": "heading1,heading2,heading3,heading4,heading5,heading6,paragraph,strong,em",
+						"multi": "paragraph,strong,em,heading1,heading2,heading3,heading4,heading5,heading6",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -188,10 +218,7 @@
 				},
 				"color": {
 					"type": "Color",
-					"config": {
-						"label": "Schriftfarbe",
-						"placeholder": ""
-					}
+					"config": { "label": "Schriftfarbe", "placeholder": "" }
 				},
 				"preset_font": {
 					"type": "Select",
@@ -230,15 +257,7 @@
 						"select": "document",
 						"repeat": false,
 						"customtypes": [
-							{
-								"id": "font",
-								"fields": [
-									"name",
-									"provider",
-									"variants",
-									"adobeFontId"
-								]
-							}
+							{ "id": "font", "fields": ["name", "provider", "variants", "adobeFontId"] }
 						]
 					}
 				},
@@ -248,59 +267,36 @@
 						"label": "Schaltflächenlink",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
 					"type": "Text",
-					"config": {
-						"label": "Schaltflächentext",
-						"placeholder": ""
-					}
+					"config": { "label": "Schaltflächentext", "placeholder": "" }
 				},
 				"button_color": {
 					"type": "Color",
-					"config": {
-						"label": "Schaltfläche Text- und Rahmenfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
+					"config": { "label": "Schaltfläche Text- und Rahmenfarbe", "placeholder": "" }
 				},
 				"button_hover_color": {
 					"type": "Color",
-					"config": {
-						"label": "Schaltfläche T & R Mouseover",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
+					"config": { "label": "Schaltfläche T & R Mouseover", "placeholder": "" }
 				},
 				"button_bg_color": {
 					"type": "Color",
-					"config": {
-						"label": "Schaltfläche Hintergrundfarbe",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
+					"config": { "label": "Schaltfläche Hintergrundfarbe", "placeholder": "" }
 				},
 				"button_hover_bg_color": {
 					"type": "Color",
-					"config": {
-						"label": "Schaltfläche Hintergrund Mouseover",
-						"placeholder": "Hex-Farbcode (#RRGGBB)"
-					}
+					"config": { "label": "Schaltfläche Hintergrund Mouseover", "placeholder": "" }
 				},
 				"text_overlay_color": {
 					"type": "Color",
-					"config": {
-						"label": "Text Überlagerungsfarbe",
-						"placeholder": ""
-					}
+					"config": { "label": "Text Überlagerungsfarbe", "placeholder": "" }
 				},
 				"text_overlay_opacity": {
 					"type": "Number",
-					"config": {
-						"label": "Transparenz Text Überlagerungsfarbe",
-						"placeholder": "0 - 100 %"
-					}
+					"config": { "label": "Transparenz Text Überlagerungsfarbe", "placeholder": "0 - 100 %" }
 				},
 				"switch_off_text_overlay": {
 					"type": "Boolean",
@@ -315,11 +311,8 @@
 					"type": "Select",
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse",
-						"options": [
-							"klein",
-							"mittel",
-							"gross"
-						]
+						"placeholder": "",
+						"options": ["klein", "mittel", "gross"]
 					}
 				},
 				"text_overlay_padding_mobile": {
@@ -327,12 +320,7 @@
 					"config": {
 						"label": "Text Überlagerungsfeld Grösse Mobile",
 						"placeholder": "— Wie Desktop —",
-						"options": [
-							"klein",
-							"mittel",
-							"gross",
-							"Ganzer Bildschirm"
-						]
+						"options": ["klein", "mittel", "gross", "Ganzer Bildschirm"]
 					}
 				},
 				"mobile_text_scale": {
@@ -340,17 +328,11 @@
 					"config": {
 						"label": "Textgrösse Mobile",
 						"placeholder": "",
-						"options": [
-							"Normal",
-							"Klein",
-							"Kleiner",
-							"Sehr klein"
-						]
+						"options": ["Normal", "Klein", "Kleiner", "Sehr klein"]
 					}
 				}
 			},
-			"items": {},
-			"imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+			"items": {}
 		}
 	]
 }

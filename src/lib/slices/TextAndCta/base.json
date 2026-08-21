@@ -23,11 +23,7 @@
 					"config": {
 						"label": "Textausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Links"
 					}
 				},
@@ -134,9 +130,7 @@
 						"label": "Schaltfläche Link",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
@@ -151,11 +145,7 @@
 					"config": {
 						"label": "Schaltfläche Grösse",
 						"placeholder": "",
-						"options": [
-							"Klein",
-							"Mittel",
-							"Gross"
-						],
+						"options": ["Klein", "Mittel", "Gross"],
 						"default_value": "Mittel"
 					}
 				},
@@ -164,11 +154,7 @@
 					"config": {
 						"label": "Schaltfläche Ausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Mitte"
 					}
 				},

@@ -18,7 +18,7 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -159,13 +159,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -307,7 +301,7 @@
 						"label": "Überschrift",
 						"placeholder": "",
 						"allowTargetBlank": true,
-						"single": "paragraph,preformatted,strong,em,hyperlink,list-item,o-list-item,rtl",
+						"single": "paragraph,preformatted,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item,rtl",
 						"labels": [
 							"size-xs",
 							"size-sm",
@@ -448,13 +442,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -738,13 +726,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

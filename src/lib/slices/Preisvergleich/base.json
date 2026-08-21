@@ -67,9 +67,7 @@
 					"config": {
 						"label": "Plan 1",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"plan_2": {
@@ -77,9 +75,7 @@
 					"config": {
 						"label": "Plan 2",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"plan_3": {
@@ -87,21 +83,14 @@
 					"config": {
 						"label": "Plan 3",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"hervorhebung": {
 					"type": "Select",
 					"config": {
 						"label": "Hervorgehobener Plan",
-						"options": [
-							"Keiner",
-							"Plan 1",
-							"Plan 2",
-							"Plan 3"
-						],
+						"options": ["Keiner", "Plan 1", "Plan 2", "Plan 3"],
 						"default_value": "Keiner"
 					}
 				},
@@ -121,9 +110,7 @@
 						"customtypes": [
 							{
 								"id": "button_stil",
-								"fields": [
-									"name"
-								]
+								"fields": ["name"]
 							}
 						]
 					}
@@ -148,13 +135,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -179,9 +160,7 @@
 					"config": {
 						"label": "Leistung",
 						"select": "document",
-						"customtypes": [
-							"leistung"
-						]
+						"customtypes": ["leistung"]
 					}
 				},
 				"plan_1_wert": {
