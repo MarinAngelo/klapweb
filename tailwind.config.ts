@@ -5,7 +5,10 @@ export default {
 	safelist: [
 		'grid-rows-[0fr]',
 		'grid-rows-[1fr]',
-		'transition-[grid-template-rows]'
+		'transition-[grid-template-rows]',
+		'sm:grid-cols-2',
+		'sm:grid-cols-3',
+		'sm:grid-cols-4'
 	],
 	blocklist: ['[-:.]'],
 	theme: {},
