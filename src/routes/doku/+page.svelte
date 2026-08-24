@@ -3505,6 +3505,99 @@
 					>
 				</tbody>
 			</table>
+
+			<p class="table-label">E-Mail-Flow</p>
+			<table>
+				<thead
+					><tr
+						><th>Auslöser</th><th>Empfänger</th><th>Status-Änderung</th><th>CMS-Template</th><th
+							>Tokens</th
+						></tr
+					></thead
+				>
+				<tbody>
+					<tr
+						><td>Buchung bestätigen</td><td>Mieter</td><td>✓ pending → confirmed</td><td
+							><code>confirmation_text</code> / <code>confirmation_betreff</code></td
+						><td
+							><code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Ressource&#125;&#125;</code>
+							<code>&#123;&#123;Anreise&#125;&#125;</code>
+							<code>&#123;&#123;Abreise&#125;&#125;</code>
+							<code>&#123;&#123;Preis&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code></td
+						></tr
+					>
+					<tr
+						><td>Check-in</td><td>Betreiber (intern)</td><td>✓ confirmed → checked_in</td><td
+							>Fixer Text</td
+						><td>—</td></tr
+					>
+					<tr
+						><td>Check-out</td><td>Betreiber (intern)</td><td>✓ checked_in → checked_out</td><td
+							>Fixer Text mit Freigabe-Link</td
+						><td>—</td></tr
+					>
+					<tr
+						><td>Abrechnung freigeben</td><td>Mieter</td><td>✓ checked_out → abgerechnet</td><td
+							>CMS-Template (Abrechnung)</td
+						><td
+							><code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Betrag&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code></td
+						></tr
+					>
+					<tr
+						><td>48h vor Anreise <em>(tägl. 08:00 UTC)</em></td><td>Mieter</td><td
+							>✗ kein Status-Wechsel</td
+						><td><code>reminder_text</code> / <code>reminder_betreff</code></td><td
+							><code>&#123;&#123;Türcode&#125;&#125;</code>
+							<code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Anreise&#125;&#125;</code>
+							<code>&#123;&#123;Abreise&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code>
+							<code>&#123;&#123;WhatsApp&#125;&#125;</code>
+							— setzt <code>reminderSent = true</code></td
+						></tr
+					>
+					<tr
+						><td>24h nach Ankunft <em>(tägl. 08:00 UTC)</em></td><td>Mieter</td><td
+							>✗ kein Status-Wechsel</td
+						><td>CMS-Template (Nach-Ankunft)</td><td
+							><code>&#123;&#123;Türcode&#125;&#125;</code>
+							<code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Anreise&#125;&#125;</code>
+							<code>&#123;&#123;Abreise&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code>
+							<code>&#123;&#123;WhatsApp&#125;&#125;</code></td
+						></tr
+					>
+					<tr
+						><td>12h vor Abreise <em>(tägl. 20:00 UTC)</em></td><td>Mieter</td><td
+							>✗ kein Status-Wechsel</td
+						><td><code>abreise_text</code> / <code>abreise_betreff</code></td><td
+							><code>&#123;&#123;Türcode&#125;&#125;</code>
+							<code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Anreise&#125;&#125;</code>
+							<code>&#123;&#123;Abreise&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code>
+							<code>&#123;&#123;WhatsApp&#125;&#125;</code>
+							— setzt <code>abreiseReminderSent = true</code></td
+						></tr
+					>
+				</tbody>
+			</table>
+
+			<div class="callout">
+				<strong>Sofort-Erinnerung bei Bestätigung:</strong> Falls die Ankunft beim Bestätigen
+				bereits innerhalb von 48h liegt und <code>reminderSent = false</code>, wird die
+				Ankunftserinnerung sofort gesendet (<code>reminderMail.ts</code>), ohne auf den Scheduler zu
+				warten.
+			</div>
+			<div class="callout">
+				<strong>Betreiber-Kopie:</strong> Jede automatische Erinnerungsmail (48h, 24h, 12h) löst
+				eine Bestätigungskopie an <code>INVOICE_FROM_EMAIL</code> aus.
+			</div>
 		</section>
 
 		<section id="arch-kundenauthentifizierung">
