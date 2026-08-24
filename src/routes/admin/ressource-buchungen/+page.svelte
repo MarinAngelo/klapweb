@@ -65,10 +65,10 @@
 		abgerechnet: null
 	};
 	const NEXT_LABEL: Record<string, string> = {
-		pending: '→ Bestätigen + Mail',
-		confirmed: '→ Check-in + Mail',
-		checked_in: '→ Check-out + Abrechnungsmail',
-		checked_out: '→ Abrechnung freigeben'
+		pending: '✉ Bestätigen → Bestätigungsmail an Mieter (+ ggf. Ankunftserinnerung)',
+		confirmed: '✉ Check-in → Benachrichtigung an Betreiber',
+		checked_in: '✉ Check-out → Abrechnungsmail an Betreiber (Freigabe-Link)',
+		checked_out: '✉ Abrechnung freigeben → Definitive Abrechnung an Mieter'
 	};
 
 	let expandedBuchungen = new Set<string>();
@@ -280,6 +280,19 @@
 												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
 											>
 												←
+											</button>
+										</form>
+									{/if}
+									<!-- Voraus ohne Mail -->
+									{#if b.status !== 'abgerechnet'}
+										<form method="POST" action="?/voraus&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button
+												type="submit"
+												title="Einen Schritt voraus (kein Mail)"
+												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
+											>
+												→
 											</button>
 										</form>
 									{/if}

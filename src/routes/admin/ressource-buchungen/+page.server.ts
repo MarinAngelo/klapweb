@@ -297,6 +297,24 @@ export const actions: Actions = {
 		}
 	},
 
+	// ── Vorwärts ohne Mail: einen Schritt weiter (kein Mail) ────────────────────
+	voraus: async ({ request, url }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		const next: Record<string, RessourceBuchung['status']> = {
+			pending: 'confirmed',
+			confirmed: 'checked_in',
+			checked_in: 'checked_out',
+			checked_out: 'abgerechnet'
+		};
+		const target = next[buchung.status];
+		if (!target) return;
+		await updateRessourceBuchungStatus(id, target);
+	},
+
 	deleteAll: async ({ url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');

@@ -3429,17 +3429,48 @@
 
 			<p class="table-label">Status-Flow</p>
 			<table>
-				<thead><tr><th>Status</th><th>Label</th><th>Aktion</th></tr></thead>
+				<thead><tr><th>Status</th><th>Label</th><th>Aktion → E-Mail</th></tr></thead>
 				<tbody>
-					<tr><td><code>pending</code></td><td>Ausstehend</td><td>→ Bestätigen + Mail</td></tr>
-					<tr><td><code>confirmed</code></td><td>Bestätigt</td><td>→ Check-in + Mail</td></tr>
 					<tr
-						><td><code>checked_in</code></td><td>Eingecheckt</td><td
-							>→ Check-out + Abrechnungsmail</td
+						><td>—</td><td><em>Buchung eingeht</em></td><td
+							>Mieter bucht → ✉ Buchungsanfrage an Betreiber (Fixer Text mit Buchungsdetails)</td
 						></tr
 					>
 					<tr
-						><td><code>checked_out</code></td><td>Ausgecheckt</td><td>→ Abrechnung freigeben</td
+						><td><code>pending</code></td><td>Ausstehend</td><td
+							>→ Bestätigen → ✉ Bestätigungsmail an Mieter<br />Falls Anreise &lt; 48h: auch ✉
+							Ankunftserinnerung an Mieter (sofort, nicht via Scheduler)</td
+						></tr
+					>
+					<tr style="opacity:0.5; font-style:italic;"
+						><td colspan="2">automatisch (Scheduler, 08:00 UTC)</td><td
+							>Falls Anreise = übermorgen &amp; <code>reminderSent = false</code> → ✉ Ankunftserinnerung
+							an Mieter</td
+						></tr
+					>
+					<tr
+						><td><code>confirmed</code></td><td>Bestätigt</td><td
+							>→ Check-in → ✉ Interne Benachrichtigung an Betreiber</td
+						></tr
+					>
+					<tr style="opacity:0.5; font-style:italic;"
+						><td colspan="2">automatisch (Scheduler)</td><td
+							>24h nach Ankunft → ✉ Nach-Ankunft-Mail an Mieter</td
+						></tr
+					>
+					<tr style="opacity:0.5; font-style:italic;"
+						><td colspan="2">automatisch (Scheduler)</td><td
+							>12h vor Abreise → ✉ Abreiseerinnerung an Mieter</td
+						></tr
+					>
+					<tr
+						><td><code>checked_in</code></td><td>Eingecheckt</td><td
+							>→ Check-out → ✉ Abrechnungsmail mit Freigabe-Link an Betreiber</td
+						></tr
+					>
+					<tr
+						><td><code>checked_out</code></td><td>Ausgecheckt</td><td
+							>→ Abrechnung freigeben → ✉ Definitive Abrechnung an Mieter</td
 						></tr
 					>
 					<tr><td><code>abgerechnet</code></td><td>Abgerechnet</td><td>—</td></tr>
