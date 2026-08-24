@@ -9,6 +9,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
+import { createClient } from '$lib/prismicio';
 
 export interface ZimmerAuswahl {
 	zimmer_name: string;
@@ -17,12 +18,12 @@ export interface ZimmerAuswahl {
 }
 
 export interface RessourceBuchung {
-	id: string;           // blob key (ressourceUid/timestamp_uuid)
-	referenz: string;     // short human-readable code (6 chars uppercase)
+	id: string; // blob key (ressourceUid/timestamp_uuid)
+	referenz: string; // short human-readable code (6 chars uppercase)
 	ressourceUid: string;
 	ressourceName?: string;
-	von: string;          // YYYY-MM-DD (check-in, inclusive)
-	bis: string;          // YYYY-MM-DD (check-out, exclusive)
+	von: string; // YYYY-MM-DD (check-in, inclusive)
+	bis: string; // YYYY-MM-DD (check-out, exclusive)
 	personen: number;
 	zimmerauswahl?: ZimmerAuswahl[]; // leer = ganze Ressource gebucht
 	preisCHF: number;
@@ -36,8 +37,8 @@ export interface RessourceBuchung {
 	checkOutAt?: string;
 	checkInItems?: string[];
 	checkOutItems?: string[];
-	creditsCHF?: number;         // summe erledigter Aufgaben-Credits
-	abrechnungBetrag?: number;   // freigegebener Endbetrag (manuell korrigierbar)
+	creditsCHF?: number; // summe erledigter Aufgaben-Credits
+	abrechnungBetrag?: number; // freigegebener Endbetrag (manuell korrigierbar)
 	abrechnungFreigegebenAt?: string;
 	reminderSent?: boolean;
 	nachAnkunftReminderSent?: boolean;
@@ -82,24 +83,64 @@ export async function listAlleRessourceBuchungen(): Promise<RessourceBuchung[]> 
 	const records = await Promise.all(
 		blobs.map((b) => store.get(b.key, { type: 'json' }) as Promise<RessourceBuchung>)
 	);
-	return records
-		.filter(Boolean)
-		.sort((a, b) => b.bookedAt.localeCompare(a.bookedAt));
+	return records.filter(Boolean).sort((a, b) => b.bookedAt.localeCompare(a.bookedAt));
 }
 
 /**
- * Returns all booked periods with their booked room names.
+ * Returns all booked periods for one or more resource UIDs combined.
  * zimmer: [] means the whole resource was booked (no room selection).
  */
 export async function getBelegtePerioden(
-	ressourceUid: string
+	ressourceUids: string | string[]
 ): Promise<Array<{ von: string; bis: string; zimmer: string[] }>> {
-	const existing = await listRessourceBuchungen(ressourceUid);
-	return existing.map((b) => ({
+	const uids = Array.isArray(ressourceUids) ? ressourceUids : [ressourceUids];
+	const all = await Promise.all(uids.map(listRessourceBuchungen));
+	return all.flat().map((b) => ({
 		von: b.von,
 		bis: b.bis,
 		zimmer: (b.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ)
 	}));
+}
+
+/**
+ * Resolves parent + child UIDs for a resource via Prismic.
+ * Returns all UIDs whose availability must be checked together.
+ */
+export async function getRelatedRessourceUids(
+	uid: string,
+	fetch: typeof globalThis.fetch
+): Promise<string[]> {
+	try {
+		const client = createClient({ fetch });
+		const [doc, allDocs] = await Promise.all([
+			client.getByUID('ressource', uid).catch(() => null),
+			client.getAllByType('ressource').catch(() => [])
+		]);
+		const children: string[] = ((doc?.data as any)?.untergeordnete_ressourcen ?? [])
+			.map((item: any) => item?.ressource?.uid)
+			.filter(Boolean);
+		const parents: string[] = (allDocs as any[])
+			.filter((d) =>
+				((d.data as any)?.untergeordnete_ressourcen ?? []).some(
+					(item: any) => item?.ressource?.uid === uid
+				)
+			)
+			.map((d: any) => d.uid)
+			.filter(Boolean);
+		console.log(
+			`[debug] uid=${uid} children=${JSON.stringify(children)} allDocs=${allDocs.length} parents=${JSON.stringify(parents)}`
+		);
+		// Sample first allDoc's untergeordnete_ressourcen for debugging
+		if (allDocs.length > 0)
+			console.log(
+				`[debug] sample doc[0] uid=${(allDocs[0] as any).uid} untergeordnete_ressourcen=${JSON.stringify((allDocs[0] as any).data?.untergeordnete_ressourcen)}`
+			);
+		const all = [...new Set([uid, ...children, ...parents])];
+		return all;
+	} catch (err) {
+		console.error(`[ressourceBuchungen] getRelatedRessourceUids(${uid}) Fehler:`, err);
+		return [uid];
+	}
 }
 
 /** Save a booking. Checks for conflicts before saving.
@@ -121,7 +162,8 @@ export async function getBuchungByReferenz(referenz: string): Promise<RessourceB
 export async function checkInBuchung(referenz: string, items: string[]): Promise<RessourceBuchung> {
 	const buchung = await getBuchungByReferenz(referenz);
 	if (!buchung) throw new Error('NOT_FOUND');
-	if (buchung.status === 'checked_in' || buchung.status === 'checked_out') throw new Error('ALREADY_DONE');
+	if (buchung.status === 'checked_in' || buchung.status === 'checked_out')
+		throw new Error('ALREADY_DONE');
 	const store = getStore_();
 	const updated: RessourceBuchung = {
 		...buchung,
@@ -133,7 +175,10 @@ export async function checkInBuchung(referenz: string, items: string[]): Promise
 	return updated;
 }
 
-export async function checkOutBuchung(referenz: string, items: string[]): Promise<RessourceBuchung> {
+export async function checkOutBuchung(
+	referenz: string,
+	items: string[]
+): Promise<RessourceBuchung> {
 	const buchung = await getBuchungByReferenz(referenz);
 	if (!buchung) throw new Error('NOT_FOUND');
 	if (buchung.status === 'checked_out') throw new Error('ALREADY_DONE');
@@ -148,9 +193,16 @@ export async function checkOutBuchung(referenz: string, items: string[]): Promis
 	return updated;
 }
 
-export async function bucheRessource(buchung: Omit<RessourceBuchung, 'id' | 'referenz'>): Promise<RessourceBuchung> {
-	const existing = await listRessourceBuchungen(buchung.ressourceUid);
-	const overlapping = existing.filter((b) => datesOverlap(buchung.von, buchung.bis, b.von, b.bis));
+export async function bucheRessource(
+	buchung: Omit<RessourceBuchung, 'id' | 'referenz'>,
+	conflictUids: string[] = []
+): Promise<RessourceBuchung> {
+	// Prüfe Konflikte auf eigener Ressource + alle verwandten UIDs
+	const allUids = [...new Set([buchung.ressourceUid, ...conflictUids])];
+	const allExisting = (await Promise.all(allUids.map(listRessourceBuchungen))).flat();
+	const overlapping = allExisting.filter((b) =>
+		datesOverlap(buchung.von, buchung.bis, b.von, b.bis)
+	);
 
 	const requestedNames = (buchung.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ);
 
@@ -186,7 +238,7 @@ export async function updateRessourceBuchung(
 	patch: Partial<RessourceBuchung>
 ): Promise<RessourceBuchung> {
 	const store = getStore_();
-	const existing = await store.get(id, { type: 'json' }) as RessourceBuchung | null;
+	const existing = (await store.get(id, { type: 'json' })) as RessourceBuchung | null;
 	if (!existing) throw new Error('Buchung nicht gefunden');
 	const updated = { ...existing, ...patch };
 	await store.setJSON(id, updated);

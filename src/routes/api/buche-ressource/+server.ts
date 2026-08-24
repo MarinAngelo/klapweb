@@ -20,14 +20,12 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { bucheRessource } from '$lib/server/ressourceBuchungen';
+import { bucheRessource, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
 function naechte(von: string, bis: string): number {
-	return Math.round(
-		(new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24)
-	);
+	return Math.round((new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24));
 }
 
 /** Returns the seasonal price for a given date, or falls back to base price. */
@@ -84,7 +82,9 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 	if (von >= bis) {
-		return new Response(JSON.stringify({ error: 'Abreise muss nach Anreise liegen' }), { status: 400 });
+		return new Response(JSON.stringify({ error: 'Abreise muss nach Anreise liegen' }), {
+			status: 400
+		});
 	}
 
 	// Load resource from Prismic for validation and price calculation
@@ -108,11 +108,13 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		maxPersonen = d.max_personen ?? 0;
 		minNaechte = d.min_naechte ?? 1;
 		basispreis = d.preis_pro_nacht ?? 0;
-		saisonpreise = (d.saisonpreise ?? []).map((s: any) => ({
-			von: s.von ?? '',
-			bis: s.bis ?? '',
-			preis_pro_nacht: s.preis_pro_nacht ?? basispreis
-		})).filter((s: { von: string; bis: string }) => s.von && s.bis);
+		saisonpreise = (d.saisonpreise ?? [])
+			.map((s: any) => ({
+				von: s.von ?? '',
+				bis: s.bis ?? '',
+				preis_pro_nacht: s.preis_pro_nacht ?? basispreis
+			}))
+			.filter((s: { von: string; bis: string }) => s.von && s.bis);
 
 		if (settings) {
 			const s = settings.data as any;
@@ -125,48 +127,53 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 
 	// Capacity check
 	if (maxPersonen > 0 && personen > maxPersonen) {
-		return new Response(
-			JSON.stringify({ error: `Maximale Personenanzahl: ${maxPersonen}` }),
-			{ status: 400 }
-		);
+		return new Response(JSON.stringify({ error: `Maximale Personenanzahl: ${maxPersonen}` }), {
+			status: 400
+		});
 	}
 
 	// Min nights check
 	const anzahlNaechte = naechte(von, bis);
 	if (anzahlNaechte < minNaechte) {
-		return new Response(
-			JSON.stringify({ error: `Mindestaufenthalt: ${minNaechte} Nächte` }),
-			{ status: 400 }
-		);
+		return new Response(JSON.stringify({ error: `Mindestaufenthalt: ${minNaechte} Nächte` }), {
+			status: 400
+		});
 	}
 
 	const preisCHF = berechneTotalpreis(von, bis, saisonpreise, basispreis);
 
-	// Save booking (includes overlap check)
+	// Save booking (includes overlap check across parent/child resources)
 	let buchung;
 	try {
-		buchung = await bucheRessource({
-			ressourceUid,
-			ressourceName,
-			von,
-			bis,
-			personen,
-			zimmerauswahl: zimmerauswahl ?? [],
-			preisCHF,
-			bookedAt: new Date().toISOString(),
-			status: 'pending',
-			name,
-			email,
-			telefon,
-			nachricht
-		});
+		const conflictUids = await getRelatedRessourceUids(ressourceUid, fetch);
+		buchung = await bucheRessource(
+			{
+				ressourceUid,
+				ressourceName,
+				von,
+				bis,
+				personen,
+				zimmerauswahl: zimmerauswahl ?? [],
+				preisCHF,
+				bookedAt: new Date().toISOString(),
+				status: 'pending',
+				name,
+				email,
+				telefon,
+				nachricht
+			},
+			conflictUids
+		);
 	} catch (e: any) {
 		if (e?.message === 'CONFLICT') {
 			return new Response(JSON.stringify({ error: 'NICHT_VERFUEGBAR' }), { status: 409 });
 		}
 		const detail = e?.message ?? String(e);
 		console.error('Buchung speichern fehlgeschlagen:', detail);
-		return new Response(JSON.stringify({ error: 'Buchung konnte nicht gespeichert werden', detail }), { status: 500 });
+		return new Response(
+			JSON.stringify({ error: 'Buchung konnte nicht gespeichert werden', detail }),
+			{ status: 500 }
+		);
 	}
 
 	// Vermieter-Benachrichtigung mit Bestätigungslink
@@ -183,7 +190,10 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		const [bisY, bisM, bisD] = bis.split('-');
 		const vonFormatted = `${vonD}.${vonM}.${vonY}`;
 		const bisFormatted = `${bisD}.${bisM}.${bisY}`;
-		const preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisCHF);
+		const preisFormatted = new Intl.NumberFormat('de-CH', {
+			style: 'currency',
+			currency: 'CHF'
+		}).format(preisCHF);
 
 		const zimmerZeilen = (zimmerauswahl ?? []).map(
 			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
@@ -227,8 +237,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		}
 	}
 
-	return new Response(
-		JSON.stringify({ ok: true, buchungId: buchung.id, preisCHF }),
-		{ status: 200 }
-	);
+	return new Response(JSON.stringify({ ok: true, buchungId: buchung.id, preisCHF }), {
+		status: 200
+	});
 };
