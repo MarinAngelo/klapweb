@@ -3517,6 +3517,11 @@
 				>
 				<tbody>
 					<tr
+						><td>Neue Buchungsanfrage (Mieter bucht)</td><td>Betreiber</td><td
+							>— (Buchung erstellt mit <code>pending</code>)</td
+						><td>Fixer Text mit Buchungsdetails</td><td>—</td></tr
+					>
+					<tr
 						><td>Buchung bestätigen</td><td>Mieter</td><td>✓ pending → confirmed</td><td
 							><code>confirmation_text</code> / <code>confirmation_betreff</code></td
 						><td
@@ -3525,25 +3530,6 @@
 							<code>&#123;&#123;Anreise&#125;&#125;</code>
 							<code>&#123;&#123;Abreise&#125;&#125;</code>
 							<code>&#123;&#123;Preis&#125;&#125;</code>
-							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code></td
-						></tr
-					>
-					<tr
-						><td>Check-in</td><td>Betreiber (intern)</td><td>✓ confirmed → checked_in</td><td
-							>Fixer Text</td
-						><td>—</td></tr
-					>
-					<tr
-						><td>Check-out</td><td>Betreiber (intern)</td><td>✓ checked_in → checked_out</td><td
-							>Fixer Text mit Freigabe-Link</td
-						><td>—</td></tr
-					>
-					<tr
-						><td>Abrechnung freigeben</td><td>Mieter</td><td>✓ checked_out → abgerechnet</td><td
-							>CMS-Template (Abrechnung)</td
-						><td
-							><code>&#123;&#123;Name&#125;&#125;</code>
-							<code>&#123;&#123;Betrag&#125;&#125;</code>
 							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code></td
 						></tr
 					>
@@ -3559,6 +3545,11 @@
 							<code>&#123;&#123;WhatsApp&#125;&#125;</code>
 							— setzt <code>reminderSent = true</code></td
 						></tr
+					>
+					<tr
+						><td>Check-in</td><td>Betreiber (intern)</td><td>✓ confirmed → checked_in</td><td
+							>Fixer Text</td
+						><td>—</td></tr
 					>
 					<tr
 						><td>24h nach Ankunft <em>(tägl. 08:00 UTC)</em></td><td>Mieter</td><td
@@ -3583,6 +3574,20 @@
 							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code>
 							<code>&#123;&#123;WhatsApp&#125;&#125;</code>
 							— setzt <code>abreiseReminderSent = true</code></td
+						></tr
+					>
+					<tr
+						><td>Check-out</td><td>Betreiber (intern)</td><td>✓ checked_in → checked_out</td><td
+							>Fixer Text mit Freigabe-Link</td
+						><td>—</td></tr
+					>
+					<tr
+						><td>Abrechnung freigeben</td><td>Mieter</td><td>✓ checked_out → abgerechnet</td><td
+							>CMS-Template (Abrechnung)</td
+						><td
+							><code>&#123;&#123;Name&#125;&#125;</code>
+							<code>&#123;&#123;Betrag&#125;&#125;</code>
+							<code>&#123;&#123;Buchungsreferenz&#125;&#125;</code></td
 						></tr
 					>
 				</tbody>
