@@ -3603,6 +3603,61 @@
 				<strong>Betreiber-Kopie:</strong> Jede automatische Erinnerungsmail (48h, 24h, 12h) löst
 				eine Bestätigungskopie an <code>INVOICE_FROM_EMAIL</code> aus.
 			</div>
+
+			<p class="table-label">Test-URLs</p>
+			<p>
+				Alle URLs funktionieren lokal und auf Production. <code>dryRun=true</code> simuliert ohne wirklich
+				zu senden.
+			</p>
+			<table>
+				<thead><tr><th>E-Mail</th><th>URL</th></tr></thead>
+				<tbody>
+					<tr>
+						<td>Buchungsbestätigung erneut senden</td>
+						<td
+							><code
+								>/api/bestaetige-buchung?id=BUCHUNGS_ID&amp;secret=ADMIN_SECRET&amp;resend=true</code
+							></td
+						>
+					</tr>
+					<tr>
+						<td>Ankunfts-Erinnerung (48h)</td>
+						<td
+							><code
+								>/api/test-reminder?secret=ADMIN_SECRET&amp;type=ankunft&amp;date=YYYY-MM-DD&amp;dryRun=true</code
+							><br /><small><code>date</code> = Anreisetag der Buchung (<code>von</code>)</small
+							></td
+						>
+					</tr>
+					<tr>
+						<td>Nach-Ankunft-Mail (24h)</td>
+						<td
+							><code
+								>/api/test-reminder?secret=ADMIN_SECRET&amp;type=nach_ankunft&amp;date=YYYY-MM-DD&amp;dryRun=true</code
+							><br /><small><code>date</code> = Anreisetag der Buchung (<code>von</code>)</small
+							></td
+						>
+					</tr>
+					<tr>
+						<td>Abreise-Erinnerung (12h)</td>
+						<td
+							><code
+								>/api/test-reminder?secret=ADMIN_SECRET&amp;type=abreise&amp;date=YYYY-MM-DD&amp;dryRun=true</code
+							><br /><small><code>date</code> = Abreisedatum der Buchung (<code>bis</code>)</small
+							></td
+						>
+					</tr>
+					<tr>
+						<td>Abrechnung freigeben</td>
+						<td><code>/api/freigabe-abrechnung?id=BUCHUNGS_ID&amp;secret=ADMIN_SECRET</code></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="callout">
+				<strong>Scheduler lokal simulieren:</strong> Mit
+				<code>DATE_OVERRIDE=YYYY-MM-DD netlify functions:invoke send-reminders</code> kann das aktuelle
+				Datum überschrieben werden, um zu prüfen ob der Scheduler für ein bestimmtes Datum korrekt feuert.
+			</div>
 		</section>
 
 		<section id="arch-kundenauthentifizierung">
