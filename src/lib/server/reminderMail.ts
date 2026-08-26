@@ -37,21 +37,24 @@ function dateInDays(n: number): string {
 
 export async function maybeSendAnkunftsErinnerung(
 	buchung: RessourceBuchung,
-	fetch: typeof globalThis.fetch
+	fetch: typeof globalThis.fetch,
+	force = false
 ): Promise<void> {
 	console.log(
-		`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}`
+		`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}, force=${force}`
 	);
 
-	if (buchung.reminderSent) {
+	if (!force && buchung.reminderSent) {
 		console.log('[reminderMail] Übersprungen: reminderSent=true');
 		return;
 	}
 
-	const grenze = dateInDays(2);
-	if (buchung.von > grenze) {
-		console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
-		return;
+	if (!force) {
+		const grenze = dateInDays(2);
+		if (buchung.von > grenze) {
+			console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
+			return;
+		}
 	}
 
 	const resendKey = env.RESEND_API_KEY;

@@ -315,6 +315,16 @@ export const actions: Actions = {
 		await updateRessourceBuchungStatus(id, target);
 	},
 
+	// ── Ankunfts-Reminder manuell senden (Admin) ────────────────────────────
+	sendReminder: async ({ request, url, fetch }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await maybeSendAnkunftsErinnerung(buchung, fetch, true);
+	},
+
 	deleteAll: async ({ url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');

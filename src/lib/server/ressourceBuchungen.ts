@@ -127,14 +127,6 @@ export async function getRelatedRessourceUids(
 			)
 			.map((d: any) => d.uid)
 			.filter(Boolean);
-		console.log(
-			`[debug] uid=${uid} children=${JSON.stringify(children)} allDocs=${allDocs.length} parents=${JSON.stringify(parents)}`
-		);
-		// Sample first allDoc's untergeordnete_ressourcen for debugging
-		if (allDocs.length > 0)
-			console.log(
-				`[debug] sample doc[0] uid=${(allDocs[0] as any).uid} untergeordnete_ressourcen=${JSON.stringify((allDocs[0] as any).data?.untergeordnete_ressourcen)}`
-			);
 		const all = [...new Set([uid, ...children, ...parents])];
 		return all;
 	} catch (err) {

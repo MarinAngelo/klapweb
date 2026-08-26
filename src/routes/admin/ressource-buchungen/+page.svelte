@@ -315,6 +315,24 @@
 											>{NEXT_LABEL[b.status]}</a
 										>
 									{/if}
+									<!-- Reminder senden -->
+									{#if b.status === 'confirmed' || b.status === 'checked_in'}
+										<form method="POST" action="?/sendReminder&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button
+												type="submit"
+												title="Ankunfts-Reminder jetzt senden{b.reminderSent ? ' (erneut)' : ''}"
+												style="font-size:0.7rem;background:{b.reminderSent
+													? '#f3f4f6'
+													: '#fef9c3'};color:{b.reminderSent
+													? '#6b7280'
+													: '#92400e'};border:1px solid {b.reminderSent
+													? '#d1d5db'
+													: '#fcd34d'};border-radius:4px;cursor:pointer;padding:2px 7px;white-space:nowrap;"
+												>📧{b.reminderSent ? ' ↺' : ''}</button
+											>
+										</form>
+									{/if}
 									<!-- Löschen -->
 									<form
 										method="POST"

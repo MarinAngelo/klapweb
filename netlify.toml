@@ -11,3 +11,4 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  included_files = ["slicemachine.config.json"]
