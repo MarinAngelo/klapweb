@@ -114,7 +114,14 @@ export default async function handler() {
 	const store = getStore({ name: 'ressource_buchungen', siteID, token });
 	const { blobs } = await store.list();
 	const allBookings = (
-		await Promise.all(blobs.map((b) => store.get(b.key, { type: 'json' })))
+		await Promise.all(
+			blobs.map((b) =>
+				store.get(b.key, { type: 'json' }).catch((e) => {
+					console.error('[send-reminders] Blob-Ladefehler:', e);
+					return null;
+				})
+			)
+		)
 	).filter(Boolean) as any[];
 
 	const client = prismic.createClient(repoName);

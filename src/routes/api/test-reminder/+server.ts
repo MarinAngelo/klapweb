@@ -68,7 +68,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const store = getStore({ name: 'ressource_buchungen', siteID, token });
 	const { blobs } = await store.list();
 	const allBookings = (
-		await Promise.all(blobs.map((b) => store.get(b.key, { type: 'json' })))
+		await Promise.all(blobs.map((b) => store.get(b.key, { type: 'json' }).catch(() => null)))
 	).filter(Boolean) as any[];
 
 	const upcoming =
