@@ -2,6 +2,7 @@
 	import { PrismicRichText } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
+	import FileField from '$lib/components/FileField.svelte';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { _ } from '$lib/stores/i18n';
 
@@ -409,7 +410,7 @@
 										<!-- Vorher/Nachher-Fotos -->
 										<div class="flex flex-col gap-3">
 											<p class="text-sm font-medium">{$_('Fotos')}</p>
-											<div class="grid grid-cols-2 gap-3 max-w-md">
+											<div class="grid grid-cols-2 gap-3">
 												{#each ['vorher', 'nachher'] as art}
 													{@const key = `${a.id}:${art}`}
 													{@const url =
@@ -488,14 +489,10 @@
 													style={inputStyle}
 													placeholder={$_('Kommentar eingeben')}
 												></textarea>
-												<label for="attachment-{a.id}" class="block text-sm"
-													>{$_('Anhang (optional)')}</label
-												>
-												<input
+												<FileField
 													id="attachment-{a.id}"
-													type="file"
+													label={$_('Anhang (optional)')}
 													bind:files={attachmentFiles[a.id]}
-													class="text-sm"
 												/>
 												{#if actionError[a.id]}
 													<p class="text-sm text-red-600">{actionError[a.id]}</p>
@@ -504,7 +501,7 @@
 													type="button"
 													disabled={actionLoading[a.id]}
 													on:click={() => aufgabeAbgeben(a)}
-													class="px-4 py-1.5 text-sm rounded self-start"
+													class="px-4 py-1.5 text-sm rounded self-end"
 													style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[
 														a.id
 													]
