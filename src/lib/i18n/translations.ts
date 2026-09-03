@@ -804,6 +804,18 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Foto konnte nicht hochgeladen werden',
 		'en-us': 'Photo could not be uploaded'
 	},
+	'Aufgaben können erst ab dem Anreisetag angenommen werden': {
+		'de-ch': 'Aufgaben können erst ab dem Anreisetag angenommen werden',
+		'en-us': 'Tasks can only be accepted from the arrival day'
+	},
+	'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich': {
+		'de-ch': 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich',
+		'en-us': 'The stay has ended — no more tasks possible'
+	},
+	'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)': {
+		'de-ch': 'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)',
+		'en-us': 'Submission only possible during the stay (arrival to departure)'
+	},
 	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
 	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
 	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },

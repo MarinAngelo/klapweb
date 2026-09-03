@@ -47,6 +47,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		});
 	}
 
+	// Abgabe nur während des Aufenthalts (Anreisetag bis Abreisetag, exkl.)
+	try {
+		const buchung = await getBuchungByReferenz(annahme.buchungId);
+		if (buchung) {
+			const heute = new Date().toISOString().slice(0, 10);
+			if (heute < buchung.von || heute >= buchung.bis) {
+				return new Response(
+					JSON.stringify({
+						error: 'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)'
+					}),
+					{ status: 409 }
+				);
+			}
+		}
+	} catch {
+		/* Buchung nicht ladbar — Abgabe nicht blockieren */
+	}
+
 	if (annahme.creditTyp === 'offen' && (!minuten || minuten <= 0)) {
 		return new Response(
 			JSON.stringify({ error: 'Minuten erforderlich für zeitbasierte Credits' }),

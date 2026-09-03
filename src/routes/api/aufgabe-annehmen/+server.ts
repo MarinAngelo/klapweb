@@ -33,6 +33,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const buchung = await getBuchungByReferenz(buchungId);
 		if (!buchung)
 			return new Response(JSON.stringify({ error: 'Buchung nicht gefunden' }), { status: 404 });
+
+		// Aufgaben nur während des Aufenthalts (Anreisetag bis Abreisetag, exkl.)
+		const heute = new Date().toISOString().slice(0, 10);
+		if (heute < buchung.von) {
+			return new Response(
+				JSON.stringify({ error: 'Aufgaben können erst ab dem Anreisetag angenommen werden' }),
+				{ status: 409 }
+			);
+		}
+		if (heute >= buchung.bis) {
+			return new Response(
+				JSON.stringify({ error: 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich' }),
+				{ status: 409 }
+			);
+		}
+
 		ressourceUid = buchung.ressourceUid ?? '';
 		guestEmail = buchung.email ?? '';
 		guestName = buchung.name ?? buchung.email ?? buchungId;
