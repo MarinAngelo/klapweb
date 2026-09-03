@@ -27,6 +27,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	if (!annahmeId) {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
+	if (!kommentar?.trim()) {
+		return new Response(JSON.stringify({ error: 'Kommentar ist erforderlich' }), { status: 400 });
+	}
 
 	let annahme;
 	try {

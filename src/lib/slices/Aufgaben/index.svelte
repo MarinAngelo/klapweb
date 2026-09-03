@@ -386,12 +386,13 @@
 													/>
 												{/if}
 												<label for="kommentar-{a.id}" class="block text-sm"
-													>{$_('Kommentar (optional)')}</label
+													>{$_('Kommentar oder Beschreibung der Aufgabe')} *</label
 												>
 												<textarea
 													id="kommentar-{a.id}"
 													bind:value={kommentarInput[a.id]}
 													rows="3"
+													required
 													class={inputClass}
 													style={inputStyle}
 													placeholder={$_('Kommentar eingeben')}

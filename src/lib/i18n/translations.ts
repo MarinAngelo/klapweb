@@ -788,6 +788,14 @@ export const translations: Record<string, Record<string, string>> = {
 	'Minuten eingeben': { 'de-ch': 'Minuten eingeben', 'en-us': 'Enter minutes' },
 	'Benötigte Werkzeuge': { 'de-ch': 'Benötigte Werkzeuge', 'en-us': 'Required tools' },
 	'Kommentar (optional)': { 'de-ch': 'Kommentar (optional)', 'en-us': 'Comment (optional)' },
+	'Kommentar oder Beschreibung der Aufgabe': {
+		'de-ch': 'Kommentar oder Beschreibung der Aufgabe',
+		'en-us': 'Comment or description of the task'
+	},
+	'Kommentar ist erforderlich': {
+		'de-ch': 'Kommentar ist erforderlich',
+		'en-us': 'Comment is required'
+	},
 	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
 	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
 	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },
