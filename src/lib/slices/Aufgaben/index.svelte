@@ -1,19 +1,19 @@
 <script lang="ts">
-import { PrismicRichText } from '@prismicio/svelte';
+	import { PrismicRichText } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
-import { useOpenIndex } from '$lib/utils/useOpenIndex';
-import { _ } from '$lib/stores/i18n';
+	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { _ } from '$lib/stores/i18n';
 
 	export let slice: any;
 	export const index: number = 0;
 
 	const inputStyle = `background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);`;
-	const inputClass = 'mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm';
+	const inputClass =
+		'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm';
 
 	// ── Auth state ────────────────────────────────────────────────────────────
 	let buchungId = '';
-	let email = '';
 	let loggedIn = false;
 	let loginError = '';
 	let loginLoading = false;
@@ -70,7 +70,7 @@ import { _ } from '$lib/stores/i18n';
 		loginError = '';
 		loginLoading = true;
 		try {
-			const res = await fetch(`/api/aufgaben?buchungId=${encodeURIComponent(buchungId)}&email=${encodeURIComponent(email)}`);
+			const res = await fetch(`/api/aufgaben?buchungId=${encodeURIComponent(buchungId)}`);
 			if (res.status === 404 || res.status === 403 || res.status === 400) {
 				const data = await res.json().catch(() => ({}));
 				loginError = data.error || $_('Ungültige Kombination von Buchungs-ID und E-Mail');
@@ -104,9 +104,11 @@ import { _ } from '$lib/stores/i18n';
 
 	async function annahmeAktualisieren() {
 		try {
-			const res = await fetch(`/api/aufgaben?buchungId=${encodeURIComponent(buchungId)}&email=${encodeURIComponent(email)}`);
+			const res = await fetch(`/api/aufgaben?buchungId=${encodeURIComponent(buchungId)}`);
 			if (res.ok) annahmen = await res.json();
-		} catch { /* non-critical */ }
+		} catch {
+			/* non-critical */
+		}
 	}
 
 	// ── Annehmen ──────────────────────────────────────────────────────────────
@@ -119,8 +121,6 @@ import { _ } from '$lib/stores/i18n';
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					buchungId,
-					email,
-					name: email,
 					aufgabeUid: aufgabe.uid,
 					aufgabeTitel: aufgabe.titel,
 					creditTyp: aufgabe.credit_typ === 'Offen (Zeitbasiert)' ? 'offen' : 'fest',
@@ -148,7 +148,6 @@ import { _ } from '$lib/stores/i18n';
 		try {
 			const fd = new FormData();
 			fd.append('annahmeId', aid);
-			fd.append('email', email);
 			if (minutenInput[aid]) fd.append('minuten', minutenInput[aid]);
 			const kommentar = kommentarInput[aid]?.trim();
 			if (kommentar) fd.append('kommentar', kommentar);
@@ -169,11 +168,9 @@ import { _ } from '$lib/stores/i18n';
 		}
 	}
 
-
 	function logout() {
 		loggedIn = false;
 		buchungId = '';
-		email = '';
 		annahmen = [];
 		aufgaben = [];
 	}
@@ -202,7 +199,10 @@ import { _ } from '$lib/stores/i18n';
 
 <Bounded {slice}>
 	<div
-		style={[bgColor ? `background-color:${bgColor};` : '', textColor ? `color:${textColor};` : ''].join('')}
+		style={[
+			bgColor ? `background-color:${bgColor};` : '',
+			textColor ? `color:${textColor};` : ''
+		].join('')}
 	>
 		{#if loggedIn}
 			{#if primary.heading}
@@ -218,7 +218,7 @@ import { _ } from '$lib/stores/i18n';
 			<div class="opacity-30 pointer-events-none select-none flex flex-col gap-6">
 				<div class="h-8 rounded w-48 bg-current opacity-20"></div>
 				<div class="flex flex-col gap-3">
-					{#each [1,2,3] as _}
+					{#each [1, 2, 3] as _}
 						<div class="h-14 rounded border-b border-current opacity-10"></div>
 					{/each}
 				</div>
@@ -234,25 +234,16 @@ import { _ } from '$lib/stores/i18n';
 					style="background-color: var(--page-bg-color); color: var(--page-color);"
 				>
 					<h2 class="text-2xl font-bold">{$_('Aufgabenliste')}</h2>
-					<p class="text-base">{$_('Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.')}</p>
+					<p class="text-base">
+						{$_('Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.')}
+					</p>
 					<form on:submit|preventDefault={handleLogin} class="flex flex-col gap-4">
 						<div>
-							<label for="aufgaben-buchung-id" class="block text-sm font-medium">{$_('Buchungs-ID')}</label>
+							<label for="aufgaben-buchung-id">{$_('Buchungs-Referenz')}</label>
 							<input
 								id="aufgaben-buchung-id"
 								type="text"
 								bind:value={buchungId}
-								required
-								class={inputClass}
-								style={inputStyle}
-							/>
-						</div>
-						<div>
-							<label for="aufgaben-email" class="block text-sm font-medium">{$_('E-Mail')}</label>
-							<input
-								id="aufgaben-email"
-								type="email"
-								bind:value={email}
 								required
 								class={inputClass}
 								style={inputStyle}
@@ -265,7 +256,9 @@ import { _ } from '$lib/stores/i18n';
 							type="submit"
 							disabled={loginLoading}
 							class="mt-2 px-6 py-2 text-sm font-medium rounded"
-							style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {loginLoading ? 0.6 : 1};"
+							style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {loginLoading
+								? 0.6
+								: 1};"
 						>
 							{loginLoading ? $_('Wird geladen…') : $_('Einloggen')}
 						</button>
@@ -275,7 +268,7 @@ import { _ } from '$lib/stores/i18n';
 		{:else}
 			<!-- Eingeloggt -->
 			<div class="flex items-center justify-between mb-6">
-				<p class="text-sm opacity-60">{$_('E-Mail')}: {email}</p>
+				<p class="text-sm opacity-60">{$_('Buchungs-Referenz')}: {buchungId}</p>
 				<button on:click={logout} class="text-sm underline opacity-60">{$_('Abmelden')}</button>
 			</div>
 
@@ -285,7 +278,8 @@ import { _ } from '$lib/stores/i18n';
 				<div class="flex flex-col gap-4 mb-8">
 					{#each meineAufgaben as a, i (a.id)}
 						{@const aufgabe = aufgabenMap.get(a.aufgabeUid)}
-						<div class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
+						<div
+							class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
 							style="border-color: var(--page-color); background-color: var(--page-color-11, color-mix(in srgb, var(--page-color) 7%, transparent));"
 						>
 							<button
@@ -296,47 +290,75 @@ import { _ } from '$lib/stores/i18n';
 								<span class="flex flex-col gap-0.5 min-w-0">
 									<span>{a.aufgabeTitel}</span>
 									<span class="text-sm font-normal opacity-60">
-										{statusLabels[a.status] ?? a.status}{#if a.credits != null} · {a.credits} {$_('Credits')}{/if}{#if a.minuten != null} · {a.minuten} min{/if}
+										{statusLabels[a.status] ?? a.status}{#if a.credits != null}
+											· {a.credits} {$_('Credits')}{/if}{#if a.minuten != null}
+											· {a.minuten} min{/if}
 									</span>
 								</span>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 20 20"
 									class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
-									class:rotate-180={$meineOpenIndex === i}>
-									<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+									class:rotate-180={$meineOpenIndex === i}
+								>
+									<path
+										d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+									/>
 								</svg>
 							</button>
 
-							<div class="accordion-body" style="grid-template-rows: {$meineOpenIndex === i ? '1fr' : '0fr'};">
+							<div
+								class="accordion-body"
+								style="grid-template-rows: {$meineOpenIndex === i ? '1fr' : '0fr'};"
+							>
 								<div class="overflow-hidden">
 									<div class="pb-4 pt-2 flex flex-col gap-8">
 										<!-- Aufgaben-Infos (gleich wie verfügbare Aufgaben) -->
 										{#if aufgabe}
-											<div class="grid grid-cols-1 gap-8 {aufgabe.bild?.url ? 'md:grid-cols-2' : ''}">
+											<div
+												class="grid grid-cols-1 gap-8 {aufgabe.bild?.url ? 'md:grid-cols-2' : ''}"
+											>
 												<div class="flex flex-col">
 													{#if aufgabe.beschreibung}
-														<div class="prose"><PrismicRichText field={aufgabe.beschreibung} /></div>
+														<div class="prose">
+															<PrismicRichText field={aufgabe.beschreibung} />
+														</div>
 													{/if}
 												</div>
 												{#if aufgabe.bild?.url}
 													<div class="md:rounded-3xl overflow-hidden">
-														<img src={aufgabe.bild.url} alt={aufgabe.bild.alt || aufgabe.titel} class="w-full h-full object-cover" />
+														<img
+															src={aufgabe.bild.url}
+															alt={aufgabe.bild.alt || aufgabe.titel}
+															class="w-full h-full object-cover"
+														/>
 													</div>
 												{/if}
 											</div>
 											{#if aufgabe.werkzeuge?.length > 0}
 												<div class="flex flex-col gap-6">
-													<p class="text-xs font-medium uppercase opacity-50">{$_('Benötigte Werkzeuge')}</p>
+													<p class="text-xs font-medium uppercase opacity-50">
+														{$_('Benötigte Werkzeuge')}
+													</p>
 													{#each aufgabe.werkzeuge as w}
-														<div class="grid grid-cols-1 gap-8 {w.bild?.url ? 'md:grid-cols-2' : ''}">
+														<div
+															class="grid grid-cols-1 gap-8 {w.bild?.url ? 'md:grid-cols-2' : ''}"
+														>
 															<div class="flex flex-col gap-1">
 																<p class="font-medium">{w.titel}</p>
 																{#if w.beschreibung}
-																	<div class="prose text-sm opacity-80"><PrismicRichText field={w.beschreibung} /></div>
+																	<div class="prose text-sm opacity-80">
+																		<PrismicRichText field={w.beschreibung} />
+																	</div>
 																{/if}
 															</div>
 															{#if w.bild?.url}
 																<div class="md:rounded-3xl overflow-hidden">
-																	<img src={w.bild.url} alt={w.bild.alt || w.titel} class="w-full h-full object-cover" />
+																	<img
+																		src={w.bild.url}
+																		alt={w.bild.alt || w.titel}
+																		class="w-full h-full object-cover"
+																	/>
 																</div>
 															{/if}
 														</div>
@@ -350,19 +372,53 @@ import { _ } from '$lib/stores/i18n';
 											<div class="flex flex-col gap-3">
 												<p class="text-sm font-medium">{$_('Aufgabe abgeben')}</p>
 												{#if a.creditTyp === 'offen'}
-													<label for="minuten-{a.id}" class="block text-sm">{$_('Geleistete Minuten')}</label>
-													<input id="minuten-{a.id}" type="number" min="1" bind:value={minutenInput[a.id]} class={inputClass} style={inputStyle} placeholder={$_('Minuten eingeben')} />
+													<label for="minuten-{a.id}" class="block text-sm"
+														>{$_('Geleistete Minuten')}</label
+													>
+													<input
+														id="minuten-{a.id}"
+														type="number"
+														min="1"
+														bind:value={minutenInput[a.id]}
+														class={inputClass}
+														style={inputStyle}
+														placeholder={$_('Minuten eingeben')}
+													/>
 												{/if}
-												<label for="kommentar-{a.id}" class="block text-sm">{$_('Kommentar (optional)')}</label>
-												<textarea id="kommentar-{a.id}" bind:value={kommentarInput[a.id]} rows="3" class={inputClass} style={inputStyle} placeholder={$_('Kommentar eingeben')}></textarea>
-												<label for="attachment-{a.id}" class="block text-sm">{$_('Anhang (optional)')}</label>
-												<input id="attachment-{a.id}" type="file" bind:files={attachmentFiles[a.id]} class="text-sm" />
+												<label for="kommentar-{a.id}" class="block text-sm"
+													>{$_('Kommentar (optional)')}</label
+												>
+												<textarea
+													id="kommentar-{a.id}"
+													bind:value={kommentarInput[a.id]}
+													rows="3"
+													class={inputClass}
+													style={inputStyle}
+													placeholder={$_('Kommentar eingeben')}
+												></textarea>
+												<label for="attachment-{a.id}" class="block text-sm"
+													>{$_('Anhang (optional)')}</label
+												>
+												<input
+													id="attachment-{a.id}"
+													type="file"
+													bind:files={attachmentFiles[a.id]}
+													class="text-sm"
+												/>
 												{#if actionError[a.id]}
 													<p class="text-sm text-red-600">{actionError[a.id]}</p>
 												{/if}
-												<button type="button" disabled={actionLoading[a.id]} on:click={() => aufgabeAbgeben(a)}
+												<button
+													type="button"
+													disabled={actionLoading[a.id]}
+													on:click={() => aufgabeAbgeben(a)}
 													class="px-4 py-1.5 text-sm rounded self-start"
-													style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[a.id] ? 0.6 : 1};">
+													style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[
+														a.id
+													]
+														? 0.6
+														: 1};"
+												>
 													{actionLoading[a.id] ? $_('Wird geladen…') : $_('Aufgabe abgeben')}
 												</button>
 											</div>
@@ -384,7 +440,8 @@ import { _ } from '$lib/stores/i18n';
 			{:else}
 				<div class="flex flex-col gap-4">
 					{#each verfuegbareAufgaben as aufgabe, i (aufgabe.uid)}
-						<div class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
+						<div
+							class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
 							style="border-color: var(--page-color); background-color: var(--page-color-11, color-mix(in srgb, var(--page-color) 7%, transparent));"
 						>
 							<button
@@ -399,11 +456,16 @@ import { _ } from '$lib/stores/i18n';
 									class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
 									class:rotate-180={$aufgabenOpenIndex === i}
 								>
-									<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+									<path
+										d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+									/>
 								</svg>
 							</button>
 
-							<div class="accordion-body" style="grid-template-rows: {$aufgabenOpenIndex === i ? '1fr' : '0fr'};">
+							<div
+								class="accordion-body"
+								style="grid-template-rows: {$aufgabenOpenIndex === i ? '1fr' : '0fr'};"
+							>
 								<div class="overflow-hidden">
 									<div class="pb-4 pt-2 flex flex-col gap-8">
 										<!-- Zeile 1: Beschreibung + Aufgaben-Bild -->
@@ -429,7 +491,9 @@ import { _ } from '$lib/stores/i18n';
 										<!-- Zeile 2: Werkzeuge (je ein Grid-Row pro Werkzeug) -->
 										{#if aufgabe.werkzeuge?.length > 0}
 											<div class="flex flex-col gap-6">
-												<p class="text-xs font-medium uppercase opacity-50">{$_('Benötigte Werkzeuge')}</p>
+												<p class="text-xs font-medium uppercase opacity-50">
+													{$_('Benötigte Werkzeuge')}
+												</p>
 												{#each aufgabe.werkzeuge as w}
 													<div class="grid grid-cols-1 gap-8 {w.bild?.url ? 'md:grid-cols-2' : ''}">
 														<div class="flex flex-col gap-1">
@@ -457,7 +521,9 @@ import { _ } from '$lib/stores/i18n';
 										<!-- Credits + Haftung + Button -->
 										<div class="flex flex-col gap-3">
 											<p class="text-sm opacity-60">
-												{aufgabe.credit_typ === 'Offen (Zeitbasiert)' ? $_('Zeitbasiert') : $_('Fest')}
+												{aufgabe.credit_typ === 'Offen (Zeitbasiert)'
+													? $_('Zeitbasiert')
+													: $_('Fest')}
 												{#if aufgabe.credit_typ !== 'Offen (Zeitbasiert)' && aufgabe.credit_betrag != null}
 													· {aufgabe.credit_betrag} Credits
 												{/if}
@@ -465,11 +531,16 @@ import { _ } from '$lib/stores/i18n';
 											{#if actionError[aufgabe.uid]}
 												<p class="text-sm text-red-600">{actionError[aufgabe.uid]}</p>
 											{/if}
-											<label for="haftung-{aufgabe.uid}" class="flex items-start gap-2 cursor-pointer text-sm">
+											<label
+												for="haftung-{aufgabe.uid}"
+												class="flex items-start gap-2 cursor-pointer text-sm"
+											>
 												<Checkbox id="haftung-{aufgabe.uid}" bind:checked={haftungAccepted} />
 												<span>
 													{$_('Ich habe den')}
-													<a href={haftungsausschlussUrl} target="_blank" class="underline">{$_('Haftungsausschluss')}</a>
+													<a href={haftungsausschlussUrl} target="_blank" class="underline"
+														>{$_('Haftungsausschluss')}</a
+													>
 													{$_('gelesen und akzeptiere diesen.')}
 												</span>
 											</label>
@@ -478,7 +549,11 @@ import { _ } from '$lib/stores/i18n';
 												disabled={actionLoading[aufgabe.uid] || !haftungAccepted}
 												on:click={() => aufgabeAnnehmen(aufgabe)}
 												class="px-4 py-1.5 text-sm rounded self-start"
-												style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[aufgabe.uid] || !haftungAccepted ? 0.4 : 1};"
+												style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[
+													aufgabe.uid
+												] || !haftungAccepted
+													? 0.4
+													: 1};"
 											>
 												{actionLoading[aufgabe.uid] ? $_('Wird geladen…') : $_('Aufgabe annehmen')}
 											</button>

@@ -743,6 +743,7 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	// Aufgaben Slice
 	'Buchungs-ID': { 'de-ch': 'Buchungs-ID', 'en-us': 'Booking ID' },
+	'Buchungs-Referenz': { 'de-ch': 'Buchungs-Referenz', 'en-us': 'Booking reference' },
 	'Mit Buchungs-ID anmelden': {
 		'de-ch': 'Mit Buchungs-ID anmelden',
 		'en-us': 'Log in with booking ID'
