@@ -29,6 +29,8 @@
 		preisProNacht?: number;
 		credits?: number;
 		minuten?: number;
+		fotoVorher?: string;
+		fotoNachher?: string;
 		angenommenAt: string;
 		erledigtAt?: string;
 	};
@@ -64,6 +66,44 @@
 	let kommentarInput: Record<string, string> = {};
 	let attachmentFiles: Record<string, FileList | undefined> = {};
 	let abgabeVisible: Record<string, boolean> = {};
+
+	// ── Vorher/Nachher Fotos ────────────────────────────────────────────────
+	// Key: `${annahmeId}:${art}` — Preview-URL (sofort sichtbar) oder Server-URL
+	let fotoPreview: Record<string, string> = {};
+	let fotoUploading: Record<string, boolean> = {};
+	let fotoError: Record<string, string> = {};
+
+	async function fotoHochladen(a: Annahme, art: 'vorher' | 'nachher', file: File | undefined) {
+		if (!file) return;
+		const key = `${a.id}:${art}`;
+		fotoError[key] = '';
+		fotoPreview[key] = URL.createObjectURL(file); // sofort anzeigen
+		fotoUploading[key] = true;
+		try {
+			const fd = new FormData();
+			fd.append('annahmeId', a.id);
+			fd.append('art', art);
+			fd.append('file', file);
+			const res = await fetch('/api/aufgabe-foto', { method: 'POST', body: fd });
+			const data = await res.json().catch(() => ({}));
+			if (!res.ok) {
+				delete fotoPreview[key];
+				fotoError[key] = data.error || $_('Foto konnte nicht hochgeladen werden');
+				return;
+			}
+			fotoPreview[key] = data.url; // Server-URL übernimmt
+			a[art === 'vorher' ? 'fotoVorher' : 'fotoNachher'] = data.url;
+		} catch {
+			delete fotoPreview[key];
+			fotoError[key] = $_('Foto konnte nicht hochgeladen werden');
+		} finally {
+			fotoUploading[key] = false;
+		}
+	}
+
+	function handleFotoChange(a: Annahme, art: string, e: Event) {
+		fotoHochladen(a, art as 'vorher' | 'nachher', (e.currentTarget as HTMLInputElement).files?.[0]);
+	}
 
 	// ── Login ─────────────────────────────────────────────────────────────────
 	async function handleLogin() {
@@ -366,7 +406,58 @@
 												</div>
 											{/if}
 										{/if}
-
+										<!-- Vorher/Nachher-Fotos -->
+										<div class="flex flex-col gap-3">
+											<p class="text-sm font-medium">{$_('Fotos')}</p>
+											<div class="grid grid-cols-2 gap-3 max-w-md">
+												{#each ['vorher', 'nachher'] as art}
+													{@const key = `${a.id}:${art}`}
+													{@const url =
+														fotoPreview[key] || (art === 'vorher' ? a.fotoVorher : a.fotoNachher)}
+													<div class="flex flex-col gap-1">
+														<label
+															for="foto-{key}"
+															class="block border rounded-lg overflow-hidden cursor-pointer relative"
+															style="border-color: var(--page-color); aspect-ratio: 4/3; background-color: color-mix(in srgb, var(--page-color) 6%, transparent);"
+														>
+															{#if url}
+																<img
+																	src={url}
+																	alt={art === 'vorher' ? $_('Vorher') : $_('Nachher')}
+																	class="w-full h-full object-cover"
+																/>
+															{:else}
+																<span
+																	class="absolute inset-0 flex flex-col items-center justify-center gap-1 text-xs opacity-60"
+																>
+																	<span class="text-xl">📷</span>
+																	{art === 'vorher' ? $_('Vorher') : $_('Nachher')}
+																</span>
+															{/if}
+															{#if fotoUploading[key]}
+																<span
+																	class="absolute inset-0 flex items-center justify-center text-xs"
+																	style="background-color: color-mix(in srgb, var(--page-bg-color) 70%, transparent);"
+																	>{$_('Wird hochgeladen…')}</span
+																>
+															{/if}
+														</label>
+														<input
+															id="foto-{key}"
+															type="file"
+															accept="image/*"
+															class="sr-only"
+															disabled={fotoUploading[key] ||
+																['erledigt', 'eingereicht'].includes(a.status)}
+															on:change={(e) => handleFotoChange(a, art, e)}
+														/>
+														{#if fotoError[key]}
+															<p class="text-xs text-red-600">{fotoError[key]}</p>
+														{/if}
+													</div>
+												{/each}
+											</div>
+										</div>
 										<!-- Abgabe-Formular -->
 										{#if !['erledigt', 'eingereicht'].includes(a.status)}
 											<div class="flex flex-col gap-3">

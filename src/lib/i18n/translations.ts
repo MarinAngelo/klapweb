@@ -796,6 +796,14 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Kommentar ist erforderlich',
 		'en-us': 'Comment is required'
 	},
+	Fotos: { 'de-ch': 'Fotos', 'en-us': 'Photos' },
+	Vorher: { 'de-ch': 'Vorher', 'en-us': 'Before' },
+	Nachher: { 'de-ch': 'Nachher', 'en-us': 'After' },
+	'Wird hochgeladen…': { 'de-ch': 'Wird hochgeladen…', 'en-us': 'Uploading…' },
+	'Foto konnte nicht hochgeladen werden': {
+		'de-ch': 'Foto konnte nicht hochgeladen werden',
+		'en-us': 'Photo could not be uploaded'
+	},
 	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
 	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
 	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },

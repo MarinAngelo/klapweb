@@ -19,6 +19,8 @@ export interface AufgabeAnnahme {
 	credits?: number;
 	kommentar?: string;
 	betreiberAntwort?: string;
+	fotoVorher?: string; // URL /api/aufgabe-foto?...&art=vorher
+	fotoNachher?: string; // URL /api/aufgabe-foto?...&art=nachher
 	angenommenAt: string;
 	bestaetgtAt?: string;
 	eingereichtAt?: string;
@@ -63,9 +65,12 @@ export async function createAnnahme(data: Omit<AufgabeAnnahme, 'id'>): Promise<A
 	return record;
 }
 
-export async function updateAnnahme(id: string, patch: Partial<AufgabeAnnahme>): Promise<AufgabeAnnahme> {
+export async function updateAnnahme(
+	id: string,
+	patch: Partial<AufgabeAnnahme>
+): Promise<AufgabeAnnahme> {
 	const store = getStore_();
-	const existing = await store.get(id, { type: 'json' }) as AufgabeAnnahme | null;
+	const existing = (await store.get(id, { type: 'json' })) as AufgabeAnnahme | null;
 	if (!existing) throw new Error('Annahme nicht gefunden');
 	const updated = { ...existing, ...patch };
 	await store.setJSON(id, updated);
@@ -78,7 +83,9 @@ export async function deleteAnnahme(id: string): Promise<void> {
 }
 
 /** Berechnet Credits: offen = (minuten / 60) × preisProNacht; fest = creditBetrag */
-export function berechneCredits(annahme: Pick<AufgabeAnnahme, 'creditTyp' | 'creditBetrag' | 'preisProNacht' | 'minuten'>): number {
+export function berechneCredits(
+	annahme: Pick<AufgabeAnnahme, 'creditTyp' | 'creditBetrag' | 'preisProNacht' | 'minuten'>
+): number {
 	if (annahme.creditTyp === 'fest') return annahme.creditBetrag ?? 0;
 	if (!annahme.minuten || !annahme.preisProNacht) return 0;
 	return Math.round((annahme.minuten / 60) * annahme.preisProNacht * 100) / 100;
