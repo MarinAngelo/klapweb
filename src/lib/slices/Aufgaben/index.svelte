@@ -219,6 +219,7 @@
 	const statusLabels: Record<string, string> = {
 		angenommen: 'Angenommen',
 		annahme_bestaetigt: 'Bestätigt',
+		abgegeben: 'Abgegeben',
 		erledigt: 'Erledigt'
 	};
 
@@ -228,8 +229,7 @@
 	const { openIndex: aufgabenOpenIndex, toggleItem: toggleAufgabe } = useOpenIndex(0);
 	const { openIndex: meineOpenIndex, toggleItem: toggleMeine } = useOpenIndex(null);
 
-	$: angenommeneUids = new Set(annahmen.map((a) => a.aufgabeUid));
-	$: verfuegbareAufgaben = aufgaben.filter((a) => a.aktiv && !angenommeneUids.has(a.uid));
+	$: verfuegbareAufgaben = aufgaben.filter((a) => a.aktiv);
 	$: meineAufgaben = annahmen;
 	$: aufgabenMap = new Map(aufgaben.map((a) => [a.uid, a]));
 
@@ -460,7 +460,7 @@
 											</div>
 										</div>
 										<!-- Abgabe-Formular -->
-										{#if !['erledigt', 'eingereicht'].includes(a.status)}
+										{#if !['erledigt', 'abgegeben'].includes(a.status)}
 											<div class="flex flex-col gap-3">
 												<p class="text-sm font-medium">{$_('Aufgabe abgeben')}</p>
 												{#if a.creditTyp === 'offen'}

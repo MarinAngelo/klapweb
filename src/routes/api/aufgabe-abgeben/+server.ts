@@ -83,7 +83,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let updated;
 	try {
 		updated = await updateAnnahme(annahmeId, {
-			status: 'eingereicht',
+			status: 'abgegeben',
 			minuten: minutenVal,
 			credits,
 			kommentar: kommentar || undefined,

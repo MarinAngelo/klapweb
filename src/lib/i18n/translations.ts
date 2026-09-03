@@ -756,10 +756,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Aufgaben: { 'de-ch': 'Aufgaben', 'en-us': 'Tasks' },
 	'Aufgabe annehmen': { 'de-ch': 'Aufgabe annehmen', 'en-us': 'Accept task' },
 	'Aufgabe abgeben': { 'de-ch': 'Aufgabe abgeben', 'en-us': 'Submit task' },
-	'Aufgabe bereits angenommen': {
-		'de-ch': 'Aufgabe bereits angenommen',
-		'en-us': 'Task already accepted'
-	},
 	Angenommen: { 'de-ch': 'Angenommen', 'en-us': 'Accepted' },
 	Erledigt: { 'de-ch': 'Erledigt', 'en-us': 'Done' },
 	'Credits verdient': { 'de-ch': 'Credits verdient', 'en-us': 'Credits earned' },

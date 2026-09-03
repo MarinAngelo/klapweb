@@ -1,7 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
 
-export type AufgabeAnnahmeStatus = 'angenommen' | 'annahme_bestaetigt' | 'eingereicht' | 'erledigt';
+export type AufgabeAnnahmeStatus = 'angenommen' | 'annahme_bestaetigt' | 'abgegeben' | 'erledigt';
 
 export interface AufgabeAnnahme {
 	id: string;

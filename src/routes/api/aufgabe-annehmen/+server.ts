@@ -5,7 +5,7 @@
  *         creditTyp, creditBetrag?, ressourceUid, preisProNacht? }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { createAnnahme, listAnnahmenFuerBuchung } from '$lib/server/aufgaben';
+import { createAnnahme } from '$lib/server/aufgaben';
 import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
@@ -67,16 +67,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		} catch {
 			/* non-critical */
 		}
-	}
-
-	// Doppelte Annahme verhindern
-	try {
-		const existing = await listAnnahmenFuerBuchung(buchungId);
-		if (existing.some((a) => a.aufgabeUid === aufgabeUid)) {
-			return new Response(JSON.stringify({ error: 'Aufgabe bereits angenommen' }), { status: 409 });
-		}
-	} catch {
-		/* non-critical */
 	}
 
 	try {

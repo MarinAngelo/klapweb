@@ -3772,8 +3772,8 @@
 						></tr
 					>
 					<tr
-						><td><code>eingereicht</code></td><td>In Bearbeitung</td><td
-							>Aufgabe in aktiver Bearbeitung</td
+						><td><code>abgegeben</code></td><td>Abgegeben</td><td
+							>Mieter hat die Aufgabe abgegeben, Freigabe durch Betreiber ausstehend</td
 						></tr
 					>
 					<tr><td><code>erledigt</code></td><td>Erledigt</td><td>Aufgabe abgeschlossen</td></tr>
@@ -3792,7 +3792,7 @@
 					<tr><td><code>aufgabeTitel</code></td><td>String</td><td>Titel der Aufgabe</td></tr>
 					<tr
 						><td><code>status</code></td><td
-							>angenommen | annahme_bestaetigt | eingereicht | erledigt</td
+							>angenommen | annahme_bestaetigt | abgegeben | erledigt</td
 						><td>Bearbeitungsstatus</td></tr
 					>
 					<tr><td><code>name</code>, <code>email</code></td><td>String</td><td>Kundendaten</td></tr>
