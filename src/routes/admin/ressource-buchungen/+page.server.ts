@@ -297,6 +297,34 @@ export const actions: Actions = {
 		}
 	},
 
+	// ── Vorwärts ohne Mail: einen Schritt weiter (kein Mail) ────────────────────
+	voraus: async ({ request, url }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		const next: Record<string, RessourceBuchung['status']> = {
+			pending: 'confirmed',
+			confirmed: 'checked_in',
+			checked_in: 'checked_out',
+			checked_out: 'abgerechnet'
+		};
+		const target = next[buchung.status];
+		if (!target) return;
+		await updateRessourceBuchungStatus(id, target);
+	},
+
+	// ── Ankunfts-Reminder manuell senden (Admin) ────────────────────────────
+	sendReminder: async ({ request, url, fetch }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await maybeSendAnkunftsErinnerung(buchung, fetch, true);
+	},
+
 	deleteAll: async ({ url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
@@ -304,5 +332,48 @@ export const actions: Actions = {
 		const all = await listAlleRessourceBuchungen();
 		await Promise.all(all.map((b) => deleteRessourceBuchung(b.id)));
 		return { ok: true };
+	},
+
+	create: async ({ request, url, fetch }) => {
+		checkAuth(url);
+		const fd = await request.formData();
+		const ressourceUid = (fd.get('ressourceUid') as string)?.trim();
+		const von = fd.get('von') as string;
+		const bis = fd.get('bis') as string;
+		const personen = Number(fd.get('personen') ?? 1);
+		const name = (fd.get('name') as string)?.trim();
+		const email = (fd.get('email') as string)?.trim();
+		const telefon = (fd.get('telefon') as string)?.trim();
+		const nachricht = (fd.get('nachricht') as string)?.trim();
+		const preisCHF = Number(fd.get('preisCHF') ?? 0);
+		const status = (fd.get('status') as RessourceBuchung['status']) ?? 'confirmed';
+
+		if (!ressourceUid || !von || !bis || !name || !email) return { error: 'Pflichtfelder fehlen' };
+
+		let ressourceName = ressourceUid;
+		try {
+			const client = createClient({ fetch });
+			const doc = await client.getByUID('ressource', ressourceUid);
+			ressourceName = (doc.data as any).name ?? ressourceUid;
+		} catch {
+			/* Prismic nicht erreichbar – UID als Name nutzen */
+		}
+
+		const { bucheRessource } = await import('$lib/server/ressourceBuchungen');
+		await bucheRessource({
+			ressourceUid,
+			ressourceName,
+			von,
+			bis,
+			personen,
+			zimmerauswahl: [],
+			preisCHF,
+			bookedAt: new Date().toISOString(),
+			status,
+			name,
+			email,
+			telefon,
+			nachricht
+		});
 	}
 };

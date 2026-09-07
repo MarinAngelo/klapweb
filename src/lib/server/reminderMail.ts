@@ -21,7 +21,7 @@ function fmtDate(dateStr: string): string {
 
 function doorCode(uid: string): string {
 	const key = uid.toUpperCase().replace(/-/g, '_');
-	return (process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '');
+	return process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '';
 }
 
 function whatsAppLink(tel: string): string {
@@ -37,25 +37,32 @@ function dateInDays(n: number): string {
 
 export async function maybeSendAnkunftsErinnerung(
 	buchung: RessourceBuchung,
-	fetch: typeof globalThis.fetch
+	fetch: typeof globalThis.fetch,
+	force = false
 ): Promise<void> {
-	console.log(`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}`);
+	console.log(
+		`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}, force=${force}`
+	);
 
-	if (buchung.reminderSent) {
+	if (!force && buchung.reminderSent) {
 		console.log('[reminderMail] Übersprungen: reminderSent=true');
 		return;
 	}
 
-	const grenze = dateInDays(2);
-	if (buchung.von > grenze) {
-		console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
-		return;
+	if (!force) {
+		const grenze = dateInDays(2);
+		if (buchung.von > grenze) {
+			console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
+			return;
+		}
 	}
 
 	const resendKey = env.RESEND_API_KEY;
 	const emailFrom = env.INVOICE_FROM_EMAIL;
 	if (!resendKey || !emailFrom || !buchung.email) {
-		console.log(`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`);
+		console.log(
+			`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`
+		);
 		return;
 	}
 
@@ -68,26 +75,33 @@ export async function maybeSendAnkunftsErinnerung(
 		const d = doc.data as any;
 
 		const textField = d.reminder_text as prismic.RichTextField | undefined;
-		if (!textField?.length) {
-			console.log(`[reminderMail] Übersprungen: reminder_text leer für ${buchung.ressourceUid}`);
-			return;
-		}
-		console.log(`[reminderMail] reminder_text gefunden, length=${textField.length}`);
-
-		const betreff = (d.reminder_betreff as string)?.trim()
-			|| `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;
-
 		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 		const tokens: Record<string, string> = {
-			Türcode:          doorCode(buchung.ressourceUid),
-			Name:             buchung.name || '',
-			Anreise:          fmtDate(buchung.von),
-			Abreise:          fmtDate(buchung.bis),
+			Türcode: doorCode(buchung.ressourceUid),
+			Name: buchung.name || '',
+			Anreise: fmtDate(buchung.von),
+			Abreise: fmtDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			WhatsApp:         waTel ? whatsAppLink(waTel) : ''
+			WhatsApp: waTel ? whatsAppLink(waTel) : ''
 		};
 
-		const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
+		const betreff =
+			(d.reminder_betreff as string)?.trim() || `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;
+
+		let html: string;
+		if (textField?.length) {
+			html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
+		} else {
+			// Fallback wenn reminder_text in Prismic nicht gesetzt
+			console.log(
+				`[reminderMail] reminder_text leer für ${buchung.ressourceUid} — sende Fallback-Mail`
+			);
+			html = `<p>Hallo ${tokens.Name},</p>
+<p>wir freuen uns auf Ihre Anreise am <strong>${tokens.Anreise}</strong> (Abreise: ${tokens.Abreise}).</p>
+${tokens.Türcode ? `<p><strong>Türcode:</strong> ${tokens.Türcode}</p>` : ''}
+${tokens.WhatsApp ? `<p>Bei Fragen: ${tokens.WhatsApp}</p>` : ''}
+<p>Referenz: ${tokens.Buchungsreferenz}</p>`;
+		}
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({

@@ -1,21 +1,15 @@
-/**
- * GET /api/ressource-verfuegbarkeit?uid=...
- *
- * Returns all booked periods for a resource.
- * zimmer: [] means the whole resource was booked (blocks all rooms).
- * zimmer: ['Room A'] means only that room is blocked.
- */
 import type { RequestHandler } from '@sveltejs/kit';
-import { getBelegtePerioden } from '$lib/server/ressourceBuchungen';
+import { getBelegtePerioden, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, fetch }) => {
 	const uid = url.searchParams.get('uid');
 	if (!uid) {
 		return new Response(JSON.stringify({ error: 'uid fehlt' }), { status: 400 });
 	}
 
 	try {
-		const perioden = await getBelegtePerioden(uid);
+		const allUids = await getRelatedRessourceUids(uid, fetch);
+		const perioden = await getBelegtePerioden(allUids);
 		return new Response(JSON.stringify(perioden), {
 			headers: { 'Content-Type': 'application/json' }
 		});

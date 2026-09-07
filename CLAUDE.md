@@ -66,6 +66,7 @@ Konkrete Regeln:
 - Scroll-Animationen: kein reaktiver State, nur `bind:this` + direktes `element.style` im RAF
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
+- **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)
 
 ## i18n
 
