@@ -50,7 +50,8 @@
 		"vite": "^5.3.1"
 	},
 	"simple-git-hooks": {
-		"pre-commit": "./node_modules/.bin/lint-staged"
+		"pre-commit": "[ -f .git/MERGE_HEAD ] && git checkout HEAD -- slicemachine.config.json; ./node_modules/.bin/lint-staged",
+		"post-merge": "git checkout ORIG_HEAD -- slicemachine.config.json 2>/dev/null || true"
 	},
 	"lint-staged": {
 		"*.{js,ts,svelte,css,json,md}": "prettier --write"

@@ -743,6 +743,7 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	// Aufgaben Slice
 	'Buchungs-ID': { 'de-ch': 'Buchungs-ID', 'en-us': 'Booking ID' },
+	'Buchungs-Referenz': { 'de-ch': 'Buchungs-Referenz', 'en-us': 'Booking reference' },
 	'Mit Buchungs-ID anmelden': {
 		'de-ch': 'Mit Buchungs-ID anmelden',
 		'en-us': 'Log in with booking ID'
@@ -755,10 +756,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Aufgaben: { 'de-ch': 'Aufgaben', 'en-us': 'Tasks' },
 	'Aufgabe annehmen': { 'de-ch': 'Aufgabe annehmen', 'en-us': 'Accept task' },
 	'Aufgabe abgeben': { 'de-ch': 'Aufgabe abgeben', 'en-us': 'Submit task' },
-	'Aufgabe bereits angenommen': {
-		'de-ch': 'Aufgabe bereits angenommen',
-		'en-us': 'Task already accepted'
-	},
 	Angenommen: { 'de-ch': 'Angenommen', 'en-us': 'Accepted' },
 	Erledigt: { 'de-ch': 'Erledigt', 'en-us': 'Done' },
 	'Credits verdient': { 'de-ch': 'Credits verdient', 'en-us': 'Credits earned' },
@@ -787,6 +784,34 @@ export const translations: Record<string, Record<string, string>> = {
 	'Minuten eingeben': { 'de-ch': 'Minuten eingeben', 'en-us': 'Enter minutes' },
 	'Benötigte Werkzeuge': { 'de-ch': 'Benötigte Werkzeuge', 'en-us': 'Required tools' },
 	'Kommentar (optional)': { 'de-ch': 'Kommentar (optional)', 'en-us': 'Comment (optional)' },
+	'Kommentar oder Beschreibung der Aufgabe': {
+		'de-ch': 'Kommentar oder Beschreibung der Aufgabe',
+		'en-us': 'Comment or description of the task'
+	},
+	'Kommentar ist erforderlich': {
+		'de-ch': 'Kommentar ist erforderlich',
+		'en-us': 'Comment is required'
+	},
+	Fotos: { 'de-ch': 'Fotos', 'en-us': 'Photos' },
+	Vorher: { 'de-ch': 'Vorher', 'en-us': 'Before' },
+	Nachher: { 'de-ch': 'Nachher', 'en-us': 'After' },
+	'Wird hochgeladen…': { 'de-ch': 'Wird hochgeladen…', 'en-us': 'Uploading…' },
+	'Foto konnte nicht hochgeladen werden': {
+		'de-ch': 'Foto konnte nicht hochgeladen werden',
+		'en-us': 'Photo could not be uploaded'
+	},
+	'Aufgaben können erst ab dem Anreisetag angenommen werden': {
+		'de-ch': 'Aufgaben können erst ab dem Anreisetag angenommen werden',
+		'en-us': 'Tasks can only be accepted from the arrival day'
+	},
+	'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich': {
+		'de-ch': 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich',
+		'en-us': 'The stay has ended — no more tasks possible'
+	},
+	'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)': {
+		'de-ch': 'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)',
+		'en-us': 'Submission only possible during the stay (arrival to departure)'
+	},
 	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
 	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
 	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },

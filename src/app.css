@@ -27,6 +27,25 @@ html {
 @tailwind components;
 @tailwind utilities;
 
+/* Placeholder: Tailwind-Preflight setzt fixes #9ca3af — auf farbigen Themes unlesbar.
+   Global an die jeweilige Textfarbe koppeln (funktioniert themed + unthemed). */
+input::placeholder,
+textarea::placeholder {
+	color: color-mix(in srgb, currentColor 55%, transparent);
+	opacity: 1;
+}
+
+/* Number-Input: native Spinner-Pfeile sind nicht thembar (immer hell) — ausblenden */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
 [data-collapsible].bg-white + [data-collapsible].bg-white,
 [data-collapsible].bg-slate-100 + [data-collapsible].bg-slate-100 {
 	@apply pt-0 md:pt-0;

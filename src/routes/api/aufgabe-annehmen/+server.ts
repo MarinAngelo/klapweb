@@ -5,35 +5,57 @@
  *         creditTyp, creditBetrag?, ressourceUid, preisProNacht? }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { createAnnahme, listAnnahmenFuerBuchung } from '$lib/server/aufgaben';
-import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
+import { createAnnahme } from '$lib/server/aufgaben';
+import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: any;
-	try { body = await request.json(); } catch {
+	try {
+		body = await request.json();
+	} catch {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { buchungId, email, name, aufgabeUid, aufgabeTitel, creditTyp, creditBetrag } = body;
+	const { buchungId, aufgabeUid, aufgabeTitel, creditTyp, creditBetrag } = body;
 
-	if (!buchungId || !email || !name || !aufgabeUid || !creditTyp) {
+	if (!buchungId || !aufgabeUid || !creditTyp) {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 
-	// Buchung verifizieren + Ressource für Preisabfrage holen
+	// Buchung per Referenz-Code oder vollständiger ID suchen
 	let ressourceUid = '';
+	let guestEmail = '';
+	let guestName = '';
 	let preisProNacht: number | undefined;
 	try {
-		const buchung = await getRessourceBuchung(buchungId);
-		if (!buchung) return new Response(JSON.stringify({ error: 'Buchung nicht gefunden' }), { status: 404 });
-		if (buchung.email?.toLowerCase() !== email.toLowerCase().trim()) {
-			return new Response(JSON.stringify({ error: 'E-Mail stimmt nicht überein' }), { status: 403 });
+		const buchung = await getBuchungByReferenz(buchungId);
+		if (!buchung)
+			return new Response(JSON.stringify({ error: 'Buchung nicht gefunden' }), { status: 404 });
+
+		// Aufgaben nur während des Aufenthalts (Anreisetag bis Abreisetag, exkl.)
+		const heute = new Date().toISOString().slice(0, 10);
+		if (heute < buchung.von) {
+			return new Response(
+				JSON.stringify({ error: 'Aufgaben können erst ab dem Anreisetag angenommen werden' }),
+				{ status: 409 }
+			);
 		}
+		if (heute >= buchung.bis) {
+			return new Response(
+				JSON.stringify({ error: 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich' }),
+				{ status: 409 }
+			);
+		}
+
 		ressourceUid = buchung.ressourceUid ?? '';
+		guestEmail = buchung.email ?? '';
+		guestName = buchung.name ?? buchung.email ?? buchungId;
 	} catch {
-		return new Response(JSON.stringify({ error: 'Buchung konnte nicht geladen werden' }), { status: 500 });
+		return new Response(JSON.stringify({ error: 'Buchung konnte nicht geladen werden' }), {
+			status: 500
+		});
 	}
 
 	// Preis aus Prismic laden (nur für zeitbasierte Credits)
@@ -42,16 +64,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const client = createClient({ fetch });
 			const doc = await client.getByUID('ressource', ressourceUid, { lang: 'de-ch' });
 			preisProNacht = (doc.data as any).preis_pro_nacht ?? undefined;
-		} catch { /* non-critical */ }
-	}
-
-	// Doppelte Annahme verhindern
-	try {
-		const existing = await listAnnahmenFuerBuchung(buchungId);
-		if (existing.some((a) => a.aufgabeUid === aufgabeUid)) {
-			return new Response(JSON.stringify({ error: 'Aufgabe bereits angenommen' }), { status: 409 });
+		} catch {
+			/* non-critical */
 		}
-	} catch { /* non-critical */ }
+	}
 
 	try {
 		const annahme = await createAnnahme({
@@ -59,8 +75,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			aufgabeTitel,
 			buchungId,
 			ressourceUid: ressourceUid ?? '',
-			name,
-			email: email.toLowerCase().trim(),
+			name: guestName,
+			email: guestEmail,
 			status: 'angenommen',
 			creditTyp,
 			creditBetrag: creditTyp === 'fest' ? (creditBetrag ?? 0) : undefined,
@@ -81,7 +97,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				adminEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
 				emailFrom = (s.booking_from_email as string) || emailFrom;
 			}
-		} catch { /* non-critical */ }
+		} catch {
+			/* non-critical */
+		}
 
 		if (resendKey && emailFrom && adminEmail && adminSecret) {
 			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&secret=${encodeURIComponent(adminSecret)}`;
@@ -96,8 +114,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
 						``,
 						`Aufgabe: ${aufgabeTitel}`,
-						`Name:    ${name}`,
-						`E-Mail:  ${email.toLowerCase().trim()}`,
+						`Name:    ${guestName}`,
+						`E-Mail:  ${guestEmail}`,
 						`Buchung: ${buchungId}`,
 						``,
 						`─────────────────────────────────────`,
@@ -114,6 +132,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ ok: true, annahmeId: annahme.id }), { status: 200 });
 	} catch (e: any) {
 		console.error('POST /api/aufgabe-annehmen Fehler:', e);
-		return new Response(JSON.stringify({ error: 'Annahme konnte nicht gespeichert werden' }), { status: 500 });
+		return new Response(JSON.stringify({ error: 'Annahme konnte nicht gespeichert werden' }), {
+			status: 500
+		});
 	}
 };

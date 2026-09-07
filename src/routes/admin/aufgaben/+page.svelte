@@ -10,14 +10,14 @@
 	const statusLabels: Record<string, string> = {
 		angenommen: 'Angenommen',
 		annahme_bestaetigt: 'Bestätigt',
-		eingereicht: 'In Bearbeitung',
+		abgegeben: 'Abgegeben',
 		erledigt: 'Erledigt'
 	};
 
 	const statusColors: Record<string, string> = {
 		angenommen: '#fef3c7',
 		annahme_bestaetigt: '#dbeafe',
-		eingereicht: '#ede9fe',
+		abgegeben: '#ede9fe',
 		erledigt: '#dcfce7'
 	};
 
@@ -155,7 +155,7 @@
 												</button>
 											</form>
 										{/if}
-										{#if a.status === 'eingereicht'}
+										{#if a.status === 'abgegeben'}
 											<form
 												method="POST"
 												action="?/freigeben&secret={secret}"
@@ -188,7 +188,7 @@
 												</button>
 											</form>
 										{/if}
-										{#if !['eingereicht', 'erledigt'].includes(a.status)}
+										{#if !['abgegeben', 'erledigt'].includes(a.status)}
 											<form
 												method="POST"
 												action="?/erledigt&secret={secret}"
