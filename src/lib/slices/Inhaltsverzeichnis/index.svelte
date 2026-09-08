@@ -3,7 +3,6 @@
 	import { theme } from '$lib/stores/theme';
 	import { planFilter } from '$lib/stores/planFilter';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import Collapsible from '$lib/components/Collapsible.svelte';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: any;
@@ -16,47 +15,26 @@
 	$: tocTitle = slice.primary.title || 'Inhalt';
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
-
-	// Mobile Bottom-Sheet Farben (Header-Palette)
 	$: mobileBg = $theme.headerBgColor || bgColor || $theme.pageBgColor;
 	$: mobileActiveColor = $theme.headerColor || textColor;
-	// Nicht-aktive Einträge: ausreichend Kontrast gegen mobileBg, aber sichtbar gedämpft
-	$: mobileDimColor = mobileBg
-		? shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110)
-		: mobileActiveColor;
+	$: mobileDimColor = shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110);
 
-	interface TocGroup {
-		h2: TocEntry;
-		h3s: TocEntry[];
-	}
-
-	// Flache Liste → Gruppen: jede H2 mit ihren nachfolgenden H3s
-	$: tocGroups = tocEntries.reduce<TocGroup[]>((groups, entry) => {
-		if (entry.level === 2) {
-			groups.push({ h2: entry, h3s: [] });
-		} else if (groups.length > 0) {
-			groups[groups.length - 1].h3s.push(entry);
-		}
-		return groups;
-	}, []);
-
-	interface TocEntry {
-		id: string;
-		text: string;
-		level: 2 | 3;
-	}
-
+	type TocEntry = { id: string; text: string; level: 2 | 3 };
 	let tocEntries: TocEntry[] = [];
 	let activeId = '';
-	let clickedTargetId = '';
-	let hashLocked = false;
 	let dismissed = false;
 	let dismissedAtY = 0;
 	let mobileOpen = false;
-	let openDropdowns: Set<string> = new Set();
+	let openDropdowns = new Set<string>();
 
-	const toSlug = (s: string) =>
-		s
+	$: tocGroups = tocEntries.reduce<{ h2: TocEntry; h3s: TocEntry[] }[]>((groups, entry) => {
+		if (entry.level === 2) groups.push({ h2: entry, h3s: [] });
+		else if (groups.length) groups[groups.length - 1].h3s.push(entry);
+		return groups;
+	}, []);
+
+	const toSlug = (value: string) =>
+		value
 			.toLowerCase()
 			.replace(/ä/g, 'ae')
 			.replace(/ö/g, 'oe')
@@ -69,98 +47,45 @@
 		if (typeof document === 'undefined') return;
 		const selector = tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3';
 		const headings = Array.from(document.querySelectorAll<HTMLElement>(selector));
-		headings.forEach((el) => {
-			if (!el.id) {
-				const id = toSlug(el.textContent ?? '');
-				if (id) el.id = id;
-			}
+		headings.forEach((heading) => {
+			if (!heading.id) heading.id = toSlug(heading.textContent ?? '');
 		});
 		tocEntries = headings
-			.filter((el) => el.id)
-			.map((el) => ({
-				id: el.id,
-				text: el.textContent ?? '',
-				level: el.tagName === 'H2' ? 2 : 3
+			.filter((heading) => heading.id)
+			.map((heading) => ({
+				id: heading.id,
+				text: heading.textContent ?? '',
+				level: heading.tagName === 'H2' ? 2 : 3
 			}));
 	}
 
-	// Re-scan after filter changes (tick ensures {#if} has updated the DOM first)
 	$: if (typeof $planFilter !== 'undefined') tick().then(scanHeadings);
 
-	onMount(() => {
-		const selector = tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3';
-		const headings = Array.from(document.querySelectorAll<HTMLElement>(selector));
-
-		// IDs setzen (falls noch keine vorhanden)
-		headings.forEach((el) => {
-			if (!el.id) {
-				const id = toSlug(el.textContent ?? '');
-				if (id) el.id = id;
-			}
-		});
-
-		// TOC-Einträge aufbauen
-		tocEntries = headings
-			.filter((el) => el.id)
-			.map((el) => ({
-				id: el.id,
-				text: el.textContent ?? '',
-				level: el.tagName === 'H2' ? 2 : 3
-			}));
-
+	function setActiveFromHash() {
 		const hashId = decodeURIComponent(window.location.hash.slice(1));
-		if (hashId && tocEntries.some((entry) => entry.id === hashId)) {
-			activeId = hashId;
-			hashLocked = true;
-		}
+		activeId = tocEntries.some((entry) => entry.id === hashId) ? hashId : '';
+	}
 
-		// Aktiven Abschnitt per IntersectionObserver verfolgen
-		const headingObserver = new IntersectionObserver(
-			(entries) => {
-				if (hashLocked) return;
-				if (clickedTargetId) {
-					const clickedEntry = entries.find(
-						(entry) => entry.isIntersecting && entry.target.id === clickedTargetId
-					);
-					if (!clickedEntry) return;
-					activeId = clickedTargetId;
-					clickedTargetId = '';
-					return;
-				}
-				const visible = entries.find((e) => e.isIntersecting);
-				if (!visible?.target.id) return;
-				activeId = visible.target.id;
-			},
-			{ rootMargin: '-10% 0px -60% 0px' }
-		);
-		headings.filter((el) => el.id).forEach((el) => headingObserver.observe(el));
+	function activate(id: string) {
+		activeId = id;
+	}
 
-		// In Links-Modus: main nach rechts verschieben damit Sidebar nicht überlappt
-		if (linksMode) {
-			document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
-		}
-
-		const releaseHashLock = () => {
-			hashLocked = false;
-		};
-		window.addEventListener('wheel', releaseHashLock, { passive: true });
-		window.addEventListener('touchstart', releaseHashLock, { passive: true });
-		window.addEventListener('keydown', releaseHashLock);
-
-		// Beim Scrollen dismissed zurücksetzen (Sidebar wieder einblenden)
+	onMount(() => {
+		scanHeadings();
+		const headings = Array.from(
+			document.querySelectorAll<HTMLElement>(tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3')
+		).filter((heading) => heading.id);
+		setActiveFromHash();
+		const onHashChange = () => setActiveFromHash();
 		const onScroll = () => {
-			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) {
-				dismissed = false;
-			}
+			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
 		};
+		window.addEventListener('hashchange', onHashChange);
 		window.addEventListener('scroll', onScroll, { passive: true });
-
+		if (linksMode) document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
 		return () => {
-			headingObserver.disconnect();
+			window.removeEventListener('hashchange', onHashChange);
 			window.removeEventListener('scroll', onScroll);
-			window.removeEventListener('wheel', releaseHashLock);
-			window.removeEventListener('touchstart', releaseHashLock);
-			window.removeEventListener('keydown', releaseHashLock);
 			document.documentElement.style.removeProperty('--toc-sidebar-offset');
 		};
 	});
@@ -177,202 +102,103 @@
 >
 	{#if tocEntries.length > 0}
 		{#if linksMode}
-			<!-- Links-Modus: Fixed Sidebar (Desktop) -->
 			<nav
 				class="toc-sidebar hidden md:block"
 				style="--toc-color: {textColor}; --toc-bg: {bgColor || $theme.pageBgColor};"
-				aria-label={tocTitle}
 				class:visible={!dismissed}
+				aria-label={tocTitle}
 			>
 				<div class="flex items-center justify-between mb-4">
-					<p class="text-xs font-semibold uppercase tracking-widest" style="opacity: 0.5;">
-						{tocTitle}
-					</p>
+					<h5>{tocTitle}</h5>
 					<button
 						on:click={() => {
 							dismissed = true;
 							dismissedAtY = window.scrollY;
 						}}
 						aria-label="Inhaltsverzeichnis schliessen"
-						class="toc-close-btn"
-						style="opacity: 0.4;">×</button
+						class="toc-close-btn">×</button
 					>
 				</div>
 				<ul class="space-y-2 text-sm">
-					{#each tocEntries as entry}
-						<li style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};">
+					{#each tocEntries as entry}<li
+							style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};"
+						>
 							<a
 								href="#{entry.id}"
-								class="toc-link block transition-all"
-								on:click={() => {
-									clickedTargetId = entry.id;
-									activeId = entry.id;
-								}}
-								style="opacity: {entry.id === activeId
-									? '1'
-									: entry.level === 3
-										? '0.5'
-										: '0.7'}; font-weight: {entry.id === activeId ? '600' : '400'};"
+								class="toc-link block"
+								on:click={() => activate(entry.id)}
+								class:toc-active={entry.id === activeId}>{entry.text}</a
 							>
-								{entry.text}
-							</a>
-						</li>
-					{/each}
+						</li>{/each}
 				</ul>
 			</nav>
 		{:else}
-			<!-- Oben-Modus: Gruppierte Spalten mit H3-Dropdowns -->
 			<div class="hidden md:block">
-				{#if tocTitle}
-					<h3>{tocTitle}</h3>
-				{/if}
-				<ul class="flex flex-wrap gap-x-8 gap-y-4 text-sm items-start">
-					{#each tocGroups as group}
-						<li class="flex flex-col gap-1">
-							{#if group.h3s.length > 0}
-								<Collapsible
-									isOpen={openDropdowns.has(group.h2.id)}
-									onToggle={() => {
-										if (openDropdowns.has(group.h2.id)) {
-											openDropdowns.delete(group.h2.id);
-										} else {
-											openDropdowns.add(group.h2.id);
-										}
-										openDropdowns = openDropdowns;
-									}}
+				<h5>{tocTitle}</h5>
+				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
+					{#each tocGroups as group}<li class="flex flex-col gap-1">
+							<a
+								href="#{group.h2.id}"
+								class="toc-link"
+								on:click={() => activate(group.h2.id)}
+								class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+							>{#if group.h3s.length}<ul
+									class="flex flex-col gap-0.5 pl-3 border-l"
+									style="border-color: currentColor; opacity: 0.4;"
 								>
-									<a
-										slot="trigger"
-										href="#{group.h2.id}"
-										class="toc-link transition-all"
-										on:click={() => {
-											clickedTargetId = group.h2.id;
-											activeId = group.h2.id;
-										}}
-										style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
-											.id === activeId
-											? '700'
-											: '500'};"
-									>
-										{group.h2.text}
-									</a>
-									<ul
-										class="flex flex-col gap-0.5 pl-3 border-l mt-1"
-										style="border-color: currentColor; opacity: 0.6;"
-									>
-										{#each group.h3s as sub}
-											<li style="opacity: {sub.id === activeId ? '1' : '0.85'};">
-												<a
-													href="#{sub.id}"
-													class="toc-link transition-all block"
-													on:click={() => {
-														clickedTargetId = sub.id;
-														activeId = sub.id;
-													}}
-													style="font-weight: {sub.id === activeId ? '600' : '400'};"
-												>
-													{sub.text}
-												</a>
-											</li>
-										{/each}
-									</ul>
-								</Collapsible>
-							{:else}
-								<a
-									href="#{group.h2.id}"
-									class="toc-link transition-all"
-									on:click={() => {
-										clickedTargetId = group.h2.id;
-										activeId = group.h2.id;
-									}}
-									style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
-										.id === activeId
-										? '700'
-										: '500'};"
-								>
-									{group.h2.text}
-								</a>
-							{/if}
-						</li>
-					{/each}
+									{#each group.h3s as sub}<li>
+											<a
+												href="#{sub.id}"
+												class="toc-link block"
+												on:click={() => activate(sub.id)}
+												class:toc-active={sub.id === activeId}>{sub.text}</a
+											>
+										</li>{/each}
+								</ul>{/if}
+						</li>{/each}
 				</ul>
 			</div>
 		{/if}
 
-		<!-- Mobile: Sticky Bottom-Sheet -->
 		<div
 			class="md:hidden toc-mobile-sheet"
 			class:open={mobileOpen}
 			style="--toc-color: {mobileActiveColor}; --toc-bg: {mobileBg}; --toc-dim: {mobileDimColor}; color: {mobileActiveColor}; background-color: {mobileBg};"
 		>
-			<!-- Leiste (immer sichtbar wenn der Slice aus dem Viewport gescrollt ist) -->
 			<button
 				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
 				on:click={() => (mobileOpen = !mobileOpen)}
 				aria-expanded={mobileOpen}
+				><span
+					>{tocTitle}{#if activeId}
+						· {tocEntries.find((entry) => entry.id === activeId)?.text}{/if}</span
+				><span>{mobileOpen ? '↓' : '↑'}</span></button
 			>
-				<span class="flex items-center gap-2 min-w-0">
-					<span
-						style="color: {mobileDimColor}; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
-						>{tocTitle}</span
-					>
-					{#if activeId}
-						<span class="truncate font-medium">
-							{tocEntries.find((e) => e.id === activeId)?.text ?? ''}
-						</span>
-					{/if}
-				</span>
-				<span class="flex-shrink-0 ml-3" style="color: {mobileDimColor};"
-					>{mobileOpen ? '↓' : '↑'}</span
-				>
-			</button>
-			<!-- Ausgeklappte Liste -->
-			{#if mobileOpen}
-				<div class="toc-mobile-list px-4 pb-4 pt-1">
+			{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
 					<ul class="space-y-3 text-sm">
-						{#each tocGroups as group}
-							<li>
+						{#each tocGroups as group}<li>
 								<a
 									href="#{group.h2.id}"
 									on:click={() => {
 										mobileOpen = false;
-										clickedTargetId = group.h2.id;
-										activeId = group.h2.id;
+										activate(group.h2.id);
 									}}
-									class="block font-medium"
-									style="color: {group.h2.id === activeId
-										? mobileActiveColor
-										: mobileDimColor}; font-weight: {group.h2.id === activeId ? '600' : '500'};"
-									>{group.h2.text}</a
-								>
-								{#if group.h3s.length > 0}
-									<ul
-										class="mt-1.5 space-y-1.5 pl-3 border-l"
-										style="border-color: {mobileDimColor};"
-									>
-										{#each group.h3s as sub}
-											<li>
+									class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+								>{#if group.h3s.length}<ul class="mt-1.5 space-y-1.5 pl-3 border-l">
+										{#each group.h3s as sub}<li>
 												<a
 													href="#{sub.id}"
 													on:click={() => {
 														mobileOpen = false;
-														clickedTargetId = sub.id;
-														activeId = sub.id;
+														activate(sub.id);
 													}}
-													style="color: {sub.id === activeId
-														? mobileActiveColor
-														: mobileDimColor}; font-weight: {sub.id === activeId ? '600' : '400'};"
-													>{sub.text}</a
+													class:toc-active={sub.id === activeId}>{sub.text}</a
 												>
-											</li>
-										{/each}
-									</ul>
-								{/if}
-							</li>
-						{/each}
+											</li>{/each}
+									</ul>{/if}
+							</li>{/each}
 					</ul>
-				</div>
-			{/if}
+				</div>{/if}
 		</div>
 	{/if}
 </Bounded>
@@ -380,19 +206,20 @@
 <style>
 	.toc-link {
 		text-decoration: none !important;
+		font-weight: 500;
 	}
-
-	.toc-link:active,
-	.toc-link:hover {
-		text-decoration: none !important;
-	}
-
-	.toc-link[style*='font-weight: 700'] {
+	.toc-link.toc-active {
+		font-weight: 700;
 		text-decoration: underline !important;
 		text-underline-offset: 0.15em;
 	}
-
-	/* Mobile: Sticky Bottom-Sheet */
+	.toc-items > li:not(:last-child) > .toc-link::after {
+		content: '|';
+		display: inline-block;
+		padding-inline: 0.75rem;
+		opacity: 0.5;
+		text-decoration: none !important;
+	}
 	.toc-mobile-sheet {
 		position: fixed;
 		bottom: 0;
@@ -402,7 +229,6 @@
 		color: var(--toc-color);
 		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
 		z-index: 40;
-		font-family: var(--page-font);
 	}
 	.toc-mobile-bar {
 		background: none;
@@ -415,8 +241,6 @@
 		max-height: 50vh;
 		overflow-y: auto;
 	}
-
-	/* Links-Modus: Fixed Sidebar */
 	.toc-sidebar {
 		position: fixed;
 		left: 0;
@@ -442,7 +266,6 @@
 		pointer-events: auto;
 		transform: translateX(0);
 	}
-
 	.toc-close-btn {
 		background: none;
 		border: none;
@@ -451,13 +274,7 @@
 		line-height: 1;
 		color: inherit;
 		padding: 0 0.15rem;
-		flex-shrink: 0;
 	}
-	.toc-close-btn:hover {
-		opacity: 1 !important;
-	}
-
-	/* Links-Modus: Bounded-Block selbst ist unsichtbar wenn Sidebar aktiv */
 	:global(.toc-links-mode) {
 		min-height: 0;
 		padding-top: 0 !important;
