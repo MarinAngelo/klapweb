@@ -61,7 +61,11 @@
 						<ul>
 							{#each entries as entry}
 								<li class:active={entry.id === activeId}>
-									<a href="#{entry.id}">{entry.text}</a>
+									<a
+										href="#{entry.id}"
+										aria-current={entry.id === activeId ? 'location' : undefined}
+										on:click={() => (activeId = entry.id)}>{entry.text}</a
+									>
 								</li>
 							{/each}
 						</ul>
@@ -3924,7 +3928,7 @@
 		padding: 0.25rem 0.5rem;
 		border-radius: 0.25rem;
 		color: var(--doku-nav-link);
-		text-decoration: none;
+		text-decoration: none !important;
 		font-size: 0.82rem;
 		transition:
 			color 0.15s,
@@ -3938,6 +3942,8 @@
 		color: var(--doku-nav-active);
 		font-weight: 600;
 		background: var(--doku-surface);
+		text-decoration: underline !important;
+		text-underline-offset: 0.15em;
 	}
 
 	/* ── Section divider ── */

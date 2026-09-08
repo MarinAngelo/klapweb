@@ -48,6 +48,8 @@
 
 	let tocEntries: TocEntry[] = [];
 	let activeId = '';
+	let clickedTargetId = '';
+	let hashLocked = false;
 	let dismissed = false;
 	let dismissedAtY = 0;
 	let mobileOpen = false;
@@ -106,11 +108,28 @@
 				level: el.tagName === 'H2' ? 2 : 3
 			}));
 
+		const hashId = decodeURIComponent(window.location.hash.slice(1));
+		if (hashId && tocEntries.some((entry) => entry.id === hashId)) {
+			activeId = hashId;
+			hashLocked = true;
+		}
+
 		// Aktiven Abschnitt per IntersectionObserver verfolgen
 		const headingObserver = new IntersectionObserver(
 			(entries) => {
+				if (hashLocked) return;
+				if (clickedTargetId) {
+					const clickedEntry = entries.find(
+						(entry) => entry.isIntersecting && entry.target.id === clickedTargetId
+					);
+					if (!clickedEntry) return;
+					activeId = clickedTargetId;
+					clickedTargetId = '';
+					return;
+				}
 				const visible = entries.find((e) => e.isIntersecting);
-				if (visible?.target.id) activeId = visible.target.id;
+				if (!visible?.target.id) return;
+				activeId = visible.target.id;
 			},
 			{ rootMargin: '-10% 0px -60% 0px' }
 		);
@@ -120,6 +139,13 @@
 		if (linksMode) {
 			document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
 		}
+
+		const releaseHashLock = () => {
+			hashLocked = false;
+		};
+		window.addEventListener('wheel', releaseHashLock, { passive: true });
+		window.addEventListener('touchstart', releaseHashLock, { passive: true });
+		window.addEventListener('keydown', releaseHashLock);
 
 		// Beim Scrollen dismissed zurücksetzen (Sidebar wieder einblenden)
 		const onScroll = () => {
@@ -132,11 +158,13 @@
 		return () => {
 			headingObserver.disconnect();
 			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('wheel', releaseHashLock);
+			window.removeEventListener('touchstart', releaseHashLock);
+			window.removeEventListener('keydown', releaseHashLock);
 			document.documentElement.style.removeProperty('--toc-sidebar-offset');
 		};
 	});
 </script>
-
 
 <Bounded
 	as="nav"
@@ -176,6 +204,10 @@
 							<a
 								href="#{entry.id}"
 								class="toc-link block transition-all"
+								on:click={() => {
+									clickedTargetId = entry.id;
+									activeId = entry.id;
+								}}
 								style="opacity: {entry.id === activeId
 									? '1'
 									: entry.level === 3
@@ -213,7 +245,14 @@
 										slot="trigger"
 										href="#{group.h2.id}"
 										class="toc-link transition-all"
-										style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2.id === activeId ? '700' : '500'}; border-bottom: {group.h2.id === activeId ? '2px solid currentColor' : '2px solid transparent'};"
+										on:click={() => {
+											clickedTargetId = group.h2.id;
+											activeId = group.h2.id;
+										}}
+										style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
+											.id === activeId
+											? '700'
+											: '500'};"
 									>
 										{group.h2.text}
 									</a>
@@ -226,6 +265,10 @@
 												<a
 													href="#{sub.id}"
 													class="toc-link transition-all block"
+													on:click={() => {
+														clickedTargetId = sub.id;
+														activeId = sub.id;
+													}}
 													style="font-weight: {sub.id === activeId ? '600' : '400'};"
 												>
 													{sub.text}
@@ -238,7 +281,14 @@
 								<a
 									href="#{group.h2.id}"
 									class="toc-link transition-all"
-									style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2.id === activeId ? '700' : '500'}; border-bottom: {group.h2.id === activeId ? '2px solid currentColor' : '2px solid transparent'};"
+									on:click={() => {
+										clickedTargetId = group.h2.id;
+										activeId = group.h2.id;
+									}}
+									style="opacity: {group.h2.id === activeId ? '1' : '0.8'}; font-weight: {group.h2
+										.id === activeId
+										? '700'
+										: '500'};"
 								>
 									{group.h2.text}
 								</a>
@@ -284,7 +334,11 @@
 							<li>
 								<a
 									href="#{group.h2.id}"
-									on:click={() => (mobileOpen = false)}
+									on:click={() => {
+										mobileOpen = false;
+										clickedTargetId = group.h2.id;
+										activeId = group.h2.id;
+									}}
 									class="block font-medium"
 									style="color: {group.h2.id === activeId
 										? mobileActiveColor
@@ -300,7 +354,11 @@
 											<li>
 												<a
 													href="#{sub.id}"
-													on:click={() => (mobileOpen = false)}
+													on:click={() => {
+														mobileOpen = false;
+														clickedTargetId = sub.id;
+														activeId = sub.id;
+													}}
 													style="color: {sub.id === activeId
 														? mobileActiveColor
 														: mobileDimColor}; font-weight: {sub.id === activeId ? '600' : '400'};"
@@ -320,6 +378,20 @@
 </Bounded>
 
 <style>
+	.toc-link {
+		text-decoration: none !important;
+	}
+
+	.toc-link:active,
+	.toc-link:hover {
+		text-decoration: none !important;
+	}
+
+	.toc-link[style*='font-weight: 700'] {
+		text-decoration: underline !important;
+		text-underline-offset: 0.15em;
+	}
+
 	/* Mobile: Sticky Bottom-Sheet */
 	.toc-mobile-sheet {
 		position: fixed;
