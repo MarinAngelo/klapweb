@@ -19,6 +19,7 @@
 	$: tocTitle = slice.primary.title || 'Inhalt';
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
+	$: desktopSticky = linksMode && slice.primary.sticky === true;
 	$: mobileBg = bgColor;
 	$: mobileActiveColor = textColor;
 	$: mobileDimColor = shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110);
@@ -101,7 +102,9 @@
 			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
 			mobilePinned = window.scrollY >= mobileNaturalTop;
 			headerScrolledAway =
-				!document.querySelector('main.header-is-sticky') && window.scrollY >= $headerHeight;
+				linksMode &&
+				!document.querySelector('main.header-is-sticky') &&
+				window.scrollY >= $headerHeight;
 			updateSidebarHeight();
 		};
 		const updateSidebarHeight = () => {

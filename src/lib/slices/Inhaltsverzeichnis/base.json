@@ -36,6 +36,15 @@
 						"default_value": "Oben"
 					}
 				},
+				"sticky": {
+					"type": "Boolean",
+					"config": {
+						"label": "Fixiert (sticky)",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
