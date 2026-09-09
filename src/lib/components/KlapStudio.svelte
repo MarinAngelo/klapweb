@@ -116,6 +116,21 @@
 
 	let sliceList: SliceEntry[] = [];
 	let activeSlice: SliceEntry | null = null;
+	let headerElement: HTMLElement | null = null;
+	let activeHeader = false;
+	let headerCurveEnabled = false;
+	let headerCurveColor = '#000000';
+	let headerCurveHeight = 32;
+	let headerCurveAmplitude = 16;
+	let headerCurveWaves = 1;
+	let headerCurveStart = '0';
+	let headerCurveOriginal: {
+		svgStyle: string;
+		pathD: string;
+		pathFill: string;
+		viewBox: string;
+		dataset: Record<string, string | undefined>;
+	} | null = null;
 	let sliceBgColor = '#000000';
 	let sliceTextColor = '#000000';
 	let btnColor = '#000000';
@@ -244,6 +259,7 @@
 	}
 
 	function buildSliceList() {
+		headerElement = document.querySelector<HTMLElement>('[data-design-element="header"]');
 		const els = Array.from(document.querySelectorAll<HTMLElement>('[data-slice-type]'));
 		const counts: Record<string, number> = {};
 		sliceList = els.map((el) => {
@@ -268,6 +284,9 @@
 		if (activeSlice && !sliceList.find((s) => s.el === activeSlice!.el)) {
 			activeSlice = null;
 		}
+		if (!headerElement) {
+			activeHeader = false;
+		}
 	}
 
 	function rgbToHex(rgb: string): string | null {
@@ -278,6 +297,8 @@
 	}
 
 	function selectSlice(entry: SliceEntry) {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = entry;
 		sketchActive = false;
@@ -328,6 +349,119 @@
 			btnHoverColor = rawHoverColor || btnColor;
 			btnHoverBgColor = rawHoverBg || btnBgColor;
 		}
+	}
+
+	function curvePath(height: number, amplitude: number, waves: number, start: string): string {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const curve = (amplitude / 2) * (1 - Math.cos((index / points) * waves * Math.PI * 2));
+			const y = start === 'Maximale Höhe' ? height - curve : curve;
+			return `${x},${y}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	}
+
+	function updateHeaderCurve() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path) return;
+		headerCurveAmplitude = Math.min(headerCurveHeight, Math.max(0, headerCurveAmplitude));
+		headerCurveWaves = Math.min(8, Math.max(1, headerCurveWaves));
+		path.setAttribute(
+			'd',
+			curvePath(headerCurveHeight, headerCurveAmplitude, headerCurveWaves, headerCurveStart)
+		);
+		path.setAttribute('fill', headerCurveColor);
+		svg.setAttribute('viewBox', `0 0 100 ${headerCurveHeight}`);
+		svg.dataset.curveEnabled = String(headerCurveEnabled);
+		svg.dataset.curveColor = headerCurveColor;
+		svg.dataset.curveHeight = String(headerCurveHeight);
+		svg.dataset.curveAmplitude = String(headerCurveAmplitude);
+		svg.dataset.curveWaves = String(headerCurveWaves);
+		svg.dataset.curveStart = headerCurveStart;
+		svg.style.height = `${headerCurveHeight}px`;
+		svg.style.bottom = `-${headerCurveHeight}px`;
+		svg.style.display = headerCurveEnabled ? 'block' : 'none';
+	}
+
+	function selectHeader() {
+		if (!headerElement) return;
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+		activeHeader = true;
+		const svg = headerElement.querySelector<SVGSVGElement>('.header-bottom-curve');
+		if (!svg) return;
+		headerCurveOriginal = {
+			svgStyle: svg.style.cssText,
+			pathD: svg.querySelector('path')?.getAttribute('d') ?? '',
+			pathFill: svg.querySelector('path')?.getAttribute('fill') ?? '',
+			viewBox: svg.getAttribute('viewBox') ?? '',
+			dataset: {
+				curveEnabled: svg.dataset.curveEnabled,
+				curveColor: svg.dataset.curveColor,
+				curveHeight: svg.dataset.curveHeight,
+				curveAmplitude: svg.dataset.curveAmplitude,
+				curveWaves: svg.dataset.curveWaves,
+				curveStart: svg.dataset.curveStart
+			}
+		};
+		headerCurveEnabled = svg.dataset.curveEnabled === 'true';
+		headerCurveColor = svg.dataset.curveColor || getCssVar('--header-bg-color');
+		headerCurveHeight = Number(svg.dataset.curveHeight) || 32;
+		headerCurveAmplitude = Number(svg.dataset.curveAmplitude) || 16;
+		headerCurveWaves = Number(svg.dataset.curveWaves) || 1;
+		headerCurveStart = svg.dataset.curveStart || '0';
+	}
+
+	function restoreHeader() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path || !headerCurveOriginal) return;
+		svg.style.cssText = headerCurveOriginal.svgStyle;
+		path.setAttribute('d', headerCurveOriginal.pathD);
+		path.setAttribute('fill', headerCurveOriginal.pathFill);
+		svg.setAttribute('viewBox', headerCurveOriginal.viewBox);
+		for (const [key, value] of Object.entries(headerCurveOriginal.dataset)) {
+			if (value === undefined) delete svg.dataset[key as keyof DOMStringMap];
+			else svg.dataset[key as keyof DOMStringMap] = value;
+		}
+		headerCurveOriginal = null;
+	}
+
+	function deselectHeader() {
+		restoreHeader();
+		activeHeader = false;
+	}
+
+	function setHeaderCurveEnabled(event: Event) {
+		headerCurveEnabled = (event.target as HTMLInputElement).checked;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveColor(event: Event) {
+		headerCurveColor = (event.target as HTMLInputElement).value;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveHeight(event: Event) {
+		headerCurveHeight = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveAmplitude(event: Event) {
+		headerCurveAmplitude = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveWaves(event: Event) {
+		headerCurveWaves = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveStart(event: Event) {
+		headerCurveStart = (event.target as HTMLSelectElement).value;
+		updateHeaderCurve();
 	}
 
 	function deselectSlice() {
@@ -413,6 +547,8 @@
 	}
 
 	function clearSliceStyles() {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = null;
 	}
@@ -532,6 +668,75 @@
 
 		<!-- Divider -->
 		<div class="divider"></div>
+
+		<div class="section-label">Kopfzeile</div>
+		<div class="slice-list">
+			{#if headerElement}
+				<button
+					class="slice-btn"
+					class:active={activeHeader}
+					on:click={() => (activeHeader ? deselectHeader() : selectHeader())}
+				>
+					Kopfzeile
+				</button>
+			{:else}
+				<span class="hint-sketch">Keine Kopfzeile gefunden</span>
+			{/if}
+		</div>
+
+		{#if activeHeader}
+			<label class="row">
+				<span>Untere Kante kurvig</span>
+				<input type="checkbox" checked={headerCurveEnabled} on:change={setHeaderCurveEnabled} />
+			</label>
+			<label class="row">
+				<span>Kurvenfarbe</span>
+				<div class="color-wrap">
+					<input type="color" value={headerCurveColor} on:input={setHeaderCurveColor} />
+					<code>{headerCurveColor}</code>
+				</div>
+			</label>
+			<label class="row">
+				<span>Kurvenhöhe ({headerCurveHeight}px)</span>
+				<input
+					type="range"
+					min="8"
+					max="160"
+					step="1"
+					value={headerCurveHeight}
+					on:input={setHeaderCurveHeight}
+				/>
+			</label>
+			<label class="row">
+				<span>Kurvenamplitude ({headerCurveAmplitude}px)</span>
+				<input
+					type="range"
+					min="0"
+					max={headerCurveHeight}
+					step="1"
+					value={headerCurveAmplitude}
+					on:input={setHeaderCurveAmplitude}
+				/>
+			</label>
+			<label class="row">
+				<span>Anzahl Kurven ({headerCurveWaves})</span>
+				<input
+					type="range"
+					min="1"
+					max="8"
+					step="1"
+					value={headerCurveWaves}
+					on:input={setHeaderCurveWaves}
+				/>
+			</label>
+			<label class="row">
+				<span>Kurvenstart links</span>
+				<select class="studio-select" value={headerCurveStart} on:change={setHeaderCurveStart}>
+					<option value="0">0</option>
+					<option value="Maximale Höhe">Maximale Höhe</option>
+				</select>
+			</label>
+		{/if}
 
 		<!-- Slice-level colors -->
 		<div class="section-label">Slice-Farben</div>

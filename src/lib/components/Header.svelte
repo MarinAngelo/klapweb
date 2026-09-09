@@ -97,6 +97,30 @@
 	$: headerColor = $theme.headerColor;
 
 	$: headerBgColor = prismicTheme?.data?.header_bg_color || $theme.headerBgColor;
+	$: bottomCurveEnabled = prismicTheme?.data?.header_bottom_curve === true;
+	$: bottomCurveColor = prismicTheme?.data?.header_bottom_curve_color || headerBgColor;
+	$: bottomCurveHeight = Math.max(0, Number(prismicTheme?.data?.header_bottom_curve_height ?? 32));
+	$: bottomCurveAmplitude = Math.min(
+		bottomCurveHeight,
+		Math.max(0, Number(prismicTheme?.data?.header_bottom_curve_amplitude ?? 16))
+	);
+	$: bottomCurveWaves = Math.min(
+		8,
+		Math.max(1, Number(prismicTheme?.data?.header_bottom_curve_waves ?? 1))
+	);
+	$: bottomCurveStartAtMax = prismicTheme?.data?.header_bottom_curve_start === 'Maximale Höhe';
+	$: bottomCurvePath = (() => {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const curve =
+				(bottomCurveAmplitude / 2) *
+				(1 - Math.cos((index / points) * bottomCurveWaves * Math.PI * 2));
+			const y = bottomCurveStartAtMax ? bottomCurveHeight - curve : curve;
+			return `${x},${y}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	})();
 	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
 	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
@@ -171,6 +195,8 @@
 
 <header
 	bind:this={headerEl}
+	data-design-element="header"
+	data-design-label="Kopfzeile"
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
 	class:opacity-0={$isLightboxOpen}
 	class:pointer-events-none={$isLightboxOpen}
@@ -260,6 +286,24 @@
 			{/if}
 		</div>
 	</Bounded>
+	{#if bottomCurveHeight > 0}
+		<svg
+			class="header-bottom-curve"
+			class:enabled={bottomCurveEnabled}
+			aria-hidden="true"
+			data-curve-enabled={bottomCurveEnabled}
+			data-curve-color={bottomCurveColor}
+			data-curve-height={bottomCurveHeight}
+			data-curve-amplitude={bottomCurveAmplitude}
+			data-curve-waves={bottomCurveWaves}
+			data-curve-start={bottomCurveStartAtMax ? 'Maximale Höhe' : '0'}
+			viewBox={`0 0 100 ${bottomCurveHeight}`}
+			preserveAspectRatio="none"
+			style={`height: ${bottomCurveHeight}px; bottom: -${bottomCurveHeight}px; display: ${bottomCurveEnabled ? 'block' : 'none'};`}
+		>
+			<path d={bottomCurvePath} fill={bottomCurveColor} />
+		</svg>
+	{/if}
 </header>
 
 <style>
@@ -267,5 +311,14 @@
 		.smart-header {
 			display: none !important;
 		}
+	}
+	.header-bottom-curve {
+		position: absolute;
+		left: 0;
+		bottom: -1px;
+		z-index: 0;
+		width: 100%;
+		pointer-events: none;
+		display: block;
 	}
 </style>
