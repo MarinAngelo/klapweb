@@ -124,6 +124,7 @@
 	let headerCurveAmplitude = 16;
 	let headerCurveWaves = 1;
 	let headerCurveStart = '0';
+	let headerSaveState: 'idle' | 'saving' | 'saved' | 'auth' | 'error' = 'idle';
 	let headerCurveOriginal: {
 		svgStyle: string;
 		pathD: string;
@@ -464,6 +465,33 @@
 		updateHeaderCurve();
 	}
 
+	async function saveHeaderTheme() {
+		const secret = new URL(window.location.href).searchParams.get('secret');
+		if (!secret) {
+			headerSaveState = 'auth';
+			return;
+		}
+		headerSaveState = 'saving';
+		try {
+			const response = await fetch(`/api/design-theme?secret=${encodeURIComponent(secret)}`, {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					header_bottom_curve: headerCurveEnabled,
+					header_bottom_curve_color: headerCurveColor,
+					header_bottom_curve_height: headerCurveHeight,
+					header_bottom_curve_amplitude: headerCurveAmplitude,
+					header_bottom_curve_waves: headerCurveWaves,
+					header_bottom_curve_start: headerCurveStart
+				})
+			});
+			if (!response.ok) throw new Error('save failed');
+			headerSaveState = 'saved';
+		} catch {
+			headerSaveState = 'error';
+		}
+	}
+
 	function deselectSlice() {
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = null;
@@ -736,6 +764,21 @@
 					<option value="Maximale Höhe">Maximale Höhe</option>
 				</select>
 			</label>
+			<button
+				class="save-theme-btn"
+				on:click={saveHeaderTheme}
+				disabled={headerSaveState === 'saving'}
+			>
+				{headerSaveState === 'saving'
+					? 'Speichert …'
+					: headerSaveState === 'saved'
+						? 'In Prismic gespeichert'
+						: headerSaveState === 'auth'
+							? 'Admin-URL mit Secret öffnen'
+							: headerSaveState === 'error'
+								? 'Speichern fehlgeschlagen'
+								: 'In Prismic speichern'}
+			</button>
 		{/if}
 
 		<!-- Slice-level colors -->
