@@ -47,6 +47,20 @@
 					"config": {
 						"label": "Textfarbe"
 					}
+				},
+				"link_color": {
+					"type": "Color",
+					"config": {
+						"label": "Linkfarbe",
+						"placeholder": "Leer = page-link-color"
+					}
+				},
+				"link_hover_color": {
+					"type": "Color",
+					"config": {
+						"label": "Linkfarbe wenn Maus darüber",
+						"placeholder": "Leer = page-link-hover-color"
+					}
 				}
 			},
 			"items": {}
