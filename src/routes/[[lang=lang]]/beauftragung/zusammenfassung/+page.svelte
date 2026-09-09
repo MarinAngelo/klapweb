@@ -319,7 +319,7 @@
 				if (grandTotal !== null) {
 					params.set('preis', formatPrice(grandTotal, selectedCurrency));
 				}
-				const resp = await fetch('/', {
+				const resp = await fetch('/api/form', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					body: params.toString()
