@@ -19,7 +19,7 @@
 	$: tocTitle = slice.primary.title || 'Inhalt';
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
-	$: desktopSticky = linksMode && slice.primary.sticky === true;
+	$: desktopTopSticky = !linksMode && slice.primary.sticky === true;
 	$: mobileBg = bgColor;
 	$: mobileActiveColor = textColor;
 	$: mobileDimColor = shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110);
@@ -38,6 +38,10 @@
 	let mobilePinned = false;
 	let sidebarHeight = 0;
 	let headerScrolledAway = false;
+	let desktopTopEl: HTMLElement | null = null;
+	let desktopTopPinned = false;
+	let desktopTopNaturalTop = 0;
+	let desktopTopHeight = 0;
 
 	$: tocGroups = tocEntries.reduce<{ h2: TocEntry; h3s: TocEntry[] }[]>((groups, entry) => {
 		if (entry.level === 2) groups.push({ h2: entry, h3s: [] });
@@ -98,9 +102,22 @@
 			mobileSheetHeight = mobileSheetEl?.getBoundingClientRect().height ?? 0;
 			if (wasPinned) mobilePinned = true;
 		};
+		const measureDesktopTop = () => {
+			if (!desktopTopSticky || !desktopTopEl) return;
+			const wasPinned = desktopTopPinned;
+			if (wasPinned) desktopTopPinned = false;
+			desktopTopNaturalTop = desktopTopEl.getBoundingClientRect().top + window.scrollY;
+			desktopTopHeight = desktopTopEl.getBoundingClientRect().height;
+			if (wasPinned) desktopTopPinned = true;
+		};
 		const onScroll = () => {
 			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
 			mobilePinned = window.scrollY >= mobileNaturalTop;
+			desktopTopPinned =
+				desktopTopSticky &&
+				window.scrollY >=
+					desktopTopNaturalTop -
+						(document.querySelector('main.header-is-sticky') ? $headerHeight : 0);
 			headerScrolledAway =
 				linksMode &&
 				!document.querySelector('main.header-is-sticky') &&
@@ -118,9 +135,11 @@
 		window.addEventListener('hashchange', onHashChange);
 		window.addEventListener('scroll', onScroll, { passive: true });
 		window.addEventListener('resize', measureMobileSheet);
+		window.addEventListener('resize', measureDesktopTop);
 		window.addEventListener('resize', updateSidebarHeight);
 		tick().then(() => {
 			measureMobileSheet();
+			measureDesktopTop();
 			onScroll();
 			updateSidebarHeight();
 		});
@@ -131,6 +150,7 @@
 			window.removeEventListener('hashchange', onHashChange);
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', measureMobileSheet);
+			window.removeEventListener('resize', measureDesktopTop);
 			window.removeEventListener('resize', updateSidebarHeight);
 			document.documentElement.style.removeProperty('--toc-sidebar-offset');
 		};
@@ -140,7 +160,7 @@
 <Bounded
 	as="nav"
 	yPadding="base-top"
-	class="toc-slice {linksMode ? 'toc-links-mode' : ''}"
+	class="toc-slice {linksMode ? 'toc-links-mode' : 'toc-top-mode'}"
 	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor}; font-family: var(--page-font);"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
@@ -183,11 +203,16 @@
 				</ul>
 			</nav>
 		{:else}
+			{#if desktopTopPinned}
+				<div class="hidden md:block" style="height: {desktopTopHeight}px;"></div>
+			{/if}
 			<div
-				class="hidden md:block"
+				class="hidden md:block toc-top-sheet"
+				class:pinned={desktopTopPinned}
+				bind:this={desktopTopEl}
 				style="--toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor};"
 			>
-				<h5>{tocTitle}</h5>
+				<h5 class="toc-top-title">{tocTitle}</h5>
 				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
 					{#each tocGroups as group}<li class="flex flex-col gap-1">
 							<a
@@ -323,6 +348,19 @@
 		max-height: 50vh;
 		overflow-y: auto;
 	}
+	.toc-top-sheet.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 40;
+		padding-inline: 1.5rem;
+		background-color: var(--page-bg-color);
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	}
+	:global(.header-is-sticky) .toc-top-sheet.pinned {
+		top: var(--header-height, 80px);
+	}
 	.toc-sidebar {
 		position: fixed;
 		left: 0;
@@ -393,6 +431,9 @@
 		}
 	}
 	@media (min-width: 768px) {
+		:global(.toc-top-title) {
+			margin-top: 1.75rem;
+		}
 		/* Links-Modus: Desktop-Sidebar ist immer position:fixed (out-of-flow) → Sektion darf kein Padding reservieren */
 		:global(.toc-links-mode) {
 			padding-top: 0 !important;
