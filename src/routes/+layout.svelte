@@ -443,7 +443,7 @@
 	<main
 		id="main-content"
 		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
-		class={isLandingPage ? 'pb-24' : ''}
+		class={`${isLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded

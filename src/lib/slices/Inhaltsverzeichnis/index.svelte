@@ -2,7 +2,9 @@
 	import { onMount, tick } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import { planFilter } from '$lib/stores/planFilter';
+	import { headerHeight } from '$lib/stores/headerHeight';
 	import Bounded from '$lib/components/Bounded.svelte';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
 	export let slice: any;
@@ -12,11 +14,14 @@
 
 	$: bgColor = slice.primary.bg_color || $theme.pageBgColor;
 	$: textColor = slice.primary.color || $theme.pageColor;
+	$: linkColor = slice.primary.link_color || 'var(--page-link-color)';
+	$: linkHoverColor = slice.primary.link_hover_color || 'var(--page-link-hover-color)';
 	$: tocTitle = slice.primary.title || 'Inhalt';
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
-	$: mobileBg = $theme.headerBgColor || bgColor || $theme.pageBgColor;
-	$: mobileActiveColor = $theme.headerColor || textColor;
+	$: desktopTopSticky = !linksMode && slice.primary.sticky === true;
+	$: mobileBg = bgColor;
+	$: mobileActiveColor = textColor;
 	$: mobileDimColor = shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110);
 
 	type TocEntry = { id: string; text: string; level: 2 | 3 };
@@ -26,6 +31,17 @@
 	let dismissedAtY = 0;
 	let mobileOpen = false;
 	let openDropdowns = new Set<string>();
+	let mobileSheetEl: HTMLElement | null = null;
+	let sectionEl: HTMLElement | null = null;
+	let mobileNaturalTop = 0;
+	let mobileSheetHeight = 0;
+	let mobilePinned = false;
+	let sidebarHeight = 0;
+	let headerScrolledAway = false;
+	let desktopTopEl: HTMLElement | null = null;
+	let desktopTopPinned = false;
+	let desktopTopNaturalTop = 0;
+	let desktopTopHeight = 0;
 
 	$: tocGroups = tocEntries.reduce<{ h2: TocEntry; h3s: TocEntry[] }[]>((groups, entry) => {
 		if (entry.level === 2) groups.push({ h2: entry, h3s: [] });
@@ -77,15 +93,65 @@
 		).filter((heading) => heading.id);
 		setActiveFromHash();
 		const onHashChange = () => setActiveFromHash();
+		const measureMobileSheet = () => {
+			const ref = sectionEl ?? mobileSheetEl;
+			if (!ref) return;
+			const wasPinned = mobilePinned;
+			if (wasPinned) mobilePinned = false;
+			mobileNaturalTop = ref.getBoundingClientRect().top + window.scrollY;
+			mobileSheetHeight = mobileSheetEl?.getBoundingClientRect().height ?? 0;
+			if (wasPinned) mobilePinned = true;
+		};
+		const measureDesktopTop = () => {
+			if (!desktopTopSticky || !desktopTopEl) return;
+			const wasPinned = desktopTopPinned;
+			if (wasPinned) desktopTopPinned = false;
+			desktopTopNaturalTop = desktopTopEl.getBoundingClientRect().top + window.scrollY;
+			desktopTopHeight = desktopTopEl.getBoundingClientRect().height;
+			if (wasPinned) desktopTopPinned = true;
+		};
 		const onScroll = () => {
 			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
+			mobilePinned = window.scrollY >= mobileNaturalTop;
+			desktopTopPinned =
+				desktopTopSticky &&
+				window.scrollY >=
+					desktopTopNaturalTop -
+						(document.querySelector('main.header-is-sticky') ? $headerHeight : 0);
+			headerScrolledAway =
+				linksMode &&
+				!document.querySelector('main.header-is-sticky') &&
+				window.scrollY >= $headerHeight;
+			updateSidebarHeight();
+		};
+		const updateSidebarHeight = () => {
+			if (!linksMode) return;
+			const footer = document.querySelector<HTMLElement>('footer');
+			if (!footer) return;
+			const sidebar = document.querySelector<HTMLElement>('.toc-sidebar');
+			const sidebarTop = sidebar?.getBoundingClientRect().top ?? $headerHeight;
+			sidebarHeight = Math.max(0, footer.getBoundingClientRect().top - sidebarTop);
 		};
 		window.addEventListener('hashchange', onHashChange);
 		window.addEventListener('scroll', onScroll, { passive: true });
-		if (linksMode) document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
+		window.addEventListener('resize', measureMobileSheet);
+		window.addEventListener('resize', measureDesktopTop);
+		window.addEventListener('resize', updateSidebarHeight);
+		tick().then(() => {
+			measureMobileSheet();
+			measureDesktopTop();
+			onScroll();
+			updateSidebarHeight();
+		});
+		if (linksMode) {
+			document.documentElement.style.setProperty('--toc-sidebar-offset', '14rem');
+		}
 		return () => {
 			window.removeEventListener('hashchange', onHashChange);
 			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', measureMobileSheet);
+			window.removeEventListener('resize', measureDesktopTop);
+			window.removeEventListener('resize', updateSidebarHeight);
 			document.documentElement.style.removeProperty('--toc-sidebar-offset');
 		};
 	});
@@ -94,17 +160,21 @@
 <Bounded
 	as="nav"
 	yPadding="base-top"
-	class="toc-slice {linksMode ? 'toc-links-mode' : ''}"
+	class="toc-slice {linksMode ? 'toc-links-mode' : 'toc-top-mode'}"
 	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor}; font-family: var(--page-font);"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	aria-label={tocTitle}
+	bind:elementRef={sectionEl}
 >
 	{#if tocEntries.length > 0}
 		{#if linksMode}
 			<nav
 				class="toc-sidebar hidden md:block"
-				style="--toc-color: {textColor}; --toc-bg: {bgColor || $theme.pageBgColor};"
+				class:has-footer-height={sidebarHeight > 0}
+				class:header-scrolled-away={headerScrolledAway}
+				style="--toc-color: {textColor}; --toc-bg: {bgColor ||
+					$theme.pageBgColor}; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-sidebar-height: {sidebarHeight}px;"
 				class:visible={!dismissed}
 				aria-label={tocTitle}
 			>
@@ -133,8 +203,16 @@
 				</ul>
 			</nav>
 		{:else}
-			<div class="hidden md:block">
-				<h5>{tocTitle}</h5>
+			{#if desktopTopPinned}
+				<div class="hidden md:block" style="height: {desktopTopHeight}px;"></div>
+			{/if}
+			<div
+				class="hidden md:block toc-top-sheet"
+				class:pinned={desktopTopPinned}
+				bind:this={desktopTopEl}
+				style="--toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor};"
+			>
+				<h5 class="toc-top-title">{tocTitle}</h5>
 				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
 					{#each tocGroups as group}<li class="flex flex-col gap-1">
 							<a
@@ -160,19 +238,27 @@
 			</div>
 		{/if}
 
+		{#if mobilePinned}
+			<div
+				class="md:hidden"
+				style="height: {mobileSheetHeight}px; background-color: {mobileBg}; color: {mobileActiveColor};"
+			></div>
+		{/if}
+
 		<div
-			class="md:hidden toc-mobile-sheet"
+			class="md:hidden toc-mobile-sheet links-mobile"
 			class:open={mobileOpen}
-			style="--toc-color: {mobileActiveColor}; --toc-bg: {mobileBg}; --toc-dim: {mobileDimColor}; color: {mobileActiveColor}; background-color: {mobileBg};"
+			class:pinned={mobilePinned}
+			bind:this={mobileSheetEl}
+			style="--toc-color: {mobileActiveColor}; --toc-bg: {mobileBg}; --toc-dim: {mobileDimColor}; --toc-mobile-top: {$headerHeight}px; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --page-color: {mobileActiveColor}; --page-bg-color: {mobileBg}; color: {mobileActiveColor}; background-color: {mobileBg};"
 		>
 			<button
 				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
 				on:click={() => (mobileOpen = !mobileOpen)}
 				aria-expanded={mobileOpen}
-				><span
-					>{tocTitle}{#if activeId}
-						· {tocEntries.find((entry) => entry.id === activeId)?.text}{/if}</span
-				><span>{mobileOpen ? '↓' : '↑'}</span></button
+				><span class="text-base font-medium">{tocTitle}</span><span
+					><SvgIcons name={mobileOpen ? 'down-square' : 'up-square'} size="1.1em" /></span
+				></button
 			>
 			{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
 					<ul class="space-y-3 text-sm">
@@ -183,6 +269,7 @@
 										mobileOpen = false;
 										activate(group.h2.id);
 									}}
+									class="toc-link"
 									class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
 								>{#if group.h3s.length}<ul class="mt-1.5 space-y-1.5 pl-3 border-l">
 										{#each group.h3s as sub}<li>
@@ -192,6 +279,7 @@
 														mobileOpen = false;
 														activate(sub.id);
 													}}
+													class="toc-link"
 													class:toc-active={sub.id === activeId}>{sub.text}</a
 												>
 											</li>{/each}
@@ -205,8 +293,12 @@
 
 <style>
 	.toc-link {
+		color: var(--toc-link-color, inherit) !important;
 		text-decoration: none !important;
 		font-weight: 500;
+	}
+	.toc-link:hover {
+		color: var(--toc-link-hover-color, var(--toc-link-color, inherit)) !important;
 	}
 	.toc-link.toc-active {
 		font-weight: 700;
@@ -230,6 +322,21 @@
 		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
 		z-index: 40;
 	}
+	.toc-mobile-sheet.links-mobile {
+		position: static;
+		bottom: auto;
+		box-shadow: none;
+	}
+	.toc-mobile-sheet.links-mobile.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	}
+	:global(.header-is-sticky) .toc-mobile-sheet.links-mobile.pinned {
+		top: var(--toc-mobile-top);
+	}
 	.toc-mobile-bar {
 		background: none;
 		border: none;
@@ -241,15 +348,28 @@
 		max-height: 50vh;
 		overflow-y: auto;
 	}
+	.toc-top-sheet.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 40;
+		padding-inline: 1.5rem;
+		background-color: var(--page-bg-color);
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	}
+	:global(.header-is-sticky) .toc-top-sheet.pinned {
+		top: var(--header-height, 80px);
+	}
 	.toc-sidebar {
 		position: fixed;
 		left: 0;
-		top: calc(var(--header-height, 80px) + 2rem);
+		top: var(--header-height, 80px);
 		width: 13rem;
-		max-height: calc(100vh - var(--header-height, 80px) - 4rem);
+		height: calc(100vh - var(--header-height, 80px));
 		overflow-y: auto;
-		padding: 1rem;
-		border-radius: 0.5rem;
+		padding: 1.75rem 1rem 1rem;
+		border-radius: 0;
 		background-color: var(--toc-bg);
 		color: var(--toc-color);
 		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
@@ -260,6 +380,31 @@
 			opacity 0.25s ease,
 			transform 0.25s ease;
 		z-index: 40;
+	}
+	.toc-sidebar {
+		position: fixed;
+		top: var(--header-height, 80px);
+		width: 13rem;
+		height: calc(100vh - var(--header-height, 80px));
+		overflow-y: auto;
+		padding: 1.75rem 1rem 1rem;
+		border-radius: 0;
+		background-color: var(--toc-bg);
+		color: var(--toc-color);
+		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(-0.5rem);
+		transition:
+			opacity 0.25s ease,
+			transform 0.25s ease;
+		z-index: 40;
+	}
+	.toc-sidebar.has-footer-height {
+		height: var(--toc-sidebar-height);
+	}
+	.toc-sidebar.header-scrolled-away {
+		top: 0;
 	}
 	.toc-sidebar.visible {
 		opacity: 1;
@@ -275,9 +420,24 @@
 		color: inherit;
 		padding: 0 0.15rem;
 	}
+	/* Links-Modus: Inhalt ist immer position:fixed (Sidebar/mobiler Balken) → Sektion selbst bleibt ohne Hintergrund */
 	:global(.toc-links-mode) {
-		min-height: 0;
-		padding-top: 0 !important;
-		padding-bottom: 0 !important;
+		background-color: transparent !important;
+	}
+	@media (max-width: 767px) {
+		/* Mobile: "Oben"-Balken verhält sich identisch wie "Links" (in-flow → pinned) → Sektion ohne eigenen Hintergrund */
+		:global(.toc-slice:not(.toc-links-mode)) {
+			background-color: transparent !important;
+		}
+	}
+	@media (min-width: 768px) {
+		:global(.toc-top-title) {
+			margin-top: 1.75rem;
+		}
+		/* Links-Modus: Desktop-Sidebar ist immer position:fixed (out-of-flow) → Sektion darf kein Padding reservieren */
+		:global(.toc-links-mode) {
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+		}
 	}
 </style>
