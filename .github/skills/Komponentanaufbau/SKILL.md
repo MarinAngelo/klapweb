@@ -50,8 +50,15 @@ Entscheidung:
 - Tailwind für Grundlayout und responsive Verhalten verwenden.
 - CSS-Variablen und Theme-Farben bevorzugen statt fester Farbwerte.
 - Input-/Select-/Textarea-Styling nur nach vorhandenen Mustern ausrichten.
+- Für mehrere gleichrangige Form-Controls mit gemeinsamem Label-/Abstandsaufbau `src/lib/components/FieldGroup.svelte` verwenden; keine individuellen Margin-Korrekturen pro Feld erfinden.
+- Alle benutzereingaberelevanten HTML5-Formularfelder (`text`, `search`, `email`, `tel`, `url`, `number`, `date`, `time`, `password`, `checkbox`, `radio`, `select` und `textarea`) müssen über `src/lib/components/InputField.svelte` definiert und verwendet werden. Neue direkte `<input>`, `<select>` oder `<textarea>`-Elemente sind dafür nicht zulässig.
+- `InputField.svelte` ist die zentrale Abbildung der HTML5-Feldtypen und ihrer Projektstile. Wird ein HTML5-Typ benötigt, der noch nicht unterstützt wird, wird zuerst `InputField.svelte` erweitert und erst danach die aufrufende Komponente angepasst.
+- Direkte Controls sind nur für technische Sonderfälle zulässig, die kein normales Formularfeld sind, etwa `type="hidden"`, Datei-Uploads mit `FileField.svelte`, native Farb-/Studio-Controls oder interne nicht-redaktionelle Steuerungen. Solche Ausnahmen müssen aus dem Kontext ersichtlich sein.
 - `border-b` statt `border` verwenden, wenn das Projekt dafür konventionell ist.
 - `background-color: var(--page-bg-color)` und `color: var(--page-color)` einhalten, sofern die Komponente in das Designsystem passt.
+- Seiten- und komponentenspezifische Selektoren (z. B. `.field-reference-header` oder `.table-header`) gehören in den lokalen `<style>`-Block der jeweiligen Svelte-Komponente, nicht in `src/app.css`.
+- `src/app.css` ist für globale, wiederverwendbare Regeln und Designsystem-Basisstile zu verwenden. Für Tabellen sind die globalen Klassen `.table-wrapper`, `.table`, `.table-header`, `.table-cell`, `.table-row`, `.table-empty` und `.table-code` zu bevorzugen.
+- Lokale Tabellenvarianten dürfen diese globalen Klassen ergänzen, sollen aber keine vollständige Tabellenbasis duplizieren.
 
 ### 5. Implementierung sauber halten
 

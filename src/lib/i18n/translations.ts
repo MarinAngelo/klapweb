@@ -904,7 +904,38 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Schrift horizontal zentrieren',
 		'en-us': 'Center text horizontally'
 	},
-	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' }
+	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' },
+	Tabellenwerkzeuge: { 'de-ch': 'Tabellenwerkzeuge', 'en-us': 'Table tools' },
+	Suche: { 'de-ch': 'Suche', 'en-us': 'Search' },
+	'Feld, Name oder Beschreibung': {
+		'de-ch': 'Feld, Name oder Beschreibung',
+		'en-us': 'Field, name or description'
+	},
+	'Element Typ': { 'de-ch': 'Element Typ', 'en-us': 'Element type' },
+	Alle: { 'de-ch': 'Alle', 'en-us': 'All' },
+	'Page Type': { 'de-ch': 'Page Type', 'en-us': 'Page Type' },
+	'Custom Type': { 'de-ch': 'Custom Type', 'en-us': 'Custom Type' },
+	Slice: { 'de-ch': 'Slice', 'en-us': 'Slice' },
+	'Sortieren nach': { 'de-ch': 'Sortieren nach', 'en-us': 'Sort by' },
+	'Tab / Variante': { 'de-ch': 'Tab / Variante', 'en-us': 'Tab / Variant' },
+	Feld: { 'de-ch': 'Feld', 'en-us': 'Field' },
+	Typ: { 'de-ch': 'Typ', 'en-us': 'Type' },
+	'Absteigend sortieren': { 'de-ch': 'Absteigend sortieren', 'en-us': 'Sort descending' },
+	'Aufsteigend sortieren': { 'de-ch': 'Aufsteigend sortieren', 'en-us': 'Sort ascending' },
+	Zurücksetzen: { 'de-ch': 'Zurücksetzen', 'en-us': 'Reset' },
+	von: { 'de-ch': 'von', 'en-us': 'of' },
+	Feldern: { 'de-ch': 'Feldern', 'en-us': 'fields' },
+	'Keine aktiven Felder für diesen Branch gefunden.': {
+		'de-ch': 'Keine aktiven Felder für diesen Branch gefunden.',
+		'en-us': 'No active fields found for this branch.'
+	},
+	'Keine Felder für diese Auswahl gefunden.': {
+		'de-ch': 'Keine Felder für diese Auswahl gefunden.',
+		'en-us': 'No fields found for this selection.'
+	},
+	Seitennavigation: { 'de-ch': 'Seitennavigation', 'en-us': 'Pagination' },
+	'Vorherige Seite': { 'de-ch': 'Vorherige Seite', 'en-us': 'Previous page' },
+	'Nächste Seite': { 'de-ch': 'Nächste Seite', 'en-us': 'Next page' }
 };
 
 /**

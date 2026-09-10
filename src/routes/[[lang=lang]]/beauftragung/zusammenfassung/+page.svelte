@@ -9,7 +9,7 @@
 	import Heading from '$lib/components/Heading.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
-	import SelectField from '$lib/components/SelectField.svelte';
+	import InputField from '$lib/components/InputField.svelte';
 	import { formatPrice } from '$lib/pricing';
 	import type { ProductData } from './+page.server';
 
@@ -513,13 +513,19 @@
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
 						<label for="currency-select" class="text-sm opacity-60">{t('Währung:', lang)}</label>
-						<SelectField
-							id="currency-select"
+						<InputField
+							inputId="currency-select"
+							field={{
+								field_name: '',
+								field_type: 'Auswahlliste',
+								required: false,
+								options: [
+									data.baseCurrency,
+									...data.additionalCodes.filter((c) => data.rates[c] != null)
+								].join(',')
+							}}
 							bind:value={selectedCurrency}
-							options={[
-								data.baseCurrency,
-								...data.additionalCodes.filter((c) => data.rates[c] != null)
-							]}
+							showLabel={false}
 						/>
 					</div>
 				{/if}

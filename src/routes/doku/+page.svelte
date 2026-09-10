@@ -79,6 +79,11 @@
 		<header class="page-header">
 			<h1>Dev-Dokumentation</h1>
 			<p class="subtitle">klap-web · Slices, Komponenten &amp; Architektur</p>
+			<p>
+				Die Prismic-Feldreferenz zeigt nur jene Felder an, die in diesem Branch gemäß Gating aktiv
+				sind. Sie wird automatisch über den Build-Prozess aktualisiert, sobald ein neues Feld
+				hinzugefügt wird.
+			</p>
 		</header>
 
 		<section id="adresse-und-map">

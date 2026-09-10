@@ -17,7 +17,7 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import GoogleMap from '$lib/components/GoogleMap.svelte';
-	import SelectField from '$lib/components/SelectField.svelte';
+	import InputField from '$lib/components/InputField.svelte';
 
 	export let slice: any;
 	const p = slice.primary ?? ({} as any);
@@ -583,7 +583,16 @@
 								{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
 										>{parentEvent.price_eur_label}</span
 									>{/if}
-								<SelectField bind:value={displayCurrency} options={['CHF', 'EUR']} />
+								<InputField
+									field={{
+										field_name: '',
+										field_type: 'Auswahlliste',
+										required: false,
+										options: 'CHF,EUR'
+									}}
+									bind:value={displayCurrency}
+									showLabel={false}
+								/>
 							{/if}
 						{:else if parentEvent.price_text?.length}
 							<PrismicRichText field={parentEvent.price_text} />

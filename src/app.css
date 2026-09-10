@@ -338,6 +338,161 @@ a:not(.site-title-link):not(.dropdown-link):not(.nav-link):hover {
 	color: var(--page-link-hover-color) !important;
 }
 
+/* Globale Tabellen-Bausteine: von Seiten und Komponenten wiederverwenden. */
+.table-tools {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+	position: relative;
+	z-index: 10;
+}
+
+.table-tool {
+	display: flex;
+	min-width: 10rem;
+	flex: 1 1 12rem;
+	flex-direction: column;
+	gap: 0.3rem;
+	color: var(--page-color);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.table-tool-search {
+	flex-basis: 18rem;
+}
+
+.table-tool-search input::placeholder {
+	font-size: 0.75rem;
+}
+
+.table-tool select {
+	min-height: 2.5rem;
+	padding: 0.5rem 0.7rem;
+	background-color: var(--page-bg-color);
+	color: var(--page-color);
+	font: inherit;
+}
+
+.table-sort-direction,
+.table-tool-reset {
+	align-self: center;
+	min-height: 2.5rem;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid color-mix(in srgb, var(--page-color) 35%, transparent);
+	background-color: transparent;
+	color: var(--page-color);
+	cursor: pointer;
+}
+
+.table-sort-direction {
+	width: 2.5rem;
+	font-size: 1.1rem;
+}
+
+.table-sort-direction:hover,
+.table-tool-reset:hover {
+	background-color: color-mix(in srgb, var(--page-color) 8%, var(--page-bg-color));
+}
+
+.table-result-count {
+	color: color-mix(in srgb, var(--page-color) 70%, transparent);
+	font-size: 0.8rem;
+}
+
+.table-pagination {
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin-top: 1rem;
+}
+
+.table-pagination-controls {
+	display: flex;
+	max-width: 100%;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	justify-content: flex-end;
+}
+
+.table-pagination-button {
+	min-width: 2.25rem;
+	min-height: 2.25rem;
+	padding: 0.35rem 0.55rem;
+	border: 1px solid color-mix(in srgb, var(--page-color) 35%, transparent);
+	background-color: transparent;
+	color: var(--page-color);
+	cursor: pointer;
+}
+
+.table-pagination-button:hover:not(:disabled),
+.table-pagination-current {
+	background-color: color-mix(in srgb, var(--page-color) 10%, var(--page-bg-color));
+}
+
+.table-pagination-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.4;
+}
+
+.table-pagination-ellipsis {
+	min-width: 1.5rem;
+	text-align: center;
+}
+
+.table-wrapper {
+	overflow-x: auto;
+	border: 1px solid color-mix(in srgb, var(--page-color) 18%, transparent);
+	background-color: color-mix(in srgb, var(--page-bg-color) 76%, #fff);
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+	text-align: left;
+}
+
+.table-header {
+	background-color: color-mix(in srgb, var(--page-color) 8%, var(--page-bg-color));
+	font-weight: 600;
+	color: var(--page-color);
+}
+
+.table th,
+.table td,
+.table-cell {
+	padding: 0.75rem 1rem;
+	vertical-align: top;
+	border-bottom: 1px solid color-mix(in srgb, var(--page-color) 16%, transparent);
+}
+
+.table tbody tr:last-child td,
+.table-row:last-child .table-cell {
+	border-bottom: none;
+}
+
+.table tbody tr:nth-child(even),
+.table-row:nth-child(even) {
+	background-color: color-mix(in srgb, var(--page-color) 4%, var(--page-bg-color));
+}
+
+.table-empty {
+	padding: 2rem 1rem;
+	text-align: center;
+	opacity: 0.75;
+}
+
+.table-code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.75rem;
+	opacity: 0.8;
+}
+
 /* Footer-Link Hover */
 .footer-nav-link:hover,
 .footer-buttonbar-p a:hover,
