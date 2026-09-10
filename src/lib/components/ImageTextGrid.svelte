@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { PrismicImage } from '@prismicio/svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import BildLupe from '$lib/components/BildLupe.svelte';
@@ -37,6 +38,47 @@
 	export let textCenterH: boolean = false;
 	export let fullscreen: boolean = false;
 
+	let imageColumn: HTMLDivElement;
+	let textColumn: HTMLDivElement;
+
+	function syncMobileColumnHeight() {
+		if (!imageColumn || !textColumn) return;
+
+		const isMobile = window.matchMedia('(max-width: 767px)').matches;
+		if (!isMobile) {
+			textColumn.style.removeProperty('--mobile-image-height');
+			return;
+		}
+
+		const imageHeight = imageColumn.getBoundingClientRect().height;
+		textColumn.style.removeProperty('--mobile-image-height');
+		const textHeight = textColumn.scrollHeight;
+		if (imageHeight > textHeight) {
+			textColumn.style.setProperty('--mobile-image-height', `${imageHeight}px`);
+		} else {
+			textColumn.style.removeProperty('--mobile-image-height');
+		}
+	}
+
+	onMount(() => {
+		const observer = new ResizeObserver(syncMobileColumnHeight);
+		const imageElements = imageColumn.querySelectorAll('img');
+		const frame = requestAnimationFrame(syncMobileColumnHeight);
+		observer.observe(imageColumn);
+		imageElements.forEach((element) => element.addEventListener('load', syncMobileColumnHeight));
+		window.addEventListener('resize', syncMobileColumnHeight);
+		syncMobileColumnHeight();
+
+		return () => {
+			cancelAnimationFrame(frame);
+			imageElements.forEach((element) =>
+				element.removeEventListener('load', syncMobileColumnHeight)
+			);
+			window.removeEventListener('resize', syncMobileColumnHeight);
+			observer.disconnect();
+		};
+	});
+
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 
 	let dialog: HTMLDialogElement;
@@ -69,6 +111,7 @@
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
+			bind:this={imageColumn}
 			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen
 				? 'md:h-full'
 				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
@@ -125,9 +168,12 @@
 			{/if}
 		</div>
 		<div
+			bind:this={textColumn}
 			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {fullscreen
 				? 'md:h-full md:min-h-0 fullscreen-text-col'
-				: ''} {textCenterV ? 'md:justify-center' : ''} {textCenterH ? 'text-center' : ''}"
+				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
+				? 'text-center'
+				: ''}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
 				2}px;"
 		>
@@ -135,15 +181,16 @@
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class={fullscreen ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
+				<div class={fullscreen || textCenterV ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
+			bind:this={textColumn}
 			class="text-col flex flex-col {fullscreen
 				? 'md:h-full md:min-h-0 fullscreen-text-col'
-				: ''} {textCenterV ? 'md:justify-center' : ''} {textCenterH
+				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
 				? 'text-center'
 				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
 			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
@@ -153,10 +200,11 @@
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class={fullscreen ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
+				<div class={fullscreen || textCenterV ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 		<div
+			bind:this={imageColumn}
 			class="{mobileTextFirst ? '' : 'order-first md:order-none'} {fullscreen
 				? 'md:h-full'
 				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
@@ -284,6 +332,11 @@
 			padding-right: var(--mob-pad, 0);
 			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
 			padding-bottom: 0;
+			min-height: var(--mobile-image-height, auto);
+		}
+
+		.mobile-vertical-center {
+			padding-bottom: var(--mob-pad-top, var(--mob-pad, 0));
 		}
 
 		.text-content p {

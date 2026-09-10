@@ -190,13 +190,13 @@
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
 			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
-				? ` height: ${fullscreenHeight}; min-height: ${fullscreenHeight}; overflow: hidden;`
+				? ` --fullscreen-height: ${fullscreenHeight};`
 				: ''}"
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			class={!fullscreen && mobileVollbreite ? 'md:px-6' : ''}
+			class={`${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
 		>
 			<div class={fullscreen ? 'h-full flex-1' : ''}>
 				<ImageTextGrid
@@ -229,3 +229,25 @@
 		</Bounded>
 	{/if}
 {/if}
+
+<style>
+	:global(.fullscreen-text-image) {
+		height: auto;
+		min-height: 0;
+		overflow: visible;
+	}
+
+	@media (max-width: 767px) {
+		:global(.fullscreen-text-image > div) {
+			flex: none;
+		}
+	}
+
+	@media (min-width: 768px) {
+		:global(.fullscreen-text-image) {
+			height: var(--fullscreen-height);
+			min-height: var(--fullscreen-height);
+			overflow: hidden;
+		}
+	}
+</style>
