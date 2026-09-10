@@ -20,11 +20,14 @@
 	export let compact = false;
 	// inline=true: Label und Input nebeneinander statt übereinander
 	export let inline = false;
+	export let showLabel = true;
+	export let inputId: string | undefined = undefined;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
 	const typeKeys: Record<string, string> = {
 		'E-Mail': 'email',
 		Textbereich: 'message',
+		Suche: 'search',
 		Land: 'land',
 		Termin: 'termin',
 		Zeitzone: 'zeitzone'
@@ -40,6 +43,7 @@
 		Einzelauswahl: 'radio',
 		Auswahlliste: 'select',
 		Textfeld: 'text',
+		Suche: 'search',
 		Code: 'code',
 		Zahl: 'number',
 		'E-Mail': 'email',
@@ -263,6 +267,7 @@
 	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
 
 	async function loadTermine(_key: number) {
+		void _key;
 		termineLoading = true;
 		termineError = false;
 		selectedTermin = '';
@@ -315,7 +320,13 @@
 	export let value: string | number = '';
 	let textValue = '';
 	let numberValue: number | null = typeof value === 'number' ? value : null;
-	$: if (htmlType === 'text' || htmlType === 'code' || htmlType === 'email') value = textValue;
+	$: if (
+		htmlType === 'text' ||
+		htmlType === 'search' ||
+		htmlType === 'code' ||
+		htmlType === 'email'
+	)
+		value = textValue;
 	$: if (htmlType === 'number') value = numberValue ?? '';
 	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
 
@@ -337,7 +348,7 @@
 
 <div class={inline ? 'w-full contents' : 'mb-4'}>
 	<!-- Label -->
-	{#if htmlType !== 'checkbox'}
+	{#if htmlType !== 'checkbox' && showLabel}
 		<label
 			for={key}
 			class={inline
@@ -351,11 +362,29 @@
 	{/if}
 
 	<div class={inline ? 'flex-1' : ''}>
-		{#if htmlType === 'text'}
+		{#if htmlType === 'search'}
+			<input
+				type="search"
+				id={inputId ?? key}
+				name={inputId ?? key}
+				bind:value={textValue}
+				required={field.required}
+				placeholder={field.placeholder ?? ''}
+				class={compact
+					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+				style={compact
+					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
+					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				on:input
+				on:blur
+				on:change
+			/>
+		{:else if htmlType === 'text'}
 			<input
 				type="text"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -372,8 +401,8 @@
 		{:else if htmlType === 'number'}
 			<input
 				type="number"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={numberValue}
 				required={field.required}
 				min={field.min ?? undefined}
@@ -391,8 +420,8 @@
 		{:else if htmlType === 'code'}
 			<input
 				type="text"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -411,8 +440,8 @@
 		{:else if htmlType === 'email'}
 			<input
 				type="email"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -519,8 +548,8 @@
 			{/if}
 		{:else if htmlType === 'select'}
 			<select
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				required={field.required}
 				class={compact
 					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
@@ -557,8 +586,8 @@
 			</div>
 		{:else if htmlType === 'select-country'}
 			<select
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				required={field.required}
 				class={compact
 					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
