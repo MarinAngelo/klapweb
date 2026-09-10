@@ -57,8 +57,18 @@
 		'lg-top': 'pb-0'
 	};
 
-	$: topClass = paddingTopClass !== undefined ? paddingTopClass : (paddingTop != null ? (ptMap[paddingTop] ?? '') : (yTop[yPadding] ?? ''));
-	$: bottomClass = paddingBottomClass !== undefined ? paddingBottomClass : (paddingBottom != null ? (pbMap[paddingBottom] ?? '') : (yBottom[yPadding] ?? ''));
+	$: topClass =
+		paddingTopClass !== undefined
+			? paddingTopClass
+			: paddingTop != null
+				? (ptMap[paddingTop] ?? '')
+				: (yTop[yPadding] ?? '');
+	$: bottomClass =
+		paddingBottomClass !== undefined
+			? paddingBottomClass
+			: paddingBottom != null
+				? (pbMap[paddingBottom] ?? '')
+				: (yBottom[yPadding] ?? '');
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }
@@ -85,6 +95,7 @@
 		class:flex-1={fullHeight}
 		class:flex={fullHeight}
 		class:flex-col={fullHeight}
+		class:min-h-0={fullHeight}
 		style:max-width={!fullWidth ? 'var(--container-max-width, 72rem)' : undefined}
 	>
 		<slot />

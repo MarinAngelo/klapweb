@@ -4,6 +4,7 @@
 	import BildLupe from '$lib/components/BildLupe.svelte';
 	import BildSlider from '$lib/components/BildSlider.svelte';
 	import { isFilled } from '@prismicio/client';
+	import { headerHeight } from '$lib/stores/headerHeight';
 
 	export let image: any;
 	export let images: any[] | undefined = undefined;
@@ -61,8 +62,9 @@
 
 <div
 	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen
-		? 'md:h-full'
+		? 'md:h-full md:min-h-0 md:grid-rows-1'
 		: ''}"
+	style:width={fullscreen ? '100vw' : '100%'}
 >
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
@@ -123,31 +125,35 @@
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV
-				? 'self-center'
-				: ''} {textCenterH ? 'text-center' : ''}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {fullscreen
+				? 'md:h-full md:min-h-0 fullscreen-text-col'
+				: ''} {textCenterV ? 'md:justify-center' : ''} {textCenterH ? 'text-center' : ''}"
+			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
+				2}px;"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
+				<div class={fullscreen ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
-			class="text-col flex flex-col {textCenterV ? 'self-center' : ''} {textCenterH
+			class="text-col flex flex-col {fullscreen
+				? 'md:h-full md:min-h-0 fullscreen-text-col'
+				: ''} {textCenterV ? 'md:justify-center' : ''} {textCenterH
 				? 'text-center'
 				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
+			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
+				2}px;"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
+				<div class={fullscreen ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 		<div
@@ -295,6 +301,10 @@
 	}
 
 	@media (min-width: 768px) {
+		.fullscreen-text-col {
+			transform: translateY(calc(-1 * var(--fullscreen-text-offset, 0px)));
+		}
+
 		.text-col {
 			padding-left: var(--desk-pad, 0);
 			padding-right: var(--desk-pad, 0);
