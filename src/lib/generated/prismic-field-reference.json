@@ -2165,6 +2165,54 @@
 		"customType": "settings",
 		"customTypeLabel": "Einstellungen",
 		"tab": "Main",
+		"field": "chat_active",
+		"path": "settings/Main/chat_active",
+		"label": "Chat-Bot aktivieren",
+		"description": "Schaltet Chat-Bot aktivieren ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Main",
+		"field": "chat_bot_name",
+		"path": "settings/Main/chat_bot_name",
+		"label": "Chat-Bot Name",
+		"description": "Erfasst einen kurzen Text für Chat-Bot Name.",
+		"type": "Text"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Main",
+		"field": "chat_greeting",
+		"path": "settings/Main/chat_greeting",
+		"label": "Chat-Bot Begrüssung",
+		"description": "Erfasst einen kurzen Text für Chat-Bot Begrüssung.",
+		"type": "Text"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Main",
+		"field": "chat_knowledge_base",
+		"path": "settings/Main/chat_knowledge_base",
+		"label": "Chat-Bot Wissensbasis",
+		"description": "Erfasst formatierten Text für Chat-Bot Wissensbasis, zum Beispiel Absätze, Überschriften oder Links.",
+		"type": "StructuredText"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Main",
 		"field": "show_language_switcher",
 		"path": "settings/Main/show_language_switcher",
 		"label": "Mehrere Sprachen verwenden",
@@ -5614,6 +5662,18 @@
 		"label": "Beschreibung",
 		"description": "Erfasst formatierten Text für Beschreibung, zum Beispiel Absätze, Überschriften oder Links.",
 		"type": "StructuredText"
+	},
+	{
+		"name": "Leistung",
+		"elementType": "Custom Type",
+		"customType": "leistung",
+		"customTypeLabel": "Leistung",
+		"tab": "Main",
+		"field": "slices",
+		"path": "leistung/Main/slices",
+		"label": "slices",
+		"description": "Wählt die Inhaltsbausteine aus, die an dieser Stelle verwendet werden können.",
+		"type": "Slices"
 	},
 	{
 		"name": "LinkListe",
