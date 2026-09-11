@@ -1,0 +1,48 @@
+{
+	"id": "angebot",
+	"label": "Angebot",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": { "label": "UID", "placeholder": "" }
+			},
+			"titel": {
+				"type": "Text",
+				"config": { "label": "Bezeichnung", "placeholder": "z.B. Massage 60 Minuten" }
+			},
+			"beschreibung": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Beschreibung",
+					"allowTargetBlank": true,
+					"multi": "paragraph,strong,em,hyperlink,list-item,o-list-item"
+				}
+			},
+			"dauer": {
+				"type": "Number",
+				"config": { "label": "Dauer (Minuten)", "placeholder": "60" }
+			},
+			"puffer_danach": {
+				"type": "Number",
+				"config": { "label": "Puffer danach (Minuten)", "placeholder": "0" }
+			},
+			"preis": {
+				"type": "Number",
+				"config": { "label": "Preis (optional)", "placeholder": "" }
+			},
+			"aktiv": {
+				"type": "Boolean",
+				"config": {
+					"label": "Aktiv",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": true
+				}
+			}
+		}
+	}
+}

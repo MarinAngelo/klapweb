@@ -5,9 +5,10 @@ import {
 	deleteBooking,
 	cancelSlot,
 	uncancelSlot,
-	listCancelled
+	listCancelled,
+	hasOverlappingBooking
 } from '$lib/server/bookings';
-import { expandDoc } from '$lib/server/terminSlots';
+import { expandArbeitstag, expandDoc } from '$lib/server/terminSlots';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
@@ -24,8 +25,16 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		listBookings(),
 		(async () => {
 			const client = createClient({ fetch });
-			const docs = await client.getAllByType('terminplanung');
-			return docs.flatMap((doc) => expandDoc(doc, today));
+			const dynamicClient = client as any;
+			const [docs, workdays, offers] = await Promise.all([
+				dynamicClient.getAllByType('terminplanung'),
+				dynamicClient.getAllByType('arbeitstag').catch(() => []),
+				dynamicClient.getAllByType('angebot').catch(() => [])
+			]);
+			return [
+				...docs.flatMap((doc: any) => expandDoc(doc, today)),
+				...workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, today))
+			];
 		})(),
 		listCancelled()
 	]);
@@ -40,8 +49,18 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	const cancelledIds = new Set(cancelledResult.status === 'fulfilled' ? cancelledResult.value : []);
 	const bookedIds = new Set(bookings.map((b) => b.terminId));
 
-	const freeSlots = allSlots
-		.filter((s) => !bookedIds.has(s.id) && !cancelledIds.has(s.id))
+	const candidateFreeSlots = allSlots.filter(
+		(s) => !bookedIds.has(s.id) && !cancelledIds.has(s.id)
+	);
+	const freeSlotChecks = await Promise.all(
+		candidateFreeSlots.map(async (s) => ({
+			slot: s,
+			blocked: !!s.endzeit && (await hasOverlappingBooking(s.datum, s.uhrzeit, s.endzeit, s.id))
+		}))
+	);
+	const freeSlots = freeSlotChecks
+		.filter(({ blocked }) => !blocked)
+		.map(({ slot }) => slot)
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
 	const cancelledSlots = allSlots

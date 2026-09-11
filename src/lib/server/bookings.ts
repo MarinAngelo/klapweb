@@ -13,10 +13,19 @@ export interface BookingRecord {
 	terminId: string;
 	datum: string;
 	uhrzeit: string;
+	endzeit?: string;
 	titel: string;
 	bookedAt: string;
 	name?: string;
 	email?: string;
+	arbeitstagId?: string;
+	angebotId?: string;
+}
+
+function toMinutes(value: string): number | null {
+	const match = /^(\d{1,2}):(\d{2})$/.exec(value ?? '');
+	if (!match) return null;
+	return Number(match[1]) * 60 + Number(match[2]);
 }
 
 function getBookingStore() {
@@ -43,6 +52,27 @@ export async function isBooked(terminId: string): Promise<boolean> {
 	return existing !== null;
 }
 
+export async function hasOverlappingBooking(
+	datum: string,
+	startzeit: string,
+	endzeit: string,
+	excludeId?: string
+): Promise<boolean> {
+	const start = toMinutes(startzeit);
+	const end = toMinutes(endzeit);
+	if (start === null || end === null || end <= start) return false;
+
+	const bookings = await listBookings();
+	return bookings.some((booking) => {
+		if (booking.terminId === excludeId || booking.datum !== datum) return false;
+		const existingStart = toMinutes(booking.uhrzeit);
+		const existingEnd = toMinutes(booking.endzeit ?? booking.uhrzeit);
+		if (existingStart === null || existingEnd === null || existingEnd <= existingStart)
+			return false;
+		return start < existingEnd && end > existingStart;
+	});
+}
+
 export async function listBookings(): Promise<BookingRecord[]> {
 	const store = getBookingStore();
 	const { blobs } = await store.list();
@@ -51,7 +81,11 @@ export async function listBookings(): Promise<BookingRecord[]> {
 	);
 	return records
 		.filter(Boolean)
-		.sort((a, b) => new Date(a.datum + 'T' + a.uhrzeit).getTime() - new Date(b.datum + 'T' + b.uhrzeit).getTime());
+		.sort(
+			(a, b) =>
+				new Date(a.datum + 'T' + a.uhrzeit).getTime() -
+				new Date(b.datum + 'T' + b.uhrzeit).getTime()
+		);
 }
 
 export async function listBookingsByEmail(email: string): Promise<BookingRecord[]> {

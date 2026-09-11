@@ -66,6 +66,12 @@
 		"terminplanung": {
 			"feature": "terminbuchung"
 		},
+		"angebot": {
+			"feature": "terminbuchung"
+		},
+		"arbeitstag": {
+			"feature": "terminbuchung"
+		},
 		"leistung": {
 			"feature": "ecommerce"
 		},

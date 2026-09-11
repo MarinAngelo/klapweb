@@ -1,8 +1,9 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { bookSlot, isBooked } from '$lib/server/bookings';
+import { bookSlot, hasOverlappingBooking, isBooked } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { expandArbeitstag } from '$lib/server/terminSlots';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -160,9 +161,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// Fetch termin + company info from Prismic
 	let datum = '';
 	let uhrzeit = '';
+	let endzeit = '';
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
 	let zeitzone = 'Europe/Zurich';
+	let arbeitstagId: string | undefined;
+	let angebotId: string | undefined;
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -176,18 +180,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings] = await Promise.all([
-			client.getByUID('terminplanung', baseUid),
-			client.getSingle('settings').catch(() => null)
-		]);
-
-		const d = doc.data as any;
-		datum = occurrenceDate ?? d.datum ?? '';
-		uhrzeit = d.uhrzeit ?? '';
-		titel = d.titel ?? baseUid;
-		sessionLaenge = d.session_laenge ?? null;
-		zeitzone = d.zeitzone ?? 'Europe/Zurich';
-
+		const dynamicClient = client as any;
+		const settings = await client.getSingle('settings').catch(() => null);
 		if (settings) {
 			const s = settings.data as any;
 			companyName = (s.responsible_person_company as string) ?? '';
@@ -198,18 +192,62 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				? s.booking_customer_email_body
 				: null;
 		}
+
+		try {
+			const doc = await dynamicClient.getByUID('terminplanung', baseUid);
+			const d = doc.data as any;
+			datum = occurrenceDate ?? d.datum ?? '';
+			uhrzeit = d.uhrzeit ?? '';
+			titel = d.titel ?? baseUid;
+			sessionLaenge = d.session_laenge ?? null;
+			endzeit =
+				sessionLaenge && uhrzeit
+					? addMinutes(datum, uhrzeit, sessionLaenge).slice(-6, -4) +
+						':' +
+						addMinutes(datum, uhrzeit, sessionLaenge).slice(-4, -2)
+					: '';
+			zeitzone = d.zeitzone ?? 'Europe/Zurich';
+		} catch {
+			const [workdays, offers] = await Promise.all([
+				dynamicClient.getAllByType('arbeitstag'),
+				dynamicClient.getAllByType('angebot')
+			]);
+			const today = new Date().toISOString().slice(0, 10);
+			const slot = workdays
+				.flatMap((doc) => expandArbeitstag(doc, offers, today))
+				.find((item) => item.id === terminId);
+			if (!slot) throw new Error('Termin nicht gefunden');
+			datum = slot.datum;
+			uhrzeit = slot.uhrzeit;
+			endzeit = slot.endzeit ?? '';
+			titel = slot.titel;
+			sessionLaenge = slot.sessionLaenge;
+			zeitzone = slot.zeitzone;
+			arbeitstagId = slot.arbeitstagId;
+			angebotId = slot.angebotId;
+		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
+	}
+
+	if (endzeit && (await hasOverlappingBooking(datum, uhrzeit, endzeit, terminId))) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
 	}
 
 	await bookSlot({
 		terminId,
 		datum,
 		uhrzeit,
+		endzeit,
 		titel,
 		bookedAt: new Date().toISOString(),
 		name,
-		email
+		email,
+		arbeitstagId,
+		angebotId
 	});
 
 	// Send emails (fire-and-forget — booking is already saved)

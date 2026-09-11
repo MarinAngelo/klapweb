@@ -59,11 +59,21 @@
 	interface AvailableTermin {
 		id: string;
 		label: string;
+		titel?: string;
+		uhrzeit?: string;
+		endzeit?: string;
+		sessionLaenge?: number | null;
 	}
 	let termine: AvailableTermin[] = [];
 	let termineLoading = false;
 	let termineError = false;
 	let selectedTermin = '';
+
+	$: termineByDate = termine.reduce<Record<string, AvailableTermin[]>>((groups, termin) => {
+		const date = termin.label.split(' – ')[0] || 'Termin';
+		(groups[date] ??= []).push(termin);
+		return groups;
+	}, {});
 
 	const countries = [
 		'Afghanistan',
@@ -623,29 +633,34 @@
 			{:else if termine.length === 0}
 				<p class="text-sm opacity-60">Keine verfügbaren Termine.</p>
 			{:else}
-				<select
-					id={key}
-					name={key}
-					required={field.required}
-					bind:value={selectedTermin}
-					class={compact
-						? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-						: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
-					style={compact
-						? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-						: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
-					on:blur
-					on:change
-				>
-					<option value="">Termin auswählen</option>
-					{#each termine as t}
-						<option
-							value={t.id}
-							style="background-color: {selectOptionBg}; color: var(--page-color);"
-							>{t.label}</option
-						>
+				<div class="termin-selection" role="radiogroup" aria-label={field.field_name ?? 'Termin'}>
+					{#each Object.entries(termineByDate) as [date, dateTermine]}
+						<section class="termin-day">
+							<h4>{date}</h4>
+							<div class="termin-options">
+								{#each dateTermine as t}
+									<label class:selected={selectedTermin === t.id} class="termin-option">
+										<input
+											type="radio"
+											id={`${key}-${t.id}`}
+											name={key}
+											value={t.id}
+											bind:group={selectedTermin}
+											required={field.required}
+											on:blur
+											on:change
+										/>
+										<span class="termin-option-content">
+											<strong>{t.titel ?? t.label}</strong>
+											<span>{t.uhrzeit}{t.endzeit ? `–${t.endzeit}` : ''}</span>
+											{#if t.sessionLaenge}<small>{t.sessionLaenge} Minuten</small>{/if}
+										</span>
+									</label>
+								{/each}
+							</div>
+						</section>
 					{/each}
-				</select>
+				</div>
 			{/if}
 		{:else if htmlType === 'select-zeitzone'}
 			<select
@@ -681,6 +696,87 @@
 	.input {
 		font-size: 18px;
 		line-height: 1.5;
+	}
+
+	.termin-selection {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 0.75rem;
+	}
+
+	.termin-day {
+		margin: 0;
+	}
+
+	.termin-day h4 {
+		margin: 0 0 0.5rem;
+		font-size: 1rem;
+		font-weight: 700;
+	}
+
+	.termin-options {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+		gap: 0.625rem;
+	}
+
+	.termin-option {
+		position: relative;
+		display: flex;
+		min-height: 4.5rem;
+		cursor: pointer;
+		align-items: center;
+		gap: 0.75rem;
+		border: 1px solid color-mix(in srgb, var(--page-color) 28%, transparent);
+		padding: 0.75rem 0.875rem;
+		background: color-mix(in srgb, var(--page-bg-color) 94%, var(--page-color));
+		transition:
+			border-color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	.termin-option:hover {
+		border-color: var(--page-color);
+		transform: translateY(-1px);
+	}
+
+	.termin-option:focus-within {
+		outline: 2px solid var(--page-color);
+		outline-offset: 2px;
+	}
+
+	.termin-option.selected {
+		border-color: var(--page-color);
+		background: color-mix(in srgb, var(--page-color) 12%, var(--page-bg-color));
+	}
+
+	.termin-option input {
+		width: 1rem;
+		height: 1rem;
+		margin: 0;
+		accent-color: var(--page-color);
+		flex: 0 0 auto;
+	}
+
+	.termin-option-content {
+		display: grid;
+		gap: 0.125rem;
+	}
+
+	.termin-option-content strong {
+		font-size: 0.95rem;
+		line-height: 1.25;
+	}
+
+	.termin-option-content span {
+		font-size: 0.95rem;
+		line-height: 1.25;
+	}
+
+	.termin-option-content small {
+		font-size: 0.8rem;
+		opacity: 0.65;
 	}
 
 	.code-input::placeholder {

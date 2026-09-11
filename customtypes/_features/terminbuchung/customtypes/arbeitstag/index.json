@@ -1,0 +1,88 @@
+{
+	"id": "arbeitstag",
+	"label": "Arbeitstag",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Main": {
+			"uid": {
+				"type": "UID",
+				"config": { "label": "UID", "placeholder": "" }
+			},
+			"bezeichnung": {
+				"type": "Text",
+				"config": { "label": "Bezeichnung", "placeholder": "z.B. Praxistag Montag" }
+			},
+			"datum": {
+				"type": "Date",
+				"config": { "label": "Datum" }
+			},
+			"startzeit": {
+				"type": "Text",
+				"config": { "label": "Startzeit (HH:MM)", "placeholder": "09:00" }
+			},
+			"endzeit": {
+				"type": "Text",
+				"config": { "label": "Endzeit (HH:MM)", "placeholder": "18:00" }
+			},
+			"zeitzone": {
+				"type": "Select",
+				"config": {
+					"label": "Zeitzone",
+					"options": ["Europe/Zurich", "Europe/Berlin", "Europe/Vienna", "Europe/London"],
+					"default_value": "Europe/Zurich"
+				}
+			},
+			"pause_von": {
+				"type": "Text",
+				"config": { "label": "Pause von (optional)", "placeholder": "12:00" }
+			},
+			"pause_bis": {
+				"type": "Text",
+				"config": { "label": "Pause bis (optional)", "placeholder": "13:00" }
+			},
+			"buchungsintervall": {
+				"type": "Select",
+				"config": {
+					"label": "Buchungsintervall",
+					"options": ["15", "30", "60"],
+					"default_value": "30"
+				}
+			},
+			"angebote": {
+				"type": "Group",
+				"config": {
+					"label": "Buchbare Angebote",
+					"repeat": true,
+					"fields": {
+						"angebot": {
+							"type": "Link",
+							"config": {
+								"label": "Angebot",
+								"select": "document",
+								"customtypes": ["angebot"]
+							}
+						}
+					}
+				}
+			},
+			"wiederholung": {
+				"type": "Select",
+				"config": {
+					"label": "Wiederholung",
+					"options": ["Keine", "Täglich", "Wöchentlich", "Zweiwöchentlich", "Monatlich"],
+					"default_value": "Keine"
+				}
+			},
+			"wiederholung_bis": {
+				"type": "Date",
+				"config": { "label": "Wiederholen bis (Datum)" }
+			},
+			"wiederholung_anzahl": {
+				"type": "Number",
+				"config": { "label": "Anzahl Wiederholungen", "placeholder": "z.B. 10" }
+			}
+		}
+	}
+}
