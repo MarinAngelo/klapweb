@@ -1,5 +1,5 @@
 /**
- * Shared logic for expanding terminplanung docs into individual bookable slots.
+ * Shared logic for expanding Arbeitstag documents into individual bookable slots.
  * Used by /api/termine and /admin/buchungen.
  */
 
@@ -14,6 +14,7 @@ export interface TerminSlot {
 	zeitzone: string;
 	label: string;
 	arbeitstagId?: string;
+	arbeitstagLabel?: string;
 	angebotId?: string;
 }
 
@@ -56,70 +57,6 @@ function advanceDate(date: Date, wiederholung: string): Date {
 	else if (wiederholung === 'Zweiwöchentlich') next.setUTCDate(next.getUTCDate() + 14);
 	else if (wiederholung === 'Monatlich') next.setUTCMonth(next.getUTCMonth() + 1);
 	return next;
-}
-
-export function expandDoc(doc: any, fromDate: string): TerminSlot[] {
-	const d = doc.data as any;
-	const startDatum: string = d.datum ?? '';
-	if (!startDatum) return [];
-
-	const titel: string = d.titel ?? doc.uid;
-	const uhrzeit: string = d.uhrzeit ?? '';
-	const sessionLaenge: number | null = d.session_laenge ?? null;
-	const zeitzone: string = d.zeitzone ?? 'Europe/Zurich';
-	const wiederholung: string = d.wiederholung ?? 'Keine';
-
-	if (!wiederholung || wiederholung === 'Keine') {
-		if (startDatum < fromDate) return [];
-		return [
-			{
-				id: doc.uid,
-				baseUid: doc.uid,
-				titel,
-				datum: startDatum,
-				uhrzeit,
-				endzeit:
-					sessionLaenge && uhrzeit ? timeLabel((minutes(uhrzeit) ?? 0) + sessionLaenge) : undefined,
-				sessionLaenge,
-				zeitzone,
-				label: makeLabel(startDatum, uhrzeit, titel, sessionLaenge)
-			}
-		];
-	}
-
-	const bis: string | null = d.wiederholung_bis ?? null;
-	const anzahl: number | null = d.wiederholung_anzahl ?? null;
-
-	const slots: TerminSlot[] = [];
-	let current = new Date(startDatum + 'T12:00:00Z');
-	let totalCount = 0;
-	const hardLimit = 500;
-
-	while (totalCount < hardLimit) {
-		const dateStr = current.toISOString().slice(0, 10);
-		if (bis && dateStr > bis) break;
-		if (anzahl !== null && totalCount >= anzahl) break;
-
-		if (dateStr >= fromDate) {
-			slots.push({
-				id: `${doc.uid}_${dateStr}`,
-				baseUid: doc.uid,
-				titel,
-				datum: dateStr,
-				uhrzeit,
-				endzeit:
-					sessionLaenge && uhrzeit ? timeLabel((minutes(uhrzeit) ?? 0) + sessionLaenge) : undefined,
-				sessionLaenge,
-				zeitzone,
-				label: makeLabel(dateStr, uhrzeit, titel, sessionLaenge)
-			});
-		}
-
-		totalCount++;
-		current = advanceDate(current, wiederholung);
-	}
-
-	return slots;
 }
 
 export function expandArbeitstag(doc: any, offers: any[], fromDate: string): TerminSlot[] {
@@ -180,6 +117,9 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 						zeitzone: d.zeitzone ?? 'Europe/Zurich',
 						label: makeLabel(dateStr, time, title, duration, endTime),
 						arbeitstagId: doc.uid,
+						arbeitstagLabel: d.bezeichnung
+							? `${formatDateWithWeekday(dateStr, null)} – ${d.bezeichnung}`
+							: formatDateWithWeekday(dateStr, null),
 						angebotId: offer.uid
 					});
 				}

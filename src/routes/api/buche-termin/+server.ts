@@ -173,11 +173,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
 
-	// Recurring slots use ID format "<uid>_YYYY-MM-DD"; non-recurring use plain uid
-	const recurringMatch = terminId.match(/^(.+)_(\d{4}-\d{2}-\d{2})$/);
-	const baseUid = recurringMatch ? recurringMatch[1] : terminId;
-	const occurrenceDate = recurringMatch ? recurringMatch[2] : null;
-
 	try {
 		const client = createClient({ fetch });
 		const dynamicClient = client as any;
@@ -193,39 +188,23 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				: null;
 		}
 
-		try {
-			const doc = await dynamicClient.getByUID('terminplanung', baseUid);
-			const d = doc.data as any;
-			datum = occurrenceDate ?? d.datum ?? '';
-			uhrzeit = d.uhrzeit ?? '';
-			titel = d.titel ?? baseUid;
-			sessionLaenge = d.session_laenge ?? null;
-			endzeit =
-				sessionLaenge && uhrzeit
-					? addMinutes(datum, uhrzeit, sessionLaenge).slice(-6, -4) +
-						':' +
-						addMinutes(datum, uhrzeit, sessionLaenge).slice(-4, -2)
-					: '';
-			zeitzone = d.zeitzone ?? 'Europe/Zurich';
-		} catch {
-			const [workdays, offers] = await Promise.all([
-				dynamicClient.getAllByType('arbeitstag'),
-				dynamicClient.getAllByType('angebot')
-			]);
-			const today = new Date().toISOString().slice(0, 10);
-			const slot = workdays
-				.flatMap((doc) => expandArbeitstag(doc, offers, today))
-				.find((item) => item.id === terminId);
-			if (!slot) throw new Error('Termin nicht gefunden');
-			datum = slot.datum;
-			uhrzeit = slot.uhrzeit;
-			endzeit = slot.endzeit ?? '';
-			titel = slot.titel;
-			sessionLaenge = slot.sessionLaenge;
-			zeitzone = slot.zeitzone;
-			arbeitstagId = slot.arbeitstagId;
-			angebotId = slot.angebotId;
-		}
+		const [workdays, offers] = await Promise.all([
+			dynamicClient.getAllByType('arbeitstag'),
+			dynamicClient.getAllByType('angebot')
+		]);
+		const today = new Date().toISOString().slice(0, 10);
+		const slot = workdays
+			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.find((item) => item.id === terminId);
+		if (!slot) throw new Error('Termin nicht gefunden');
+		datum = slot.datum;
+		uhrzeit = slot.uhrzeit;
+		endzeit = slot.endzeit ?? '';
+		titel = slot.titel;
+		sessionLaenge = slot.sessionLaenge;
+		zeitzone = slot.zeitzone;
+		arbeitstagId = slot.arbeitstagId;
+		angebotId = slot.angebotId;
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}

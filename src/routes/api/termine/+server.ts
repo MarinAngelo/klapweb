@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 import { hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
-import { expandArbeitstag, expandDoc } from '$lib/server/terminSlots';
+import { expandArbeitstag } from '$lib/server/terminSlots';
 
 export type { TerminSlot as AvailableTermin } from '$lib/server/terminSlots';
 
@@ -9,17 +9,13 @@ export const GET: RequestHandler = async ({ fetch }) => {
 	try {
 		const client = createClient({ fetch });
 		const dynamicClient = client as any;
-		const [docs, workdays, offers] = await Promise.all([
-			dynamicClient.getAllByType('terminplanung'),
+		const [workdays, offers] = await Promise.all([
 			dynamicClient.getAllByType('arbeitstag').catch(() => []),
 			dynamicClient.getAllByType('angebot').catch(() => [])
 		]);
 		const today = new Date().toISOString().slice(0, 10);
 
-		const allSlots = [
-			...docs.flatMap((doc) => expandDoc(doc, today)),
-			...workdays.flatMap((doc) => expandArbeitstag(doc, offers, today))
-		];
+		const allSlots = workdays.flatMap((doc) => expandArbeitstag(doc, offers, today));
 
 		const withAvailability = await Promise.all(
 			allSlots.map(async (slot) => {

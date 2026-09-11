@@ -1,7 +1,7 @@
 /**
  * Booking storage via Netlify Blobs.
  *
- * Each booking occupies one blob keyed by the terminplanung document UID.
+ * Each booking occupies one blob keyed by the generated workday slot ID.
  * Using the UID as key means a slot can only be booked once (atomic write).
  *
  * Required Netlify environment variables: NETLIFY_SITE_ID, NETLIFY_TOKEN

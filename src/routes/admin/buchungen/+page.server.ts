@@ -8,7 +8,7 @@ import {
 	listCancelled,
 	hasOverlappingBooking
 } from '$lib/server/bookings';
-import { expandArbeitstag, expandDoc } from '$lib/server/terminSlots';
+import { expandArbeitstag } from '$lib/server/terminSlots';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
@@ -26,15 +26,11 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		(async () => {
 			const client = createClient({ fetch });
 			const dynamicClient = client as any;
-			const [docs, workdays, offers] = await Promise.all([
-				dynamicClient.getAllByType('terminplanung'),
+			const [workdays, offers] = await Promise.all([
 				dynamicClient.getAllByType('arbeitstag').catch(() => []),
 				dynamicClient.getAllByType('angebot').catch(() => [])
 			]);
-			return [
-				...docs.flatMap((doc: any) => expandDoc(doc, today)),
-				...workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, today))
-			];
+			return workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, today));
 		})(),
 		listCancelled()
 	]);

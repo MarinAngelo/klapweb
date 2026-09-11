@@ -63,9 +63,6 @@
 		}
 	},
 	"customTypes": {
-		"terminplanung": {
-			"feature": "terminbuchung"
-		},
 		"angebot": {
 			"feature": "terminbuchung"
 		},
