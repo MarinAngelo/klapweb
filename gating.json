@@ -63,7 +63,10 @@
 		}
 	},
 	"customTypes": {
-		"terminplanung": {
+		"angebot": {
+			"feature": "terminbuchung"
+		},
+		"arbeitstag": {
 			"feature": "terminbuchung"
 		},
 		"leistung": {

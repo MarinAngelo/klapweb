@@ -18,7 +18,10 @@
 		(e.currentTarget as HTMLFormElement).submit();
 	}
 
-	const fmtDate = (datum: string, uhrzeit: string) => formatDateWithWeekday(datum, uhrzeit || null);
+	const fmtDate = (datum: string, uhrzeit: string, endzeit?: string) => {
+		const date = formatDateWithWeekday(datum, uhrzeit || null);
+		return endzeit ? `${date}–${endzeit} Uhr` : date;
+	};
 
 	const tdStyle = 'padding: 0.5rem 0.75rem;';
 	const tdNowrap = tdStyle + ' white-space: nowrap;';
@@ -87,7 +90,7 @@
 				<tbody>
 					{#each data.bookings as b}
 						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style={tdNowrap}>{fmtDate(b.datum, b.uhrzeit)}</td>
+							<td style={tdNowrap}>{fmtDate(b.datum, b.uhrzeit, b.endzeit)}</td>
 							<td style={tdStyle}>{b.titel || b.terminId}</td>
 							<td style={tdStyle}>{b.name ?? '–'}</td>
 							<td style={tdStyle}>{b.email ?? '–'}</td>
