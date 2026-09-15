@@ -75,6 +75,18 @@
 		checked_out: '✉ Abrechnung freigeben → Definitive Abrechnung an Mieter'
 	};
 
+	function nextAction(b: any): string | null {
+		if (b.status === 'checked_in' && !abreiseReminderSent(b)) return 'sendAbreiseReminder';
+		return NEXT_ACTION[b.status];
+	}
+
+	function nextLabel(b: any): string {
+		if (b.status === 'checked_in' && !abreiseReminderSent(b)) {
+			return '✉ Vor Abreise → Abreise-Mail an Mieter';
+		}
+		return NEXT_LABEL[b.status];
+	}
+
 	let expandedBuchungen = new Set<string>();
 	function toggleExpand(id: string) {
 		if (expandedBuchungen.has(id)) expandedBuchungen.delete(id);
@@ -301,14 +313,14 @@
 										</form>
 									{/if}
 									<!-- Vorwärts -->
-									{#if NEXT_ACTION[b.status]}
-										<form method="POST" action="?/{NEXT_ACTION[b.status]}&secret={secret}">
+									{#if nextAction(b)}
+										<form method="POST" action="?/{nextAction(b)}&secret={secret}">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
 												style="font-size:0.7rem;background:#1e2d5a;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:2px 8px;font-weight:600;white-space:nowrap;"
 											>
-												{NEXT_LABEL[b.status]}
+												{nextLabel(b)}
 											</button>
 										</form>
 									{:else if b.status === 'checked_out'}

@@ -12,7 +12,7 @@ import {
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
-import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
+import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
