@@ -61,7 +61,11 @@
 						<ul>
 							{#each entries as entry}
 								<li class:active={entry.id === activeId}>
-									<a href="#{entry.id}">{entry.text}</a>
+									<a
+										href="#{entry.id}"
+										aria-current={entry.id === activeId ? 'location' : undefined}
+										on:click={() => (activeId = entry.id)}>{entry.text}</a
+									>
 								</li>
 							{/each}
 						</ul>
@@ -75,6 +79,11 @@
 		<header class="page-header">
 			<h1>Dev-Dokumentation</h1>
 			<p class="subtitle">klap-web · Slices, Komponenten &amp; Architektur</p>
+			<p>
+				Die Prismic-Feldreferenz zeigt nur jene Felder an, die in diesem Branch gemäß Gating aktiv
+				sind. Sie wird automatisch über den Build-Prozess aktualisiert, sobald ein neues Feld
+				hinzugefügt wird.
+			</p>
 		</header>
 
 		<section id="adresse-und-map">
@@ -1764,47 +1773,46 @@
 			</table>
 		</section>
 
-		<section id="ct-terminplanung">
-			<h2>Terminplanung <code class="slice-tag">terminplanung</code></h2>
+		<section id="ct-angebot">
+			<h2>Angebot <code class="slice-tag">angebot</code></h2>
 			<div class="pills">
 				<span class="pill gate" title="Feature: terminbuchung">Feature: terminbuchung &nbsp;⚙</span>
 			</div>
-			<p>
-				Repeatable. Einzelne Terminslots für das Buchungssystem. Unterstützt Wiederholungen (täglich
-				bis monatlich).
-			</p>
+			<p>Repeatable. Ein buchbarer Angebotstyp mit eigener Dauer und optionaler Pufferzeit.</p>
 			<table>
 				<thead><tr><th>API-ID</th><th>Typ</th><th>Beschreibung</th></tr></thead>
 				<tbody>
 					<tr><td><code>uid</code></td><td>UID</td><td>Slug</td></tr>
-					<tr><td><code>titel</code></td><td>Text</td><td>Bezeichnung des Termins</td></tr>
-					<tr><td><code>datum</code></td><td>Datum</td><td>Startdatum</td></tr>
-					<tr><td><code>uhrzeit</code></td><td>Text</td><td>Uhrzeit im Format HH:MM</td></tr>
-					<tr><td><code>session_laenge</code></td><td>Zahl</td><td>Dauer in Minuten</td></tr>
+					<tr><td><code>titel</code></td><td>Text</td><td>Bezeichnung des Angebots</td></tr>
+					<tr><td><code>beschreibung</code></td><td>Rich Text</td><td>Beschreibung</td></tr>
+					<tr><td><code>dauer</code></td><td>Zahl</td><td>Dauer in Minuten</td></tr>
 					<tr
-						><td><code>zeitzone</code></td><td>Auswahl</td><td
-							>Zeitzone (24 Optionen, Default: Europe/Zurich)</td
+						><td><code>puffer_danach</code></td><td>Zahl</td><td
+							>Optionale Pufferzeit nach dem Angebot</td
 						></tr
 					>
+					<tr><td><code>preis</code></td><td>Zahl</td><td>Optionaler Preis</td></tr>
 					<tr
-						><td><code>wiederholung</code></td><td>Auswahl</td><td
-							>Keine / Täglich / Wöchentlich / Zweiwöchentlich / Monatlich</td
-						></tr
-					>
-					<tr
-						><td><code>wiederholung_bis</code></td><td>Datum</td><td>Wiederholen bis (Datum)</td
-						></tr
-					>
-					<tr
-						><td><code>wiederholung_anzahl</code></td><td>Zahl</td><td
-							>Maximale Anzahl Wiederholungen</td
+						><td><code>aktiv</code></td><td>Boolean</td><td>Steuert, ob das Angebot buchbar ist</td
 						></tr
 					>
 				</tbody>
 			</table>
+		</section>
+
+		<section id="ct-arbeitstag">
+			<h2>Arbeitstag <code class="slice-tag">arbeitstag</code></h2>
+			<div class="pills">
+				<span class="pill gate" title="Feature: terminbuchung">Feature: terminbuchung &nbsp;⚙</span>
+			</div>
+			<p>
+				Repeatable. Ein verfügbares Zeitfenster, aus dem gemeinsam mit verknüpften Angeboten
+				automatisch buchbare Slots erzeugt werden.
+			</p>
 			<div class="callout">
-				Die Slot-Expansion wird serverseitig in <code>src/lib/server/terminSlots.ts</code> durchgeführt
-				— Wiederholungen werden zur Laufzeit aus dem Startdatum berechnet, nicht einzeln gespeichert.
+				Die Slot-Expansion wird serverseitig in <code>src/lib/server/terminSlots.ts</code>
+				durchgeführt. Ein Arbeitstag verknüpft Angebote über das Feld <code>angebote</code> und kann Wiederholungen,
+				Pausen und ein Buchungsintervall definieren.
 			</div>
 		</section>
 
@@ -2197,7 +2205,7 @@
 					>
 					<tr
 						><td><code>customtypes/_features/*/customtypes/*/index.json</code></td><td
-							>Feature-eigene Custom Types (event, terminplanung, leistung, variablen)</td
+							>Feature-eigene Custom Types (angebot, arbeitstag, event, leistung, variablen)</td
 						></tr
 					>
 					<tr
@@ -2705,7 +2713,7 @@
 						><td>resend.com Dashboard → API Keys</td></tr
 					>
 					<tr
-						><td><code>INVOICE_FROM_EMAIL</code></td><td>Absender aller transaktionalen Mails</td
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender aller transaktionalen Mails</td
 						><td>Ja</td><td>Muss verifizierte Domain bei Resend sein</td></tr
 					>
 					<tr
@@ -3320,7 +3328,7 @@
 						></tr
 					>
 					<tr
-						><td><code>INVOICE_FROM_EMAIL</code></td><td>Absender-E-Mail</td><td
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender-E-Mail</td><td
 							>Absender-E-Mail (muss in Resend verifiziert sein)</td
 						></tr
 					>
@@ -3655,7 +3663,7 @@
 
 			<div class="callout">
 				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> +
-				<code>INVOICE_FROM_EMAIL</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
+				<code>EMAIL_FROM_ADDRESS</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
 				E-Mail versendet nicht (kein Fehler-Abbruch).
 			</div>
 		</section>
@@ -3924,7 +3932,7 @@
 		padding: 0.25rem 0.5rem;
 		border-radius: 0.25rem;
 		color: var(--doku-nav-link);
-		text-decoration: none;
+		text-decoration: none !important;
 		font-size: 0.82rem;
 		transition:
 			color 0.15s,
@@ -3938,6 +3946,8 @@
 		color: var(--doku-nav-active);
 		font-weight: 600;
 		background: var(--doku-surface);
+		text-decoration: underline !important;
+		text-underline-offset: 0.15em;
 	}
 
 	/* ── Section divider ── */

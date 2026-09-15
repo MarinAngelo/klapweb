@@ -58,7 +58,7 @@ export async function maybeSendAnkunftsErinnerung(
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !buchung.email) {
 		console.log(
 			`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`

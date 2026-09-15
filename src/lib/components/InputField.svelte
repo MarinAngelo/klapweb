@@ -3,6 +3,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { shadeColor } from '$lib/utils/color';
 	import Checkbox from '$lib/components/Checkbox.svelte';
+	import { _ } from '$lib/stores/i18n';
 
 	export let field: {
 		field_name: string | null;
@@ -20,11 +21,14 @@
 	export let compact = false;
 	// inline=true: Label und Input nebeneinander statt übereinander
 	export let inline = false;
+	export let showLabel = true;
+	export let inputId: string | undefined = undefined;
 
 	// Technischer Schlüssel: Typ hat Vorrang, sonst normalisierter Label
 	const typeKeys: Record<string, string> = {
 		'E-Mail': 'email',
 		Textbereich: 'message',
+		Suche: 'search',
 		Land: 'land',
 		Termin: 'termin',
 		Zeitzone: 'zeitzone'
@@ -40,6 +44,7 @@
 		Einzelauswahl: 'radio',
 		Auswahlliste: 'select',
 		Textfeld: 'text',
+		Suche: 'search',
 		Code: 'code',
 		Zahl: 'number',
 		'E-Mail': 'email',
@@ -55,11 +60,42 @@
 	interface AvailableTermin {
 		id: string;
 		label: string;
+		titel?: string;
+		uhrzeit?: string;
+		endzeit?: string;
+		sessionLaenge?: number | null;
+		arbeitstagLabel?: string;
 	}
 	let termine: AvailableTermin[] = [];
 	let termineLoading = false;
 	let termineError = false;
 	let selectedTermin = '';
+	let selectedWorkday = '';
+	let selectedTime = '';
+
+	$: termineByWorkday = termine.reduce<Record<string, Record<string, AvailableTermin[]>>>(
+		(groups, termin) => {
+			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || 'Termin';
+			const time = termin.uhrzeit || 'Ganztägig';
+			(groups[workday] ??= {})[time] ??= [];
+			groups[workday][time].push(termin);
+			return groups;
+		},
+		{}
+	);
+	$: selectedWorkdaySlots = termineByWorkday[selectedWorkday] ?? {};
+	$: selectedTimeTermine = selectedWorkdaySlots[selectedTime] ?? [];
+
+	function chooseWorkday(workday: string) {
+		selectedWorkday = workday;
+		selectedTime = '';
+		selectedTermin = '';
+	}
+
+	function chooseTime(time: string) {
+		selectedTime = time;
+		selectedTermin = '';
+	}
 
 	const countries = [
 		'Afghanistan',
@@ -263,9 +299,12 @@
 	$: htmlType = typeMapping[field.field_type ?? ''] || field.field_type || 'text';
 
 	async function loadTermine(_key: number) {
+		void _key;
 		termineLoading = true;
 		termineError = false;
 		selectedTermin = '';
+		selectedWorkday = '';
+		selectedTime = '';
 		try {
 			const r = await fetch('/api/termine');
 			termine = await r.json();
@@ -315,7 +354,13 @@
 	export let value: string | number = '';
 	let textValue = '';
 	let numberValue: number | null = typeof value === 'number' ? value : null;
-	$: if (htmlType === 'text' || htmlType === 'code' || htmlType === 'email') value = textValue;
+	$: if (
+		htmlType === 'text' ||
+		htmlType === 'search' ||
+		htmlType === 'code' ||
+		htmlType === 'email'
+	)
+		value = textValue;
 	$: if (htmlType === 'number') value = numberValue ?? '';
 	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
 
@@ -337,7 +382,7 @@
 
 <div class={inline ? 'w-full contents' : 'mb-4'}>
 	<!-- Label -->
-	{#if htmlType !== 'checkbox'}
+	{#if htmlType !== 'checkbox' && showLabel}
 		<label
 			for={key}
 			class={inline
@@ -351,11 +396,29 @@
 	{/if}
 
 	<div class={inline ? 'flex-1' : ''}>
-		{#if htmlType === 'text'}
+		{#if htmlType === 'search'}
+			<input
+				type="search"
+				id={inputId ?? key}
+				name={inputId ?? key}
+				bind:value={textValue}
+				required={field.required}
+				placeholder={field.placeholder ?? ''}
+				class={compact
+					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
+					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
+				style={compact
+					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
+					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				on:input
+				on:blur
+				on:change
+			/>
+		{:else if htmlType === 'text'}
 			<input
 				type="text"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -372,8 +435,8 @@
 		{:else if htmlType === 'number'}
 			<input
 				type="number"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={numberValue}
 				required={field.required}
 				min={field.min ?? undefined}
@@ -391,8 +454,8 @@
 		{:else if htmlType === 'code'}
 			<input
 				type="text"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -411,8 +474,8 @@
 		{:else if htmlType === 'email'}
 			<input
 				type="email"
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
@@ -519,8 +582,8 @@
 			{/if}
 		{:else if htmlType === 'select'}
 			<select
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				required={field.required}
 				class={compact
 					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
@@ -557,8 +620,8 @@
 			</div>
 		{:else if htmlType === 'select-country'}
 			<select
-				id={key}
-				name={key}
+				id={inputId ?? key}
+				name={inputId ?? key}
 				required={field.required}
 				class={compact
 					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
@@ -594,29 +657,82 @@
 			{:else if termine.length === 0}
 				<p class="text-sm opacity-60">Keine verfügbaren Termine.</p>
 			{:else}
-				<select
-					id={key}
-					name={key}
-					required={field.required}
-					bind:value={selectedTermin}
-					class={compact
-						? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-						: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
-					style={compact
-						? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-						: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
-					on:blur
-					on:change
-				>
-					<option value="">Termin auswählen</option>
-					{#each termine as t}
-						<option
-							value={t.id}
-							style="background-color: {selectOptionBg}; color: var(--page-color);"
-							>{t.label}</option
-						>
-					{/each}
-				</select>
+				<div class="termin-selection" role="radiogroup" aria-label={field.field_name ?? 'Termin'}>
+					{#if !selectedWorkday}
+						<section class="termin-step">
+							<h4>{$_('Tag wählen')}</h4>
+							<div class="termin-day-options">
+								{#each Object.keys(termineByWorkday) as workday}
+									<button
+										type="button"
+										class="termin-day-option"
+										on:click={() => chooseWorkday(workday)}
+									>
+										{workday}
+									</button>
+								{/each}
+							</div>
+						</section>
+					{:else if !selectedTime}
+						<section class="termin-step">
+							<div class="termin-step-heading">
+								<h4>{selectedWorkday}</h4>
+								<button type="button" class="termin-back" on:click={() => chooseWorkday('')}
+									>{$_('Tag ändern')}</button
+								>
+							</div>
+							<h5 class="termin-step-title">{$_('Zeit wählen')}</h5>
+							<div class="termin-time-options">
+								{#each Object.entries(selectedWorkdaySlots) as [time, slotTermine]}
+									<button
+										type="button"
+										class="termin-time-option"
+										on:click={() => chooseTime(time)}
+									>
+										<strong
+											>{time}{slotTermine[0]?.endzeit ? `–${slotTermine[0].endzeit}` : ''}</strong
+										>
+										<span>{slotTermine.length} {$_('Angebote')}</span>
+									</button>
+								{/each}
+							</div>
+						</section>
+					{:else}
+						<section class="termin-step">
+							<div class="termin-step-heading">
+								<h4>{selectedWorkday}</h4>
+								<button type="button" class="termin-back" on:click={() => chooseTime('')}
+									>{$_('Zeit ändern')}</button
+								>
+							</div>
+							<h5 class="termin-step-title">
+								{selectedTime}{selectedTimeTermine[0]?.endzeit
+									? `–${selectedTimeTermine[0].endzeit}`
+									: ''}
+							</h5>
+							<div class="termin-options">
+								{#each selectedTimeTermine as t}
+									<label class:selected={selectedTermin === t.id} class="termin-option">
+										<input
+											type="radio"
+											id={`${key}-${t.id}`}
+											name={key}
+											value={t.id}
+											bind:group={selectedTermin}
+											required={field.required}
+											on:blur
+											on:change
+										/>
+										<span class="termin-option-content">
+											<strong>{t.titel ?? t.label}</strong>
+											{#if t.sessionLaenge}<small>{t.sessionLaenge} Minuten</small>{/if}
+										</span>
+									</label>
+								{/each}
+							</div>
+						</section>
+					{/if}
+				</div>
 			{/if}
 		{:else if htmlType === 'select-zeitzone'}
 			<select
@@ -652,6 +768,171 @@
 	.input {
 		font-size: 18px;
 		line-height: 1.5;
+	}
+
+	.termin-selection {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 0.75rem;
+	}
+
+	.termin-step {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.termin-step-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.termin-step-heading h4,
+	.termin-step-title {
+		margin: 0;
+	}
+
+	.termin-day-options,
+	.termin-time-options {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+		gap: 0.625rem;
+	}
+
+	.termin-day-option,
+	.termin-time-option {
+		border: 1px solid color-mix(in srgb, var(--page-color) 28%, transparent);
+		padding: 0.875rem 1rem;
+		background: color-mix(in srgb, var(--page-bg-color) 94%, var(--page-color));
+		color: var(--page-color);
+		text-align: left;
+		cursor: pointer;
+		transition:
+			border-color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	.termin-day-option:hover,
+	.termin-time-option:hover {
+		border-color: var(--page-color);
+		background: color-mix(in srgb, var(--page-color) 12%, var(--page-bg-color));
+		transform: translateY(-1px);
+	}
+
+	.termin-day-option:focus-visible,
+	.termin-time-option:focus-visible,
+	.termin-back:focus-visible {
+		outline: 2px solid var(--page-color);
+		outline-offset: 2px;
+	}
+
+	.termin-time-option {
+		display: grid;
+		gap: 0.25rem;
+	}
+
+	.termin-time-option span {
+		font-size: 0.8rem;
+		opacity: 0.65;
+	}
+
+	.termin-back {
+		border: 0;
+		padding: 0;
+		background: none;
+		color: var(--page-color);
+		font-size: 0.85rem;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.termin-day {
+		margin: 0;
+	}
+
+	.termin-day h4 {
+		margin: 0 0 0.5rem;
+		font-size: 1rem;
+		font-weight: 700;
+	}
+
+	.termin-time-slots {
+		display: grid;
+		gap: 0.875rem;
+	}
+
+	.termin-time-slot h5 {
+		margin: 0 0 0.375rem;
+		font-size: 0.95rem;
+		font-style: normal;
+		font-weight: 700;
+	}
+
+	.termin-options {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+		gap: 0.625rem;
+	}
+
+	.termin-option {
+		position: relative;
+		display: flex;
+		min-height: 4.5rem;
+		cursor: pointer;
+		align-items: center;
+		gap: 0.75rem;
+		border: 1px solid color-mix(in srgb, var(--page-color) 28%, transparent);
+		padding: 0.75rem 0.875rem;
+		background: color-mix(in srgb, var(--page-bg-color) 94%, var(--page-color));
+		transition:
+			border-color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	.termin-option:hover {
+		border-color: var(--page-color);
+		transform: translateY(-1px);
+	}
+
+	.termin-option:focus-within {
+		outline: 2px solid var(--page-color);
+		outline-offset: 2px;
+	}
+
+	.termin-option.selected {
+		border-color: var(--page-color);
+		background: color-mix(in srgb, var(--page-color) 12%, var(--page-bg-color));
+	}
+
+	.termin-option input {
+		width: 1rem;
+		height: 1rem;
+		margin: 0;
+		accent-color: var(--page-color);
+		flex: 0 0 auto;
+	}
+
+	.termin-option-content {
+		display: grid;
+		gap: 0.125rem;
+	}
+
+	.termin-option-content strong {
+		font-size: 0.95rem;
+		line-height: 1.25;
+	}
+
+	.termin-option-content span {
+		font-size: 0.95rem;
+		line-height: 1.25;
+	}
+
+	.termin-option-content small {
+		font-size: 0.8rem;
+		opacity: 0.65;
 	}
 
 	.code-input::placeholder {

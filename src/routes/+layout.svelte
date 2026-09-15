@@ -322,6 +322,16 @@
 			s.primary?.banner_overlap === true
 	);
 	$: isLandingPage = $page.data?.page?.data?.landing_page === true || $errorPageLanding;
+	$: isFullscreenP5LandingPage =
+		isLandingPage &&
+		$page.data?.page?.data?.slices?.length === 1 &&
+		$page.data?.page?.data?.slices?.[0]?.slice_type === 'p5_grafik' &&
+		$page.data?.page?.data?.slices?.[0]?.variation === 'mitTitelbereich';
+	$: isFullscreenTextWithImageLandingPage =
+		isLandingPage &&
+		$page.data?.page?.data?.slices?.length === 1 &&
+		$page.data?.page?.data?.slices?.[0]?.slice_type === 'text_with_image' &&
+		$page.data?.page?.data?.slices?.[0]?.primary?.fullscreen === true;
 	$: isPreview = $page.url.pathname.startsWith('/preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
@@ -442,7 +452,7 @@
 	<main
 		id="main-content"
 		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
-		class={isLandingPage ? 'pb-24' : ''}
+		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
 			<Bounded

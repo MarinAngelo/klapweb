@@ -21,7 +21,7 @@ export const actions: Actions = {
 
 		if (result) {
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.INVOICE_FROM_EMAIL;
+			const fromEmail = env.EMAIL_FROM_ADDRESS;
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');
