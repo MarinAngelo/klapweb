@@ -87,7 +87,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const resendKey = env.RESEND_API_KEY;
 		const adminSecret = env.ADMIN_SECRET;
 
-		let emailFrom = env.INVOICE_FROM_EMAIL;
+		let emailFrom = env.EMAIL_FROM_ADDRESS;
 		let adminEmail = '';
 		try {
 			const client = createClient({ fetch });

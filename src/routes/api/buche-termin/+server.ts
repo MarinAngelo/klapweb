@@ -231,7 +231,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = bookingFromEmail || env.INVOICE_FROM_EMAIL;
+	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
 
 	if (resendKey && fromEmail && toEmail) {
@@ -335,7 +335,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
 		console.warn(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet'
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet'
 		);
 	}
 

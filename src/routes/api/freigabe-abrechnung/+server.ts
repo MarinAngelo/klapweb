@@ -35,12 +35,15 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (!buchung) return html(404, '<p>Buchung nicht gefunden.</p>');
 
 	if (buchung.status === 'abgerechnet') {
-		return html(200, `
+		return html(
+			200,
+			`
 			<p>✓ Diese Abrechnung wurde bereits freigegeben.</p>
 			<p><strong>Freigegebener Betrag:</strong> ${fmt(buchung.abrechnungBetrag ?? 0)}</p>
 			<p>Freigegeben am: ${buchung.abrechnungFreigegebenAt ? new Date(buchung.abrechnungFreigegebenAt).toLocaleString('de-CH') : '–'}</p>
 			<br><a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(url.searchParams.get('secret') ?? '')}&resend=true">Abrechnung erneut senden</a>
-		`);
+		`
+		);
 	}
 
 	const annahmen = await listAnnahmenFuerBuchung(id).catch(() => []);
@@ -50,16 +53,22 @@ export const GET: RequestHandler = async ({ url }) => {
 	const vorschlag = buchung.abrechnungBetrag ?? berechneterBetrag;
 
 	const aufgabenRows = erledigt.length
-		? erledigt.map((a) => `
+		? erledigt
+				.map(
+					(a) => `
 			<tr>
 				<td>${a.aufgabeTitel}</td>
 				<td style="text-align:right">− ${fmt(berechneCredits(a))}</td>
-			</tr>`).join('')
+			</tr>`
+				)
+				.join('')
 		: '<tr><td colspan="2" style="color:#888">(keine erledigten Aufgaben)</td></tr>';
 
 	const resend = url.searchParams.get('resend') === 'true';
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<h1>Abrechnung freigeben</h1>
 		<h2>${buchung.ressourceName ?? buchung.ressourceUid}</h2>
 		<p>
@@ -94,7 +103,8 @@ export const GET: RequestHandler = async ({ url }) => {
 			</fieldset>
 			<button type="submit">${resend ? '✉ Abrechnung erneut senden' : '✓ Freigeben &amp; Abrechnung an Mieter senden'}</button>
 		</form>
-	`);
+	`
+	);
 };
 
 // ── POST: Abrechnung freigeben ─────────────────────────────────────────────────
@@ -123,12 +133,12 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		status: 'abgerechnet',
 		abrechnungBetrag: betrag,
 		abrechnungFreigegebenAt: new Date().toISOString(),
-		...(notiz ? { abrechnungsNotiz: notiz } as any : {})
+		...(notiz ? ({ abrechnungsNotiz: notiz } as any) : {})
 	});
 
 	// ── Definitive Abrechnung an Mieter ───────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	let mailGesendet = false;
 	let mailFehler = '';
 
@@ -160,12 +170,14 @@ export const POST: RequestHandler = async ({ url, request }) => {
 					``,
 					`─────────────────────────────────────`,
 					`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-					...(creditsCHF > 0 ? [
-						`Credits (Aufgaben): − ${fmt(creditsCHF)}`,
-						``,
-						`Erledigte Aufgaben:`,
-						aufgabenZeilen,
-					] : []),
+					...(creditsCHF > 0
+						? [
+								`Credits (Aufgaben): − ${fmt(creditsCHF)}`,
+								``,
+								`Erledigte Aufgaben:`,
+								aufgabenZeilen
+							]
+						: []),
 					`─────────────────────────────────────`,
 					`Total:              ${fmt(betrag)}`,
 					`─────────────────────────────────────`,
@@ -183,7 +195,9 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		}
 	}
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<p>✓ <strong>Abrechnung freigegeben.</strong></p>
 		<p><strong>Betrag:</strong> ${fmt(betrag)}</p>
 		${notiz ? `<p><strong>Notiz:</strong> ${notiz}</p>` : ''}
@@ -194,7 +208,8 @@ export const POST: RequestHandler = async ({ url, request }) => {
 					? `Abrechnung wurde an <strong>${buchung.email}</strong> gesendet.`
 					: `<span style="color:red">E-Mail fehlgeschlagen: ${mailFehler || '–'}</span>`
 		}</p>
-	`);
+	`
+	);
 };
 
 function html(status: number, body: string) {

@@ -64,7 +64,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalThis.fetch) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
 	const naechte = Math.round(
@@ -157,7 +157,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 
 async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const { Resend } = await import('resend');
@@ -178,7 +178,7 @@ async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 
 async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freigabeUrl: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const annahmen = await listAnnahmenFuerBuchung(buchung.id).catch(() => []);
