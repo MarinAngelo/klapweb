@@ -17,6 +17,10 @@
 		return !!(b as any).reminderSent;
 	}
 
+	function abreiseReminderSent(b: any): boolean {
+		return !!(b as any).abreiseReminderSent;
+	}
+
 	function fmtPrice(chf: number) {
 		return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
 	}
@@ -321,15 +325,34 @@
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
-												title="Ankunfts-Reminder jetzt senden{b.reminderSent ? ' (erneut)' : ''}"
-												style="font-size:0.7rem;background:{b.reminderSent
+												title="Ankunfts-Reminder jetzt senden{reminderSent(b) ? ' (erneut)' : ''}"
+												style="font-size:0.7rem;background:{reminderSent(b)
 													? '#f3f4f6'
-													: '#fef9c3'};color:{b.reminderSent
+													: '#fef9c3'};color:{reminderSent(b)
 													? '#6b7280'
-													: '#92400e'};border:1px solid {b.reminderSent
+													: '#92400e'};border:1px solid {reminderSent(b)
 													? '#d1d5db'
 													: '#fcd34d'};border-radius:4px;cursor:pointer;padding:2px 7px;white-space:nowrap;"
-												>📧{b.reminderSent ? ' ↺' : ''}</button
+												>📧{reminderSent(b) ? ' ↺' : ''}</button
+											>
+										</form>
+									{/if}
+									{#if b.status === 'checked_in' || b.status === 'checked_out'}
+										<form method="POST" action="?/sendAbreiseReminder&secret={secret}">
+											<input type="hidden" name="id" value={b.id} />
+											<button
+												type="submit"
+												title="Abreise-Reminder jetzt senden{abreiseReminderSent(b)
+													? ' (erneut)'
+													: ''}"
+												style="font-size:0.7rem;background:{abreiseReminderSent(b)
+													? '#f3f4f6'
+													: '#e0f2fe'};color:{abreiseReminderSent(b)
+													? '#6b7280'
+													: '#0369a1'};border:1px solid {abreiseReminderSent(b)
+													? '#d1d5db'
+													: '#7dd3fc'};border-radius:4px;cursor:pointer;padding:2px 7px;white-space:nowrap;"
+												>✈{abreiseReminderSent(b) ? ' ↺' : ''}</button
 											>
 										</form>
 									{/if}

@@ -290,7 +290,8 @@ export const actions: Actions = {
 			await updateRessourceBuchung(id, {
 				status: 'pending',
 				reminderSent: false,
-				nachAnkunftReminderSent: false
+				nachAnkunftReminderSent: false,
+				abreiseReminderSent: false
 			});
 		} else {
 			await updateRessourceBuchungStatus(id, target);
@@ -323,6 +324,16 @@ export const actions: Actions = {
 		const buchung = await getRessourceBuchung(id);
 		if (!buchung) return;
 		await maybeSendAnkunftsErinnerung(buchung, fetch, true);
+	},
+
+	// ── Abreise-Reminder manuell senden (Admin) ─────────────────────────────
+	sendAbreiseReminder: async ({ request, url, fetch }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await sendAbreiseErinnerung(buchung, fetch, true);
 	},
 
 	deleteAll: async ({ url }) => {

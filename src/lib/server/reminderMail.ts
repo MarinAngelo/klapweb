@@ -73,9 +73,9 @@ export async function maybeSendAnkunftsErinnerung(
 			client.getSingle('settings').catch(() => null)
 		]);
 		const d = doc.data as any;
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 
 		const textField = d.reminder_text as prismic.RichTextField | undefined;
-		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 		const tokens: Record<string, string> = {
 			Türcode: doorCode(buchung.ressourceUid),
 			Name: buchung.name || '',
@@ -120,5 +120,67 @@ ${tokens.WhatsApp ? `<p>Bei Fragen: ${tokens.WhatsApp}</p>` : ''}
 		console.log(`[reminderMail] Ankunftserinnerung sofort gesendet an ${buchung.email}`);
 	} catch (err) {
 		console.error('[reminderMail] Fehler:', err);
+	}
+}
+
+/** Sendet die Abreise-Erinnerung manuell für eine Buchung. */
+export async function sendAbreiseErinnerung(
+	buchung: RessourceBuchung,
+	fetch: typeof globalThis.fetch,
+	force = false
+): Promise<{ sent: boolean; reason?: string }> {
+	if (!force && buchung.abreiseReminderSent) return { sent: false, reason: 'already_sent' };
+
+	const resendKey = env.RESEND_API_KEY;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	if (!resendKey || !emailFrom || !buchung.email) {
+		return { sent: false, reason: 'missing_config' };
+	}
+
+	try {
+		const client = createClient({ fetch });
+		const [doc, settings] = await Promise.all([
+			client.getByUID('ressource', buchung.ressourceUid),
+			client.getSingle('settings').catch(() => null)
+		]);
+		const d = doc.data as any;
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+
+		const textField = d.abreise_text as prismic.RichTextField | undefined;
+		if (!textField?.length) return { sent: false, reason: 'missing_abreise_text' };
+
+		const tokens: Record<string, string> = {
+			Türcode: doorCode(buchung.ressourceUid),
+			Name: buchung.name || '',
+			Anreise: fmtDate(buchung.von),
+			Abreise: fmtDate(buchung.bis),
+			Buchungsreferenz: buchung.referenz ?? buchung.id,
+			WhatsApp: waTel ? whatsAppLink(waTel) : ''
+		};
+
+		const betreff =
+			(d.abreise_betreff as string)?.trim() ||
+			`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
+		const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
+
+		const { Resend } = await import('resend');
+		const { error } = await new Resend(resendKey).emails.send({
+			from: emailFrom,
+			to: buchung.email,
+			subject: betreff,
+			html
+		});
+
+		if (error) {
+			console.error('[reminderMail] Abreiseerinnerung fehlgeschlagen:', error);
+			return { sent: false, reason: 'send_error' };
+		}
+
+		await updateRessourceBuchung(buchung.id, { abreiseReminderSent: true });
+		console.log(`[reminderMail] Abreiseerinnerung gesendet an ${buchung.email}`);
+		return { sent: true };
+	} catch (err) {
+		console.error('[reminderMail] Abreiseerinnerung Fehler:', err);
+		return { sent: false, reason: 'exception' };
 	}
 }
