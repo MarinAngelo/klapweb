@@ -8,10 +8,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { getRessourceBuchung, updateRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
+}
+
+function fmtEur(eur: number) {
+	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'EUR' }).format(eur);
 }
 
 function fmtDatum(iso: string) {
@@ -51,6 +56,9 @@ export const GET: RequestHandler = async ({ url }) => {
 	const creditsCHF = buchung.creditsCHF ?? erledigt.reduce((s, a) => s + berechneCredits(a), 0);
 	const berechneterBetrag = Math.max(0, buchung.preisCHF - creditsCHF);
 	const vorschlag = buchung.abrechnungBetrag ?? berechneterBetrag;
+	const rates = await fetchExchangeRates('CHF', ['EUR']);
+	const eurRate = rates.EUR;
+	const vorschlagEur = eurRate ? Math.round(vorschlag * eurRate * 100) / 100 : null;
 
 	const aufgabenRows = erledigt.length
 		? erledigt
@@ -95,6 +103,11 @@ export const GET: RequestHandler = async ({ url }) => {
 				<label>
 					Freigegebener Betrag (CHF)
 					<input type="number" name="betrag" value="${vorschlag.toFixed(2)}" min="0" step="0.05" required>
+					${
+						vorschlagEur !== null && eurRate
+							? `<small>Entspricht derzeit ca. ${fmtEur(vorschlagEur)} (1 CHF = ${eurRate.toFixed(4)} EUR, Tageskurs)</small>`
+							: '<small>EUR-Tageskurs momentan nicht verfügbar.</small>'
+					}
 				</label>
 				<label>
 					Interne Notiz (optional, erscheint nicht in der Mieter-Mail)
@@ -125,6 +138,10 @@ export const POST: RequestHandler = async ({ url, request }) => {
 	if (betrag === null || isNaN(betrag) || betrag < 0) {
 		return html(400, '<p>Ungültiger Betrag.</p>');
 	}
+
+	const rates = await fetchExchangeRates('CHF', ['EUR']);
+	const eurRate = rates.EUR;
+	const betragEur = eurRate ? Math.round(betrag * eurRate * 100) / 100 : null;
 
 	const resend_ = url.searchParams.get('resend') === 'true';
 
@@ -180,6 +197,12 @@ export const POST: RequestHandler = async ({ url, request }) => {
 						: []),
 					`─────────────────────────────────────`,
 					`Total:              ${fmt(betrag)}`,
+					...(betragEur !== null && eurRate
+						? [
+								`Entspricht ca.:    ${fmtEur(betragEur)}`,
+								`(Tageskurs: 1 CHF = ${eurRate.toFixed(4)} EUR)`
+							]
+						: []),
 					`─────────────────────────────────────`,
 					``,
 					`Freundliche Grüsse`
@@ -199,7 +222,9 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		200,
 		`
 		<p>✓ <strong>Abrechnung freigegeben.</strong></p>
-		<p><strong>Betrag:</strong> ${fmt(betrag)}</p>
+		<p><strong>Betrag:</strong> ${fmt(betrag)}${
+			betragEur !== null ? ` (ca. ${fmtEur(betragEur)} zum Tageskurs)` : ''
+		}</p>
 		${notiz ? `<p><strong>Notiz:</strong> ${notiz}</p>` : ''}
 		<p>${
 			!buchung.email
