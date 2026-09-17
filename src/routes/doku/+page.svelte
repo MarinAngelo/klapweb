@@ -1774,7 +1774,7 @@
 		</section>
 
 		<section id="ct-angebot">
-			<h2>Angebot <code class="slice-tag">angebot</code></h2>
+			<h2>Buchbares Angebot <code class="slice-tag">angebot</code></h2>
 			<div class="pills">
 				<span class="pill gate" title="Feature: terminbuchung">Feature: terminbuchung &nbsp;⚙</span>
 			</div>

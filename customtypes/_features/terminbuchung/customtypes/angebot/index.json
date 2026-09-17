@@ -1,6 +1,6 @@
 {
 	"id": "angebot",
-	"label": "Angebot",
+	"label": "Buchbares Angebot",
 	"format": "custom",
 	"repeatable": true,
 	"status": true,
