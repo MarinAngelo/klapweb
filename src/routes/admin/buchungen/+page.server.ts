@@ -91,6 +91,16 @@ export const actions: Actions = {
 		}
 	},
 
+	cancelSelected: async ({ request, url }) => {
+		const secret = env.ADMIN_SECRET;
+		const provided = url.searchParams.get('secret');
+		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+
+		const form = await request.formData();
+		const ids = form.getAll('slotId').filter((id): id is string => typeof id === 'string' && !!id);
+		await Promise.all(ids.map(cancelSlot));
+	},
+
 	uncancel: async ({ request, url }) => {
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');

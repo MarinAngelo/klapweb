@@ -89,7 +89,46 @@ Wiederholen bis: 31.12.2025
 
 ---
 
-### 3. Buchungsformular auf einer Seite einfügen
+### 3. Admin Panel
+
+Bevor du das Buchungsformular veröffentlichst, öffne die Terminverwaltung:
+
+```text
+/admin/buchungen?secret=DEIN_ADMIN_SECRET
+```
+
+Dort siehst du, welche konkreten Termine aus den Arbeitstagen und buchbaren Angeboten erzeugt wurden.
+
+#### Kontrollieren
+
+Prüfe die Liste **Freie Termine**:
+
+- Stimmen Datum und Wochentag?
+- Stimmen Start- und Endzeit?
+- Erscheint die richtige Anzahl Termine?
+- Wird der Puffer nach einem Angebot berücksichtigt?
+- Werden Pausen korrekt ausgespart?
+- Sind nur die gewünschten buchbaren Angebote sichtbar?
+- Sind wiederkehrende Termine bis zum gewünschten Enddatum vorhanden?
+
+Falls ein Termin nicht erscheint, prüfe zuerst, ob das Angebot aktiv ist, ob es beim Arbeitstag verknüpft ist und ob der Arbeitstag veröffentlicht wurde.
+
+#### Korrekturen
+
+Der Feinschliff erfolgt vor der Veröffentlichung:
+
+- Einzelne Termine in der Liste **Freie Termine** sperren, wenn sie ausnahmsweise nicht buchbar sein sollen.
+- Mehrere Termine auswählen und gemeinsam sperren.
+- Gesperrte Termine in der Liste **Gesperrte Termine** wieder freigeben.
+- Puffer oder Dauer im **Buchbaren Angebot** anpassen, wenn die Abstände nicht stimmen.
+- Buchungsintervall, Pause oder Arbeitszeit im **Arbeitstag** anpassen, wenn zu viele oder zu wenige Slots entstehen.
+- Nach Änderungen im CMS den Arbeitstag beziehungsweise das Angebot erneut veröffentlichen und die Terminverwaltung aktualisieren.
+
+Erst wenn die freien Termine im Admin Panel korrekt aussehen, sollte die Buchungsseite veröffentlicht werden.
+
+---
+
+### 4. Buchungsformular auf einer Seite einfügen
 
 Öffne in Prismic die Seite, auf der gebucht werden soll.
 
@@ -110,7 +149,7 @@ Du kannst zusätzliche Felder ergänzen, zum Beispiel Telefon, Nachricht oder Fi
 
 ---
 
-### 4. Formulartexte festlegen
+### 5. Formulartexte festlegen
 
 Im Slice **Formular → Mit Termin** kannst du folgende Texte pflegen:
 
@@ -132,7 +171,7 @@ Ihr Termin wurde erfolgreich reserviert. Eine Bestätigung mit den Termindetails
 
 ---
 
-### 5. E-Mail-Benachrichtigungen konfigurieren
+### 6. E-Mail-Benachrichtigungen konfigurieren
 
 Öffne in Prismic den Custom Type **Settings** und den Tab **Terminbuchung**.
 
@@ -191,7 +230,7 @@ Die CMS-Absender-E-Mail hat Vorrang. Falls sie leer ist, wird `EMAIL_FROM_ADDRES
 
 ---
 
-### 6. Seite veröffentlichen
+### 7. Seite veröffentlichen
 
 Veröffentliche in dieser Reihenfolge:
 
@@ -209,7 +248,7 @@ Ein Termin erscheint auf der Website nur, wenn:
 
 ---
 
-### 7. Buchung durch Besucherinnen und Besucher
+### 8. Buchung durch Besucherinnen und Besucher
 
 Der Ablauf ist:
 
@@ -226,7 +265,7 @@ Wenn sich zwei Buchungen zeitlich überlappen, wird die spätere Buchung abgeleh
 
 ---
 
-### 8. Buchungen kontrollieren
+### 9. Buchungen kontrollieren
 
 Die gebuchten Termine können in der Terminverwaltung kontrolliert werden:
 
@@ -256,7 +295,7 @@ Ein gesperrter Termin kann wieder freigegeben werden.
 
 ---
 
-### 9. Termine sperren oder wieder freigeben
+### 10. Termine sperren oder wieder freigeben
 
 In der Liste **Freie Termine** kannst du einen Termin sperren. Der Slot wird dann nicht mehr auf der Website angeboten.
 
@@ -268,7 +307,7 @@ Eine bestehende Buchung löschst du über **Gebuchte Termine**. Danach wird der 
 
 ---
 
-### 10. Wiederkehrende Termine ändern
+### 11. Wiederkehrende Termine ändern
 
 Wenn du eine Serie ändern möchtest, öffne den entsprechenden **Arbeitstag**.
 
