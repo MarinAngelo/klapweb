@@ -44,7 +44,12 @@
 				"type": "Select",
 				"config": {
 					"label": "Zeitzone",
-					"options": ["Europe/Zurich", "Europe/Berlin", "Europe/Vienna", "Europe/London"],
+					"options": [
+						"Europe/Zurich",
+						"Europe/Berlin",
+						"Europe/Vienna",
+						"Europe/London"
+					],
 					"default_value": "Europe/Zurich"
 				}
 			},
@@ -66,7 +71,11 @@
 				"type": "Select",
 				"config": {
 					"label": "Buchungsintervall",
-					"options": ["15", "30", "60"],
+					"options": [
+						"15",
+						"30",
+						"60"
+					],
 					"default_value": "30"
 				}
 			},
@@ -81,7 +90,9 @@
 							"config": {
 								"label": "Buchbares Angebot",
 								"select": "document",
-								"customtypes": ["angebot"]
+								"customtypes": [
+									"angebot"
+								]
 							}
 						}
 					}
@@ -91,7 +102,13 @@
 				"type": "Select",
 				"config": {
 					"label": "Wiederholung",
-					"options": ["Keine", "Täglich", "Wöchentlich", "Zweiwöchentlich", "Monatlich"],
+					"options": [
+						"Keine",
+						"Täglich",
+						"Wöchentlich",
+						"Zweiwöchentlich",
+						"Monatlich"
+					],
 					"default_value": "Keine"
 				}
 			},
