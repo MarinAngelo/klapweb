@@ -378,13 +378,14 @@ Prüfe vor der Veröffentlichung:
 
 ## Fehlerbehebung
 
-| Problem                               | Mögliche Ursache                                                                              |
-| ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Kein Termin wird angezeigt            | Feature inaktiv, Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot inaktiv |
-| Formular sendet nicht                 | Pflichtfelder unvollständig oder Feld `Termin` fehlt                                          |
-| Keine Bestätigungsmail                | `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS` oder `INVOICE_TO_EMAIL` fehlt                          |
-| Termin ist plötzlich nicht verfügbar  | Er wurde gebucht, gesperrt oder überlappt mit einer bestehenden Buchung                       |
-| Änderungen im CMS sind nicht sichtbar | Angebot, Arbeitstag oder Seite wurde nicht publiziert                                         |
+| Problem                                                     | Mögliche Ursache                                                                                |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Custom Type **Buchbares Angebot** oder **Arbeitstag** fehlt | Feature **Terminbuchung** ist im Projekt nicht aktiviert                                        |
+| Kein Termin wird angezeigt                                  | Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder das verknüpfte Angebot ist inaktiv |
+| Formular sendet nicht                                       | Pflichtfelder unvollständig oder Feld `Termin` fehlt                                            |
+| Keine Bestätigungsmail                                      | `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS` oder `INVOICE_TO_EMAIL` fehlt                            |
+| Termin ist plötzlich nicht verfügbar                        | Er wurde gebucht, gesperrt oder überlappt mit einer bestehenden Buchung                         |
+| Änderungen im CMS sind nicht sichtbar                       | Angebot, Arbeitstag oder Seite wurde nicht publiziert                                           |
 
 ---
 
