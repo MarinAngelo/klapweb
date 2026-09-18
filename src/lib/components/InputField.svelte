@@ -307,6 +307,10 @@
 		selectedTime = '';
 		try {
 			const r = await fetch('/api/termine');
+			if (!r.ok) {
+				termineError = true;
+				return;
+			}
 			termine = await r.json();
 		} catch {
 			termineError = true;
