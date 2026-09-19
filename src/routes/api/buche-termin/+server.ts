@@ -237,6 +237,31 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		angebotId
 	});
 
+	// Kunde erfassen (mit Duplikat-Prüfung per E-Mail)
+	if (email) {
+		try {
+			const { saveCustomer, listCustomers } = await import('$lib/server/customers');
+			const emailLower = email.trim().toLowerCase();
+			const existing = await listCustomers();
+			const isDuplicate = existing.some((c) => c.email && c.email.toLowerCase() === emailLower);
+			if (!isDuplicate) {
+				const nameParts = (name ?? '').trim().split(/\s+/);
+				await saveCustomer({
+					date: new Date().toISOString(),
+					paymentMethod: 'terminbuchung',
+					service: titel,
+					amount: null,
+					currency: 'CHF',
+					vorname: nameParts.slice(0, -1).join(' ') || nameParts[0] || undefined,
+					nachname: nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined,
+					email
+				});
+			}
+		} catch (e) {
+			console.error('Kunde konnte nicht gespeichert werden:', e);
+		}
+	}
+
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
 	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;

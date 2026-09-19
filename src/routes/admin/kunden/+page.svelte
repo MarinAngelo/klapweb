@@ -36,7 +36,12 @@
 			minute: '2-digit'
 		});
 		const adresse = [c.adresse, c.plz, c.ort].filter(Boolean).join(', ') || '–';
-		const quelle = c.paymentMethod === 'manuell' ? 'Manuell erfasst' : 'E-Commerce';
+		const quelle =
+			c.paymentMethod === 'manuell'
+				? 'Manuell erfasst'
+				: c.paymentMethod === 'terminbuchung'
+					? 'Terminbuchung'
+					: 'E-Commerce';
 		return { date, name, email: c.email ?? '–', firma: c.firma ?? '–', adresse, quelle };
 	}
 
