@@ -2584,6 +2584,18 @@
 		"elementType": "Page Type",
 		"customType": "settings",
 		"customTypeLabel": "Einstellungen",
+		"tab": "Terminbuchung",
+		"field": "booking_success_title",
+		"path": "settings/Terminbuchung/booking_success_title",
+		"label": "Buchungsbestätigung: Titel",
+		"description": "Erfasst einen kurzen Text für Buchungsbestätigung: Titel.",
+		"type": "Text"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
 		"tab": "Online-Handel",
 		"field": "invoice_currency",
 		"path": "settings/Online-Handel/invoice_currency",
@@ -4378,30 +4390,6 @@
 		"label": "2 Spalten",
 		"description": "Schaltet 2 Spalten ein oder aus.",
 		"type": "Boolean"
-	},
-	{
-		"name": "Formular",
-		"elementType": "Slice",
-		"customType": "Formular",
-		"customTypeLabel": "Formular",
-		"tab": "Mit Termin",
-		"field": "submitted_title",
-		"path": "Formular/mitTermin/Primary/submitted_title",
-		"label": "Gesendet Titel",
-		"description": "Erfasst einen kurzen Text für Gesendet Titel.",
-		"type": "Text"
-	},
-	{
-		"name": "Formular",
-		"elementType": "Slice",
-		"customType": "Formular",
-		"customTypeLabel": "Formular",
-		"tab": "Mit Termin",
-		"field": "submitted_text",
-		"path": "Formular/mitTermin/Primary/submitted_text",
-		"label": "Gesendet Text",
-		"description": "Erfasst formatierten Text für Gesendet Text, zum Beispiel Absätze, Überschriften oder Links.",
-		"type": "StructuredText"
 	},
 	{
 		"name": "Formular",

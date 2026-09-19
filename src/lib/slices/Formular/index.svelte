@@ -321,11 +321,22 @@
 						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 						return;
 					}
-					// Buchung erfolgreich → Modal zeigen und Formular zurücksetzen, ohne /api/form zu senden
-					showModal = true;
-					form.reset();
-					fieldErrors = {};
-					termineRefreshKey++;
+					// Buchung erfolgreich → auf Success-Page weiterleiten
+					const result = await resp.json();
+					const params = new URLSearchParams({
+						titel: result.titel ?? '',
+						datum: result.datum ?? '',
+						uhrzeit: result.uhrzeit ?? '',
+						endzeit: result.endzeit ?? '',
+						dauer: String(result.dauer ?? ''),
+						name: result.name ?? '',
+						email: result.email ?? '',
+						storno: result.storno ?? '',
+						gcal: result.gcal ?? '',
+						ics: result.ics ?? '',
+						returnTo: window.location.pathname + window.location.search
+					});
+					goto(`/termin-gebucht?${params.toString()}`);
 					return;
 				} catch {
 					linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);

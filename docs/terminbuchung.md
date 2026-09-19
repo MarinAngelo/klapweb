@@ -158,16 +158,8 @@ Im Slice **Formular → Mit Termin** kannst du folgende Texte pflegen:
 | **Formular Titel**            | Überschrift des Buchungsformulars                    |
 | **Formular Instruktionen**    | Kurze Anleitung für die Besucherin oder den Besucher |
 | **Senden-Schaltflächen-Text** | Text des Absende-Buttons, z.B. „Termin buchen“       |
-| **Gesendet Titel**            | Überschrift nach erfolgreicher Buchung               |
-| **Gesendet Text**             | Bestätigungstext nach erfolgreicher Buchung          |
 
-Beispiel für die Erfolgsmeldung:
-
-```text
-Vielen Dank für Ihre Buchung.
-
-Ihr Termin wurde erfolgreich reserviert. Eine Bestätigung mit den Termindetails wurde an Ihre E-Mail-Adresse gesendet.
-```
+Nach erfolgreicher Buchung werden Besucherinnen und Besucher auf die Bestätigungsseite `/termin-gebucht` weitergeleitet. Der Titel dieser Seite kommt aus den Settings (siehe nächster Schritt).
 
 ---
 
@@ -177,11 +169,12 @@ Ihr Termin wurde erfolgreich reserviert. Eine Bestätigung mit den Termindetails
 
 Pflege dort:
 
-| Feld                       | Bedeutung                                 |
-| -------------------------- | ----------------------------------------- |
-| **Absender-E-Mail**        | Absenderadresse für Buchungsbestätigungen |
-| **Kunden-E-Mail: Betreff** | Betreff der Bestätigungsmail              |
-| **Kunden-E-Mail: Text**    | Inhalt der Bestätigungsmail               |
+| Feld                           | Bedeutung                                          |
+| ------------------------------ | -------------------------------------------------- |
+| **Absender-E-Mail**            | Absenderadresse für Buchungsbestätigungen          |
+| **Kunden-E-Mail: Betreff**     | Betreff der Bestätigungsmail                       |
+| **Kunden-E-Mail: Text**        | Inhalt der Bestätigungsmail                        |
+| **Buchungsbestätigung: Titel** | Titel der Bestätigungsseite, z.B. „Termin gebucht“ |
 
 Unterstützte Platzhalter:
 

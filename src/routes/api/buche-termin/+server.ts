@@ -242,6 +242,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
 	const toEmail = companyEmail;
 
+	const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
+	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
+
 	if (resendKey && fromEmail && toEmail) {
 		const dateLabel = fmtDate(datum, uhrzeit);
 		const durationLine = sessionLaenge ? ` (${sessionLaenge} min)` : '';
@@ -261,7 +264,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
-		const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
 		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
 
 		const convertedTime = customerTimezone
@@ -290,6 +292,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const stornoLine = `\n\nStornieren: ${stornoLink}`;
 		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
+		const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
@@ -385,5 +388,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		);
 	}
 
-	return new Response(JSON.stringify({ ok: true }), { status: 200 });
+	const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
+
+	return new Response(
+		JSON.stringify({
+			ok: true,
+			titel,
+			datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '',
+			uhrzeit: uhrzeit || '',
+			endzeit: endzeit || '',
+			dauer: sessionLaenge ?? '',
+			name: name || '',
+			email: email || '',
+			storno: stornoLink,
+			gcal: gcalUrl,
+			ics: icsDownloadLink
+		}),
+		{ status: 200 }
+	);
 };
