@@ -52,6 +52,11 @@ export async function isBooked(terminId: string): Promise<boolean> {
 	return existing !== null;
 }
 
+export async function getBooking(terminId: string): Promise<BookingRecord | null> {
+	const store = getBookingStore();
+	return (await store.get(terminId, { type: 'json' })) as BookingRecord | null;
+}
+
 export async function hasOverlappingBooking(
 	datum: string,
 	startzeit: string,
