@@ -137,14 +137,22 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 }
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
-	let body: { terminId?: string; name?: string; email?: string; customerTimezone?: string };
+	let body: {
+		terminId?: string;
+		name?: string;
+		email?: string;
+		customerTimezone?: string;
+		fields?: Record<string, string>;
+		fieldLabels?: Record<string, string>;
+	};
 	try {
 		body = await request.json();
 	} catch {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email, customerTimezone } = body;
+	const { terminId, name, email, customerTimezone, fields, fieldLabels } = body;
+	const origin = new URL(request.url).origin;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
 	}
@@ -278,6 +286,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				companyName
 			].join('\n');
 
+		const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
+		const stornoLine = `\n\nStornieren: ${stornoLink}`;
+		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
@@ -300,12 +312,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 				// E-Mail an Kunden
 				if (email) {
+					const htmlBody =
+						bodyText
+							.split('\n')
+							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
+							.join('') +
+						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
+						(calendarLine
+							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
+							: '') +
+						stornoHtml;
+
 					resend.emails
 						.send({
 							from: fromEmail,
 							to: email,
 							subject,
-							text: bodyText + customerTzLine + calendarLine,
+							text: bodyText + customerTzLine + calendarLine + stornoLine,
+							html: htmlBody,
 							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
@@ -314,6 +338,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				}
 
 				// Benachrichtigung an Anbieter
+				const extraLines =
+					fields && fieldLabels
+						? Object.entries(fields)
+								.filter(
+									([key, value]) =>
+										!['termin', 'name', 'email', 'subject', 'form-name', 'bot-field'].includes(
+											key
+										) && value !== 'Ausgewählt'
+								)
+								.map(([key, value]) => {
+									const label = fieldLabels[key] ?? key;
+									return value ? `${label}: ${value}` : '';
+								})
+								.filter(Boolean)
+						: [];
+
 				resend.emails
 					.send({
 						from: fromEmail,
@@ -323,8 +363,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 							[
 								`Neue Buchung eingegangen.`,
 								``,
-								`Termin: ${terminLine}`,
-								`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
+								`Angebot: ${titel}`,
+								`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
+								`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
+								`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+								``,
+								`Name: ${customerName}`,
+								...(email ? [`E-Mail: ${email}`] : []),
+								...(extraLines.length ? [``, ...extraLines] : [])
 							].join('\n') + providerCalendarLine,
 						attachments: providerIcsAttachment
 					})

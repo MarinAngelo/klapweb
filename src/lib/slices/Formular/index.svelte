@@ -41,7 +41,7 @@
 	}
 
 	function checklistItemText(item: unknown): string {
-		return (item as Record<string, unknown>)?.checklist_item as string ?? '';
+		return ((item as Record<string, unknown>)?.checklist_item as string) ?? '';
 	}
 
 	async function handleStep1() {
@@ -51,16 +51,24 @@
 			const res = await fetch('/api/pruefe-buchungsref', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ referenz: buchungsref.trim(), typ: isEinChecken ? 'einChecken' : 'ausChecken' })
+				body: JSON.stringify({
+					referenz: buchungsref.trim(),
+					typ: isEinChecken ? 'einChecken' : 'ausChecken'
+				})
 			});
 			const data = await res.json();
 			if (data.ok) {
 				checkStep = 2;
 			} else {
 				const code = data.error;
-				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
-				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
-				else if (code === 'TOO_EARLY') checkError = t(isEinChecken ? 'Check-in ab' : 'Check-out ab', lang) + ' ' + data.von;
+				if (code === 'NOT_FOUND')
+					checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE')
+					checkError =
+						checkPrimary.error_already_done ||
+						t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				else if (code === 'TOO_EARLY')
+					checkError = t(isEinChecken ? 'Check-in ab' : 'Check-out ab', lang) + ' ' + data.von;
 				else checkError = t('Ein Fehler ist aufgetreten.', lang);
 			}
 		} catch {
@@ -74,14 +82,18 @@
 		checkSubmitting = true;
 		const endpoint = isEinChecken ? '/api/ressource-check-in' : '/api/ressource-check-out';
 		const items = (slice.items as any[]).map((item, i) => {
-				const text = item.checklist_item ?? '';
-				return (checkedItems.has(i) ? '✓ ' : '✗ ') + text;
-			});
+			const text = item.checklist_item ?? '';
+			return (checkedItems.has(i) ? '✓ ' : '✗ ') + text;
+		});
 		try {
 			const res = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ referenz: buchungsref.trim(), items, kommentar: checkKommentar.trim() || undefined })
+				body: JSON.stringify({
+					referenz: buchungsref.trim(),
+					items,
+					kommentar: checkKommentar.trim() || undefined
+				})
 			});
 			const data = await res.json();
 			if (data.success) {
@@ -90,8 +102,12 @@
 				setTimeout(() => goto(redirectTo), 4000);
 			} else {
 				const code = data.error;
-				if (code === 'NOT_FOUND') checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
-				else if (code === 'ALREADY_DONE') checkError = checkPrimary.error_already_done || t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
+				if (code === 'NOT_FOUND')
+					checkError = checkPrimary.error_not_found || t('Buchungsreferenz nicht gefunden.', lang);
+				else if (code === 'ALREADY_DONE')
+					checkError =
+						checkPrimary.error_already_done ||
+						t(isEinChecken ? 'Bereits eingecheckt.' : 'Bereits ausgecheckt.', lang);
 				else checkError = t('Ein Fehler ist aufgetreten.', lang);
 			}
 		} catch {
@@ -272,6 +288,18 @@
 					? (formData.get('zeitzone') as string) || undefined
 					: undefined;
 				try {
+					const extraFields: Record<string, string> = {};
+					const extraLabels: Record<string, string> = {};
+					for (const field of formFields) {
+						const key = effectiveKey(field);
+						if (!key || ['termin', 'email'].includes(key)) continue;
+						if (/^name$/i.test(key)) continue;
+						const value = formData.get(key);
+						if (typeof value === 'string') {
+							extraFields[key] = value;
+							extraLabels[key] = field.field_name ?? key;
+						}
+					}
 					const resp = await fetch('/api/buche-termin', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
@@ -279,7 +307,9 @@
 							terminId,
 							name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
 							email: emailField ? String(formData.get('email') ?? '') : undefined,
-							customerTimezone
+							customerTimezone,
+							fields: extraFields,
+							fieldLabels: extraLabels
 						})
 					});
 					if (resp.status === 409) {
@@ -399,12 +429,16 @@
 					<PrismicRichText field={checkPrimary.success_text} />
 				{:else}
 					<p style="color: #065f46; font-weight: 600;">
-						{isEinChecken ? t('Erfolgreich eingecheckt.', lang) : t('Erfolgreich ausgecheckt.', lang)}
+						{isEinChecken
+							? t('Erfolgreich eingecheckt.', lang)
+							: t('Erfolgreich ausgecheckt.', lang)}
 					</p>
 				{/if}
 			{:else}
 				{#if checkPrimary.heading}<h2>{checkPrimary.heading}</h2>{/if}
-				{#if checkPrimary.intro_text?.length}<PrismicRichText field={checkPrimary.intro_text} />{/if}
+				{#if checkPrimary.intro_text?.length}<PrismicRichText
+						field={checkPrimary.intro_text}
+					/>{/if}
 
 				{#if checkStep === 1}
 					<!-- Schritt 1: Buchungsreferenz prüfen -->
@@ -425,7 +459,9 @@
 							type="submit"
 							disabled={checkSubmitting}
 							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
-							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(
+								theme
+							).headerColor || '#fff'};"
 						>
 							{checkSubmitting ? '…' : t('Weiter', lang)}
 						</button>
@@ -454,7 +490,11 @@
 							</ul>
 						{/if}
 						<InputField
-							field={{ field_name: t('Kommentar', lang), field_type: 'Textbereich', required: false }}
+							field={{
+								field_name: t('Kommentar', lang),
+								field_type: 'Textbereich',
+								required: false
+							}}
 							bind:value={checkKommentar}
 						/>
 						{#if checkError}
@@ -464,9 +504,11 @@
 							type="submit"
 							disabled={checkSubmitting}
 							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
-							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(theme).headerColor || '#fff'};"
+							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(
+								theme
+							).headerColor || '#fff'};"
 						>
-							{checkSubmitting ? '…' : (checkPrimary.submit_label || t('Abschicken', lang))}
+							{checkSubmitting ? '…' : checkPrimary.submit_label || t('Abschicken', lang)}
 						</button>
 					</form>
 				{/if}
@@ -507,7 +549,11 @@
 					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
 						{#each formFields as field}
 							{#if field && effectiveKey(field)}
-								<div class={isDefaultZweiSpalten && field.field_type === 'Textbereich' ? 'sm:col-span-2' : ''}>
+								<div
+									class={isDefaultZweiSpalten && field.field_type === 'Textbereich'
+										? 'sm:col-span-2'
+										: ''}
+								>
 									<InputField
 										{field}
 										refreshKey={termineRefreshKey}
