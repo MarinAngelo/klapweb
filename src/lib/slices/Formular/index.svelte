@@ -321,6 +321,12 @@
 						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 						return;
 					}
+					// Buchung erfolgreich → Modal zeigen und Formular zurücksetzen, ohne /api/form zu senden
+					showModal = true;
+					form.reset();
+					fieldErrors = {};
+					termineRefreshKey++;
+					return;
 				} catch {
 					linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 					return;
