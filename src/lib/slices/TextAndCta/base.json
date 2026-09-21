@@ -177,7 +177,7 @@
 				"button_hover_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche T & R Mouseover",
+						"label": "Text & Rahmen wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
@@ -191,7 +191,7 @@
 				"button_hover_bg_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche Hintergrund Mouseover",
+						"label": "Hintergrund wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				}

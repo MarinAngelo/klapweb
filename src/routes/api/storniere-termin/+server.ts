@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { deleteBooking, getBooking } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { invalidateTermineCache } from '$lib/server/termineCache';
 import { env } from '$env/dynamic/private';
 
 export const GET: RequestHandler = async ({ url, fetch }) => {
@@ -39,6 +40,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	}
 
 	await deleteBooking(id);
+	invalidateTermineCache();
 
 	// E-Mails senden (fire-and-forget)
 	const resendKey = env.RESEND_API_KEY;

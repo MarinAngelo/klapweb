@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 import { listBookings, listCancelled } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { getCachedTermine, setCachedTermine } from '$lib/server/termineCache';
 
 export type { TerminSlot as AvailableTermin } from '$lib/server/terminSlots';
 
@@ -12,6 +13,13 @@ function toMinutes(value: string): number | null {
 }
 
 export const GET: RequestHandler = async () => {
+	const cached = getCachedTermine();
+	if (cached) {
+		return new Response(JSON.stringify(cached), {
+			headers: { 'Content-Type': 'application/json', 'X-Cache': 'HIT' }
+		});
+	}
+
 	try {
 		const client = createClient();
 		const dynamicClient = client as any;
@@ -68,6 +76,8 @@ export const GET: RequestHandler = async () => {
 			const bStr = b.datum + 'T' + (b.uhrzeit || '00:00');
 			return aStr.localeCompare(bStr);
 		});
+
+		setCachedTermine(available);
 
 		return new Response(JSON.stringify(available), {
 			headers: { 'Content-Type': 'application/json' }

@@ -4,6 +4,7 @@ import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { invalidateTermineCache } from '$lib/server/termineCache';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -265,6 +266,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		arbeitstagId,
 		angebotId
 	});
+	invalidateTermineCache();
 
 	// Kunde erfassen (mit Duplikat-Prüfung per E-Mail)
 	if (email) {
