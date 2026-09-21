@@ -280,7 +280,7 @@
 				},
 				"button_hover_color": {
 					"type": "Color",
-					"config": { "label": "Schaltfläche T & R Mouseover", "placeholder": "" }
+					"config": { "label": "Text & Rahmen wenn Maus drüber", "placeholder": "" }
 				},
 				"button_bg_color": {
 					"type": "Color",
@@ -288,7 +288,7 @@
 				},
 				"button_hover_bg_color": {
 					"type": "Color",
-					"config": { "label": "Schaltfläche Hintergrund Mouseover", "placeholder": "" }
+					"config": { "label": "Hintergrund wenn Maus drüber", "placeholder": "" }
 				},
 				"text_overlay_color": {
 					"type": "Color",
