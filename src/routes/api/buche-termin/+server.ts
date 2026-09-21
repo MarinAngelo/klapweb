@@ -157,9 +157,17 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
 	}
 
-	// Check if already booked
+	// Check if already booked or cancelled
 	const alreadyBooked = await isBooked(terminId);
 	if (alreadyBooked) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	const cancelled = await isCancelled(terminId);
+	if (cancelled) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
 			{ status: 409 }
