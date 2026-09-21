@@ -165,6 +165,9 @@
 	// Fehlerausgabe für Link-Blocker
 	let linkError: string | null = null;
 
+	// Loading-State für den Submit-Button
+	let submitting = false;
+
 	// Termin-Feld: nach Submit neu laden (gebuchter Termin verschwindet aus Liste)
 	let termineRefreshKey = 0;
 
@@ -249,160 +252,167 @@
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 
-		const form = event.target as HTMLFormElement;
-		const formData = new FormData(form);
+		if (submitting) return;
+		submitting = true;
 
-		// Feld-Validierung (Pflicht & Typ)
-		let errors: Record<string, string> = {};
-		for (const field of formFields) {
-			const value = formData.get(effectiveKey(field));
-			const error = validateField(field, value);
-			if (error) {
-				errors[effectiveKey(field)] = error;
+		try {
+			const form = event.target as HTMLFormElement;
+			const formData = new FormData(form);
+
+			// Feld-Validierung (Pflicht & Typ)
+			let errors: Record<string, string> = {};
+			for (const field of formFields) {
+				const value = formData.get(effectiveKey(field));
+				const error = validateField(field, value);
+				if (error) {
+					errors[effectiveKey(field)] = error;
+				}
 			}
-		}
-		fieldErrors = errors;
-		if (Object.keys(errors).length > 0) {
-			return;
-		}
+			fieldErrors = errors;
+			if (Object.keys(errors).length > 0) {
+				return;
+			}
 
-		// Clientseitige Link-Prüfung
-		const offenders = validateNoLinks(formData);
-		if (offenders.length > 0) {
-			// Feldnamen schön darstellen (kommagetrennt)
-			const list = offenders.map((n) => `„${n}”`).join(', ');
-			linkError = `${t('Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:', lang)} ${list}.`;
-			return;
-		}
-		linkError = null;
+			// Clientseitige Link-Prüfung
+			const offenders = validateNoLinks(formData);
+			if (offenders.length > 0) {
+				// Feldnamen schön darstellen (kommagetrennt)
+				const list = offenders.map((n) => `„${n}”`).join(', ');
+				linkError = `${t('Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:', lang)} ${list}.`;
+				return;
+			}
+			linkError = null;
 
-		// Termin-Buchung: Slot reservieren bevor Formular abgesendet wird
-		const terminField = formFields.find((f) => (f as any).field_type === 'Termin');
-		if (terminField) {
-			const terminId = formData.get('termin') as string;
-			if (terminId) {
-				const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
-				const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
-				const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
-				const customerTimezone = zeitzoneField
-					? (formData.get('zeitzone') as string) || undefined
-					: undefined;
-				try {
-					const extraFields: Record<string, string> = {};
-					const extraLabels: Record<string, string> = {};
-					for (const field of formFields) {
-						const key = effectiveKey(field);
-						if (!key || ['termin', 'email'].includes(key)) continue;
-						if (/^name$/i.test(key)) continue;
-						const value = formData.get(key);
-						if (typeof value === 'string') {
-							extraFields[key] = value;
-							extraLabels[key] = field.field_name ?? key;
+			// Termin-Buchung: Slot reservieren bevor Formular abgesendet wird
+			const terminField = formFields.find((f) => (f as any).field_type === 'Termin');
+			if (terminField) {
+				const terminId = formData.get('termin') as string;
+				if (terminId) {
+					const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
+					const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+					const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
+					const customerTimezone = zeitzoneField
+						? (formData.get('zeitzone') as string) || undefined
+						: undefined;
+					try {
+						const extraFields: Record<string, string> = {};
+						const extraLabels: Record<string, string> = {};
+						for (const field of formFields) {
+							const key = effectiveKey(field);
+							if (!key || ['termin', 'email'].includes(key)) continue;
+							if (/^name$/i.test(key)) continue;
+							const value = formData.get(key);
+							if (typeof value === 'string') {
+								extraFields[key] = value;
+								extraLabels[key] = field.field_name ?? key;
+							}
 						}
-					}
-					const resp = await fetch('/api/buche-termin', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							terminId,
-							name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
-							email: emailField ? String(formData.get('email') ?? '') : undefined,
-							customerTimezone,
-							fields: extraFields,
-							fieldLabels: extraLabels
-						})
-					});
-					if (resp.status === 409) {
-						const data = await resp.json();
-						linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
+						const resp = await fetch('/api/buche-termin', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								terminId,
+								name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
+								email: emailField ? String(formData.get('email') ?? '') : undefined,
+								customerTimezone,
+								fields: extraFields,
+								fieldLabels: extraLabels
+							})
+						});
+						if (resp.status === 409) {
+							const data = await resp.json();
+							linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
+							return;
+						}
+						if (!resp.ok) {
+							linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
+							return;
+						}
+						// Buchung erfolgreich → auf Success-Page weiterleiten
+						const result = await resp.json();
+						const params = new URLSearchParams({
+							titel: result.titel ?? '',
+							datum: result.datum ?? '',
+							uhrzeit: result.uhrzeit ?? '',
+							endzeit: result.endzeit ?? '',
+							dauer: String(result.dauer ?? ''),
+							name: result.name ?? '',
+							email: result.email ?? '',
+							storno: result.storno ?? '',
+							gcal: result.gcal ?? '',
+							ics: result.ics ?? '',
+							returnTo: window.location.pathname + window.location.search
+						});
+						goto(`/termin-gebucht?${params.toString()}`);
 						return;
-					}
-					if (!resp.ok) {
+					} catch {
 						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
 						return;
 					}
-					// Buchung erfolgreich → auf Success-Page weiterleiten
-					const result = await resp.json();
-					const params = new URLSearchParams({
-						titel: result.titel ?? '',
-						datum: result.datum ?? '',
-						uhrzeit: result.uhrzeit ?? '',
-						endzeit: result.endzeit ?? '',
-						dauer: String(result.dauer ?? ''),
-						name: result.name ?? '',
-						email: result.email ?? '',
-						storno: result.storno ?? '',
-						gcal: result.gcal ?? '',
-						ics: result.ics ?? '',
-						returnTo: window.location.pathname + window.location.search
-					});
-					goto(`/termin-gebucht?${params.toString()}`);
-					return;
-				} catch {
-					linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
-					return;
-				}
-			}
-		}
-
-		// Checkout-Modus: Daten in sessionStorage speichern und zur Zusammenfassung navigieren
-		if (checkoutUrl) {
-			const data: Record<string, string> = {};
-			const labels: Record<string, string> = {};
-			for (const [key, value] of formData.entries()) {
-				if (typeof value === 'string') data[key] = value;
-			}
-			for (const field of formFields) {
-				const key = effectiveKey(field);
-				if (key) labels[key] = field.field_name ?? key;
-			}
-			sessionStorage.setItem('checkoutData', JSON.stringify({ data, labels }));
-			const serviceUid = data['dienstleistung'] ?? '';
-			const target = serviceUid
-				? `${checkoutUrl}?service=${encodeURIComponent(serviceUid)}`
-				: checkoutUrl;
-			goto(target);
-			return;
-		}
-
-		// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
-		const nameField = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
-		if (nameField) {
-			const nameVal = formData.get(effectiveKey(nameField));
-			if (nameVal) formData.set('subject', String(nameVal));
-		}
-
-		try {
-			// Explizit alle Entries iterieren – vermeidet Probleme mit FormData as any Cast
-			const params = new URLSearchParams();
-			for (const [key, value] of formData.entries()) {
-				if (typeof value === 'string') {
-					if (key === 'dienstleistung' && value === '') continue;
-					params.append(key, value);
 				}
 			}
 
-			// Im Dev-Modus → lokaler Mock-Endpunkt
-			// In Production → Netlify CDN fängt den POST ab (form-name im Body)
-			const endpoint = import.meta.env.DEV ? '/api/form' : '/';
-			const response = await fetch(endpoint, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: params.toString()
-			});
-
-			if (response.ok) {
-				showModal = true;
-				form.reset();
-				fieldErrors = {};
-				termineRefreshKey++;
-			} else {
-				console.error('Fehler beim Senden des Formulars:', response);
-				alert(t('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.', lang));
+			// Checkout-Modus: Daten in sessionStorage speichern und zur Zusammenfassung navigieren
+			if (checkoutUrl) {
+				const data: Record<string, string> = {};
+				const labels: Record<string, string> = {};
+				for (const [key, value] of formData.entries()) {
+					if (typeof value === 'string') data[key] = value;
+				}
+				for (const field of formFields) {
+					const key = effectiveKey(field);
+					if (key) labels[key] = field.field_name ?? key;
+				}
+				sessionStorage.setItem('checkoutData', JSON.stringify({ data, labels }));
+				const serviceUid = data['dienstleistung'] ?? '';
+				const target = serviceUid
+					? `${checkoutUrl}?service=${encodeURIComponent(serviceUid)}`
+					: checkoutUrl;
+				goto(target);
+				return;
 			}
-		} catch (error) {
-			console.error('Netzwerkfehler oder anderer Fehler:', error);
-			alert(t('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.', lang));
+
+			// Netlify "subject"-Feld = Wert des Name-Feldes → wird als Titel/Betreff angezeigt
+			const nameField = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+			if (nameField) {
+				const nameVal = formData.get(effectiveKey(nameField));
+				if (nameVal) formData.set('subject', String(nameVal));
+			}
+
+			try {
+				// Explizit alle Entries iterieren – vermeidet Probleme mit FormData as any Cast
+				const params = new URLSearchParams();
+				for (const [key, value] of formData.entries()) {
+					if (typeof value === 'string') {
+						if (key === 'dienstleistung' && value === '') continue;
+						params.append(key, value);
+					}
+				}
+
+				// Im Dev-Modus → lokaler Mock-Endpunkt
+				// In Production → Netlify CDN fängt den POST ab (form-name im Body)
+				const endpoint = import.meta.env.DEV ? '/api/form' : '/';
+				const response = await fetch(endpoint, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: params.toString()
+				});
+
+				if (response.ok) {
+					showModal = true;
+					form.reset();
+					fieldErrors = {};
+					termineRefreshKey++;
+				} else {
+					console.error('Fehler beim Senden des Formulars:', response);
+					alert(t('Senden fehlgeschlagen. Bitte versuchen Sie es erneut.', lang));
+				}
+			} catch (error) {
+				console.error('Netzwerkfehler oder anderer Fehler:', error);
+				alert(t('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.', lang));
+			}
+		} finally {
+			submitting = false;
 		}
 	}
 
@@ -590,8 +600,10 @@
 					{/if}
 					<div class="mt-8 flex justify-center md:justify-end">
 						<Button
-							text={slice.primary?.submitt_button_text || 'Absenden'}
-							disabled={!!linkError}
+							text={submitting
+								? 'Wird gesendet…'
+								: slice.primary?.submitt_button_text || 'Absenden'}
+							disabled={!!linkError || submitting}
 							link={undefined}
 							styleName={submitBtnStyle}
 							color={undefined}

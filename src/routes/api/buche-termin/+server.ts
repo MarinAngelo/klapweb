@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { bookSlot, hasOverlappingBooking, isBooked } from '$lib/server/bookings';
+import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
@@ -312,8 +312,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
 			Firma: companyName,
-			Ort: ortName,
-			Adresse: ortAdresse
+			Ort: ortAdresse || ortName
 		};
 
 		const subject = custEmailSubject

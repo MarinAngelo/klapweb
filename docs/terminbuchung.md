@@ -214,7 +214,10 @@ Unterstützte Platzhalter:
 {{Dauer}}
 {{Name}}
 {{Firma}}
+{{Ort}}
 ```
+
+Der Token `{{Ort}}` wird nur ersetzt, wenn das gebuchte Angebot einen Ort verknüpft hat.
 
 Beispiel Betreff:
 
