@@ -9,6 +9,7 @@ import {
 	hasOverlappingBooking
 } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { invalidateTermineCache } from '$lib/server/termineCache';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
@@ -106,6 +107,7 @@ export const actions: Actions = {
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
 			await deleteBooking(id);
+			invalidateTermineCache();
 		}
 	},
 
@@ -118,6 +120,7 @@ export const actions: Actions = {
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
 			await cancelSlot(id);
+			invalidateTermineCache();
 		}
 	},
 
@@ -129,6 +132,7 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const ids = form.getAll('slotId').filter((id): id is string => typeof id === 'string' && !!id);
 		await Promise.all(ids.map(cancelSlot));
+		invalidateTermineCache();
 	},
 
 	uncancel: async ({ request, url }) => {
@@ -140,6 +144,7 @@ export const actions: Actions = {
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
 			await uncancelSlot(id);
+			invalidateTermineCache();
 		}
 	},
 
@@ -149,6 +154,7 @@ export const actions: Actions = {
 		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 		const all = await listBookings();
 		await Promise.all(all.map((b) => deleteBooking(b.terminId)));
+		invalidateTermineCache();
 		return { ok: true };
 	}
 };
