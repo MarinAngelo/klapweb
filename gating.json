@@ -19,15 +19,24 @@
 	"features": {
 		"terminbuchung": {
 			"label": "Terminbuchung",
-			"plans": ["professional"]
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
-			"plans": ["professional"]
+			"plans": ["professional"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
-			"plans": ["individuell"]
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"p5js": {
 			"label": "P5.js",
@@ -39,11 +48,19 @@
 		},
 		"ressourcenbuchung": {
 			"label": "Ressourcen-Buchung",
-			"plans": ["individuell"]
+			"plans": ["individuell"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		},
 		"global_events": {
 			"label": "Globale Events",
-			"plans": ["professional"]
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",
@@ -59,7 +76,8 @@
 		},
 		"chatbot": {
 			"label": "Chat-Bot",
-			"plans": ["klap-web-ch"]
+			"plans": ["klap-web-ch"],
+			"env": ["ANTHROPIC_API_KEY"]
 		}
 	},
 	"customTypes": {
@@ -92,6 +110,9 @@
 		},
 		"icon": {
 			"feature": "erweiterte_gestaltung"
+		},
+		"ort": {
+			"plan": "professional"
 		},
 		"settings": {
 			"fields": {

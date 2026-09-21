@@ -1774,7 +1774,7 @@
 		</section>
 
 		<section id="ct-angebot">
-			<h2>Angebot <code class="slice-tag">angebot</code></h2>
+			<h2>Buchbares Angebot <code class="slice-tag">angebot</code></h2>
 			<div class="pills">
 				<span class="pill gate" title="Feature: terminbuchung">Feature: terminbuchung &nbsp;⚙</span>
 			</div>
@@ -2713,7 +2713,7 @@
 						><td>resend.com Dashboard → API Keys</td></tr
 					>
 					<tr
-						><td><code>INVOICE_FROM_EMAIL</code></td><td>Absender aller transaktionalen Mails</td
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender aller transaktionalen Mails</td
 						><td>Ja</td><td>Muss verifizierte Domain bei Resend sein</td></tr
 					>
 					<tr
@@ -3328,7 +3328,7 @@
 						></tr
 					>
 					<tr
-						><td><code>INVOICE_FROM_EMAIL</code></td><td>Absender-E-Mail</td><td
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender-E-Mail</td><td
 							>Absender-E-Mail (muss in Resend verifiziert sein)</td
 						></tr
 					>
@@ -3663,7 +3663,7 @@
 
 			<div class="callout">
 				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> +
-				<code>INVOICE_FROM_EMAIL</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
+				<code>EMAIL_FROM_ADDRESS</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
 				E-Mail versendet nicht (kein Fehler-Abbruch).
 			</div>
 		</section>

@@ -19,7 +19,7 @@ export async function POST({ request, fetch }) {
 
 	// E-Mail an Betreiber
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	let toEmail = env.INVOICE_TO_EMAIL || '';
 	if (!toEmail) {
 		try {
@@ -27,7 +27,9 @@ export async function POST({ request, fetch }) {
 			const settings = await client.getSingle('settings');
 			const s = settings.data as any;
 			toEmail = (s.responsible_email as string) || (s.e_mail as string) || '';
-		} catch { /* ignore */ }
+		} catch {
+			/* ignore */
+		}
 	}
 	if (resendKey && toEmail && emailFrom && buchung) {
 		const [vonY, vonM, vonD] = buchung.von.split('-');

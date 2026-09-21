@@ -12,7 +12,7 @@ import {
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
-import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
+import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
@@ -64,7 +64,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalThis.fetch) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
 	const naechte = Math.round(
@@ -157,7 +157,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 
 async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const { Resend } = await import('resend');
@@ -178,7 +178,7 @@ async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 
 async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freigabeUrl: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const annahmen = await listAnnahmenFuerBuchung(buchung.id).catch(() => []);
@@ -290,7 +290,8 @@ export const actions: Actions = {
 			await updateRessourceBuchung(id, {
 				status: 'pending',
 				reminderSent: false,
-				nachAnkunftReminderSent: false
+				nachAnkunftReminderSent: false,
+				abreiseReminderSent: false
 			});
 		} else {
 			await updateRessourceBuchungStatus(id, target);
@@ -323,6 +324,16 @@ export const actions: Actions = {
 		const buchung = await getRessourceBuchung(id);
 		if (!buchung) return;
 		await maybeSendAnkunftsErinnerung(buchung, fetch, true);
+	},
+
+	// ── Abreise-Reminder manuell senden (Admin) ─────────────────────────────
+	sendAbreiseReminder: async ({ request, url, fetch }) => {
+		checkAuth(url);
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await sendAbreiseErinnerung(buchung, fetch, true);
 	},
 
 	deleteAll: async ({ url }) => {

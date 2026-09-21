@@ -90,7 +90,7 @@ h4 {
 	color: var(--page-color);
 }
 h5 {
-	@apply text-lg tracking-tight font-semibold mb-2 mt-3;
+	@apply text-lg tracking-tight font-bold italic mb-2 mt-3;
 	color: var(--page-color);
 }
 h6 {

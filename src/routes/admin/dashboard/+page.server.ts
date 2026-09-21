@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const secret = env.ADMIN_SECRET;
 	const provided = url.searchParams.get('secret');
 	if (!secret || provided !== secret) {
-		throw redirect(303, '/admin');
+		throw redirect(303, provided ? '/admin?error=1' : '/admin');
 	}
 
 	let disabledSections: string[] = [];

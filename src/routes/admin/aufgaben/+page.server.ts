@@ -48,7 +48,7 @@ export const actions: Actions = {
 		});
 
 		const resendKey = env.RESEND_API_KEY;
-		const emailFrom = env.INVOICE_FROM_EMAIL;
+		const emailFrom = env.EMAIL_FROM_ADDRESS;
 
 		if (resendKey && emailFrom && annahme.email) {
 			const { Resend } = await import('resend');
@@ -104,7 +104,7 @@ export const actions: Actions = {
 		});
 
 		const resendKey = env.RESEND_API_KEY;
-		const emailFrom = env.INVOICE_FROM_EMAIL;
+		const emailFrom = env.EMAIL_FROM_ADDRESS;
 
 		if (resendKey && emailFrom && annahme.email) {
 			try {
