@@ -80,9 +80,7 @@
 					"config": {
 						"label": "Button-Stil",
 						"select": "document",
-						"customtypes": [
-							"button_stil"
-						]
+						"customtypes": ["button_stil"]
 					}
 				},
 				"zwei_spalten": {
@@ -171,13 +169,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -345,67 +337,6 @@
 						"default_value": false
 					}
 				},
-				"submitted_title": {
-					"type": "Text",
-					"config": {
-						"label": "Gesendet Titel",
-						"placeholder": ""
-					}
-				},
-				"submitted_text": {
-					"type": "StructuredText",
-					"config": {
-						"multi": "paragraph,preformatted,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl,heading1,heading2,heading3,heading4,heading5,heading6",
-						"allowTargetBlank": true,
-						"label": "Gesendet Text",
-						"labels": [
-							"highlight",
-							"note",
-							"quote",
-							"size-xs",
-							"size-sm",
-							"size-lg",
-							"size-xl",
-							"size-2xl",
-							"size-3xl",
-							"size-4xl",
-							"size-5xl",
-							"size-6xl",
-							"weight-thin",
-							"weight-light",
-							"weight-medium",
-							"weight-semibold",
-							"weight-black",
-							"tracking-tight",
-							"tracking-wide",
-							"tracking-wider",
-							"tracking-widest",
-							"leading-tight",
-							"leading-loose",
-							"uppercase",
-							"lowercase",
-							"capitalize",
-							"underline",
-							"block",
-							"muted",
-							"display-thin",
-							"display-light",
-							"display-bold",
-							"display-black",
-							"giant-thin",
-							"giant-light",
-							"giant-bold",
-							"hero-thin",
-							"hero-light",
-							"hero-bold",
-							"subtitle",
-							"subtitle-bold",
-							"kicker",
-							"overline",
-							"invisible"
-						]
-					}
-				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -417,13 +348,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -660,12 +585,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Vertikaler Abstand",
-						"options": [
-							"kein Abstand",
-							"wenig",
-							"mittel",
-							"gross"
-						]
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				}
 			},
@@ -753,12 +673,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Vertikaler Abstand",
-						"options": [
-							"kein Abstand",
-							"wenig",
-							"mittel",
-							"gross"
-						]
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				}
 			},

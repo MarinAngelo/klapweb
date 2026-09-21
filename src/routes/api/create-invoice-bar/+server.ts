@@ -2,9 +2,10 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { saveManualInvoice } from '$lib/server/invoices';
 import { listCustomers, saveCustomer } from '$lib/server/customers';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
+import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const body = await request.json();
 
@@ -112,12 +113,20 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.INVOICE_FROM_EMAIL;
+			const fromEmail = env.EMAIL_FROM_ADDRESS;
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');
 					const resend = new Resend(resendKey);
-					const fromName = env.INVOICE_FROM_NAME;
+					let fromName = env.EMAIL_FROM_NAME;
+					try {
+						const client = createClient({ fetch });
+						const settings = await client.getSingle('settings');
+						const cmsName = (settings.data as Record<string, unknown>).responsible_person_company;
+						if (typeof cmsName === 'string' && cmsName.trim()) fromName = cmsName.trim();
+					} catch (e) {
+						console.error('CMS-Firmenname konnte nicht geladen werden:', e);
+					}
 					const fromWithName = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
 					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
 					const fmt = (n: number) =>

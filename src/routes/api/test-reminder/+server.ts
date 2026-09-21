@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const siteID = env.NETLIFY_SITE_ID;
 	const token = env.NETLIFY_TOKEN;
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const fromEmail = env.EMAIL_FROM_ADDRESS;
 	const smConfig = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
 	const repoName = env.PRISMIC_REPOSITORY_NAME || smConfig.repositoryName;
 	const dryRun = url.searchParams.get('dryRun') === 'true';

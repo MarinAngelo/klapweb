@@ -1601,11 +1601,35 @@
 		"customType": "angebot",
 		"customTypeLabel": "Buchbares Angebot",
 		"tab": "Main",
+		"field": "vorlaufzeit",
+		"path": "angebot/Main/vorlaufzeit",
+		"label": "Vorlaufzeit (Minuten)",
+		"description": "Erfasst einen Zahlenwert für Vorlaufzeit (Minuten).",
+		"type": "Number"
+	},
+	{
+		"name": "Buchbares Angebot",
+		"elementType": "Custom Type",
+		"customType": "angebot",
+		"customTypeLabel": "Buchbares Angebot",
+		"tab": "Main",
 		"field": "preis",
 		"path": "angebot/Main/preis",
 		"label": "Preis (optional)",
 		"description": "Erfasst einen Zahlenwert für Preis (optional).",
 		"type": "Number"
+	},
+	{
+		"name": "Buchbares Angebot",
+		"elementType": "Custom Type",
+		"customType": "angebot",
+		"customTypeLabel": "Buchbares Angebot",
+		"tab": "Main",
+		"field": "ort",
+		"path": "angebot/Main/ort",
+		"label": "Ort",
+		"description": "Verknüpft Ort mit einer anderen Seite oder einem externen Ziel.",
+		"type": "Link"
 	},
 	{
 		"name": "Buchbares Angebot",
@@ -2626,6 +2650,30 @@
 		"label": "Kunden-E-Mail: Text",
 		"description": "Erfasst formatierten Text für Kunden-E-Mail: Text, zum Beispiel Absätze, Überschriften oder Links.",
 		"type": "StructuredText"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Terminbuchung",
+		"field": "booking_success_title",
+		"path": "settings/Terminbuchung/booking_success_title",
+		"label": "Buchungsbestätigung: Titel",
+		"description": "Erfasst einen kurzen Text für Buchungsbestätigung: Titel.",
+		"type": "Text"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
+		"tab": "Terminbuchung",
+		"field": "booking_reminder_hours",
+		"path": "settings/Terminbuchung/booking_reminder_hours",
+		"label": "Erinnerung: Stunden vor Termin",
+		"description": "Erfasst einen Zahlenwert für Erinnerung: Stunden vor Termin.",
+		"type": "Number"
 	},
 	{
 		"name": "Einstellungen",
@@ -4426,30 +4474,6 @@
 		"label": "2 Spalten",
 		"description": "Schaltet 2 Spalten ein oder aus.",
 		"type": "Boolean"
-	},
-	{
-		"name": "Formular",
-		"elementType": "Slice",
-		"customType": "Formular",
-		"customTypeLabel": "Formular",
-		"tab": "Mit Termin",
-		"field": "submitted_title",
-		"path": "Formular/mitTermin/Primary/submitted_title",
-		"label": "Gesendet Titel",
-		"description": "Erfasst einen kurzen Text für Gesendet Titel.",
-		"type": "Text"
-	},
-	{
-		"name": "Formular",
-		"elementType": "Slice",
-		"customType": "Formular",
-		"customTypeLabel": "Formular",
-		"tab": "Mit Termin",
-		"field": "submitted_text",
-		"path": "Formular/mitTermin/Primary/submitted_text",
-		"label": "Gesendet Text",
-		"description": "Erfasst formatierten Text für Gesendet Text, zum Beispiel Absätze, Überschriften oder Links.",
-		"type": "StructuredText"
 	},
 	{
 		"name": "Formular",
@@ -6415,8 +6439,8 @@
 		"tab": "Mit Titelbereich",
 		"field": "button_hover_color",
 		"path": "P5Grafik/mitTitelbereich/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -6439,8 +6463,8 @@
 		"tab": "Mit Titelbereich",
 		"field": "button_hover_bg_color",
 		"path": "P5Grafik/mitTitelbereich/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -7363,8 +7387,8 @@
 		"tab": "Standard",
 		"field": "button_hover_color",
 		"path": "Button/default/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -7387,8 +7411,8 @@
 		"tab": "Standard",
 		"field": "button_hover_bg_color",
 		"path": "Button/default/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -7471,8 +7495,8 @@
 		"tab": "Kauf-Schaltfläche",
 		"field": "button_hover_color",
 		"path": "Button/kauf/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -7495,8 +7519,8 @@
 		"tab": "Kauf-Schaltfläche",
 		"field": "button_hover_bg_color",
 		"path": "Button/kauf/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -7980,114 +8004,6 @@
 		"type": "Image"
 	},
 	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "uid",
-		"path": "terminplanung/Main/uid",
-		"label": "UID",
-		"description": "Legt die eindeutige Kennung für UID fest. Diese wird für die Zuordnung und Verlinkung verwendet.",
-		"type": "UID"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "titel",
-		"path": "terminplanung/Main/titel",
-		"label": "Bezeichnung",
-		"description": "Erfasst einen kurzen Text für Bezeichnung.",
-		"type": "Text"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "datum",
-		"path": "terminplanung/Main/datum",
-		"label": "Startdatum",
-		"description": "Legt das Datum für Startdatum fest.",
-		"type": "Date"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "uhrzeit",
-		"path": "terminplanung/Main/uhrzeit",
-		"label": "Uhrzeit (HH:MM)",
-		"description": "Erfasst einen kurzen Text für Uhrzeit (HH:MM).",
-		"type": "Text"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "session_laenge",
-		"path": "terminplanung/Main/session_laenge",
-		"label": "Dauer (Minuten)",
-		"description": "Erfasst einen Zahlenwert für Dauer (Minuten).",
-		"type": "Number"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "zeitzone",
-		"path": "terminplanung/Main/zeitzone",
-		"label": "Zeitzone",
-		"description": "Legt Zeitzone über eine Auswahl fest: Pacific/Honolulu, America/Los_Angeles, America/Denver, America/Chicago, America/New_York, America/Sao_Paulo, Atlantic/Azores, Europe/London, Europe/Paris, Europe/Zurich, Europe/Berlin, Europe/Vienna, Europe/Athens, Europe/Moscow, Asia/Dubai, Asia/Kolkata, Asia/Dhaka, Asia/Bangkok, Asia/Singapore, Asia/Shanghai, Asia/Tokyo, Australia/Sydney, Pacific/Auckland, Africa/Johannesburg.",
-		"type": "Select"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "wiederholung",
-		"path": "terminplanung/Main/wiederholung",
-		"label": "Wiederholung",
-		"description": "Legt Wiederholung über eine Auswahl fest: Keine, Täglich, Wöchentlich, Zweiwöchentlich, Monatlich.",
-		"type": "Select"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "wiederholung_bis",
-		"path": "terminplanung/Main/wiederholung_bis",
-		"label": "Wiederholen bis (Datum)",
-		"description": "Legt das Datum für Wiederholen bis (Datum) fest.",
-		"type": "Date"
-	},
-	{
-		"name": "Terminplanung",
-		"elementType": "Custom Type",
-		"customType": "terminplanung",
-		"customTypeLabel": "Terminplanung",
-		"tab": "Main",
-		"field": "wiederholung_anzahl",
-		"path": "terminplanung/Main/wiederholung_anzahl",
-		"label": "Anzahl Wiederholungen",
-		"description": "Erfasst einen Zahlenwert für Anzahl Wiederholungen.",
-		"type": "Number"
-	},
-	{
 		"name": "Text",
 		"elementType": "Slice",
 		"customType": "Text",
@@ -8539,8 +8455,8 @@
 		"tab": "Standard",
 		"field": "button_hover_color",
 		"path": "TextAndCta/default/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -8563,8 +8479,8 @@
 		"tab": "Standard",
 		"field": "button_hover_bg_color",
 		"path": "TextAndCta/default/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -9595,8 +9511,8 @@
 		"tab": "Standard",
 		"field": "button_hover_color",
 		"path": "Titelbereich/default/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -9619,8 +9535,8 @@
 		"tab": "Standard",
 		"field": "button_hover_bg_color",
 		"path": "Titelbereich/default/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -9895,8 +9811,8 @@
 		"tab": "Farbverlauf",
 		"field": "button_hover_color",
 		"path": "Titelbereich/farbverlauf/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -9919,8 +9835,8 @@
 		"tab": "Farbverlauf",
 		"field": "button_hover_bg_color",
 		"path": "Titelbereich/farbverlauf/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -10291,8 +10207,8 @@
 		"tab": "Mit Bild Karusell",
 		"field": "button_hover_color",
 		"path": "Titelbereich/mitBildKarusell/Primary/button_hover_color",
-		"label": "Schaltfläche T & R Mouseover",
-		"description": "Legt die Farbe für Schaltfläche T & R Mouseover fest.",
+		"label": "Text & Rahmen wenn Maus drüber",
+		"description": "Legt die Farbe für Text & Rahmen wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{
@@ -10315,8 +10231,8 @@
 		"tab": "Mit Bild Karusell",
 		"field": "button_hover_bg_color",
 		"path": "Titelbereich/mitBildKarusell/Primary/button_hover_bg_color",
-		"label": "Schaltfläche Hintergrund Mouseover",
-		"description": "Legt die Farbe für Schaltfläche Hintergrund Mouseover fest.",
+		"label": "Hintergrund wenn Maus drüber",
+		"description": "Legt die Farbe für Hintergrund wenn Maus drüber fest.",
 		"type": "Color"
 	},
 	{

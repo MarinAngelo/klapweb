@@ -43,11 +43,6 @@
 	$: email = settingsData.e_mail || '';
 	$: responsiblePersonCompany = settingsData.responsible_person_company || '';
 	const currentYear = new Date().getFullYear();
-
-	const handleHover = (e: Event, color?: string) => {
-		const el = e.target as HTMLElement;
-		if (el) el.style.color = color ?? 'var(--footer-link-hover-color)';
-	};
 </script>
 
 {#if settings && navigation}
@@ -94,10 +89,8 @@
 						{$_('Kontakt')}:
 						<a
 							href={`mailto:${email}`}
-							class="text-center hover:underline"
+							class="footer-link text-center hover:underline"
 							style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
-							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 						>
 							{email}
 						</a>
@@ -114,10 +107,8 @@
 				>
 					<a
 						href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);"
-						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-						on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 					>
 						{$_('Datenschutz')}
 					</a>
@@ -126,10 +117,8 @@
 
 					<a
 						href={getStaticHref('impressum', 'legal-notice')}
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);"
-						on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-						on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 					>
 						{$_('Impressum')}
 					</a>
@@ -138,10 +127,8 @@
 						&nbsp;|&nbsp;
 						<a
 							href={getStaticHref('agb', 'terms-and-conditions')}
-							class="hover:underline"
+							class="footer-link hover:underline"
 							style="color: var(--footer-link-color);"
-							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 						>
 							{$_('AGB')}
 						</a>
@@ -150,10 +137,8 @@
 						&nbsp;|&nbsp;
 						<a
 							href={getStaticHref('haftungsausschluss', 'disclaimer')}
-							class="hover:underline"
+							class="footer-link hover:underline"
 							style="color: var(--footer-link-color);"
-							on:mouseenter={(e) => handleHover(e, 'var(--footer-link-hover-color)')}
-							on:mouseleave={(e) => handleHover(e, 'var(--footer-link-color)')}
 						>
 							{$_('Haftungsausschluss')}
 						</a>
@@ -169,7 +154,7 @@
 						href="https://svelte.dev"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);">Svelte</a
 					>
 					&nbsp;|&nbsp;
@@ -177,7 +162,7 @@
 						href="https://prismic.io"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);">Prismic</a
 					>
 				</p>
@@ -190,7 +175,7 @@
 						href="https://www.netlify.com/"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);">Netlify</a
 					>
 					&nbsp;|&nbsp;
@@ -198,7 +183,7 @@
 						href="https://resend.com/"
 						target="_blank"
 						rel="noopener noreferrer nofollow"
-						class="hover:underline"
+						class="footer-link hover:underline"
 						style="color: var(--footer-link-color);">Resend</a
 					>
 				</p>

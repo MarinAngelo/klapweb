@@ -17,9 +17,7 @@
 						"label": "Link",
 						"placeholder": "",
 						"select": null,
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				},
 				"button_text": {
@@ -34,11 +32,7 @@
 					"config": {
 						"label": "Grösse",
 						"placeholder": "",
-						"options": [
-							"Klein",
-							"Mittel",
-							"Gross"
-						],
+						"options": ["Klein", "Mittel", "Gross"],
 						"default_value": "Mittel"
 					}
 				},
@@ -47,11 +41,7 @@
 					"config": {
 						"label": "Ausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Mitte"
 					}
 				},
@@ -69,9 +59,7 @@
 					"config": {
 						"label": "Button-Stil",
 						"select": "document",
-						"customtypes": [
-							"button_stil"
-						]
+						"customtypes": ["button_stil"]
 					}
 				},
 				"button_color": {
@@ -84,7 +72,7 @@
 				"button_hover_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche T & R Mouseover",
+						"label": "Text & Rahmen wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
@@ -98,7 +86,7 @@
 				"button_hover_bg_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche Hintergrund Mouseover",
+						"label": "Hintergrund wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
@@ -107,12 +95,7 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": [
-							"kein Abstand",
-							"wenig",
-							"mittel",
-							"gross"
-						]
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				}
 			},
@@ -138,11 +121,7 @@
 					"config": {
 						"label": "Grösse",
 						"placeholder": "",
-						"options": [
-							"Klein",
-							"Mittel",
-							"Gross"
-						],
+						"options": ["Klein", "Mittel", "Gross"],
 						"default_value": "Mittel"
 					}
 				},
@@ -151,11 +130,7 @@
 					"config": {
 						"label": "Ausrichtung",
 						"placeholder": "",
-						"options": [
-							"Links",
-							"Mitte",
-							"Rechts"
-						],
+						"options": ["Links", "Mitte", "Rechts"],
 						"default_value": "Mitte"
 					}
 				},
@@ -178,7 +153,7 @@
 				"button_hover_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche T & R Mouseover",
+						"label": "Text & Rahmen wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
@@ -192,7 +167,7 @@
 				"button_hover_bg_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche Hintergrund Mouseover",
+						"label": "Hintergrund wenn Maus drüber",
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
@@ -201,12 +176,7 @@
 					"config": {
 						"label": "Vertikaler Abstand",
 						"placeholder": "",
-						"options": [
-							"kein Abstand",
-							"wenig",
-							"mittel",
-							"gross"
-						]
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				},
 				"animate": {
@@ -220,13 +190,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

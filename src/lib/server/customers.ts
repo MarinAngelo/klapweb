@@ -23,7 +23,7 @@ import { env } from '$env/dynamic/private';
 export interface CustomerRecord {
 	id: string;
 	date: string;
-	paymentMethod: 'rechnung' | 'bar' | 'stripe';
+	paymentMethod: 'rechnung' | 'bar' | 'stripe' | 'manuell' | 'terminbuchung';
 	service: string;
 	amount: number | null;
 	currency: string;

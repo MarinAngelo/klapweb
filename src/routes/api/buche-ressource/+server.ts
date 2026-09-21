@@ -179,7 +179,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	// Vermieter-Benachrichtigung mit Bestätigungslink
 	const resendKey = env.RESEND_API_KEY;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
-	const emailFrom = fromEmail || env.INVOICE_FROM_EMAIL;
+	const emailFrom = fromEmail || env.EMAIL_FROM_ADDRESS;
 	const adminSecret = env.ADMIN_SECRET;
 
 	if (resendKey && emailFrom && toEmail && adminSecret) {

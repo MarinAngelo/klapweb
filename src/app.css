@@ -317,9 +317,9 @@ a[data-type='prismic-link'] {
 	color: var(--page-link-color);
 }
 
-a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-link):not(
-		.site-title-link
-	):not(.no-underline) {
+a:not(.footer-nav-link):not(.footer-link):not(.button-prismic-link):not(.nav-link):not(
+		.dropdown-link
+	):not(.site-title-link):not(.no-underline) {
 	@apply underline;
 	color: var(--page-link-color);
 }
@@ -333,8 +333,12 @@ a:not(.footer-nav-link):not(.button-prismic-link):not(.nav-link):not(.dropdown-l
 	}
 }
 
-a[data-type='prismic-link']:not(.dropdown-link):not(.nav-link):hover,
-a:not(.site-title-link):not(.dropdown-link):not(.nav-link):hover {
+a[data-type='prismic-link']:not(.dropdown-link):not(.nav-link):not(.button-prismic-link):not(
+		.footer-nav-link
+	):not(.footer-link):hover,
+a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link):not(
+		.button-prismic-link
+	):not(.footer-nav-link):not(.footer-link):hover {
 	color: var(--page-link-hover-color) !important;
 }
 
@@ -496,6 +500,7 @@ a:not(.site-title-link):not(.dropdown-link):not(.nav-link):hover {
 /* Footer-Link Hover */
 .footer-nav-link:hover,
 .footer-buttonbar-p a:hover,
+.footer-link:hover,
 a[href^='mailto:']:hover {
 	color: var(--footer-link-hover-color) !important;
 }
