@@ -1,6 +1,10 @@
 import type { PageServerLoad } from './$types';
 import { createClient } from '$lib/prismicio';
 
+// Die Seite liest Query-Parameter ($page.url.searchParams) — darf nicht
+// prerendert werden, sonst schlägt der Build fehl.
+export const prerender = false;
+
 export const load: PageServerLoad = async ({ fetch }) => {
 	let successTitle = 'Termin gebucht';
 	try {
