@@ -318,4 +318,60 @@ export default async function handler() {
 			}
 		}
 	}
+
+	// ── Termin-Erinnerungen: X Stunden vor Termin (bei jedem Lauf) ──────────
+	const reminderHours = Number((settings?.data as any)?.booking_reminder_hours ?? 0);
+	if (reminderHours > 0) {
+		const terminStore = getStore({ name: 'buchungen', siteID, token });
+		const { blobs: terminBlobs } = await terminStore.list();
+		const termine = (
+			await Promise.all(
+				terminBlobs.map((b) => terminStore.get(b.key, { type: 'json' }).catch(() => null))
+			)
+		).filter(Boolean) as any[];
+
+		const now = Date.now();
+		const upcoming = termine.filter((b) => {
+			if (!b.email || b.reminderSent || !b.datum || !b.uhrzeit) return false;
+			const terminTime = new Date(`${b.datum}T${b.uhrzeit}:00`).getTime();
+			const diffHours = (terminTime - now) / 3600000;
+			return diffHours > 0 && diffHours <= reminderHours;
+		});
+		console.log(`[send-reminders] Termin-Erinnerungen (≤${reminderHours}h): ${upcoming.length}`);
+
+		for (const buchung of upcoming) {
+			try {
+				const betreff = `Erinnerung: ${buchung.titel}`;
+				const datumLabel = formatDate(buchung.datum);
+				const html = `<p>Guten Tag ${buchung.name || ''}</p>
+<p>Dies ist eine Erinnerung an Ihren Termin:</p>
+<p><strong>${buchung.titel}</strong><br>
+${datumLabel}, ${buchung.uhrzeit} Uhr</p>
+<p>Freundliche Grüsse</p>`;
+
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Termin-Erinnerungsmail',
+					datumLabel,
+					'Termin'
+				);
+				if (error) {
+					console.error(
+						`[send-reminders] Termin-Erinnerung fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
+					continue;
+				}
+
+				await terminStore.setJSON(buchung.terminId, { ...buchung, reminderSent: true });
+				console.log(`[send-reminders] Termin-Erinnerung gesendet an ${buchung.email}`);
+			} catch (err) {
+				console.error(`[send-reminders] Fehler bei Termin ${buchung.terminId}:`, err);
+			}
+		}
+	}
 }

@@ -20,6 +20,7 @@ export interface BookingRecord {
 	email?: string;
 	arbeitstagId?: string;
 	angebotId?: string;
+	reminderSent?: boolean;
 }
 
 function toMinutes(value: string): number | null {
@@ -55,6 +56,16 @@ export async function isBooked(terminId: string): Promise<boolean> {
 export async function getBooking(terminId: string): Promise<BookingRecord | null> {
 	const store = getBookingStore();
 	return (await store.get(terminId, { type: 'json' })) as BookingRecord | null;
+}
+
+export async function updateBooking(
+	terminId: string,
+	patch: Partial<BookingRecord>
+): Promise<void> {
+	const store = getBookingStore();
+	const existing = await getBooking(terminId);
+	if (!existing) return;
+	await store.setJSON(terminId, { ...existing, ...patch });
 }
 
 export async function hasOverlappingBooking(

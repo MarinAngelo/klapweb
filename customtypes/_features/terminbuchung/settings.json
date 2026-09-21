@@ -32,6 +32,13 @@
 				"label": "Buchungsbestätigung: Titel",
 				"placeholder": "Termin gebucht"
 			}
+		},
+		"booking_reminder_hours": {
+			"type": "Number",
+			"config": {
+				"label": "Erinnerung: Stunden vor Termin",
+				"placeholder": "24 (leer = keine Erinnerung)"
+			}
 		}
 	}
 }

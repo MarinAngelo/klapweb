@@ -2596,6 +2596,18 @@
 		"elementType": "Page Type",
 		"customType": "settings",
 		"customTypeLabel": "Einstellungen",
+		"tab": "Terminbuchung",
+		"field": "booking_reminder_hours",
+		"path": "settings/Terminbuchung/booking_reminder_hours",
+		"label": "Erinnerung: Stunden vor Termin",
+		"description": "Erfasst einen Zahlenwert für Erinnerung: Stunden vor Termin.",
+		"type": "Number"
+	},
+	{
+		"name": "Einstellungen",
+		"elementType": "Page Type",
+		"customType": "settings",
+		"customTypeLabel": "Einstellungen",
 		"tab": "Online-Handel",
 		"field": "invoice_currency",
 		"path": "settings/Online-Handel/invoice_currency",
