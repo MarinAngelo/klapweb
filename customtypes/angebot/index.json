@@ -56,6 +56,16 @@
 					"placeholder": ""
 				}
 			},
+			"ort": {
+				"type": "Link",
+				"config": {
+					"label": "Ort",
+					"select": "document",
+					"customtypes": [
+						"ort"
+					]
+				}
+			},
 			"aktiv": {
 				"type": "Boolean",
 				"config": {

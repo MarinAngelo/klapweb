@@ -4,10 +4,11 @@
 
 Das Buchungssystem ermöglicht es Besucherinnen und Besuchern, freie Zeitfenster aus einem oder mehreren Angeboten zu buchen. Du definierst im CMS Arbeitstage, Angebote, Dauer, Puffer und Wiederholungen. Das System erzeugt daraus automatisch buchbare Termine und verwaltet gebuchte, freie und gesperrte Slots.
 
-Der aktuelle Aufbau besteht aus zwei CMS-Typen:
+Der aktuelle Aufbau besteht aus drei CMS-Typen:
 
-- **Buchbares Angebot**: die eigentliche Leistung, zum Beispiel „Massage 60 Minuten“
+- **Buchbares Angebot**: die eigentliche Leistung, zum Beispiel „Massage 60 Minuten"
 - **Arbeitstag**: der Zeitraum, an dem buchbare Angebote verfügbar sind
+- **Ort / Standort**: der physische Ort, an dem das Angebot stattfindet (optional)
 
 Ein Termin im Buchungsformular entsteht aus:
 
@@ -17,6 +18,8 @@ Arbeitstag
 + Dauer und Puffer des Angebots
 + Buchungsintervall des Arbeitstags
 ```
+
+Ein Angebot kann optional einen **Ort** verknüpfen. Der Ort wird in den E-Mails und im Admin-Panel angezeigt.
 
 ---
 
@@ -47,9 +50,34 @@ Speichere und veröffentliche das buchbare Angebot.
 - Massage, Dauer 60 Minuten, Puffer 15 Minuten, Vorlaufzeit 60 Minuten
 - Erstgespräch, Dauer 45 Minuten, kein Puffer, keine Vorlaufzeit
 
+**Optional: Ort verknüpfen**
+
+Falls das Angebot an einem physischen Ort stattfindet, kannst du im Feld **Ort** einen Standort auswählen. Der Ort wird in den E-Mails und im Admin-Panel angezeigt.
+
 ---
 
-### 2. Arbeitstage anlegen
+### 2. Orte anlegen (optional)
+
+Öffne in Prismic den Custom Type **Ort / Standort** und erstelle einen neuen Eintrag.
+
+| Feld                | Bedeutung                                           |
+| ------------------- | --------------------------------------------------- |
+| **UID**             | Eindeutiger Name, z.B. `zuerich-city`               |
+| **Name**            | Anzeigename, z.B. „Zürich City“                     |
+| **Adresse**         | Vollständige Adresse                                |
+| **Geo-Koordinaten** | Format `47.3769, 8.5417` (aus Google Maps kopieren) |
+| **Telefon**         | Optionale Telefonnummer                             |
+| **E-Mail**          | Optionale E-Mail-Adresse                            |
+| **Öffnungszeiten**  | Optionale Öffnungszeiten                            |
+| **Wegbeschreibung** | Optionale Wegbeschreibung                           |
+| **Bild**            | Optionales Bild                                     |
+| **Aktiv**           | Nur aktive Orte sind auswählbar                     |
+
+Speichere und veröffentliche den Ort.
+
+---
+
+### 3. Arbeitstage anlegen
 
 Öffne in Prismic den Custom Type **Arbeitstag** und erstelle einen neuen Eintrag.
 
@@ -90,7 +118,7 @@ Wiederholen bis: 31.12.2025
 
 ---
 
-### 3. Admin Panel
+### 4. Admin Panel
 
 Bevor du das Buchungsformular veröffentlichst, öffne die Terminverwaltung:
 
@@ -129,7 +157,7 @@ Erst wenn die freien Termine im Admin Panel korrekt aussehen, sollte die Buchung
 
 ---
 
-### 4. Buchungsformular auf einer Seite einfügen
+### 5. Buchungsformular auf einer Seite einfügen
 
 Öffne in Prismic die Seite, auf der gebucht werden soll.
 
@@ -150,7 +178,7 @@ Du kannst zusätzliche Felder ergänzen, zum Beispiel Telefon, Nachricht oder Fi
 
 ---
 
-### 5. Formulartexte festlegen
+### 6. Formulartexte festlegen
 
 Im Slice **Formular → Mit Termin** kannst du folgende Texte pflegen:
 
@@ -164,7 +192,7 @@ Nach erfolgreicher Buchung werden Besucherinnen und Besucher auf die Bestätigun
 
 ---
 
-### 6. E-Mail-Benachrichtigungen konfigurieren
+### 7. E-Mail-Benachrichtigungen konfigurieren
 
 Öffne in Prismic den Custom Type **Settings** und den Tab **Terminbuchung**.
 
@@ -231,7 +259,7 @@ Die CMS-Absender-E-Mail hat Vorrang. Falls sie leer ist, wird `EMAIL_FROM_ADDRES
 
 ---
 
-### 7. Seite veröffentlichen
+### 8. Seite veröffentlichen
 
 Veröffentliche in dieser Reihenfolge:
 
@@ -249,7 +277,7 @@ Ein Termin erscheint auf der Website nur, wenn:
 
 ---
 
-### 8. Buchung durch Besucherinnen und Besucher
+### 9. Buchung durch Besucherinnen und Besucher
 
 Der Ablauf ist:
 
@@ -266,7 +294,7 @@ Wenn sich zwei Buchungen zeitlich überlappen, wird die spätere Buchung abgeleh
 
 ---
 
-### 9. Buchungen kontrollieren
+### 10. Buchungen kontrollieren
 
 Die gebuchten Termine können in der Terminverwaltung kontrolliert werden:
 
@@ -296,7 +324,7 @@ Ein gesperrter Termin kann wieder freigegeben werden.
 
 ---
 
-### 10. Termine sperren oder wieder freigeben
+### 11. Termine sperren oder wieder freigeben
 
 In der Liste **Freie Termine** kannst du einen Termin sperren. Der Slot wird dann nicht mehr auf der Website angeboten.
 
@@ -308,7 +336,7 @@ Eine bestehende Buchung löschst du über **Gebuchte Termine**. Danach wird der 
 
 ---
 
-### 11. Wiederkehrende Termine ändern
+### 12. Wiederkehrende Termine ändern
 
 Wenn du eine Serie ändern möchtest, öffne den entsprechenden **Arbeitstag**.
 

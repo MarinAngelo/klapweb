@@ -1625,6 +1625,18 @@
 		"customType": "angebot",
 		"customTypeLabel": "Buchbares Angebot",
 		"tab": "Main",
+		"field": "ort",
+		"path": "angebot/Main/ort",
+		"label": "Ort",
+		"description": "Verknüpft Ort mit einer anderen Seite oder einem externen Ziel.",
+		"type": "Link"
+	},
+	{
+		"name": "Buchbares Angebot",
+		"elementType": "Custom Type",
+		"customType": "angebot",
+		"customTypeLabel": "Buchbares Angebot",
+		"tab": "Main",
 		"field": "aktiv",
 		"path": "angebot/Main/aktiv",
 		"label": "Aktiv",

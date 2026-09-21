@@ -26,6 +26,8 @@
 	const fmtTimeRange = (uhrzeit: string, endzeit?: string) =>
 		uhrzeit && endzeit ? `${uhrzeit}–${endzeit} Uhr` : uhrzeit ? `${uhrzeit} Uhr` : '–';
 
+	const getOrtName = (b: unknown) => (b as { ortName?: string }).ortName || '–';
+
 	let selectedFreeSlots: string[] = [];
 	let lastFreeSlotIndex: number | null = null;
 	let mobileSelectionMode = false;
@@ -167,7 +169,7 @@
 			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
 				<thead>
 					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each ['Termin', 'Titel', 'Name', 'E-Mail', 'Gebucht am', ''] as col}
+						{#each ['Termin', 'Titel', 'Ort', 'Name', 'E-Mail', 'Gebucht am', ''] as col}
 							<th style={tdNowrap}>{col}</th>
 						{/each}
 					</tr>
@@ -177,6 +179,7 @@
 						<tr style="border-bottom: 1px solid #e5e7eb;">
 							<td style={tdNowrap}>{fmtDate(b.datum, b.uhrzeit, b.endzeit)}</td>
 							<td style={tdStyle}>{b.titel || b.terminId}</td>
+							<td style="{tdStyle} opacity: 0.7;">{getOrtName(b)}</td>
 							<td style={tdStyle}>{b.name ?? '–'}</td>
 							<td style={tdStyle}>{b.email ?? '–'}</td>
 							<td style="{tdNowrap} opacity: 0.6;">

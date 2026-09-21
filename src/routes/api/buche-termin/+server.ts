@@ -183,6 +183,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let zeitzone = 'Europe/Zurich';
 	let arbeitstagId: string | undefined;
 	let angebotId: string | undefined;
+	let ortName = '';
+	let ortAdresse = '';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -221,6 +223,25 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		zeitzone = slot.zeitzone;
 		arbeitstagId = slot.arbeitstagId;
 		angebotId = slot.angebotId;
+
+		// Ort aus dem verknüpften Angebot laden
+		const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
+		const ortLink = (offerDoc?.data as any)?.ort;
+		if (ortLink?.uid) {
+			try {
+				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
+				ortName = (ortDoc.data as any).name ?? '';
+				const adresseBlocks = (ortDoc.data as any).adresse;
+				ortAdresse = Array.isArray(adresseBlocks)
+					? adresseBlocks
+							.map((b: any) => b?.text ?? '')
+							.filter(Boolean)
+							.join(', ')
+					: '';
+			} catch {
+				/* Ort nicht erreichbar */
+			}
+		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
@@ -290,7 +311,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Uhrzeit: uhrzeit || '–',
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
-			Firma: companyName
+			Firma: companyName,
+			Ort: ortName,
+			Adresse: ortAdresse
 		};
 
 		const subject = custEmailSubject
@@ -403,6 +426,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 								`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
 								`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
 								`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+								...(ortName ? [`Ort: ${ortName}`] : []),
+								...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
 								``,
 								`Name: ${customerName}`,
 								...(email ? [`E-Mail: ${email}`] : []),

@@ -31,7 +31,18 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 				dynamicClient.getAllByType('arbeitstag').catch(() => []),
 				dynamicClient.getAllByType('angebot').catch(() => [])
 			]);
-			return workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, allSlotsFrom));
+
+			// Orte laden und den Slots zuordnen
+			const orte = await dynamicClient.getAllByType('ort').catch(() => []);
+			const ortByUid = new Map(orte.map((o: any) => [o.uid, o]));
+
+			const slots = workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, allSlotsFrom));
+			return slots.map((slot) => {
+				const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
+				const ortLink = (offerDoc?.data as any)?.ort;
+				const ortDoc = ortLink?.uid ? ortByUid.get(ortLink.uid) : null;
+				return { ...slot, ortName: ortDoc ? ((ortDoc.data as any).name ?? '') : '' };
+			});
 		})(),
 		listCancelled()
 	]);
@@ -43,6 +54,11 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 			: null;
 
 	const allSlots = slotsResult.status === 'fulfilled' ? slotsResult.value : [];
+	const slotById = new Map(allSlots.map((s: any) => [s.id, s]));
+	const bookingsWithOrt = bookings.map((b) => ({
+		...b,
+		ortName: (slotById.get(b.terminId) as any)?.ortName ?? ''
+	}));
 	const cancelledIds = new Set(cancelledResult.status === 'fulfilled' ? cancelledResult.value : []);
 	const bookedIds = new Set(bookings.map((b) => b.terminId));
 
@@ -77,7 +93,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		.filter((s) => cancelledIds.has(s.id))
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
-	return { bookings, freeSlots, pastSlots, cancelledSlots, blobError };
+	return { bookings: bookingsWithOrt, freeSlots, pastSlots, cancelledSlots, blobError };
 };
 
 export const actions: Actions = {
