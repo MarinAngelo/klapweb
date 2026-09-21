@@ -341,6 +341,7 @@
 							storno: result.storno ?? '',
 							gcal: result.gcal ?? '',
 							ics: result.ics ?? '',
+							ort: result.ort ?? '',
 							returnTo: window.location.pathname + window.location.search
 						});
 						goto(`/termin-gebucht?${params.toString()}`);

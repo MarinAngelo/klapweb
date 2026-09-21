@@ -10,11 +10,13 @@
 
 	function confirmDelete(e: SubmitEvent, titel: string) {
 		if (!confirm(`Buchung "${titel}" wirklich löschen (Termin wird wieder frei)?`)) return;
+		actionLoading = true;
 		(e.currentTarget as HTMLFormElement).submit();
 	}
 
 	function confirmCancel(e: SubmitEvent, titel: string) {
 		if (!confirm(`Termin "${titel}" sperren (wird nicht mehr buchbar)?`)) return;
+		actionLoading = true;
 		(e.currentTarget as HTMLFormElement).submit();
 	}
 
@@ -32,6 +34,7 @@
 	let lastFreeSlotIndex: number | null = null;
 	let mobileSelectionMode = false;
 	let mobileRangeStartIndex: number | null = null;
+	let actionLoading = false;
 
 	function isFreeSlotSelected(index: number): boolean {
 		const id = data.freeSlots[index]?.id;
@@ -395,6 +398,12 @@
 			</table>
 		</div>
 	{/if}
+
+	{#if actionLoading}
+		<div class="admin-loading-overlay">
+			<div class="admin-loading-spinner"></div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -423,6 +432,32 @@
 			flex: 0 0 100%;
 			justify-content: flex-start;
 			flex-wrap: wrap;
+		}
+	}
+
+	.admin-loading-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(255, 255, 255, 0.7);
+		backdrop-filter: blur(4px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 9999;
+	}
+
+	.admin-loading-spinner {
+		width: 3rem;
+		height: 3rem;
+		border: 4px solid #e5e7eb;
+		border-top-color: #1e2d5a;
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
 		}
 	}
 </style>

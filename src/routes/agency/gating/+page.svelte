@@ -10,6 +10,12 @@
 		: [];
 	let passwordInput = '';
 	let loginError = '';
+	let showEnvWarning = data.authenticated && (data.missingEnv?.length ?? 0) > 0;
+
+	function getMissingEnv(featureId: string): string[] {
+		if (!data.authenticated) return [];
+		return data.missingEnv?.find((e) => e.featureId === featureId)?.missing ?? [];
+	}
 
 	function getPlans() {
 		if (!data.authenticated) return [];
@@ -131,6 +137,14 @@
 									{#if inPlan}
 										<span class="badge">im Plan</span>
 									{/if}
+									{#if getMissingEnv(id).length > 0}
+										<span
+											class="badge badge-warning"
+											title="Fehlende Umgebungsvariablen: {getMissingEnv(id).join(', ')}"
+										>
+											⚠ Env
+										</span>
+									{/if}
 								</span>
 							</label>
 						{/each}
@@ -176,9 +190,52 @@
 						.join(', ') || 'keine'}
 				</p>
 			</div>
+
+			{#if (data.missingEnv?.length ?? 0) > 0}
+				<button type="button" class="env-warning-bar" on:click={() => (showEnvWarning = true)}>
+					⚠ {data.missingEnv?.length}
+					{data.missingEnv?.length === 1 ? 'aktives Feature' : 'aktive Features'} mit fehlenden Umgebungsvariablen
+					— Details anzeigen
+				</button>
+			{/if}
 		</div>
 	{/if}
 </div>
+
+{#if showEnvWarning && data.authenticated}
+	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+	<div class="modal-backdrop" on:click={() => (showEnvWarning = false)}>
+		<div class="modal" role="dialog" aria-modal="true" on:click|stopPropagation>
+			<h2>⚠ Fehlende Umgebungsvariablen</h2>
+			<p class="modal-intro">
+				Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die
+				betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.
+			</p>
+
+			{#each data.missingEnv ?? [] as entry}
+				<div class="modal-feature">
+					<strong>{entry.label}</strong>
+					<ul>
+						{#each entry.missing as name}
+							<li><code>{name}</code></li>
+						{/each}
+					</ul>
+				</div>
+			{/each}
+
+			<p class="modal-hint">
+				<strong>Setzen:</strong> Lokal in der Datei <code>.env</code>, auf Netlify unter
+				<strong>Site Settings → Environment variables</strong>. Hinweis: Einzelne Variablen (z.B.
+				<code>EMAIL_FROM_ADDRESS</code>) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw.
+				der Versand entfällt.
+			</p>
+
+			<button type="button" class="btn btn-primary" on:click={() => (showEnvWarning = false)}>
+				Verstanden
+			</button>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.container {
@@ -349,6 +406,87 @@
 	.checkbox-label span {
 		display: flex;
 		align-items: center;
+	}
+
+	.badge-warning {
+		background: #fff3cd;
+		color: #856404;
+	}
+
+	.env-warning-bar {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		background: #fff3cd;
+		color: #856404;
+		border: 1px solid #ffeeba;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.95rem;
+		font-family: inherit;
+		text-align: left;
+	}
+
+	.env-warning-bar:hover {
+		background: #ffeeba;
+	}
+
+	.modal-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		padding: 1rem;
+	}
+
+	.modal {
+		background: #fff;
+		border-radius: 8px;
+		padding: 2rem;
+		max-width: 500px;
+		width: 100%;
+		max-height: 80vh;
+		overflow-y: auto;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+	}
+
+	.modal h2 {
+		margin: 0 0 1rem;
+		font-size: 1.25rem;
+	}
+
+	.modal-intro {
+		color: #666;
+		margin-bottom: 1.5rem;
+	}
+
+	.modal-feature {
+		background: #fff3cd;
+		border: 1px solid #ffeeba;
+		border-radius: 4px;
+		padding: 0.75rem 1rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.modal-feature ul {
+		margin: 0.5rem 0 0;
+		padding-left: 1.25rem;
+	}
+
+	.modal-feature code,
+	.modal-hint code {
+		background: rgba(0, 0, 0, 0.08);
+		padding: 0.1rem 0.35rem;
+		border-radius: 3px;
+		font-size: 0.85rem;
+	}
+
+	.modal-hint {
+		color: #666;
+		font-size: 0.9rem;
+		margin: 1.5rem 0;
 	}
 
 	.info p {

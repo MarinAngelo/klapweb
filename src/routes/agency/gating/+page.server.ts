@@ -72,6 +72,16 @@ export const load = ({ cookies }) => {
 	const adminSections = gating.admin_sections ?? {};
 	const adminSectionsDisabled: string[] = overrides.admin_sections_disabled ?? [];
 
+	// Prüfe ob für aktive Features benötigte Env-Vars gesetzt sind
+	const missingEnv = activeFeatures
+		.map((featureId) => {
+			const def = gating.features?.[featureId];
+			const required: string[] = def?.env ?? [];
+			const missing = required.filter((name) => !env[name]);
+			return { featureId, label: def?.label ?? featureId, missing };
+		})
+		.filter((entry) => entry.missing.length > 0);
+
 	return {
 		authenticated: true,
 		plans: gating.plans,
@@ -81,7 +91,8 @@ export const load = ({ cookies }) => {
 		activeFeatures,
 		overrideFeatures: enabledFeatures,
 		adminSections,
-		adminSectionsDisabled
+		adminSectionsDisabled,
+		missingEnv
 	};
 };
 

@@ -459,7 +459,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			email: email || '',
 			storno: stornoLink,
 			gcal: gcalUrl,
-			ics: icsDownloadLink
+			ics: icsDownloadLink,
+			ort: ortAdresse || ortName
 		}),
 		{ status: 200 }
 	);

@@ -243,22 +243,17 @@ Freundliche Grüsse
 {{Firma}}
 ```
 
-Damit E-Mails tatsächlich versendet werden, müssen auf dem Hosting folgende Umgebungsvariablen konfiguriert sein:
-
-```env
-RESEND_API_KEY
-EMAIL_FROM_ADDRESS
-```
-
 Die Adressen werden so bestimmt:
 
-| E-Mail                    | Quelle                                                                 |
-| ------------------------- | ---------------------------------------------------------------------- |
-| Kundenbestätigung         | Feld `E-Mail` im Formular                                              |
-| Anbieter-Benachrichtigung | **E-Mail** in den CMS-Settings                                         |
-| Technischer Absender      | **Absender-E-Mail** im Tab **Terminbuchung** oder `EMAIL_FROM_ADDRESS` |
+| E-Mail                    | Quelle                                       |
+| ------------------------- | -------------------------------------------- |
+| Kundenbestätigung         | Feld `E-Mail` im Formular                    |
+| Anbieter-Benachrichtigung | **E-Mail** in den CMS-Settings               |
+| Technischer Absender      | **Absender-E-Mail** im Tab **Terminbuchung** |
 
-Die CMS-Absender-E-Mail hat Vorrang. Falls sie leer ist, wird `EMAIL_FROM_ADDRESS` verwendet. Die Kundenadresse kommt nicht aus den Settings, sondern aus der Formulareingabe.
+Die CMS-Absender-E-Mail hat Vorrang. Falls sie leer ist, wird die technische Absenderadresse verwendet. Die Kundenadresse kommt nicht aus den Settings, sondern aus der Formulareingabe.
+
+**Hinweis für die Agentur:** Der E-Mail-Versand erfordert die Umgebungsvariablen `RESEND_API_KEY` und `EMAIL_FROM_ADDRESS` auf dem Hosting. Diese werden bei der Einrichtung konfiguriert und sind nicht Teil der Benutzeranleitung.
 
 ---
 
@@ -379,7 +374,6 @@ Prüfe vor der Veröffentlichung:
 - Ist das Feld **Termin** obligatorisch?
 - Ist die Absender-E-Mail in den Settings eingetragen?
 - Ist die Anbieter-E-Mail in den CMS-Settings eingetragen?
-- Sind `RESEND_API_KEY` und `EMAIL_FROM_ADDRESS` auf dem Hosting eingerichtet?
 - Wurden Angebote, Arbeitstage und Formularseite veröffentlicht?
 - Wurde eine Testbuchung erfolgreich durchgeführt?
 
@@ -425,7 +419,7 @@ Beide werden in Minuten auf Ebene **Buchbares Angebot** konfiguriert, wirken abe
 | Custom Type **Buchbares Angebot** oder **Arbeitstag** fehlt | Feature **Terminbuchung** ist im Projekt nicht aktiviert                                        |
 | Kein Termin wird angezeigt                                  | Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder das verknüpfte Angebot ist inaktiv |
 | Formular sendet nicht                                       | Pflichtfelder unvollständig oder Feld `Termin` fehlt                                            |
-| Keine Bestätigungsmail                                      | `RESEND_API_KEY` oder `EMAIL_FROM_ADDRESS` fehlt                                                |
+| Keine Bestätigungsmail                                      | E-Mail-Konfiguration fehlt oder ist fehlerhaft                                                  |
 | Keine Anbieter-Benachrichtigung                             | Anbieter-E-Mail in den CMS-Settings fehlt                                                       |
 | Termin ist plötzlich nicht verfügbar                        | Er wurde gebucht, gesperrt oder überlappt mit einer bestehenden Buchung                         |
 | Änderungen im CMS sind nicht sichtbar                       | Angebot, Arbeitstag oder Seite wurde nicht publiziert                                           |

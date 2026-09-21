@@ -18,6 +18,7 @@
 	$: gcalLink = q.get('gcal') ?? '';
 	$: icsLink = q.get('ics') ?? '';
 	$: returnTo = q.get('returnTo') ?? '/';
+	$: ort = q.get('ort') ?? '';
 </script>
 
 <svelte:head><title>Termin gebucht</title></svelte:head>
@@ -29,6 +30,9 @@
 		<div class="text-left inline-block">
 			{#if titel}
 				<p><strong>Angebot:</strong> {titel}</p>
+			{/if}
+			{#if ort}
+				<p><strong>Ort:</strong> {ort}</p>
 			{/if}
 			{#if datum}
 				<p><strong>Datum:</strong> {datum}</p>
