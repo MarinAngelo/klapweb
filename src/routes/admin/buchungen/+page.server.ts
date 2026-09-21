@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 
 	const today = new Date().toISOString().slice(0, 10);
+	const allSlotsFrom = '2000-01-01'; // Admin sieht alle Termine, auch vergangene
 
 	const [bookingsResult, slotsResult, cancelledResult] = await Promise.allSettled([
 		listBookings(),
@@ -30,7 +31,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 				dynamicClient.getAllByType('arbeitstag').catch(() => []),
 				dynamicClient.getAllByType('angebot').catch(() => [])
 			]);
-			return workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, today));
+			return workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, allSlotsFrom));
 		})(),
 		listCancelled()
 	]);
@@ -45,17 +46,30 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	const cancelledIds = new Set(cancelledResult.status === 'fulfilled' ? cancelledResult.value : []);
 	const bookedIds = new Set(bookings.map((b) => b.terminId));
 
+	const now = Date.now();
+
 	const candidateFreeSlots = allSlots.filter(
 		(s) => !bookedIds.has(s.id) && !cancelledIds.has(s.id)
 	);
 	const freeSlotChecks = await Promise.all(
-		candidateFreeSlots.map(async (s) => ({
-			slot: s,
-			blocked: !!s.endzeit && (await hasOverlappingBooking(s.datum, s.uhrzeit, s.endzeit, s.id))
-		}))
+		candidateFreeSlots.map(async (s) => {
+			const vorlaufMs = (s.vorlaufzeit ?? 0) * 60000;
+			const startTime =
+				s.datum && s.uhrzeit ? new Date(`${s.datum}T${s.uhrzeit}:00`).getTime() : null;
+			return {
+				slot: s,
+				blocked: !!s.endzeit && (await hasOverlappingBooking(s.datum, s.uhrzeit, s.endzeit, s.id)),
+				past: startTime !== null ? startTime - vorlaufMs < now : s.datum < today
+			};
+		})
 	);
 	const freeSlots = freeSlotChecks
-		.filter(({ blocked }) => !blocked)
+		.filter(({ blocked, past }) => !blocked && !past)
+		.map(({ slot }) => slot)
+		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
+
+	const pastSlots = freeSlotChecks
+		.filter(({ blocked, past }) => !blocked && past)
 		.map(({ slot }) => slot)
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
@@ -63,7 +77,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		.filter((s) => cancelledIds.has(s.id))
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
-	return { bookings, freeSlots, cancelledSlots, blobError };
+	return { bookings, freeSlots, pastSlots, cancelledSlots, blobError };
 };
 
 export const actions: Actions = {

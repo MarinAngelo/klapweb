@@ -16,6 +16,7 @@ export interface TerminSlot {
 	arbeitstagId?: string;
 	arbeitstagLabel?: string;
 	angebotId?: string;
+	vorlaufzeit?: number;
 }
 
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
@@ -120,7 +121,8 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 						arbeitstagLabel: d.bezeichnung
 							? `${formatDateWithWeekday(dateStr, null)} – ${d.bezeichnung}`
 							: formatDateWithWeekday(dateStr, null),
-						angebotId: offer.uid
+						angebotId: offer.uid,
+						vorlaufzeit: Math.max(0, Number(offerData.vorlaufzeit ?? 0))
 					});
 				}
 			}

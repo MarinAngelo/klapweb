@@ -28,23 +28,24 @@ Arbeitstag
 
 Fülle folgende Felder aus:
 
-| Feld                        | Bedeutung                                             |
-| --------------------------- | ----------------------------------------------------- |
-| **UID**                     | Eindeutiger technischer Name, z.B. `massage-60`       |
-| **Bezeichnung**             | Name des Angebots, z.B. „Massage 60 Minuten“          |
-| **Beschreibung**            | Optionale Erläuterung                                 |
-| **Dauer (Minuten)**         | Dauer der Leistung, z.B. `60`                         |
-| **Puffer danach (Minuten)** | Optionaler Abstand vor dem nächsten Termin, z.B. `15` |
-| **Preis (optional)**        | Optionaler Preis des Angebots                         |
-| **Aktiv**                   | Nur aktive Angebote werden als Termine erzeugt        |
+| Feld                        | Bedeutung                                                                                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **UID**                     | Eindeutiger technischer Name, z.B. `massage-60`                                                                                                    |
+| **Bezeichnung**             | Name des Angebots, z.B. „Massage 60 Minuten“                                                                                                       |
+| **Beschreibung**            | Optionale Erläuterung                                                                                                                              |
+| **Dauer (Minuten)**         | Dauer der Leistung, z.B. `60`                                                                                                                      |
+| **Puffer danach (Minuten)** | Optionaler Abstand vor dem nächsten Termin, z.B. `15`                                                                                              |
+| **Vorlaufzeit (Minuten)**   | Wie lange vor dem Termin nicht mehr buchbar, z.B. `60` = ab 10:00 nicht mehr buchbar bei Termin um 11:00. `0` oder leer = bis Terminbeginn buchbar |
+| **Preis (optional)**        | Optionaler Preis des Angebots                                                                                                                      |
+| **Aktiv**                   | Nur aktive Angebote werden als Termine erzeugt                                                                                                     |
 
 Speichere und veröffentliche das buchbare Angebot.
 
 **Beispiele:**
 
-- Beratung, Dauer 30 Minuten, Puffer 10 Minuten
-- Massage, Dauer 60 Minuten, Puffer 15 Minuten
-- Erstgespräch, Dauer 45 Minuten, kein Puffer
+- Beratung, Dauer 30 Minuten, Puffer 10 Minuten, Vorlaufzeit 120 Minuten
+- Massage, Dauer 60 Minuten, Puffer 15 Minuten, Vorlaufzeit 60 Minuten
+- Erstgespräch, Dauer 45 Minuten, kein Puffer, keine Vorlaufzeit
 
 ---
 
@@ -357,10 +358,19 @@ Prüfe vor der Veröffentlichung:
 
 ### Empfohlene Planung
 
-- Mindestens einige Tage Vorlaufzeit einplanen
 - Verfügbarkeiten regelmässig pflegen
 - Pausen und Freitage direkt im Arbeitstag eintragen
 - Puffer bei längeren Angeboten realistisch wählen
+- Vorlaufzeit pro Angebot festlegen, damit Kunden nicht zu kurzfristig buchen
+
+### Puffer vs. Vorlaufzeit
+
+Beide werden in Minuten auf Ebene **Buchbares Angebot** konfiguriert, wirken aber unterschiedlich:
+
+| Feld              | Wirkung                                                                    | Beispiel                                                           |
+| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Puffer danach** | Blockiert Zeit **nach** dem Termin für den nächsten Termin                 | 60 Min. Massage + 15 Min. Puffer → nächster Slot erst nach 75 Min. |
+| **Vorlaufzeit**   | Bestimmt, ab wann ein Termin **nicht mehr buchbar** ist (vor Terminbeginn) | Termin 11:00, Vorlaufzeit 60 → ab 10:00 nicht mehr buchbar         |
 
 ### Sinnvolle Intervallwahl
 

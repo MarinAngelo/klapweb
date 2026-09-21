@@ -37,9 +37,15 @@ export const GET: RequestHandler = async () => {
 			// Blobs nicht erreichbar → alle Slots als verfügbar behandeln
 		}
 
+		const now = Date.now();
 		const available = allSlots.filter((slot) => {
 			if (bookedIds.has(slot.id)) return false;
 			if (cancelledIds.has(slot.id)) return false;
+			// Vergangen inkl. Vorlaufzeit: ab Startzeit minus Vorlaufzeit nicht mehr buchbar
+			if (slot.datum && slot.uhrzeit) {
+				const vorlaufMs = (slot.vorlaufzeit ?? 0) * 60000;
+				if (new Date(`${slot.datum}T${slot.uhrzeit}:00`).getTime() - vorlaufMs < now) return false;
+			}
 			if (slot.endzeit) {
 				const start = toMinutes(slot.uhrzeit);
 				const end = toMinutes(slot.endzeit);

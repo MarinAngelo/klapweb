@@ -322,6 +322,34 @@
 		</form>
 	{/if}
 
+	<!-- Vergangene Termine -->
+	{#if data.pastSlots?.length > 0}
+		<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; opacity: 0.5;">
+			Vergangene Termine ({data.pastSlots.length})
+		</h2>
+		<div style="overflow-x: auto; margin-bottom: 2.5rem;">
+			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; opacity: 0.5;">
+				<thead>
+					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
+						{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer'] as col}
+							<th style={tdNowrap}>{col}</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#each data.pastSlots as s}
+						<tr style="border-bottom: 1px solid #e5e7eb;">
+							<td style={tdNowrap}>{formatDateWithWeekday(s.datum, null)}</td>
+							<td style={tdNowrap}>{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
+							<td style={tdStyle}>{s.titel}</td>
+							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
+
 	<!-- Gesperrte Termine -->
 	{#if data.cancelledSlots.length > 0}
 		<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; opacity: 0.6;">
