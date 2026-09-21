@@ -93,6 +93,9 @@
 		"icon": {
 			"feature": "erweiterte_gestaltung"
 		},
+		"ort": {
+			"plan": "professional"
+		},
 		"settings": {
 			"fields": {
 				"pwa_enabled": {

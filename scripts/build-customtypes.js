@@ -520,6 +520,21 @@ for (const feature of allFeatures) {
 	}
 }
 
+// ── 4b. Plan-basierte Custom Types (direkt in customtypes/, ohne Feature) ──────
+
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (gate.feature) continue; // Feature-basierte werden oben behandelt
+	if (!isActive(gate)) continue;
+
+	const src = join(ROOT, `customtypes/${typeId}/index.json`);
+	if (!existsSync(src)) {
+		console.warn(`⚠ customtypes/${typeId}/index.json fehlt (plan: ${gate.plan})`);
+		continue;
+	}
+
+	console.log(`✓ customtypes/${typeId}/index.json (plan: ${gate.plan})`);
+}
+
 console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
 
 // ── 5. Gated Custom Types aufräumen ──────────────────────────────────────────────
