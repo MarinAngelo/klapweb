@@ -157,6 +157,22 @@
 						"default_value": false
 					}
 				},
+				"additional_dates": {
+					"type": "Group",
+					"config": {
+						"label": "Weitere Daten",
+						"repeat": true,
+						"fields": {
+							"date": {
+								"type": "Date",
+								"config": {
+									"label": "Datum",
+									"placeholder": ""
+								}
+							}
+						}
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -184,22 +200,6 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
-					}
-				},
-				"additional_dates": {
-					"type": "Group",
-					"config": {
-						"label": "Weitere Daten",
-						"repeat": true,
-						"fields": {
-							"date": {
-								"type": "Date",
-								"config": {
-									"label": "Datum",
-									"placeholder": ""
-								}
-							}
-						}
 					}
 				}
 			},

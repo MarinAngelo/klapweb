@@ -64,6 +64,7 @@ Konkrete Regeln:
   - **Achtung:** API-ID nur umbenennen wenn das Feld noch keinen Inhalt hat — sonst gehen Daten verloren
 - TypeScript-Casts (`as any`) nie im Svelte-Template — immer im `<script>`-Block
 - Scroll-Animationen: kein reaktiver State, nur `bind:this` + direktes `element.style` im RAF
+- **Animationsfelder in Slice-Modellen:** Wenn eine Variation die Felder `animate`, `anim_direction`, `anim_delay` und `anim_duration` verwendet, stehen diese vier Felder immer als letzter Block in `primary` — nach allen Inhalts-, Layout- und Darstellungsfeldern. `Timeline` und `Galerie` sind Ausnahmen: Sie besitzen derzeit nur das Boolean-Feld `animate`, weil ihre Animation fest im Code definiert ist.
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 - **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)

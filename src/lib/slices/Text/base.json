@@ -87,35 +87,6 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				},
 				"y_padding_same": {
 					"type": "Boolean",
 					"config": {
@@ -144,6 +115,35 @@
 							"Ressourcen-Buchung",
 							"Globale Events"
 						]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				}
 			},
@@ -226,35 +226,6 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				},
 				"y_padding_same": {
 					"type": "Boolean",
 					"config": {
@@ -283,6 +254,35 @@
 							"Ressourcen-Buchung",
 							"Globale Events"
 						]
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				}
 			},
