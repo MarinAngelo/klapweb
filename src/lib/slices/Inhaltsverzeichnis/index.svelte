@@ -150,7 +150,7 @@
 			updateSidebarHeight();
 		});
 		if (linksMode) {
-			document.documentElement.style.setProperty('--toc-sidebar-offset', '17rem');
+			document.documentElement.style.setProperty('--toc-sidebar-offset', '16rem');
 		}
 		return () => {
 			window.removeEventListener('hashchange', onHashChange);
