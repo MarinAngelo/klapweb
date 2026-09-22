@@ -6019,8 +6019,8 @@
 		"tab": "Standard",
 		"field": "y_padding_same",
 		"path": "LinkListe/default/Primary/y_padding_same",
-		"label": "Abstand oben / unten gleich",
-		"description": "Schaltet Abstand oben / unten gleich ein oder aus.",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
 		"type": "Boolean"
 	},
 	{
@@ -8105,6 +8105,30 @@
 		"customType": "Text",
 		"customTypeLabel": "Text",
 		"tab": "Standard",
+		"field": "y_padding_same",
+		"path": "Text/default/Primary/y_padding_same",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Standard",
+		"field": "y_padding",
+		"path": "Text/default/Primary/y_padding",
+		"label": "Vertikaler Abstand",
+		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Standard",
 		"field": "feature_gate",
 		"path": "Text/default/Primary/feature_gate",
 		"label": "Sichtbar für Leistung (Plan)",
@@ -8194,6 +8218,30 @@
 		"label": "Animationsdauer (ms)",
 		"description": "Erfasst einen Zahlenwert für Animationsdauer (ms).",
 		"type": "Number"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Zwei Spalten",
+		"field": "y_padding_same",
+		"path": "Text/twoColumns/Primary/y_padding_same",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Zwei Spalten",
+		"field": "y_padding",
+		"path": "Text/twoColumns/Primary/y_padding",
+		"label": "Vertikaler Abstand",
+		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
 	},
 	{
 		"name": "Text",
@@ -8539,8 +8587,8 @@
 		"tab": "Standard",
 		"field": "y_padding_same",
 		"path": "TextMitBild/default/Primary/y_padding_same",
-		"label": "Abstand oben / unten gleich",
-		"description": "Schaltet Abstand oben / unten gleich ein oder aus.",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
 		"type": "Boolean"
 	},
 	{
@@ -8983,8 +9031,8 @@
 		"tab": "Multi (Mehrere Zeilen)",
 		"field": "y_padding_same",
 		"path": "TextMitBild/multi/Primary/y_padding_same",
-		"label": "Abstand oben / unten gleich",
-		"description": "Schaltet Abstand oben / unten gleich ein oder aus.",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
 		"type": "Boolean"
 	},
 	{
@@ -10555,8 +10603,8 @@
 		"tab": "Einzelzitat",
 		"field": "y_padding_same",
 		"path": "Zitat/default/Primary/y_padding_same",
-		"label": "Abstand oben / unten gleich",
-		"description": "Schaltet Abstand oben / unten gleich ein oder aus.",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
 		"type": "Boolean"
 	},
 	{
@@ -10699,8 +10747,8 @@
 		"tab": "Testimonials",
 		"field": "y_padding_same",
 		"path": "Zitat/testimonials/Primary/y_padding_same",
-		"label": "Abstand oben / unten gleich",
-		"description": "Schaltet Abstand oben / unten gleich ein oder aus.",
+		"label": "Innerer Abstand oben / unten gleich",
+		"description": "Schaltet Innerer Abstand oben / unten gleich ein oder aus.",
 		"type": "Boolean"
 	},
 	{

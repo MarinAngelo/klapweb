@@ -25,16 +25,14 @@ type PickContentRelationshipFieldData<
 			TSubRelationship['customtypes'],
 			TLang
 		>;
-	} & // Group
-	{
+	} & { // Group
 		[TGroup in Extract<
 			TRelationship['fields'][number],
 			prismic.CustomTypeModelFetchGroupLevel1 | prismic.CustomTypeModelFetchGroupLevel2
 		> as TGroup['id']]: TData[TGroup['id']] extends prismic.GroupField<infer TGroupData>
 			? prismic.GroupField<PickContentRelationshipFieldData<TGroup, TGroupData, TLang>>
 			: never;
-	} & // Other fields
-	{
+	} & { // Other fields
 		[TFieldKey in Extract<TRelationship['fields'][number], string>]: TFieldKey extends keyof TData
 			? TData[TFieldKey]
 			: never;
@@ -5376,7 +5374,7 @@ export interface LinkListeSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *LinkListe → Standard → Primary*
+	 * Innerer Abstand oben / unten gleich field in *LinkListe → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -6361,7 +6359,7 @@ export interface QuoteSliceDefaultPrimary {
 	anker_farbe: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *Zitat → Einzelzitat → Primary*
+	 * Innerer Abstand oben / unten gleich field in *Zitat → Einzelzitat → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -6503,7 +6501,7 @@ export interface QuoteSliceTestimonialsPrimary {
 	karten_bg: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *Zitat → Testimonials → Primary*
+	 * Innerer Abstand oben / unten gleich field in *Zitat → Testimonials → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -7350,7 +7348,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *TextMitBild → Standard → Primary*
+	 * Innerer Abstand oben / unten gleich field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -7749,7 +7747,7 @@ export interface TextWithImageSliceMultiPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 * Innerer Abstand oben / unten gleich field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*

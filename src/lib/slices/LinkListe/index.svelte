@@ -18,20 +18,6 @@
 	$: layout = p.layout ?? 'Liste';
 	$: spalten = p.spalten ?? '3';
 
-	$: yPadding = (() => {
-		const same = p.y_padding_same ?? false;
-		switch (p.y_padding) {
-			case 'kein Abstand':
-				return 'none';
-			case 'wenig':
-				return same ? 'sm' : 'sm-top';
-			case 'gross':
-				return same ? 'lg' : 'lg-top';
-			default:
-				return same ? 'base' : 'base-top';
-		}
-	})() as 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top';
-
 	type Group = { name: string; items: any[] };
 	$: grouped = (() => {
 		const map = new Map<string, any[]>();
@@ -83,7 +69,8 @@
 
 <Bounded
 	as="section"
-	{yPadding}
+	yPaddingSame={p.y_padding_same ?? false}
+	yPaddingSize={p.y_padding}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};"
 	data-slice-type={slice.slice_type}

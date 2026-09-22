@@ -203,8 +203,8 @@ export const translations: Record<string, Record<string, string>> = {
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
 	'Bild Links (Vorher)': { 'de-ch': 'Bild Links (Vorher)', 'en-us': 'Image Left (Before)' },
 	'Bild Rechts (Nachher)': { 'de-ch': 'Bild Rechts (Nachher)', 'en-us': 'Image Right (After)' },
-	'Abstand oben / unten gleich': {
-		'de-ch': 'Abstand oben / unten gleich',
+	'Innerer Abstand oben / unten gleich': {
+		'de-ch': 'Innerer Abstand oben / unten gleich',
 		'en-us': 'Equal top/bottom spacing'
 	},
 	'Animation aktivieren': { 'de-ch': 'Animation aktivieren', 'en-us': 'Enable animation' },
