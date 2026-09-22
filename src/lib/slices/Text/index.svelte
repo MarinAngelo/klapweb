@@ -20,12 +20,17 @@
 	$: centered =
 		(slice.variation === 'default' || slice.variation === 'ueberschrift') &&
 		!!(slice.primary as any).centered;
+
+	$: yPaddingSame = ((slice.primary as any).y_padding_same as boolean | undefined) ?? false;
+	$: yPaddingSize = (slice.primary as any).y_padding as string | undefined;
 </script>
 
 {#if visible}
 	<Bounded
 		as="section"
 		class="leading-relaxed"
+		{yPaddingSame}
+		{yPaddingSize}
 		style="font-family: var(--page-font); --page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}

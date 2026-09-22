@@ -116,6 +116,22 @@
 						"placeholder": "2000"
 					}
 				},
+				"y_padding_same": {
+					"type": "Boolean",
+					"config": {
+						"label": "Innerer Abstand oben / unten gleich",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+					}
+				},
 				"feature_gate": {
 					"type": "Select",
 					"config": {
@@ -237,6 +253,22 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
+					}
+				},
+				"y_padding_same": {
+					"type": "Boolean",
+					"config": {
+						"label": "Innerer Abstand oben / unten gleich",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"y_padding": {
+					"type": "Select",
+					"config": {
+						"label": "Vertikaler Abstand",
+						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				},
 				"feature_gate": {

@@ -2,7 +2,7 @@
 
 ## Symptom
 
-Wenn in einem TextMitBild-Slice die Option `y_padding_same` (Abstand oben / unten gleich) aktiviert ist, hat der Slice auf Mobile **keinen** unteren Abstand. Auf Desktop funktioniert es korrekt.
+Wenn in einem TextMitBild-Slice die Option `y_padding_same` (Innerer Abstand oben / unten gleich) aktiviert ist, hat der Slice auf Mobile **keinen** unteren Abstand. Auf Desktop funktioniert es korrekt.
 
 ## Ursache (bekannt)
 
@@ -10,13 +10,13 @@ In `src/lib/components/Bounded.svelte` ist die `yBottom`-Map so definiert:
 
 ```ts
 const yBottom: Record<string, string> = {
-    none: 'pb-0',
-    sm: 'md:pb-10',       // ← kein pb-* ohne md:-Prefix
-    'sm-top': 'pb-0',
-    base: 'md:pb-28',     // ← kein pb-* ohne md:-Prefix
-    'base-top': 'pb-0',
-    lg: 'md:pb-48',       // ← kein pb-* ohne md:-Prefix
-    'lg-top': 'pb-0'
+	none: 'pb-0',
+	sm: 'md:pb-10', // ← kein pb-* ohne md:-Prefix
+	'sm-top': 'pb-0',
+	base: 'md:pb-28', // ← kein pb-* ohne md:-Prefix
+	'base-top': 'pb-0',
+	lg: 'md:pb-48', // ← kein pb-* ohne md:-Prefix
+	'lg-top': 'pb-0'
 };
 ```
 

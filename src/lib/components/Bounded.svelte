@@ -6,6 +6,10 @@
 	export let tag = 'section';
 	export let yPadding: 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top' =
 		'base-top';
+	/** CMS-Felder y_padding_same + y_padding direkt übergeben — Mapping passiert zentral hier.
+	 *  Wenn gesetzt, überschreibt dies das manuelle yPadding. */
+	export let yPaddingSame: boolean | undefined = undefined;
+	export let yPaddingSize: string | undefined = undefined; // 'kein Abstand' | 'wenig' | 'mittel' | 'gross'
 	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
 	export let paddingTop: string | undefined = undefined;
 	export let paddingBottom: string | undefined = undefined;
@@ -49,26 +53,46 @@
 	};
 	const yBottom: Record<string, string> = {
 		none: 'pb-0',
-		sm: 'md:pb-10',
+		sm: 'pb-8 md:pb-10',
 		'sm-top': 'pb-0',
-		base: 'md:pb-28',
+		base: 'pb-20 md:pb-28',
 		'base-top': 'pb-0',
-		lg: 'md:pb-48',
+		lg: 'pb-32 md:pb-48',
 		'lg-top': 'pb-0'
 	};
+
+	// CMS-Label (y_padding) + Toggle (y_padding_same) → yPadding-Schlüssel.
+	// Einzige Stelle im Projekt, die dieses Mapping kennt.
+	function resolveYPadding(size: string, same: boolean): string {
+		switch (size) {
+			case 'kein Abstand':
+				return 'none';
+			case 'wenig':
+				return same ? 'sm' : 'sm-top';
+			case 'gross':
+				return same ? 'lg' : 'lg-top';
+			default: // 'mittel' oder leer
+				return same ? 'base' : 'base-top';
+		}
+	}
+
+	$: resolvedYPadding =
+		yPaddingSize !== undefined || yPaddingSame !== undefined
+			? resolveYPadding(yPaddingSize ?? '', yPaddingSame ?? false)
+			: yPadding;
 
 	$: topClass =
 		paddingTopClass !== undefined
 			? paddingTopClass
 			: paddingTop != null
 				? (ptMap[paddingTop] ?? '')
-				: (yTop[yPadding] ?? '');
+				: (yTop[resolvedYPadding] ?? '');
 	$: bottomClass =
 		paddingBottomClass !== undefined
 			? paddingBottomClass
 			: paddingBottom != null
 				? (pbMap[paddingBottom] ?? '')
-				: (yBottom[yPadding] ?? '');
+				: (yBottom[resolvedYPadding] ?? '');
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }
