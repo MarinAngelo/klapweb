@@ -125,7 +125,8 @@
 		<div class="header-actions">
 			<Button
 				href="/admin/dashboard?secret={secret}"
-				text="← Dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"
