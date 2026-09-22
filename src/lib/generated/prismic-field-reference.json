@@ -6041,6 +6041,18 @@
 		"customType": "LinkListe",
 		"customTypeLabel": "LinkListe",
 		"tab": "Standard",
+		"field": "inner_apply",
+		"path": "LinkListe/default/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "LinkListe",
+		"elementType": "Slice",
+		"customType": "LinkListe",
+		"customTypeLabel": "LinkListe",
+		"tab": "Standard",
 		"field": "y_padding_same",
 		"path": "LinkListe/default/Primary/y_padding_same",
 		"label": "Innerer Abstand oben / unten gleich",
@@ -8261,6 +8273,18 @@
 		"customType": "Text",
 		"customTypeLabel": "Text",
 		"tab": "Zwei Spalten",
+		"field": "inner_apply",
+		"path": "Text/twoColumns/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Zwei Spalten",
 		"field": "y_padding_same",
 		"path": "Text/twoColumns/Primary/y_padding_same",
 		"label": "Innerer Abstand oben / unten gleich",
@@ -8674,6 +8698,18 @@
 		"label": "Schriftfarbe",
 		"description": "Legt die Farbe für Schriftfarbe fest.",
 		"type": "Color"
+	},
+	{
+		"name": "TextMitBild",
+		"elementType": "Slice",
+		"customType": "TextMitBild",
+		"customTypeLabel": "TextMitBild",
+		"tab": "Standard",
+		"field": "inner_apply",
+		"path": "TextMitBild/default/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
 	},
 	{
 		"name": "TextMitBild",
@@ -9130,6 +9166,18 @@
 		"label": "Schriftfarbe",
 		"description": "Legt die Farbe für Schriftfarbe fest.",
 		"type": "Color"
+	},
+	{
+		"name": "TextMitBild",
+		"elementType": "Slice",
+		"customType": "TextMitBild",
+		"customTypeLabel": "TextMitBild",
+		"tab": "Multi (Mehrere Zeilen)",
+		"field": "inner_apply",
+		"path": "TextMitBild/multi/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
 	},
 	{
 		"name": "TextMitBild",
@@ -10721,6 +10769,18 @@
 		"customType": "Zitat",
 		"customTypeLabel": "Zitat",
 		"tab": "Einzelzitat",
+		"field": "inner_apply",
+		"path": "Zitat/default/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Zitat",
+		"elementType": "Slice",
+		"customType": "Zitat",
+		"customTypeLabel": "Zitat",
+		"tab": "Einzelzitat",
 		"field": "y_padding_same",
 		"path": "Zitat/default/Primary/y_padding_same",
 		"label": "Innerer Abstand oben / unten gleich",
@@ -10870,6 +10930,18 @@
 		"label": "Karten-Hintergrundfarbe",
 		"description": "Legt die Farbe für Karten-Hintergrundfarbe fest.",
 		"type": "Color"
+	},
+	{
+		"name": "Zitat",
+		"elementType": "Slice",
+		"customType": "Zitat",
+		"customTypeLabel": "Zitat",
+		"tab": "Testimonials",
+		"field": "inner_apply",
+		"path": "Zitat/testimonials/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
 	},
 	{
 		"name": "Zitat",

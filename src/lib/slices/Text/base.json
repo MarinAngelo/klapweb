@@ -243,6 +243,15 @@
 						"placeholder": "Hex-Farbcode (#RRGGBB)"
 					}
 				},
+				"inner_apply": {
+					"type": "Boolean",
+					"config": {
+						"label": "Innen anwenden",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"y_padding_same": {
 					"type": "Boolean",
 					"config": {
