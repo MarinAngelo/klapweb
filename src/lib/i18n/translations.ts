@@ -207,6 +207,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Innerer Abstand oben / unten gleich',
 		'en-us': 'Equal top/bottom spacing'
 	},
+	'Nach oben': { 'de-ch': 'Nach oben', 'en-us': 'Back to top' },
 	'Animation aktivieren': { 'de-ch': 'Animation aktivieren', 'en-us': 'Enable animation' },
 	'Animations-Richtung': { 'de-ch': 'Animations-Richtung', 'en-us': 'Animation direction' },
 	'Animationsdauer (ms)': { 'de-ch': 'Animationsdauer (ms)', 'en-us': 'Animation duration (ms)' },
