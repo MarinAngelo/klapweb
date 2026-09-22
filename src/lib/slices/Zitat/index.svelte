@@ -39,6 +39,7 @@
 	as="section"
 	yPaddingSame={p.y_padding_same ?? false}
 	yPaddingSize={p.y_padding}
+	marginTopSize={p.margin_top}
 	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 		'var(--page-color)'};"
 	data-slice-type={slice.slice_type}

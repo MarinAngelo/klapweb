@@ -104,6 +104,14 @@
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
+					}
+				},
+
 				"y_padding_mobile": {
 					"type": "Select",
 					"config": {
@@ -481,6 +489,14 @@
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
+					}
+				},
+
 				"row_gap": {
 					"type": "Select",
 					"config": {

@@ -126,6 +126,8 @@
 		slice.primary?.anim_delay,
 		slice.primary?.anim_duration
 	);
+	$: yPaddingSize = (slice.primary as any)?.y_padding as string | undefined;
+	$: marginTopSize = (slice.primary as any)?.margin_top as string | undefined;
 
 	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
@@ -440,6 +442,8 @@
 
 <Bounded
 	as="section"
+	{yPaddingSize}
+	{marginTopSize}
 	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}

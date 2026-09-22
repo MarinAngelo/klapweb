@@ -97,6 +97,13 @@
 						"placeholder": "",
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
+				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
+					}
 				}
 			},
 			"items": {},
@@ -177,6 +184,13 @@
 						"label": "Vertikaler innerer Abstand",
 						"placeholder": "",
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+					}
+				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
 					}
 				},
 				"animate": {

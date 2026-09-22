@@ -10,6 +10,8 @@
 	 *  Wenn gesetzt, überschreibt dies das manuelle yPadding. */
 	export let yPaddingSame: boolean | undefined = undefined;
 	export let yPaddingSize: string | undefined = undefined; // 'kein Abstand' | 'wenig' | 'mittel' | 'gross'
+	/** CMS-Feld für den äußeren oberen Abstand (margin-top). */
+	export let marginTopSize: string | undefined = undefined; // 'wenig' | 'mittel' | 'gross'
 	/** CMS-gesteuerte Abstände (überschreibt yPadding für die jeweilige Achse) */
 	export let paddingTop: string | undefined = undefined;
 	export let paddingBottom: string | undefined = undefined;
@@ -39,6 +41,12 @@
 		Klein: 'pb-8 md:pb-10',
 		Mittel: 'pb-20 md:pb-28',
 		Gross: 'pb-32 md:pb-48'
+	};
+	const mtMap: Record<string, string> = {
+		wenig: 'mt-8 md:mt-10',
+		mittel: 'mt-20 md:mt-28',
+		// Äusserer Abstand darf nicht grösser als das Standard-Padding oben werden.
+		gross: 'mt-20 md:mt-28'
 	};
 
 	// yPadding → Einzelachsen (Rückwärtskompatibilität)
@@ -93,6 +101,7 @@
 			: paddingBottom != null
 				? (pbMap[paddingBottom] ?? '')
 				: (yBottom[resolvedYPadding] ?? '');
+	$: marginTopClass = marginTopSize ? (mtMap[marginTopSize] ?? '') : '';
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }
@@ -108,6 +117,7 @@
 	class={clsx(
 		!noPadding && 'px-6',
 		specialLayout && isMobile && 'px-0',
+		marginTopClass,
 		topClass,
 		bottomClass,
 		fullHeight && 'flex flex-col',

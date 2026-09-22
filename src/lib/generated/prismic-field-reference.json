@@ -4673,6 +4673,18 @@
 		"customType": "Formular",
 		"customTypeLabel": "Formular",
 		"tab": "Check-in",
+		"field": "margin_top",
+		"path": "Formular/einChecken/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Formular",
+		"elementType": "Slice",
+		"customType": "Formular",
+		"customTypeLabel": "Formular",
+		"tab": "Check-in",
 		"field": "checklist_item",
 		"path": "Formular/einChecken/Items/checklist_item",
 		"label": "Checklisten-Eintrag",
@@ -4797,6 +4809,18 @@
 		"path": "Formular/ausChecken/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Formular",
+		"elementType": "Slice",
+		"customType": "Formular",
+		"customTypeLabel": "Formular",
+		"tab": "Check-out",
+		"field": "margin_top",
+		"path": "Formular/ausChecken/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -5813,6 +5837,18 @@
 		"customType": "Kontakt",
 		"customTypeLabel": "Kontakt",
 		"tab": "Standard",
+		"field": "margin_top",
+		"path": "Kontakt/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Kontakt",
+		"elementType": "Slice",
+		"customType": "Kontakt",
+		"customTypeLabel": "Kontakt",
+		"tab": "Standard",
 		"field": "animate",
 		"path": "Kontakt/default/Primary/animate",
 		"label": "Animation aktivieren",
@@ -6033,6 +6069,18 @@
 		"path": "LinkListe/default/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "LinkListe",
+		"elementType": "Slice",
+		"customType": "LinkListe",
+		"customTypeLabel": "LinkListe",
+		"tab": "Standard",
+		"field": "margin_top",
+		"path": "LinkListe/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -7432,6 +7480,18 @@
 		"elementType": "Slice",
 		"customType": "Button",
 		"customTypeLabel": "Schaltfläche",
+		"tab": "Standard",
+		"field": "margin_top",
+		"path": "Button/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Schaltfläche",
+		"elementType": "Slice",
+		"customType": "Button",
+		"customTypeLabel": "Schaltfläche",
 		"tab": "Kauf-Schaltfläche",
 		"field": "button_text",
 		"path": "Button/kauf/Primary/button_text",
@@ -7533,6 +7593,18 @@
 		"path": "Button/kauf/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Schaltfläche",
+		"elementType": "Slice",
+		"customType": "Button",
+		"customTypeLabel": "Schaltfläche",
+		"tab": "Kauf-Schaltfläche",
+		"field": "margin_top",
+		"path": "Button/kauf/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -8081,6 +8153,18 @@
 		"customType": "Text",
 		"customTypeLabel": "Text",
 		"tab": "Standard",
+		"field": "margin_top",
+		"path": "Text/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Standard",
 		"field": "feature_gate",
 		"path": "Text/default/Primary/feature_gate",
 		"label": "Sichtbar für Leistung (Plan)",
@@ -8193,6 +8277,18 @@
 		"path": "Text/twoColumns/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Zwei Spalten",
+		"field": "margin_top",
+		"path": "Text/twoColumns/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -8601,6 +8697,18 @@
 		"path": "TextMitBild/default/Primary/y_padding",
 		"label": "Vertikaler Abstand Desktop",
 		"description": "Legt Vertikaler Abstand Desktop über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "TextMitBild",
+		"elementType": "Slice",
+		"customType": "TextMitBild",
+		"customTypeLabel": "TextMitBild",
+		"tab": "Standard",
+		"field": "margin_top",
+		"path": "TextMitBild/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -9045,6 +9153,18 @@
 		"path": "TextMitBild/multi/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "TextMitBild",
+		"elementType": "Slice",
+		"customType": "TextMitBild",
+		"customTypeLabel": "TextMitBild",
+		"tab": "Multi (Mehrere Zeilen)",
+		"field": "margin_top",
+		"path": "TextMitBild/multi/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -10625,6 +10745,18 @@
 		"customType": "Zitat",
 		"customTypeLabel": "Zitat",
 		"tab": "Einzelzitat",
+		"field": "margin_top",
+		"path": "Zitat/default/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Zitat",
+		"elementType": "Slice",
+		"customType": "Zitat",
+		"customTypeLabel": "Zitat",
+		"tab": "Einzelzitat",
 		"field": "animate",
 		"path": "Zitat/default/Primary/animate",
 		"label": "Animation aktivieren",
@@ -10761,6 +10893,18 @@
 		"path": "Zitat/testimonials/Primary/y_padding",
 		"label": "Vertikaler innerer Abstand",
 		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"type": "Select"
+	},
+	{
+		"name": "Zitat",
+		"elementType": "Slice",
+		"customType": "Zitat",
+		"customTypeLabel": "Zitat",
+		"tab": "Testimonials",
+		"field": "margin_top",
+		"path": "Zitat/testimonials/Primary/margin_top",
+		"label": "Oberer äusserer Abstand",
+		"description": "Legt Oberer äusserer Abstand über eine Auswahl fest: wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
