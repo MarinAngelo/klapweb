@@ -4663,8 +4663,8 @@
 		"tab": "Check-in",
 		"field": "y_padding",
 		"path": "Formular/einChecken/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -4795,8 +4795,8 @@
 		"tab": "Check-out",
 		"field": "y_padding",
 		"path": "Formular/ausChecken/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -5803,8 +5803,8 @@
 		"tab": "Standard",
 		"field": "y_padding",
 		"path": "Kontakt/default/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -6019,8 +6019,8 @@
 		"tab": "Standard",
 		"field": "y_padding",
 		"path": "LinkListe/default/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -7411,8 +7411,8 @@
 		"tab": "Standard",
 		"field": "y_padding",
 		"path": "Button/default/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -7519,8 +7519,8 @@
 		"tab": "Kauf-Schaltfläche",
 		"field": "y_padding",
 		"path": "Button/kauf/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -8059,8 +8059,8 @@
 		"tab": "Standard",
 		"field": "y_padding",
 		"path": "Text/default/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -8179,8 +8179,8 @@
 		"tab": "Zwei Spalten",
 		"field": "y_padding",
 		"path": "Text/twoColumns/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -9031,8 +9031,8 @@
 		"tab": "Multi (Mehrere Zeilen)",
 		"field": "y_padding",
 		"path": "TextMitBild/multi/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -10603,8 +10603,8 @@
 		"tab": "Einzelzitat",
 		"field": "y_padding",
 		"path": "Zitat/default/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
@@ -10747,8 +10747,8 @@
 		"tab": "Testimonials",
 		"field": "y_padding",
 		"path": "Zitat/testimonials/Primary/y_padding",
-		"label": "Vertikaler Abstand",
-		"description": "Legt Vertikaler Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
+		"label": "Vertikaler innerer Abstand",
+		"description": "Legt Vertikaler innerer Abstand über eine Auswahl fest: kein Abstand, wenig, mittel, gross.",
 		"type": "Select"
 	},
 	{
