@@ -27,6 +27,12 @@ interface PrismicThemeData {
 	header_link_hover_bg_color?: string;
 	header_link_font_size?: number;
 	header_link_font?: { data?: { name?: string } };
+	header_bottom_curve?: boolean;
+	header_bottom_curve_color?: string;
+	header_bottom_curve_height?: number;
+	header_bottom_curve_amplitude?: number;
+	header_bottom_curve_waves?: number;
+	header_bottom_curve_start?: string;
 	footer_color?: string;
 	footer_bg_color?: string;
 	footer_font_size_top_bar?: number;
@@ -167,6 +173,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const footerLinkColor = prismicThemeData.footer_link_color || getCssVar('--footer-link-color');
 	const footerLinkHoverColor =
 		prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
+	const headerBottomCurve = prismicThemeData.header_bottom_curve ?? false;
+	const headerBottomCurveColor = prismicThemeData.header_bottom_curve_color || headerBgColor;
+	const headerBottomCurveHeight = prismicThemeData.header_bottom_curve_height ?? 32;
+	const headerBottomCurveAmplitude = prismicThemeData.header_bottom_curve_amplitude ?? 16;
+	const headerBottomCurveWaves = prismicThemeData.header_bottom_curve_waves ?? 1;
+	const headerBottomCurveStart = prismicThemeData.header_bottom_curve_start || '0';
 	const noMarginTop = prismicThemeData.no_margin_top || false;
 	const pageLinkActiveColor =
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
@@ -199,6 +211,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 		headerLinkHoverBgColor,
 		headerLinkFontSize,
 		headerLinkFont,
+		headerBottomCurve,
+		headerBottomCurveColor,
+		headerBottomCurveHeight,
+		headerBottomCurveAmplitude,
+		headerBottomCurveWaves,
+		headerBottomCurveStart,
 		footerColor,
 		footerBgColor,
 		footerFontSizeTopBar,

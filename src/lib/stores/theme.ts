@@ -61,6 +61,12 @@ export const THEME_DEFAULTS = {
 	headerLinkHoverColor: '',
 	headerLinkHoverBgColor: '',
 	headerLinkFont: '',
+	headerBottomCurve: false,
+	headerBottomCurveColor: '',
+	headerBottomCurveHeight: 32,
+	headerBottomCurveAmplitude: 16,
+	headerBottomCurveWaves: 1,
+	headerBottomCurveStart: '0',
 
 	// Fußzeile Farben (wie in app.css)
 	footerColor: '',
