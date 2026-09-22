@@ -17,6 +17,7 @@
 	$: anim = mapAnimationFromPrimary(p);
 	$: layout = p.layout ?? 'Liste';
 	$: spalten = p.spalten ?? '3';
+	$: innerApply = p.inner_apply ?? false;
 
 	type Group = { name: string; items: any[] };
 	$: grouped = (() => {
@@ -72,8 +73,10 @@
 	yPaddingSame={p.y_padding_same ?? false}
 	yPaddingSize={p.y_padding}
 	marginTopSize={p.margin_top}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-		'var(--page-color)'};"
+	innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+	style="background-color: {innerApply
+		? 'var(--page-bg-color)'
+		: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}

@@ -16,6 +16,7 @@
 	$: stil = p.stil ?? 'Klassisch';
 	$: ausrichtung = p.ausrichtung ?? 'Mitte';
 	$: accentColor = p.anker_farbe || 'currentColor';
+	$: innerApply = p.inner_apply ?? false;
 
 	$: justifyStyle =
 		ausrichtung === 'Links' ? 'flex-start' : ausrichtung === 'Rechts' ? 'flex-end' : 'center';
@@ -40,8 +41,10 @@
 	yPaddingSame={p.y_padding_same ?? false}
 	yPaddingSize={p.y_padding}
 	marginTopSize={p.margin_top}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-		'var(--page-color)'};"
+	innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+	style="background-color: {innerApply
+		? 'var(--page-bg-color)'
+		: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}

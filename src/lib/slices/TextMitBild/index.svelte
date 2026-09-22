@@ -116,6 +116,7 @@
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
 	$: marginTopSize = p.margin_top as string | undefined;
+	$: innerApply = p.inner_apply ?? false;
 	$: computedPaddingTopClass = yPaddingMobileVal
 		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
 				.filter(Boolean)
@@ -135,14 +136,18 @@
 		<Bounded
 			as="section"
 			{yPadding}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
 			fullWidth={isFullWidth}
 			noPadding={isFullWidth}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
+			style="background-color: {innerApply
+				? 'var(--page-bg-color)'
+				: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color
+				? ` --page-color: ${p.color};`
+				: ''}"
 		>
 			{#if p.section_title}
 				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
@@ -190,10 +195,12 @@
 			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
 			{marginTopSize}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
-				? ` --fullscreen-height: ${fullscreenHeight};`
-				: ''}"
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+			style="background-color: {innerApply
+				? 'var(--page-bg-color)'
+				: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color
+				? ` --page-color: ${p.color};`
+				: ''}{fullscreen ? ` --fullscreen-height: ${fullscreenHeight};` : ''}"
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
