@@ -322,6 +322,9 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		box-sizing: border-box;
 		background-color: var(--toc-bg);
 		color: var(--toc-color);
 		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
@@ -337,6 +340,7 @@
 		top: 0;
 		left: 0;
 		right: 0;
+		margin-left: 0;
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 	}
 	:global(.header-is-sticky) .toc-mobile-sheet.links-mobile.pinned {
