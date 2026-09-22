@@ -115,6 +115,7 @@
 	};
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: marginTopSize = p.margin_top as string | undefined;
 	$: computedPaddingTopClass = yPaddingMobileVal
 		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
 				.filter(Boolean)
@@ -188,6 +189,7 @@
 			noPadding={fullscreen || mobileVollbreite}
 			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
+			{marginTopSize}
 			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
 				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
 				? ` --fullscreen-height: ${fullscreenHeight};`

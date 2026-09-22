@@ -65,6 +65,14 @@
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
 				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
+					}
+				},
+
 				"animate": {
 					"type": "Boolean",
 					"config": {

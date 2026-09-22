@@ -587,6 +587,13 @@
 						"label": "Vertikaler innerer Abstand",
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
 					}
+				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
+					}
 				}
 			},
 			"items": {
@@ -674,6 +681,13 @@
 					"config": {
 						"label": "Vertikaler innerer Abstand",
 						"options": ["kein Abstand", "wenig", "mittel", "gross"]
+					}
+				},
+				"margin_top": {
+					"type": "Select",
+					"config": {
+						"label": "Oberer äusserer Abstand",
+						"options": ["wenig", "mittel", "gross"]
 					}
 				}
 			},

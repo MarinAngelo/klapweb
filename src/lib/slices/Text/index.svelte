@@ -23,6 +23,7 @@
 
 	$: yPaddingSame = ((slice.primary as any).y_padding_same as boolean | undefined) ?? false;
 	$: yPaddingSize = (slice.primary as any).y_padding as string | undefined;
+	$: marginTopSize = (slice.primary as any).margin_top as string | undefined;
 </script>
 
 {#if visible}
@@ -31,6 +32,7 @@
 		class="leading-relaxed"
 		{yPaddingSame}
 		{yPaddingSize}
+		{marginTopSize}
 		style="font-family: var(--page-font); --page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
