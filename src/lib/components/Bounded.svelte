@@ -28,6 +28,8 @@
 	export let noPadding: boolean = false;
 	export let fullHeight: boolean = false;
 	export let elementRef: HTMLElement | null = null;
+	/** Optionaler Hintergrund nur für den inneren Standard-Container. */
+	export let innerBackgroundColor: string | undefined = undefined;
 
 	// CMS-Label → Tailwind-Klassen
 	const ptMap: Record<string, string> = {
@@ -68,6 +70,15 @@
 		lg: 'pb-32 md:pb-48',
 		'lg-top': 'pb-0'
 	};
+	const innerHorizontalPadding: Record<string, string> = {
+		none: 'px-0',
+		sm: 'px-4 md:px-5',
+		'sm-top': 'px-4 md:px-5',
+		base: 'px-10 md:px-14',
+		'base-top': 'px-10 md:px-14',
+		lg: 'px-16 md:px-24',
+		'lg-top': 'px-16 md:px-24'
+	};
 
 	// CMS-Label (y_padding) + Toggle (y_padding_same) → yPadding-Schlüssel.
 	// Einzige Stelle im Projekt, die dieses Mapping kennt.
@@ -102,6 +113,7 @@
 				? (pbMap[paddingBottom] ?? '')
 				: (yBottom[resolvedYPadding] ?? '');
 	$: marginTopClass = marginTopSize ? (mtMap[marginTopSize] ?? '') : '';
+	$: innerHorizontalPaddingClass = innerHorizontalPadding[resolvedYPadding] ?? 'px-10 md:px-14';
 
 	$: finalOptions = animate
 		? { duration: 2000, delay: 100, ...animationOptions }
@@ -115,22 +127,28 @@
 	data-collapsible={collapsible}
 	{...$$restProps}
 	class={clsx(
-		!noPadding && 'px-6',
+		!noPadding && !innerBackgroundColor && 'px-6',
 		specialLayout && isMobile && 'px-0',
 		marginTopClass,
-		topClass,
-		bottomClass,
+		!innerBackgroundColor && topClass,
+		!innerBackgroundColor && bottomClass,
 		fullHeight && 'flex flex-col',
 		$$props.class
 	)}
 >
 	<div
-		class="mx-auto w-full relative overflow-visible"
+		class={clsx(
+			'mx-auto w-full relative overflow-visible',
+			innerBackgroundColor && !noPadding && innerHorizontalPaddingClass,
+			innerBackgroundColor && topClass,
+			innerBackgroundColor && bottomClass
+		)}
 		class:flex-1={fullHeight}
 		class:flex={fullHeight}
 		class:flex-col={fullHeight}
 		class:min-h-0={fullHeight}
 		style:max-width={!fullWidth ? 'var(--container-max-width, 72rem)' : undefined}
+		style:background-color={innerBackgroundColor}
 	>
 		<slot />
 	</div>

@@ -8117,6 +8117,18 @@
 		"customType": "Text",
 		"customTypeLabel": "Text",
 		"tab": "Standard",
+		"field": "inner_apply",
+		"path": "Text/default/Primary/inner_apply",
+		"label": "Innen anwenden",
+		"description": "Schaltet Innen anwenden ein oder aus.",
+		"type": "Boolean"
+	},
+	{
+		"name": "Text",
+		"elementType": "Slice",
+		"customType": "Text",
+		"customTypeLabel": "Text",
+		"tab": "Standard",
 		"field": "y_padding_same",
 		"path": "Text/default/Primary/y_padding_same",
 		"label": "Innerer Abstand oben / unten gleich",
