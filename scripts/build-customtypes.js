@@ -427,11 +427,42 @@ if (slicesWithoutBase.length > 0) {
 	console.warn(`  Lösung: base.json aus Git-History restaurieren oder neu erstellen.`);
 }
 
+const animationFields = ['animate', 'anim_direction', 'anim_delay', 'anim_duration'];
+
+function validateAnimationFieldOrder(model, path) {
+	for (const variation of model.variations ?? []) {
+		const fieldNames = Object.keys(variation.primary ?? {});
+		const present = animationFields.filter((field) => fieldNames.includes(field));
+		if (!present.length) continue;
+
+		// Timeline/Galerie verwenden bewusst nur den festen Animate-Schalter.
+		if (present.length === 1 && present[0] === 'animate') {
+			if (fieldNames.at(-1) !== 'animate') {
+				throw new Error(
+					`${path} / ${variation.id}: Das Feld animate muss am Ende von primary stehen.`
+				);
+			}
+			continue;
+		}
+
+		const lastFields = fieldNames.slice(-animationFields.length);
+		if (
+			present.length !== animationFields.length ||
+			lastFields.join('|') !== animationFields.join('|')
+		) {
+			throw new Error(
+				`${path} / ${variation.id}: Animationsfelder müssen als letzter primary-Block in der Reihenfolge ${animationFields.join(', ')} stehen.`
+			);
+		}
+	}
+}
+
 for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue;
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
+	validateAnimationFieldOrder(base, basePath);
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)
@@ -453,6 +484,7 @@ for (const sliceName of allSlices) {
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 	const fullPath = `src/lib/slices/${sliceName}/full.json`;
 	const fullExists = existsSync(join(ROOT, fullPath));
+	if (fullExists) validateAnimationFieldOrder(read(fullPath), fullPath);
 
 	// Extra-Variationen aus gating.json.slices[name].variations (ersetzt slices.json)
 	const activeExtraIds = new Set(
