@@ -27,6 +27,8 @@
 	export let rounded: boolean = true;
 	// Abstand unten (mb-6 Standard, false = kein Abstand)
 	export let mb: boolean = true;
+	// Optionales Standard-Icon vor dem Buttontext, z.B. left/right/up/down
+	export let leadingIcon: string | undefined = undefined;
 
 	$: sizeClass =
 		size === 'sm'
@@ -86,7 +88,10 @@
 
 {#if href}
 	<a {href} class={baseClass} style={baseStyle}>
-		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+		{#if leadingIcon}<SvgIcons
+				name={leadingIcon}
+				size="1em"
+			/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
 				color={stileEntry?.color || 'currentColor'}
@@ -95,7 +100,10 @@
 {:else if link}
 	{#if beauftragungHref}
 		<a href={beauftragungHref} class={baseClass} style={baseStyle}>
-			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+			{#if leadingIcon}<SvgIcons
+					name={leadingIcon}
+					size="1em"
+				/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 					name={resolvedIcon}
 					size="1em"
 					color="currentColor"
@@ -103,7 +111,10 @@
 		</a>
 	{:else}
 		<PrismicLink field={link} class={baseClass} style={baseStyle}>
-			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+			{#if leadingIcon}<SvgIcons
+					name={leadingIcon}
+					size="1em"
+				/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 					name={resolvedIcon}
 					size="1em"
 					color="currentColor"
@@ -112,7 +123,10 @@
 	{/if}
 {:else}
 	<button type="submit" class={baseClass} style={baseStyle} disabled={$$props.disabled} on:click>
-		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+		{#if leadingIcon}<SvgIcons
+				name={leadingIcon}
+				size="1em"
+			/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
 				color={stileEntry?.color || 'currentColor'}

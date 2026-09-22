@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import Button from '$lib/components/Button.svelte';
 	export let data: PageData;
 
@@ -111,7 +112,8 @@
 			>
 			<Button
 				href="/admin/dashboard?secret={secret}"
-				text="← Dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"
@@ -295,7 +297,7 @@
 												title="Einen Schritt zurück (kein Mail)"
 												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
 											>
-												←
+												<SvgIcons name="left" size="1em" color="currentColor" />
 											</button>
 										</form>
 									{/if}
@@ -308,7 +310,7 @@
 												title="Einen Schritt voraus (kein Mail)"
 												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
 											>
-												→
+												<SvgIcons name="right" size="1em" color="currentColor" />
 											</button>
 										</form>
 									{/if}
