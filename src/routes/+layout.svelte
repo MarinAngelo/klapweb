@@ -15,6 +15,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
+	import PageUpButton from '$lib/components/PageUpButton.svelte';
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
@@ -476,6 +477,8 @@
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
+
+<PageUpButton />
 
 <PrismicPreview {repositoryName} />
 {#if klapstudioActive}
