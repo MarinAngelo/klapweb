@@ -12,10 +12,13 @@
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 
-	$: bgColor = slice.primary.bg_color || $theme.pageBgColor;
-	$: textColor = slice.primary.color || $theme.pageColor;
-	$: linkColor = slice.primary.link_color || 'var(--page-link-color)';
-	$: linkHoverColor = slice.primary.link_hover_color || 'var(--page-link-hover-color)';
+	$: bgColor = slice.primary.bg_color || (linksMode ? $theme.headerBgColor : $theme.pageBgColor);
+	$: textColor = slice.primary.color || (linksMode ? $theme.headerColor : $theme.pageColor);
+	$: linkColor =
+		slice.primary.link_color || (linksMode ? $theme.headerLinkColor : 'var(--page-link-color)');
+	$: linkHoverColor =
+		slice.primary.link_hover_color ||
+		(linksMode ? $theme.headerLinkHoverColor : 'var(--page-link-hover-color)');
 	$: tocTitle = slice.primary.title || 'Inhalt';
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
@@ -38,8 +41,9 @@
 	let mobileNaturalTop = 0;
 	let mobileSheetHeight = 0;
 	let mobilePinned = false;
-	let sidebarHeight = 0;
 	let headerScrolledAway = false;
+	let sidebarMaxHeight: number | null = null;
+	let sidebarAtFooter = false;
 	let desktopTopEl: HTMLElement | null = null;
 	let desktopTopPinned = false;
 	let desktopTopNaturalTop = 0;
@@ -143,9 +147,11 @@
 			if (!linksMode) return;
 			const footer = document.querySelector<HTMLElement>('footer');
 			if (!footer) return;
-			const sidebar = document.querySelector<HTMLElement>('.toc-sidebar');
-			const sidebarTop = sidebar?.getBoundingClientRect().top ?? $headerHeight;
-			sidebarHeight = Math.max(0, footer.getBoundingClientRect().top - sidebarTop);
+			const top = headerScrolledAway ? 0 : $headerHeight;
+			const viewportHeight = window.innerHeight;
+			const footerViewportTop = footer.getBoundingClientRect().top;
+			sidebarAtFooter = footerViewportTop < viewportHeight;
+			sidebarMaxHeight = Math.max(192, Math.min(viewportHeight - top, footerViewportTop - top));
 		};
 		window.addEventListener('hashchange', onHashChange);
 		window.addEventListener('scroll', onScroll, { passive: true });
@@ -191,23 +197,20 @@
 		{#if linksMode}
 			<nav
 				class="toc-sidebar hidden md:block"
-				class:has-footer-height={sidebarHeight > 0}
 				class:header-scrolled-away={headerScrolledAway}
+				class:at-footer={sidebarAtFooter}
 				style="--toc-color: {textColor}; --toc-bg: {bgColor ||
-					$theme.pageBgColor}; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-sidebar-height: {sidebarHeight}px;"
+					$theme.pageBgColor}; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-top: {headerScrolledAway
+					? 0
+					: $headerHeight || 80}px; --toc-sidebar-max-height: {sidebarMaxHeight
+					? `${sidebarMaxHeight}px`
+					: 'none'}; --toc-track-color: {$theme.pageBgColor ||
+					'#f8fafc'}; --toc-thumb-color: {$theme.footerBgColor || '#d1d5db'};"
 				class:visible={!dismissed}
 				aria-label={tocTitle}
 			>
 				<div class="flex items-center justify-between mb-4">
 					<h5>{tocTitle}</h5>
-					<button
-						on:click={() => {
-							dismissed = true;
-							dismissedAtY = window.scrollY;
-						}}
-						aria-label="Inhaltsverzeichnis schliessen"
-						class="toc-close-btn">×</button
-					>
 				</div>
 				<ul class="space-y-2 text-sm">
 					{#each tocEntries as entry}<li
@@ -317,6 +320,8 @@
 		color: var(--toc-link-color, inherit) !important;
 		text-decoration: none !important;
 		font-weight: 500;
+		overflow-wrap: anywhere;
+		word-break: break-word;
 	}
 	.toc-link:hover {
 		color: var(--toc-link-hover-color, var(--toc-link-color, inherit)) !important;
@@ -389,10 +394,15 @@
 	.toc-sidebar {
 		position: fixed;
 		left: 0;
-		top: var(--header-height, 80px);
-		width: 13rem;
-		height: calc(100vh - var(--header-height, 80px));
+		top: var(--toc-top, 80px);
+		width: 16rem;
+		height: calc(100dvh - var(--toc-top, 80px));
+		min-height: 12rem;
+		max-height: min(calc(100dvh - var(--toc-top, 80px)), var(--toc-sidebar-max-height, 100dvh));
 		overflow-y: auto;
+		overflow-x: hidden;
+		scrollbar-width: thin;
+		scrollbar-color: var(--toc-thumb-color) var(--toc-track-color);
 		padding: 1.75rem 1rem 1rem;
 		border-radius: 0;
 		background-color: var(--toc-bg);
@@ -406,35 +416,30 @@
 			transform 0.25s ease;
 		z-index: 40;
 	}
-	.toc-sidebar {
-		position: fixed;
-		top: var(--header-height, 80px);
-		width: 13rem;
-		height: calc(100vh - var(--header-height, 80px));
-		overflow-y: auto;
-		padding: 1.75rem 1rem 1rem;
-		border-radius: 0;
-		background-color: var(--toc-bg);
-		color: var(--toc-color);
-		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
-		opacity: 0;
-		pointer-events: none;
-		transform: translateX(-0.5rem);
-		transition:
-			opacity 0.25s ease,
-			transform 0.25s ease;
-		z-index: 40;
-	}
-	.toc-sidebar.has-footer-height {
-		height: var(--toc-sidebar-height);
-	}
-	.toc-sidebar.header-scrolled-away {
-		top: 0;
+	.toc-sidebar.at-footer {
+		position: absolute;
+		top: auto;
+		bottom: 0;
+		height: var(--toc-sidebar-max-height);
 	}
 	.toc-sidebar.visible {
 		opacity: 1;
 		pointer-events: auto;
 		transform: translateX(0);
+	}
+	.toc-sidebar::-webkit-scrollbar {
+		width: 8px;
+	}
+	.toc-sidebar::-webkit-scrollbar-track {
+		background: var(--toc-track-color);
+	}
+	.toc-sidebar::-webkit-scrollbar-thumb {
+		background: var(--toc-thumb-color);
+		border-radius: 4px;
+	}
+	.toc-sidebar::-webkit-scrollbar-button {
+		display: none;
+		height: 0;
 	}
 	.toc-close-btn {
 		background: none;
@@ -444,6 +449,17 @@
 		line-height: 1;
 		color: inherit;
 		padding: 0 0.15rem;
+	}
+	/* Links-Modus: Inhalt ist normalerweise position:fixed; am Seitenende wird sie absolut am Slice geparkt */
+	:global(.toc-links-mode) {
+		position: relative;
+		background-color: transparent !important;
+	}
+	@media (max-width: 767px) {
+		/* Mobile: "Oben"-Balken verhält sich identisch wie "Links" (in-flow → pinned) → Sektion ohne eigenen Hintergrund */
+		:global(.toc-slice:not(.toc-links-mode)) {
+			background-color: transparent !important;
+		}
 	}
 	@media (min-width: 768px) {
 		:global(.toc-top-title) {
