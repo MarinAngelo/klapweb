@@ -447,6 +447,55 @@
 			}
 		},
 		"Fusszeile": {
+			"footer_top_curve": {
+				"type": "Boolean",
+				"config": {
+					"label": "Obere Kante Kurvig",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"footer_top_curve_color": {
+				"type": "Color",
+				"config": {
+					"label": "Kurvenfarbe",
+					"placeholder": "Leer = Fusszeilenfarbe"
+				}
+			},
+			"footer_top_curve_height": {
+				"type": "Number",
+				"config": {
+					"label": "Kurvenhöhe (px)",
+					"placeholder": "8 - 160",
+					"default_value": 32
+				}
+			},
+			"footer_top_curve_amplitude": {
+				"type": "Number",
+				"config": {
+					"label": "Kurvenamplitude (px)",
+					"placeholder": "0 - Kurvenhöhe",
+					"default_value": 16
+				}
+			},
+			"footer_top_curve_waves": {
+				"type": "Number",
+				"config": {
+					"label": "Anzahl Kurven",
+					"placeholder": "1 - 8",
+					"default_value": 1
+				}
+			},
+			"footer_top_curve_start": {
+				"type": "Select",
+				"config": {
+					"label": "Kurvenstart am linken Rand",
+					"placeholder": "0",
+					"options": ["0", "Maximale Höhe"],
+					"default_value": "0"
+				}
+			},
 			"footer_bg_color": {
 				"type": "Color",
 				"config": {

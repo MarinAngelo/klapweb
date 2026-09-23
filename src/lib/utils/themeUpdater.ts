@@ -35,6 +35,12 @@ interface PrismicThemeData {
 	header_bottom_curve_start?: string;
 	footer_color?: string;
 	footer_bg_color?: string;
+	footer_top_curve?: boolean;
+	footer_top_curve_color?: string;
+	footer_top_curve_height?: number;
+	footer_top_curve_amplitude?: number;
+	footer_top_curve_waves?: number;
+	footer_top_curve_start?: string;
 	footer_font_size_top_bar?: number;
 	footer_font_size_button_bar?: number;
 	footer_link_color?: string;
@@ -164,6 +170,23 @@ export function updateTheme(data: ThemeUpdateData): void {
 	);
 	const footerColor = prismicThemeData.footer_color || getCssVar('--footer-color');
 	const footerBgColor = prismicThemeData.footer_bg_color || getCssVar('--footer-bg-color');
+	// Bis das neue Footer-Schema publiziert ist, erbt der Footer die Header-Wave-Werte.
+	const footerTopCurve =
+		prismicThemeData.footer_top_curve ?? prismicThemeData.header_bottom_curve ?? false;
+	const footerTopCurveColor =
+		prismicThemeData.footer_top_curve_color ||
+		prismicThemeData.header_bottom_curve_color ||
+		footerBgColor;
+	const footerTopCurveHeight =
+		prismicThemeData.footer_top_curve_height ?? prismicThemeData.header_bottom_curve_height ?? 32;
+	const footerTopCurveAmplitude =
+		prismicThemeData.footer_top_curve_amplitude ??
+		prismicThemeData.header_bottom_curve_amplitude ??
+		16;
+	const footerTopCurveWaves =
+		prismicThemeData.footer_top_curve_waves ?? prismicThemeData.header_bottom_curve_waves ?? 1;
+	const footerTopCurveStart =
+		prismicThemeData.footer_top_curve_start || prismicThemeData.header_bottom_curve_start || '0';
 	const footerFontSizeTopBar =
 		prismicThemeData.footer_font_size_top_bar ||
 		parseFloat(getCssVar('--footer-font-size-top-bar'));
@@ -219,6 +242,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 		headerBottomCurveStart,
 		footerColor,
 		footerBgColor,
+		footerTopCurve,
+		footerTopCurveColor,
+		footerTopCurveHeight,
+		footerTopCurveAmplitude,
+		footerTopCurveWaves,
+		footerTopCurveStart,
 		footerFontSizeTopBar,
 		footerFontSizeButtonBar,
 		footerLinkColor,

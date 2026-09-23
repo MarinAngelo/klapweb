@@ -71,6 +71,12 @@ export const THEME_DEFAULTS = {
 	// Fußzeile Farben (wie in app.css)
 	footerColor: '',
 	footerBgColor: '',
+	footerTopCurve: false,
+	footerTopCurveColor: '',
+	footerTopCurveHeight: 32,
+	footerTopCurveAmplitude: 16,
+	footerTopCurveWaves: 1,
+	footerTopCurveStart: '0',
 	footerFontSizeTopBar: 0,
 	footerFontSizeButtonBar: 0,
 	footerLinkColor: '',
