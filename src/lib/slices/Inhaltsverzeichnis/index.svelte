@@ -35,6 +35,8 @@
 	let mobileOpen = false;
 	let openDropdowns = new Set<string>();
 	let mobileSheetEl: HTMLElement | null = null;
+	let mobileBarEl: HTMLElement | null = null;
+	let mounted = false;
 	let sectionEl: HTMLElement | null = null;
 	let mobileNaturalTop = 0;
 	let mobileSheetHeight = 0;
@@ -90,6 +92,19 @@
 		activeId = id;
 	}
 
+	// Anchor jumps must clear sticky header + pinned TOC bar (via html scroll-padding-top)
+	function updateScrollOffset() {
+		if (!mounted) return;
+		const stickyHeader = document.querySelector('main.header-is-sticky') ? $headerHeight : 0;
+		const isMobile = window.matchMedia('(max-width: 767px)').matches;
+		let tocHeight = 0;
+		if (isMobile) tocHeight = mobileBarEl?.getBoundingClientRect().height ?? 0;
+		else if (desktopTopSticky) tocHeight = desktopTopHeight;
+		document.documentElement.style.setProperty('--scroll-offset', `${stickyHeader + tocHeight}px`);
+	}
+
+	$: if (mounted) ($headerHeight, desktopTopHeight, tocEntries, updateScrollOffset());
+
 	onMount(() => {
 		scanHeadings();
 		const headings = Array.from(
@@ -143,11 +158,14 @@
 		window.addEventListener('resize', measureMobileSheet);
 		window.addEventListener('resize', measureDesktopTop);
 		window.addEventListener('resize', updateSidebarHeight);
+		window.addEventListener('resize', updateScrollOffset);
+		mounted = true;
 		tick().then(() => {
 			measureMobileSheet();
 			measureDesktopTop();
 			onScroll();
 			updateSidebarHeight();
+			updateScrollOffset();
 		});
 		if (linksMode) {
 			document.documentElement.style.setProperty('--toc-sidebar-offset', '16rem');
@@ -158,7 +176,9 @@
 			window.removeEventListener('resize', measureMobileSheet);
 			window.removeEventListener('resize', measureDesktopTop);
 			window.removeEventListener('resize', updateSidebarHeight);
+			window.removeEventListener('resize', updateScrollOffset);
 			document.documentElement.style.removeProperty('--toc-sidebar-offset');
+			document.documentElement.style.removeProperty('--scroll-offset');
 		};
 	});
 </script>
@@ -213,7 +233,7 @@
 				class="hidden md:block toc-top-sheet"
 				class:pinned={desktopTopPinned}
 				bind:this={desktopTopEl}
-				style="--toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor};"
+				style="--toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-desktop-top: {$headerHeight}px;"
 			>
 				<h5 class="toc-top-title">{tocTitle}</h5>
 				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
@@ -257,6 +277,7 @@
 		>
 			<button
 				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
+				bind:this={mobileBarEl}
 				on:click={() => (mobileOpen = !mobileOpen)}
 				aria-expanded={mobileOpen}
 				><span class="text-base font-medium">{tocTitle}</span><span
@@ -368,7 +389,7 @@
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 	}
 	:global(.header-is-sticky) .toc-top-sheet.pinned {
-		top: var(--header-height, 80px);
+		top: var(--toc-desktop-top, 80px);
 	}
 	.toc-sidebar {
 		position: fixed;

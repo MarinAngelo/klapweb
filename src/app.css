@@ -21,7 +21,8 @@ body {
 }
 html {
 	scroll-behavior: smooth;
-	scroll-padding-top: calc(var(--header-height, 80px) + 1rem);
+	/* --scroll-offset is set by the TOC slice (sticky header + pinned TOC bar) */
+	scroll-padding-top: calc(var(--scroll-offset, var(--header-height, 80px)) + 1rem);
 }
 @tailwind base;
 @tailwind components;
