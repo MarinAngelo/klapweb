@@ -112,6 +112,8 @@
 		pageColorEls: Array<{ el: HTMLElement; origCss: string }>;
 		textColEl: HTMLElement | null;
 		origTextColStyle: string;
+		blobPathEl: SVGPathElement | null;
+		origBlobTransform: string;
 	};
 
 	let sliceList: SliceEntry[] = [];
@@ -160,6 +162,10 @@
 	// Zoom-State (nur AdresseUndMap)
 	let zoomDesktop = 100;
 	let zoomMobile = 100;
+	let blobScale = 100;
+	let blobPositionX = 50;
+	let blobPositionY = 50;
+	let blobRotation = 0;
 
 	function parseRgba(str: string): { hex: string; opacity: number } | null {
 		const m = str.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
@@ -278,7 +284,9 @@
 				origBtnStyle: '',
 				pageColorEls: [],
 				textColEl: null,
-				origTextColStyle: ''
+				origTextColStyle: '',
+				blobPathEl: null,
+				origBlobTransform: ''
 			};
 		});
 		// If the previously active slice is no longer in DOM, reset
@@ -328,6 +336,17 @@
 			const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 			entry.origGradientStyle = gEl?.style.cssText ?? '';
 			initGradientFromEl(entry.el);
+			entry.blobPathEl = entry.el.querySelector<SVGPathElement>('.titelbereich-blob-surface path');
+			entry.origBlobTransform = entry.blobPathEl?.getAttribute('transform') ?? '';
+			if (entry.blobPathEl) {
+				const transform = entry.origBlobTransform.match(
+					/translate\(([-\d.]+)\s+([-\d.]+)\).*rotate\(([-\d.]+)\).*scale\(([-\d.]+)\)/
+				);
+				blobPositionX = transform ? Number(transform[1]) / 2 : 50;
+				blobPositionY = transform ? Number(transform[2]) / 2 : 50;
+				blobRotation = transform ? Number(transform[3]) : 0;
+				blobScale = transform ? Number(transform[4]) * 100 : 100;
+			}
 		}
 
 		if (entry.el.dataset.sliceType === 'adresse_und_map') {
@@ -502,6 +521,7 @@
 		if (entry.innerEl) entry.innerEl.style.cssText = entry.origInnerStyle;
 		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
 		if (entry.textColEl) entry.textColEl.style.cssText = entry.origTextColStyle;
+		if (entry.blobPathEl) entry.blobPathEl.setAttribute('transform', entry.origBlobTransform);
 		for (const { el, origCss } of entry.pageColorEls) {
 			el.style.cssText = origCss;
 		}
@@ -509,6 +529,36 @@
 		if (gEl) gEl.style.cssText = entry.origGradientStyle;
 		gradientEl = null;
 		currentFontIndex = -1;
+	}
+
+	$: isBlobStudioSlice = activeSlice?.blobPathEl !== null && activeSlice?.blobPathEl !== undefined;
+
+	function updateBlobStudio() {
+		if (!activeSlice?.blobPathEl) return;
+		activeSlice.blobPathEl.setAttribute(
+			'transform',
+			`translate(${blobPositionX * 2} ${blobPositionY * 2}) rotate(${blobRotation}) scale(${2 * (blobScale / 100)})`
+		);
+	}
+
+	function setBlobScale(e: Event) {
+		blobScale = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionX(e: Event) {
+		blobPositionX = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionY(e: Event) {
+		blobPositionY = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobRotation(e: Event) {
+		blobRotation = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
 	}
 
 	function setSliceBg(e: Event) {
@@ -800,6 +850,53 @@
 		</div>
 
 		{#if activeSlice}
+			{#if isBlobStudioSlice}
+				<div class="section-label">Blob-Parameter</div>
+				<label class="row">
+					<span>Blob-Grösse (%) <code>{blobScale}</code></span>
+					<input
+						type="range"
+						min="50"
+						max="150"
+						step="1"
+						value={blobScale}
+						on:input={setBlobScale}
+					/>
+				</label>
+				<label class="row">
+					<span>Position horizontal (%) <code>{blobPositionX}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionX}
+						on:input={setBlobPositionX}
+					/>
+				</label>
+				<label class="row">
+					<span>Position vertikal (%) <code>{blobPositionY}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionY}
+						on:input={setBlobPositionY}
+					/>
+				</label>
+				<label class="row">
+					<span>Drehung (Grad) <code>{blobRotation}</code></span>
+					<input
+						type="range"
+						min="-180"
+						max="180"
+						step="1"
+						value={blobRotation}
+						on:input={setBlobRotation}
+					/>
+				</label>
+			{/if}
 			<label class="row">
 				<span>Hintergrundfarbe</span>
 				<div class="color-wrap">

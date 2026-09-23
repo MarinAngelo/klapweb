@@ -424,16 +424,6 @@
 		color: inherit;
 		padding: 0 0.15rem;
 	}
-	/* Links-Modus: Inhalt ist immer position:fixed (Sidebar/mobiler Balken) → Sektion selbst bleibt ohne Hintergrund */
-	:global(.toc-links-mode) {
-		background-color: transparent !important;
-	}
-	@media (max-width: 767px) {
-		/* Mobile: "Oben"-Balken verhält sich identisch wie "Links" (in-flow → pinned) → Sektion ohne eigenen Hintergrund */
-		:global(.toc-slice:not(.toc-links-mode)) {
-			background-color: transparent !important;
-		}
-	}
 	@media (min-width: 768px) {
 		:global(.toc-top-title) {
 			margin-top: 1.75rem;

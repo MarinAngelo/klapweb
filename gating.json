@@ -209,6 +209,11 @@
 			"plan": "professional"
 		},
 		"Titelbereich": {
+			"variations": {
+				"blob": {
+					"plan": "klap-web-ch"
+				}
+			},
 			"fields": {
 				"button_style": {
 					"feature": "erweiterte_gestaltung"
