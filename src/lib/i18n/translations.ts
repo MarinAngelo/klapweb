@@ -1002,7 +1002,35 @@ export const translations: Record<string, Record<string, string>> = {
 			'en-us':
 				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
 		},
-	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' }
+	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
+	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
+	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
+	'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.':
+		{
+			'de-ch':
+				'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.',
+			'en-us':
+				'All entries from gating.json: which custom types, slices, variations and fields belong to which feature or plan. Dimmed = inactive with the current selection.'
+		},
+	'Unbekannte Features oder Pläne referenziert': {
+		'de-ch': 'Unbekannte Features oder Pläne referenziert',
+		'en-us': 'Unknown features or plans referenced'
+	},
+	'Nach Feature': { 'de-ch': 'Nach Feature', 'en-us': 'By feature' },
+	'Nach Plan (ohne Feature)': {
+		'de-ch': 'Nach Plan (ohne Feature)',
+		'en-us': 'By plan (without feature)'
+	},
+	'Keine Zuordnung in gating.json (nur im Code abgefragt)': {
+		'de-ch': 'Keine Zuordnung in gating.json (nur im Code abgefragt)',
+		'en-us': 'No assignment in gating.json (checked in code only)'
+	},
+	'Custom Types': { 'de-ch': 'Custom Types', 'en-us': 'Custom types' },
+	'Custom-Type-Felder': { 'de-ch': 'Custom-Type-Felder', 'en-us': 'Custom type fields' },
+	'Tab-Overlays': { 'de-ch': 'Tab-Overlays', 'en-us': 'Tab overlays' },
+	Slices: { 'de-ch': 'Slices', 'en-us': 'Slices' },
+	'Slice-Variationen': { 'de-ch': 'Slice-Variationen', 'en-us': 'Slice variations' },
+	'Slice-Felder': { 'de-ch': 'Slice-Felder', 'en-us': 'Slice fields' }
 };
 
 /**

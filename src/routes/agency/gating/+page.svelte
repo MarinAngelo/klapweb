@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { _ } from '$lib/stores/i18n';
 
 	export let data: PageData;
+	export let form: ActionData;
 
 	type FeatureDef = { label: string; plans?: string[]; env?: string[] };
 	type PlanDef = { label: string; extends?: string };
@@ -27,13 +28,79 @@
 		return featureDefs[featureId]?.plans ?? [];
 	}
 
+	// Overview of the whole gating.json
+	type ItemKind = 'customType' | 'customTypeField' | 'slice' | 'variation' | 'field' | 'overlay';
+	type GatingItem = {
+		kind: ItemKind;
+		target: string;
+		detail?: string;
+		gate: { feature?: string; plan?: string };
+	};
+	const gatingItems: GatingItem[] = data.authenticated
+		? ((data.gatingItems ?? []) as GatingItem[])
+		: [];
+	const kindOrder: ItemKind[] = [
+		'customType',
+		'customTypeField',
+		'overlay',
+		'slice',
+		'variation',
+		'field'
+	];
+	const kindLabels: Record<ItemKind, string> = {
+		customType: 'Custom Types',
+		customTypeField: 'Custom-Type-Felder',
+		overlay: 'Tab-Overlays',
+		slice: 'Slices',
+		variation: 'Slice-Variationen',
+		field: 'Slice-Felder'
+	};
+	const planOrder = Object.keys(planDefs);
+
+	function groupByKind(items: GatingItem[]) {
+		return kindOrder
+			.map((kind) => ({ kind, items: items.filter((item) => item.kind === kind) }))
+			.filter((group) => group.items.length > 0);
+	}
+
+	function minPlanIndex(featureId: string): number {
+		const indices = (featureDefs[featureId]?.plans ?? []).map((p) => planOrder.indexOf(p));
+		return indices.length ? Math.min(...indices.map((i) => (i < 0 ? 999 : i))) : 999;
+	}
+
+	const featureOverview = Object.keys(featureDefs)
+		.sort((a, b) => minPlanIndex(a) - minPlanIndex(b))
+		.map((id) => ({
+			id,
+			label: featureDefs[id].label,
+			plans: (featureDefs[id].plans ?? []).map((p) => planDefs[p]?.label ?? p),
+			env: featureDefs[id].env ?? [],
+			groups: groupByKind(gatingItems.filter((item) => item.gate.feature === id))
+		}));
+
+	const planOverview = planOrder
+		.map((id) => ({
+			id,
+			label: planDefs[id].label,
+			groups: groupByKind(gatingItems.filter((item) => item.gate.plan === id))
+		}))
+		.filter((plan) => plan.groups.length > 0);
+
+	// Gates referencing a feature/plan that does not exist in gating.json (typos)
+	const unknownGateItems = gatingItems.filter(
+		(item) =>
+			(item.gate.feature && !featureDefs[item.gate.feature]) ||
+			(item.gate.plan && !planDefs[item.gate.plan])
+	);
+
 	let selectedPlan = data.authenticated ? data.currentPlan : '';
 	let selectedFeatures: string[] = data.authenticated ? [...data.activeFeatures] : [];
 	let disabledSections: string[] = data.authenticated
 		? [...(data.adminSectionsDisabled ?? [])]
 		: [];
 	let passwordInput = '';
-	let loginError = '';
+	// Error key returned by the login action (translated in the template)
+	$: loginError = (form as { error?: string } | null)?.error ?? '';
 	let showEnvWarning = data.authenticated && (data.missingEnv?.length ?? 0) > 0;
 
 	function getMissingEnv(featureId: string): string[] {
@@ -131,7 +198,7 @@
 				</div>
 
 				{#if loginError}
-					<div class="error-message">{loginError}</div>
+					<div class="error-message" role="alert">{$_(loginError)}</div>
 				{/if}
 
 				<button type="submit" class="btn btn-primary">{$_('Anmelden')}</button>
@@ -264,6 +331,87 @@
 					</button>
 				</form>
 			{/if}
+
+			<section class="overview">
+				<h2>{$_('Gating-Übersicht')}</h2>
+				<p class="overview-intro">
+					{$_(
+						'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.'
+					)}
+				</p>
+
+				{#if unknownGateItems.length > 0}
+					<div class="overview-warning">
+						<strong>⚠ {$_('Unbekannte Features oder Pläne referenziert')}:</strong>
+						<ul>
+							{#each unknownGateItems as item}
+								<li>
+									<code>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code>
+									({item.gate.feature ?? item.gate.plan})
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
+				<h3>{$_('Nach Feature')}</h3>
+				{#each featureOverview as feature}
+					<div class="overview-card" class:inactive={!selectedFeatures.includes(feature.id)}>
+						<div class="overview-card-head">
+							<strong>{feature.label}</strong>
+							<code class="overview-id">{feature.id}</code>
+							{#each feature.plans as plan}
+								<span class="badge">{$_('ab')} {plan}</span>
+							{/each}
+						</div>
+						{#if feature.env.length}
+							<div class="overview-env">Env: {feature.env.join(', ')}</div>
+						{/if}
+						{#if feature.groups.length}
+							{#each feature.groups as group}
+								<div class="overview-group">
+									<span class="overview-kind">{$_(kindLabels[group.kind])}</span>
+									<div class="overview-items">
+										{#each group.items as item}
+											<code class="overview-item"
+												>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code
+											>
+										{/each}
+									</div>
+								</div>
+							{/each}
+						{:else}
+							<div class="overview-empty">
+								{$_('Keine Zuordnung in gating.json (nur im Code abgefragt)')}
+							</div>
+						{/if}
+					</div>
+				{/each}
+
+				{#if planOverview.length}
+					<h3>{$_('Nach Plan (ohne Feature)')}</h3>
+					{#each planOverview as plan}
+						<div class="overview-card" class:inactive={!selectedPlanChain.includes(plan.id)}>
+							<div class="overview-card-head">
+								<strong>{$_('ab')} {plan.label}</strong>
+								<code class="overview-id">{plan.id}</code>
+							</div>
+							{#each plan.groups as group}
+								<div class="overview-group">
+									<span class="overview-kind">{$_(kindLabels[group.kind])}</span>
+									<div class="overview-items">
+										{#each group.items as item}
+											<code class="overview-item"
+												>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code
+											>
+										{/each}
+									</div>
+								</div>
+							{/each}
+						</div>
+					{/each}
+				{/if}
+			</section>
 
 			{#if (data.missingEnv?.length ?? 0) > 0}
 				<button type="button" class="env-warning-bar" on:click={() => (showEnvWarning = true)}>
@@ -489,6 +637,115 @@
 	.badge-warning {
 		background: #fff3cd;
 		color: #856404;
+	}
+
+	.overview {
+		margin: 2rem 0;
+	}
+
+	.overview h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.25rem;
+	}
+
+	.overview h3 {
+		margin: 1.5rem 0 0.75rem;
+		font-size: 1rem;
+	}
+
+	.overview-intro {
+		color: #666;
+		font-size: 0.9rem;
+		margin: 0;
+	}
+
+	.overview-warning {
+		background: #fff3cd;
+		color: #856404;
+		border: 1px solid #ffeeba;
+		border-radius: 4px;
+		padding: 0.75rem 1rem;
+		margin-top: 1rem;
+		font-size: 0.9rem;
+	}
+
+	.overview-warning ul {
+		margin: 0.5rem 0 0;
+		padding-left: 1.25rem;
+	}
+
+	.overview-card {
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
+		padding: 0.75rem 1rem;
+		margin-bottom: 0.75rem;
+		transition: opacity 0.2s;
+	}
+
+	.overview-card.inactive {
+		opacity: 0.45;
+	}
+
+	.overview-card-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.overview-card-head .badge {
+		margin-left: 0;
+	}
+
+	.overview-id {
+		font-size: 0.8rem;
+		color: #666;
+	}
+
+	.overview-env {
+		font-size: 0.8rem;
+		color: #856404;
+		margin-top: 0.35rem;
+	}
+
+	.overview-group {
+		display: grid;
+		grid-template-columns: 9.5rem 1fr;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+		font-size: 0.85rem;
+	}
+
+	.overview-kind {
+		color: #666;
+	}
+
+	.overview-items {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+	}
+
+	.overview-item {
+		background: #f0f0f0;
+		padding: 0.1rem 0.4rem;
+		border-radius: 3px;
+		font-size: 0.8rem;
+		overflow-wrap: anywhere;
+	}
+
+	.overview-empty {
+		color: #999;
+		font-size: 0.85rem;
+		font-style: italic;
+		margin-top: 0.5rem;
+	}
+
+	@media (max-width: 480px) {
+		.overview-group {
+			grid-template-columns: 1fr;
+			gap: 0.25rem;
+		}
 	}
 
 	.definition {
