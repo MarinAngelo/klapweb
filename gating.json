@@ -249,22 +249,28 @@
 	},
 	"admin_sections": {
 		"rechnungen": {
-			"label": "Rechnungen"
+			"label": "Rechnungen",
+			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 		},
 		"kunden": {
-			"label": "Kunden"
+			"label": "Kunden",
+			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 		},
 		"buchungen": {
-			"label": "Terminverwaltung"
+			"label": "Terminverwaltung",
+			"feature": "terminbuchung"
 		},
 		"ressource-buchungen": {
-			"label": "Ressource-Buchungen"
+			"label": "Ressource-Buchungen",
+			"feature": "ressourcenbuchung"
 		},
 		"aufgaben": {
-			"label": "Aufgaben"
+			"label": "Aufgaben",
+			"feature": "ressourcenbuchung"
 		},
 		"event-anmeldungen": {
-			"label": "Event Anmeldungen"
+			"label": "Event Anmeldungen",
+			"feature": "global_events"
 		}
 	}
 }
