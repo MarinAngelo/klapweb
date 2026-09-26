@@ -1,7 +1,31 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { _ } from '$lib/stores/i18n';
 
 	export let data: PageData;
+
+	type FeatureDef = { label: string; plans?: string[]; env?: string[] };
+	type PlanDef = { label: string; extends?: string };
+	const featureDefs: Record<string, FeatureDef> = data.authenticated
+		? ((data.features ?? {}) as Record<string, FeatureDef>)
+		: {};
+	const planDefs: Record<string, PlanDef> = data.authenticated
+		? ((data.plans ?? {}) as Record<string, PlanDef>)
+		: {};
+
+	// Global plan definition (gating.json): minimum plan per feature
+	const initialFeaturePlans: Record<string, string> = Object.fromEntries(
+		Object.entries(featureDefs).map(([id, def]) => [id, def.plans?.[0] ?? ''])
+	);
+	let featurePlans: Record<string, string> = { ...initialFeaturePlans };
+	$: changedFeaturePlans = Object.fromEntries(
+		Object.entries(featurePlans).filter(([id, plan]) => plan !== initialFeaturePlans[id])
+	);
+	$: definitionChanged = Object.keys(changedFeaturePlans).length > 0;
+
+	function getFeaturePlanList(featureId: string): string[] {
+		return featureDefs[featureId]?.plans ?? [];
+	}
 
 	let selectedPlan = data.authenticated ? data.currentPlan : '';
 	let selectedFeatures: string[] = data.authenticated ? [...data.activeFeatures] : [];
@@ -25,14 +49,27 @@
 		}));
 	}
 
-	function getAllFeatures() {
-		if (!data.authenticated) return [];
-		return Object.entries(data.features ?? {}).map(([id, feature]: [string, any]) => ({
-			id,
-			label: feature.label,
-			inPlan: data.basePlanFeatures.includes(id)
-		}));
+	function getPlanChain(planKey: string): string[] {
+		const chain: string[] = [];
+		let key: string | undefined = planKey;
+		while (key && !chain.includes(key)) {
+			chain.push(key);
+			key = planDefs[key]?.extends;
+		}
+		return chain;
 	}
+
+	// Features included in the currently selected (not yet saved) plan
+	$: selectedPlanChain = getPlanChain(selectedPlan);
+	$: planFeatures = Object.entries(featureDefs)
+		.filter(([, def]) => (def.plans ?? []).some((p) => selectedPlanChain.includes(p)))
+		.map(([id]) => id);
+
+	$: allFeatures = Object.entries(featureDefs).map(([id, feature]) => ({
+		id,
+		label: feature.label,
+		inPlan: planFeatures.includes(id)
+	}));
 
 	function toggleFeature(featureId: string) {
 		if (selectedFeatures.includes(featureId)) {
@@ -77,18 +114,18 @@
 	{#if !data.authenticated}
 		<!-- Login Form -->
 		<div class="login-container">
-			<h1>Agency Gating Editor</h1>
-			<p class="intro">Bitte geben Sie das Agentur-Passwort ein:</p>
+			<h1>{$_('Agency Gating Editor')}</h1>
+			<p class="intro">{$_('Bitte geben Sie das Agentur-Passwort ein:')}</p>
 
 			<form method="POST" action="?/login" class="login-form">
 				<div class="form-group">
-					<label for="secret">Passwort</label>
+					<label for="secret">{$_('Passwort')}</label>
 					<input
 						id="secret"
 						name="secret"
 						type="password"
 						bind:value={passwordInput}
-						placeholder="Passwort eingeben"
+						placeholder={$_('Passwort eingeben')}
 						required
 					/>
 				</div>
@@ -97,22 +134,22 @@
 					<div class="error-message">{loginError}</div>
 				{/if}
 
-				<button type="submit" class="btn btn-primary">Anmelden</button>
+				<button type="submit" class="btn btn-primary">{$_('Anmelden')}</button>
 			</form>
 		</div>
 	{:else}
 		<!-- Editor -->
 		<div class="editor-container">
 			<div class="header">
-				<h1>Agency Gating Editor</h1>
+				<h1>{$_('Agency Gating Editor')}</h1>
 				<form method="POST" action="?/logout" style="display: inline;">
-					<button type="submit" class="btn btn-secondary">Abmelden</button>
+					<button type="submit" class="btn btn-secondary">{$_('Abmelden')}</button>
 				</form>
 			</div>
 
 			<form method="POST" action="?/save" on:submit={handleSave} class="form">
 				<div class="form-group">
-					<label for="plan">Plan</label>
+					<label for="plan">{$_('Plan')}</label>
 					<select id="plan" name="plan" bind:value={selectedPlan}>
 						{#each getPlans() as { id, label }}
 							<option value={id}>
@@ -124,8 +161,8 @@
 
 				<div class="form-group">
 					<fieldset>
-						<legend>Features</legend>
-						{#each getAllFeatures() as { id, label, inPlan }}
+						<legend>{$_('Features')}</legend>
+						{#each allFeatures as { id, label, inPlan }}
 							<label class="checkbox-label">
 								<input
 									type="checkbox"
@@ -135,12 +172,12 @@
 								<span>
 									{label}
 									{#if inPlan}
-										<span class="badge">im Plan</span>
+										<span class="badge">{$_('im Plan')}</span>
 									{/if}
 									{#if getMissingEnv(id).length > 0}
 										<span
 											class="badge badge-warning"
-											title="Fehlende Umgebungsvariablen: {getMissingEnv(id).join(', ')}"
+											title="{$_('Fehlende Umgebungsvariablen')}: {getMissingEnv(id).join(', ')}"
 										>
 											⚠ Env
 										</span>
@@ -160,7 +197,7 @@
 
 				<div class="form-group">
 					<fieldset>
-						<legend>Admin-Bereiche</legend>
+						<legend>{$_('Admin-Bereiche')}</legend>
 						{#each getAllAdminSections() as { id, label }}
 							<label class="checkbox-label">
 								<input
@@ -174,28 +211,67 @@
 					</fieldset>
 				</div>
 
-				<button type="submit" class="btn btn-primary">Speichern</button>
+				<button type="submit" class="btn btn-primary">{$_('Speichern')}</button>
 			</form>
 
 			<div class="info">
-				<strong>Übersicht:</strong>
-				<p>Plan: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
-				<p>Plan-Features: {data.basePlanFeatures.join(', ') || 'keine'}</p>
-				<p><strong>Ausgewählte Features:</strong> {selectedFeatures.join(', ') || 'keine'}</p>
+				<strong>{$_('Übersicht')}:</strong>
+				<p>{$_('Plan')}: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
+				<p>{$_('Plan-Features')}: {planFeatures.join(', ') || $_('keine')}</p>
+				<p>
+					<strong>{$_('Ausgewählte Features')}:</strong>
+					{selectedFeatures.join(', ') || $_('keine')}
+				</p>
 				<p style="color: #666; font-size: 0.9rem;">
-					Zusätzlich: {selectedFeatures
-						.filter((f) => !data.basePlanFeatures.includes(f))
-						.join(', ') || 'keine'} / Entfernt: {data.basePlanFeatures
+					{$_('Zusätzlich')}: {selectedFeatures
+						.filter((f) => !planFeatures.includes(f))
+						.join(', ') || $_('keine')} / {$_('Entfernt')}: {planFeatures
 						.filter((f) => !selectedFeatures.includes(f))
-						.join(', ') || 'keine'}
+						.join(', ') || $_('keine')}
 				</p>
 			</div>
+
+			{#if data.canEditDefinition}
+				<form method="POST" action="?/savePlanDefinition" class="form definition">
+					<input type="hidden" name="feature_plans" value={JSON.stringify(changedFeaturePlans)} />
+					<fieldset>
+						<legend>{$_('Plan-Definition (global)')}</legend>
+						<p class="definition-warning">
+							⚠ {$_(
+								'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.'
+							)}
+						</p>
+						{#each allFeatures as { id, label }}
+							<div class="definition-row">
+								<label for="def-{id}">
+									{label}
+									{#if getFeaturePlanList(id).length > 1}
+										<span class="badge" title={getFeaturePlanList(id).join(', ')}
+											>{$_('Mehrere Pläne')}</span
+										>
+									{/if}
+								</label>
+								<select id="def-{id}" bind:value={featurePlans[id]}>
+									{#each getPlans() as plan}
+										<option value={plan.id}>{$_('ab')} {plan.label}</option>
+									{/each}
+								</select>
+							</div>
+						{/each}
+					</fieldset>
+					<button type="submit" class="btn btn-primary" disabled={!definitionChanged}>
+						{$_('Plan-Definition speichern')}
+					</button>
+				</form>
+			{/if}
 
 			{#if (data.missingEnv?.length ?? 0) > 0}
 				<button type="button" class="env-warning-bar" on:click={() => (showEnvWarning = true)}>
 					⚠ {data.missingEnv?.length}
-					{data.missingEnv?.length === 1 ? 'aktives Feature' : 'aktive Features'} mit fehlenden Umgebungsvariablen
-					— Details anzeigen
+					{data.missingEnv?.length === 1
+						? $_('aktives Feature mit fehlenden Umgebungsvariablen')
+						: $_('aktive Features mit fehlenden Umgebungsvariablen')}
+					— {$_('Details anzeigen')}
 				</button>
 			{/if}
 		</div>
@@ -206,10 +282,11 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 	<div class="modal-backdrop" on:click={() => (showEnvWarning = false)}>
 		<div class="modal" role="dialog" aria-modal="true" on:click|stopPropagation>
-			<h2>⚠ Fehlende Umgebungsvariablen</h2>
+			<h2>⚠ {$_('Fehlende Umgebungsvariablen')}</h2>
 			<p class="modal-intro">
-				Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die
-				betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.
+				{$_(
+					'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.'
+				)}
 			</p>
 
 			{#each data.missingEnv ?? [] as entry}
@@ -224,14 +301,15 @@
 			{/each}
 
 			<p class="modal-hint">
-				<strong>Setzen:</strong> Lokal in der Datei <code>.env</code>, auf Netlify unter
-				<strong>Site Settings → Environment variables</strong>. Hinweis: Einzelne Variablen (z.B.
-				<code>EMAIL_FROM_ADDRESS</code>) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw.
-				der Versand entfällt.
+				<strong>{$_('Setzen')}:</strong>
+				{$_('Lokal in der Datei')} <code>.env</code>, {$_('auf Netlify unter')}
+				<strong>Site Settings → Environment variables</strong>. {$_(
+					'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.'
+				)}
 			</p>
 
 			<button type="button" class="btn btn-primary" on:click={() => (showEnvWarning = false)}>
-				Verstanden
+				{$_('Verstanden')}
 			</button>
 		</div>
 	</div>
@@ -411,6 +489,43 @@
 	.badge-warning {
 		background: #fff3cd;
 		color: #856404;
+	}
+
+	.definition {
+		margin-top: 2rem;
+		gap: 1rem;
+	}
+
+	.definition-warning {
+		background: #fff3cd;
+		color: #856404;
+		padding: 0.5rem 0.75rem;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		margin: 0 0 1rem;
+	}
+
+	.definition-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		margin: 0.5rem 0;
+	}
+
+	.definition-row label {
+		display: flex;
+		align-items: center;
+	}
+
+	.definition-row select {
+		padding: 0.4rem 0.5rem;
+		font-size: 0.9rem;
+	}
+
+	.btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 
 	.env-warning-bar {

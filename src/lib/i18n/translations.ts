@@ -936,7 +936,73 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	Seitennavigation: { 'de-ch': 'Seitennavigation', 'en-us': 'Pagination' },
 	'Vorherige Seite': { 'de-ch': 'Vorherige Seite', 'en-us': 'Previous page' },
-	'Nächste Seite': { 'de-ch': 'Nächste Seite', 'en-us': 'Next page' }
+	'Nächste Seite': { 'de-ch': 'Nächste Seite', 'en-us': 'Next page' },
+	// Agency Gating Editor
+	'Agency Gating Editor': { 'de-ch': 'Agency Gating Editor', 'en-us': 'Agency Gating Editor' },
+	'Bitte geben Sie das Agentur-Passwort ein:': {
+		'de-ch': 'Bitte geben Sie das Agentur-Passwort ein:',
+		'en-us': 'Please enter the agency password:'
+	},
+	Passwort: { 'de-ch': 'Passwort', 'en-us': 'Password' },
+	'Passwort eingeben': { 'de-ch': 'Passwort eingeben', 'en-us': 'Enter password' },
+	Features: { 'de-ch': 'Features', 'en-us': 'Features' },
+	'im Plan': { 'de-ch': 'im Plan', 'en-us': 'in plan' },
+	'Fehlende Umgebungsvariablen': {
+		'de-ch': 'Fehlende Umgebungsvariablen',
+		'en-us': 'Missing environment variables'
+	},
+	'Admin-Bereiche': { 'de-ch': 'Admin-Bereiche', 'en-us': 'Admin sections' },
+	Speichern: { 'de-ch': 'Speichern', 'en-us': 'Save' },
+	Übersicht: { 'de-ch': 'Übersicht', 'en-us': 'Overview' },
+	'Plan-Features': { 'de-ch': 'Plan-Features', 'en-us': 'Plan features' },
+	keine: { 'de-ch': 'keine', 'en-us': 'none' },
+	'Ausgewählte Features': { 'de-ch': 'Ausgewählte Features', 'en-us': 'Selected features' },
+	Zusätzlich: { 'de-ch': 'Zusätzlich', 'en-us': 'Additional' },
+	Entfernt: { 'de-ch': 'Entfernt', 'en-us': 'Removed' },
+	'Plan-Definition (global)': {
+		'de-ch': 'Plan-Definition (global)',
+		'en-us': 'Plan definition (global)'
+	},
+	'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.':
+		{
+			'de-ch':
+				'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.',
+			'en-us':
+				'Changes gating.json – after commit and merge it applies to all branches/customers, not just this project.'
+		},
+	'Mehrere Pläne': { 'de-ch': 'Mehrere Pläne', 'en-us': 'Multiple plans' },
+	ab: { 'de-ch': 'ab', 'en-us': 'from' },
+	'Plan-Definition speichern': {
+		'de-ch': 'Plan-Definition speichern',
+		'en-us': 'Save plan definition'
+	},
+	'aktives Feature mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktives Feature mit fehlenden Umgebungsvariablen',
+		'en-us': 'active feature with missing environment variables'
+	},
+	'aktive Features mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktive Features mit fehlenden Umgebungsvariablen',
+		'en-us': 'active features with missing environment variables'
+	},
+	'Details anzeigen': { 'de-ch': 'Details anzeigen', 'en-us': 'Show details' },
+	'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.':
+		{
+			'de-ch':
+				'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.',
+			'en-us':
+				'Required environment variables are not set for the following active features. The affected functions (e.g. email sending, database access) will not work.'
+		},
+	Setzen: { 'de-ch': 'Setzen', 'en-us': 'Set' },
+	'Lokal in der Datei': { 'de-ch': 'Lokal in der Datei', 'en-us': 'Locally in the file' },
+	'auf Netlify unter': { 'de-ch': 'auf Netlify unter', 'en-us': 'on Netlify under' },
+	'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.':
+		{
+			'de-ch':
+				'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.',
+			'en-us':
+				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
+		},
+	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' }
 };
 
 /**

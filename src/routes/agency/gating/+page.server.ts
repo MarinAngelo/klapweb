@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
@@ -92,7 +93,9 @@ export const load = ({ cookies }) => {
 		overrideFeatures: enabledFeatures,
 		adminSections,
 		adminSectionsDisabled,
-		missingEnv
+		missingEnv,
+		// gating.json is committed → only editable on the local dev server
+		canEditDefinition: dev
 	};
 };
 
@@ -178,6 +181,42 @@ export const actions = {
 		if (!planChanged && !overridesChanged) {
 			throw redirect(303, '/agency/gating');
 		}
+		try {
+			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
+		} catch (e) {
+			console.error('build-customtypes.js failed:', e);
+			throw error(500, 'Fehler beim Generieren der Modelle');
+		}
+
+		throw redirect(303, '/agency/gating');
+	},
+
+	// Global plan definition: minimum plan per feature in gating.json (affects all branches)
+	async savePlanDefinition({ request, cookies }) {
+		if (!isAuthenticated({ [AUTH_COOKIE]: cookies.get(AUTH_COOKIE) ?? '' })) {
+			throw error(403, 'Nicht authentifiziert');
+		}
+		if (!dev) throw error(403, 'Nur auf dem lokalen Dev-Server möglich');
+
+		const data = await request.formData();
+		const featurePlans: Record<string, string> = JSON.parse(
+			(data.get('feature_plans') as string) || '{}'
+		);
+
+		const gating = read(GATING_PATH);
+		let changed = false;
+		for (const [featureId, planKey] of Object.entries(featurePlans)) {
+			const feature = gating.features?.[featureId];
+			if (!feature || !gating.plans?.[planKey]) continue;
+			const current: string[] = feature.plans ?? [];
+			if (current.length === 1 && current[0] === planKey) continue;
+			feature.plans = [planKey];
+			changed = true;
+		}
+
+		if (!changed) throw redirect(303, '/agency/gating');
+
+		write(GATING_PATH, gating);
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
 		} catch (e) {
