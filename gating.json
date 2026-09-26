@@ -24,7 +24,7 @@
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
-			"plans": ["professional"],
+			"plans": ["individuell"],
 			"env": [
 				"NETLIFY_SITE_ID",
 				"NETLIFY_TOKEN",
@@ -72,7 +72,7 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
-			"plans": ["professional"]
+			"plans": ["individuell"]
 		},
 		"chatbot": {
 			"label": "Chat-Bot",
