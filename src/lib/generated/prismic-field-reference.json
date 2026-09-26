@@ -6036,6 +6036,18 @@
 		"type": "StructuredText"
 	},
 	{
+		"name": "Leistung",
+		"elementType": "Custom Type",
+		"customType": "leistung",
+		"customTypeLabel": "Leistung",
+		"tab": "Main",
+		"field": "detail_description",
+		"path": "leistung/Main/detail_description",
+		"label": "Detailbeschreibung",
+		"description": "Erfasst formatierten Text für Detailbeschreibung, zum Beispiel Absätze, Überschriften oder Links.",
+		"type": "StructuredText"
+	},
+	{
 		"name": "LinkListe",
 		"elementType": "Slice",
 		"customType": "LinkListe",
