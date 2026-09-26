@@ -29,7 +29,14 @@
 	}
 
 	// Overview of the whole gating.json
-	type ItemKind = 'customType' | 'customTypeField' | 'slice' | 'variation' | 'field' | 'overlay';
+	type ItemKind =
+		| 'customType'
+		| 'customTypeField'
+		| 'slice'
+		| 'variation'
+		| 'field'
+		| 'overlay'
+		| 'adminSection';
 	type GatingItem = {
 		kind: ItemKind;
 		target: string;
@@ -45,7 +52,8 @@
 		'overlay',
 		'slice',
 		'variation',
-		'field'
+		'field',
+		'adminSection'
 	];
 	const kindLabels: Record<ItemKind, string> = {
 		customType: 'Custom Types',
@@ -53,7 +61,8 @@
 		overlay: 'Tab-Overlays',
 		slice: 'Slices',
 		variation: 'Slice-Variationen',
-		field: 'Slice-Felder'
+		field: 'Slice-Felder',
+		adminSection: 'Admin-Bereiche'
 	};
 	const planOrder = Object.keys(planDefs);
 
@@ -154,13 +163,27 @@
 		}
 	}
 
-	function getAllAdminSections() {
-		if (!data.authenticated) return [];
-		return Object.entries(data.adminSections ?? {}).map(([id, s]: [string, any]) => ({
-			id,
-			label: s.label
-		}));
-	}
+	type AdminSectionDef = { label: string; plan?: string; feature?: string; features?: string[] };
+	const adminSectionDefs: Record<string, AdminSectionDef> = data.authenticated
+		? ((data.adminSections ?? {}) as Record<string, AdminSectionDef>)
+		: {};
+
+	// Plan/feature gate from gating.json, evaluated against the current (unsaved) selection
+	$: adminSectionList = Object.entries(adminSectionDefs).map(([id, def]) => ({
+		id,
+		label: def.label,
+		gateLabel: [
+			def.plan ? `${$_('ab')} ${planDefs[def.plan]?.label ?? def.plan}` : '',
+			def.feature ? (featureDefs[def.feature]?.label ?? def.feature) : '',
+			(def.features ?? []).map((f) => featureDefs[f]?.label ?? f).join(` ${$_('oder')} `)
+		]
+			.filter(Boolean)
+			.join(' + '),
+		gateActive:
+			(!def.plan || selectedPlanChain.includes(def.plan)) &&
+			(!def.feature || selectedFeatures.includes(def.feature)) &&
+			(!def.features?.length || def.features.some((f) => selectedFeatures.includes(f)))
+	}));
 
 	function handleSave(e: Event) {
 		const form = e.currentTarget as HTMLFormElement;
@@ -265,14 +288,20 @@
 				<div class="form-group">
 					<fieldset>
 						<legend>{$_('Admin-Bereiche')}</legend>
-						{#each getAllAdminSections() as { id, label }}
-							<label class="checkbox-label">
+						{#each adminSectionList as section}
+							<label class="checkbox-label" class:gate-inactive={!section.gateActive}>
 								<input
 									type="checkbox"
-									checked={!disabledSections.includes(id)}
-									on:change={() => toggleSection(id)}
+									checked={section.gateActive && !disabledSections.includes(section.id)}
+									disabled={!section.gateActive}
+									on:change={() => toggleSection(section.id)}
 								/>
-								<span>{label}</span>
+								<span>
+									{section.label}
+									{#if section.gateLabel}
+										<span class="badge" title={$_('Gate in gating.json')}>{section.gateLabel}</span>
+									{/if}
+								</span>
 							</label>
 						{/each}
 					</fieldset>
@@ -559,6 +588,11 @@
 
 	.checkbox-label input[type='checkbox'] {
 		cursor: pointer;
+	}
+
+	.checkbox-label.gate-inactive {
+		opacity: 0.45;
+		cursor: not-allowed;
 	}
 
 	.text-muted {

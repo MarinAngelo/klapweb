@@ -1005,6 +1005,8 @@ export const translations: Record<string, Record<string, string>> = {
 	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
 	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
 	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
+	'Gate in gating.json': { 'de-ch': 'Gate in gating.json', 'en-us': 'Gate in gating.json' },
+	oder: { 'de-ch': 'oder', 'en-us': 'or' },
 	'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.':
 		{
 			'de-ch':

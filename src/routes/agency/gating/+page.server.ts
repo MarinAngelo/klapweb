@@ -101,7 +101,14 @@ export const load = ({ cookies }) => {
 
 type Gate = { feature?: string; plan?: string };
 type GatingItem = {
-	kind: 'customType' | 'customTypeField' | 'slice' | 'variation' | 'field' | 'overlay';
+	kind:
+		| 'customType'
+		| 'customTypeField'
+		| 'slice'
+		| 'variation'
+		| 'field'
+		| 'overlay'
+		| 'adminSection';
 	target: string;
 	detail?: string;
 	gate: Gate;
@@ -135,6 +142,23 @@ function collectGatingItems(gating: any): GatingItem[] {
 			const fieldGate = gateOf(fieldDef);
 			if (fieldGate)
 				items.push({ kind: 'field', target: sliceName, detail: field, gate: fieldGate });
+		}
+	}
+
+	for (const [sectionId, def] of Object.entries<any>(gating.admin_sections ?? {})) {
+		const target = def.label ?? sectionId;
+		const gate = gateOf(def);
+		if (gate) items.push({ kind: 'adminSection', target, gate });
+		// OR gate: listed under each feature, marked as alternative
+		const alternatives: string[] = def.features ?? [];
+		for (const feature of alternatives) {
+			const others = alternatives.filter((f) => f !== feature);
+			items.push({
+				kind: 'adminSection',
+				target,
+				detail: others.length ? `oder ${others.join(', ')}` : undefined,
+				gate: { feature }
+			});
 		}
 	}
 
