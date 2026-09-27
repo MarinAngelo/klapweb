@@ -16,6 +16,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
+	import CookieBanner from '$lib/components/CookieBanner.svelte';
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
@@ -478,6 +479,7 @@
 </div>
 
 <PageUpButton />
+<CookieBanner {lang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />

@@ -4,7 +4,8 @@
 	import type { Content } from '@prismicio/client';
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
-	import { getLangBase } from '$lib/i18n/i18n'; // Wir nutzen den neuen Helper
+	import { getLegalHref } from '$lib/utils/legalHref';
+	import { consentSettingsOpen } from '$lib/stores/consent';
 
 	import Bounded from './Bounded.svelte';
 
@@ -24,19 +25,8 @@
 
 	// REAKTIVE LINK-GENERIERUNG
 	// Diese Logik prüft jetzt: "Welche Sprache bin ich?" statt "Bin ich Master?"
-	$: getStaticHref = (deSlug: string, enSlug: string) => {
-		if (!lang) return '/';
-
-		const currentBase = getLangBase(lang); // Liefert 'de' oder 'en'
-		const targetSlug = currentBase === 'en' ? enSlug : deSlug;
-
-		// Prefix Logik: Master (mainLang) bekommt keinen Prefix, alle anderen schon
-		const isDefault = lang === mainLang;
-		const prefix = isDefault ? '' : `/${lang}`;
-
-		const path = `${prefix}/${targetSlug}`.replace(/\/+$/, '');
-		return path || '/';
-	};
+	$: getStaticHref = (deSlug: string, enSlug: string) =>
+		getLegalHref(lang, mainLang, deSlug, enSlug);
 
 	$: ({ footerColor } = $theme);
 	$: footerMarginTop = $theme.noMarginTop ? '0' : '10rem';
@@ -178,6 +168,16 @@
 								{$_('Haftungsausschluss')}
 							</a>
 						{/if}
+
+						&nbsp;|&nbsp;
+						<button
+							type="button"
+							class="footer-link footer-consent-link hover:underline"
+							style="color: var(--footer-link-color);"
+							on:click={() => consentSettingsOpen.set(true)}
+						>
+							{$_('Cookie-Einstellungen')}
+						</button>
 					</p>
 
 					<p
@@ -254,5 +254,13 @@
 		pointer-events: none;
 		z-index: 1;
 		display: block;
+	}
+
+	.footer-consent-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
 	}
 </style>

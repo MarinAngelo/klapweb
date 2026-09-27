@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
+	import ConsentGate from '$lib/components/ConsentGate.svelte';
 
 	export let mapUrl: string | null | undefined = undefined;
 	export let mapHeight: number = 400;
@@ -58,30 +59,32 @@
 
 {#if embedUrl}
 	<div class="flex flex-col gap-3">
-		<div
-			class="relative overflow-hidden {!roundCorners
-				? ''
-				: mobileVollbreite
-					? '-mx-6 md:mx-0 md:rounded-3xl'
-					: 'rounded-3xl'}"
-		>
-			<iframe
-				src={embedUrl}
-				width="100%"
-				height={mapHeight}
-				style="border: 0; display: block; min-height: {mapHeight}px;"
-				allowfullscreen={true}
-				loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"
-				title="Google Maps"
-			></iframe>
-			{#if mapOpacity > 0}
-				<div
-					class="absolute inset-0"
-					style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
-				></div>
-			{/if}
-		</div>
+		<ConsentGate service="google_maps" minHeight={mapHeight}>
+			<div
+				class="relative overflow-hidden {!roundCorners
+					? ''
+					: mobileVollbreite
+						? '-mx-6 md:mx-0 md:rounded-3xl'
+						: 'rounded-3xl'}"
+			>
+				<iframe
+					src={embedUrl}
+					width="100%"
+					height={mapHeight}
+					style="border: 0; display: block; min-height: {mapHeight}px;"
+					allowfullscreen={true}
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+					title="Google Maps"
+				></iframe>
+				{#if mapOpacity > 0}
+					<div
+						class="absolute inset-0"
+						style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
+					></div>
+				{/if}
+			</div>
+		</ConsentGate>
 		{#if directionsUrl}
 			<a
 				href={directionsUrl}

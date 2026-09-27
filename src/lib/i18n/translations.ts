@@ -1032,7 +1032,171 @@ export const translations: Record<string, Record<string, string>> = {
 	'Tab-Overlays': { 'de-ch': 'Tab-Overlays', 'en-us': 'Tab overlays' },
 	Slices: { 'de-ch': 'Slices', 'en-us': 'Slices' },
 	'Slice-Variationen': { 'de-ch': 'Slice-Variationen', 'en-us': 'Slice variations' },
-	'Slice-Felder': { 'de-ch': 'Slice-Felder', 'en-us': 'Slice fields' }
+	'Slice-Felder': { 'de-ch': 'Slice-Felder', 'en-us': 'Slice fields' },
+	// Cookie consent
+	'Verwendete Cookies und Dienste': {
+		'de-ch': 'Verwendete Cookies und Dienste',
+		'en-us': 'Cookies and services used'
+	},
+	Zweck: { 'de-ch': 'Zweck', 'en-us': 'Purpose' },
+	'Cookies / Daten': { 'de-ch': 'Cookies / Daten', 'en-us': 'Cookies / data' },
+	'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen': {
+		'de-ch': 'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen',
+		'en-us': 'You can decline or re-allow non-functional services at any time'
+	},
+	'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.': {
+		'de-ch': 'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.',
+		'en-us': 'No services of this category are used on this page.'
+	},
+	'Cookie-Einstellungen': { 'de-ch': 'Cookie-Einstellungen', 'en-us': 'Cookie settings' },
+	'Cookie-Hinweis': { 'de-ch': 'Cookie-Hinweis', 'en-us': 'Cookie notice' },
+	'Cookies & externe Inhalte': {
+		'de-ch': 'Cookies & externe Inhalte',
+		'en-us': 'Cookies & external content'
+	},
+	'Diese Seite lädt Inhalte von Drittanbietern': {
+		'de-ch': 'Diese Seite lädt Inhalte von Drittanbietern',
+		'en-us': 'This page loads content from third parties'
+	},
+	'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.':
+		{
+			'de-ch':
+				'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.',
+			'en-us':
+				'This may set cookies and transmit data such as your IP address. You can decline this at any time.'
+		},
+	Ablehnen: { 'de-ch': 'Ablehnen', 'en-us': 'Decline' },
+	Einstellungen: { 'de-ch': 'Einstellungen', 'en-us': 'Settings' },
+	Einverstanden: { 'de-ch': 'Einverstanden', 'en-us': 'Accept' },
+	'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.':
+		{
+			'de-ch':
+				'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.',
+			'en-us':
+				'Here you can see which cookies and services this website uses. You can decline non-functional services.'
+		},
+	'Immer aktiv': { 'de-ch': 'Immer aktiv', 'en-us': 'Always active' },
+	'auf dieser Seite': { 'de-ch': 'auf dieser Seite', 'en-us': 'on this page' },
+	'Datenschutz des Anbieters': {
+		'de-ch': 'Datenschutz des Anbieters',
+		'en-us': "Provider's privacy policy"
+	},
+	'Alle ablehnen': { 'de-ch': 'Alle ablehnen', 'en-us': 'Decline all' },
+	'Auswahl speichern': { 'de-ch': 'Auswahl speichern', 'en-us': 'Save selection' },
+	'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.': {
+		'de-ch': 'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.',
+		'en-us': 'This content is not loaded because you declined external content.'
+	},
+	'Beim Laden werden Daten an folgenden Anbieter übertragen': {
+		'de-ch': 'Beim Laden werden Daten an folgenden Anbieter übertragen',
+		'en-us': 'Loading it transmits data to the following provider'
+	},
+	'Einmal laden': { 'de-ch': 'Einmal laden', 'en-us': 'Load once' },
+	'Immer erlauben': { 'de-ch': 'Immer erlauben', 'en-us': 'Always allow' },
+	Funktional: { 'de-ch': 'Funktional', 'en-us': 'Functional' },
+	'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.':
+		{
+			'de-ch':
+				'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.',
+			'en-us':
+				'Required for the website to work (e.g. login, protected pages, your cookie choice). Cannot be disabled.'
+		},
+	'Externe Inhalte': { 'de-ch': 'Externe Inhalte', 'en-us': 'External content' },
+	'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.':
+		{
+			'de-ch':
+				'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.',
+			'en-us':
+				'Maps, videos and other embedded third-party content. These may set cookies and receive your IP address.'
+		},
+	Statistik: { 'de-ch': 'Statistik', 'en-us': 'Statistics' },
+	'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.': {
+		'de-ch': 'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.',
+		'en-us': 'Anonymous or pseudonymous analysis of how this website is used.'
+	},
+	Marketing: { 'de-ch': 'Marketing', 'en-us': 'Marketing' },
+	'Werbung und Wiedererkennung über verschiedene Websites hinweg.': {
+		'de-ch': 'Werbung und Wiedererkennung über verschiedene Websites hinweg.',
+		'en-us': 'Advertising and recognition across different websites.'
+	},
+	Benutzerkonto: { 'de-ch': 'Benutzerkonto', 'en-us': 'User account' },
+	'Website-Betreiber': { 'de-ch': 'Website-Betreiber', 'en-us': 'Website operator' },
+	'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.': {
+		'de-ch': 'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.',
+		'en-us': 'Keeps you signed in to your user account.'
+	},
+	'klap_user_session (Cookie)': {
+		'de-ch': 'klap_user_session (Cookie)',
+		'en-us': 'klap_user_session (cookie)'
+	},
+	'Passwortgeschützte Seiten': {
+		'de-ch': 'Passwortgeschützte Seiten',
+		'en-us': 'Password-protected pages'
+	},
+	'Merkt sich die Freigabe passwortgeschützter Seiten.': {
+		'de-ch': 'Merkt sich die Freigabe passwortgeschützter Seiten.',
+		'en-us': 'Remembers access to password-protected pages.'
+	},
+	'klap_auth (Cookie)': { 'de-ch': 'klap_auth (Cookie)', 'en-us': 'klap_auth (cookie)' },
+	'Cookie-Auswahl': { 'de-ch': 'Cookie-Auswahl', 'en-us': 'Cookie choice' },
+	'Speichert Ihre Auswahl in diesem Cookie-Dialog.': {
+		'de-ch': 'Speichert Ihre Auswahl in diesem Cookie-Dialog.',
+		'en-us': 'Stores your choice in this cookie dialog.'
+	},
+	'klap_consent (Local Storage)': {
+		'de-ch': 'klap_consent (Local Storage)',
+		'en-us': 'klap_consent (local storage)'
+	},
+	'Anzeige interaktiver Karten.': {
+		'de-ch': 'Anzeige interaktiver Karten.',
+		'en-us': 'Display of interactive maps.'
+	},
+	'Google-Cookies (z.B. NID)': {
+		'de-ch': 'Google-Cookies (z.B. NID)',
+		'en-us': 'Google cookies (e.g. NID)'
+	},
+	'Übertragung der IP-Adresse an Google': {
+		'de-ch': 'Übertragung der IP-Adresse an Google',
+		'en-us': 'Transmission of your IP address to Google'
+	},
+	'Wiedergabe eingebetteter Videos.': {
+		'de-ch': 'Wiedergabe eingebetteter Videos.',
+		'en-us': 'Playback of embedded videos.'
+	},
+	'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)': {
+		'de-ch': 'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)',
+		'en-us': 'YouTube cookies (e.g. VISITOR_INFO1_LIVE, YSC)'
+	},
+	'Vimeo-Cookies (z.B. vuid)': {
+		'de-ch': 'Vimeo-Cookies (z.B. vuid)',
+		'en-us': 'Vimeo cookies (e.g. vuid)'
+	},
+	'Übertragung der IP-Adresse an Vimeo': {
+		'de-ch': 'Übertragung der IP-Adresse an Vimeo',
+		'en-us': 'Transmission of your IP address to Vimeo'
+	},
+	'Eingebetteter Inhalt': { 'de-ch': 'Eingebetteter Inhalt', 'en-us': 'Embedded content' },
+	Drittanbieter: { 'de-ch': 'Drittanbieter', 'en-us': 'Third party' },
+	'Anzeige von Inhalten, die von einer externen Website geladen werden.': {
+		'de-ch': 'Anzeige von Inhalten, die von einer externen Website geladen werden.',
+		'en-us': 'Display of content loaded from an external website.'
+	},
+	'Cookies des Anbieters möglich': {
+		'de-ch': 'Cookies des Anbieters möglich',
+		'en-us': 'Provider cookies possible'
+	},
+	'Übertragung der IP-Adresse an den Anbieter': {
+		'de-ch': 'Übertragung der IP-Adresse an den Anbieter',
+		'en-us': 'Transmission of your IP address to the provider'
+	},
+	'Google Maps': { 'de-ch': 'Google Maps', 'en-us': 'Google Maps' },
+	YouTube: { 'de-ch': 'YouTube', 'en-us': 'YouTube' },
+	Vimeo: { 'de-ch': 'Vimeo', 'en-us': 'Vimeo' },
+	'Google Ireland Ltd. / Google LLC': {
+		'de-ch': 'Google Ireland Ltd. / Google LLC',
+		'en-us': 'Google Ireland Ltd. / Google LLC'
+	},
+	'Vimeo.com Inc.': { 'de-ch': 'Vimeo.com Inc.', 'en-us': 'Vimeo.com Inc.' }
 };
 
 /**
