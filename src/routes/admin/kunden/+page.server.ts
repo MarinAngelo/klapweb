@@ -3,6 +3,7 @@ import { error, fail } from '@sveltejs/kit';
 import { listCustomers, deleteCustomer, saveCustomer, updateCustomer } from '$lib/server/customers';
 import { env } from '$env/dynamic/private';
 import { createClient } from '$lib/prismicio';
+import { FEATURE_KUNDENVERWALTUNG } from '$lib/server/features';
 
 type Language = { id: string; name: string };
 
@@ -22,6 +23,7 @@ async function loadLanguages(fetch: typeof globalThis.fetch): Promise<Language[]
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ url, fetch }) => {
+	if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
 	const secret = env.ADMIN_SECRET;
 	const provided = url.searchParams.get('secret');
 
@@ -43,6 +45,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 
 export const actions: Actions = {
 	create: async ({ request, url, fetch }) => {
+		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
 		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
@@ -78,6 +81,7 @@ export const actions: Actions = {
 	},
 
 	setLang: async ({ request, url, fetch }) => {
+		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
 		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
@@ -100,6 +104,7 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ request, url }) => {
+		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
 		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
@@ -112,6 +117,7 @@ export const actions: Actions = {
 	},
 
 	deleteAll: async ({ url }) => {
+		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
 		const secret = env.ADMIN_SECRET;
 		const provided = url.searchParams.get('secret');
 		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');

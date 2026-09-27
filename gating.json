@@ -94,6 +94,11 @@
 			"label": "Kundenkonto",
 			"plans": ["professional"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+		},
+		"kundenverwaltung": {
+			"label": "Kundenverwaltung",
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		}
 	},
 	"customTypes": {
@@ -276,7 +281,7 @@
 		},
 		"kunden": {
 			"label": "Kunden",
-			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+			"feature": "kundenverwaltung"
 		},
 		"buchungen": {
 			"label": "Terminverwaltung",

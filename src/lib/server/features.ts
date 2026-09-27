@@ -21,6 +21,7 @@ export const FEATURE_TERMINBUCHUNG = _check('terminbuchung');
 export const FEATURE_ECOMMERCE = _check('ecommerce');
 export const FEATURE_NEWSLETTER = _check('newsletter');
 export const FEATURE_KUNDENKONTO = _check('kundenkonto');
+export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };
 type FeatureOverrides = { enabled?: string[]; disabled?: string[] };

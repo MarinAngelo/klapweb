@@ -274,6 +274,9 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 
 ### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
 
+- Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
+- Feld `lang` (Prismic-Locale, z.B. `de-ch`): Dropdown mit den Sprachen aus dem Prismic-Repository
+
 **Datenstruktur:** Kunden aus Netlify Blobs, mit:
 
 - `date`, `vorname`, `nachname`, `firma`, `email`, `adresse`, `plz`, `ort`, `land`
