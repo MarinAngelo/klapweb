@@ -25,10 +25,24 @@
  *   page.json / settings.json  → Tab-Overlays für Custom Types (Inhalt bleibt dort)
  *   customtypes/<type>/index.json → Feature-eigene Custom Types
  *
+ * Plan-Dateien in customtypes/_plans/<plan>/customtypes/<type>/index.json:
+ *   Quelle für Custom Types mit Plan-Gate (gating.json customTypes.<type>.plan)
+ *
+ * customtypes/<type>/index.json von Feature-/Plan-Typen ist nur eine generierte Kopie
+ * (gitignored) und wird bei inaktivem Gate gelöscht.
+ *
  * slicemachine.config.json: "plan" wählt den aktiven Plan.
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'fs';
+import {
+	readFileSync,
+	writeFileSync,
+	existsSync,
+	readdirSync,
+	mkdirSync,
+	rmSync,
+	statSync
+} from 'fs';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -52,6 +66,33 @@ function writeIfChanged(path, data) {
 	}
 	mkdirSync(dirname(fullPath), { recursive: true });
 	writeFileSync(fullPath, newContent);
+}
+
+/**
+ * Copies a custom type source file to its generated location customtypes/<type>/index.json.
+ * If the generated file was edited afterwards (e.g. in the Slice Machine UI), it is NOT
+ * overwritten — those edits would otherwise be lost silently. Copy them into the source instead.
+ */
+function copyCustomType(srcPath, typeId, label) {
+	const targetPath = `customtypes/${typeId}/index.json`;
+	const srcFull = join(ROOT, srcPath);
+	const targetFull = join(ROOT, targetPath);
+	const srcContent = JSON.stringify(JSON.parse(readFileSync(srcFull, 'utf-8')), null, '\t') + '\n';
+	if (existsSync(targetFull)) {
+		const targetContent = readFileSync(targetFull, 'utf-8');
+		if (targetContent === srcContent) {
+			console.log(`✓ ${targetPath} (${label})`);
+			return;
+		}
+		if (statSync(targetFull).mtimeMs > statSync(srcFull).mtimeMs) {
+			console.warn(`⚠ ${targetPath} wurde geändert (Slice Machine?) und ist neuer als die Quelle.`);
+			console.warn(`  Nicht überschrieben. Änderungen übernehmen: cp ${targetPath} ${srcPath}`);
+			return;
+		}
+	}
+	mkdirSync(dirname(targetFull), { recursive: true });
+	writeFileSync(targetFull, srcContent);
+	console.log(`✓ ${targetPath} (${label})`);
 }
 
 const config = read('slicemachine.config.json');
@@ -544,27 +585,27 @@ for (const feature of allFeatures) {
 		.map((d) => d.name);
 
 	for (const typeName of typeNames) {
-		const src = join(ctDir, typeName, 'index.json');
-		if (!existsSync(src)) continue;
-		const def = JSON.parse(readFileSync(src, 'utf-8'));
-		write(`customtypes/${typeName}/index.json`, def);
-		console.log(`✓ customtypes/${typeName}/index.json (feature: ${feature})`);
+		const srcPath = `customtypes/_features/${feature}/customtypes/${typeName}/index.json`;
+		if (!existsSync(join(ROOT, srcPath))) continue;
+		copyCustomType(srcPath, typeName, `feature: ${feature}`);
 	}
 }
 
-// ── 4b. Plan-basierte Custom Types (direkt in customtypes/, ohne Feature) ──────
+// ── 4b. Plan-basierte Custom Types ───────────────────────────────────────────────
+// Quelle: customtypes/_plans/<plan>/customtypes/<type>/index.json (versioniert).
+// customtypes/<type>/index.json ist nur die generierte Kopie (gitignored) — Schritt 5
+// darf sie löschen, ohne dass die Quelle verloren geht.
 
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
-	if (gate.feature) continue; // Feature-basierte werden oben behandelt
+	if (gate.feature || !gate.plan) continue; // Feature-basierte oben; settings (nur Feld-Gates) nicht betroffen
 	if (!isActive(gate)) continue;
 
-	const src = join(ROOT, `customtypes/${typeId}/index.json`);
-	if (!existsSync(src)) {
-		console.warn(`⚠ customtypes/${typeId}/index.json fehlt (plan: ${gate.plan})`);
+	const srcPath = `customtypes/_plans/${gate.plan}/customtypes/${typeId}/index.json`;
+	if (!existsSync(join(ROOT, srcPath))) {
+		console.warn(`⚠ ${srcPath} fehlt (plan: ${gate.plan})`);
 		continue;
 	}
-
-	console.log(`✓ customtypes/${typeId}/index.json (plan: ${gate.plan})`);
+	copyCustomType(srcPath, typeId, `plan: ${gate.plan}`);
 }
 
 console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
@@ -585,9 +626,10 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 // ── Pre-Build-Check: Existenz aller aktiven Custom-Type-Basisdateien ─────────────
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	if (!isActive(gate)) continue;
-	if (!gate.feature) continue; // managedTypes (page/settings) ohne feature-Gate überspringen
-	// Feature-Ordner-Pfad
-	let basePath = `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`;
+	if (!gate.feature && !gate.plan) continue; // managedTypes (page/settings) ohne Gate überspringen
+	const basePath = gate.feature
+		? `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`
+		: `customtypes/_plans/${gate.plan}/customtypes/${typeId}/index.json`;
 	if (!existsSync(join(ROOT, basePath))) {
 		console.error(`❌ FEHLER: Basisdatei für aktiven Custom Type "${typeId}" fehlt: ${basePath}`);
 		process.exit(1);
