@@ -138,15 +138,20 @@ Konkrete Regeln:
 
 ### Übersicht
 
-| Datei                          | Zweck                                                        | Committed |
-| ------------------------------ | ------------------------------------------------------------ | --------- |
-| `gating.json`                  | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln | Ja        |
-| `slicemachine.config.json`     | Wählt den aktiven Plan (`"plan": "starter"`)                 | Ja        |
-| `scripts/build-customtypes.js` | Liest `gating.json` + `base.json` → generiert Output         | Ja        |
-| `src/lib/slices/*/base.json`   | Slice-Quelldatei (kein `_meta` mehr nötig)                   | Ja        |
-| `src/lib/slices/*/full.json`   | Slice mit Extra-Variationen (für Features)                   | Ja        |
-| `src/lib/slices/*/model.json`  | Generiert — gitignored                                       | Nein      |
-| `customtypes/*/index.json`     | Generiert — gitignored                                       | Nein      |
+| Datei                                                           | Zweck                                                           | Committed |
+| --------------------------------------------------------------- | --------------------------------------------------------------- | --------- |
+| `gating.json`                                                   | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln    | Ja        |
+| `slicemachine.config.json`                                      | Wählt den aktiven Plan (`"plan": "starter"`)                    | Ja        |
+| `scripts/build-customtypes.js`                                  | Liest `gating.json` + `base.json` → generiert Output            | Ja        |
+| `src/lib/slices/*/base.json`                                    | Slice-Quelldatei (kein `_meta` mehr nötig)                      | Ja        |
+| `src/lib/slices/*/full.json`                                    | Slice mit Extra-Variationen (für Features)                      | Ja        |
+| `src/lib/slices/*/model.json`                                   | Generiert — gitignored                                          | Nein      |
+| `customtypes/*/index.json`                                      | Generiert — gitignored                                          | Nein      |
+| `customtypes/_features/{feature}/customtypes/{type}/index.json` | Quelle für Custom Types mit Feature-Gate                        | Ja        |
+| `customtypes/_plans/{plan}/customtypes/{type}/index.json`       | Quelle für Custom Types mit Plan-Gate (z.B. `ort`)              | Ja        |
+| `src/lib/generated/prismic-field-reference.json`                | Generiert (planabhängig, auch bei `npm run build`) — gitignored | Nein      |
+
+**Gated Custom Types:** `customtypes/{type}/index.json` ist nur eine Kopie der Quelle in `_features/` bzw. `_plans/` und wird bei inaktivem Gate gelöscht. Änderungen in der Slice Machine UI landen in der Kopie → das Script überschreibt sie nicht, sondern warnt mit dem `cp`-Befehl, um sie in die Quelle zu übernehmen. Neuer Custom Type mit Plan-Gate: Quelle unter `_plans/{plan}/…` anlegen + Pfad in `.gitignore` ergänzen.
 
 ### gating.json — Struktur
 
