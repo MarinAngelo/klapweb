@@ -78,6 +78,17 @@
 			"label": "Chat-Bot",
 			"plans": ["klap-web-ch"],
 			"env": ["ANTHROPIC_API_KEY"]
+		},
+		"newsletter": {
+			"label": "Newsletter",
+			"plans": ["professional"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		}
 	},
 	"customTypes": {
@@ -144,6 +155,9 @@
 					"feature": "chatbot"
 				}
 			}
+		},
+		"newsletter": {
+			"feature": "newsletter"
 		}
 	},
 	"slices": {
@@ -271,6 +285,10 @@
 		"event-anmeldungen": {
 			"label": "Event Anmeldungen",
 			"feature": "global_events"
+		},
+		"newsletter": {
+			"label": "Newsletter",
+			"feature": "newsletter"
 		}
 	}
 }

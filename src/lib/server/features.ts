@@ -19,6 +19,7 @@ export const FEATURE_CHATBOT = _check('chatbot');
 export const FEATURE_KLAPSTUDIO = _check('klapstudio');
 export const FEATURE_TERMINBUCHUNG = _check('terminbuchung');
 export const FEATURE_ECOMMERCE = _check('ecommerce');
+export const FEATURE_NEWSLETTER = _check('newsletter');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };
 type FeatureOverrides = { enabled?: string[]; disabled?: string[] };

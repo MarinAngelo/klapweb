@@ -25,6 +25,7 @@ customtypes/aufgabe/index.json
 customtypes/event/index.json
 customtypes/werkzeug/index.json
 customtypes/ort/index.json
+customtypes/newsletter/index.json
 src/lib/slices/*/model.json
 src/lib/config/icon-labels.ts
 src/lib/generated/prismic-field-reference.json

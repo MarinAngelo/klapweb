@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
@@ -49,6 +50,13 @@
 			icon: '🎟️'
 		},
 		{
+			id: 'newsletter',
+			title: 'Newsletter',
+			description: 'Info-Mails aus Prismic an alle Kunden senden',
+			href: `/admin/newsletter?secret=${s}`,
+			icon: '✉️'
+		},
+		{
 			id: 'seiten',
 			title: 'Passwortgeschützte Seiten',
 			description: 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',
@@ -60,11 +68,11 @@
 	$: sections = allSections.filter((s) => !data.disabledSections.includes(s.id));
 </script>
 
-<svelte:head><title>Admin Dashboard</title></svelte:head>
+<svelte:head><title>{$_('Admin Dashboard')}</title></svelte:head>
 
 <div style="font-family: sans-serif; min-height: 100vh; background: #f9fafb; padding: 3rem 1.5rem;">
 	<div style="max-width: 600px; margin: 0 auto;">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 2rem;">Dashboard</h1>
+		<h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 2rem;">{$_('Dashboard')}</h1>
 
 		<div style="display: grid; gap: 1rem;">
 			{#each sections as section}
@@ -76,9 +84,9 @@
 				>
 					<span style="font-size: 1.75rem; line-height: 1;">{section.icon}</span>
 					<div>
-						<div style="font-weight: 600; font-size: 1rem;">{section.title}</div>
+						<div style="font-weight: 600; font-size: 1rem;">{$_(section.title)}</div>
 						<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem;">
-							{section.description}
+							{$_(section.description)}
 						</div>
 					</div>
 					<SvgIcons name="right" size="1.25rem" color="#9ca3af" />

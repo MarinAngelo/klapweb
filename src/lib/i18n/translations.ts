@@ -1246,7 +1246,198 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Google Ireland Ltd. / Google LLC',
 		'en-us': 'Google Ireland Ltd. / Google LLC'
 	},
-	'Vimeo.com Inc.': { 'de-ch': 'Vimeo.com Inc.', 'en-us': 'Vimeo.com Inc.' }
+	'Vimeo.com Inc.': { 'de-ch': 'Vimeo.com Inc.', 'en-us': 'Vimeo.com Inc.' },
+	// Newsletter / Admin-Dashboard
+	'Zurück zum Dashboard': { 'de-ch': 'Zurück zum Dashboard', 'en-us': 'Back to dashboard' },
+	Newsletter: { 'de-ch': 'Newsletter', 'en-us': 'Newsletter' },
+	'Info-Mails an alle Kunden senden. Die Mails verfassen Sie in Prismic (Typ „Newsletter“) und veröffentlichen sie dort – danach erscheinen sie hier.':
+		{
+			'de-ch':
+				'Info-Mails an alle Kunden senden. Die Mails verfassen Sie in Prismic (Typ „Newsletter“) und veröffentlichen sie dort – danach erscheinen sie hier.',
+			'en-us':
+				'Send info mails to all customers. Write them in Prismic (type “Newsletter”) and publish them there – they will then appear here.'
+		},
+	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.': {
+		'de-ch': 'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.',
+		'en-us': 'Email sending not configured: RESEND_API_KEY and EMAIL_FROM_ADDRESS are missing.'
+	},
+	'Test-Mail gesendet an': { 'de-ch': 'Test-Mail gesendet an', 'en-us': 'Test mail sent to' },
+	'Info-Mail gesendet an': { 'de-ch': 'Info-Mail gesendet an', 'en-us': 'Info mail sent to' },
+	Empfänger: { 'de-ch': 'Empfänger', 'en-us': 'recipients' },
+	Abgemeldet: { 'de-ch': 'Abgemeldet', 'en-us': 'Unsubscribed' },
+	Versände: { 'de-ch': 'Versände', 'en-us': 'Sends' },
+	'Noch keine veröffentlichten Newsletter. Legen Sie in Prismic ein Dokument vom Typ „Newsletter“ an und veröffentlichen Sie es.':
+		{
+			'de-ch':
+				'Noch keine veröffentlichten Newsletter. Legen Sie in Prismic ein Dokument vom Typ „Newsletter“ an und veröffentlichen Sie es.',
+			'en-us':
+				'No published newsletters yet. Create a document of type “Newsletter” in Prismic and publish it.'
+		},
+	'Newsletter wählen': { 'de-ch': 'Newsletter wählen', 'en-us': 'Choose newsletter' },
+	'Vorschau öffnen': { 'de-ch': 'Vorschau öffnen', 'en-us': 'Open preview' },
+	'Dieser Newsletter wurde bereits versendet': {
+		'de-ch': 'Dieser Newsletter wurde bereits versendet',
+		'en-us': 'This newsletter has already been sent'
+	},
+	'1. Test-Mail an mich': { 'de-ch': '1. Test-Mail an mich', 'en-us': '1. Test mail to me' },
+	'Test-Adresse': { 'de-ch': 'Test-Adresse', 'en-us': 'Test address' },
+	'Wird gesendet …': { 'de-ch': 'Wird gesendet …', 'en-us': 'Sending …' },
+	'Test senden': { 'de-ch': 'Test senden', 'en-us': 'Send test' },
+	'2. An alle Kunden senden': {
+		'de-ch': '2. An alle Kunden senden',
+		'en-us': '2. Send to all customers'
+	},
+	'Ich möchte diesen Newsletter jetzt an': {
+		'de-ch': 'Ich möchte diesen Newsletter jetzt an',
+		'en-us': 'I want to send this newsletter to'
+	},
+	'senden.': { 'de-ch': 'senden.', 'en-us': 'now.' },
+	'Jetzt senden': { 'de-ch': 'Jetzt senden', 'en-us': 'Send now' },
+	Verlauf: { 'de-ch': 'Verlauf', 'en-us': 'History' },
+	Datum: { 'de-ch': 'Datum', 'en-us': 'Date' },
+	Betreff: { 'de-ch': 'Betreff', 'en-us': 'Subject' },
+	Fehler: { 'de-ch': 'Fehler', 'en-us': 'Errors' },
+	'Jede Mail enthält Ihre Absender-Angaben und einen Abmelde-Link. Abgemeldete Adressen werden automatisch ausgeschlossen.':
+		{
+			'de-ch':
+				'Jede Mail enthält Ihre Absender-Angaben und einen Abmelde-Link. Abgemeldete Adressen werden automatisch ausgeschlossen.',
+			'en-us':
+				'Every mail contains your sender details and an unsubscribe link. Unsubscribed addresses are excluded automatically.'
+		},
+	'Admin Dashboard': { 'de-ch': 'Admin Dashboard', 'en-us': 'Admin dashboard' },
+	Dashboard: { 'de-ch': 'Dashboard', 'en-us': 'Dashboard' },
+	Rechnungen: { 'de-ch': 'Rechnungen', 'en-us': 'Invoices' },
+	'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)': {
+		'de-ch': 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
+		'en-us': 'Create, edit and send invoices (e-commerce + manual)'
+	},
+	Kunden: { 'de-ch': 'Kunden', 'en-us': 'Customers' },
+	'Bestellungen und Kundendaten einsehen, neue Kunden erfassen': {
+		'de-ch': 'Bestellungen und Kundendaten einsehen, neue Kunden erfassen',
+		'en-us': 'View orders and customer data, add new customers'
+	},
+	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Buchungen anzeigen, löschen, Termine sperren': {
+		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
+		'en-us': 'View and delete bookings, block time slots'
+	},
+	'Ressource-Buchungen': { 'de-ch': 'Ressource-Buchungen', 'en-us': 'Resource bookings' },
+	'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen': {
+		'de-ch': 'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen',
+		'en-us': 'Holiday homes, rooms etc. — view and delete bookings'
+	},
+	'Angenommene Aufgaben bestätigen und als erledigt markieren': {
+		'de-ch': 'Angenommene Aufgaben bestätigen und als erledigt markieren',
+		'en-us': 'Confirm accepted tasks and mark them as done'
+	},
+	'Event Anmeldungen': { 'de-ch': 'Event Anmeldungen', 'en-us': 'Event registrations' },
+	'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event': {
+		'de-ch': 'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event',
+		'en-us': 'View registrations from event checkouts, grouped by event'
+	},
+	'Info-Mails aus Prismic an alle Kunden senden': {
+		'de-ch': 'Info-Mails aus Prismic an alle Kunden senden',
+		'en-us': 'Send info mails from Prismic to all customers'
+	},
+	'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen': {
+		'de-ch': 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',
+		'en-us': 'Show all protected pages and open them without password'
+	},
+	'Info-Mails abbestellen': {
+		'de-ch': 'Info-Mails abbestellen',
+		'en-us': 'Unsubscribe from info mails'
+	},
+	'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.': {
+		'de-ch': 'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.',
+		'en-us': 'You have been unsubscribed and will not receive any further info mails.'
+	},
+	'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.': {
+		'de-ch': 'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.',
+		'en-us': 'This unsubscribe link is invalid. Please use the link from the email.'
+	},
+	'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?': {
+		'de-ch': 'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?',
+		'en-us': 'Do you want to stop receiving info mails at this email address?'
+	},
+	'Web-Ansicht der Info-Mail – Platzhalter mit Beispiel-Empfänger': {
+		'de-ch': 'Web-Ansicht der Info-Mail – Platzhalter mit Beispiel-Empfänger',
+		'en-us': 'Web view of the info mail – placeholders filled with an example recipient'
+	},
+	'Sie erhalten diese E-Mail als Kundin oder Kunde von': {
+		'de-ch': 'Sie erhalten diese E-Mail als Kundin oder Kunde von',
+		'en-us': 'You are receiving this email as a customer of'
+	},
+	'Keine weiteren Info-Mails erhalten': {
+		'de-ch': 'Keine weiteren Info-Mails erhalten',
+		'en-us': 'Unsubscribe from info mails'
+	},
+	'Ungültiger Abmelde-Link': {
+		'de-ch': 'Ungültiger Abmelde-Link',
+		'en-us': 'Invalid unsubscribe link'
+	},
+	'Die Abmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Abmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'Unsubscribing failed. Please try again later.'
+	},
+	'Newsletter und Test-Adresse angeben': {
+		'de-ch': 'Newsletter und Test-Adresse angeben',
+		'en-us': 'Specify newsletter and test address'
+	},
+	'Newsletter nicht gefunden': {
+		'de-ch': 'Newsletter nicht gefunden',
+		'en-us': 'Newsletter not found'
+	},
+	'Bitte den Versand bestätigen': {
+		'de-ch': 'Bitte den Versand bestätigen',
+		'en-us': 'Please confirm sending'
+	},
+	'Keine Empfänger vorhanden': {
+		'de-ch': 'Keine Empfänger vorhanden',
+		'en-us': 'No recipients available'
+	},
+	'2. An ausgewählte Kunden senden': {
+		'de-ch': '2. An ausgewählte Kunden senden',
+		'en-us': '2. Send to selected customers'
+	},
+	'3. An alle Kunden senden': {
+		'de-ch': '3. An alle Kunden senden',
+		'en-us': '3. Send to all customers'
+	},
+	'Kunden suchen …': { 'de-ch': 'Kunden suchen …', 'en-us': 'Search customers …' },
+	'Alle auswählen': { 'de-ch': 'Alle auswählen', 'en-us': 'Select all' },
+	'Keine Kunden gefunden': { 'de-ch': 'Keine Kunden gefunden', 'en-us': 'No customers found' },
+	'ausgewählte Empfänger': { 'de-ch': 'ausgewählte Empfänger', 'en-us': 'selected recipients' },
+	'An Auswahl senden': { 'de-ch': 'An Auswahl senden', 'en-us': 'Send to selection' },
+	'Versand an': { 'de-ch': 'Versand an', 'en-us': 'Sent to' },
+	Auswahl: { 'de-ch': 'Auswahl', 'en-us': 'Selection' },
+	'Bitte mindestens einen Kunden auswählen': {
+		'de-ch': 'Bitte mindestens einen Kunden auswählen',
+		'en-us': 'Please select at least one customer'
+	},
+	// Admin: Kunden
+	'wirklich löschen?': { 'de-ch': 'wirklich löschen?', 'en-us': 'really delete?' },
+	'Kunde erfasst': { 'de-ch': 'Kunde erfasst', 'en-us': 'Customer added' },
+	'Fehler beim Erfassen': { 'de-ch': 'Fehler beim Erfassen', 'en-us': 'Error while adding' },
+	'Unbekannter Fehler': { 'de-ch': 'Unbekannter Fehler', 'en-us': 'Unknown error' },
+	'Server-Fehler': { 'de-ch': 'Server-Fehler', 'en-us': 'Server error' },
+	'Sprache konnte nicht gespeichert werden': {
+		'de-ch': 'Sprache konnte nicht gespeichert werden',
+		'en-us': 'Language could not be saved'
+	},
+	Kundenliste: { 'de-ch': 'Kundenliste', 'en-us': 'Customer list' },
+	'Alle Kunden löschen?': { 'de-ch': 'Alle Kunden löschen?', 'en-us': 'Delete all customers?' },
+	'Alle löschen': { 'de-ch': 'Alle löschen', 'en-us': 'Delete all' },
+	'Formular schliessen': { 'de-ch': 'Formular schliessen', 'en-us': 'Close form' },
+	'Neuer Kunde': { 'de-ch': 'Neuer Kunde', 'en-us': 'New customer' },
+	'Wird gespeichert …': { 'de-ch': 'Wird gespeichert …', 'en-us': 'Saving …' },
+	'Noch keine Einträge.': { 'de-ch': 'Noch keine Einträge.', 'en-us': 'No entries yet.' },
+	Löschen: { 'de-ch': 'Löschen', 'en-us': 'Delete' },
+	Quelle: { 'de-ch': 'Quelle', 'en-us': 'Source' },
+	'Manuell erfasst': { 'de-ch': 'Manuell erfasst', 'en-us': 'Added manually' },
+	Terminbuchung: { 'de-ch': 'Terminbuchung', 'en-us': 'Appointment booking' },
+	'E-Commerce': { 'de-ch': 'E-Commerce', 'en-us': 'E-commerce' },
+	'Kunde fehlt': { 'de-ch': 'Kunde fehlt', 'en-us': 'Customer missing' },
+	'Unbekannte Sprache': { 'de-ch': 'Unbekannte Sprache', 'en-us': 'Unknown language' }
 };
 
 /**
