@@ -38,8 +38,9 @@ async function getRepoInfo(client: ReturnType<typeof createClient>) {
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url, locals }) {
-	// Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
-	if (url.pathname.startsWith('/preview/')) {
+	// Slice-Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
+	// (/preview/… ist dagegen die Prismic-Vorschau und braucht alle Daten)
+	if (url.pathname.startsWith('/slice-preview/')) {
 		return {};
 	}
 
@@ -50,7 +51,9 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const { mainLang, allLocales } = await getRepoInfo(client);
 
 		// 2. Sprach-Ermittlung der aktuellen Route
+		// Prismic-Vorschau (/preview/…): Präfix für die Sprach-Ermittlung ignorieren
 		const segments = url.pathname.split('/').filter(Boolean);
+		if (segments[0] === 'preview') segments.shift();
 		const firstSegment = segments[0];
 		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
 
