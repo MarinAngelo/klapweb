@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import ConsentGate from '$lib/components/ConsentGate.svelte';
+	import { getMapProvider, resolveMapUrl, type MapProvider } from '$lib/utils/mapUrl';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -27,45 +28,20 @@
 	const mapOpacity = convertNumber(p.opacity ?? 100);
 
 	let embedUrl = '';
-	let resolvedUrl = '';
+	let directionsUrl = '';
+	let provider: MapProvider = 'google_maps';
 
-	function toDirectionsUrl(resolved: string): string {
-		if (!resolved) return '';
-		// Ortsname aus URL-Pfad (genauer als Koordinaten)
-		const placeMatch = resolved.match(/\/maps\/place\/([^/@?]+)/);
-		if (placeMatch) {
-			const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-			return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place)}`;
-		}
-		// Koordinaten aus URL
-		const coordMatch = resolved.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-		if (coordMatch) {
-			return `https://www.google.com/maps/dir/?api=1&destination=${coordMatch[1]},${coordMatch[2]}`;
-		}
-		// Fallback: q-Parameter
-		try {
-			const q = new URL(resolved).searchParams.get('q');
-			if (q) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
-		} catch {}
-		return '';
-	}
-
-	$: directionsUrl = resolvedUrl ? toDirectionsUrl(resolvedUrl) : '';
+	$: mapTitle = provider === 'openstreetmap' ? 'OpenStreetMap' : 'Google Maps';
 
 	onMount(async () => {
 		if (!p.map_url) return;
-		// Sofort auf Client setzen, damit der iframe vor der Animation existiert
-		embedUrl = p.map_url;
-		try {
-			const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(p.map_url)}`);
-			if (res.ok) {
-				const data = await res.json();
-				embedUrl = data.embedUrl;
-				resolvedUrl = data.resolvedUrl || data.embedUrl;
-			}
-		} catch {
-			// embedUrl bereits gesetzt, Fallback bleibt
-		}
+		provider = getMapProvider(p.map_url);
+		// Google: sofort auf Client setzen, damit der iframe vor der Animation existiert
+		// (OSM-Links sind keine einbettbaren URLs → erst nach Umwandlung setzen)
+		if (provider === 'google_maps') embedUrl = p.map_url;
+		const resolved = await resolveMapUrl(p.map_url);
+		embedUrl = resolved.embedUrl || embedUrl;
+		directionsUrl = resolved.directionsUrl;
 	});
 </script>
 
@@ -89,7 +65,7 @@
 			<div class="flex flex-col gap-3">
 				<div class="relative md:h-full rounded-3xl overflow-hidden">
 					{#if embedUrl}
-						<ConsentGate service="google_maps" minHeight={mapHeight}>
+						<ConsentGate service={provider} minHeight={mapHeight}>
 							<iframe
 								src={embedUrl}
 								width="100%"
@@ -98,7 +74,7 @@
 								allowfullscreen={true}
 								loading="lazy"
 								referrerpolicy="no-referrer-when-downgrade"
-								title="Google Maps"
+								title={mapTitle}
 							></iframe>
 							{#if mapOpacity > 0}
 								<div
@@ -149,7 +125,7 @@
 			<div class="flex flex-col gap-3">
 				<div class="relative md:h-full rounded-3xl overflow-hidden">
 					{#if embedUrl}
-						<ConsentGate service="google_maps" minHeight={mapHeight}>
+						<ConsentGate service={provider} minHeight={mapHeight}>
 							<iframe
 								src={embedUrl}
 								width="100%"
@@ -158,7 +134,7 @@
 								allowfullscreen={true}
 								loading="lazy"
 								referrerpolicy="no-referrer-when-downgrade"
-								title="Google Maps"
+								title={mapTitle}
 							></iframe>
 							{#if mapOpacity > 0}
 								<div

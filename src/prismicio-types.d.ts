@@ -2453,11 +2453,11 @@ type ButtonSliceVariation = ButtonSliceDefault;
 export type ButtonSlice = prismic.SharedSlice<'button', ButtonSliceVariation>;
 
 /**
- * Primary content in *GoogleMapEinbetten → Standard → Primary*
+ * Primary content in *MapEinbetten → Standard → Primary*
  */
 export interface CodeEinbettenSliceDefaultPrimary {
 	/**
-	 * Google Maps URL field in *GoogleMapEinbetten → Standard → Primary*
+	 * Google Maps URL field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)
@@ -2467,7 +2467,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	map_url: prismic.KeyTextField;
 
 	/**
-	 * Kartenhöhe (px) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Kartenhöhe (px) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 400
@@ -2477,7 +2477,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	map_height: prismic.NumberField;
 
 	/**
-	 * Transparenz field in *GoogleMapEinbetten → Standard → Primary*
+	 * Transparenz field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: Zahl zwischen 0 und 80 %
@@ -2487,7 +2487,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	opacity: prismic.NumberField;
 
 	/**
-	 * Vollbreite auf Mobile field in *GoogleMapEinbetten → Standard → Primary*
+	 * Vollbreite auf Mobile field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2498,7 +2498,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	mobile_full_width: prismic.BooleanField;
 
 	/**
-	 * Animation aktivieren field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animation aktivieren field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2509,7 +2509,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	animate: prismic.BooleanField;
 
 	/**
-	 * Animations-Richtung field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animations-Richtung field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -2520,7 +2520,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
 
 	/**
-	 * Verzögerung (ms) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Verzögerung (ms) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 500
@@ -2530,7 +2530,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	anim_delay: prismic.NumberField;
 
 	/**
-	 * Animationsdauer (ms) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animationsdauer (ms) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 2000
@@ -2541,7 +2541,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for GoogleMapEinbetten Slice
+ * Standard variation for MapEinbetten Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -2554,12 +2554,12 @@ export type CodeEinbettenSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *GoogleMapEinbetten*
+ * Slice variation for *MapEinbetten*
  */
 type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
 
 /**
- * GoogleMapEinbetten Shared Slice
+ * MapEinbetten Shared Slice
  *
  * - **API ID**: `code_einbetten`
  * - **Description**: CodeEinbetten

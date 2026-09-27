@@ -562,7 +562,7 @@
 		</section>
 
 		<section id="google-map-einbetten">
-			<h2>GoogleMapEinbetten <code class="slice-tag">code_einbetten</code></h2>
+			<h2>MapEinbetten <code class="slice-tag">code_einbetten</code></h2>
 			<p>
 				Google Maps Karte als iframe &mdash; ohne Adresstextblock, nur die Karte mit optionalem
 				Wegbeschreibungs-Button.

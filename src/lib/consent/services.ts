@@ -77,6 +77,17 @@ export const consentServices: Record<string, ConsentService> = {
 		storage: ['Google-Cookies (z.B. NID)', 'Übertragung der IP-Adresse an Google'],
 		privacyUrl: 'https://policies.google.com/privacy'
 	},
+	openstreetmap: {
+		label: 'OpenStreetMap',
+		provider: 'OpenStreetMap Foundation',
+		category: 'external_media',
+		purpose: 'Anzeige interaktiver Karten.',
+		storage: [
+			'Keine Tracking-Cookies',
+			'Übertragung der IP-Adresse an die OpenStreetMap Foundation'
+		],
+		privacyUrl: 'https://osmfoundation.org/wiki/Privacy_Policy'
+	},
 	youtube: {
 		label: 'YouTube',
 		provider: 'Google Ireland Ltd. / Google LLC',
@@ -110,6 +121,7 @@ export function serviceIdFor(urlOrProvider: string | undefined | null): string {
 	const value = (urlOrProvider ?? '').toLowerCase();
 	if (/youtube|youtu\.be/.test(value)) return 'youtube';
 	if (/vimeo/.test(value)) return 'vimeo';
+	if (/openstreetmap\.org|(^|\/\/|\.)osm\.org/.test(value)) return 'openstreetmap';
 	if (/google\.[a-z.]+\/maps|maps\.google|goo\.gl\/maps|maps\.app\.goo\.gl/.test(value))
 		return 'google_maps';
 	return 'external_embed';

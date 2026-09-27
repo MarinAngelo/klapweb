@@ -15,7 +15,7 @@ export function detectServicesInContent(documents: unknown[]): string[] {
 				servicesInHtml(value).forEach((id) => found.add(id));
 			} else if (/map/i.test(path) && /^https?:\/\//i.test(value)) {
 				const id = serviceIdFor(value);
-				if (id === 'google_maps') found.add(id);
+				if (id === 'google_maps' || id === 'openstreetmap') found.add(id);
 			}
 			return;
 		}

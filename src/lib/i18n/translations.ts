@@ -162,7 +162,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
 	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
 	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
-	GoogleMapEinbetten: { 'de-ch': 'GoogleMapEinbetten', 'en-us': 'Embed Google Map' },
+	MapEinbetten: { 'de-ch': 'MapEinbetten', 'en-us': 'Embed map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
 	Kacheln: { 'de-ch': 'Kacheln', 'en-us': 'Tiles' },
@@ -1190,6 +1190,16 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Transmission of your IP address to the provider'
 	},
 	'Google Maps': { 'de-ch': 'Google Maps', 'en-us': 'Google Maps' },
+	OpenStreetMap: { 'de-ch': 'OpenStreetMap', 'en-us': 'OpenStreetMap' },
+	'OpenStreetMap Foundation': {
+		'de-ch': 'OpenStreetMap Foundation',
+		'en-us': 'OpenStreetMap Foundation'
+	},
+	'Keine Tracking-Cookies': { 'de-ch': 'Keine Tracking-Cookies', 'en-us': 'No tracking cookies' },
+	'Übertragung der IP-Adresse an die OpenStreetMap Foundation': {
+		'de-ch': 'Übertragung der IP-Adresse an die OpenStreetMap Foundation',
+		'en-us': 'Transmission of your IP address to the OpenStreetMap Foundation'
+	},
 	YouTube: { 'de-ch': 'YouTube', 'en-us': 'YouTube' },
 	Vimeo: { 'de-ch': 'Vimeo', 'en-us': 'Vimeo' },
 	'Google Ireland Ltd. / Google LLC': {
