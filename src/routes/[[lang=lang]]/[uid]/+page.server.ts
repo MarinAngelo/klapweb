@@ -21,7 +21,8 @@ export interface PlaeneFeature {
 
 export async function load({ params, parent, fetch, cookies, url }) {
 	const { lang, settings } = await parent();
-	const client = createClient({ fetch });
+	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
+	const client = createClient({ fetch, cookies });
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
