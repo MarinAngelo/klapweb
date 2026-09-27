@@ -1,7 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
-import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO } from '$lib/server/features';
+import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO, FEATURE_KUNDENKONTO } from '$lib/server/features';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -113,7 +113,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
-		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
+		const userBackendActive =
+			FEATURE_KUNDENKONTO && ((baseSettings.data as any)?.user_backend_active ?? false);
 		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';

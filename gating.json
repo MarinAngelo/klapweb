@@ -89,6 +89,11 @@
 				"EMAIL_FROM_ADDRESS",
 				"ADMIN_SECRET"
 			]
+		},
+		"kundenkonto": {
+			"label": "Kundenkonto",
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		}
 	},
 	"customTypes": {
@@ -153,6 +158,9 @@
 				},
 				"chat_knowledge_base": {
 					"feature": "chatbot"
+				},
+				"user_backend_active": {
+					"feature": "kundenkonto"
 				}
 			}
 		},
