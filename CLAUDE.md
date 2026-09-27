@@ -327,7 +327,9 @@ Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → S
 - Feature `newsletter` (gating.json, ab Professionell), Admin-Bereich `newsletter`
 - **Inhalt in Prismic:** Custom Type `newsletter` (Quelle `customtypes/_features/newsletter/…`): Betreff, Vorschautext, Rich Text, optionaler Button. Platzhalter `{{Name}}` (Vor- + Nachname, sonst Firma), `{{Vorname}}`, `{{Nachname}}`, `{{Firma}}` pro Empfänger
 - **Vorschau:** „Preview the page“ in Prismic → `/api/preview` löst Newsletter selbst auf (nicht im Route Resolver, weil Repos ohne den Typ das ablehnen würden) → `/preview/newsletter/<uid>`; Web-Ansicht `/newsletter/<uid>`
-- **Empfänger:** alle Kunden (`kunden`-Store) mit E-Mail, dedupliziert, ohne Abgemeldete
+- **Empfänger:** alle Kunden (`kunden`-Store) mit E-Mail + bestätigte Abonnenten (`newsletter_abonnenten`), dedupliziert, ohne Abgemeldete
+- **Anmeldung:** Formular-Variante `newsletterSignup` („Newsletter abonnieren“, Feature `newsletter`) → `/api/newsletter/anmelden` sendet Bestätigungsmail (Double-Opt-in, signierter Link 7 Tage gültig, nichts gespeichert) → `/newsletter/bestaetigen` speichert erst per Button (Mail-Scanner bestätigen nichts). Honeypot-Feld gegen Bots, gleiche Antwort für bekannte/unbekannte Adressen
 - **Versand:** `src/lib/server/newsletter.ts`, Resend Batch-API (100 pro Aufruf); Test-Mail zuerst, Versand nur mit Bestätigung; Verlauf im Blob-Store `newsletter_versand`
 - **CH-Recht (UWG Art. 3 lit. o):** jede Mail mit Absender-Angaben (Settings) + Abmelde-Link; `List-Unsubscribe` + One-Click (`/api/newsletter/abmelden`). Abmeldungen im Store `newsletter_abmeldungen` (Key = SHA-256 der E-Mail), Links HMAC-signiert mit `NEWSLETTER_SECRET` bzw. `ADMIN_SECRET`
+- **Abonnenten-Übersicht** im Newsletter-Admin: Name, E-Mail, Sprache, „bestätigt am“ (= Nachweis der Einwilligung), Status; „Entfernen“ löscht den Abonnenten und trägt die Adresse als abgemeldet ein; CSV-Export `/admin/newsletter/abonnenten.csv?secret=…`
 - Abmelde-Seite `/newsletter/abmelden` hat bewusst kein Feature-Gate (Abmeldung muss immer möglich sein)

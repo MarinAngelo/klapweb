@@ -1437,7 +1437,101 @@ export const translations: Record<string, Record<string, string>> = {
 	Terminbuchung: { 'de-ch': 'Terminbuchung', 'en-us': 'Appointment booking' },
 	'E-Commerce': { 'de-ch': 'E-Commerce', 'en-us': 'E-commerce' },
 	'Kunde fehlt': { 'de-ch': 'Kunde fehlt', 'en-us': 'Customer missing' },
-	'Unbekannte Sprache': { 'de-ch': 'Unbekannte Sprache', 'en-us': 'Unknown language' }
+	'Unbekannte Sprache': { 'de-ch': 'Unbekannte Sprache', 'en-us': 'Unknown language' },
+	// Newsletter-Anmeldung (Double-Opt-in)
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		{
+			'de-ch':
+				'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.',
+			'en-us':
+				'Almost done! We have sent you an email. Please confirm your sign-up using the link in it.'
+		},
+	'Ich möchte Info-Mails erhalten. Die Einwilligung kann ich jederzeit über den Abmelde-Link in jeder E-Mail widerrufen.':
+		{
+			'de-ch':
+				'Ich möchte Info-Mails erhalten. Die Einwilligung kann ich jederzeit über den Abmelde-Link in jeder E-Mail widerrufen.',
+			'en-us':
+				'I would like to receive info mails. I can withdraw my consent at any time via the unsubscribe link in every email.'
+		},
+	'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.': {
+		'de-ch': 'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.',
+		'en-us': 'Please confirm that you would like to receive info mails.'
+	},
+	'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The sign-up failed. Please try again later.'
+	},
+	'Bitte geben Sie eine gültige E-Mail-Adresse ein.': {
+		'de-ch': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+		'en-us': 'Please enter a valid email address.'
+	},
+	'Anmeldung bestätigen': { 'de-ch': 'Anmeldung bestätigen', 'en-us': 'Confirm sign-up' },
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.': {
+		'de-ch': 'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.',
+		'en-us': 'Thank you! Your sign-up is confirmed. You will now receive our info mails.'
+	},
+	'Dieser Bestätigungslink ist ungültig oder abgelaufen.': {
+		'de-ch': 'Dieser Bestätigungslink ist ungültig oder abgelaufen.',
+		'en-us': 'This confirmation link is invalid or has expired.'
+	},
+	'Bitte melden Sie sich erneut an.': {
+		'de-ch': 'Bitte melden Sie sich erneut an.',
+		'en-us': 'Please sign up again.'
+	},
+	'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:': {
+		'de-ch': 'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:',
+		'en-us': 'Please confirm the sign-up for info mails with this email address:'
+	},
+	'Die Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The confirmation failed. Please try again later.'
+	},
+	'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von': {
+		'de-ch': 'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von',
+		'en-us': 'You are receiving this email because you subscribed to the info mails of'
+	},
+	'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails': {
+		'de-ch': 'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails',
+		'en-us': 'Please confirm your sign-up for the info mails'
+	},
+	'Guten Tag': { 'de-ch': 'Guten Tag', 'en-us': 'Hello' },
+	'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.':
+		{
+			'de-ch':
+				'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.',
+			'en-us':
+				'You have signed up for the info mails. Please confirm your sign-up by clicking the button. The link is valid for 7 days.'
+		},
+	'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.': {
+		'de-ch': 'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.',
+		'en-us': 'If you did not sign up, simply ignore this email.'
+	},
+	Abonnent: { 'de-ch': 'Abonnent', 'en-us': 'Subscriber' },
+	// Newsletter: Abonnenten-Übersicht
+	'Abonnent wirklich entfernen? Die Adresse erhält danach keine Info-Mails mehr.': {
+		'de-ch': 'Abonnent wirklich entfernen? Die Adresse erhält danach keine Info-Mails mehr.',
+		'en-us': 'Really remove subscriber? The address will no longer receive info mails.'
+	},
+	'Abonnent entfernt': { 'de-ch': 'Abonnent entfernt', 'en-us': 'Subscriber removed' },
+	Abonnenten: { 'de-ch': 'Abonnenten', 'en-us': 'Subscribers' },
+	'Als CSV exportieren': { 'de-ch': 'Als CSV exportieren', 'en-us': 'Export as CSV' },
+	'Anmeldungen über das Formular „Newsletter abonnieren“ (bestätigt per E-Mail). Das Bestätigungsdatum ist der Nachweis der Einwilligung.':
+		{
+			'de-ch':
+				'Anmeldungen über das Formular „Newsletter abonnieren“ (bestätigt per E-Mail). Das Bestätigungsdatum ist der Nachweis der Einwilligung.',
+			'en-us':
+				'Sign-ups via the “Subscribe to newsletter” form (confirmed by email). The confirmation date is the proof of consent.'
+		},
+	'Noch keine Abonnenten.': { 'de-ch': 'Noch keine Abonnenten.', 'en-us': 'No subscribers yet.' },
+	'Abonnenten suchen …': { 'de-ch': 'Abonnenten suchen …', 'en-us': 'Search subscribers …' },
+	'Bestätigt am': { 'de-ch': 'Bestätigt am', 'en-us': 'Confirmed on' },
+	abgemeldet: { 'de-ch': 'abgemeldet', 'en-us': 'unsubscribed' },
+	aktiv: { 'de-ch': 'aktiv', 'en-us': 'active' },
+	'Keine Abonnenten gefunden': {
+		'de-ch': 'Keine Abonnenten gefunden',
+		'en-us': 'No subscribers found'
+	},
+	'Abonnent nicht gefunden': { 'de-ch': 'Abonnent nicht gefunden', 'en-us': 'Subscriber not found' }
 };
 
 /**

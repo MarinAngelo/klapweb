@@ -219,6 +219,9 @@
 				},
 				"ausChecken": {
 					"feature": "ressourcenbuchung"
+				},
+				"newsletterSignup": {
+					"feature": "newsletter"
 				}
 			}
 		},

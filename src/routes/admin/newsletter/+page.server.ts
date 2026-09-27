@@ -5,10 +5,12 @@ import type { PrismicDocument } from '@prismicio/client';
 import { createClient } from '$lib/prismicio';
 import { FEATURE_NEWSLETTER } from '$lib/server/features';
 import {
-	brandingFromSettings,
 	countUnsubscribed,
+	loadBranding,
 	getRecipients,
 	listSends,
+	listSubscribersWithStatus,
+	removeSubscriber,
 	logSend,
 	sendNewsletter
 } from '$lib/server/newsletter';
@@ -29,15 +31,6 @@ async function loadNewsletter(client: AnyClient, uid: string) {
 	return docs.find((d) => d.uid === uid) ?? null;
 }
 
-async function loadBranding(client: AnyClient, lang: string) {
-	const [settings, themes] = await Promise.all([
-		client.getSingle('settings', { lang }).catch(() => null),
-		(client as any).getAllByType('theme', { lang: '*' }).catch(() => [])
-	]);
-	const theme = themes.find((t: PrismicDocument) => t.data?.activ === true) ?? null;
-	return brandingFromSettings(settings, theme);
-}
-
 export const load: PageServerLoad = async ({ url, fetch }) => {
 	checkAccess(url);
 	const client = createClient({ fetch }) as unknown as AnyClient;
@@ -46,6 +39,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	let recipients: Awaited<ReturnType<typeof getRecipients>> = [];
 	let unsubscribedCount = 0;
 	let sends: Awaited<ReturnType<typeof listSends>> = [];
+	let subscribers: Awaited<ReturnType<typeof listSubscribersWithStatus>> = [];
 	let loadError: string | null = null;
 
 	try {
@@ -63,10 +57,11 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 	}
 
 	try {
-		[recipients, unsubscribedCount, sends] = await Promise.all([
+		[recipients, unsubscribedCount, sends, subscribers] = await Promise.all([
 			getRecipients(),
 			countUnsubscribed(),
-			listSends()
+			listSends(),
+			listSubscribersWithStatus()
 		]);
 	} catch (e) {
 		loadError = e instanceof Error ? e.message : String(e);
@@ -78,6 +73,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		recipientCount: recipients.length,
 		unsubscribedCount,
 		sends,
+		subscribers,
 		loadError,
 		mailConfigured: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM_ADDRESS),
 		defaultTestEmail: env.INVOICE_TO_EMAIL || env.EMAIL_FROM_ADDRESS || ''
@@ -161,6 +157,18 @@ export const actions: Actions = {
 			'alle',
 			url.origin
 		);
+	},
+
+	removeSubscriber: async ({ request, url }) => {
+		checkAccess(url);
+		const form = await request.formData();
+		const email = String(form.get('email') ?? '');
+		try {
+			if (!(await removeSubscriber(email))) return fail(404, { error: 'Abonnent nicht gefunden' });
+		} catch (e) {
+			return fail(500, { error: e instanceof Error ? e.message : String(e) });
+		}
+		return { removed: email };
 	},
 
 	sendSelected: async ({ request, url, fetch }) => {

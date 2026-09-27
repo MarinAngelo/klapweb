@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
 	import Button from '$lib/components/Button.svelte';
@@ -46,6 +47,30 @@
 	$: formError = (form as { error?: string } | null)?.error;
 	$: testSent = (form as { testSent?: string } | null)?.testSent;
 	$: sentCount = (form as { sent?: number } | null)?.sent;
+	$: removedEmail = (form as { removed?: string } | null)?.removed;
+
+	// Abonnenten-Übersicht
+	let subscriberFilter = '';
+	$: filteredSubscribers = data.subscribers.filter((sub) =>
+		`${sub.vorname ?? ''} ${sub.nachname ?? ''} ${sub.email}`
+			.toLowerCase()
+			.includes(subscriberFilter.trim().toLowerCase())
+	);
+	$: activeSubscriberCount = data.subscribers.filter((sub) => !sub.unsubscribed).length;
+	$: csvHref = `/admin/newsletter/abonnenten.csv?secret=${encodeURIComponent(secret)}&lang=${$page.data.lang ?? 'de-ch'}`;
+
+	// Ask before removing; cancel() stops the enhanced submit
+	function confirmRemove(email: string): SubmitFunction {
+		return ({ cancel }) => {
+			if (
+				!confirm(
+					`${email}: ${$_('Abonnent wirklich entfernen? Die Adresse erhält danach keine Info-Mails mehr.')}`
+				)
+			) {
+				cancel();
+			}
+		};
+	}
 
 	const fmtDate = (iso: string) =>
 		new Date(iso).toLocaleString('de-CH', {
@@ -91,6 +116,9 @@
 	{/if}
 	{#if testSent}
 		<p class="notice notice-ok" role="status">{$_('Test-Mail gesendet an')} {testSent}</p>
+	{/if}
+	{#if removedEmail}
+		<p class="notice notice-ok" role="status">{$_('Abonnent entfernt')}: {removedEmail}</p>
 	{/if}
 	{#if sentCount !== undefined}
 		<p class="notice notice-ok" role="status">
@@ -212,7 +240,10 @@
 							/>
 							<span>
 								<span class="font-semibold">{recipientLabel(r)}</span>
-								<span class="text-sm opacity-70">{r.email}</span>
+								<span class="text-sm opacity-70"
+									>{r.email}{#if r.source === 'abonnent'}
+										· {$_('Abonnent')}{/if}</span
+								>
 							</span>
 						</label>
 					{:else}
@@ -264,6 +295,70 @@
 			</form>
 		</section>
 	{/if}
+
+	<section class="card">
+		<div class="flex flex-wrap items-center gap-3 mb-4">
+			<h2 class="card-title" style="margin: 0;">
+				{$_('Abonnenten')} ({activeSubscriberCount})
+			</h2>
+			{#if data.subscribers.length}
+				<a href={csvHref} class="link-btn ml-auto" download>{$_('Als CSV exportieren')}</a>
+			{/if}
+		</div>
+		<p class="text-sm opacity-70 mb-4">
+			{$_(
+				'Anmeldungen über das Formular „Newsletter abonnieren“ (bestätigt per E-Mail). Das Bestätigungsdatum ist der Nachweis der Einwilligung.'
+			)}
+		</p>
+		{#if data.subscribers.length === 0}
+			<p class="text-sm opacity-70">{$_('Noch keine Abonnenten.')}</p>
+		{:else}
+			<input
+				type="search"
+				bind:value={subscriberFilter}
+				placeholder={$_('Abonnenten suchen …')}
+				aria-label={$_('Abonnenten suchen …')}
+				class="field mb-3"
+			/>
+			<div class="overflow-x-auto">
+				<table class="w-full text-sm">
+					<thead>
+						<tr>
+							<th class="text-left">{$_('Name')}</th>
+							<th class="text-left">{$_('E-Mail')}</th>
+							<th class="text-left">{$_('Sprache')}</th>
+							<th class="text-left">{$_('Bestätigt am')}</th>
+							<th class="text-left">{$_('Status')}</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each filteredSubscribers as sub (sub.email)}
+							<tr class:unsubscribed={sub.unsubscribed}>
+								<td>{[sub.vorname, sub.nachname].filter(Boolean).join(' ') || '–'}</td>
+								<td>{sub.email}</td>
+								<td>{sub.lang ?? '–'}</td>
+								<td>{fmtDate(sub.confirmedAt)}</td>
+								<td>{sub.unsubscribed ? $_('abgemeldet') : $_('aktiv')}</td>
+								<td class="text-right">
+									<form
+										method="POST"
+										action="?/removeSubscriber&secret={encodeURIComponent(secret)}"
+										use:enhance={confirmRemove(sub.email)}
+									>
+										<input type="hidden" name="email" value={sub.email} />
+										<button type="submit" class="link-btn remove-btn">{$_('Entfernen')}</button>
+									</form>
+								</td>
+							</tr>
+						{:else}
+							<tr><td colspan="6" class="opacity-70">{$_('Keine Abonnenten gefunden')}</td></tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	</section>
 
 	{#if data.sends.length}
 		<section class="card">
@@ -406,6 +501,14 @@
 		color: inherit;
 		text-decoration: underline;
 		cursor: pointer;
+	}
+
+	tr.unsubscribed td {
+		opacity: 0.5;
+	}
+
+	.remove-btn {
+		color: #dc2626;
 	}
 
 	th,
