@@ -2768,11 +2768,11 @@ type EventSliceVariation = EventSliceDefault;
 export type EventSlice = prismic.SharedSlice<'event', EventSliceVariation>;
 
 /**
- * Item in *Formular → Standard → Primary → Formular Felder*
+ * Item in *Formulare → Standard → Primary → Formular Felder*
  */
 export interface FormSliceDefaultPrimaryFormFieldsItem {
 	/**
-	 * Formularfeld Label field in *Formular → Standard → Primary → Formular Felder*
+	 * Formularfeld Label field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -2782,7 +2782,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	field_name: prismic.KeyTextField;
 
 	/**
-	 * Feld Typ field in *Formular → Standard → Primary → Formular Felder*
+	 * Feld Typ field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -2802,7 +2802,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	>;
 
 	/**
-	 * Obligatorisch field in *Formular → Standard → Primary → Formular Felder*
+	 * Obligatorisch field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2813,7 +2813,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	required: prismic.BooleanField;
 
 	/**
-	 * Fehlermeldung field in *Formular → Standard → Primary → Formular Felder*
+	 * Fehlermeldung field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: Bitte ausfüllen
@@ -2823,7 +2823,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	invalid_feedback_text: prismic.KeyTextField;
 
 	/**
-	 * Optionen bei Auswahlfeldern field in *Formular → Standard → Primary → Formular Felder*
+	 * Optionen bei Auswahlfeldern field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: mit Komma getrennt
@@ -2833,7 +2833,7 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 	options: prismic.KeyTextField;
 
 	/**
-	 * Platzhalter field in *Formular → Standard → Primary → Formular Felder*
+	 * Platzhalter field in *Formulare → Standard → Primary → Formular Felder*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -2844,11 +2844,11 @@ export interface FormSliceDefaultPrimaryFormFieldsItem {
 }
 
 /**
- * Primary content in *Formular → Standard → Primary*
+ * Primary content in *Formulare → Standard → Primary*
  */
 export interface FormSliceDefaultPrimary {
 	/**
-	 * Formular Titel field in *Formular → Standard → Primary*
+	 * Formular Titel field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -2858,7 +2858,7 @@ export interface FormSliceDefaultPrimary {
 	form_title: prismic.KeyTextField;
 
 	/**
-	 * Formular Instruktionen field in *Formular → Standard → Primary*
+	 * Formular Instruktionen field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -2868,7 +2868,7 @@ export interface FormSliceDefaultPrimary {
 	form_instructions: prismic.RichTextField;
 
 	/**
-	 * Senden-Schaltflächen-Text field in *Formular → Standard → Primary*
+	 * Senden-Schaltflächen-Text field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -2878,7 +2878,7 @@ export interface FormSliceDefaultPrimary {
 	submitt_button_text: prismic.KeyTextField;
 
 	/**
-	 * 2 Spalten field in *Formular → Standard → Primary*
+	 * 2 Spalten field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2889,7 +2889,7 @@ export interface FormSliceDefaultPrimary {
 	zwei_spalten: prismic.BooleanField;
 
 	/**
-	 * Gesendet Titel field in *Formular → Standard → Primary*
+	 * Gesendet Titel field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: *None*
@@ -2899,7 +2899,7 @@ export interface FormSliceDefaultPrimary {
 	submitted_title: prismic.KeyTextField;
 
 	/**
-	 * Gesendet Text field in *Formular → Standard → Primary*
+	 * Gesendet Text field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Rich Text
 	 * - **Placeholder**: *None*
@@ -2909,7 +2909,7 @@ export interface FormSliceDefaultPrimary {
 	submitted_text: prismic.RichTextField;
 
 	/**
-	 * Vollbreite auf Mobile field in *Formular → Standard → Primary*
+	 * Vollbreite auf Mobile field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2920,7 +2920,7 @@ export interface FormSliceDefaultPrimary {
 	mobile_full_width: prismic.BooleanField;
 
 	/**
-	 * Animation aktivieren field in *Formular → Standard → Primary*
+	 * Animation aktivieren field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2931,7 +2931,7 @@ export interface FormSliceDefaultPrimary {
 	animate: prismic.BooleanField;
 
 	/**
-	 * Animations-Richtung field in *Formular → Standard → Primary*
+	 * Animations-Richtung field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -2942,7 +2942,7 @@ export interface FormSliceDefaultPrimary {
 	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
 
 	/**
-	 * Verzögerung (ms) field in *Formular → Standard → Primary*
+	 * Verzögerung (ms) field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 500
@@ -2952,7 +2952,7 @@ export interface FormSliceDefaultPrimary {
 	anim_delay: prismic.NumberField;
 
 	/**
-	 * Animationsdauer (ms) field in *Formular → Standard → Primary*
+	 * Animationsdauer (ms) field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 2000
@@ -2962,7 +2962,7 @@ export interface FormSliceDefaultPrimary {
 	anim_duration: prismic.NumberField;
 
 	/**
-	 * Formular Felder field in *Formular → Standard → Primary*
+	 * Formular Felder field in *Formulare → Standard → Primary*
 	 *
 	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
@@ -2973,7 +2973,7 @@ export interface FormSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for Formular Slice
+ * Standard variation for Formulare Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -2986,12 +2986,12 @@ export type FormSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Formular*
+ * Slice variation for *Formulare*
  */
 type FormSliceVariation = FormSliceDefault;
 
 /**
- * Formular Shared Slice
+ * Formulare Shared Slice
  *
  * - **API ID**: `form`
  * - **Description**: Formular

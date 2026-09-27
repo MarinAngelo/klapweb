@@ -9,7 +9,7 @@
 
 <Bounded>
 	<div class="max-w-xl mx-auto py-12">
-		<h1>{$_('Anmeldung bestätigen')}</h1>
+		<h1>{form?.done ? $_('Anmeldung bestätigt') : $_('Anmeldung bestätigen')}</h1>
 
 		{#if form?.done}
 			<p>

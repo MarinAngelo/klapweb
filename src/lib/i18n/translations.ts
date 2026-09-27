@@ -1531,7 +1531,11 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Keine Abonnenten gefunden',
 		'en-us': 'No subscribers found'
 	},
-	'Abonnent nicht gefunden': { 'de-ch': 'Abonnent nicht gefunden', 'en-us': 'Subscriber not found' }
+	'Abonnent nicht gefunden': {
+		'de-ch': 'Abonnent nicht gefunden',
+		'en-us': 'Subscriber not found'
+	},
+	'Anmeldung bestätigt': { 'de-ch': 'Anmeldung bestätigt', 'en-us': 'Sign-up confirmed' }
 };
 
 /**

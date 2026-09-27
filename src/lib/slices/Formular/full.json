@@ -1,7 +1,7 @@
 {
 	"id": "form",
 	"type": "SharedSlice",
-	"name": "Formular",
+	"name": "Formulare",
 	"description": "Formular",
 	"variations": [
 		{
