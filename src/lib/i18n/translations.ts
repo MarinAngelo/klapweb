@@ -1191,6 +1191,46 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Google Maps': { 'de-ch': 'Google Maps', 'en-us': 'Google Maps' },
 	OpenStreetMap: { 'de-ch': 'OpenStreetMap', 'en-us': 'OpenStreetMap' },
+	Dailymotion: { 'de-ch': 'Dailymotion', 'en-us': 'Dailymotion' },
+	'Dailymotion SA': { 'de-ch': 'Dailymotion SA', 'en-us': 'Dailymotion SA' },
+	'Dailymotion-Cookies (z.B. dmvk, ts)': {
+		'de-ch': 'Dailymotion-Cookies (z.B. dmvk, ts)',
+		'en-us': 'Dailymotion cookies (e.g. dmvk, ts)'
+	},
+	'Übertragung der IP-Adresse an Dailymotion': {
+		'de-ch': 'Übertragung der IP-Adresse an Dailymotion',
+		'en-us': 'Transmission of your IP address to Dailymotion'
+	},
+	SoundCloud: { 'de-ch': 'SoundCloud', 'en-us': 'SoundCloud' },
+	'SoundCloud Global Limited & Co. KG': {
+		'de-ch': 'SoundCloud Global Limited & Co. KG',
+		'en-us': 'SoundCloud Global Limited & Co. KG'
+	},
+	'Wiedergabe eingebetteter Audioinhalte.': {
+		'de-ch': 'Wiedergabe eingebetteter Audioinhalte.',
+		'en-us': 'Playback of embedded audio content.'
+	},
+	'SoundCloud-Cookies (z.B. sc_anonymous_id)': {
+		'de-ch': 'SoundCloud-Cookies (z.B. sc_anonymous_id)',
+		'en-us': 'SoundCloud cookies (e.g. sc_anonymous_id)'
+	},
+	'Übertragung der IP-Adresse an SoundCloud': {
+		'de-ch': 'Übertragung der IP-Adresse an SoundCloud',
+		'en-us': 'Transmission of your IP address to SoundCloud'
+	},
+	Spotify: { 'de-ch': 'Spotify', 'en-us': 'Spotify' },
+	'Spotify AB': { 'de-ch': 'Spotify AB', 'en-us': 'Spotify AB' },
+	'Spotify-Cookies (z.B. sp_t)': {
+		'de-ch': 'Spotify-Cookies (z.B. sp_t)',
+		'en-us': 'Spotify cookies (e.g. sp_t)'
+	},
+	'Übertragung der IP-Adresse an Spotify': {
+		'de-ch': 'Übertragung der IP-Adresse an Spotify',
+		'en-us': 'Transmission of your IP address to Spotify'
+	},
+	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
+	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
 	'OpenStreetMap Foundation': {
 		'de-ch': 'OpenStreetMap Foundation',
 		'en-us': 'OpenStreetMap Foundation'

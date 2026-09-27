@@ -2110,7 +2110,7 @@ export interface AnleitungSliceDefaultPrimaryStepsItem {
 	step_description: prismic.RichTextField;
 
 	/**
-	 * YouTube Video field in *Anleitung → Default → Primary → Schritte*
+	 * Video (YouTube, Vimeo …) field in *Anleitung → Default → Primary → Schritte*
 	 *
 	 * - **Field Type**: Embed
 	 * - **Placeholder**: *None*
@@ -2118,6 +2118,16 @@ export interface AnleitungSliceDefaultPrimaryStepsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/embed
 	 */
 	youtube_video: prismic.EmbedField;
+
+	/**
+	 * Video Einbettungs-Code (alternativ) field in *Anleitung → Default → Primary → Schritte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: <iframe src="https://player.vimeo.com/video/…"></iframe>
+	 * - **API ID Path**: anleitung.default.primary.steps[].video_embed_code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	video_embed_code: prismic.KeyTextField;
 }
 
 /**
@@ -2145,7 +2155,7 @@ export interface AnleitungSliceDefaultPrimary {
 	description: prismic.RichTextField;
 
 	/**
-	 * YouTube Video field in *Anleitung → Default → Primary*
+	 * Video (YouTube, Vimeo …) field in *Anleitung → Default → Primary*
 	 *
 	 * - **Field Type**: Embed
 	 * - **Placeholder**: *None*
@@ -2153,6 +2163,16 @@ export interface AnleitungSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/embed
 	 */
 	youtube_video: prismic.EmbedField;
+
+	/**
+	 * Video Einbettungs-Code (alternativ) field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: <iframe src="https://player.vimeo.com/video/…"></iframe>
+	 * - **API ID Path**: anleitung.default.primary.video_embed_code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	video_embed_code: prismic.KeyTextField;
 
 	/**
 	 * Vollbreite auf Mobile field in *Anleitung → Default → Primary*

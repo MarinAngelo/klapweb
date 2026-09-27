@@ -811,9 +811,21 @@
 		"tab": "Default",
 		"field": "youtube_video",
 		"path": "Anleitung/default/Primary/youtube_video",
-		"label": "YouTube Video",
-		"description": "Bindet einen externen Inhalt für YouTube Video ein.",
+		"label": "Video (YouTube, Vimeo …)",
+		"description": "Bindet einen externen Inhalt für Video (YouTube, Vimeo …) ein.",
 		"type": "Embed"
+	},
+	{
+		"name": "Anleitung",
+		"elementType": "Slice",
+		"customType": "Anleitung",
+		"customTypeLabel": "Anleitung",
+		"tab": "Default",
+		"field": "video_embed_code",
+		"path": "Anleitung/default/Primary/video_embed_code",
+		"label": "Video Einbettungs-Code (alternativ)",
+		"description": "Erfasst einen kurzen Text für Video Einbettungs-Code (alternativ).",
+		"type": "Text"
 	},
 	{
 		"name": "Anleitung",

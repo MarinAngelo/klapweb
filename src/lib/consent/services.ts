@@ -107,6 +107,33 @@ export const consentServices: Record<string, ConsentService> = {
 		storage: ['Vimeo-Cookies (z.B. vuid)', 'Übertragung der IP-Adresse an Vimeo'],
 		privacyUrl: 'https://vimeo.com/privacy'
 	},
+	dailymotion: {
+		label: 'Dailymotion',
+		provider: 'Dailymotion SA',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Videos.',
+		storage: ['Dailymotion-Cookies (z.B. dmvk, ts)', 'Übertragung der IP-Adresse an Dailymotion'],
+		privacyUrl: 'https://legal.dailymotion.com/en/privacy-policy/'
+	},
+	soundcloud: {
+		label: 'SoundCloud',
+		provider: 'SoundCloud Global Limited & Co. KG',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Audioinhalte.',
+		storage: [
+			'SoundCloud-Cookies (z.B. sc_anonymous_id)',
+			'Übertragung der IP-Adresse an SoundCloud'
+		],
+		privacyUrl: 'https://soundcloud.com/pages/privacy'
+	},
+	spotify: {
+		label: 'Spotify',
+		provider: 'Spotify AB',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Audioinhalte.',
+		storage: ['Spotify-Cookies (z.B. sp_t)', 'Übertragung der IP-Adresse an Spotify'],
+		privacyUrl: 'https://www.spotify.com/ch-de/legal/privacy-policy/'
+	},
 	external_embed: {
 		label: 'Eingebetteter Inhalt',
 		provider: 'Drittanbieter',
@@ -121,6 +148,9 @@ export function serviceIdFor(urlOrProvider: string | undefined | null): string {
 	const value = (urlOrProvider ?? '').toLowerCase();
 	if (/youtube|youtu\.be/.test(value)) return 'youtube';
 	if (/vimeo/.test(value)) return 'vimeo';
+	if (/dailymotion|dai\.ly/.test(value)) return 'dailymotion';
+	if (/soundcloud/.test(value)) return 'soundcloud';
+	if (/spotify/.test(value)) return 'spotify';
 	if (/openstreetmap\.org|(^|\/\/|\.)osm\.org/.test(value)) return 'openstreetmap';
 	if (/google\.[a-z.]+\/maps|maps\.google|goo\.gl\/maps|maps\.app\.goo\.gl/.test(value))
 		return 'google_maps';

@@ -3,6 +3,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
@@ -22,7 +23,7 @@
 >
 	<div
 		class="prose max-w-3xl {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
-		data-slice-type="{slice.slice_type}EmbedFieldHandler"
+		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 	>
 		{#if p.title}
@@ -33,13 +34,13 @@
 				<PrismicRichText field={p.description} />
 			</div>
 		{/if}
-		{#if p.youtube_video && p.youtube_video.embed_url}
+		{#if p.youtube_video?.embed_url || p.video_embed_code}
 			<div class="mb-8 flex justify-center">
-				{#if p.youtube_video.embed_url.startsWith('http')}
-					<EmbedFieldHandler embed={p.youtube_video} />
+				{#if !p.youtube_video?.embed_url || p.youtube_video.embed_url.startsWith('http')}
+					<EmbedFieldHandler embed={p.youtube_video} code={p.video_embed_code} />
 				{:else}
 					<div class="text-red-600 text-sm">
-						Ungültige Video-URL: {p.youtube_video.embed_url}
+						{$_('Ungültige Video-URL')}: {p.youtube_video.embed_url}
 					</div>
 				{/if}
 			</div>
@@ -54,13 +55,13 @@
 						{#if step.step_description}
 							<PrismicRichText field={step.step_description} />
 						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url}
+						{#if step.youtube_video?.embed_url || step.video_embed_code}
 							<div class="my-4 flex justify-center">
-								{#if step.youtube_video.embed_url.startsWith('http')}
-									<EmbedFieldHandler embed={step.youtube_video} />
+								{#if !step.youtube_video?.embed_url || step.youtube_video.embed_url.startsWith('http')}
+									<EmbedFieldHandler embed={step.youtube_video} code={step.video_embed_code} />
 								{:else}
 									<div class="text-red-600 text-sm">
-										Ungültige Video-URL: {step.youtube_video.embed_url}
+										{$_('Ungültige Video-URL')}: {step.youtube_video.embed_url}
 									</div>
 								{/if}
 							</div>
