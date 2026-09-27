@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
+	import ConsentGate from '$lib/components/ConsentGate.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -88,22 +89,24 @@
 			<div class="flex flex-col gap-3">
 				<div class="relative md:h-full rounded-3xl overflow-hidden">
 					{#if embedUrl}
-						<iframe
-							src={embedUrl}
-							width="100%"
-							height={mapHeight}
-							style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
-							allowfullscreen={true}
-							loading="lazy"
-							referrerpolicy="no-referrer-when-downgrade"
-							title="Google Maps"
-						></iframe>
-						{#if mapOpacity > 0}
-							<div
-								class="absolute inset-0"
-								style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
-							></div>
-						{/if}
+						<ConsentGate service="google_maps" minHeight={mapHeight}>
+							<iframe
+								src={embedUrl}
+								width="100%"
+								height={mapHeight}
+								style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+								allowfullscreen={true}
+								loading="lazy"
+								referrerpolicy="no-referrer-when-downgrade"
+								title="Google Maps"
+							></iframe>
+							{#if mapOpacity > 0}
+								<div
+									class="absolute inset-0"
+									style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+								></div>
+							{/if}
+						</ConsentGate>
 					{/if}
 				</div>
 				{#if directionsUrl}
@@ -146,22 +149,24 @@
 			<div class="flex flex-col gap-3">
 				<div class="relative md:h-full rounded-3xl overflow-hidden">
 					{#if embedUrl}
-						<iframe
-							src={embedUrl}
-							width="100%"
-							height={mapHeight}
-							style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
-							allowfullscreen={true}
-							loading="lazy"
-							referrerpolicy="no-referrer-when-downgrade"
-							title="Google Maps"
-						></iframe>
-						{#if mapOpacity > 0}
-							<div
-								class="absolute inset-0"
-								style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
-							></div>
-						{/if}
+						<ConsentGate service="google_maps" minHeight={mapHeight}>
+							<iframe
+								src={embedUrl}
+								width="100%"
+								height={mapHeight}
+								style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+								allowfullscreen={true}
+								loading="lazy"
+								referrerpolicy="no-referrer-when-downgrade"
+								title="Google Maps"
+							></iframe>
+							{#if mapOpacity > 0}
+								<div
+									class="absolute inset-0"
+									style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+								></div>
+							{/if}
+						</ConsentGate>
 					{/if}
 				</div>
 				{#if directionsUrl}

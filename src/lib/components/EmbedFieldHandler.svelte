@@ -1,10 +1,14 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
+	import ConsentGate from '$lib/components/ConsentGate.svelte';
+	import { serviceIdFor } from '$lib/consent/services';
 	export let embed: any;
 
-	// Nach dem Rendern: width/height-Attribute aller iframes entfernen/überschreiben
-	onMount(() => {
+	$: consentServiceId = serviceIdFor(embed?.provider_name || embed?.embed_url);
+
+	// Nach dem Rendern (auch nach Freigabe im ConsentGate): width/height-Attribute der iframes überschreiben
+	afterUpdate(() => {
 		const iframes = document.querySelectorAll('.media-embed-html iframe');
 		iframes.forEach((iframe) => {
 			const el = iframe as HTMLIFrameElement;
@@ -20,7 +24,9 @@
 
 {#if embed && embed.html}
 	<div class="media-embed-html w-full max-w-3xl mx-auto mb-6" style="text-align:center">
-		{@html embed.html}
+		<ConsentGate service={consentServiceId} minHeight={300}>
+			{@html embed.html}
+		</ConsentGate>
 	</div>
 {:else}
 	<div style="text-align:center">

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
 	import { PrismicRichText } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
@@ -333,12 +334,12 @@
 >
 	<div class="flex flex-col gap-8 w-full">
 		{#if slice.primary.heading?.length}
-			<PrismicRichText field={slice.primary.heading} />
+			<PrismicRichText field={slice.primary.heading} components={{ embed: RichTextEmbed }} />
 		{/if}
 
 		{#if slice.primary.intro?.length}
 			<div class="mb-0 max-w-2xl">
-				<PrismicRichText field={slice.primary.intro} />
+				<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
 			</div>
 		{/if}
 
@@ -368,7 +369,10 @@
 					{slice.primary.success_heading || $_('Anfrage erhalten!')}
 				</p>
 				{#if slice.primary.success_text?.length}
-					<PrismicRichText field={slice.primary.success_text} />
+					<PrismicRichText
+						field={slice.primary.success_text}
+						components={{ embed: RichTextEmbed }}
+					/>
 				{:else}
 					<p>{$_('Wir melden uns in Kürze bei Ihnen.')}</p>
 				{/if}
