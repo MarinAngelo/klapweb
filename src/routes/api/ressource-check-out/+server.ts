@@ -33,7 +33,7 @@ export async function POST({ request, fetch, url }) {
 
 	// ── Betreiber-Mail mit Abrechnung + Freigabe-Link ──────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	const adminSecret = env.ADMIN_SECRET;
 	let toEmail = env.INVOICE_TO_EMAIL || '';
 	if (!toEmail) {
@@ -42,7 +42,9 @@ export async function POST({ request, fetch, url }) {
 			const settings = await client.getSingle('settings');
 			const s = settings.data as any;
 			toEmail = (s.responsible_email as string) || (s.e_mail as string) || '';
-		} catch { /* ignore */ }
+		} catch {
+			/* ignore */
+		}
 	}
 
 	if (resendKey && toEmail && emailFrom && adminSecret) {

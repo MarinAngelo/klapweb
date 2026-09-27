@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	let secret = '';
-	let error = false;
+	$: error = $page.url.searchParams.get('error') === '1';
 
 	function handleSubmit() {
 		if (!secret.trim()) return;
-		error = false;
 		goto(`/admin/dashboard?secret=${encodeURIComponent(secret.trim())}`);
 	}
 </script>
 
 <svelte:head><title>Admin</title></svelte:head>
 
-<div style="font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;">
+<div
+	style="font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;"
+>
 	<form
 		on:submit|preventDefault={handleSubmit}
 		style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 1rem;"

@@ -722,11 +722,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const fromEmail = env.EMAIL_FROM_ADDRESS;
 	const businessEmail = isEventCheckout && eventManagerEmail ? eventManagerEmail : co.email;
 
 	if (!resendKey || !fromEmail) {
-		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL)');
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS)');
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 

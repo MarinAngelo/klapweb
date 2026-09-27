@@ -48,7 +48,8 @@
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
 			<Button
 				href="/admin/dashboard?secret={secret}"
-				text="← Dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"

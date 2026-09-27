@@ -19,15 +19,24 @@
 	"features": {
 		"terminbuchung": {
 			"label": "Terminbuchung",
-			"plans": ["professional"]
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
-			"plans": ["professional"]
+			"plans": ["individuell"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
-			"plans": ["individuell"]
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"p5js": {
 			"label": "P5.js",
@@ -39,11 +48,19 @@
 		},
 		"ressourcenbuchung": {
 			"label": "Ressourcen-Buchung",
-			"plans": ["individuell"]
+			"plans": ["individuell"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		},
 		"global_events": {
 			"label": "Globale Events",
-			"plans": ["professional"]
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",
@@ -55,15 +72,19 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
-			"plans": ["professional"]
+			"plans": ["individuell"]
 		},
 		"chatbot": {
 			"label": "Chat-Bot",
-			"plans": ["klap-web-ch"]
+			"plans": ["klap-web-ch"],
+			"env": ["ANTHROPIC_API_KEY"]
 		}
 	},
 	"customTypes": {
-		"terminplanung": {
+		"angebot": {
+			"feature": "terminbuchung"
+		},
+		"arbeitstag": {
 			"feature": "terminbuchung"
 		},
 		"leistung": {
@@ -89,6 +110,9 @@
 		},
 		"icon": {
 			"feature": "erweiterte_gestaltung"
+		},
+		"ort": {
+			"plan": "professional"
 		},
 		"settings": {
 			"fields": {
@@ -185,6 +209,11 @@
 			"plan": "professional"
 		},
 		"Titelbereich": {
+			"variations": {
+				"blob": {
+					"plan": "klap-web-ch"
+				}
+			},
 			"fields": {
 				"button_style": {
 					"feature": "erweiterte_gestaltung"
@@ -220,22 +249,28 @@
 	},
 	"admin_sections": {
 		"rechnungen": {
-			"label": "Rechnungen"
+			"label": "Rechnungen",
+			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 		},
 		"kunden": {
-			"label": "Kunden"
+			"label": "Kunden",
+			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 		},
 		"buchungen": {
-			"label": "Terminverwaltung"
+			"label": "Terminverwaltung",
+			"feature": "terminbuchung"
 		},
 		"ressource-buchungen": {
-			"label": "Ressource-Buchungen"
+			"label": "Ressource-Buchungen",
+			"feature": "ressourcenbuchung"
 		},
 		"aufgaben": {
-			"label": "Aufgaben"
+			"label": "Aufgaben",
+			"feature": "ressourcenbuchung"
 		},
 		"event-anmeldungen": {
-			"label": "Event Anmeldungen"
+			"label": "Event Anmeldungen",
+			"feature": "global_events"
 		}
 	}
 }

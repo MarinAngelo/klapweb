@@ -111,7 +111,8 @@
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
 			<Button
 				href="/admin/dashboard?secret={s}"
-				text="← Dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"
@@ -170,7 +171,8 @@
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<div style="position: relative;" on:mouseleave={() => (openDownloadMenu = null)}>
 							<Button
-								text="↓ Liste ▾"
+								text="Liste"
+								leadingIcon="down"
 								color="#065f46"
 								bgColor="transparent"
 								hoverColor="#064e3b"

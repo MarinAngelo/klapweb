@@ -162,7 +162,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
 	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
 	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
-	GoogleMapEinbetten: { 'de-ch': 'GoogleMapEinbetten', 'en-us': 'Embed Google Map' },
+	MapEinbetten: { 'de-ch': 'MapEinbetten', 'en-us': 'Embed map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
 	Kacheln: { 'de-ch': 'Kacheln', 'en-us': 'Tiles' },
@@ -203,10 +203,11 @@ export const translations: Record<string, Record<string, string>> = {
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
 	'Bild Links (Vorher)': { 'de-ch': 'Bild Links (Vorher)', 'en-us': 'Image Left (Before)' },
 	'Bild Rechts (Nachher)': { 'de-ch': 'Bild Rechts (Nachher)', 'en-us': 'Image Right (After)' },
-	'Abstand oben / unten gleich': {
-		'de-ch': 'Abstand oben / unten gleich',
+	'Innerer Abstand oben / unten gleich': {
+		'de-ch': 'Innerer Abstand oben / unten gleich',
 		'en-us': 'Equal top/bottom spacing'
 	},
+	'Nach oben': { 'de-ch': 'Nach oben', 'en-us': 'Back to top' },
 	'Animation aktivieren': { 'de-ch': 'Animation aktivieren', 'en-us': 'Enable animation' },
 	'Animations-Richtung': { 'de-ch': 'Animations-Richtung', 'en-us': 'Animation direction' },
 	'Animationsdauer (ms)': { 'de-ch': 'Animationsdauer (ms)', 'en-us': 'Animation duration (ms)' },
@@ -904,7 +905,348 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Schrift horizontal zentrieren',
 		'en-us': 'Center text horizontally'
 	},
-	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' }
+	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' },
+	Tabellenwerkzeuge: { 'de-ch': 'Tabellenwerkzeuge', 'en-us': 'Table tools' },
+	Suche: { 'de-ch': 'Suche', 'en-us': 'Search' },
+	'Feld, Name oder Beschreibung': {
+		'de-ch': 'Feld, Name oder Beschreibung',
+		'en-us': 'Field, name or description'
+	},
+	'Element Typ': { 'de-ch': 'Element Typ', 'en-us': 'Element type' },
+	Alle: { 'de-ch': 'Alle', 'en-us': 'All' },
+	'Page Type': { 'de-ch': 'Page Type', 'en-us': 'Page Type' },
+	'Custom Type': { 'de-ch': 'Custom Type', 'en-us': 'Custom Type' },
+	Slice: { 'de-ch': 'Slice', 'en-us': 'Slice' },
+	'Sortieren nach': { 'de-ch': 'Sortieren nach', 'en-us': 'Sort by' },
+	'Tab / Variante': { 'de-ch': 'Tab / Variante', 'en-us': 'Tab / Variant' },
+	Feld: { 'de-ch': 'Feld', 'en-us': 'Field' },
+	Typ: { 'de-ch': 'Typ', 'en-us': 'Type' },
+	'Absteigend sortieren': { 'de-ch': 'Absteigend sortieren', 'en-us': 'Sort descending' },
+	'Aufsteigend sortieren': { 'de-ch': 'Aufsteigend sortieren', 'en-us': 'Sort ascending' },
+	Zurücksetzen: { 'de-ch': 'Zurücksetzen', 'en-us': 'Reset' },
+	von: { 'de-ch': 'von', 'en-us': 'of' },
+	Feldern: { 'de-ch': 'Feldern', 'en-us': 'fields' },
+	'Keine aktiven Felder für diesen Branch gefunden.': {
+		'de-ch': 'Keine aktiven Felder für diesen Branch gefunden.',
+		'en-us': 'No active fields found for this branch.'
+	},
+	'Keine Felder für diese Auswahl gefunden.': {
+		'de-ch': 'Keine Felder für diese Auswahl gefunden.',
+		'en-us': 'No fields found for this selection.'
+	},
+	Seitennavigation: { 'de-ch': 'Seitennavigation', 'en-us': 'Pagination' },
+	'Vorherige Seite': { 'de-ch': 'Vorherige Seite', 'en-us': 'Previous page' },
+	'Nächste Seite': { 'de-ch': 'Nächste Seite', 'en-us': 'Next page' },
+	// Agency Gating Editor
+	'Agency Gating Editor': { 'de-ch': 'Agency Gating Editor', 'en-us': 'Agency Gating Editor' },
+	'Bitte geben Sie das Agentur-Passwort ein:': {
+		'de-ch': 'Bitte geben Sie das Agentur-Passwort ein:',
+		'en-us': 'Please enter the agency password:'
+	},
+	Passwort: { 'de-ch': 'Passwort', 'en-us': 'Password' },
+	'Passwort eingeben': { 'de-ch': 'Passwort eingeben', 'en-us': 'Enter password' },
+	Features: { 'de-ch': 'Features', 'en-us': 'Features' },
+	'im Plan': { 'de-ch': 'im Plan', 'en-us': 'in plan' },
+	'Fehlende Umgebungsvariablen': {
+		'de-ch': 'Fehlende Umgebungsvariablen',
+		'en-us': 'Missing environment variables'
+	},
+	'Admin-Bereiche': { 'de-ch': 'Admin-Bereiche', 'en-us': 'Admin sections' },
+	Speichern: { 'de-ch': 'Speichern', 'en-us': 'Save' },
+	Übersicht: { 'de-ch': 'Übersicht', 'en-us': 'Overview' },
+	'Plan-Features': { 'de-ch': 'Plan-Features', 'en-us': 'Plan features' },
+	keine: { 'de-ch': 'keine', 'en-us': 'none' },
+	'Ausgewählte Features': { 'de-ch': 'Ausgewählte Features', 'en-us': 'Selected features' },
+	Zusätzlich: { 'de-ch': 'Zusätzlich', 'en-us': 'Additional' },
+	Entfernt: { 'de-ch': 'Entfernt', 'en-us': 'Removed' },
+	'Plan-Definition (global)': {
+		'de-ch': 'Plan-Definition (global)',
+		'en-us': 'Plan definition (global)'
+	},
+	'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.':
+		{
+			'de-ch':
+				'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.',
+			'en-us':
+				'Changes gating.json – after commit and merge it applies to all branches/customers, not just this project.'
+		},
+	'Mehrere Pläne': { 'de-ch': 'Mehrere Pläne', 'en-us': 'Multiple plans' },
+	ab: { 'de-ch': 'ab', 'en-us': 'from' },
+	'Plan-Definition speichern': {
+		'de-ch': 'Plan-Definition speichern',
+		'en-us': 'Save plan definition'
+	},
+	'aktives Feature mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktives Feature mit fehlenden Umgebungsvariablen',
+		'en-us': 'active feature with missing environment variables'
+	},
+	'aktive Features mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktive Features mit fehlenden Umgebungsvariablen',
+		'en-us': 'active features with missing environment variables'
+	},
+	'Details anzeigen': { 'de-ch': 'Details anzeigen', 'en-us': 'Show details' },
+	'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.':
+		{
+			'de-ch':
+				'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.',
+			'en-us':
+				'Required environment variables are not set for the following active features. The affected functions (e.g. email sending, database access) will not work.'
+		},
+	Setzen: { 'de-ch': 'Setzen', 'en-us': 'Set' },
+	'Lokal in der Datei': { 'de-ch': 'Lokal in der Datei', 'en-us': 'Locally in the file' },
+	'auf Netlify unter': { 'de-ch': 'auf Netlify unter', 'en-us': 'on Netlify under' },
+	'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.':
+		{
+			'de-ch':
+				'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.',
+			'en-us':
+				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
+		},
+	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
+	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
+	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
+	'Gate in gating.json': { 'de-ch': 'Gate in gating.json', 'en-us': 'Gate in gating.json' },
+	oder: { 'de-ch': 'oder', 'en-us': 'or' },
+	'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.':
+		{
+			'de-ch':
+				'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.',
+			'en-us':
+				'All entries from gating.json: which custom types, slices, variations and fields belong to which feature or plan. Dimmed = inactive with the current selection.'
+		},
+	'Unbekannte Features oder Pläne referenziert': {
+		'de-ch': 'Unbekannte Features oder Pläne referenziert',
+		'en-us': 'Unknown features or plans referenced'
+	},
+	'Nach Feature': { 'de-ch': 'Nach Feature', 'en-us': 'By feature' },
+	'Nach Plan (ohne Feature)': {
+		'de-ch': 'Nach Plan (ohne Feature)',
+		'en-us': 'By plan (without feature)'
+	},
+	'Keine Zuordnung in gating.json (nur im Code abgefragt)': {
+		'de-ch': 'Keine Zuordnung in gating.json (nur im Code abgefragt)',
+		'en-us': 'No assignment in gating.json (checked in code only)'
+	},
+	'Custom Types': { 'de-ch': 'Custom Types', 'en-us': 'Custom types' },
+	'Custom-Type-Felder': { 'de-ch': 'Custom-Type-Felder', 'en-us': 'Custom type fields' },
+	'Tab-Overlays': { 'de-ch': 'Tab-Overlays', 'en-us': 'Tab overlays' },
+	Slices: { 'de-ch': 'Slices', 'en-us': 'Slices' },
+	'Slice-Variationen': { 'de-ch': 'Slice-Variationen', 'en-us': 'Slice variations' },
+	'Slice-Felder': { 'de-ch': 'Slice-Felder', 'en-us': 'Slice fields' },
+	// Cookie consent
+	'Verwendete Cookies und Dienste': {
+		'de-ch': 'Verwendete Cookies und Dienste',
+		'en-us': 'Cookies and services used'
+	},
+	Zweck: { 'de-ch': 'Zweck', 'en-us': 'Purpose' },
+	'Cookies / Daten': { 'de-ch': 'Cookies / Daten', 'en-us': 'Cookies / data' },
+	'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen': {
+		'de-ch': 'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen',
+		'en-us': 'You can decline or re-allow non-functional services at any time'
+	},
+	'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.': {
+		'de-ch': 'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.',
+		'en-us': 'No services of this category are used on this page.'
+	},
+	'Cookie-Einstellungen': { 'de-ch': 'Cookie-Einstellungen', 'en-us': 'Cookie settings' },
+	'Cookie-Hinweis': { 'de-ch': 'Cookie-Hinweis', 'en-us': 'Cookie notice' },
+	'Cookies & externe Inhalte': {
+		'de-ch': 'Cookies & externe Inhalte',
+		'en-us': 'Cookies & external content'
+	},
+	'Diese Seite lädt Inhalte von Drittanbietern': {
+		'de-ch': 'Diese Seite lädt Inhalte von Drittanbietern',
+		'en-us': 'This page loads content from third parties'
+	},
+	'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.':
+		{
+			'de-ch':
+				'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.',
+			'en-us':
+				'This may set cookies and transmit data such as your IP address. You can decline this at any time.'
+		},
+	Ablehnen: { 'de-ch': 'Ablehnen', 'en-us': 'Decline' },
+	Einstellungen: { 'de-ch': 'Einstellungen', 'en-us': 'Settings' },
+	Einverstanden: { 'de-ch': 'Einverstanden', 'en-us': 'Accept' },
+	'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.':
+		{
+			'de-ch':
+				'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.',
+			'en-us':
+				'Here you can see which cookies and services this website uses. You can decline non-functional services.'
+		},
+	'Immer aktiv': { 'de-ch': 'Immer aktiv', 'en-us': 'Always active' },
+	'auf dieser Seite': { 'de-ch': 'auf dieser Seite', 'en-us': 'on this page' },
+	'Datenschutz des Anbieters': {
+		'de-ch': 'Datenschutz des Anbieters',
+		'en-us': "Provider's privacy policy"
+	},
+	'Alle ablehnen': { 'de-ch': 'Alle ablehnen', 'en-us': 'Decline all' },
+	'Auswahl speichern': { 'de-ch': 'Auswahl speichern', 'en-us': 'Save selection' },
+	'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.': {
+		'de-ch': 'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.',
+		'en-us': 'This content is not loaded because you declined external content.'
+	},
+	'Beim Laden werden Daten an folgenden Anbieter übertragen': {
+		'de-ch': 'Beim Laden werden Daten an folgenden Anbieter übertragen',
+		'en-us': 'Loading it transmits data to the following provider'
+	},
+	'Einmal laden': { 'de-ch': 'Einmal laden', 'en-us': 'Load once' },
+	'Immer erlauben': { 'de-ch': 'Immer erlauben', 'en-us': 'Always allow' },
+	Funktional: { 'de-ch': 'Funktional', 'en-us': 'Functional' },
+	'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.':
+		{
+			'de-ch':
+				'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.',
+			'en-us':
+				'Required for the website to work (e.g. login, protected pages, your cookie choice). Cannot be disabled.'
+		},
+	'Externe Inhalte': { 'de-ch': 'Externe Inhalte', 'en-us': 'External content' },
+	'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.':
+		{
+			'de-ch':
+				'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.',
+			'en-us':
+				'Maps, videos and other embedded third-party content. These may set cookies and receive your IP address.'
+		},
+	Statistik: { 'de-ch': 'Statistik', 'en-us': 'Statistics' },
+	'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.': {
+		'de-ch': 'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.',
+		'en-us': 'Anonymous or pseudonymous analysis of how this website is used.'
+	},
+	Marketing: { 'de-ch': 'Marketing', 'en-us': 'Marketing' },
+	'Werbung und Wiedererkennung über verschiedene Websites hinweg.': {
+		'de-ch': 'Werbung und Wiedererkennung über verschiedene Websites hinweg.',
+		'en-us': 'Advertising and recognition across different websites.'
+	},
+	Benutzerkonto: { 'de-ch': 'Benutzerkonto', 'en-us': 'User account' },
+	'Website-Betreiber': { 'de-ch': 'Website-Betreiber', 'en-us': 'Website operator' },
+	'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.': {
+		'de-ch': 'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.',
+		'en-us': 'Keeps you signed in to your user account.'
+	},
+	'klap_user_session (Cookie)': {
+		'de-ch': 'klap_user_session (Cookie)',
+		'en-us': 'klap_user_session (cookie)'
+	},
+	'Passwortgeschützte Seiten': {
+		'de-ch': 'Passwortgeschützte Seiten',
+		'en-us': 'Password-protected pages'
+	},
+	'Merkt sich die Freigabe passwortgeschützter Seiten.': {
+		'de-ch': 'Merkt sich die Freigabe passwortgeschützter Seiten.',
+		'en-us': 'Remembers access to password-protected pages.'
+	},
+	'klap_auth (Cookie)': { 'de-ch': 'klap_auth (Cookie)', 'en-us': 'klap_auth (cookie)' },
+	'Cookie-Auswahl': { 'de-ch': 'Cookie-Auswahl', 'en-us': 'Cookie choice' },
+	'Speichert Ihre Auswahl in diesem Cookie-Dialog.': {
+		'de-ch': 'Speichert Ihre Auswahl in diesem Cookie-Dialog.',
+		'en-us': 'Stores your choice in this cookie dialog.'
+	},
+	'klap_consent (Local Storage)': {
+		'de-ch': 'klap_consent (Local Storage)',
+		'en-us': 'klap_consent (local storage)'
+	},
+	'Anzeige interaktiver Karten.': {
+		'de-ch': 'Anzeige interaktiver Karten.',
+		'en-us': 'Display of interactive maps.'
+	},
+	'Google-Cookies (z.B. NID)': {
+		'de-ch': 'Google-Cookies (z.B. NID)',
+		'en-us': 'Google cookies (e.g. NID)'
+	},
+	'Übertragung der IP-Adresse an Google': {
+		'de-ch': 'Übertragung der IP-Adresse an Google',
+		'en-us': 'Transmission of your IP address to Google'
+	},
+	'Wiedergabe eingebetteter Videos.': {
+		'de-ch': 'Wiedergabe eingebetteter Videos.',
+		'en-us': 'Playback of embedded videos.'
+	},
+	'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)': {
+		'de-ch': 'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)',
+		'en-us': 'YouTube cookies (e.g. VISITOR_INFO1_LIVE, YSC)'
+	},
+	'Vimeo-Cookies (z.B. vuid)': {
+		'de-ch': 'Vimeo-Cookies (z.B. vuid)',
+		'en-us': 'Vimeo cookies (e.g. vuid)'
+	},
+	'Übertragung der IP-Adresse an Vimeo': {
+		'de-ch': 'Übertragung der IP-Adresse an Vimeo',
+		'en-us': 'Transmission of your IP address to Vimeo'
+	},
+	'Eingebetteter Inhalt': { 'de-ch': 'Eingebetteter Inhalt', 'en-us': 'Embedded content' },
+	Drittanbieter: { 'de-ch': 'Drittanbieter', 'en-us': 'Third party' },
+	'Anzeige von Inhalten, die von einer externen Website geladen werden.': {
+		'de-ch': 'Anzeige von Inhalten, die von einer externen Website geladen werden.',
+		'en-us': 'Display of content loaded from an external website.'
+	},
+	'Cookies des Anbieters möglich': {
+		'de-ch': 'Cookies des Anbieters möglich',
+		'en-us': 'Provider cookies possible'
+	},
+	'Übertragung der IP-Adresse an den Anbieter': {
+		'de-ch': 'Übertragung der IP-Adresse an den Anbieter',
+		'en-us': 'Transmission of your IP address to the provider'
+	},
+	'Google Maps': { 'de-ch': 'Google Maps', 'en-us': 'Google Maps' },
+	OpenStreetMap: { 'de-ch': 'OpenStreetMap', 'en-us': 'OpenStreetMap' },
+	Dailymotion: { 'de-ch': 'Dailymotion', 'en-us': 'Dailymotion' },
+	'Dailymotion SA': { 'de-ch': 'Dailymotion SA', 'en-us': 'Dailymotion SA' },
+	'Dailymotion-Cookies (z.B. dmvk, ts)': {
+		'de-ch': 'Dailymotion-Cookies (z.B. dmvk, ts)',
+		'en-us': 'Dailymotion cookies (e.g. dmvk, ts)'
+	},
+	'Übertragung der IP-Adresse an Dailymotion': {
+		'de-ch': 'Übertragung der IP-Adresse an Dailymotion',
+		'en-us': 'Transmission of your IP address to Dailymotion'
+	},
+	SoundCloud: { 'de-ch': 'SoundCloud', 'en-us': 'SoundCloud' },
+	'SoundCloud Global Limited & Co. KG': {
+		'de-ch': 'SoundCloud Global Limited & Co. KG',
+		'en-us': 'SoundCloud Global Limited & Co. KG'
+	},
+	'Wiedergabe eingebetteter Audioinhalte.': {
+		'de-ch': 'Wiedergabe eingebetteter Audioinhalte.',
+		'en-us': 'Playback of embedded audio content.'
+	},
+	'SoundCloud-Cookies (z.B. sc_anonymous_id)': {
+		'de-ch': 'SoundCloud-Cookies (z.B. sc_anonymous_id)',
+		'en-us': 'SoundCloud cookies (e.g. sc_anonymous_id)'
+	},
+	'Übertragung der IP-Adresse an SoundCloud': {
+		'de-ch': 'Übertragung der IP-Adresse an SoundCloud',
+		'en-us': 'Transmission of your IP address to SoundCloud'
+	},
+	Spotify: { 'de-ch': 'Spotify', 'en-us': 'Spotify' },
+	'Spotify AB': { 'de-ch': 'Spotify AB', 'en-us': 'Spotify AB' },
+	'Spotify-Cookies (z.B. sp_t)': {
+		'de-ch': 'Spotify-Cookies (z.B. sp_t)',
+		'en-us': 'Spotify cookies (e.g. sp_t)'
+	},
+	'Übertragung der IP-Adresse an Spotify': {
+		'de-ch': 'Übertragung der IP-Adresse an Spotify',
+		'en-us': 'Transmission of your IP address to Spotify'
+	},
+	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
+	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
+	'OpenStreetMap Foundation': {
+		'de-ch': 'OpenStreetMap Foundation',
+		'en-us': 'OpenStreetMap Foundation'
+	},
+	'Keine Tracking-Cookies': { 'de-ch': 'Keine Tracking-Cookies', 'en-us': 'No tracking cookies' },
+	'Übertragung der IP-Adresse an die OpenStreetMap Foundation': {
+		'de-ch': 'Übertragung der IP-Adresse an die OpenStreetMap Foundation',
+		'en-us': 'Transmission of your IP address to the OpenStreetMap Foundation'
+	},
+	YouTube: { 'de-ch': 'YouTube', 'en-us': 'YouTube' },
+	Vimeo: { 'de-ch': 'Vimeo', 'en-us': 'Vimeo' },
+	'Google Ireland Ltd. / Google LLC': {
+		'de-ch': 'Google Ireland Ltd. / Google LLC',
+		'en-us': 'Google Ireland Ltd. / Google LLC'
+	},
+	'Vimeo.com Inc.': { 'de-ch': 'Vimeo.com Inc.', 'en-us': 'Vimeo.com Inc.' }
 };
 
 /**

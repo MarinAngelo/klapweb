@@ -400,7 +400,8 @@
 		<div class="ml-auto flex items-center gap-2">
 			<Button
 				href="/admin/dashboard?secret={adminSecret}"
-				text="← Dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"

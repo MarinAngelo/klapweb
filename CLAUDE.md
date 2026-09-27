@@ -64,6 +64,7 @@ Konkrete Regeln:
   - **Achtung:** API-ID nur umbenennen wenn das Feld noch keinen Inhalt hat — sonst gehen Daten verloren
 - TypeScript-Casts (`as any`) nie im Svelte-Template — immer im `<script>`-Block
 - Scroll-Animationen: kein reaktiver State, nur `bind:this` + direktes `element.style` im RAF
+- **Animationsfelder in Slice-Modellen:** Wenn eine Variation die Felder `animate`, `anim_direction`, `anim_delay` und `anim_duration` verwendet, stehen diese vier Felder immer als letzter Block in `primary` — nach allen Inhalts-, Layout- und Darstellungsfeldern. `Timeline` und `Galerie` sind Ausnahmen: Sie besitzen derzeit nur das Boolean-Feld `animate`, weil ihre Animation fest im Code definiert ist.
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 - **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)
@@ -77,6 +78,15 @@ Konkrete Regeln:
 - **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
 - **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
 - **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
+
+## Cookie-Banner (Schweizer Recht, Opt-out)
+
+- Rechtsgrundlage: Art. 45c FMG + DSG → informieren + Ablehnung ermöglichen (keine vorgängige Einwilligung wie in der EU)
+- **Jeder Dienst, der Cookies setzt, im Browser speichert oder Daten (z.B. IP) an Dritte überträgt, muss in `src/lib/consent/services.ts` registriert werden** (Kategorie, Anbieter, Zweck, Speicher, Datenschutz-URL; Texte als i18n-Keys)
+- Nicht-funktionale Inhalte (iframes, externe Scripts) immer mit `<ConsentGate service="…" minHeight={…}>` umschliessen — nur dann erscheint der Banner auf der Seite und nur dann kann der Besucher ablehnen
+- Banner erscheint nur auf Seiten, die einen nicht-funktionalen Dienst nutzen; Auswahl in `localStorage` (`klap_consent`); Footer-Link „Cookie-Einstellungen“ öffnet den Dialog
+- Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen
+- Wird die Bedeutung gespeicherter Auswahlen geändert: `CONSENT_VERSION` in `src/lib/stores/consent.ts` erhöhen → Banner erscheint erneut
 
 ## Netlify Blobs
 
@@ -299,7 +309,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
-- `INVOICE_FROM_EMAIL`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- `EMAIL_FROM_ADDRESS`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
 Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`

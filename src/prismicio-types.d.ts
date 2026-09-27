@@ -25,16 +25,16 @@ type PickContentRelationshipFieldData<
 			TSubRelationship['customtypes'],
 			TLang
 		>;
-	} & // Group
-	{
+	} & {
+		// Group
 		[TGroup in Extract<
 			TRelationship['fields'][number],
 			prismic.CustomTypeModelFetchGroupLevel1 | prismic.CustomTypeModelFetchGroupLevel2
 		> as TGroup['id']]: TData[TGroup['id']] extends prismic.GroupField<infer TGroupData>
 			? prismic.GroupField<PickContentRelationshipFieldData<TGroup, TGroupData, TLang>>
 			: never;
-	} & // Other fields
-	{
+	} & {
+		// Other fields
 		[TFieldKey in Extract<TRelationship['fields'][number], string>]: TFieldKey extends keyof TData
 			? TData[TFieldKey]
 			: never;
@@ -2110,7 +2110,7 @@ export interface AnleitungSliceDefaultPrimaryStepsItem {
 	step_description: prismic.RichTextField;
 
 	/**
-	 * YouTube Video field in *Anleitung → Default → Primary → Schritte*
+	 * Video (YouTube, Vimeo …) field in *Anleitung → Default → Primary → Schritte*
 	 *
 	 * - **Field Type**: Embed
 	 * - **Placeholder**: *None*
@@ -2118,6 +2118,16 @@ export interface AnleitungSliceDefaultPrimaryStepsItem {
 	 * - **Documentation**: https://prismic.io/docs/fields/embed
 	 */
 	youtube_video: prismic.EmbedField;
+
+	/**
+	 * Video Einbettungs-Code (alternativ) field in *Anleitung → Default → Primary → Schritte*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: <iframe src="https://player.vimeo.com/video/…"></iframe>
+	 * - **API ID Path**: anleitung.default.primary.steps[].video_embed_code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	video_embed_code: prismic.KeyTextField;
 }
 
 /**
@@ -2145,7 +2155,7 @@ export interface AnleitungSliceDefaultPrimary {
 	description: prismic.RichTextField;
 
 	/**
-	 * YouTube Video field in *Anleitung → Default → Primary*
+	 * Video (YouTube, Vimeo …) field in *Anleitung → Default → Primary*
 	 *
 	 * - **Field Type**: Embed
 	 * - **Placeholder**: *None*
@@ -2153,6 +2163,16 @@ export interface AnleitungSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/embed
 	 */
 	youtube_video: prismic.EmbedField;
+
+	/**
+	 * Video Einbettungs-Code (alternativ) field in *Anleitung → Default → Primary*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: <iframe src="https://player.vimeo.com/video/…"></iframe>
+	 * - **API ID Path**: anleitung.default.primary.video_embed_code
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	video_embed_code: prismic.KeyTextField;
 
 	/**
 	 * Vollbreite auf Mobile field in *Anleitung → Default → Primary*
@@ -2453,11 +2473,11 @@ type ButtonSliceVariation = ButtonSliceDefault;
 export type ButtonSlice = prismic.SharedSlice<'button', ButtonSliceVariation>;
 
 /**
- * Primary content in *GoogleMapEinbetten → Standard → Primary*
+ * Primary content in *MapEinbetten → Standard → Primary*
  */
 export interface CodeEinbettenSliceDefaultPrimary {
 	/**
-	 * Google Maps URL field in *GoogleMapEinbetten → Standard → Primary*
+	 * Google Maps URL field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Text
 	 * - **Placeholder**: Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)
@@ -2467,7 +2487,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	map_url: prismic.KeyTextField;
 
 	/**
-	 * Kartenhöhe (px) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Kartenhöhe (px) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 400
@@ -2477,7 +2497,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	map_height: prismic.NumberField;
 
 	/**
-	 * Transparenz field in *GoogleMapEinbetten → Standard → Primary*
+	 * Transparenz field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: Zahl zwischen 0 und 80 %
@@ -2487,7 +2507,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	opacity: prismic.NumberField;
 
 	/**
-	 * Vollbreite auf Mobile field in *GoogleMapEinbetten → Standard → Primary*
+	 * Vollbreite auf Mobile field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2498,7 +2518,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	mobile_full_width: prismic.BooleanField;
 
 	/**
-	 * Animation aktivieren field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animation aktivieren field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -2509,7 +2529,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	animate: prismic.BooleanField;
 
 	/**
-	 * Animations-Richtung field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animations-Richtung field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -2520,7 +2540,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
 
 	/**
-	 * Verzögerung (ms) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Verzögerung (ms) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 500
@@ -2530,7 +2550,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 	anim_delay: prismic.NumberField;
 
 	/**
-	 * Animationsdauer (ms) field in *GoogleMapEinbetten → Standard → Primary*
+	 * Animationsdauer (ms) field in *MapEinbetten → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 2000
@@ -2541,7 +2561,7 @@ export interface CodeEinbettenSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for GoogleMapEinbetten Slice
+ * Standard variation for MapEinbetten Slice
  *
  * - **API ID**: `default`
  * - **Description**: Default
@@ -2554,12 +2574,12 @@ export type CodeEinbettenSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *GoogleMapEinbetten*
+ * Slice variation for *MapEinbetten*
  */
 type CodeEinbettenSliceVariation = CodeEinbettenSliceDefault;
 
 /**
- * GoogleMapEinbetten Shared Slice
+ * MapEinbetten Shared Slice
  *
  * - **API ID**: `code_einbetten`
  * - **Description**: CodeEinbetten
@@ -5376,7 +5396,7 @@ export interface LinkListeSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *LinkListe → Standard → Primary*
+	 * Innerer Abstand oben / unten gleich field in *LinkListe → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -6361,7 +6381,7 @@ export interface QuoteSliceDefaultPrimary {
 	anker_farbe: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *Zitat → Einzelzitat → Primary*
+	 * Innerer Abstand oben / unten gleich field in *Zitat → Einzelzitat → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -6503,7 +6523,7 @@ export interface QuoteSliceTestimonialsPrimary {
 	karten_bg: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *Zitat → Testimonials → Primary*
+	 * Innerer Abstand oben / unten gleich field in *Zitat → Testimonials → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -7350,7 +7370,7 @@ export interface TextWithImageSliceDefaultPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *TextMitBild → Standard → Primary*
+	 * Innerer Abstand oben / unten gleich field in *TextMitBild → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -7749,7 +7769,7 @@ export interface TextWithImageSliceMultiPrimary {
 	color: prismic.ColorField;
 
 	/**
-	 * Abstand oben / unten gleich field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
+	 * Innerer Abstand oben / unten gleich field in *TextMitBild → Multi (Mehrere Zeilen) → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*

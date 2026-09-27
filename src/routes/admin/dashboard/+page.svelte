@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
@@ -80,7 +81,7 @@
 							{section.description}
 						</div>
 					</div>
-					<span style="margin-left: auto; color: #9ca3af; font-size: 1.25rem;">→</span>
+					<SvgIcons name="right" size="1.25rem" color="#9ca3af" />
 				</a>
 			{/each}
 		</div>

@@ -162,7 +162,7 @@ export const actions: Actions = {
 		if (sendEmail && invoiceData.email) {
 			const { env: privEnv } = await import('$env/dynamic/private');
 			const resendKey = privEnv.RESEND_API_KEY;
-			const fromEmail = privEnv.INVOICE_FROM_EMAIL;
+			const fromEmail = privEnv.EMAIL_FROM_ADDRESS;
 
 			if (resendKey && fromEmail) {
 				try {
@@ -402,7 +402,7 @@ export const actions: Actions = {
 
 		// Versende E-Mail
 		const resendKey = env.RESEND_API_KEY;
-		const fromEmail = env.INVOICE_FROM_EMAIL;
+		const fromEmail = env.EMAIL_FROM_ADDRESS;
 
 		if (!resendKey || !fromEmail) {
 			throw error(500, 'E-Mail-Konfiguration fehlt');

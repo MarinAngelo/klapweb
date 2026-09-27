@@ -113,7 +113,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 
 	// ── Mail senden ───────────────────────────────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	let mailGesendet = false;
 	let mailFehler = '';
 

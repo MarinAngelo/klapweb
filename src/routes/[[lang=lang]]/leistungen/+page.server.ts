@@ -3,9 +3,9 @@ import { error } from '@sveltejs/kit';
 
 export const prerender = true;
 
-export async function load({ params, parent, fetch }) {
+export async function load({ params, parent, fetch, cookies }) {
 	const { lang } = await parent();
-	const client = createClient({ fetch });
+	const client = createClient({ fetch, cookies });
 
 	try {
 		const leistungen = await client.getAllByType('leistung', {

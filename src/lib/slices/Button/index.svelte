@@ -43,12 +43,30 @@
 		| 'lg-top';
 
 	$: btnStyleName = p.button_style?.uid || undefined;
-	$: btnStyleEntry = btnStyleName ? ($theme.buttonStile ?? []).find((s) => s.name === btnStyleName) : undefined;
+	$: btnStyleEntry = btnStyleName
+		? ($theme.buttonStile ?? []).find((s) => s.name === btnStyleName)
+		: undefined;
 	$: btnIcon = btnStyleEntry?.icon || undefined;
-	$: buttonColor = p.button_color || (btnStyleName ? `var(--btn-${btnStyleName}-color, var(--page-button-color))` : $theme.pageButtonColor);
-	$: buttonBgColor = p.button_bg_color || (btnStyleName ? `var(--btn-${btnStyleName}-bg, var(--page-button-bg-color))` : $theme.pageButtonBgColor);
-	$: buttonHoverColor = p.button_hover_color || (btnStyleName ? `var(--btn-${btnStyleName}-hover-color, var(--page-button-hover-color))` : $theme.pageButtonHoverColor);
-	$: buttonHoverBgColor = p.button_hover_bg_color || (btnStyleName ? `var(--btn-${btnStyleName}-hover-bg, var(--page-button-hover-bg-color))` : $theme.pageButtonHoverBgColor);
+	$: buttonColor =
+		p.button_color ||
+		(btnStyleName
+			? `var(--btn-${btnStyleName}-color, var(--page-button-color))`
+			: $theme.pageButtonColor);
+	$: buttonBgColor =
+		p.button_bg_color ||
+		(btnStyleName
+			? `var(--btn-${btnStyleName}-bg, var(--page-button-bg-color))`
+			: $theme.pageButtonBgColor);
+	$: buttonHoverColor =
+		p.button_hover_color ||
+		(btnStyleName
+			? `var(--btn-${btnStyleName}-hover-color, var(--page-button-hover-color))`
+			: $theme.pageButtonHoverColor);
+	$: buttonHoverBgColor =
+		p.button_hover_bg_color ||
+		(btnStyleName
+			? `var(--btn-${btnStyleName}-hover-bg, var(--page-button-hover-bg-color))`
+			: $theme.pageButtonHoverBgColor);
 	$: beauftragungHref = getBeauftragunHref(p.button_link, $page.params.uid);
 	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 </script>
@@ -56,16 +74,19 @@
 <Bounded
 	tag="section"
 	{yPadding}
+	marginTopSize={p.margin_top}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class="{slice.primary.mobile_full_width ? 'overflow-x-clip' : ''}"
+	class={slice.primary.mobile_full_width ? 'overflow-x-clip' : ''}
 >
 	<div class="{alignClass} {slice.primary.mobile_full_width ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
 		{#if slice.variation === 'kauf'}
 			<a
-				href="/beauftragung{$page.params.uid ? `?dienstleistung=${encodeURIComponent($page.params.uid)}` : ''}"
+				href="/beauftragung{$page.params.uid
+					? `?dienstleistung=${encodeURIComponent($page.params.uid)}`
+					: ''}"
 				class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 					? 'flex w-full items-center justify-center sm:inline-flex sm:items-center sm:w-auto'
 					: 'inline-flex items-center gap-2'}"
@@ -78,7 +99,11 @@
 					--focus-ring-color: {buttonColor};
 				"
 			>
-				{p.button_text || 'Jetzt beauftragen'}{#if btnIcon}&nbsp;<SvgIcons name={btnIcon} size="1em" color={btnStyleEntry?.color || 'currentColor'} />{/if}
+				{p.button_text || 'Jetzt beauftragen'}{#if btnIcon}&nbsp;<SvgIcons
+						name={btnIcon}
+						size="1em"
+						color={btnStyleEntry?.color || 'currentColor'}
+					/>{/if}
 			</a>
 		{:else if isFilled.link(p.button_link)}
 			{#if beauftragungHref}
@@ -96,7 +121,11 @@
 						--focus-ring-color: {buttonColor};
 					"
 				>
-					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons name={btnIcon} size="1em" color={btnStyleEntry?.color || 'currentColor'} />{/if}
+					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
+							name={btnIcon}
+							size="1em"
+							color={btnStyleEntry?.color || 'currentColor'}
+						/>{/if}
 				</a>
 			{:else}
 				<PrismicLink
@@ -113,10 +142,13 @@
 						--focus-ring-color: {buttonColor};
 					"
 				>
-					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons name={btnIcon} size="1em" color={btnStyleEntry?.color || 'currentColor'} />{/if}
+					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
+							name={btnIcon}
+							size="1em"
+							color={btnStyleEntry?.color || 'currentColor'}
+						/>{/if}
 				</PrismicLink>
 			{/if}
 		{/if}
 	</div>
 </Bounded>
-

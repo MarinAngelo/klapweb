@@ -1,8 +1,10 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { bookSlot, isBooked } from '$lib/server/bookings';
+import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { expandArbeitstag } from '$lib/server/terminSlots';
+import { invalidateTermineCache } from '$lib/server/termineCache';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -136,21 +138,37 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 }
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
-	let body: { terminId?: string; name?: string; email?: string; customerTimezone?: string };
+	let body: {
+		terminId?: string;
+		name?: string;
+		email?: string;
+		customerTimezone?: string;
+		fields?: Record<string, string>;
+		fieldLabels?: Record<string, string>;
+	};
 	try {
 		body = await request.json();
 	} catch {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email, customerTimezone } = body;
+	const { terminId, name, email, customerTimezone, fields, fieldLabels } = body;
+	const origin = new URL(request.url).origin;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
 	}
 
-	// Check if already booked
+	// Check if already booked or cancelled
 	const alreadyBooked = await isBooked(terminId);
 	if (alreadyBooked) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	const cancelled = await isCancelled(terminId);
+	if (cancelled) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
 			{ status: 409 }
@@ -160,34 +178,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// Fetch termin + company info from Prismic
 	let datum = '';
 	let uhrzeit = '';
+	let endzeit = '';
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
 	let zeitzone = 'Europe/Zurich';
+	let arbeitstagId: string | undefined;
+	let angebotId: string | undefined;
+	let ortName = '';
+	let ortAdresse = '';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
 
-	// Recurring slots use ID format "<uid>_YYYY-MM-DD"; non-recurring use plain uid
-	const recurringMatch = terminId.match(/^(.+)_(\d{4}-\d{2}-\d{2})$/);
-	const baseUid = recurringMatch ? recurringMatch[1] : terminId;
-	const occurrenceDate = recurringMatch ? recurringMatch[2] : null;
-
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings] = await Promise.all([
-			client.getByUID('terminplanung', baseUid),
-			client.getSingle('settings').catch(() => null)
-		]);
-
-		const d = doc.data as any;
-		datum = occurrenceDate ?? d.datum ?? '';
-		uhrzeit = d.uhrzeit ?? '';
-		titel = d.titel ?? baseUid;
-		sessionLaenge = d.session_laenge ?? null;
-		zeitzone = d.zeitzone ?? 'Europe/Zurich';
-
+		const dynamicClient = client as any;
+		const settings = await client.getSingle('settings').catch(() => null);
 		if (settings) {
 			const s = settings.data as any;
 			companyName = (s.responsible_person_company as string) ?? '';
@@ -198,24 +206,100 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				? s.booking_customer_email_body
 				: null;
 		}
+
+		const [workdays, offers] = await Promise.all([
+			dynamicClient.getAllByType('arbeitstag'),
+			dynamicClient.getAllByType('angebot')
+		]);
+		const today = new Date().toISOString().slice(0, 10);
+		const slot = workdays
+			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.find((item) => item.id === terminId);
+		if (!slot) throw new Error('Termin nicht gefunden');
+		datum = slot.datum;
+		uhrzeit = slot.uhrzeit;
+		endzeit = slot.endzeit ?? '';
+		titel = slot.titel;
+		sessionLaenge = slot.sessionLaenge;
+		zeitzone = slot.zeitzone;
+		arbeitstagId = slot.arbeitstagId;
+		angebotId = slot.angebotId;
+
+		// Ort aus dem verknüpften Angebot laden
+		const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
+		const ortLink = (offerDoc?.data as any)?.ort;
+		if (ortLink?.uid) {
+			try {
+				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
+				ortName = (ortDoc.data as any).name ?? '';
+				const adresseBlocks = (ortDoc.data as any).adresse;
+				ortAdresse = Array.isArray(adresseBlocks)
+					? adresseBlocks
+							.map((b: any) => b?.text ?? '')
+							.filter(Boolean)
+							.join(', ')
+					: '';
+			} catch {
+				/* Ort nicht erreichbar */
+			}
+		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
+	}
+
+	if (endzeit && (await hasOverlappingBooking(datum, uhrzeit, endzeit, terminId))) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
 	}
 
 	await bookSlot({
 		terminId,
 		datum,
 		uhrzeit,
+		endzeit,
 		titel,
 		bookedAt: new Date().toISOString(),
 		name,
-		email
+		email,
+		arbeitstagId,
+		angebotId
 	});
+	invalidateTermineCache();
+
+	// Kunde erfassen (mit Duplikat-Prüfung per E-Mail)
+	if (email) {
+		try {
+			const { saveCustomer, listCustomers } = await import('$lib/server/customers');
+			const emailLower = email.trim().toLowerCase();
+			const existing = await listCustomers();
+			const isDuplicate = existing.some((c) => c.email && c.email.toLowerCase() === emailLower);
+			if (!isDuplicate) {
+				const nameParts = (name ?? '').trim().split(/\s+/);
+				await saveCustomer({
+					date: new Date().toISOString(),
+					paymentMethod: 'terminbuchung',
+					service: titel,
+					amount: null,
+					currency: 'CHF',
+					vorname: nameParts.slice(0, -1).join(' ') || nameParts[0] || undefined,
+					nachname: nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined,
+					email
+				});
+			}
+		} catch (e) {
+			console.error('Kunde konnte nicht gespeichert werden:', e);
+		}
+	}
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = bookingFromEmail || env.INVOICE_FROM_EMAIL;
-	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
+	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
+	const toEmail = companyEmail;
+
+	const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
+	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
 		const dateLabel = fmtDate(datum, uhrzeit);
@@ -229,14 +313,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Uhrzeit: uhrzeit || '–',
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
-			Firma: companyName
+			Firma: companyName,
+			Ort: ortAdresse || ortName
 		};
 
 		const subject = custEmailSubject
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
-		const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
 		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
 
 		const convertedTime = customerTimezone
@@ -261,6 +345,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				companyName
 			].join('\n');
 
+		const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
+		const stornoLine = `\n\nStornieren: ${stornoLink}`;
+		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+
+		const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
@@ -283,12 +372,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 				// E-Mail an Kunden
 				if (email) {
+					const htmlBody =
+						bodyText
+							.split('\n')
+							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
+							.join('') +
+						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
+						(calendarLine
+							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
+							: '') +
+						stornoHtml;
+
 					resend.emails
 						.send({
 							from: fromEmail,
 							to: email,
 							subject,
-							text: bodyText + customerTzLine + calendarLine,
+							text: bodyText + customerTzLine + calendarLine + stornoLine,
+							html: htmlBody,
 							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
@@ -297,6 +398,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				}
 
 				// Benachrichtigung an Anbieter
+				const extraLines =
+					fields && fieldLabels
+						? Object.entries(fields)
+								.filter(
+									([key, value]) =>
+										!['termin', 'name', 'email', 'subject', 'form-name', 'bot-field'].includes(
+											key
+										) && value !== 'Ausgewählt'
+								)
+								.map(([key, value]) => {
+									const label = fieldLabels[key] ?? key;
+									return value ? `${label}: ${value}` : '';
+								})
+								.filter(Boolean)
+						: [];
+
 				resend.emails
 					.send({
 						from: fromEmail,
@@ -306,8 +423,16 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 							[
 								`Neue Buchung eingegangen.`,
 								``,
-								`Termin: ${terminLine}`,
-								`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
+								`Angebot: ${titel}`,
+								`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
+								`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
+								`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+								...(ortName ? [`Ort: ${ortName}`] : []),
+								...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
+								``,
+								`Name: ${customerName}`,
+								...(email ? [`E-Mail: ${email}`] : []),
+								...(extraLines.length ? [``, ...extraLines] : [])
 							].join('\n') + providerCalendarLine,
 						attachments: providerIcsAttachment
 					})
@@ -318,9 +443,27 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
 		console.warn(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet'
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS / CMS-Anbieter-E-Mail) — keine Buchungs-E-Mails gesendet'
 		);
 	}
 
-	return new Response(JSON.stringify({ ok: true }), { status: 200 });
+	const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
+
+	return new Response(
+		JSON.stringify({
+			ok: true,
+			titel,
+			datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '',
+			uhrzeit: uhrzeit || '',
+			endzeit: endzeit || '',
+			dauer: sessionLaenge ?? '',
+			name: name || '',
+			email: email || '',
+			storno: stornoLink,
+			gcal: gcalUrl,
+			ics: icsDownloadLink,
+			ort: ortAdresse || ortName
+		}),
+		{ status: 200 }
+	);
 };

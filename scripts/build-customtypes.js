@@ -151,6 +151,152 @@ function filterTabFields(tab, fieldGating) {
 	return result;
 }
 
+const customTypeLabelOverrides = {
+	aufgabe: 'Aufgabe',
+	page: 'Seiten',
+	settings: 'Einstellungen'
+};
+
+function describeField(fieldConfig, label, elementType) {
+	const config = fieldConfig?.config ?? {};
+	if (config.description || fieldConfig?.description) {
+		return config.description || fieldConfig.description;
+	}
+
+	const subject = label || 'dieses Feld';
+	const options = Array.isArray(config.options) ? config.options.filter(Boolean).join(', ') : '';
+	const descriptions = {
+		UID: `Legt die eindeutige Kennung für ${subject} fest. Diese wird für die Zuordnung und Verlinkung verwendet.`,
+		Text: `Erfasst einen kurzen Text für ${subject}.`,
+		'Key Text': `Erfasst einen kurzen, eindeutig verwendbaren Textwert für ${subject}.`,
+		StructuredText: `Erfasst formatierten Text für ${subject}, zum Beispiel Absätze, Überschriften oder Links.`,
+		Image: `Wählt ein Bild für ${subject} aus und stellt es an der vorgesehenen Stelle dar.`,
+		Boolean: `Schaltet ${subject} ein oder aus.`,
+		Number: `Erfasst einen Zahlenwert für ${subject}.`,
+		Select: `Legt ${subject} über eine Auswahl fest${options ? `: ${options}` : ''}.`,
+		Color: `Legt die Farbe für ${subject} fest.`,
+		Date: `Legt das Datum für ${subject} fest.`,
+		Timestamp: `Legt Datum und Uhrzeit für ${subject} fest.`,
+		Link: `Verknüpft ${subject} mit einer anderen Seite oder einem externen Ziel.`,
+		ContentRelationship: `Verknüpft ${subject} mit einem anderen Inhalt im CMS.`,
+		Embed: `Bindet einen externen Inhalt für ${subject} ein.`,
+		Group: `Ermöglicht eine wiederholbare Liste von Einträgen für ${subject}.`,
+		Slices: `Wählt die Inhaltsbausteine aus, die an dieser Stelle verwendet werden können.`,
+		IntegrationFields: `Lädt zusätzliche Daten für ${subject} aus einer externen Integration.`,
+		GeoPoint: `Speichert einen geografischen Ort für ${subject}.`
+	};
+
+	if (descriptions[fieldConfig?.type]) return descriptions[fieldConfig.type];
+	if (config.placeholder) return `Erfasst ${subject}; Beispiel: ${config.placeholder}.`;
+	return `Legt den Wert für ${subject} fest.`;
+}
+
+function collectFieldReference() {
+	const fieldMap = [];
+	const customTypesDir = join(ROOT, 'customtypes');
+	const typeNames = !existsSync(customTypesDir)
+		? []
+		: readdirSync(customTypesDir, { withFileTypes: true })
+				.filter((entry) => entry.isDirectory() && !entry.name.startsWith('_'))
+				.map((entry) => entry.name)
+				.sort((a, b) => a.localeCompare(b));
+
+	for (const typeName of typeNames) {
+		const typePath = join(customTypesDir, typeName, 'index.json');
+		if (!existsSync(typePath)) continue;
+
+		const doc = read(`customtypes/${typeName}/index.json`);
+		const tabs = doc?.json ?? {};
+		const tabNames = Object.keys(tabs);
+
+		for (const tabName of tabNames) {
+			const tabContent = tabs[tabName];
+			if (!tabContent || typeof tabContent !== 'object') continue;
+			const fieldNames = Object.keys(tabContent);
+			for (const fieldName of fieldNames) {
+				const fieldConfig = tabContent[fieldName];
+				if (!fieldConfig || typeof fieldConfig !== 'object') continue;
+				fieldMap.push({
+					name: customTypeLabelOverrides[typeName] || doc.label || typeName,
+					elementType: typeName === 'page' || typeName === 'settings' ? 'Page Type' : 'Custom Type',
+					customType: typeName,
+					customTypeLabel: customTypeLabelOverrides[typeName] || doc.label || typeName,
+					tab: tabName,
+					field: fieldName,
+					path: `${typeName}/${tabName}/${fieldName}`,
+					label: fieldConfig?.config?.label || fieldName,
+					description: describeField(
+						fieldConfig,
+						fieldConfig?.config?.label || fieldName,
+						'Custom Type'
+					),
+					type: fieldConfig?.type || 'unknown'
+				});
+			}
+		}
+	}
+
+	const slicesDir = join(ROOT, 'src/lib/slices');
+	if (existsSync(slicesDir)) {
+		for (const entry of readdirSync(slicesDir, { withFileTypes: true })) {
+			if (!entry.isDirectory()) continue;
+			const modelPath = join(slicesDir, entry.name, 'model.json');
+			if (!existsSync(modelPath)) continue;
+
+			const model = JSON.parse(readFileSync(modelPath, 'utf-8'));
+			for (const variation of model.variations ?? []) {
+				for (const [section, fields] of [
+					['Primary', variation.primary],
+					['Items', variation.items]
+				]) {
+					for (const [fieldName, fieldConfig] of Object.entries(fields ?? {})) {
+						if (!fieldConfig || typeof fieldConfig !== 'object') continue;
+						fieldMap.push({
+							name: model.name || entry.name,
+							elementType: 'Slice',
+							customType: entry.name,
+							customTypeLabel: model.name || entry.name,
+							tab: variation.name || variation.id,
+							field: fieldName,
+							path: `${entry.name}/${variation.id}/${section}/${fieldName}`,
+							label: fieldConfig?.config?.label || fieldName,
+							description: describeField(
+								fieldConfig,
+								fieldConfig?.config?.label || fieldName,
+								'Slice'
+							),
+							type: fieldConfig?.type || 'unknown'
+						});
+					}
+				}
+			}
+		}
+	}
+
+	const elementTypeOrder = new Map([
+		['Page Type', 0],
+		['Custom Type', 1],
+		['Slice', 2]
+	]);
+	const tabOrder = new Map();
+	for (const field of fieldMap) {
+		const groupKey = `${field.elementType}:${field.name}`;
+		if (!tabOrder.has(groupKey)) tabOrder.set(groupKey, new Map());
+		const groupTabs = tabOrder.get(groupKey);
+		if (!groupTabs.has(field.tab)) groupTabs.set(field.tab, groupTabs.size);
+	}
+
+	return fieldMap.sort((a, b) => {
+		const byName = a.name.localeCompare(b.name, 'de');
+		if (byName !== 0) return byName;
+		const byElementType = elementTypeOrder.get(a.elementType) - elementTypeOrder.get(b.elementType);
+		if (byElementType !== 0) return byElementType;
+		const aTabs = tabOrder.get(`${a.elementType}:${a.name}`);
+		const bTabs = tabOrder.get(`${b.elementType}:${b.name}`);
+		return aTabs.get(a.tab) - bTabs.get(b.tab);
+	});
+}
+
 // ── 1. Custom Types ──────────────────────────────────────────────────────────────
 
 const managedTypes = ['page', 'settings'];
@@ -281,11 +427,42 @@ if (slicesWithoutBase.length > 0) {
 	console.warn(`  Lösung: base.json aus Git-History restaurieren oder neu erstellen.`);
 }
 
+const animationFields = ['animate', 'anim_direction', 'anim_delay', 'anim_duration'];
+
+function validateAnimationFieldOrder(model, path) {
+	for (const variation of model.variations ?? []) {
+		const fieldNames = Object.keys(variation.primary ?? {});
+		const present = animationFields.filter((field) => fieldNames.includes(field));
+		if (!present.length) continue;
+
+		// Timeline/Galerie verwenden bewusst nur den festen Animate-Schalter.
+		if (present.length === 1 && present[0] === 'animate') {
+			if (fieldNames.at(-1) !== 'animate') {
+				throw new Error(
+					`${path} / ${variation.id}: Das Feld animate muss am Ende von primary stehen.`
+				);
+			}
+			continue;
+		}
+
+		const lastFields = fieldNames.slice(-animationFields.length);
+		if (
+			present.length !== animationFields.length ||
+			lastFields.join('|') !== animationFields.join('|')
+		) {
+			throw new Error(
+				`${path} / ${variation.id}: Animationsfelder müssen als letzter primary-Block in der Reihenfolge ${animationFields.join(', ')} stehen.`
+			);
+		}
+	}
+}
+
 for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue;
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
+	validateAnimationFieldOrder(base, basePath);
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)
@@ -307,6 +484,7 @@ for (const sliceName of allSlices) {
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 	const fullPath = `src/lib/slices/${sliceName}/full.json`;
 	const fullExists = existsSync(join(ROOT, fullPath));
+	if (fullExists) validateAnimationFieldOrder(read(fullPath), fullPath);
 
 	// Extra-Variationen aus gating.json.slices[name].variations (ersetzt slices.json)
 	const activeExtraIds = new Set(
@@ -374,6 +552,21 @@ for (const feature of allFeatures) {
 	}
 }
 
+// ── 4b. Plan-basierte Custom Types (direkt in customtypes/, ohne Feature) ──────
+
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (gate.feature) continue; // Feature-basierte werden oben behandelt
+	if (!isActive(gate)) continue;
+
+	const src = join(ROOT, `customtypes/${typeId}/index.json`);
+	if (!existsSync(src)) {
+		console.warn(`⚠ customtypes/${typeId}/index.json fehlt (plan: ${gate.plan})`);
+		continue;
+	}
+
+	console.log(`✓ customtypes/${typeId}/index.json (plan: ${gate.plan})`);
+}
+
 console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
 
 // ── 5. Gated Custom Types aufräumen ──────────────────────────────────────────────
@@ -401,3 +594,7 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	}
 }
 // ── Ende Pre-Build-Check ──────────────────────────────────────────────────────
+
+const fieldReference = collectFieldReference();
+writeIfChanged('src/lib/generated/prismic-field-reference.json', fieldReference);
+console.log(`✓ src/lib/generated/prismic-field-reference.json (${fieldReference.length} fields)`);

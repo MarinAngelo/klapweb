@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { Content } from '@prismicio/client';
 	import { PrismicRichText } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: Content.RessourceBuchungSlice;
@@ -332,12 +334,12 @@
 >
 	<div class="flex flex-col gap-8 w-full">
 		{#if slice.primary.heading?.length}
-			<PrismicRichText field={slice.primary.heading} />
+			<PrismicRichText field={slice.primary.heading} components={{ embed: RichTextEmbed }} />
 		{/if}
 
 		{#if slice.primary.intro?.length}
 			<div class="mb-0 max-w-2xl">
-				<PrismicRichText field={slice.primary.intro} />
+				<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
 			</div>
 		{/if}
 
@@ -367,7 +369,10 @@
 					{slice.primary.success_heading || $_('Anfrage erhalten!')}
 				</p>
 				{#if slice.primary.success_text?.length}
-					<PrismicRichText field={slice.primary.success_text} />
+					<PrismicRichText
+						field={slice.primary.success_text}
+						components={{ embed: RichTextEmbed }}
+					/>
 				{:else}
 					<p>{$_('Wir melden uns in Kürze bei Ihnen.')}</p>
 				{/if}
@@ -548,7 +553,8 @@
 							class="mt-2 px-6 py-3 font-medium transition-opacity disabled:opacity-40"
 							style="background-color: {textColor}; color: {bgColor};"
 						>
-							{$_('Weiter')} →
+							{$_('Weiter')}
+							<SvgIcons name="right" size="1em" />
 						</button>
 					</div>
 
@@ -671,7 +677,8 @@
 						on:click={backToStep1}
 						class="text-xs underline opacity-60 hover:opacity-100 text-left mt-1 w-fit"
 					>
-						← {$_('Auswahl ändern')}
+						<SvgIcons name="left" size="1em" />
+						{$_('Auswahl ändern')}
 					</button>
 				</div>
 
@@ -755,7 +762,8 @@
 							class="px-6 py-3 font-medium transition-opacity"
 							style="background-color: transparent; color: {textColor}; border: 1px solid {textColor}44;"
 						>
-							← {$_('Zurück')}
+							<SvgIcons name="left" size="1em" />
+							{$_('Zurück')}
 						</button>
 						<button
 							type="submit"

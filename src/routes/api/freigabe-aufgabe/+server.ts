@@ -29,46 +29,56 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	try {
-		await updateAnnahme(id, { status: 'annahme_bestaetigt', bestaetgtAt: new Date().toISOString() });
+		await updateAnnahme(id, {
+			status: 'annahme_bestaetigt',
+			bestaetgtAt: new Date().toISOString()
+		});
 	} catch (e) {
 		return html(500, `Fehler beim Freigeben: ${e}`);
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 
 	if (resendKey && emailFrom && annahme.email) {
-		import('resend').then(({ Resend }) => {
-			const resend = new Resend(resendKey);
-			resend.emails.send({
-				from: emailFrom,
-				to: annahme!.email!,
-				subject: `Aufgabe bestätigt: ${annahme!.aufgabeTitel}`,
-				text: [
-					`Guten Tag ${annahme!.name}`,
-					``,
-					`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
-					``,
-					`Aufgabe: ${annahme!.aufgabeTitel}`,
-					`Credits: ${annahme!.creditTyp === 'fest' ? `${annahme!.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
-					``,
-					`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
-					`Buchungs-ID: ${annahme!.buchungId}`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
-			});
-		}).catch((e) => console.error('Resend import fehlgeschlagen:', e));
+		import('resend')
+			.then(({ Resend }) => {
+				const resend = new Resend(resendKey);
+				resend.emails
+					.send({
+						from: emailFrom,
+						to: annahme!.email!,
+						subject: `Aufgabe bestätigt: ${annahme!.aufgabeTitel}`,
+						text: [
+							`Guten Tag ${annahme!.name}`,
+							``,
+							`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
+							``,
+							`Aufgabe: ${annahme!.aufgabeTitel}`,
+							`Credits: ${annahme!.creditTyp === 'fest' ? `${annahme!.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
+							``,
+							`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
+							`Buchungs-ID: ${annahme!.buchungId}`,
+							``,
+							`Freundliche Grüsse`
+						].join('\n')
+					})
+					.then(({ error: e }) => {
+						if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
+					});
+			})
+			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	}
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<strong>Aufgabe freigegeben ✓</strong><br><br>
 		Nutzer: ${annahme.name} (${annahme.email ?? '–'})<br>
 		Aufgabe: ${annahme.aufgabeTitel}<br>
 		${annahme.email ? `Bestätigungsmail wurde an <strong>${annahme.email}</strong> gesendet.` : 'Keine E-Mail hinterlegt.'}
-	`);
+	`
+	);
 };
 
 function html(status: number, body: string) {

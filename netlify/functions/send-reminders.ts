@@ -7,12 +7,12 @@
  * Runs daily at 20:00 UTC:
  *   → Abreiseerinnerung   (12h vor Abreise,    bis = morgen)
  *
- * After each guest email, a confirmation is sent to the operator (INVOICE_FROM_EMAIL).
+ * After each guest email, a confirmation is sent to the operator (EMAIL_FROM_ADDRESS).
  *
  * Required env vars:
  *   NETLIFY_SITE_ID, NETLIFY_TOKEN   – Blobs access
  *   RESEND_API_KEY                   – Email sending
- *   INVOICE_FROM_EMAIL               – Sender + operator notification recipient
+ *   EMAIL_FROM_ADDRESS               – Sender + operator notification recipient
  *   PRISMIC_REPOSITORY_NAME          – Prismic repo (default: from slicemachine.config.json)
  *
  * Optional:
@@ -83,7 +83,7 @@ export default async function handler() {
 	const siteID = process.env.NETLIFY_SITE_ID;
 	const token = process.env.NETLIFY_TOKEN;
 	const resendKey = process.env.RESEND_API_KEY;
-	const fromEmail = process.env.INVOICE_FROM_EMAIL;
+	const fromEmail = process.env.EMAIL_FROM_ADDRESS;
 
 	let repoName = process.env.PRISMIC_REPOSITORY_NAME;
 	if (!repoName) {
@@ -315,6 +315,62 @@ export default async function handler() {
 				console.log(`[send-reminders] Nach-Ankunft-Mail gesendet an ${buchung.email}`);
 			} catch (err) {
 				console.error(`[send-reminders] Fehler bei Buchung ${buchung.id}:`, err);
+			}
+		}
+	}
+
+	// ── Termin-Erinnerungen: X Stunden vor Termin (bei jedem Lauf) ──────────
+	const reminderHours = Number((settings?.data as any)?.booking_reminder_hours ?? 0);
+	if (reminderHours > 0) {
+		const terminStore = getStore({ name: 'buchungen', siteID, token });
+		const { blobs: terminBlobs } = await terminStore.list();
+		const termine = (
+			await Promise.all(
+				terminBlobs.map((b) => terminStore.get(b.key, { type: 'json' }).catch(() => null))
+			)
+		).filter(Boolean) as any[];
+
+		const now = Date.now();
+		const upcoming = termine.filter((b) => {
+			if (!b.email || b.reminderSent || !b.datum || !b.uhrzeit) return false;
+			const terminTime = new Date(`${b.datum}T${b.uhrzeit}:00`).getTime();
+			const diffHours = (terminTime - now) / 3600000;
+			return diffHours > 0 && diffHours <= reminderHours;
+		});
+		console.log(`[send-reminders] Termin-Erinnerungen (≤${reminderHours}h): ${upcoming.length}`);
+
+		for (const buchung of upcoming) {
+			try {
+				const betreff = `Erinnerung: ${buchung.titel}`;
+				const datumLabel = formatDate(buchung.datum);
+				const html = `<p>Guten Tag ${buchung.name || ''}</p>
+<p>Dies ist eine Erinnerung an Ihren Termin:</p>
+<p><strong>${buchung.titel}</strong><br>
+${datumLabel}, ${buchung.uhrzeit} Uhr</p>
+<p>Freundliche Grüsse</p>`;
+
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Termin-Erinnerungsmail',
+					datumLabel,
+					'Termin'
+				);
+				if (error) {
+					console.error(
+						`[send-reminders] Termin-Erinnerung fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
+					continue;
+				}
+
+				await terminStore.setJSON(buchung.terminId, { ...buchung, reminderSent: true });
+				console.log(`[send-reminders] Termin-Erinnerung gesendet an ${buchung.email}`);
+			} catch (err) {
+				console.error(`[send-reminders] Fehler bei Termin ${buchung.terminId}:`, err);
 			}
 		}
 	}

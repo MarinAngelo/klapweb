@@ -5,7 +5,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import SelectField from '$lib/components/SelectField.svelte';
+	import InputField from '$lib/components/InputField.svelte';
 
 	export let data: {
 		page: any;
@@ -47,9 +47,15 @@
 			style="color: {pageColor}; opacity: 0.7;"
 		>
 			<span>Währung:</span>
-			<SelectField
+			<InputField
+				field={{
+					field_name: '',
+					field_type: 'Auswahlliste',
+					required: false,
+					options: currencyOptions.join(',')
+				}}
 				bind:value={selectedCurrency}
-				options={currencyOptions}
+				showLabel={false}
 				on:change={onCurrencyChange}
 			/>
 		</div>

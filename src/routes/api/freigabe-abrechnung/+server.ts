@@ -8,10 +8,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { getRessourceBuchung, updateRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
+import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
+}
+
+function fmtEur(eur: number) {
+	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'EUR' }).format(eur);
 }
 
 function fmtDatum(iso: string) {
@@ -35,12 +40,15 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (!buchung) return html(404, '<p>Buchung nicht gefunden.</p>');
 
 	if (buchung.status === 'abgerechnet') {
-		return html(200, `
+		return html(
+			200,
+			`
 			<p>✓ Diese Abrechnung wurde bereits freigegeben.</p>
 			<p><strong>Freigegebener Betrag:</strong> ${fmt(buchung.abrechnungBetrag ?? 0)}</p>
 			<p>Freigegeben am: ${buchung.abrechnungFreigegebenAt ? new Date(buchung.abrechnungFreigegebenAt).toLocaleString('de-CH') : '–'}</p>
 			<br><a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(url.searchParams.get('secret') ?? '')}&resend=true">Abrechnung erneut senden</a>
-		`);
+		`
+		);
 	}
 
 	const annahmen = await listAnnahmenFuerBuchung(id).catch(() => []);
@@ -48,18 +56,27 @@ export const GET: RequestHandler = async ({ url }) => {
 	const creditsCHF = buchung.creditsCHF ?? erledigt.reduce((s, a) => s + berechneCredits(a), 0);
 	const berechneterBetrag = Math.max(0, buchung.preisCHF - creditsCHF);
 	const vorschlag = buchung.abrechnungBetrag ?? berechneterBetrag;
+	const rates = await fetchExchangeRates('CHF', ['EUR']);
+	const eurRate = rates.EUR;
+	const vorschlagEur = eurRate ? Math.round(vorschlag * eurRate * 100) / 100 : null;
 
 	const aufgabenRows = erledigt.length
-		? erledigt.map((a) => `
+		? erledigt
+				.map(
+					(a) => `
 			<tr>
 				<td>${a.aufgabeTitel}</td>
 				<td style="text-align:right">− ${fmt(berechneCredits(a))}</td>
-			</tr>`).join('')
+			</tr>`
+				)
+				.join('')
 		: '<tr><td colspan="2" style="color:#888">(keine erledigten Aufgaben)</td></tr>';
 
 	const resend = url.searchParams.get('resend') === 'true';
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<h1>Abrechnung freigeben</h1>
 		<h2>${buchung.ressourceName ?? buchung.ressourceUid}</h2>
 		<p>
@@ -86,6 +103,11 @@ export const GET: RequestHandler = async ({ url }) => {
 				<label>
 					Freigegebener Betrag (CHF)
 					<input type="number" name="betrag" value="${vorschlag.toFixed(2)}" min="0" step="0.05" required>
+					${
+						vorschlagEur !== null && eurRate
+							? `<small>Entspricht derzeit ca. ${fmtEur(vorschlagEur)} (1 CHF = ${eurRate.toFixed(4)} EUR, Tageskurs)</small>`
+							: '<small>EUR-Tageskurs momentan nicht verfügbar.</small>'
+					}
 				</label>
 				<label>
 					Interne Notiz (optional, erscheint nicht in der Mieter-Mail)
@@ -94,7 +116,8 @@ export const GET: RequestHandler = async ({ url }) => {
 			</fieldset>
 			<button type="submit">${resend ? '✉ Abrechnung erneut senden' : '✓ Freigeben &amp; Abrechnung an Mieter senden'}</button>
 		</form>
-	`);
+	`
+	);
 };
 
 // ── POST: Abrechnung freigeben ─────────────────────────────────────────────────
@@ -116,6 +139,10 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		return html(400, '<p>Ungültiger Betrag.</p>');
 	}
 
+	const rates = await fetchExchangeRates('CHF', ['EUR']);
+	const eurRate = rates.EUR;
+	const betragEur = eurRate ? Math.round(betrag * eurRate * 100) / 100 : null;
+
 	const resend_ = url.searchParams.get('resend') === 'true';
 
 	// Buchung aktualisieren
@@ -123,12 +150,12 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		status: 'abgerechnet',
 		abrechnungBetrag: betrag,
 		abrechnungFreigegebenAt: new Date().toISOString(),
-		...(notiz ? { abrechnungsNotiz: notiz } as any : {})
+		...(notiz ? ({ abrechnungsNotiz: notiz } as any) : {})
 	});
 
 	// ── Definitive Abrechnung an Mieter ───────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	let mailGesendet = false;
 	let mailFehler = '';
 
@@ -160,14 +187,22 @@ export const POST: RequestHandler = async ({ url, request }) => {
 					``,
 					`─────────────────────────────────────`,
 					`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-					...(creditsCHF > 0 ? [
-						`Credits (Aufgaben): − ${fmt(creditsCHF)}`,
-						``,
-						`Erledigte Aufgaben:`,
-						aufgabenZeilen,
-					] : []),
+					...(creditsCHF > 0
+						? [
+								`Credits (Aufgaben): − ${fmt(creditsCHF)}`,
+								``,
+								`Erledigte Aufgaben:`,
+								aufgabenZeilen
+							]
+						: []),
 					`─────────────────────────────────────`,
 					`Total:              ${fmt(betrag)}`,
+					...(betragEur !== null && eurRate
+						? [
+								`Entspricht ca.:    ${fmtEur(betragEur)}`,
+								`(Tageskurs: 1 CHF = ${eurRate.toFixed(4)} EUR)`
+							]
+						: []),
 					`─────────────────────────────────────`,
 					``,
 					`Freundliche Grüsse`
@@ -183,9 +218,13 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		}
 	}
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<p>✓ <strong>Abrechnung freigegeben.</strong></p>
-		<p><strong>Betrag:</strong> ${fmt(betrag)}</p>
+		<p><strong>Betrag:</strong> ${fmt(betrag)}${
+			betragEur !== null ? ` (ca. ${fmtEur(betragEur)} zum Tageskurs)` : ''
+		}</p>
 		${notiz ? `<p><strong>Notiz:</strong> ${notiz}</p>` : ''}
 		<p>${
 			!buchung.email
@@ -194,7 +233,8 @@ export const POST: RequestHandler = async ({ url, request }) => {
 					? `Abrechnung wurde an <strong>${buchung.email}</strong> gesendet.`
 					: `<span style="color:red">E-Mail fehlgeschlagen: ${mailFehler || '–'}</span>`
 		}</p>
-	`);
+	`
+	);
 };
 
 function html(status: number, body: string) {

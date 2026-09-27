@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	export let data: PageData;
 
 	const s = data.secret;
@@ -18,7 +19,7 @@
 		<a
 			href="/admin/dashboard?secret={s}"
 			style="margin-left: auto; font-size: 0.875rem; color: #6b7280; text-decoration: none;"
-			>← Dashboard</a
+			><SvgIcons name="left" size="1em" /> Dashboard</a
 		>
 	</div>
 

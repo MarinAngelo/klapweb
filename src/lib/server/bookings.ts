@@ -1,7 +1,7 @@
 /**
  * Booking storage via Netlify Blobs.
  *
- * Each booking occupies one blob keyed by the terminplanung document UID.
+ * Each booking occupies one blob keyed by the generated workday slot ID.
  * Using the UID as key means a slot can only be booked once (atomic write).
  *
  * Required Netlify environment variables: NETLIFY_SITE_ID, NETLIFY_TOKEN
@@ -13,10 +13,20 @@ export interface BookingRecord {
 	terminId: string;
 	datum: string;
 	uhrzeit: string;
+	endzeit?: string;
 	titel: string;
 	bookedAt: string;
 	name?: string;
 	email?: string;
+	arbeitstagId?: string;
+	angebotId?: string;
+	reminderSent?: boolean;
+}
+
+function toMinutes(value: string): number | null {
+	const match = /^(\d{1,2}):(\d{2})$/.exec(value ?? '');
+	if (!match) return null;
+	return Number(match[1]) * 60 + Number(match[2]);
 }
 
 function getBookingStore() {
@@ -43,6 +53,42 @@ export async function isBooked(terminId: string): Promise<boolean> {
 	return existing !== null;
 }
 
+export async function getBooking(terminId: string): Promise<BookingRecord | null> {
+	const store = getBookingStore();
+	return (await store.get(terminId, { type: 'json' })) as BookingRecord | null;
+}
+
+export async function updateBooking(
+	terminId: string,
+	patch: Partial<BookingRecord>
+): Promise<void> {
+	const store = getBookingStore();
+	const existing = await getBooking(terminId);
+	if (!existing) return;
+	await store.setJSON(terminId, { ...existing, ...patch });
+}
+
+export async function hasOverlappingBooking(
+	datum: string,
+	startzeit: string,
+	endzeit: string,
+	excludeId?: string
+): Promise<boolean> {
+	const start = toMinutes(startzeit);
+	const end = toMinutes(endzeit);
+	if (start === null || end === null || end <= start) return false;
+
+	const bookings = await listBookings();
+	return bookings.some((booking) => {
+		if (booking.terminId === excludeId || booking.datum !== datum) return false;
+		const existingStart = toMinutes(booking.uhrzeit);
+		const existingEnd = toMinutes(booking.endzeit ?? booking.uhrzeit);
+		if (existingStart === null || existingEnd === null || existingEnd <= existingStart)
+			return false;
+		return start < existingEnd && end > existingStart;
+	});
+}
+
 export async function listBookings(): Promise<BookingRecord[]> {
 	const store = getBookingStore();
 	const { blobs } = await store.list();
@@ -51,7 +97,11 @@ export async function listBookings(): Promise<BookingRecord[]> {
 	);
 	return records
 		.filter(Boolean)
-		.sort((a, b) => new Date(a.datum + 'T' + a.uhrzeit).getTime() - new Date(b.datum + 'T' + b.uhrzeit).getTime());
+		.sort(
+			(a, b) =>
+				new Date(a.datum + 'T' + a.uhrzeit).getTime() -
+				new Date(b.datum + 'T' + b.uhrzeit).getTime()
+		);
 }
 
 export async function listBookingsByEmail(email: string): Promise<BookingRecord[]> {

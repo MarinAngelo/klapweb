@@ -26,6 +26,48 @@
 	export let slice: Content.HeroSlice;
 	// Reaktives Bild: Aktualisiert sich wenn sich slice ändert
 	$: image = 'backgroundImage' in slice.primary ? slice.primary.backgroundImage : null;
+	$: isBlobVariation = slice.variation === 'blob';
+	$: blobShape = (slice.primary as any).blob_shape ?? true;
+	$: blobColor =
+		(slice.primary as any).text_overlay_color ||
+		(slice.primary as any).blob_color ||
+		(slice.primary as any).bg_color ||
+		'var(--page-color)';
+	$: blobSvgCode = (slice.primary as any).blob_svg_code?.trim() || '';
+	$: blobScale = Math.min(150, Math.max(50, Number((slice.primary as any).blob_scale ?? 100)));
+	// Der SVG-Pfad nutzt seine 200er-ViewBox nur zu ca. 63% Breite/73% Höhe.
+	// 2.0 gleicht die natürliche SVG-Pfad-Ausdehnung aus und füllt den Canvas.
+	$: blobCanvasScale = 2 * (blobScale / 100);
+	$: blobPositionX = Math.min(
+		100,
+		Math.max(0, Number((slice.primary as any).blob_position_x ?? 50))
+	);
+	$: blobPositionY = Math.min(
+		100,
+		Math.max(0, Number((slice.primary as any).blob_position_y ?? 50))
+	);
+	$: blobRotation = Math.min(
+		180,
+		Math.max(-180, Number((slice.primary as any).blob_rotation ?? 0))
+	);
+	$: blobWaveBottom = (slice.primary as any).blob_wave_bottom ?? true;
+	$: blobWaveHeight = Math.max(0, Number((slice.primary as any).blob_wave_height ?? 32));
+	$: blobWaveAmplitude = Math.min(
+		blobWaveHeight,
+		Math.max(0, Number((slice.primary as any).blob_wave_amplitude ?? 16))
+	);
+	$: blobWaveWaves = Math.min(8, Math.max(1, Number((slice.primary as any).blob_wave_waves ?? 1)));
+	$: blobWavePath = (() => {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const wave =
+				blobWaveHeight -
+				(blobWaveAmplitude / 2) * (1 - Math.cos((index / points) * blobWaveWaves * Math.PI * 2));
+			return `${x},${wave}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	})();
 	const sliceStore = writable(slice);
 
 	// Wenn sich slice ändert, aktualisiere den Store
@@ -230,9 +272,10 @@
 
 <section
 	bind:this={sectionEl}
-	class="relative z-0 overflow-visible"
+	class="relative z-0 overflow-visible {isBlobVariation && blobShape ? 'titelbereich-blob' : ''}"
 	data-slice-type={slice.slice_type}
 	style="color: {color};
+		background-color: {bgColor ?? 'transparent'};
 		height: {$bannerHeight};
 		{$bannerHeight === 'auto' ? 'min-height: 100vh;' : ''}
 		font-family: {presetFont
@@ -243,17 +286,39 @@
 			'inherit'};
 	"
 >
-	<GradientBackground
-		color1={gradient?.color1 ?? null}
-		color2={gradient?.color2 ?? null}
-		opacity1={gradient?.opacity1 ?? 1}
-		opacity2={gradient?.opacity2 ?? 1}
-		stop1={gradient?.stop1 ?? '0%'}
-		stop2={gradient?.stop2 ?? '100%'}
-		type={gradient?.type ?? 'Linear'}
-		angle={gradient?.angle ?? '180deg'}
-		fallback={gradientFallback}
-	/>
+	{#if !isBlobVariation}
+		<GradientBackground
+			color1={gradient?.color1 ?? null}
+			color2={gradient?.color2 ?? null}
+			opacity1={gradient?.opacity1 ?? 1}
+			opacity2={gradient?.opacity2 ?? 1}
+			stop1={gradient?.stop1 ?? '0%'}
+			stop2={gradient?.stop2 ?? '100%'}
+			type={gradient?.type ?? 'Linear'}
+			angle={gradient?.angle ?? '180deg'}
+			fallback={gradientFallback}
+		/>
+	{:else if blobShape}
+		<div class="titelbereich-blob-surface" aria-hidden="true">
+			<div
+				class="titelbereich-blob-shape titelbereich-blob-custom"
+				style={`--blob-color: ${blobColor}; transform: translate(${blobPositionX - 50}%, ${blobPositionY - 50}%) rotate(${blobRotation}deg) scale(${blobCanvasScale});`}
+			>
+				{#if blobSvgCode}
+					<!-- SVG-Code stammt aus einem vertrauenswürdigen Agency/CMS-Feld. -->
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html blobSvgCode}
+				{:else}
+					<svg viewBox="0 0 200 200" preserveAspectRatio="none">
+						<path
+							fill={blobColor}
+							d="M15.6,-17.8C30.7,-5.9,60.7,-10.9,64,-8.8C67.3,-6.7,43.9,2.5,33.8,19C23.7,35.4,26.8,59,20.4,65.2C14,71.5,-2,60.4,-12.5,49.9C-23.1,39.3,-28.2,29.3,-36.6,19C-45,8.8,-56.7,-1.6,-58.5,-13.5C-60.2,-25.4,-51.9,-38.7,-40.5,-51.3C-29.1,-63.9,-14.6,-75.7,-7.2,-67.2C0.2,-58.7,0.5,-29.8,15.6,-17.8Z"
+						/>
+					</svg>
+				{/if}
+			</div>
+		</div>
+	{/if}
 	{#if image && typeof image.url === 'string' && image.url}
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
 			<div bind:this={parallaxInner} class="absolute inset-x-0" style="height: 120%; top: -10%;">
@@ -298,7 +363,7 @@
 	{/if}
 	<div class="absolute inset-0 z-10 flex items-center justify-center">
 		<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
-		{#if mounted && isFullScreenMobile && !switchOffTextOverlay}
+		{#if mounted && isFullScreenMobile && !switchOffTextOverlay && !isBlobVariation}
 			<div
 				class="absolute inset-0"
 				style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none;"
@@ -308,7 +373,7 @@
 		<Bounded tag="div" yPadding="none" class="w-full">
 			<div class="relative w-full flex items-center justify-center">
 				<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
-				{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay)}
+				{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay) && !isBlobVariation}
 					<div
 						class="absolute inset-0"
 						style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
@@ -358,6 +423,17 @@
 			</div>
 		</Bounded>
 	</div>
+	{#if isBlobVariation && blobWaveBottom && blobWaveHeight > 0}
+		<svg
+			class="titelbereich-blob-wave"
+			aria-hidden="true"
+			viewBox={`0 0 100 ${blobWaveHeight}`}
+			preserveAspectRatio="none"
+			style={`height: ${blobWaveHeight}px; bottom: -${blobWaveHeight}px;`}
+		>
+			<path d={blobWavePath} fill={bgColor ?? 'var(--page-bg-color)'} />
+		</svg>
+	{/if}
 </section>
 
 <style>
@@ -365,5 +441,40 @@
 		section {
 			scroll-snap-align: start;
 		}
+	}
+	.titelbereich-blob {
+		overflow-x: clip;
+		overflow-y: visible;
+	}
+	.titelbereich-blob-surface {
+		position: absolute;
+		width: 100vw;
+		height: 100vh;
+		left: 50%;
+		top: 0;
+		transform: translateX(-50%);
+		z-index: 1;
+		pointer-events: none;
+		display: block;
+	}
+	.titelbereich-blob-shape {
+		width: 100%;
+		height: 100%;
+	}
+	:global(.titelbereich-blob-custom svg) {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+	:global(.titelbereich-blob-custom svg *[fill]:not([fill='none'])) {
+		fill: var(--blob-color) !important;
+	}
+	.titelbereich-blob-wave {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		pointer-events: none;
+		z-index: 11;
+		display: block;
 	}
 </style>

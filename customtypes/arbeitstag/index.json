@@ -1,6 +1,6 @@
 {
-	"id": "terminplanung",
-	"label": "Terminplanung",
+	"id": "arbeitstag",
+	"label": "Arbeitstag",
 	"format": "custom",
 	"repeatable": true,
 	"status": true,
@@ -13,31 +13,31 @@
 					"placeholder": ""
 				}
 			},
-			"titel": {
+			"bezeichnung": {
 				"type": "Text",
 				"config": {
 					"label": "Bezeichnung",
-					"placeholder": "z.B. Erstgespräch"
+					"placeholder": "z.B. Praxistag Montag"
 				}
 			},
 			"datum": {
 				"type": "Date",
 				"config": {
-					"label": "Startdatum"
+					"label": "Datum"
 				}
 			},
-			"uhrzeit": {
+			"startzeit": {
 				"type": "Text",
 				"config": {
-					"label": "Uhrzeit (HH:MM)",
-					"placeholder": "14:00"
+					"label": "Startzeit (HH:MM)",
+					"placeholder": "09:00"
 				}
 			},
-			"session_laenge": {
-				"type": "Number",
+			"endzeit": {
+				"type": "Text",
 				"config": {
-					"label": "Dauer (Minuten)",
-					"placeholder": "60"
+					"label": "Endzeit (HH:MM)",
+					"placeholder": "18:00"
 				}
 			},
 			"zeitzone": {
@@ -45,32 +45,57 @@
 				"config": {
 					"label": "Zeitzone",
 					"options": [
-						"Pacific/Honolulu",
-						"America/Los_Angeles",
-						"America/Denver",
-						"America/Chicago",
-						"America/New_York",
-						"America/Sao_Paulo",
-						"Atlantic/Azores",
-						"Europe/London",
-						"Europe/Paris",
 						"Europe/Zurich",
 						"Europe/Berlin",
 						"Europe/Vienna",
-						"Europe/Athens",
-						"Europe/Moscow",
-						"Asia/Dubai",
-						"Asia/Kolkata",
-						"Asia/Dhaka",
-						"Asia/Bangkok",
-						"Asia/Singapore",
-						"Asia/Shanghai",
-						"Asia/Tokyo",
-						"Australia/Sydney",
-						"Pacific/Auckland",
-						"Africa/Johannesburg"
+						"Europe/London"
 					],
 					"default_value": "Europe/Zurich"
+				}
+			},
+			"pause_von": {
+				"type": "Text",
+				"config": {
+					"label": "Pause von (optional)",
+					"placeholder": "12:00"
+				}
+			},
+			"pause_bis": {
+				"type": "Text",
+				"config": {
+					"label": "Pause bis (optional)",
+					"placeholder": "13:00"
+				}
+			},
+			"buchungsintervall": {
+				"type": "Select",
+				"config": {
+					"label": "Buchungsintervall",
+					"options": [
+						"15",
+						"30",
+						"60"
+					],
+					"default_value": "30"
+				}
+			},
+			"angebote": {
+				"type": "Group",
+				"config": {
+					"label": "Buchbare Angebote",
+					"repeat": true,
+					"fields": {
+						"angebot": {
+							"type": "Link",
+							"config": {
+								"label": "Buchbares Angebot",
+								"select": "document",
+								"customtypes": [
+									"angebot"
+								]
+							}
+						}
+					}
 				}
 			},
 			"wiederholung": {
