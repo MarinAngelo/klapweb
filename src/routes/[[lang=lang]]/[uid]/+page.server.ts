@@ -5,6 +5,7 @@ import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import { isAdmin } from '$lib/server/adminAuth';
+import { hasPageAccess } from '$lib/server/pageAuth';
 
 export interface AddonRow {
 	label: string;
@@ -48,8 +49,7 @@ export async function load({ params, parent, fetch, cookies }) {
 
 			if (!isAdminBypass) {
 				const pagePassword = (settings.data as any).page_password as string | null;
-				const authCookie = cookies.get('klap_auth');
-				if (!pagePassword || authCookie !== pagePassword) {
+				if (!hasPageAccess(cookies, pagePassword)) {
 					const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
 					throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
 				}

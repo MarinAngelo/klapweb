@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onMount, onDestroy } from 'svelte';
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
 	import { textBgColorSketch } from '$lib/sketches/text-bg-color';
@@ -653,16 +654,18 @@
 {#if open}
 	<aside class="panel">
 		<div class="header">
-			<span class="title">Design Panel</span>
+			<span class="title">{$_('Design Panel')}</span>
 			<div class="header-actions">
 				<button
 					class="toggle"
 					class:on={sketchActive}
 					on:click={() => (sketchActive = !sketchActive)}
-					title="Farbsketch ein/aus">⬡</button
+					title={$_('Farbsketch ein/aus')}>⬡</button
 				>
-				<button class="close" on:click={() => (open = false)} title="Schliessen (Ctrl+Shift+K)"
-					>✕</button
+				<button
+					class="close"
+					on:click={() => (open = false)}
+					title={$_('Schliessen (Ctrl+Shift+K)')}>✕</button
 				>
 			</div>
 		</div>
@@ -672,26 +675,26 @@
 				<button
 					class="mode-btn"
 					class:on={sketchMode === 'dark'}
-					on:click={() => (sketchMode = 'dark')}>◼ Dunkel</button
+					on:click={() => (sketchMode = 'dark')}>◼ {$_('Dunkel')}</button
 				>
 				<button
 					class="mode-btn"
 					class:on={sketchMode === 'light'}
-					on:click={() => (sketchMode = 'light')}>◻ Hell</button
+					on:click={() => (sketchMode = 'light')}>◻ {$_('Hell')}</button
 				>
 			</div>
 			<div class="sketch-wrap">
 				<P5Canvas {sketch} width="100%" height="100%" />
 			</div>
-			<p class="hint-sketch">Maus X = Hintergrund · Maus Y = Schrift</p>
+			<p class="hint-sketch">{$_('Maus X = Hintergrund · Maus Y = Schrift')}</p>
 		{/if}
 
 		<!-- Page-level colors -->
 
 		<div class="divider"></div>
-		<div class="section-label">Standard-Schriftart</div>
+		<div class="section-label">{$_('Standard-Schriftart')}</div>
 		<label class="row">
-			<span>Schriftwechsel</span>
+			<span>{$_('Schriftwechsel')}</span>
 			<div style="display: flex; align-items: center; gap: 0.5rem;">
 				<button
 					class="font-cycle-btn"
@@ -699,7 +702,7 @@
 						? `'${presetFontNames[currentFontIndex]}', sans-serif`
 						: 'inherit'};"
 					on:click={() => cycleFont(1)}
-					title="Nächste Schriftart wählen"
+					title={$_('Nächste Schriftart wählen')}
 				>
 					{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}
 				</button>
@@ -707,29 +710,29 @@
 					class="copy-btn"
 					on:click={() =>
 						copy(currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '', 'fontname')}
-					title="Fontnamen kopieren"
+					title={$_('Fontnamen kopieren')}
 				>
 					{copiedField === 'fontname' ? '✓' : '⧉'}
 				</button>
 			</div>
 		</label>
 		<label class="row">
-			<span>Hintergrundfarbe (Page)</span>
+			<span>{$_('Hintergrundfarbe (Page)')}</span>
 			<div class="color-wrap">
 				<input type="color" value={bgColor} on:input={setBg} />
 				<code>{bgColor}</code>
-				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title="Kopieren">
+				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title={$_('Kopieren')}>
 					{copiedField === 'bg' ? '✓' : '⧉'}
 				</button>
 			</div>
 		</label>
 
 		<label class="row">
-			<span>Schriftfarbe</span>
+			<span>{$_('Schriftfarbe')}</span>
 			<div class="color-wrap">
 				<input type="color" value={textColor} on:input={setText} />
 				<code>{textColor}</code>
-				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title="Kopieren">
+				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title={$_('Kopieren')}>
 					{copiedField === 'text' ? '✓' : '⧉'}
 				</button>
 			</div>
@@ -737,9 +740,9 @@
 
 		<div class="row">
 			<div class="row-header">
-				<span>Hintergrundfarbe (Slices+)</span>
+				<span>{$_('Hintergrundfarbe (Slices+)')}</span>
 				<button class="toggle" class:on={sectionBgActive} on:click={toggleSectionBg}>
-					{sectionBgActive ? 'AN' : 'AUS'}
+					{sectionBgActive ? $_('AN') : $_('AUS')}
 				</button>
 			</div>
 		</div>
@@ -747,7 +750,7 @@
 		<!-- Divider -->
 		<div class="divider"></div>
 
-		<div class="section-label">Kopfzeile</div>
+		<div class="section-label">{$_('Kopfzeile')}</div>
 		<div class="slice-list">
 			{#if headerElement}
 				<button
@@ -755,27 +758,27 @@
 					class:active={activeHeader}
 					on:click={() => (activeHeader ? deselectHeader() : selectHeader())}
 				>
-					Kopfzeile
+					{$_('Kopfzeile')}
 				</button>
 			{:else}
-				<span class="hint-sketch">Keine Kopfzeile gefunden</span>
+				<span class="hint-sketch">{$_('Keine Kopfzeile gefunden')}</span>
 			{/if}
 		</div>
 
 		{#if activeHeader}
 			<label class="row">
-				<span>Untere Kante kurvig</span>
+				<span>{$_('Untere Kante kurvig')}</span>
 				<input type="checkbox" checked={headerCurveEnabled} on:change={setHeaderCurveEnabled} />
 			</label>
 			<label class="row">
-				<span>Kurvenfarbe</span>
+				<span>{$_('Kurvenfarbe')}</span>
 				<div class="color-wrap">
 					<input type="color" value={headerCurveColor} on:input={setHeaderCurveColor} />
 					<code>{headerCurveColor}</code>
 				</div>
 			</label>
 			<label class="row">
-				<span>Kurvenhöhe ({headerCurveHeight}px)</span>
+				<span>{$_('Kurvenhöhe')} ({headerCurveHeight}px)</span>
 				<input
 					type="range"
 					min="8"
@@ -786,7 +789,7 @@
 				/>
 			</label>
 			<label class="row">
-				<span>Kurvenamplitude ({headerCurveAmplitude}px)</span>
+				<span>{$_('Kurvenamplitude')} ({headerCurveAmplitude}px)</span>
 				<input
 					type="range"
 					min="0"
@@ -797,7 +800,7 @@
 				/>
 			</label>
 			<label class="row">
-				<span>Anzahl Kurven ({headerCurveWaves})</span>
+				<span>{$_('Anzahl Kurven')} ({headerCurveWaves})</span>
 				<input
 					type="range"
 					min="1"
@@ -808,10 +811,10 @@
 				/>
 			</label>
 			<label class="row">
-				<span>Kurvenstart links</span>
+				<span>{$_('Kurvenstart links')}</span>
 				<select class="studio-select" value={headerCurveStart} on:change={setHeaderCurveStart}>
 					<option value="0">0</option>
-					<option value="Maximale Höhe">Maximale Höhe</option>
+					<option value="Maximale Höhe">{$_('Maximale Höhe')}</option>
 				</select>
 			</label>
 			<button
@@ -820,19 +823,19 @@
 				disabled={headerSaveState === 'saving'}
 			>
 				{headerSaveState === 'saving'
-					? 'Speichert …'
+					? $_('Speichert …')
 					: headerSaveState === 'saved'
-						? 'In Prismic gespeichert'
+						? $_('In Prismic gespeichert')
 						: headerSaveState === 'auth'
-							? 'Bitte zuerst unter /admin anmelden'
+							? $_('Bitte zuerst unter /admin anmelden')
 							: headerSaveState === 'error'
-								? 'Speichern fehlgeschlagen'
-								: 'In Prismic speichern'}
+								? $_('Speichern fehlgeschlagen')
+								: $_('In Prismic speichern')}
 			</button>
 		{/if}
 
 		<!-- Slice-level colors -->
-		<div class="section-label">Slice-Farben</div>
+		<div class="section-label">{$_('Slice-Farben')}</div>
 
 		<div class="slice-list">
 			{#each sliceList as entry}
@@ -845,15 +848,15 @@
 				</button>
 			{/each}
 			{#if sliceList.length === 0}
-				<span class="hint-sketch">Keine Slices gefunden</span>
+				<span class="hint-sketch">{$_('Keine Slices gefunden')}</span>
 			{/if}
 		</div>
 
 		{#if activeSlice}
 			{#if isBlobStudioSlice}
-				<div class="section-label">Blob-Parameter</div>
+				<div class="section-label">{$_('Blob-Parameter')}</div>
 				<label class="row">
-					<span>Blob-Grösse (%) <code>{blobScale}</code></span>
+					<span>{$_('Blob-Grösse (%)')} <code>{blobScale}</code></span>
 					<input
 						type="range"
 						min="50"
@@ -864,7 +867,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Position horizontal (%) <code>{blobPositionX}</code></span>
+					<span>{$_('Position horizontal (%)')} <code>{blobPositionX}</code></span>
 					<input
 						type="range"
 						min="0"
@@ -875,7 +878,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Position vertikal (%) <code>{blobPositionY}</code></span>
+					<span>{$_('Position vertikal (%)')} <code>{blobPositionY}</code></span>
 					<input
 						type="range"
 						min="0"
@@ -886,7 +889,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Drehung (Grad) <code>{blobRotation}</code></span>
+					<span>{$_('Drehung (Grad)')} <code>{blobRotation}</code></span>
 					<input
 						type="range"
 						min="-180"
@@ -898,25 +901,29 @@
 				</label>
 			{/if}
 			<label class="row">
-				<span>Hintergrundfarbe</span>
+				<span>{$_('Hintergrundfarbe')}</span>
 				<div class="color-wrap">
 					<input type="color" value={sliceBgColor} on:input={setSliceBg} />
 					<code>{sliceBgColor}</code>
-					<button class="copy-btn" on:click={() => copy(sliceBgColor, 'slice-bg')} title="Kopieren">
+					<button
+						class="copy-btn"
+						on:click={() => copy(sliceBgColor, 'slice-bg')}
+						title={$_('Kopieren')}
+					>
 						{copiedField === 'slice-bg' ? '✓' : '⧉'}
 					</button>
 				</div>
 			</label>
 
 			<label class="row">
-				<span>Schriftfarbe</span>
+				<span>{$_('Schriftfarbe')}</span>
 				<div class="color-wrap">
 					<input type="color" value={sliceTextColor} on:input={setSliceText} />
 					<code>{sliceTextColor}</code>
 					<button
 						class="copy-btn"
 						on:click={() => copy(sliceTextColor, 'slice-text')}
-						title="Kopieren"
+						title={$_('Kopieren')}
 					>
 						{copiedField === 'slice-text' ? '✓' : '⧉'}
 					</button>
@@ -925,36 +932,44 @@
 
 			{#if activeSlice.btnEl}
 				<label class="row">
-					<span>Schaltfläche Farbe</span>
+					<span>{$_('Schaltfläche Farbe')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnColor} on:input={setBtnColor} />
 						<code>{btnColor}</code>
-						<button class="copy-btn" on:click={() => copy(btnColor, 'btn-color')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnColor, 'btn-color')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'btn-color' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hintergrund</span>
+					<span>{$_('Schaltfläche Hintergrund')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnBgColor} on:input={setBtnBgColor} />
 						<code>{btnBgColor}</code>
-						<button class="copy-btn" on:click={() => copy(btnBgColor, 'btn-bg')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnBgColor, 'btn-bg')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'btn-bg' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hover Farbe</span>
+					<span>{$_('Schaltfläche Hover Farbe')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnHoverColor} on:input={setBtnHoverColor} />
 						<code>{btnHoverColor}</code>
 						<button
 							class="copy-btn"
 							on:click={() => copy(btnHoverColor, 'btn-hover-color')}
-							title="Kopieren"
+							title={$_('Kopieren')}
 						>
 							{copiedField === 'btn-hover-color' ? '✓' : '⧉'}
 						</button>
@@ -962,14 +977,14 @@
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hover Hintergrund</span>
+					<span>{$_('Schaltfläche Hover Hintergrund')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnHoverBgColor} on:input={setBtnHoverBgColor} />
 						<code>{btnHoverBgColor}</code>
 						<button
 							class="copy-btn"
 							on:click={() => copy(btnHoverBgColor, 'btn-hover-bg')}
-							title="Kopieren"
+							title={$_('Kopieren')}
 						>
 							{copiedField === 'btn-hover-bg' ? '✓' : '⧉'}
 						</button>
@@ -979,7 +994,7 @@
 
 			{#if hasPresetFont}
 				<div class="divider"></div>
-				<div class="section-label">Schriftart</div>
+				<div class="section-label">{$_('Schriftart')}</div>
 				<div class="row font-cycle-row">
 					<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
 					<span class="font-cycle-name"
@@ -991,19 +1006,19 @@
 
 			{#if isHeroSlice}
 				<div class="divider"></div>
-				<div class="section-label">Verlauf</div>
+				<div class="section-label">{$_('Verlauf')}</div>
 
 				<label class="row">
-					<span>Form</span>
+					<span>{$_('Form')}</span>
 					<select class="studio-select" bind:value={gradType} on:change={reapplyGradient}>
-						<option>Linear</option>
-						<option>Radial</option>
+						<option value="Linear">{$_('Linear')}</option>
+						<option value="Radial">{$_('Radial')}</option>
 					</select>
 				</label>
 
 				{#if gradType === 'Linear'}
 					<label class="row">
-						<span>Richtung</span>
+						<span>{$_('Richtung')}</span>
 						<select class="studio-select" bind:value={gradAngle} on:change={reapplyGradient}>
 							{#each ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'] as a}
 								<option value={a}>{a.replace('deg', '°')}</option>
@@ -1013,17 +1028,21 @@
 				{/if}
 
 				<label class="row">
-					<span>Startfarbe</span>
+					<span>{$_('Startfarbe')}</span>
 					<div class="color-wrap">
 						<input type="color" bind:value={gradColor1} on:input={reapplyGradient} />
 						<code>{gradColor1}</code>
-						<button class="copy-btn" on:click={() => copy(gradColor1, 'gc1')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor1, 'gc1')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'gc1' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 				<label class="row">
-					<span>Startfarbe Deckkraft ({gradOpacity1.toFixed(2)})</span>
+					<span>{$_('Startfarbe Deckkraft')} ({gradOpacity1.toFixed(2)})</span>
 					<input
 						type="range"
 						min="0"
@@ -1034,7 +1053,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Startfarbe Position ({gradStop1}%)</span>
+					<span>{$_('Startfarbe Position')} ({gradStop1}%)</span>
 					<input
 						type="range"
 						min="0"
@@ -1046,17 +1065,21 @@
 				</label>
 
 				<label class="row">
-					<span>Endfarbe</span>
+					<span>{$_('Endfarbe')}</span>
 					<div class="color-wrap">
 						<input type="color" bind:value={gradColor2} on:input={reapplyGradient} />
 						<code>{gradColor2}</code>
-						<button class="copy-btn" on:click={() => copy(gradColor2, 'gc2')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor2, 'gc2')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'gc2' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 				<label class="row">
-					<span>Endfarbe Deckkraft ({gradOpacity2.toFixed(2)})</span>
+					<span>{$_('Endfarbe Deckkraft')} ({gradOpacity2.toFixed(2)})</span>
 					<input
 						type="range"
 						min="0"
@@ -1067,7 +1090,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Endfarbe Position ({gradStop2}%)</span>
+					<span>{$_('Endfarbe Position')} ({gradStop2}%)</span>
 					<input
 						type="range"
 						min="0"
@@ -1082,9 +1105,9 @@
 
 		{#if isAdresseUndMap}
 			<div class="divider"></div>
-			<div class="section-label">Schriftgrösse</div>
+			<div class="section-label">{$_('Schriftgrösse')}</div>
 			<label class="row">
-				<span>Desktop ({zoomDesktop}%)</span>
+				<span>{$_('Desktop')} ({zoomDesktop}%)</span>
 				<input
 					type="range"
 					min="50"
@@ -1095,7 +1118,7 @@
 				/>
 			</label>
 			<label class="row">
-				<span>Mobile ({zoomMobile}%)</span>
+				<span>{$_('Mobile')} ({zoomMobile}%)</span>
 				<input
 					type="range"
 					min="50"

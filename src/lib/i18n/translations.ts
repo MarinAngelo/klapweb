@@ -1538,7 +1538,91 @@ export const translations: Record<string, Record<string, string>> = {
 	'Anmeldung bestätigt': { 'de-ch': 'Anmeldung bestätigt', 'en-us': 'Sign-up confirmed' },
 	// Admin-Login
 	Admin: { 'de-ch': 'Admin', 'en-us': 'Admin' },
-	'Falsches Passwort.': { 'de-ch': 'Falsches Passwort.', 'en-us': 'Wrong password.' }
+	'Falsches Passwort.': { 'de-ch': 'Falsches Passwort.', 'en-us': 'Wrong password.' },
+	// KlapStudio Design Panel
+	Kurvenhöhe: { 'de-ch': 'Kurvenhöhe', 'en-us': 'Curve height' },
+	Kurvenamplitude: { 'de-ch': 'Kurvenamplitude', 'en-us': 'Curve amplitude' },
+	'Anzahl Kurven': { 'de-ch': 'Anzahl Kurven', 'en-us': 'Number of curves' },
+	'Startfarbe Deckkraft': { 'de-ch': 'Startfarbe Deckkraft', 'en-us': 'Start colour opacity' },
+	'Startfarbe Position': { 'de-ch': 'Startfarbe Position', 'en-us': 'Start colour position' },
+	'Endfarbe Deckkraft': { 'de-ch': 'Endfarbe Deckkraft', 'en-us': 'End colour opacity' },
+	'Endfarbe Position': { 'de-ch': 'Endfarbe Position', 'en-us': 'End colour position' },
+	Desktop: { 'de-ch': 'Desktop', 'en-us': 'Desktop' },
+	Mobile: { 'de-ch': 'Mobile', 'en-us': 'Mobile' },
+	'Design Panel': { 'de-ch': 'Design Panel', 'en-us': 'Design panel' },
+	Dunkel: { 'de-ch': 'Dunkel', 'en-us': 'Dark' },
+	Hell: { 'de-ch': 'Hell', 'en-us': 'Light' },
+	'Maus X = Hintergrund · Maus Y = Schrift': {
+		'de-ch': 'Maus X = Hintergrund · Maus Y = Schrift',
+		'en-us': 'Mouse X = background · Mouse Y = text'
+	},
+	'Standard-Schriftart': { 'de-ch': 'Standard-Schriftart', 'en-us': 'Default font' },
+	Schriftwechsel: { 'de-ch': 'Schriftwechsel', 'en-us': 'Font switch' },
+	'Hintergrundfarbe (Page)': {
+		'de-ch': 'Hintergrundfarbe (Page)',
+		'en-us': 'Background colour (page)'
+	},
+	Schriftfarbe: { 'de-ch': 'Schriftfarbe', 'en-us': 'Text colour' },
+	'Hintergrundfarbe (Slices+)': {
+		'de-ch': 'Hintergrundfarbe (Slices+)',
+		'en-us': 'Background colour (slices+)'
+	},
+	Kopfzeile: { 'de-ch': 'Kopfzeile', 'en-us': 'Header' },
+	'Keine Kopfzeile gefunden': { 'de-ch': 'Keine Kopfzeile gefunden', 'en-us': 'No header found' },
+	'Untere Kante kurvig': { 'de-ch': 'Untere Kante kurvig', 'en-us': 'Curved bottom edge' },
+	Kurvenfarbe: { 'de-ch': 'Kurvenfarbe', 'en-us': 'Curve colour' },
+	'Kurvenstart links': { 'de-ch': 'Kurvenstart links', 'en-us': 'Curve start (left)' },
+	'Maximale Höhe': { 'de-ch': 'Maximale Höhe', 'en-us': 'Maximum height' },
+	'Slice-Farben': { 'de-ch': 'Slice-Farben', 'en-us': 'Slice colours' },
+	'Keine Slices gefunden': { 'de-ch': 'Keine Slices gefunden', 'en-us': 'No slices found' },
+	'Blob-Parameter': { 'de-ch': 'Blob-Parameter', 'en-us': 'Blob parameters' },
+	'Blob-Grösse (%)': { 'de-ch': 'Blob-Grösse (%)', 'en-us': 'Blob size (%)' },
+	'Position horizontal (%)': {
+		'de-ch': 'Position horizontal (%)',
+		'en-us': 'Horizontal position (%)'
+	},
+	'Position vertikal (%)': { 'de-ch': 'Position vertikal (%)', 'en-us': 'Vertical position (%)' },
+	'Drehung (Grad)': { 'de-ch': 'Drehung (Grad)', 'en-us': 'Rotation (degrees)' },
+	Hintergrundfarbe: { 'de-ch': 'Hintergrundfarbe', 'en-us': 'Background colour' },
+	'Schaltfläche Farbe': { 'de-ch': 'Schaltfläche Farbe', 'en-us': 'Button colour' },
+	'Schaltfläche Hintergrund': { 'de-ch': 'Schaltfläche Hintergrund', 'en-us': 'Button background' },
+	'Schaltfläche Hover Farbe': {
+		'de-ch': 'Schaltfläche Hover Farbe',
+		'en-us': 'Button hover colour'
+	},
+	'Schaltfläche Hover Hintergrund': {
+		'de-ch': 'Schaltfläche Hover Hintergrund',
+		'en-us': 'Button hover background'
+	},
+	Schriftart: { 'de-ch': 'Schriftart', 'en-us': 'Font' },
+	Form: { 'de-ch': 'Form', 'en-us': 'Shape' },
+	Linear: { 'de-ch': 'Linear', 'en-us': 'Linear' },
+	Radial: { 'de-ch': 'Radial', 'en-us': 'Radial' },
+	Richtung: { 'de-ch': 'Richtung', 'en-us': 'Direction' },
+	Startfarbe: { 'de-ch': 'Startfarbe', 'en-us': 'Start colour' },
+	Endfarbe: { 'de-ch': 'Endfarbe', 'en-us': 'End colour' },
+	Schriftgrösse: { 'de-ch': 'Schriftgrösse', 'en-us': 'Font size' },
+	'Farbsketch ein/aus': { 'de-ch': 'Farbsketch ein/aus', 'en-us': 'Colour sketch on/off' },
+	'Schliessen (Ctrl+Shift+K)': {
+		'de-ch': 'Schliessen (Ctrl+Shift+K)',
+		'en-us': 'Close (Ctrl+Shift+K)'
+	},
+	'Nächste Schriftart wählen': {
+		'de-ch': 'Nächste Schriftart wählen',
+		'en-us': 'Choose next font'
+	},
+	'Fontnamen kopieren': { 'de-ch': 'Fontnamen kopieren', 'en-us': 'Copy font name' },
+	Kopieren: { 'de-ch': 'Kopieren', 'en-us': 'Copy' },
+	'Speichert …': { 'de-ch': 'Speichert …', 'en-us': 'Saving …' },
+	'In Prismic gespeichert': { 'de-ch': 'In Prismic gespeichert', 'en-us': 'Saved in Prismic' },
+	'Bitte zuerst unter /admin anmelden': {
+		'de-ch': 'Bitte zuerst unter /admin anmelden',
+		'en-us': 'Please log in at /admin first'
+	},
+	'Speichern fehlgeschlagen': { 'de-ch': 'Speichern fehlgeschlagen', 'en-us': 'Saving failed' },
+	'In Prismic speichern': { 'de-ch': 'In Prismic speichern', 'en-us': 'Save in Prismic' },
+	AUS: { 'de-ch': 'AUS', 'en-us': 'OFF' },
+	AN: { 'de-ch': 'AN', 'en-us': 'ON' }
 };
 
 /**

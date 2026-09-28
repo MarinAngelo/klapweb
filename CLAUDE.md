@@ -244,6 +244,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
 - APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
 - `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
+- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
 
 ## Admin-Panel — Rechnungen & Kunden
 
