@@ -232,6 +232,11 @@ function describeField(fieldConfig, label, elementType) {
 	return `Legt den Wert für ${subject} fest.`;
 }
 
+// Eigene Beschreibungen (scripts/field-descriptions.json) überschreiben die automatisch erzeugten
+const fieldDescriptionOverrides = existsSync(join(ROOT, 'scripts/field-descriptions.json'))
+	? read('scripts/field-descriptions.json')
+	: {};
+
 function collectFieldReference() {
 	const fieldMap = [];
 	const customTypesDir = join(ROOT, 'customtypes');
@@ -325,6 +330,17 @@ function collectFieldReference() {
 		if (!tabOrder.has(groupKey)) tabOrder.set(groupKey, new Map());
 		const groupTabs = tabOrder.get(groupKey);
 		if (!groupTabs.has(field.tab)) groupTabs.set(field.tab, groupTabs.size);
+	}
+
+	for (const entry of fieldMap) {
+		const override = fieldDescriptionOverrides[entry.path];
+		if (typeof override === 'string' && override) entry.description = override;
+	}
+	const unknown = Object.keys(fieldDescriptionOverrides).filter(
+		(path) => !path.startsWith('_') && !fieldMap.some((entry) => entry.path === path)
+	);
+	if (unknown.length) {
+		console.warn(`⚠ scripts/field-descriptions.json: unbekannte Feldpfade: ${unknown.join(', ')}`);
 	}
 
 	return fieldMap.sort((a, b) => {
