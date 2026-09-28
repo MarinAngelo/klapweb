@@ -134,7 +134,8 @@
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
 		style={$isMenuOpen
-			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
+			? // 1px overlap with the header → no hairline on fractional device pixel ratios
+				`top: ${Math.max(0, $headerHeight - 1)}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
 			: ''}
 	>
 		<ul
@@ -195,7 +196,9 @@
 			{/if}
 
 			{#if userBackendActive}
-				<li class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2">
+				<li
+					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-2"
+				>
 					{#if user}
 						<a
 							href="/konto"

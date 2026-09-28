@@ -25,6 +25,8 @@
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
+	// With bottom curve: header surface + wave are painted in one backdrop layer (see markup)
+	let backdropEl: HTMLElement | undefined;
 	let observer: ResizeObserver;
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 	let revealRafId: number;
@@ -48,11 +50,12 @@
 			) as HTMLElement | null;
 			const opacity = getScrollOpacity(heroEl);
 			const bg = hexToRgba(headerBgColor, opacity);
-			const curve = headerEl.querySelector('.header-bottom-curve') as SVGElement | null;
 			headerEl.style.setProperty('--navbar-current-bg', bg);
-			curve?.style.setProperty('opacity', String(opacity));
-			curve?.querySelector('path')?.setAttribute('fill', bottomCurveColor);
-			headerEl.style.backgroundColor = bg;
+			if (useBackdrop && backdropEl) {
+				backdropEl.style.opacity = String(opacity);
+			} else {
+				headerEl.style.backgroundColor = bg;
+			}
 		});
 	}
 
@@ -66,12 +69,8 @@
 	}
 
 	function syncCurveToHeader() {
-		if (!headerEl) return;
-		const curve = headerEl.querySelector('.header-bottom-curve') as SVGElement | null;
-		const path = curve?.querySelector('path');
-		if (!curve || !path) return;
-		path.setAttribute('fill', bottomCurveColor || headerBgColor || 'var(--header-bg-color)');
-		curve.style.opacity = String(getScrollOpacity());
+		if (!backdropEl) return;
+		backdropEl.style.opacity = $isMenuOpen ? '1' : String(getScrollOpacity());
 	}
 
 	afterUpdate(() => requestAnimationFrame(syncCurveToHeader));
@@ -115,6 +114,10 @@
 	$: bottomCurveAmplitude = prismicTheme?.data?.header_bottom_curve_amplitude ?? 16;
 	$: bottomCurveWaves = prismicTheme?.data?.header_bottom_curve_waves ?? 1;
 	$: bottomCurveStartAtMax = prismicTheme?.data?.header_bottom_curve_start === 'Maximale Höhe';
+	// Header surface and wave share one fully opaque layer whose opacity is faded as a whole:
+	// the wave can overlap the surface by 1px (no hairline on fractional device pixel ratios)
+	// without the overlap looking darker while the header is semi-transparent.
+	$: useBackdrop = bottomCurveEnabled && bottomCurveHeight > 0;
 	$: bottomCurvePath = (() => {
 		const points = 32;
 		const values = Array.from({ length: points + 1 }, (_, index) => {
@@ -213,9 +216,27 @@
 	style:top="0"
 	style:left="0"
 	style:z-index="9999"
-	style:background-color={computedBgColor}
+	style:background-color={useBackdrop ? 'transparent' : computedBgColor}
 	style:color={headerColor}
 >
+	{#if useBackdrop}
+		<div
+			class="header-backdrop"
+			bind:this={backdropEl}
+			aria-hidden="true"
+			style="opacity: {$isMenuOpen ? 1 : headerBgOpacity};"
+		>
+			<div class="header-backdrop-fill" style="background-color: {headerBgColor};"></div>
+			<svg
+				class="header-bottom-curve"
+				viewBox={`0 0 100 ${bottomCurveHeight}`}
+				preserveAspectRatio="none"
+				style={`height: ${bottomCurveHeight}px;`}
+			>
+				<path d={bottomCurvePath} fill={bottomCurveColor || headerBgColor} />
+			</svg>
+		</div>
+	{/if}
 	<Bounded
 		tag="div"
 		yPadding="none"
@@ -295,20 +316,6 @@
 			{/if}
 		</div>
 	</Bounded>
-	{#if bottomCurveHeight > 0}
-		<svg
-			class="header-bottom-curve"
-			aria-hidden="true"
-			viewBox={`0 0 100 ${bottomCurveHeight}`}
-			preserveAspectRatio="none"
-			style={`height: ${bottomCurveHeight}px; bottom: -${bottomCurveHeight}px; display: ${bottomCurveEnabled ? 'block' : 'none'};`}
-		>
-			<path
-				d={bottomCurvePath}
-				fill={bottomCurveColor || headerBgColor || 'var(--header-bg-color)'}
-			/>
-		</svg>
-	{/if}
 </header>
 
 <style>
@@ -317,13 +324,24 @@
 			display: none !important;
 		}
 	}
+	/* Below the header content (header has z-index → own stacking context) */
+	.header-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		transition: opacity 0.7s ease-in-out;
+	}
+	.header-backdrop-fill {
+		position: absolute;
+		inset: 0;
+	}
 	.header-bottom-curve {
 		position: absolute;
 		left: 0;
-		bottom: -1px;
-		z-index: 0;
+		/* overlap the surface by 1px → no hairline between header and wave */
+		top: calc(100% - 1px);
 		width: 100%;
-		pointer-events: none;
 		display: block;
 	}
 </style>

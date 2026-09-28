@@ -249,7 +249,8 @@
 		position: absolute;
 		left: 0;
 		width: 100%;
-		top: 0;
+		/* overlap the (always opaque) footer by 1px → no hairline on fractional device pixel ratios */
+		top: 1px;
 		transform: translateY(-100%);
 		pointer-events: none;
 		z-index: 1;
