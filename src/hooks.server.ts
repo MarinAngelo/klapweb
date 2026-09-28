@@ -1,4 +1,5 @@
 import { redirect, type Handle } from '@sveltejs/kit';
+import { building } from '$app/environment';
 import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
@@ -34,10 +35,12 @@ function setCachedUser(token: string, user: CachedUser): void {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// ── Admin-Panel: nur mit Session-Cookie (Login unter /admin) ─────────────────
-	const { pathname, searchParams } = event.url;
-	if (pathname.startsWith('/admin/')) {
+	// Never read event.url.searchParams/search outside this branch: SvelteKit throws on
+	// prerendered pages if the hook merely accesses them. /admin/* is never prerendered.
+	const { pathname } = event.url;
+	if (!building && pathname.startsWith('/admin/')) {
 		// Transition: old bookmarks with ?secret=… log in once, then the secret is removed from the URL
-		const legacySecret = searchParams.get('secret');
+		const legacySecret = event.url.searchParams.get('secret');
 		if (legacySecret !== null) {
 			if (isValidAdminPassword(legacySecret)) startAdminSession(event.cookies);
 			const clean = new URL(event.url);
