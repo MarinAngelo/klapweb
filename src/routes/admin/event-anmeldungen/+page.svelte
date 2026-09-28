@@ -6,8 +6,6 @@
 
 	export let data: PageData;
 
-	const s = data.secret;
-
 	// Gruppieren nach Event
 	const byEvent = new Map<string, { label: string; registrations: EventRegistration[] }>();
 	for (const r of data.registrations) {
@@ -110,7 +108,7 @@
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Event Anmeldungen</h1>
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
 			<Button
-				href="/admin/dashboard?secret={s}"
+				href="/admin/dashboard"
 				text="Dashboard"
 				leadingIcon="left"
 				color="#374151"
@@ -122,12 +120,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={s}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm('Alle Anmeldungen löschen?')) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={s} />
 				<Button
 					text="Alle löschen"
 					color="#dc2626"
@@ -195,9 +192,7 @@
 										>CSV</button
 									>
 									<a
-										href="/admin/event-anmeldungen/download?secret={s}&uid={encodeURIComponent(
-											group.uid
-										)}"
+										href="/admin/event-anmeldungen/download?uid={encodeURIComponent(group.uid)}"
 										style="display: block; padding: 0.5rem 1rem; font-size: 0.875rem; color: inherit; text-decoration: none;"
 										on:click={() => (openDownloadMenu = null)}>PDF</a
 									>
@@ -255,7 +250,7 @@
 									<td style="padding: 0.625rem 1rem;">
 										<form
 											method="POST"
-											action="?/delete&secret={s}"
+											action="?/delete"
 											on:submit={(e) => {
 												if (!confirm('Eintrag löschen?')) e.preventDefault();
 											}}

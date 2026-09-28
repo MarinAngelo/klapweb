@@ -23,6 +23,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { bucheRessource, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 function naechte(von: string, bis: string): number {
 	return Math.round((new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24));
@@ -180,11 +181,10 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	const resendKey = env.RESEND_API_KEY;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
 	const emailFrom = fromEmail || env.EMAIL_FROM_ADDRESS;
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (resendKey && emailFrom && toEmail && adminSecret) {
+	if (resendKey && emailFrom && toEmail && env.ADMIN_SECRET) {
 		const origin = url.origin;
-		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&secret=${adminSecret}`;
+		// Token only authorises this confirmation — the admin password is never sent by mail
+		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&token=${adminActionToken('bestaetige-buchung', buchung.id)}`;
 
 		const [vonY, vonM, vonD] = von.split('-');
 		const [bisY, bisM, bisD] = bis.split('-');

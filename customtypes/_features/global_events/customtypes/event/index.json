@@ -365,8 +365,8 @@
 			"location_map_url": {
 				"type": "Text",
 				"config": {
-					"label": "Karte / Google Maps",
-					"placeholder": "https://maps.google.com/..."
+					"label": "Karten-URL (OpenStreetMap oder Google Maps)",
+					"placeholder": "https://www.openstreetmap.org/... oder https://maps.google.com/..."
 				}
 			},
 			"map_height": {

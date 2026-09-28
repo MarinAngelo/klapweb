@@ -15,7 +15,10 @@ export function detectServicesInContent(documents: unknown[]): string[] {
 				servicesInHtml(value).forEach((id) => found.add(id));
 			} else if (/map/i.test(path) && /^https?:\/\//i.test(value)) {
 				const id = serviceIdFor(value);
-				if (id === 'google_maps') found.add(id);
+				if (id === 'google_maps' || id === 'openstreetmap') found.add(id);
+			} else if (/embed_code/i.test(path) && /^https?:\/\//i.test(value.trim())) {
+				// Video URL pasted into an embed code field (e.g. Anleitung video_embed_code)
+				found.add(serviceIdFor(value));
 			}
 			return;
 		}

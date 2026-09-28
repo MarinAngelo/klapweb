@@ -22,9 +22,16 @@
 	$: definition = consentServices[service] ?? consentServices.external_embed;
 	$: allowed = $isServiceAllowed(service) || loadedOnce;
 
+	// Re-register if the service changes (e.g. map provider resolved after mount)
+	let unregister: (() => void) | null = null;
+	$: if (mounted) {
+		unregister?.();
+		unregister = registerServiceUsage(service);
+	}
+
 	onMount(() => {
 		mounted = true;
-		return registerServiceUsage(service);
+		return () => unregister?.();
 	});
 </script>
 

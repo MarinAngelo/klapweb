@@ -11,7 +11,7 @@
  * NOTE: @netlify/blobs auto-detection does NOT work with adapter-auto on Netlify.
  * siteID + token must always be passed explicitly via $env/dynamic/private.
  *
- * Admin view: /admin/kunden?secret=<ADMIN_SECRET>
+ * Admin view: /admin/kunden (Login unter /admin)
  *
  * Called from:
  *   - src/routes/api/invoice/+server.ts      (Rechnung, fire-and-forget after email)
@@ -37,6 +37,8 @@ export interface CustomerRecord {
 	plz?: string;
 	ort?: string;
 	land?: string;
+	/** Preferred language = Prismic locale id (e.g. 'de-ch'); used for info mails */
+	lang?: string;
 	// Extra form fields (key → value)
 	extra?: Record<string, string>;
 }
@@ -57,6 +59,17 @@ export async function saveCustomer(record: Omit<CustomerRecord, 'id'>): Promise<
 	const id = `${Date.now()}_${crypto.randomUUID()}`;
 	await store.setJSON(id, { id, ...record });
 	return id;
+}
+
+/** Merges the given fields into an existing customer (one blob per customer → no race with others) */
+export async function updateCustomer(
+	id: string,
+	patch: Partial<Omit<CustomerRecord, 'id'>>
+): Promise<void> {
+	const store = getCustomerStore();
+	const existing = (await store.get(id, { type: 'json' })) as CustomerRecord | null;
+	if (!existing) throw new Error(`Kunde ${id} nicht gefunden`);
+	await store.setJSON(id, { ...existing, ...patch, id });
 }
 
 export async function deleteCustomer(id: string): Promise<void> {

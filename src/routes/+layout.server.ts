@@ -1,7 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
-import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO } from '$lib/server/features';
+import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO, FEATURE_KUNDENKONTO } from '$lib/server/features';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -38,8 +38,9 @@ async function getRepoInfo(client: ReturnType<typeof createClient>) {
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url, locals }) {
-	// Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
-	if (url.pathname.startsWith('/preview/')) {
+	// Slice-Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
+	// (/preview/… ist dagegen die Prismic-Vorschau und braucht alle Daten)
+	if (url.pathname.startsWith('/slice-preview/')) {
 		return {};
 	}
 
@@ -50,7 +51,9 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const { mainLang, allLocales } = await getRepoInfo(client);
 
 		// 2. Sprach-Ermittlung der aktuellen Route
+		// Prismic-Vorschau (/preview/…): Präfix für die Sprach-Ermittlung ignorieren
 		const segments = url.pathname.split('/').filter(Boolean);
+		if (segments[0] === 'preview') segments.shift();
 		const firstSegment = segments[0];
 		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
 
@@ -110,7 +113,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
-		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
+		const userBackendActive =
+			FEATURE_KUNDENKONTO && ((baseSettings.data as any)?.user_backend_active ?? false);
 		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';

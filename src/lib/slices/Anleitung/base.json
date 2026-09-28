@@ -73,8 +73,15 @@
 				"youtube_video": {
 					"type": "Embed",
 					"config": {
-						"label": "YouTube Video",
-						"placeholder": ""
+						"label": "Video (YouTube, Vimeo …)",
+						"placeholder": "https://youtu.be/… oder https://vimeo.com/…"
+					}
+				},
+				"video_embed_code": {
+					"type": "Text",
+					"config": {
+						"label": "Video Einbettungs-Code (alternativ)",
+						"placeholder": "<iframe src=\"https://player.vimeo.com/video/…\"></iframe> – nur nötig, wenn das Video-Feld die URL nicht akzeptiert"
 					}
 				},
 				"mobile_full_width": {
@@ -153,8 +160,15 @@
 							"youtube_video": {
 								"type": "Embed",
 								"config": {
-									"label": "YouTube Video",
-									"placeholder": ""
+									"label": "Video (YouTube, Vimeo …)",
+									"placeholder": "https://youtu.be/… oder https://vimeo.com/…"
+								}
+							},
+							"video_embed_code": {
+								"type": "Text",
+								"config": {
+									"label": "Video Einbettungs-Code (alternativ)",
+									"placeholder": "<iframe src=\"https://player.vimeo.com/video/…\"></iframe> – nur nötig, wenn das Video-Feld die URL nicht akzeptiert"
 								}
 							}
 						}

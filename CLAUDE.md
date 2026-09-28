@@ -138,15 +138,20 @@ Konkrete Regeln:
 
 ### Übersicht
 
-| Datei                          | Zweck                                                        | Committed |
-| ------------------------------ | ------------------------------------------------------------ | --------- |
-| `gating.json`                  | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln | Ja        |
-| `slicemachine.config.json`     | Wählt den aktiven Plan (`"plan": "starter"`)                 | Ja        |
-| `scripts/build-customtypes.js` | Liest `gating.json` + `base.json` → generiert Output         | Ja        |
-| `src/lib/slices/*/base.json`   | Slice-Quelldatei (kein `_meta` mehr nötig)                   | Ja        |
-| `src/lib/slices/*/full.json`   | Slice mit Extra-Variationen (für Features)                   | Ja        |
-| `src/lib/slices/*/model.json`  | Generiert — gitignored                                       | Nein      |
-| `customtypes/*/index.json`     | Generiert — gitignored                                       | Nein      |
+| Datei                                                           | Zweck                                                           | Committed |
+| --------------------------------------------------------------- | --------------------------------------------------------------- | --------- |
+| `gating.json`                                                   | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln    | Ja        |
+| `slicemachine.config.json`                                      | Wählt den aktiven Plan (`"plan": "starter"`)                    | Ja        |
+| `scripts/build-customtypes.js`                                  | Liest `gating.json` + `base.json` → generiert Output            | Ja        |
+| `src/lib/slices/*/base.json`                                    | Slice-Quelldatei (kein `_meta` mehr nötig)                      | Ja        |
+| `src/lib/slices/*/full.json`                                    | Slice mit Extra-Variationen (für Features)                      | Ja        |
+| `src/lib/slices/*/model.json`                                   | Generiert — gitignored                                          | Nein      |
+| `customtypes/*/index.json`                                      | Generiert — gitignored                                          | Nein      |
+| `customtypes/_features/{feature}/customtypes/{type}/index.json` | Quelle für Custom Types mit Feature-Gate                        | Ja        |
+| `customtypes/_plans/{plan}/customtypes/{type}/index.json`       | Quelle für Custom Types mit Plan-Gate (z.B. `ort`)              | Ja        |
+| `src/lib/generated/prismic-field-reference.json`                | Generiert (planabhängig, auch bei `npm run build`) — gitignored | Nein      |
+
+**Gated Custom Types:** `customtypes/{type}/index.json` ist nur eine Kopie der Quelle in `_features/` bzw. `_plans/` und wird bei inaktivem Gate gelöscht. Änderungen in der Slice Machine UI landen in der Kopie → das Script überschreibt sie nicht, sondern warnt mit dem `cp`-Befehl, um sie in die Quelle zu übernehmen. Neuer Custom Type mit Plan-Gate: Quelle unter `_plans/{plan}/…` anlegen + Pfad in `.gitignore` ergänzen.
 
 ### gating.json — Struktur
 
@@ -231,9 +236,19 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
 
+## Admin-Anmeldung
+
+- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h), Logout im Dashboard
+- **Alle `/admin/*`-Routen werden zentral in `hooks.server.ts` geschützt** — keine eigenen Secret-Prüfungen in Seiten/Actions, **nie `?secret=` in Links, Formularen oder Fetches**
+- Alte Lesezeichen mit `?secret=` melden einmal an und werden ohne Secret umgeleitet
+- **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
+- APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
+- `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
+- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+
 ## Admin-Panel — Rechnungen & Kunden
 
-### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
+### Rechnungsverwaltung (`/admin/rechnungen`)
 
 **Datenstruktur:** `ManualInvoiceRecord` mit:
 
@@ -267,7 +282,10 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
 
-### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
+### Kunden-Management (`/admin/kunden`)
+
+- Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
+- Feld `lang` (Prismic-Locale, z.B. `de-ch`): Dropdown mit den Sprachen aus dem Prismic-Repository
 
 **Datenstruktur:** Kunden aus Netlify Blobs, mit:
 
@@ -313,3 +331,15 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
 Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+
+## Newsletter / Info-Mails (`/admin/newsletter`)
+
+- Feature `newsletter` (gating.json, ab Professionell), Admin-Bereich `newsletter`
+- **Inhalt in Prismic:** Custom Type `newsletter` (Quelle `customtypes/_features/newsletter/…`): Betreff, Vorschautext, Rich Text, optionaler Button. Platzhalter `{{Name}}` (Vor- + Nachname, sonst Firma), `{{Vorname}}`, `{{Nachname}}`, `{{Firma}}` pro Empfänger
+- **Vorschau:** „Preview the page“ in Prismic → `/api/preview` löst Newsletter selbst auf (nicht im Route Resolver, weil Repos ohne den Typ das ablehnen würden) → `/preview/newsletter/<uid>`; Web-Ansicht `/newsletter/<uid>`
+- **Empfänger:** alle Kunden (`kunden`-Store) mit E-Mail + bestätigte Abonnenten (`newsletter_abonnenten`), dedupliziert, ohne Abgemeldete
+- **Anmeldung:** Formular-Variante `newsletterSignup` („Newsletter abonnieren“, Feature `newsletter`) → `/api/newsletter/anmelden` sendet Bestätigungsmail (Double-Opt-in, signierter Link 7 Tage gültig, nichts gespeichert) → `/newsletter/bestaetigen` speichert erst per Button (Mail-Scanner bestätigen nichts). Honeypot-Feld gegen Bots, gleiche Antwort für bekannte/unbekannte Adressen
+- **Versand:** `src/lib/server/newsletter.ts`, Resend Batch-API (100 pro Aufruf); Test-Mail zuerst, Versand nur mit Bestätigung; Verlauf im Blob-Store `newsletter_versand`
+- **CH-Recht (UWG Art. 3 lit. o):** jede Mail mit Absender-Angaben (Settings) + Abmelde-Link; `List-Unsubscribe` + One-Click (`/api/newsletter/abmelden`). Abmeldungen im Store `newsletter_abmeldungen` (Key = SHA-256 der E-Mail), Links HMAC-signiert mit `NEWSLETTER_SECRET` bzw. `ADMIN_SECRET`
+- **Abonnenten-Übersicht** im Newsletter-Admin: Name, E-Mail, Sprache, „bestätigt am“ (= Nachweis der Einwilligung), Status; „Entfernen“ löscht den Abonnenten und trägt die Adresse als abgemeldet ein; CSV-Export `/admin/newsletter/abonnenten.csv`
+- Abmelde-Seite `/newsletter/abmelden` hat bewusst kein Feature-Gate (Abmeldung muss immer möglich sein)

@@ -9,6 +9,7 @@
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -24,6 +25,9 @@
 	$: isKauf = (slice.variation as string) === 'kauf';
 	$: isEinChecken = (slice.variation as string) === 'einChecken';
 	$: isAusChecken = (slice.variation as string) === 'ausChecken';
+	$: isNewsletterSignup = (slice.variation as string) === 'newsletterSignup';
+	// Feature-gated variation → not part of the generated Prismic types
+	$: newsletterPrimary = slice.primary as any;
 	$: checkPrimary = slice.primary as any;
 	$: submitBtnStyle = (slice.primary as any)?.button_style?.uid || undefined;
 
@@ -545,6 +549,10 @@
 					</form>
 				{/if}
 			{/if}
+		</div>
+	{:else if isNewsletterSignup}
+		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+			<NewsletterSignup primary={newsletterPrimary} {lang} idPrefix="newsletter-{index ?? 0}" />
 		</div>
 	{:else}
 		<!-- Standard: einspaltig -->

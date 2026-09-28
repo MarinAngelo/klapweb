@@ -3,6 +3,7 @@ import { checkOutBuchung, updateRessourceBuchung } from '$lib/server/ressourceBu
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
@@ -34,7 +35,6 @@ export async function POST({ request, fetch, url }) {
 	// ── Betreiber-Mail mit Abrechnung + Freigabe-Link ──────────────────────
 	const resendKey = env.RESEND_API_KEY;
 	const emailFrom = env.EMAIL_FROM_ADDRESS;
-	const adminSecret = env.ADMIN_SECRET;
 	let toEmail = env.INVOICE_TO_EMAIL || '';
 	if (!toEmail) {
 		try {
@@ -47,8 +47,9 @@ export async function POST({ request, fetch, url }) {
 		}
 	}
 
-	if (resendKey && toEmail && emailFrom && adminSecret) {
-		const freigabeLink = `${url.origin}/api/freigabe-abrechnung?id=${encodeURIComponent(buchung.id)}&secret=${adminSecret}`;
+	if (resendKey && toEmail && emailFrom && env.ADMIN_SECRET) {
+		// Token only authorises this approval — the admin password is never sent by mail
+		const freigabeLink = `${url.origin}/api/freigabe-abrechnung?id=${encodeURIComponent(buchung.id)}&token=${adminActionToken('freigabe-abrechnung', buchung.id)}`;
 		const [vonY, vonM, vonD] = buchung.von.split('-');
 		const [bisY, bisM, bisD] = buchung.bis.split('-');
 
