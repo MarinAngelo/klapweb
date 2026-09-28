@@ -1,5 +1,4 @@
 import type { PageServerLoad, Actions } from './$types';
-import { error, redirect } from '@sveltejs/kit';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import {
 	listAlleRessourceBuchungen,
@@ -14,6 +13,7 @@ import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
 	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
@@ -29,15 +29,7 @@ function fmtD(iso: string) {
 	return `${d}.${m}.${y}`;
 }
 
-function checkAuth(url: URL) {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-}
-
-export const load: PageServerLoad = async ({ url }) => {
-	checkAuth(url);
-
+export const load: PageServerLoad = async () => {
 	let buchungen: RessourceBuchung[] = [];
 	let blobError: string | null = null;
 	try {
@@ -225,15 +217,13 @@ async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freiga
 // ── Actions ────────────────────────────────────────────────────────────────────
 
 export const actions: Actions = {
-	delete: async ({ request, url }) => {
-		checkAuth(url);
+	delete: async ({ request }) => {
 		const id = (await request.formData()).get('id');
 		if (typeof id === 'string' && id) await deleteRessourceBuchung(id);
 	},
 
 	// ── Vorwärts: pending → confirmed ─────────────────────────────────────────
-	bestaetigen: async ({ request, url, fetch }) => {
-		checkAuth(url);
+	bestaetigen: async ({ request, fetch }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchungStatus(id, 'confirmed');
@@ -242,8 +232,7 @@ export const actions: Actions = {
 	},
 
 	// ── Vorwärts: confirmed → checked_in ──────────────────────────────────────
-	checkin: async ({ request, url }) => {
-		checkAuth(url);
+	checkin: async ({ request }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchung(id, {
@@ -256,7 +245,6 @@ export const actions: Actions = {
 
 	// ── Vorwärts: checked_in → checked_out ────────────────────────────────────
 	checkout: async ({ request, url }) => {
-		checkAuth(url);
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchung(id, {
@@ -264,15 +252,13 @@ export const actions: Actions = {
 			checkOutAt: new Date().toISOString()
 		});
 		const toEmail = env.INVOICE_TO_EMAIL || '';
-		const adminSecret = env.ADMIN_SECRET ?? '';
 		const origin = url.origin;
-		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&secret=${adminSecret}`;
+		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&token=${adminActionToken('freigabe-abrechnung', id)}`;
 		await mailAbrechnung(buchung, toEmail, freigabeUrl).catch(console.error);
 	},
 
 	// ── Rückwärts: einen Schritt zurück (kein Mail) ───────────────────────────
-	zurueck: async ({ request, url }) => {
-		checkAuth(url);
+	zurueck: async ({ request }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await getRessourceBuchung(id);
@@ -299,8 +285,7 @@ export const actions: Actions = {
 	},
 
 	// ── Vorwärts ohne Mail: einen Schritt weiter (kein Mail) ────────────────────
-	voraus: async ({ request, url }) => {
-		checkAuth(url);
+	voraus: async ({ request }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await getRessourceBuchung(id);
@@ -317,8 +302,7 @@ export const actions: Actions = {
 	},
 
 	// ── Ankunfts-Reminder manuell senden (Admin) ────────────────────────────
-	sendReminder: async ({ request, url, fetch }) => {
-		checkAuth(url);
+	sendReminder: async ({ request, fetch }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await getRessourceBuchung(id);
@@ -327,8 +311,7 @@ export const actions: Actions = {
 	},
 
 	// ── Abreise-Reminder manuell senden (Admin) ─────────────────────────────
-	sendAbreiseReminder: async ({ request, url, fetch }) => {
-		checkAuth(url);
+	sendAbreiseReminder: async ({ request, fetch }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await getRessourceBuchung(id);
@@ -336,17 +319,13 @@ export const actions: Actions = {
 		await sendAbreiseErinnerung(buchung, fetch, true);
 	},
 
-	deleteAll: async ({ url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+	deleteAll: async () => {
 		const all = await listAlleRessourceBuchungen();
 		await Promise.all(all.map((b) => deleteRessourceBuchung(b.id)));
 		return { ok: true };
 	},
 
-	create: async ({ request, url, fetch }) => {
-		checkAuth(url);
+	create: async ({ request, fetch }) => {
 		const fd = await request.formData();
 		const ressourceUid = (fd.get('ressourceUid') as string)?.trim();
 		const von = fd.get('von') as string;

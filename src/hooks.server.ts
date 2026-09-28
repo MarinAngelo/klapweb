@@ -1,4 +1,5 @@
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
+import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
 
@@ -32,6 +33,22 @@ function setCachedUser(token: string, user: CachedUser): void {
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// ── Admin-Panel: nur mit Session-Cookie (Login unter /admin) ─────────────────
+	const { pathname, searchParams } = event.url;
+	if (pathname.startsWith('/admin/')) {
+		// Transition: old bookmarks with ?secret=… log in once, then the secret is removed from the URL
+		const legacySecret = searchParams.get('secret');
+		if (legacySecret !== null) {
+			if (isValidAdminPassword(legacySecret)) startAdminSession(event.cookies);
+			const clean = new URL(event.url);
+			clean.searchParams.delete('secret');
+			throw redirect(303, clean.pathname + clean.search);
+		}
+		if (!isAdmin(event.cookies)) {
+			throw redirect(303, `/admin?next=${encodeURIComponent(pathname + event.url.search)}`);
+		}
+	}
+
 	const sessionToken = event.cookies.get('klap_user_session');
 	if (sessionToken) {
 		const cached = getCachedUser(sessionToken);

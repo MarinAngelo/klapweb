@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import type { PageData, SubmitFunction } from './$types';
-	import { onMount } from 'svelte';
 	import { formatDateShort } from '$lib/utils/formatDate';
 	import Button from '$lib/components/Button.svelte';
 
@@ -11,7 +9,6 @@
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
-	let adminSecret = '';
 
 	let items: Array<{ description: string; quantity: number; unitPrice: number }> = [
 		{ description: '', quantity: 1, unitPrice: 0 }
@@ -43,10 +40,6 @@
 		land: ''
 	};
 	let newCustomerLoading = false;
-
-	onMount(() => {
-		adminSecret = new URLSearchParams(window.location.search).get('secret') || '';
-	});
 
 	function getSelectedCustomer() {
 		return data.customers.find((c) => c.id === selectedCustomerId);
@@ -170,7 +163,6 @@
 		if (!confirm(`Wirklich löschen: ${invoiceNumber}?`)) return;
 
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', invoiceId);
 
 		try {
@@ -213,7 +205,6 @@
 
 		editPdfLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-number', editingInvoice.invoiceNumber);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
@@ -256,7 +247,6 @@
 
 		isLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', editingInvoiceId);
 
 		try {
@@ -291,7 +281,6 @@
 		isLoading = true;
 
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', editingInvoiceId);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
@@ -355,7 +344,6 @@
 
 		newCustomerLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('vorname', newCustomerForm.vorname);
 		formData.set('nachname', newCustomerForm.nachname);
 		formData.set('firma', newCustomerForm.firma);
@@ -366,7 +354,7 @@
 		formData.set('land', newCustomerForm.land);
 
 		try {
-			const res = await fetch('/admin/kunden?/create&secret=' + adminSecret, {
+			const res = await fetch('/admin/kunden?/create', {
 				method: 'POST',
 				body: formData
 			});
@@ -399,7 +387,7 @@
 		<h1 class="text-3xl font-bold">Rechnungen</h1>
 		<div class="ml-auto flex items-center gap-2">
 			<Button
-				href="/admin/dashboard?secret={adminSecret}"
+				href="/admin/dashboard"
 				text="Dashboard"
 				leadingIcon="left"
 				color="#374151"
@@ -411,12 +399,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={adminSecret}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={adminSecret} />
 				<Button
 					text="Alle löschen"
 					color="#dc2626"
@@ -516,8 +503,6 @@
 
 		{#if isFormOpen}
 			<form method="POST" action="?/preview" use:enhance={handlePreview} class="space-y-4">
-				<input type="hidden" name="secret" value={adminSecret} />
-
 				<!-- Kunden Auswahl -->
 				<fieldset class="border rounded p-4 bg-gray-50">
 					<legend class="px-2 font-bold">Kunde wählen</legend>
@@ -1067,7 +1052,6 @@
 					</div>
 
 					<form method="POST" action="?/save" use:enhance={handleSave} class="space-y-4">
-						<input type="hidden" name="secret" value={adminSecret} />
 						<input type="hidden" name="notes" value={notes} />
 						<label class="flex items-center gap-2">
 							<input type="checkbox" bind:checked={sendEmail} class="rounded" />

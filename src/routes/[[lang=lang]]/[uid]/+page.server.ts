@@ -4,7 +4,7 @@ import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
-import { env } from '$env/dynamic/private';
+import { isAdmin } from '$lib/server/adminAuth';
 
 export interface AddonRow {
 	label: string;
@@ -19,7 +19,7 @@ export interface PlaeneFeature {
 	leistungUid?: string;
 }
 
-export async function load({ params, parent, fetch, cookies, url }) {
+export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
 	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
 	const client = createClient({ fetch, cookies });
@@ -42,11 +42,9 @@ export async function load({ params, parent, fetch, cookies, url }) {
 				: []
 		});
 
-		// Password protection – Admin-Bypass wenn ?admin_secret=<ADMIN_SECRET>
+		// Password protection – angemeldete Admins (Session-Cookie) sehen die Seite ohne Passwort
 		if ((page.data as any).password_protected === true) {
-			const adminSecret = env.ADMIN_SECRET;
-			const bypassParam = url.searchParams.get('admin_secret');
-			const isAdminBypass = adminSecret && bypassParam === adminSecret;
+			const isAdminBypass = isAdmin(cookies);
 
 			if (!isAdminBypass) {
 				const pagePassword = (settings.data as any).page_password as string | null;

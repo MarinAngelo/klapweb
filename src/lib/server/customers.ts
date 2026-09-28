@@ -11,7 +11,7 @@
  * NOTE: @netlify/blobs auto-detection does NOT work with adapter-auto on Netlify.
  * siteID + token must always be passed explicitly via $env/dynamic/private.
  *
- * Admin view: /admin/kunden?secret=<ADMIN_SECRET>
+ * Admin view: /admin/kunden (Login unter /admin)
  *
  * Called from:
  *   - src/routes/api/invoice/+server.ts      (Rechnung, fire-and-forget after email)

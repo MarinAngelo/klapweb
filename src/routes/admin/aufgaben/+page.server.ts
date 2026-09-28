@@ -1,5 +1,4 @@
 import type { PageServerLoad, Actions } from './$types';
-import { error } from '@sveltejs/kit';
 import {
 	listAlleAnnahmen,
 	updateAnnahme,
@@ -12,11 +11,7 @@ import { env } from '$env/dynamic/private';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async ({ url }) => {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+export const load: PageServerLoad = async () => {
 	let annahmen: Awaited<ReturnType<typeof listAlleAnnahmen>> = [];
 	let blobError: string | null = null;
 
@@ -26,15 +21,11 @@ export const load: PageServerLoad = async ({ url }) => {
 		blobError = String(e);
 	}
 
-	return { annahmen, blobError, secret: provided };
+	return { annahmen, blobError };
 };
 
 export const actions: Actions = {
-	bestaetigen: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	bestaetigen: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id !== 'string' || !id) return;
@@ -78,11 +69,7 @@ export const actions: Actions = {
 		}
 	},
 
-	freigeben: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	freigeben: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id') as string;
 		const betreiberAntwort = (form.get('betreiber_antwort') as string)?.trim() || undefined;
@@ -167,11 +154,7 @@ export const actions: Actions = {
 		}
 	},
 
-	erledigt: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	erledigt: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		const minutenRaw = form.get('minuten');
@@ -196,11 +179,7 @@ export const actions: Actions = {
 		});
 	},
 
-	zuruecksetzen: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	zuruecksetzen: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
@@ -214,11 +193,7 @@ export const actions: Actions = {
 		}
 	},
 
-	loeschen: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	loeschen: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
@@ -226,10 +201,7 @@ export const actions: Actions = {
 		}
 	},
 
-	deleteAll: async ({ url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+	deleteAll: async () => {
 		const all = await listAlleAnnahmen();
 		await Promise.all(all.map((a) => deleteAnnahme(a.id)));
 		return { ok: true };

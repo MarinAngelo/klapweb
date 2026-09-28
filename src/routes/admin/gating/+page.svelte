@@ -1,13 +1,10 @@
 <script lang="ts">
 	import type { PageData, ActionData } from './$types';
 	import Button from '$lib/components/Button.svelte';
-	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 	export let form: ActionData;
-
-	$: secret = $page.url.searchParams.get('secret') ?? '';
 
 	// Deep clone so we can mutate freely
 	let gating = structuredClone(data.gating) as {
@@ -379,7 +376,7 @@
 		</span>
 		<div style="margin-left: auto;">
 			<Button
-				href="/admin/dashboard?secret={secret}"
+				href="/admin/dashboard"
 				text="Dashboard"
 				leadingIcon="left"
 				color="#374151"
@@ -403,7 +400,7 @@
 	<!-- Save button (top) -->
 	<form
 		method="POST"
-		action="?/save&secret={secret}"
+		action="?/save"
 		use:enhance={() => {
 			saving = true;
 			saveMessage = '';
@@ -886,7 +883,7 @@
 	<div style="margin-top: 2rem;">
 		<form
 			method="POST"
-			action="?/save&secret={secret}"
+			action="?/save"
 			use:enhance={() => {
 				saving = true;
 				saveMessage = '';

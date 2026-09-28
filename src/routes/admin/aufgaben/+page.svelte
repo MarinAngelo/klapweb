@@ -5,8 +5,6 @@
 	import { formatDateTimeShort } from '$lib/utils/formatDate';
 	export let data: PageData;
 
-	$: secret = data.secret ?? '';
-
 	const statusLabels: Record<string, string> = {
 		angenommen: 'Angenommen',
 		annahme_bestaetigt: 'Bestätigt',
@@ -47,7 +45,7 @@
 		<span style="font-size: 0.875rem; color: #6b7280;">{data.annahmen.length} Einträge</span>
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
 			<Button
-				href="/admin/dashboard?secret={secret}"
+				href="/admin/dashboard"
 				text="Dashboard"
 				leadingIcon="left"
 				color="#374151"
@@ -59,12 +57,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={secret}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm('Alle Aufgaben löschen?')) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={secret} />
 				<Button
 					text="Alle löschen"
 					color="#dc2626"
@@ -146,7 +143,7 @@
 										style="display: flex; flex-direction: column; gap: 0.375rem; min-width: 220px;"
 									>
 										{#if a.status === 'angenommen'}
-											<form method="POST" action="?/bestaetigen&secret={secret}" use:enhance>
+											<form method="POST" action="?/bestaetigen" use:enhance>
 												<input type="hidden" name="id" value={a.id} />
 												<button
 													type="submit"
@@ -159,7 +156,7 @@
 										{#if a.status === 'abgegeben'}
 											<form
 												method="POST"
-												action="?/freigeben&secret={secret}"
+												action="?/freigeben"
 												use:enhance
 												style="display: flex; flex-direction: column; gap: 0.25rem;"
 											>
@@ -192,7 +189,7 @@
 										{#if !['abgegeben', 'erledigt'].includes(a.status)}
 											<form
 												method="POST"
-												action="?/erledigt&secret={secret}"
+												action="?/erledigt"
 												use:enhance
 												style="display: flex; flex-direction: column; gap: 0.25rem;"
 											>
@@ -216,7 +213,7 @@
 											</form>
 										{/if}
 										{#if a.status !== 'angenommen'}
-											<form method="POST" action="?/zuruecksetzen&secret={secret}" use:enhance>
+											<form method="POST" action="?/zuruecksetzen" use:enhance>
 												<input type="hidden" name="id" value={a.id} />
 												<button
 													type="submit"
@@ -228,7 +225,7 @@
 										{/if}
 										<form
 											method="POST"
-											action="?/loeschen&secret={secret}"
+											action="?/loeschen"
 											use:enhance
 											on:submit={(e) => confirmLoeschen(e, a.name)}
 										>

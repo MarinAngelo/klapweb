@@ -3,11 +3,10 @@
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	export let data: PageData;
 
-	const s = data.secret;
-
+	// Logged-in admins open protected pages without password (admin session cookie)
 	function pageHref(uid: string, lang: string, mainLang = 'de-ch') {
 		const prefix = lang === mainLang ? '' : `/${lang}`;
-		return `${prefix}/${uid}?admin_secret=${s}`;
+		return `${prefix}/${uid}`;
 	}
 </script>
 
@@ -17,7 +16,7 @@
 	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">🔒 Passwortgeschützte Seiten</h1>
 		<a
-			href="/admin/dashboard?secret={s}"
+			href="/admin/dashboard"
 			style="margin-left: auto; font-size: 0.875rem; color: #6b7280; text-decoration: none;"
 			><SvgIcons name="left" size="1em" /> Dashboard</a
 		>

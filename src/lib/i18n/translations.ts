@@ -1535,7 +1535,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Abonnent nicht gefunden',
 		'en-us': 'Subscriber not found'
 	},
-	'Anmeldung bestätigt': { 'de-ch': 'Anmeldung bestätigt', 'en-us': 'Sign-up confirmed' }
+	'Anmeldung bestätigt': { 'de-ch': 'Anmeldung bestätigt', 'en-us': 'Sign-up confirmed' },
+	// Admin-Login
+	Admin: { 'de-ch': 'Admin', 'en-us': 'Admin' },
+	'Falsches Passwort.': { 'de-ch': 'Falsches Passwort.', 'en-us': 'Wrong password.' }
 };
 
 /**

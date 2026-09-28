@@ -236,9 +236,18 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
 
+## Admin-Anmeldung
+
+- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h), Logout im Dashboard
+- **Alle `/admin/*`-Routen werden zentral in `hooks.server.ts` geschützt** — keine eigenen Secret-Prüfungen in Seiten/Actions, **nie `?secret=` in Links, Formularen oder Fetches**
+- Alte Lesezeichen mit `?secret=` melden einmal an und werden ohne Secret umgeleitet
+- **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
+- APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
+- `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
+
 ## Admin-Panel — Rechnungen & Kunden
 
-### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
+### Rechnungsverwaltung (`/admin/rechnungen`)
 
 **Datenstruktur:** `ManualInvoiceRecord` mit:
 
@@ -272,7 +281,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
 
-### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
+### Kunden-Management (`/admin/kunden`)
 
 - Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
 - Feld `lang` (Prismic-Locale, z.B. `de-ch`): Dropdown mit den Sprachen aus dem Prismic-Repository
@@ -322,7 +331,7 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 
 Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
-## Newsletter / Info-Mails (`/admin/newsletter?secret=<ADMIN_SECRET>`)
+## Newsletter / Info-Mails (`/admin/newsletter`)
 
 - Feature `newsletter` (gating.json, ab Professionell), Admin-Bereich `newsletter`
 - **Inhalt in Prismic:** Custom Type `newsletter` (Quelle `customtypes/_features/newsletter/…`): Betreff, Vorschautext, Rich Text, optionaler Button. Platzhalter `{{Name}}` (Vor- + Nachname, sonst Firma), `{{Vorname}}`, `{{Nachname}}`, `{{Firma}}` pro Empfänger
@@ -331,5 +340,5 @@ Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → S
 - **Anmeldung:** Formular-Variante `newsletterSignup` („Newsletter abonnieren“, Feature `newsletter`) → `/api/newsletter/anmelden` sendet Bestätigungsmail (Double-Opt-in, signierter Link 7 Tage gültig, nichts gespeichert) → `/newsletter/bestaetigen` speichert erst per Button (Mail-Scanner bestätigen nichts). Honeypot-Feld gegen Bots, gleiche Antwort für bekannte/unbekannte Adressen
 - **Versand:** `src/lib/server/newsletter.ts`, Resend Batch-API (100 pro Aufruf); Test-Mail zuerst, Versand nur mit Bestätigung; Verlauf im Blob-Store `newsletter_versand`
 - **CH-Recht (UWG Art. 3 lit. o):** jede Mail mit Absender-Angaben (Settings) + Abmelde-Link; `List-Unsubscribe` + One-Click (`/api/newsletter/abmelden`). Abmeldungen im Store `newsletter_abmeldungen` (Key = SHA-256 der E-Mail), Links HMAC-signiert mit `NEWSLETTER_SECRET` bzw. `ADMIN_SECRET`
-- **Abonnenten-Übersicht** im Newsletter-Admin: Name, E-Mail, Sprache, „bestätigt am“ (= Nachweis der Einwilligung), Status; „Entfernen“ löscht den Abonnenten und trägt die Adresse als abgemeldet ein; CSV-Export `/admin/newsletter/abonnenten.csv?secret=…`
+- **Abonnenten-Übersicht** im Newsletter-Admin: Name, E-Mail, Sprache, „bestätigt am“ (= Nachweis der Einwilligung), Status; „Entfernen“ löscht den Abonnenten und trägt die Adresse als abgemeldet ein; CSV-Export `/admin/newsletter/abonnenten.csv`
 - Abmelde-Seite `/newsletter/abmelden` hat bewusst kein Feature-Gate (Abmeldung muss immer möglich sein)

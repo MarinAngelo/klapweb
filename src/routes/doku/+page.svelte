@@ -2664,18 +2664,15 @@
 							>Login-Formular — schickt <code>ADMIN_SECRET</code> als Query-Param</td
 						></tr
 					>
+					<tr><td><code>/admin/dashboard</code></td><td>Links zu Kunden und Buchungen</td></tr>
 					<tr
-						><td><code>/admin/dashboard?secret=…</code></td><td>Links zu Kunden und Buchungen</td
-						></tr
-					>
-					<tr
-						><td><code>/admin/kunden?secret=…</code></td><td
+						><td><code>/admin/kunden</code></td><td
 							>Tabelle aller Kunden (Datum, Name, E-Mail, Betrag, Zahlungsart-Badge). Action:
 							löschen.</td
 						></tr
 					>
 					<tr
-						><td><code>/admin/buchungen?secret=…</code></td><td
+						><td><code>/admin/buchungen</code></td><td
 							>Drei Tabellen: gebuchte Termine / freie Termine / gesperrte Termine. Actions:
 							löschen, sperren, entsperren.</td
 						></tr
@@ -2684,9 +2681,10 @@
 			</table>
 
 			<div class="callout callout-warn">
-				<strong>Authentifizierung Admin:</strong> Nur via
-				<code>?secret=ADMIN_SECRET</code>-Query-Parameter — kein Session-Cookie. Das Secret muss bei
-				jedem Link mitgegeben werden.
+				<strong>Authentifizierung Admin:</strong> Login unter <code>/admin</code> mit
+				<code>ADMIN_SECRET</code> → signiertes Session-Cookie (8 h). Alle
+				<code>/admin/*</code>-Routen werden zentral in <code>hooks.server.ts</code> geschützt. Links in
+				E-Mails (Freigaben) tragen ein Token pro Aktion statt des Passworts.
 			</div>
 
 			<p class="table-label">Environment-Variablen</p>
@@ -3309,7 +3307,7 @@
 				<tbody>
 					<tr
 						><td><code>ADMIN_SECRET</code></td><td>Beliebig (z.B. UUID)</td><td
-							>Authentifizierung für /admin/* Routes → URL-Parameter: <code>?secret=...&</code></td
+							>Passwort für den Admin-Login unter <code>/admin</code> (Session-Cookie)</td
 						></tr
 					>
 					<tr

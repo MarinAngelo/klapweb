@@ -4,10 +4,6 @@
 	import { formatDateWithWeekday } from '$lib/utils/formatDate';
 	export let data: PageData;
 
-	import { page } from '$app/stores';
-
-	$: secret = $page.url.searchParams.get('secret') ?? '';
-
 	function confirmDelete(e: SubmitEvent, titel: string) {
 		if (!confirm(`Buchung "${titel}" wirklich löschen (Termin wird wieder frei)?`)) return;
 		actionLoading = true;
@@ -124,7 +120,7 @@
 		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Terminverwaltung</h1>
 		<div class="header-actions">
 			<Button
-				href="/admin/dashboard?secret={secret}"
+				href="/admin/dashboard"
 				text="Dashboard"
 				leadingIcon="left"
 				color="#374151"
@@ -136,12 +132,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={secret}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm('Alle Buchungen löschen?')) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={secret} />
 				<Button
 					text="Alle löschen"
 					color="#dc2626"
@@ -198,7 +193,7 @@
 							<td style={tdStyle}>
 								<form
 									method="POST"
-									action="?/delete&secret={secret}"
+									action="?/delete"
 									on:submit|preventDefault={(e) => confirmDelete(e, b.titel || b.terminId)}
 								>
 									<input type="hidden" name="id" value={b.terminId} />
@@ -227,7 +222,7 @@
 	{:else}
 		<form
 			method="POST"
-			action="?/cancelSelected&secret={secret}"
+			action="?/cancelSelected"
 			on:submit={confirmBulkCancel}
 			style="margin-bottom: 2.5rem;"
 		>
@@ -309,7 +304,7 @@
 								<td style={tdStyle}>
 									<form
 										method="POST"
-										action="?/cancel&secret={secret}"
+										action="?/cancel"
 										on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
 									>
 										<input type="hidden" name="id" value={s.id} />
@@ -383,7 +378,7 @@
 							<td style="{tdStyle} text-decoration: line-through;">{s.titel}</td>
 							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
 							<td style={tdStyle}>
-								<form method="POST" action="?/uncancel&secret={secret}">
+								<form method="POST" action="?/uncancel">
 									<input type="hidden" name="id" value={s.id} />
 									<button
 										type="submit"

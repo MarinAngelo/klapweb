@@ -17,10 +17,9 @@ import {
 
 export const prerender = false;
 
-function checkAccess(url: URL) {
+// Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
+function checkAccess() {
 	if (!FEATURE_NEWSLETTER) throw error(404, 'Nicht gefunden');
-	const secret = env.ADMIN_SECRET;
-	if (!secret || url.searchParams.get('secret') !== secret) throw error(403, 'Kein Zugriff');
 }
 
 // Custom type is feature-gated → not part of the generated Prismic types
@@ -31,8 +30,8 @@ async function loadNewsletter(client: AnyClient, uid: string) {
 	return docs.find((d) => d.uid === uid) ?? null;
 }
 
-export const load: PageServerLoad = async ({ url, fetch }) => {
-	checkAccess(url);
+export const load: PageServerLoad = async ({ fetch }) => {
+	checkAccess();
 	const client = createClient({ fetch }) as unknown as AnyClient;
 
 	let newsletters: { uid: string; subject: string; lang: string; publishedAt: string }[] = [];
@@ -119,7 +118,7 @@ async function sendAndLog(
 
 export const actions: Actions = {
 	test: async ({ request, url, fetch }) => {
-		checkAccess(url);
+		checkAccess();
 		const form = await request.formData();
 		const uid = String(form.get('uid') ?? '');
 		const testEmail = String(form.get('testEmail') ?? '').trim();
@@ -145,7 +144,7 @@ export const actions: Actions = {
 	},
 
 	send: async ({ request, url, fetch }) => {
-		checkAccess(url);
+		checkAccess();
 		const form = await request.formData();
 		// Checkbox sends its value ("on") only when checked — presence is the confirmation
 		if (!form.has('confirm')) return fail(400, { error: 'Bitte den Versand bestätigen' });
@@ -159,8 +158,8 @@ export const actions: Actions = {
 		);
 	},
 
-	removeSubscriber: async ({ request, url }) => {
-		checkAccess(url);
+	removeSubscriber: async ({ request }) => {
+		checkAccess();
 		const form = await request.formData();
 		const email = String(form.get('email') ?? '');
 		try {
@@ -172,7 +171,7 @@ export const actions: Actions = {
 	},
 
 	sendSelected: async ({ request, url, fetch }) => {
-		checkAccess(url);
+		checkAccess();
 		const form = await request.formData();
 		if (!form.has('confirm')) return fail(400, { error: 'Bitte den Versand bestätigen' });
 		// Only addresses that are real, not unsubscribed customers — never arbitrary input

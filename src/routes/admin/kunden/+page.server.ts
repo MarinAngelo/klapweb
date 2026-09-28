@@ -1,7 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail } from '@sveltejs/kit';
 import { listCustomers, deleteCustomer, saveCustomer, updateCustomer } from '$lib/server/customers';
-import { env } from '$env/dynamic/private';
 import { createClient } from '$lib/prismicio';
 import { FEATURE_KUNDENVERWALTUNG } from '$lib/server/features';
 
@@ -22,14 +21,8 @@ async function loadLanguages(fetch: typeof globalThis.fetch): Promise<Language[]
 
 export const prerender = false;
 
-export const load: PageServerLoad = async ({ url, fetch }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
 	if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-
-	if (!secret || provided !== secret) {
-		throw error(403, 'Kein Zugriff');
-	}
 
 	let customers: Awaited<ReturnType<typeof listCustomers>> = [];
 	let blobError: string | null = null;
@@ -44,11 +37,8 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 };
 
 export const actions: Actions = {
-	create: async ({ request, url, fetch }) => {
+	create: async ({ request, fetch }) => {
 		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 
 		const form = await request.formData();
 		const languages = await loadLanguages(fetch);
@@ -80,11 +70,8 @@ export const actions: Actions = {
 		}
 	},
 
-	setLang: async ({ request, url, fetch }) => {
+	setLang: async ({ request, fetch }) => {
 		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 
 		const form = await request.formData();
 		const id = String(form.get('id') ?? '');
@@ -103,11 +90,8 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	delete: async ({ request, url }) => {
+	delete: async ({ request }) => {
 		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 
 		const form = await request.formData();
 		const id = form.get('id');
@@ -116,11 +100,8 @@ export const actions: Actions = {
 		}
 	},
 
-	deleteAll: async ({ url }) => {
+	deleteAll: async () => {
 		if (!FEATURE_KUNDENVERWALTUNG) throw error(404, 'Nicht gefunden');
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
 		const all = await listCustomers();
 		await Promise.all(all.map((c) => deleteCustomer(c.id)));
 		return { ok: true };

@@ -485,14 +485,10 @@
 	}
 
 	async function saveHeaderTheme() {
-		const secret = new URL(window.location.href).searchParams.get('secret');
-		if (!secret) {
-			headerSaveState = 'auth';
-			return;
-		}
 		headerSaveState = 'saving';
 		try {
-			const response = await fetch(`/api/design-theme?secret=${encodeURIComponent(secret)}`, {
+			// Authorised by the admin session cookie (log in under /admin first)
+			const response = await fetch('/api/design-theme', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({
@@ -504,6 +500,10 @@
 					header_bottom_curve_start: headerCurveStart
 				})
 			});
+			if (response.status === 401) {
+				headerSaveState = 'auth';
+				return;
+			}
 			if (!response.ok) throw new Error('save failed');
 			headerSaveState = 'saved';
 		} catch {
@@ -824,7 +824,7 @@
 					: headerSaveState === 'saved'
 						? 'In Prismic gespeichert'
 						: headerSaveState === 'auth'
-							? 'Admin-URL mit Secret öffnen'
+							? 'Bitte zuerst unter /admin anmelden'
 							: headerSaveState === 'error'
 								? 'Speichern fehlgeschlagen'
 								: 'In Prismic speichern'}

@@ -1,10 +1,10 @@
 /**
- * GET /api/test-reminder?secret=XXX&type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
+ * GET /api/test-reminder?type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
  *
  * Runs the same logic as the send-reminders Netlify function.
  *
  * Parameters:
- *   secret  – must match ADMIN_SECRET env var
+ *   Zugriff – nur mit Admin-Session (vorher unter /admin anmelden)
  *   type    – "ankunft" (default), "nach_ankunft", or "abreise"
  *   date    – target date (default: today+2 / today-1 / today+1)
  *   dryRun  – if "true", shows what would be sent without actually sending (default: false)
@@ -12,6 +12,7 @@
 
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { isAdmin } from '$lib/server/adminAuth';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
 import { Resend } from 'resend';
@@ -31,8 +32,8 @@ function dateInDays(days: number): string {
 	return d.toISOString().slice(0, 10);
 }
 
-export const GET: RequestHandler = async ({ url }) => {
-	if (url.searchParams.get('secret') !== env.ADMIN_SECRET) {
+export const GET: RequestHandler = async ({ url, cookies }) => {
+	if (!isAdmin(cookies)) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 

@@ -1,5 +1,4 @@
 import type { PageServerLoad, Actions } from './$types';
-import { error } from '@sveltejs/kit';
 import {
 	listBookings,
 	deleteBooking,
@@ -11,15 +10,10 @@ import {
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { createClient } from '$lib/prismicio';
-import { env } from '$env/dynamic/private';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async ({ url, fetch }) => {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+export const load: PageServerLoad = async ({ fetch }) => {
 	const today = new Date().toISOString().slice(0, 10);
 	const allSlotsFrom = '2000-01-01'; // Admin sieht alle Termine, auch vergangene
 
@@ -98,11 +92,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 };
 
 export const actions: Actions = {
-	delete: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	delete: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
@@ -111,11 +101,7 @@ export const actions: Actions = {
 		}
 	},
 
-	cancel: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	cancel: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
@@ -124,22 +110,14 @@ export const actions: Actions = {
 		}
 	},
 
-	cancelSelected: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	cancelSelected: async ({ request }) => {
 		const form = await request.formData();
 		const ids = form.getAll('slotId').filter((id): id is string => typeof id === 'string' && !!id);
 		await Promise.all(ids.map(cancelSlot));
 		invalidateTermineCache();
 	},
 
-	uncancel: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	uncancel: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
@@ -148,10 +126,7 @@ export const actions: Actions = {
 		}
 	},
 
-	deleteAll: async ({ url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+	deleteAll: async () => {
 		const all = await listBookings();
 		await Promise.all(all.map((b) => deleteBooking(b.terminId)));
 		invalidateTermineCache();

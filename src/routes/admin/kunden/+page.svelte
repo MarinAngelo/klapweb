@@ -4,13 +4,11 @@
 	import { _ } from '$lib/stores/i18n';
 	export let data: PageData;
 
-	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	// Column headers are i18n keys
 	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Adresse', 'Sprache', 'Quelle', ''];
-	$: secret = $page.url.searchParams.get('secret') ?? '';
 
 	const inputStyle =
 		'width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;';
@@ -107,7 +105,7 @@
 		</h1>
 		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
 			<Button
-				href="/admin/dashboard?secret={secret}"
+				href="/admin/dashboard"
 				text={$_('Dashboard')}
 				leadingIcon="left"
 				color="#374151"
@@ -119,12 +117,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={secret}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm($_('Alle Kunden löschen?'))) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={secret} />
 				<Button
 					text={$_('Alle löschen')}
 					color="#dc2626"
@@ -158,12 +155,10 @@
 		{#if isFormOpen}
 			<form
 				method="POST"
-				action="?/create&secret={secret}"
+				action="?/create"
 				use:enhance={handleCreate}
 				style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;"
 			>
-				<input type="hidden" name="secret" value={secret} />
-
 				<div style="grid-column: 1;">
 					<label for="kunde-vorname" style={labelStyle}>{$_('Vorname')} *</label>
 					<input
@@ -268,7 +263,7 @@
 							<td style="padding: 0.5rem 0.75rem;">{r.firma}</td>
 							<td style="padding: 0.5rem 0.75rem;">{r.adresse}</td>
 							<td style="padding: 0.5rem 0.75rem;">
-								<form method="POST" action="?/setLang&secret={secret}" use:enhance={handleSetLang}>
+								<form method="POST" action="?/setLang" use:enhance={handleSetLang}>
 									<input type="hidden" name="id" value={c.id} />
 									<select
 										name="lang"
@@ -288,7 +283,7 @@
 							<td style="padding: 0.5rem 0.75rem;">
 								<form
 									method="POST"
-									action="?/delete&secret={secret}"
+									action="?/delete"
 									on:submit|preventDefault={(e) => confirmDelete(e, r.name)}
 								>
 									<input type="hidden" name="id" value={c.id} />

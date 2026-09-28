@@ -1,5 +1,4 @@
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 import { FEATURE_NEWSLETTER } from '$lib/server/features';
 import { listSubscribersWithStatus } from '$lib/server/newsletter';
 import { t } from '$lib/i18n/translations';
@@ -11,8 +10,7 @@ const csvCell = (value: string) => `"${value.replace(/"/g, '""')}"`;
 
 export async function GET({ url }) {
 	if (!FEATURE_NEWSLETTER) throw error(404, 'Nicht gefunden');
-	const secret = env.ADMIN_SECRET;
-	if (!secret || url.searchParams.get('secret') !== secret) throw error(403, 'Kein Zugriff');
+	// Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
 
 	const subscribers = await listSubscribersWithStatus();
 	const lang = url.searchParams.get('lang') || 'de-ch';

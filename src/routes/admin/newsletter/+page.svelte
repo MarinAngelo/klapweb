@@ -10,8 +10,7 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: secret = $page.url.searchParams.get('secret') ?? '';
-	$: dashboardHref = `/admin/dashboard?secret=${encodeURIComponent(secret)}`;
+	$: dashboardHref = `/admin/dashboard`;
 
 	let selectedUid = data.newsletters[0]?.uid ?? '';
 	let testEmail = data.defaultTestEmail;
@@ -57,7 +56,7 @@
 			.includes(subscriberFilter.trim().toLowerCase())
 	);
 	$: activeSubscriberCount = data.subscribers.filter((sub) => !sub.unsubscribed).length;
-	$: csvHref = `/admin/newsletter/abonnenten.csv?secret=${encodeURIComponent(secret)}&lang=${$page.data.lang ?? 'de-ch'}`;
+	$: csvHref = `/admin/newsletter/abonnenten.csv?lang=${$page.data.lang ?? 'de-ch'}`;
 
 	// Ask before removing; cancel() stops the enhanced submit
 	function confirmRemove(email: string): SubmitFunction {
@@ -180,7 +179,7 @@
 			<h2 class="card-title">{$_('1. Test-Mail an mich')}</h2>
 			<form
 				method="POST"
-				action="?/test&secret={encodeURIComponent(secret)}"
+				action="?/test"
 				use:enhance={submitting('test')}
 				class="flex flex-wrap gap-3 items-end"
 			>
@@ -207,11 +206,7 @@
 
 		<section class="card">
 			<h2 class="card-title">{$_('2. An ausgewählte Kunden senden')}</h2>
-			<form
-				method="POST"
-				action="?/sendSelected&secret={encodeURIComponent(secret)}"
-				use:enhance={submitting('selected')}
-			>
+			<form method="POST" action="?/sendSelected" use:enhance={submitting('selected')}>
 				<input type="hidden" name="uid" value={selectedUid} />
 				<div class="flex flex-wrap gap-3 items-center mb-3">
 					<input
@@ -272,11 +267,7 @@
 
 		<section class="card">
 			<h2 class="card-title">{$_('3. An alle Kunden senden')}</h2>
-			<form
-				method="POST"
-				action="?/send&secret={encodeURIComponent(secret)}"
-				use:enhance={submitting('send')}
-			>
+			<form method="POST" action="?/send" use:enhance={submitting('send')}>
 				<input type="hidden" name="uid" value={selectedUid} />
 				<label class="flex items-center gap-3 mb-4">
 					<Checkbox name="confirm" value="on" bind:checked={confirmed} />
@@ -343,7 +334,7 @@
 								<td class="text-right">
 									<form
 										method="POST"
-										action="?/removeSubscriber&secret={encodeURIComponent(secret)}"
+										action="?/removeSubscriber"
 										use:enhance={confirmRemove(sub.email)}
 									>
 										<input type="hidden" name="email" value={sub.email} />
