@@ -85,6 +85,10 @@
 	$: itemTextColor = resolvedContrastAmount
 		? shadeColor(effectiveTextColor || '#000000', resolvedContrastAmount)
 		: effectiveTextColor;
+	$: isBildUndText = slice.variation === 'bildUndText';
+	// Bild und Text: heading level of the item titles (CMS field "Titel-Ebene", default H2)
+	$: titleLevel = String((p as any).title_level ?? '');
+	$: titleTag = /^H[2-6]$/.test(titleLevel) ? titleLevel.toLowerCase() : 'h2';
 </script>
 
 <Bounded
@@ -119,7 +123,11 @@
 	>
 		{#if p.heading || p.description || p.mit_suche}
 			<div
-				class="{p.bg_color || p.sektion_rahmen ? '' : p.mobile_full_width ? 'px-6 md:px-0' : ''} flex flex-col gap-4"
+				class="{p.bg_color || p.sektion_rahmen
+					? ''
+					: p.mobile_full_width
+						? 'px-6 md:px-0'
+						: ''} flex flex-col gap-4"
 			>
 				{#if p.heading}
 					<PrismicRichText field={p.heading} />
@@ -182,10 +190,7 @@
 						style="grid-template-rows: {$openIndex === index ? '1fr' : '0fr'};"
 					>
 						<div class="overflow-hidden">
-							<div
-								class="mt-2 px-3 py-2 rounded"
-								style="background-color: {effectiveBgColor};"
-							>
+							<div class="mt-2 px-3 py-2 rounded" style="background-color: {effectiveBgColor};">
 								{#if leistung.beschreibung?.length}
 									<PrismicRichText field={leistung.beschreibung} />
 								{/if}
@@ -210,29 +215,36 @@
 							: 'px-3'}"
 					style="border-color: {effectiveBorderColor}; background-color: {effectiveBorderColor}11;"
 				>
-					<button
-						class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 {slice.variation ===
-						'bildUndText'
-							? 'pb-5 md:pb-1'
-							: ''} {!p.bg_color && p.mobile_full_width && !p.sektion_rahmen ? 'px-6 md:px-0' : ''}"
-						style="color: {itemTextColor};"
-						aria-haspopup="true"
-						aria-expanded={$openIndex === index}
-						on:click={() => toggleItem(index)}
-					>
-						{item.label}
-						<svg
-							class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
-							style="color: var(--page-link-color);"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 20 20"
-							class:rotate-180={$openIndex === index}
+					<!-- Bild und Text: Titel als h2–h6 je nach „Titel-Ebene“ (Heading enthält den Button → zugängliches Akkordeon-Muster);
+					     Grösse/Schrift kommen global aus app.css -->
+					<svelte:element this={isBildUndText ? titleTag : 'div'} class="accordion-title">
+						<button
+							class="{isBildUndText
+								? ''
+								: 'text-2xl font-semibold tracking-tight'} inline-flex items-center justify-between w-full mt-3 py-1 {isBildUndText
+								? 'pb-5 md:pb-1'
+								: ''} {!p.bg_color && p.mobile_full_width && !p.sektion_rahmen
+								? 'px-6 md:px-0'
+								: ''}"
+							style="color: {itemTextColor};"
+							aria-haspopup="true"
+							aria-expanded={$openIndex === index}
+							on:click={() => toggleItem(index)}
 						>
-							<path
-								d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-							/>
-						</svg>
-					</button>
+							{item.label}
+							<svg
+								class="w-6 h-6 ml-1 fill-current transform transition-transform shrink-0"
+								style="color: var(--page-link-color);"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 20 20"
+								class:rotate-180={$openIndex === index}
+							>
+								<path
+									d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+								/>
+							</svg>
+						</button>
+					</svelte:element>
 
 					<div
 						id="2"
@@ -280,6 +292,10 @@
 </Bounded>
 
 <style>
+	/* h2–h6 keep their global size/font (app.css), but no heading margins inside the accordion */
+	.accordion-title {
+		margin: 0;
+	}
 	button {
 		text-align: left;
 		min-width: 0;

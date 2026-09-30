@@ -471,6 +471,15 @@
 						"default_value": false
 					}
 				},
+				"title_level": {
+					"type": "Select",
+					"config": {
+						"label": "Titel-Ebene",
+						"placeholder": "Überschriften-Ebene der Akkordeon-Titel (H2 = Hauptabschnitt, H3–H6 = Unterpunkte)",
+						"options": ["H2", "H3", "H4", "H5", "H6"],
+						"default_value": "H2"
+					}
+				},
 				"accordion_items": {
 					"type": "Group",
 					"config": {
