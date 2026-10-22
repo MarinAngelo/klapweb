@@ -25,8 +25,9 @@
 	{#if slices.length > 0}
 		<SliceZone {slices} {components} />
 	{:else if isFilled.richText(leistung.data.beschreibung)}
-		<Bounded as="header" class="py-12">
-			<div class="text-lg text-muted-foreground max-w-2xl">
+		<Bounded tag="header" class="py-12">
+			<!-- Full container width: aligned with the page title, same spacing left and right -->
+			<div class="text-lg text-muted-foreground">
 				<PrismicRichText field={leistung.data.beschreibung} />
 			</div>
 		</Bounded>
@@ -39,10 +40,7 @@
 	{/if}
 
 	<!-- CTA: All Services -->
-	<Bounded as="footer" class="py-12 text-center">
-		<Button
-			href="{langPrefix}/leistungen"
-			text={$_('Alle Leistungen anzeigen')}
-		/>
+	<Bounded tag="footer" class="py-12 text-center">
+		<Button href="{langPrefix}/leistungen" text={$_('Alle Leistungen anzeigen')} />
 	</Bounded>
 </article>

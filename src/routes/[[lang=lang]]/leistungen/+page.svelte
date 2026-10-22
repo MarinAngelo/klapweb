@@ -17,7 +17,7 @@
 	<meta name="description" content={$_('Übersicht unserer Leistungen und Services')} />
 </svelte:head>
 
-<Bounded as="section" data-anim-container>
+<Bounded tag="section" data-anim-container>
 	<div class="space-y-8">
 		<div class="text-center">
 			<h1 class="h2">{$_('Leistungen')}</h1>
