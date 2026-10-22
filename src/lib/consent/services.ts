@@ -10,7 +10,12 @@
  * `purpose` ist ein i18n-Key (translations.ts).
  */
 
-export type ConsentCategory = 'functional' | 'external_media' | 'statistics' | 'marketing';
+export type ConsentCategory =
+	| 'functional'
+	| 'external_media'
+	| 'ai_chat'
+	| 'statistics'
+	| 'marketing';
 
 export type ConsentService = {
 	label: string;
@@ -33,6 +38,11 @@ export const consentCategories: Record<ConsentCategory, { label: string; descrip
 		label: 'Externe Inhalte',
 		description:
 			'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.'
+	},
+	ai_chat: {
+		label: 'KI-Chat',
+		description:
+			'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.'
 	},
 	statistics: {
 		label: 'Statistik',
@@ -140,6 +150,19 @@ export const consentServices: Record<string, ConsentService> = {
 		category: 'external_media',
 		purpose: 'Anzeige von Inhalten, die von einer externen Website geladen werden.',
 		storage: ['Cookies des Anbieters möglich', 'Übertragung der IP-Adresse an den Anbieter']
+	},
+
+	// ── KI-Chat ──────────────────────────────────────────────────────────────
+	ai_chat: {
+		label: 'Chat-Assistent (Claude)',
+		provider: 'Anthropic PBC (USA)',
+		category: 'ai_chat',
+		purpose: 'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.',
+		storage: [
+			'Keine Cookies',
+			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)'
+		],
+		privacyUrl: 'https://www.anthropic.com/legal/privacy'
 	}
 };
 

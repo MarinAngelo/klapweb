@@ -305,6 +305,10 @@
 		"newsletter": {
 			"label": "Newsletter",
 			"feature": "newsletter"
+		},
+		"chatbot": {
+			"label": "Chat-Bot",
+			"feature": "chatbot"
 		}
 	}
 }

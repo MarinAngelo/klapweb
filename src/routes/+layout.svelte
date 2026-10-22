@@ -486,7 +486,7 @@
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
 {#if chatActive}
-	<ChatWidget botName={chatBotName} greeting={chatGreeting} />
+	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
 {/if}
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->

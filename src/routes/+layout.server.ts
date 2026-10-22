@@ -116,8 +116,9 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const userBackendActive =
 			FEATURE_KUNDENKONTO && ((baseSettings.data as any)?.user_backend_active ?? false);
 		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
-		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
-		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
+		// Empty → translated default in ChatWidget
+		const chatBotName = (baseSettings.data as any)?.chat_bot_name || '';
+		const chatGreeting = (baseSettings.data as any)?.chat_greeting || '';
 		const klapstudioActive = FEATURE_KLAPSTUDIO;
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);

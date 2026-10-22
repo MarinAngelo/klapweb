@@ -55,6 +55,13 @@
 			icon: '✉️'
 		},
 		{
+			id: 'chatbot',
+			title: 'Chat-Bot',
+			description: 'Fragen und geschätzte KI-Kosten pro Tag und Monat',
+			href: `/admin/chatbot`,
+			icon: '💬'
+		},
+		{
 			id: 'seiten',
 			title: 'Passwortgeschützte Seiten',
 			description: 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',

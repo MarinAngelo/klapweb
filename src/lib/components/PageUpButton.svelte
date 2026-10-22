@@ -44,8 +44,9 @@
 
 <style>
 	.page-up-button {
+		/* centred so it doesn't collide with the chat widget (bottom right) */
 		position: fixed;
-		right: 1rem;
+		left: 50%;
 		bottom: 1rem;
 		z-index: 45;
 		display: grid;
@@ -58,6 +59,7 @@
 		color: var(--header-color);
 		box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
 		cursor: pointer;
+		transform: translateX(-50%);
 		font-size: 1.5rem;
 		line-height: 1;
 		transition:
@@ -69,7 +71,7 @@
 	.page-up-button:hover {
 		background-color: var(--header-color);
 		color: var(--header-bg-color);
-		transform: translateY(-2px);
+		transform: translate(-50%, -2px);
 	}
 
 	.page-up-button:focus-visible {
@@ -79,7 +81,6 @@
 
 	@media (max-width: 767px) {
 		.page-up-button {
-			right: 0.75rem;
 			bottom: 0.75rem;
 			width: 2.5rem;
 			height: 2.5rem;
