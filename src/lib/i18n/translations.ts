@@ -887,6 +887,96 @@ export const translations: Record<string, Record<string, string>> = {
 	'Nachricht eingeben': { 'de-ch': 'Nachricht eingeben…', 'en-us': 'Type a message…' },
 	Senden: { 'de-ch': 'Senden', 'en-us': 'Send' },
 	Tippt: { 'de-ch': 'Tippt…', 'en-us': 'Typing…' },
+	Assistent: { 'de-ch': 'Assistent', 'en-us': 'Assistant' },
+	'Hallo! Wie kann ich helfen?': {
+		'de-ch': 'Hallo! Wie kann ich helfen?',
+		'en-us': 'Hi! How can I help?'
+	},
+	'Verbindungsfehler.': { 'de-ch': 'Verbindungsfehler.', 'en-us': 'Connection error.' },
+	'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.': {
+		'de-ch': 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',
+		'en-us': 'Too many messages. Please try again in a few minutes.'
+	},
+	'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).': {
+		'de-ch': 'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).',
+		'en-us': 'The message is empty or too long (max. 1000 characters).'
+	},
+	'Der Chat ist zurzeit nicht verfügbar.': {
+		'de-ch': 'Der Chat ist zurzeit nicht verfügbar.',
+		'en-us': 'The chat is currently unavailable.'
+	},
+	'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.': {
+		'de-ch': 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.',
+		'en-us': 'The chat could not reply. Please try again.'
+	},
+	'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.': {
+		'de-ch': 'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.',
+		'en-us': 'You have declined the AI chat in the cookie settings.'
+	},
+	'Chat erlauben': { 'de-ch': 'Chat erlauben', 'en-us': 'Allow chat' },
+	'Chat-Bot': { 'de-ch': 'Chat-Bot', 'en-us': 'Chatbot' },
+	Kosten: { 'de-ch': 'Kosten', 'en-us': 'Costs' },
+	Fragen: { 'de-ch': 'Fragen', 'en-us': 'Questions' },
+	Zeitraum: { 'de-ch': 'Zeitraum', 'en-us': 'Period' },
+	'Tokens Eingabe': { 'de-ch': 'Tokens Eingabe', 'en-us': 'Input tokens' },
+	'davon aus Cache': { 'de-ch': 'davon aus Cache', 'en-us': 'of which cached' },
+	'Tokens Antwort': { 'de-ch': 'Tokens Antwort', 'en-us': 'Output tokens' },
+	'Durchschnitt pro Frage': { 'de-ch': 'Durchschnitt pro Frage', 'en-us': 'Average per question' },
+	'Pro Tag': { 'de-ch': 'Pro Tag', 'en-us': 'Per day' },
+	'Pro Monat': { 'de-ch': 'Pro Monat', 'en-us': 'Per month' },
+	Eingabe: { 'de-ch': 'Eingabe', 'en-us': 'Input' },
+	Antwort: { 'de-ch': 'Antwort', 'en-us': 'Output' },
+	'Cache schreiben': { 'de-ch': 'Cache schreiben', 'en-us': 'Cache write' },
+	'Cache lesen': { 'de-ch': 'Cache lesen', 'en-us': 'Cache read' },
+	'Berechnungsgrundlage pro Million Tokens': {
+		'de-ch': 'Berechnungsgrundlage pro Million Tokens',
+		'en-us': 'Prices per million tokens'
+	},
+	'Fragen und geschätzte KI-Kosten pro Tag und Monat': {
+		'de-ch': 'Fragen und geschätzte KI-Kosten pro Tag und Monat',
+		'en-us': 'Questions and estimated AI costs per day and month'
+	},
+	'Geschätzte Kosten der KI-Antworten nach den Listenpreisen des Anbieters (Anthropic, Claude Haiku). Verbindlich ist die Abrechnung des Anbieters.':
+		{
+			'de-ch':
+				'Geschätzte Kosten der KI-Antworten nach den Listenpreisen des Anbieters (Anthropic, Claude Haiku). Verbindlich ist die Abrechnung des Anbieters.',
+			'en-us':
+				'Estimated cost of the AI answers based on the provider’s list prices (Anthropic, Claude Haiku). The provider’s invoice is binding.'
+		},
+	'Die Wissensbasis wird 5 Minuten zwischengespeichert: Folgefragen in dieser Zeit sind deutlich günstiger.':
+		{
+			'de-ch':
+				'Die Wissensbasis wird 5 Minuten zwischengespeichert: Folgefragen in dieser Zeit sind deutlich günstiger.',
+			'en-us':
+				'The knowledge base is cached for 5 minutes: follow-up questions within that time are much cheaper.'
+		},
+	'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.': {
+		'de-ch': 'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.',
+		'en-us': 'Your messages are sent to Anthropic to generate a reply.'
+	},
+	'KI-Chat': { 'de-ch': 'KI-Chat', 'en-us': 'AI chat' },
+	'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.':
+		{
+			'de-ch':
+				'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.',
+			'en-us':
+				'Chat assistant that answers your questions using artificial intelligence. Your messages are sent to an external provider for this.'
+		},
+	'Chat-Assistent (Claude)': {
+		'de-ch': 'Chat-Assistent (Claude)',
+		'en-us': 'Chat assistant (Claude)'
+	},
+	'Anthropic PBC (USA)': { 'de-ch': 'Anthropic PBC (USA)', 'en-us': 'Anthropic PBC (USA)' },
+	'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.': {
+		'de-ch': 'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.',
+		'en-us': 'Answers questions in the chat window using artificial intelligence.'
+	},
+	'Keine Cookies': { 'de-ch': 'Keine Cookies', 'en-us': 'No cookies' },
+	'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)': {
+		'de-ch':
+			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)',
+		'en-us': 'Your chat messages are passed via our server to Anthropic (only when you send them)'
+	},
 	'Beispiel Firma GmbH': { 'de-ch': 'Beispiel Firma GmbH', 'en-us': 'Example Corp Ltd' },
 	'Check-in': { 'de-ch': 'Check-in', 'en-us': 'Check-in' },
 	'Check-out': { 'de-ch': 'Check-out', 'en-us': 'Check-out' },

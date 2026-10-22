@@ -28,6 +28,8 @@ export function detectServicesInContent(documents: unknown[]): string[] {
 		}
 		if (value && typeof value === 'object') {
 			const record = value as Record<string, unknown>;
+			// Settings: chat bot switched on ("Chat-Bot aktivieren")
+			if (record.chat_active === true) found.add('ai_chat');
 			// oEmbed (embed field or rich-text embed node)
 			if (typeof record.embed_url === 'string' && typeof record.html === 'string') {
 				found.add(serviceIdFor((record.provider_name as string) || record.embed_url));
