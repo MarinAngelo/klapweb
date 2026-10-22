@@ -34,14 +34,15 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-anim-stagger>
 				{#each leistungen as leistung, i (leistung.uid)}
 					<div
-						class="flex flex-col p-6 border border-border rounded-lg hover:shadow-lg transition-shadow duration-200"
+						class="flex flex-col min-w-0 p-6 border border-border rounded-lg hover:shadow-lg transition-shadow duration-200"
 						use:reveal={{
 							direction: 'up',
 							distance: '20px',
 							delay: i * 100
 						}}
 					>
-						<h2 class="h3">
+						<!-- Long German compounds (e.g. "Ressourcenbuchungssystem") would overflow the card -->
+						<h2 class="h3 leistung-title">
 							{leistung.label}
 						</h2>
 						{#if leistung.beschreibung}
@@ -66,5 +67,10 @@
 <style>
 	:global([data-anim-stagger] > *) {
 		opacity: 0;
+	}
+
+	.leistung-title {
+		hyphens: auto;
+		overflow-wrap: anywhere;
 	}
 </style>
