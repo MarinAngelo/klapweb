@@ -4,6 +4,8 @@
 	import Dropdown from './Dropdown.svelte';
 	import SvgIcon from './SvgIcons.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import CartLink from './CartLink.svelte';
+	import { cartCount } from '$lib/stores/cart';
 	// import { theme } from '../stores/theme';
 	// import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
@@ -111,7 +113,9 @@
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
 	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
 >
-	<div class="flex lg:hidden h-full items-center">
+	<div class="flex lg:hidden h-full items-center gap-3">
+		<!-- Mobile: cart stays visible next to the burger -->
+		<CartLink color={headerLinkColor} />
 		<button
 			class="btn btn-square btn-ghost h-10 w-10"
 			on:click={toggleMenu}
@@ -192,6 +196,12 @@
 					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4"
 				>
 					<LanguageSwitcher {lang} {locales} {allAlternates} />
+				</li>
+			{/if}
+
+			{#if $cartCount > 0}
+				<li class="hidden lg:flex lg:items-center lg:ml-4">
+					<CartLink color={headerLinkColor} fontSize={headerLinkFontSize} />
 				</li>
 			{/if}
 

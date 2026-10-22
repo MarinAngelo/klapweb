@@ -5,11 +5,14 @@
 	import Button from '$lib/components/Button.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { reveal } from '$lib/actions/reveal';
+	import AddToCartButton from '$lib/components/AddToCartButton.svelte';
+	import { formatPrice, parseCurrencyCode } from '$lib/pricing';
 
 	export let data;
 
 	$: leistungen = data.leistungen ?? [];
 	$: langPrefix = $page.params.lang ? `/${$page.params.lang}` : '';
+	$: currency = parseCurrencyCode($page.data.settings?.data?.invoice_currency) || 'CHF';
 </script>
 
 <svelte:head>
@@ -50,12 +53,30 @@
 								{asText(leistung.beschreibung)}
 							</p>
 						{/if}
-						<div class="mt-4">
+						{#if leistung.price !== null}
+							<p class="mt-3 font-semibold tabular-nums">
+								{formatPrice(leistung.price, currency)}
+								<span class="text-sm font-normal opacity-60">{$_('exkl. MwSt.')}</span>
+							</p>
+						{/if}
+						<div class="mt-4 flex flex-wrap gap-3">
 							<Button
 								href="{langPrefix}/leistung/{leistung.uid}"
 								text={$_('Mehr erfahren')}
 								size="sm"
+								mb={false}
 							/>
+							{#if leistung.price !== null}
+								<AddToCartButton
+									item={{
+										type: 'leistung',
+										uid: leistung.uid ?? '',
+										label: leistung.label ?? leistung.uid ?? '',
+										price: leistung.price,
+										billingType: 'Einmalig'
+									}}
+								/>
+							{/if}
 						</div>
 					</div>
 				{/each}

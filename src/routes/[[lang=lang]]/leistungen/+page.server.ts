@@ -19,6 +19,7 @@ export async function load({ params, parent, fetch, cookies }) {
 				uid: doc.uid,
 				label: doc.data.label,
 				beschreibung: doc.data.beschreibung,
+				price: ((doc.data as Record<string, unknown>).price_chf as number | null) ?? null,
 				first_publication_date: doc.first_publication_date
 			}))
 		};

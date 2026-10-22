@@ -83,6 +83,13 @@
 						"invisible"
 					]
 				}
+			},
+			"price_chf": {
+				"type": "Number",
+				"config": {
+					"label": "Preis exkl. MwSt. (CHF)",
+					"placeholder": "Leer = nicht über den Warenkorb bestellbar"
+				}
 			}
 		}
 	}

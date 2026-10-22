@@ -10,6 +10,7 @@
 
 	export let data: {
 		dienstleistung: string;
+		warenkorb?: string;
 		pageTitle: string;
 		eventCheckout: boolean;
 		extraFields: Array<{
@@ -384,8 +385,9 @@
 			$page.url.searchParams.get('no_chrome') === 'true' ? '&no_chrome=true' : '';
 		const returnUrl = $page.url.searchParams.get('return_url');
 		const returnUrlParam = returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : '';
+		const cartParam = data.warenkorb ? `&warenkorb=${encodeURIComponent(data.warenkorb)}` : '';
 		goto(
-			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${eventParam}${noChromeParam}${returnUrlParam}`
+			`/beauftragung/zusammenfassung?service=${encodeURIComponent(data.dienstleistung)}${cartParam}${eventParam}${noChromeParam}${returnUrlParam}`
 		);
 	}
 

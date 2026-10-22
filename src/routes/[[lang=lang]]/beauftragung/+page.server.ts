@@ -1,4 +1,5 @@
 import { createClient } from '$lib/prismicio';
+import { parseCartSpec, serializeCart } from '$lib/utils/cartSpec';
 
 export const prerender = false;
 
@@ -38,8 +39,12 @@ export async function load({ url, parent, fetch, cookies }) {
 		};
 	}
 
+	// Cart checkout (?warenkorb=leistung:…,page:…) — passed on to the summary unchanged
+	const warenkorb = serializeCart(parseCartSpec(url.searchParams.get('warenkorb')));
+
 	return {
-		dienstleistung,
+		dienstleistung: warenkorb ? 'warenkorb' : dienstleistung,
+		warenkorb,
 		extraFields,
 		pageTitle,
 		eventCheckout,

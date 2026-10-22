@@ -301,6 +301,15 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Ein Kunde kann mehrere Rechnungen haben
 - Duplikat-Prüfung (E-Mail primär, dann Name) verhindert Mehrfacherfassung
 
+### Warenkorb (Leistungen + Pakete)
+
+- Leistung hat Feld `price_chf` («Preis exkl. MwSt. (CHF)», immer einmalig); ohne Preis kein «In den Warenkorb»
+- Paketseiten (Page mit «E-Commerce aktiv»): Kauf-Schaltfläche = Direktkauf wie bisher, daneben «In den Warenkorb»
+- Store `src/lib/stores/cart.ts` (localStorage `klap_cart`, Consent-Dienst `cart`), Seite `/warenkorb`, Icon mit Anzahl in der Navbar
+- Transport nur als Referenzen `?warenkorb=leistung:<uid>,page:<uid>` (`src/lib/utils/cartSpec.ts`) → Beauftragung → Zusammenfassung → `/api/invoice` (`cart`). **Preise immer serverseitig** via `src/lib/server/cartLines.ts`, nie aus dem Browser
+- Pakete im Warenkorb bringen ihre Zusatzleistungen (Pflicht) mit; Rabatt-Code gilt für Hauptpositionen, nicht für Zusatzleistungen
+- Stripe (Payment Links pro Produkt) ist beim Warenkorb ausgeblendet; Rechnung + PDF mit allen Positionen
+
 ### E-Commerce Checkout-Anpassungen
 
 **"Rechnung"-Zahlungen:**
