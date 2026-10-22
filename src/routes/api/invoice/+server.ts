@@ -7,6 +7,8 @@ import { env } from '$env/dynamic/private';
 import { saveCustomer, listCustomers } from '$lib/server/customers';
 import { saveManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
+import { parseCartSpec } from '$lib/utils/cartSpec';
+import { resolveCartLines, cartLabel } from '$lib/server/cartLines';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -18,6 +20,9 @@ interface InvoiceRequest {
 	eventPrice?: number | null;
 	eventLabel?: string;
 	eventManagerEmail?: string | null;
+	/** Cart checkout: "leistung:<uid>,page:<uid>" — prices are resolved here */
+	cart?: string;
+	lang?: string;
 }
 
 interface EmailTemplate {
@@ -189,15 +194,38 @@ async function fetchProductInfo(
 	}
 }
 
+/** One invoice position; discount codes apply to `discountable` positions only */
+interface PdfLine {
+	label: string;
+	price: number | null;
+	billingType: string | null;
+	discountable: boolean;
+}
+
+const BILLING_TYPE_SUFFIX: Record<string, string> = {
+	Einmalig: 'Einmalig',
+	Jährlich: 'pro Jahr',
+	Monatlich: 'pro Monat'
+};
+
+/** "Chat-Bot (Einmalig)", "Hosting (pro Jahr)" */
+function lineLabel(line: { label: string; billingType: string | null }): string {
+	const suffix = line.billingType ? BILLING_TYPE_SUFFIX[line.billingType] : undefined;
+	return suffix ? `${line.label} (${suffix})` : line.label;
+}
+
+/** Discount of one position (same rounding as before: whole cents) */
+function lineDiscount(line: PdfLine, codeDiscount: { pct: number } | null): number {
+	if (!codeDiscount || !line.discountable || line.price === null) return 0;
+	return Math.round(line.price * codeDiscount.pct) / 100;
+}
+
 async function generatePdf(
 	invoiceNumber: string,
 	data: Record<string, string>,
-	serviceLabel: string,
-	netPrice: number | null,
+	lines: PdfLine[],
 	co: CompanyInfo,
-	codeDiscount: { code: string; pct: number } | null,
-	addons: Array<{ label: string; price: number | null; billingType: string | null }>,
-	mainBillingType: string | null
+	codeDiscount: { code: string; pct: number } | null
 ): Promise<Uint8Array> {
 	const pdfDoc = await PDFDocument.create();
 	const page = pdfDoc.addPage([595, 842]); // A4
@@ -341,52 +369,40 @@ async function generatePdf(
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2
 		}).format(n);
-	// Apply code discount to main service
-	const codeDiscountAmount =
-		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
-	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
-
-	const billingTypeSuffix: Record<string, string> = {
-		Einmalig: 'Einmalig',
-		Jährlich: 'pro Jahr',
-		Monatlich: 'pro Monat'
-	};
+	// Code discount over all discountable positions
+	const totalDiscount = lines.reduce((sum, line) => sum + lineDiscount(line, codeDiscount), 0);
+	const lastDiscountableIndex = lines.reduce(
+		(last, line, i) => (line.discountable && line.price !== null ? i : last),
+		-1
+	);
+	const pricedLines = lines.filter((line) => line.price !== null);
+	const netTotal = pricedLines.reduce((sum, line) => sum + (line.price ?? 0), 0) - totalDiscount;
 
 	// --- Line items ---
-	// Main service
-	page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-	drawRight(netPrice !== null ? fmt(netPrice) : '—', y);
-	y -= 20;
-
-	// Code discount
-	if (codeDiscount && netPrice !== null) {
-		page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontRegular,
-			color: gray
-		});
-		drawRight(fmt(-codeDiscountAmount), y);
-		y -= 20;
-	}
-
-	// Addon lines
-	for (const addon of addons) {
-		const addonSuffix =
-			addon.billingType && billingTypeSuffix[addon.billingType]
-				? ` (${billingTypeSuffix[addon.billingType]})`
-				: '';
-		page.drawText(`${addon.label}${addonSuffix}`, {
+	lines.forEach((line, i) => {
+		page.drawText(lineLabel(line), {
 			x: marginL + 8,
 			y,
 			size: 10,
 			font: fontRegular,
 			color: black
 		});
-		drawRight(addon.price !== null ? fmt(addon.price) : '—', y);
+		drawRight(line.price !== null ? fmt(line.price) : '—', y);
 		y -= 20;
-	}
+
+		// Code discount right after the last discounted position
+		if (codeDiscount && i === lastDiscountableIndex) {
+			page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
+				x: marginL + 8,
+				y,
+				size: 10,
+				font: fontRegular,
+				color: gray
+			});
+			drawRight(fmt(-totalDiscount), y);
+			y -= 20;
+		}
+	});
 
 	y -= 10;
 	page.drawLine({
@@ -398,16 +414,12 @@ async function generatePdf(
 	y -= 16;
 
 	// --- Totals ---
-	if (co.vatRate && discountedPrice !== null) {
+	if (co.vatRate && pricedLines.length > 0) {
 		// VAT: apply to sum of all items
-		const allItemsNet = [discountedPrice, ...addons.map((a) => a.price ?? 0)].reduce(
-			(s, p) => s + p,
-			0
-		);
-		const vatAmount = Math.round(allItemsNet * co.vatRate) / 100;
-		const grandTotal = allItemsNet + vatAmount;
+		const vatAmount = Math.round(netTotal * co.vatRate) / 100;
+		const grandTotal = netTotal + vatAmount;
 
-		if (addons.length > 0) {
+		if (lines.length > 1) {
 			page.drawText('Zwischensumme', {
 				x: marginL + 8,
 				y,
@@ -415,7 +427,7 @@ async function generatePdf(
 				font: fontRegular,
 				color: black
 			});
-			drawRight(fmt(allItemsNet), y);
+			drawRight(fmt(netTotal), y);
 			y -= 20;
 		}
 		page.drawText(`MwSt ${co.vatRate}%`, {
@@ -435,17 +447,12 @@ async function generatePdf(
 			color: black
 		});
 		drawRight(fmt(grandTotal), y, fontBold);
-	} else if (addons.length > 0) {
+	} else if (lines.length > 1) {
 		// No VAT, multiple items: grouped totals by billing type
 		const byType: Record<string, number> = {};
-		if (discountedPrice !== null) {
-			const t = mainBillingType ?? 'Einmalig';
-			byType[t] = (byType[t] ?? 0) + discountedPrice;
-		}
-		for (const addon of addons) {
-			if (addon.price === null) continue;
-			const t = addon.billingType ?? 'Einmalig';
-			byType[t] = (byType[t] ?? 0) + addon.price;
+		for (const line of pricedLines) {
+			const t = line.billingType ?? 'Einmalig';
+			byType[t] = (byType[t] ?? 0) + (line.price ?? 0) - lineDiscount(line, codeDiscount);
 		}
 		const typeEntries = Object.entries(byType);
 		const multipleTypes = typeEntries.length > 1;
@@ -469,10 +476,6 @@ async function generatePdf(
 				color: lightGray
 			});
 			y -= 6;
-			const grandTotalNet = [discountedPrice ?? 0, ...addons.map((a) => a.price ?? 0)].reduce(
-				(s, p) => s + p,
-				0
-			);
 			page.drawText('Gesamttotal exkl. MwSt.', {
 				x: marginL + 8,
 				y,
@@ -480,12 +483,12 @@ async function generatePdf(
 				font: fontBold,
 				color: black
 			});
-			drawRight(fmt(grandTotalNet), y, fontBold);
+			drawRight(fmt(netTotal), y, fontBold);
 			y -= 18;
 		}
 	} else {
 		// No VAT, single item
-		const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
+		const priceStr = pricedLines.length > 0 ? fmt(netTotal) : '—';
 		page.drawText('Total exkl. MwSt.', {
 			x: marginL + 8,
 			y,
@@ -547,45 +550,77 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		isEventCheckout,
 		eventPrice,
 		eventLabel,
-		eventManagerEmail
+		eventManagerEmail,
+		cart,
+		lang
 	} = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
 	// Firmendaten + Produktdaten laden
 	const co = await fetchCompanyInfo(fetch);
-	const product = isEventCheckout
-		? {
-				label: eventLabel || serviceKey,
-				price: eventPrice ?? null,
-				billingType: 'Einmalig' as const,
-				addons: []
-			}
-		: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+	const cartRefs = isEventCheckout ? [] : parseCartSpec(cart);
+	const isCart = cartRefs.length > 0;
+
+	// Positions in the base currency: cart lines, or main product followed by its add-ons
+	let baseLines: PdfLine[];
+	let orderLabel: string;
+	if (isCart) {
+		const cartLines = await resolveCartLines(
+			createClient({ fetch }),
+			cartRefs,
+			lang,
+			co.globalDepositPct
+		);
+		if (cartLines.length === 0) {
+			return new Response(JSON.stringify({ error: 'Der Warenkorb ist leer' }), { status: 400 });
+		}
+		baseLines = cartLines.map((line) => ({
+			label: line.label,
+			price: line.price,
+			billingType: line.billingType,
+			discountable: line.kind === 'main'
+		}));
+		orderLabel = cartLabel(cartLines);
+	} else {
+		const product = isEventCheckout
+			? {
+					label: eventLabel || serviceKey,
+					price: eventPrice ?? null,
+					billingType: 'Einmalig' as const,
+					addons: [] as AddonInfo[]
+				}
+			: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+		baseLines = [
+			{
+				label: product.label,
+				price: product.price,
+				billingType: product.billingType,
+				discountable: true
+			},
+			...product.addons.map((addon) => ({ ...addon, discountable: false }))
+		];
+		orderLabel = product.label;
+	}
 
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
-	let invoicePrice = product.price;
 	let conversionRate: number | null = null;
 	if (invoiceCurrency !== co.currency) {
 		const rates = await fetchExchangeRates(co.currency, [invoiceCurrency]);
 		conversionRate = rates[invoiceCurrency] ?? null;
-		if (invoicePrice !== null && conversionRate !== null) {
-			invoicePrice = Math.round(invoicePrice * conversionRate * 100) / 100;
-		}
 	}
-
-	// Convert addon prices to invoiceCurrency
-	const convertedAddons = product.addons.map((addon) => ({
-		...addon,
+	const lines: PdfLine[] = baseLines.map((line) => ({
+		...line,
 		price:
-			addon.price !== null && conversionRate !== null
-				? Math.round(addon.price * conversionRate * 100) / 100
-				: addon.price
+			line.price !== null && conversionRate !== null
+				? Math.round(line.price * conversionRate * 100) / 100
+				: line.price
 	}));
+	const invoicePrice = lines[0]?.price ?? null;
 
 	// Rabatt-Code validieren
 	let codeDiscountInfo: { code: string; pct: number } | null = null;
-	if (discountCode?.trim() && invoicePrice !== null) {
+	if (discountCode?.trim() && lines.some((line) => line.discountable && line.price !== null)) {
 		const match = co.discountCodes.find(
 			(c) => c.code.toLowerCase() === discountCode.trim().toLowerCase()
 		);
@@ -593,38 +628,31 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			codeDiscountInfo = { code: discountCode.trim(), pct: match.discount_percent };
 		}
 	}
-	// Final price (after code discount) — used for email tokens
-	const finalPrice =
-		codeDiscountInfo && invoicePrice !== null
+	// Amount for e-mail tokens / customer list: single product = main price after discount
+	// (unchanged), cart = total of all positions after discount
+	const finalPrice = isCart
+		? Math.round(
+				lines.reduce(
+					(sum, line) => sum + (line.price ?? 0) - lineDiscount(line, codeDiscountInfo),
+					0
+				) * 100
+			) / 100
+		: codeDiscountInfo && invoicePrice !== null
 			? Math.round(invoicePrice * (1 - codeDiscountInfo.pct / 100) * 100) / 100
 			: invoicePrice;
 
-	// Build service label with billing type suffix for PDF
-	const billingTypeSuffix: Record<string, string> = {
-		Einmalig: 'Einmalig',
-		Jährlich: 'pro Jahr',
-		Monatlich: 'pro Monat'
-	};
-	const pdfServiceLabel =
-		product.billingType && billingTypeSuffix[product.billingType]
-			? `${product.label} (${billingTypeSuffix[product.billingType]})`
-			: product.label;
-
-	// PDF generieren (generatePdf receives price before code discount; applies discount internally)
+	// PDF generieren (generatePdf receives prices before code discount; applies discount internally)
 	let pdfBytes: Uint8Array;
 	try {
 		pdfBytes = await generatePdf(
 			invoiceNumber,
 			data,
-			pdfServiceLabel,
-			invoicePrice,
+			lines,
 			{
 				...co,
 				currency: invoiceCurrency
 			},
-			codeDiscountInfo,
-			convertedAddons,
-			product.billingType
+			codeDiscountInfo
 		);
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
@@ -650,13 +678,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			plz: data['plz'] || undefined,
 			ort: data['ort'] || undefined,
 			land: data['land'] || undefined,
-			items: [
-				{
-					description: pdfServiceLabel,
-					quantity: 1,
-					unitPrice: invoicePrice ?? 0
-				}
-			],
+			// Cart: every position; single product: main position as before
+			items: (isCart ? lines : lines.slice(0, 1)).map((line) => ({
+				description: lineLabel(line),
+				quantity: 1,
+				unitPrice: line.price ?? 0
+			})),
 			notes: codeDiscountInfo
 				? `Rabatt-Code: ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)`
 				: '',
@@ -702,7 +729,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			await saveCustomer({
 				date: new Date().toISOString(),
 				paymentMethod: 'rechnung',
-				service: product.label,
+				service: orderLabel,
 				amount: finalPrice,
 				currency: invoiceCurrency,
 				discountCode: codeDiscountInfo?.code,
@@ -750,7 +777,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		Vorname: data['vorname'] ?? '',
 		Nachname: data['nachname'] ?? '',
 		Email: customerEmail,
-		Dienstleistung: product.label,
+		Dienstleistung: orderLabel,
 		Betrag: finalPrice !== null ? emailFmt(finalPrice) : '—',
 		Waehrung: invoiceCurrency,
 		Firma: co.name,
@@ -787,7 +814,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				from: fromWithName,
 				to: businessEmail,
 				subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
-				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
+				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${isCart ? orderLabel : serviceKey}\n\nAlle Angaben:\n${Object.entries(
 					data
 				)
 					.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))

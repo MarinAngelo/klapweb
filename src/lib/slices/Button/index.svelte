@@ -7,6 +7,8 @@
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
 	import { mapAnimation } from '$lib/utils/animationMapper';
+	import AddToCartButton from '$lib/components/AddToCartButton.svelte';
+	import { calcDisplayPrice } from '$lib/pricing';
 
 	export let slice: any;
 	export let slices: any;
@@ -68,6 +70,29 @@
 			? `var(--btn-${btnStyleName}-hover-bg, var(--page-button-hover-bg-color))`
 			: $theme.pageButtonHoverBgColor);
 	$: beauftragungHref = getBeauftragunHref(p.button_link, $page.params.uid);
+
+	// Kauf-Schaltfläche: the package page can also go into the cart (with Leistungen)
+	$: pageData = ($page.data?.page?.data ?? {}) as Record<string, any>;
+	$: cartItem =
+		slice.variation === 'kauf' && $page.params.uid && pageData.ecommerce_active
+			? {
+					type: 'page' as const,
+					uid: $page.params.uid,
+					label: pageData.title?.[0]?.text || $page.params.uid,
+					price: calcDisplayPrice(
+						pageData.ecommerce_price_chf ?? null,
+						pageData.ecommerce_discount_percent ?? null,
+						pageData.ecommerce_deposit_percent ??
+							$page.data?.settings?.data?.global_deposit_percent ??
+							null
+					),
+					billingType: pageData.ecommerce_billing_type || null
+				}
+			: null;
+	$: cartButtonSize =
+		({ Klein: 'sm', Mittel: 'md', Gross: 'lg' } as Record<string, 'sm' | 'md' | 'lg'>)[
+			p.button_size
+		] ?? 'md';
 	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 </script>
 
@@ -81,7 +106,11 @@
 	animationOptions={anim.options}
 	class={slice.primary.mobile_full_width ? 'overflow-x-clip' : ''}
 >
-	<div class="{alignClass} {slice.primary.mobile_full_width ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
+	<div
+		class="{alignClass} flex-wrap items-center gap-3 {slice.primary.mobile_full_width
+			? '-mx-6 md:mx-0 px-6 md:px-0'
+			: ''}"
+	>
 		{#if slice.variation === 'kauf'}
 			<a
 				href="/beauftragung{$page.params.uid
@@ -105,6 +134,9 @@
 						color={btnStyleEntry?.color || 'currentColor'}
 					/>{/if}
 			</a>
+			{#if cartItem}
+				<AddToCartButton item={cartItem} size={cartButtonSize} />
+			{/if}
 		{:else if isFilled.link(p.button_link)}
 			{#if beauftragungHref}
 				<a

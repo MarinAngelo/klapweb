@@ -1233,6 +1233,25 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Speichert Ihre Auswahl in diesem Cookie-Dialog.',
 		'en-us': 'Stores your choice in this cookie dialog.'
 	},
+	'klap_cart (Local Storage)': {
+		'de-ch': 'klap_cart (Local Storage)',
+		'en-us': 'klap_cart (local storage)'
+	},
+	'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.': {
+		'de-ch': 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
+		'en-us': 'Remembers the services in your cart until you order.'
+	},
+	Warenkorb: { 'de-ch': 'Warenkorb', 'en-us': 'Cart' },
+	'In den Warenkorb': { 'de-ch': 'In den Warenkorb', 'en-us': 'Add to cart' },
+	'Im Warenkorb': { 'de-ch': 'Im Warenkorb', 'en-us': 'In cart' },
+	'Ihr Warenkorb ist leer.': { 'de-ch': 'Ihr Warenkorb ist leer.', 'en-us': 'Your cart is empty.' },
+	'Leistungen ansehen': { 'de-ch': 'Leistungen ansehen', 'en-us': 'View services' },
+	'Zur Kasse': { 'de-ch': 'Zur Kasse', 'en-us': 'Checkout' },
+	'Weitere Leistungen': { 'de-ch': 'Weitere Leistungen', 'en-us': 'More services' },
+	'Zusatzleistungen der Pakete (z. B. Hosting) werden in der Bestellübersicht ergänzt.': {
+		'de-ch': 'Zusatzleistungen der Pakete (z. B. Hosting) werden in der Bestellübersicht ergänzt.',
+		'en-us': 'Add-ons of packages (e.g. hosting) are added in the order summary.'
+	},
 	'klap_consent (Local Storage)': {
 		'de-ch': 'klap_consent (Local Storage)',
 		'en-us': 'klap_consent (local storage)'

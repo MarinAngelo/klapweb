@@ -127,6 +127,25 @@
 			stroke-linejoin="round"
 		/>
 	</svg>
+{:else if resolvedName === 'cart'}
+	<svg
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
+		<path
+			d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.2a1.5 1.5 0 0 0 1.4-1l2-6.3H6.2"
+			stroke={color}
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<circle cx="9.5" cy="19.5" r="1.5" fill={color} />
+		<circle cx="17" cy="19.5" r="1.5" fill={color} />
+	</svg>
 {:else if resolvedName === 'user'}
 	<svg
 		width={size}

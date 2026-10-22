@@ -1,6 +1,8 @@
 import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
+import { parseCartSpec, serializeCart } from '$lib/utils/cartSpec';
+import { resolveCartLines } from '$lib/server/cartLines';
 
 export const prerender = false;
 
@@ -40,6 +42,29 @@ export async function load({ fetch, url, parent }) {
 	};
 
 	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
+
+	// Cart checkout: several Leistungen / package pages, prices resolved here (never from the browser)
+	const cartRefs = parseCartSpec(url.searchParams.get('warenkorb'));
+	if (cartRefs.length) {
+		const client = createClient({ fetch });
+		const cartLines = await resolveCartLines(client, cartRefs, lang, globalDepositPct);
+		return {
+			product: null,
+			cartLines,
+			cartSpec: serializeCart(cartRefs),
+			pageTitle,
+			checkoutButtonText,
+			baseCurrency,
+			additionalCodes,
+			rates,
+			// Stripe payment links exist per product only → not available for a cart
+			paymentMethods: { ...paymentMethods, stripe: false },
+			barDescription: null,
+			eventTexts: null,
+			isEventCheckout: false,
+			eventUid: ''
+		};
+	}
 
 	const serviceUid = url.searchParams.get('service') ?? '';
 	const isEventCheckout = url.searchParams.get('event_checkout') === 'true';

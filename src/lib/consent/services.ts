@@ -70,6 +70,13 @@ export const consentServices: Record<string, ConsentService> = {
 		purpose: 'Merkt sich die Freigabe passwortgeschützter Seiten.',
 		storage: ['klap_auth (Cookie)']
 	},
+	cart: {
+		label: 'Warenkorb',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
+		storage: ['klap_cart (Local Storage)']
+	},
 	consent_choice: {
 		label: 'Cookie-Auswahl',
 		provider: 'Website-Betreiber',
