@@ -100,6 +100,16 @@ Konkrete Regeln:
 - **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
 - **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
 
+## Git-Strategie (Kern + Kunden-Branches)
+
+Details: `docs/git-strategie.md`
+
+- `main` = Kern; fliesst per `git merge main` in alle Branches
+- Kunden `basis`/`professional`: Code identisch mit `main`
+- Kunden `individuell` + `klap-web-ch`: dürfen abweichen, **nie nach `main` mergen** — nur reine Kern-Commits per `cherry-pick`
+- Ein Commit ist entweder Kern oder Kunde, nie beides; Kern-Änderungen (Erweiterungspunkte) zuerst in `main`
+- Vor Kundenanpassung prüfen: reicht Konfiguration? Sonst Erweiterungspunkt im Kern, dann neue Dateien statt Kern-Dateien ändern
+
 ## slicemachine.config.json Protection
 
 - **Datei ist Branch-spezifisch** — `main` hat `"plan": "individuell"`, andere Branches können andere Pläne haben
