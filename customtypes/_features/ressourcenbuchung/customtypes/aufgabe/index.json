@@ -66,6 +66,38 @@
 				}
 			}
 		},
+		"Teilaufgaben": {
+			"parent_task": {
+				"type": "Link",
+				"config": {
+					"label": "Hauptaufgabe (nur bei Teilaufgaben ausfüllen)",
+					"placeholder": "Diese Aufgabe ist ein Teil von …",
+					"customtypes": ["aufgabe"],
+					"allowText": false
+				}
+			},
+			"position": {
+				"type": "Number",
+				"config": {
+					"label": "Position innerhalb der Hauptaufgabe (nur bei Teilaufgaben)",
+					"placeholder": "z.B. 1"
+				}
+			},
+			"enforce_order": {
+				"type": "Boolean",
+				"config": {
+					"label": "Teilaufgaben in Reihenfolge erzwingen (nur bei Hauptaufgabe)",
+					"default_value": false
+				}
+			},
+			"bonus_credits": {
+				"type": "Number",
+				"config": {
+					"label": "Bonus-Credits, wenn alle Teilaufgaben erledigt sind (nur bei Hauptaufgabe)",
+					"placeholder": "z.B. 20"
+				}
+			}
+		},
 		"Werkzeuge": {
 			"werkzeuge": {
 				"type": "Group",

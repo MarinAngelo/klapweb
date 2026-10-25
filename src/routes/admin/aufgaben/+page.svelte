@@ -21,11 +21,16 @@
 
 	const fmtDate = (iso: string | undefined) => (iso ? formatDateTimeShort(iso) : '–');
 
-	// Group by aufgabeUid
-	$: grouped = data.annahmen.reduce<Record<string, typeof data.annahmen>>((acc, a) => {
-		(acc[a.aufgabeUid] ??= []).push(a);
-		return acc;
-	}, {});
+	// Group by aufgabeUid; subtasks appear as "Main task › Subtask", sorted so they stay together
+	const groupTitle = (a: PageData['annahmen'][number]) =>
+		a.hauptaufgabeTitel ? `${a.hauptaufgabeTitel} › ${a.aufgabeTitel}` : a.aufgabeTitel;
+
+	$: grouped = Object.entries(
+		data.annahmen.reduce<Record<string, typeof data.annahmen>>((acc, a) => {
+			(acc[a.bonus ? `bonus:${a.aufgabeUid}` : a.aufgabeUid] ??= []).push(a);
+			return acc;
+		}, {})
+	).sort(([, a], [, b]) => groupTitle(a[0]).localeCompare(groupTitle(b[0])));
 
 	const tdStyle = 'padding: 0.5rem 0.75rem; vertical-align: top;';
 	const tdNowrap = tdStyle + ' white-space: nowrap;';
@@ -84,11 +89,11 @@
 	{#if data.annahmen.length === 0}
 		<p style="opacity: 0.5;">Noch keine Annahmen vorhanden.</p>
 	{:else}
-		{#each Object.entries(grouped) as [aufgabeUid, annahmen]}
+		{#each grouped as [aufgabeUid, annahmen]}
 			<h2
 				style="font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb;"
 			>
-				{annahmen[0]?.aufgabeTitel || aufgabeUid}
+				{groupTitle(annahmen[0]) || aufgabeUid}
 				<span style="font-weight: 400; opacity: 0.5; font-size: 0.875rem;">({annahmen.length})</span
 				>
 			</h2>
@@ -123,7 +128,9 @@
 										>{a.buchungId}</span
 									>
 								</td>
-								<td style={tdNowrap}>{a.creditTyp === 'fest' ? 'Fest' : 'Zeitbasiert'}</td>
+								<td style={tdNowrap}
+									>{a.bonus ? 'Bonus' : a.creditTyp === 'fest' ? 'Fest' : 'Zeitbasiert'}</td
+								>
 								<td style={tdNowrap}
 									>{a.credits != null
 										? a.credits
@@ -212,7 +219,7 @@
 												</button>
 											</form>
 										{/if}
-										{#if a.status !== 'angenommen'}
+										{#if a.status !== 'angenommen' && !a.bonus}
 											<form method="POST" action="?/zuruecksetzen" use:enhance>
 												<input type="hidden" name="id" value={a.id} />
 												<button

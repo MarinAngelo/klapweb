@@ -7,6 +7,7 @@ import {
 	berechneCredits
 } from '$lib/server/aufgaben';
 import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
+import { bonusEntfernen, bonusPruefen } from '$lib/server/aufgabenKatalog';
 import { env } from '$env/dynamic/private';
 
 export const prerender = false;
@@ -69,7 +70,7 @@ export const actions: Actions = {
 		}
 	},
 
-	freigeben: async ({ request }) => {
+	freigeben: async ({ request, fetch }) => {
 		const form = await request.formData();
 		const id = form.get('id') as string;
 		const betreiberAntwort = (form.get('betreiber_antwort') as string)?.trim() || undefined;
@@ -89,6 +90,7 @@ export const actions: Actions = {
 			betreiberAntwort,
 			erledigtAt: new Date().toISOString()
 		});
+		await bonusPruefen(updated, fetch);
 
 		const resendKey = env.RESEND_API_KEY;
 		const emailFrom = env.EMAIL_FROM_ADDRESS;
@@ -154,7 +156,7 @@ export const actions: Actions = {
 		}
 	},
 
-	erledigt: async ({ request }) => {
+	erledigt: async ({ request, fetch }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		const minutenRaw = form.get('minuten');
@@ -171,18 +173,21 @@ export const actions: Actions = {
 			minuten: annahme.creditTyp === 'offen' ? minuten : undefined
 		});
 
-		await updateAnnahme(id, {
+		const updated = await updateAnnahme(id, {
 			status: 'erledigt',
 			minuten: annahme.creditTyp === 'offen' ? minuten : undefined,
 			credits,
 			erledigtAt: new Date().toISOString()
 		});
+		await bonusPruefen(updated, fetch);
 	},
 
 	zuruecksetzen: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
+			const annahme = await getAnnahme(id);
+			if (annahme) await bonusEntfernen(annahme);
 			await updateAnnahme(id, {
 				status: 'angenommen',
 				bestaetgtAt: undefined,
@@ -197,6 +202,8 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id === 'string' && id) {
+			const annahme = await getAnnahme(id);
+			if (annahme) await bonusEntfernen(annahme);
 			await deleteAnnahme(id);
 		}
 	},

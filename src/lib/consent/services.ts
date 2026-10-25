@@ -77,6 +77,13 @@ export const consentServices: Record<string, ConsentService> = {
 		purpose: 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
 		storage: ['klap_cart (Local Storage)']
 	},
+	aufgaben_login: {
+		label: 'Aufgabenliste',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
+		storage: ['klap_aufgaben_login (Local Storage)']
+	},
 	consent_choice: {
 		label: 'Cookie-Auswahl',
 		provider: 'Website-Betreiber',
