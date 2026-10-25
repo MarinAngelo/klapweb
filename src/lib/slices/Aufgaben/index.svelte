@@ -6,6 +6,8 @@
 	import FileField from '$lib/components/FileField.svelte';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { _ } from '$lib/stores/i18n';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	export let slice: any;
 	export const index: number = 0;
@@ -19,6 +21,55 @@
 	let loggedIn = false;
 	let loginError = '';
 	let loginLoading = false;
+	let rememberMe = false;
+	let restoring = false; // auto-login from remembered reference in progress
+
+	// "Remember me": booking reference in localStorage, registered as functional
+	// consent service "aufgaben_login"
+	const REMEMBER_KEY = 'klap_aufgaben_login';
+	const REMEMBER_MS = 14 * 24 * 60 * 60 * 1000;
+
+	function saveRemembered() {
+		try {
+			localStorage.setItem(
+				REMEMBER_KEY,
+				JSON.stringify({ buchungId, expires: Date.now() + REMEMBER_MS })
+			);
+		} catch {
+			/* storage unavailable */
+		}
+	}
+
+	function clearRemembered() {
+		try {
+			localStorage.removeItem(REMEMBER_KEY);
+		} catch {
+			/* storage unavailable */
+		}
+	}
+
+	function readRemembered(): string | null {
+		try {
+			const raw = localStorage.getItem(REMEMBER_KEY);
+			if (!raw) return null;
+			const data = JSON.parse(raw);
+			if (typeof data?.buchungId === 'string' && data.expires > Date.now()) return data.buchungId;
+		} catch {
+			/* invalid or unavailable */
+		}
+		clearRemembered();
+		return null;
+	}
+
+	onMount(() => {
+		const remembered = readRemembered();
+		if (remembered) {
+			buchungId = remembered;
+			rememberMe = true;
+			restoring = true;
+			handleLogin().finally(() => (restoring = false));
+		}
+	});
 
 	// ── Aufgaben state ────────────────────────────────────────────────────────
 	type Annahme = {
@@ -116,6 +167,7 @@
 			if (res.status === 404 || res.status === 403 || res.status === 400) {
 				const data = await res.json().catch(() => ({}));
 				loginError = data.error || $_('Ungültige Kombination von Buchungs-ID und E-Mail');
+				clearRemembered();
 				return;
 			}
 			if (!res.ok) {
@@ -125,6 +177,8 @@
 			annahmen = await res.json();
 			await loadAufgaben();
 			loggedIn = true;
+			if (rememberMe) saveRemembered();
+			else clearRemembered();
 		} catch {
 			loginError = $_('Ein Fehler ist aufgetreten');
 		} finally {
@@ -210,11 +264,20 @@
 		}
 	}
 
+	// Leave the page: back if there is history, otherwise to the start page
+	function cancelLogin() {
+		if (history.length > 1) history.back();
+		else goto('/');
+	}
+
+	function handleModalKeydown(e: KeyboardEvent) {
+		if (!loggedIn && e.key === 'Escape') cancelLogin();
+	}
+
+	// Leave to the start page; state is not reset first so the login modal doesn't flash
 	function logout() {
-		loggedIn = false;
-		buchungId = '';
-		annahmen = [];
-		aufgaben = [];
+		clearRemembered();
+		goto('/');
 	}
 
 	const statusLabels: Record<string, string> = {
@@ -238,6 +301,8 @@
 	$: bgColor = primary?.bg_color || '';
 	$: textColor = primary?.text_color || '';
 </script>
+
+<svelte:window on:keydown={handleModalKeydown} />
 
 <Bounded {slice}>
 	<div
@@ -271,46 +336,55 @@
 			</div>
 
 			<!-- Login Modal -->
-			<div
-				class="fixed inset-0 z-[10000] flex items-center justify-center p-4 backdrop-blur-sm"
-				style="background-color: rgba(0,0,0,0.45);"
-			>
+			{#if !restoring}
 				<div
-					class="w-full max-w-sm rounded-2xl shadow-2xl p-8 flex flex-col gap-5"
-					style="background-color: var(--page-bg-color); color: var(--page-color);"
+					class="fixed inset-0 z-[10000] flex items-center justify-center p-4 backdrop-blur-sm"
+					style="background-color: rgba(0,0,0,0.45);"
 				>
-					<h2 class="text-2xl font-bold">{$_('Aufgabenliste')}</h2>
-					<p class="text-base">
-						{$_('Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.')}
-					</p>
-					<form on:submit|preventDefault={handleLogin} class="flex flex-col gap-4">
-						<div>
-							<label for="aufgaben-buchung-id">{$_('Buchungs-Referenz')}</label>
-							<input
-								id="aufgaben-buchung-id"
-								type="text"
-								bind:value={buchungId}
-								required
-								class={inputClass}
-								style={inputStyle}
-							/>
-						</div>
-						{#if loginError}
-							<p class="text-sm text-red-600">{loginError}</p>
-						{/if}
-						<button
-							type="submit"
-							disabled={loginLoading}
-							class="mt-2 px-6 py-2 text-sm font-medium rounded"
-							style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {loginLoading
-								? 0.6
-								: 1};"
-						>
-							{loginLoading ? $_('Wird geladen…') : $_('Einloggen')}
-						</button>
-					</form>
+					<div
+						class="w-full max-w-sm rounded-2xl shadow-2xl p-8 flex flex-col gap-5"
+						style="background-color: var(--page-bg-color); color: var(--page-color);"
+					>
+						<h2 class="text-2xl font-bold">{$_('Aufgabenliste')}</h2>
+						<p class="text-base">
+							{$_('Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.')}
+						</p>
+						<form on:submit|preventDefault={handleLogin} class="flex flex-col gap-4">
+							<div>
+								<label for="aufgaben-buchung-id">{$_('Buchungs-Referenz')}</label>
+								<input
+									id="aufgaben-buchung-id"
+									type="text"
+									bind:value={buchungId}
+									required
+									class={inputClass}
+									style={inputStyle}
+								/>
+							</div>
+							<label for="aufgaben-remember" class="flex items-start gap-2 cursor-pointer text-sm">
+								<Checkbox id="aufgaben-remember" bind:checked={rememberMe} />
+								<span>{$_('Angemeldet bleiben (14 Tage)')}</span>
+							</label>
+							{#if loginError}
+								<p class="text-sm text-red-600">{loginError}</p>
+							{/if}
+							<button
+								type="submit"
+								disabled={loginLoading}
+								class="mt-2 px-6 py-2 text-sm font-medium rounded"
+								style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {loginLoading
+									? 0.6
+									: 1};"
+							>
+								{loginLoading ? $_('Wird geladen…') : $_('Einloggen')}
+							</button>
+							<button type="button" on:click={cancelLogin} class="text-sm underline opacity-60">
+								{$_('Abbrechen')}
+							</button>
+						</form>
+					</div>
 				</div>
-			</div>
+			{/if}
 		{:else}
 			<!-- Eingeloggt -->
 			<div class="flex items-center justify-between mb-6">
