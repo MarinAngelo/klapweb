@@ -21,6 +21,9 @@ export interface AufgabeAnnahme {
 	betreiberAntwort?: string;
 	fotoVorher?: string; // URL /api/aufgabe-foto?...&art=vorher
 	fotoNachher?: string; // URL /api/aufgabe-foto?...&art=nachher
+	hauptaufgabeUid?: string; // set when the task is a subtask
+	hauptaufgabeTitel?: string;
+	bonus?: boolean; // automatic bonus record (all subtasks done)
 	angenommenAt: string;
 	bestaetgtAt?: string;
 	eingereichtAt?: string;
@@ -63,6 +66,14 @@ export async function createAnnahme(data: Omit<AufgabeAnnahme, 'id'>): Promise<A
 	const record: AufgabeAnnahme = { id, ...data };
 	await store.setJSON(id, record);
 	return record;
+}
+
+/** Stores a record under a fixed id; returns false if the id already exists. */
+export async function createAnnahmeMitId(record: AufgabeAnnahme): Promise<boolean> {
+	const store = getStore_();
+	if (await store.get(record.id)) return false;
+	await store.setJSON(record.id, record);
+	return true;
 }
 
 export async function updateAnnahme(

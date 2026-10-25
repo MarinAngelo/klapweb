@@ -785,6 +785,52 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Invalid combination of booking ID and email'
 	},
 	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
+	Teilaufgaben: { 'de-ch': 'Teilaufgaben', 'en-us': 'Subtasks' },
+	Credits: { 'de-ch': 'Credits', 'en-us': 'credits' },
+	'{erledigt} von {total} Teilaufgaben erledigt': {
+		'de-ch': '{erledigt} von {total} Teilaufgaben erledigt',
+		'en-us': '{erledigt} of {total} subtasks done'
+	},
+	'Du: {erledigt} von {total}': {
+		'de-ch': 'Du: {erledigt} von {total}',
+		'en-us': 'You: {erledigt} of {total}'
+	},
+	'in vorgegebener Reihenfolge': {
+		'de-ch': 'in vorgegebener Reihenfolge',
+		'en-us': 'in the given order'
+	},
+	'Bonus, wenn du alle Teilaufgaben erledigst:': {
+		'de-ch': 'Bonus, wenn du alle Teilaufgaben erledigst:',
+		'en-us': 'Bonus if you complete all subtasks:'
+	},
+	'Von dir angenommen': { 'de-ch': 'Von dir angenommen', 'en-us': 'Accepted by you' },
+	'Bereits vergeben': { 'de-ch': 'Bereits vergeben', 'en-us': 'Already taken' },
+	'Verfügbar, sobald erledigt:': {
+		'de-ch': 'Verfügbar, sobald erledigt:',
+		'en-us': 'Available once completed:'
+	},
+	'Aufgabe nicht verfügbar': { 'de-ch': 'Aufgabe nicht verfügbar', 'en-us': 'Task not available' },
+	'Bitte eine der Teilaufgaben annehmen': {
+		'de-ch': 'Bitte eine der Teilaufgaben annehmen',
+		'en-us': 'Please accept one of the subtasks'
+	},
+	'Aufgabe ist bereits angenommen': {
+		'de-ch': 'Aufgabe ist bereits angenommen',
+		'en-us': 'Task has already been accepted'
+	},
+	'Aufgabe ist bereits vergeben': {
+		'de-ch': 'Aufgabe ist bereits vergeben',
+		'en-us': 'Task is already taken'
+	},
+	'Vorherige Teilaufgaben müssen zuerst erledigt sein': {
+		'de-ch': 'Vorherige Teilaufgaben müssen zuerst erledigt sein',
+		'en-us': 'Previous subtasks must be completed first'
+	},
+	'Aufgabe konnte nicht geprüft werden': {
+		'de-ch': 'Aufgabe konnte nicht geprüft werden',
+		'en-us': 'Task could not be checked'
+	},
+	'Buchung nicht gefunden': { 'de-ch': 'Buchung nicht gefunden', 'en-us': 'Booking not found' },
 	'Verfügbare Aufgaben': { 'de-ch': 'Verfügbare Aufgaben', 'en-us': 'Available tasks' },
 	Abmelden: { 'de-ch': 'Abmelden', 'en-us': 'Log out' },
 	Fest: { 'de-ch': 'Fest', 'en-us': 'Fixed' },
