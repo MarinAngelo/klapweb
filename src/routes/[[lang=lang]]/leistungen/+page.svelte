@@ -5,11 +5,14 @@
 	import Button from '$lib/components/Button.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { reveal } from '$lib/actions/reveal';
+	import AddToCartButton from '$lib/components/AddToCartButton.svelte';
+	import { formatPrice, parseCurrencyCode } from '$lib/pricing';
 
 	export let data;
 
 	$: leistungen = data.leistungen ?? [];
 	$: langPrefix = $page.params.lang ? `/${$page.params.lang}` : '';
+	$: currency = parseCurrencyCode($page.data.settings?.data?.invoice_currency) || 'CHF';
 </script>
 
 <svelte:head>
@@ -17,7 +20,7 @@
 	<meta name="description" content={$_('Übersicht unserer Leistungen und Services')} />
 </svelte:head>
 
-<Bounded as="section" data-anim-container>
+<Bounded tag="section" data-anim-container>
 	<div class="space-y-8">
 		<div class="text-center">
 			<h1 class="h2">{$_('Leistungen')}</h1>
@@ -34,14 +37,15 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-anim-stagger>
 				{#each leistungen as leistung, i (leistung.uid)}
 					<div
-						class="flex flex-col p-6 border border-border rounded-lg hover:shadow-lg transition-shadow duration-200"
+						class="flex flex-col min-w-0 p-6 border border-border rounded-lg hover:shadow-lg transition-shadow duration-200"
 						use:reveal={{
 							direction: 'up',
 							distance: '20px',
 							delay: i * 100
 						}}
 					>
-						<h2 class="h3">
+						<!-- Long German compounds (e.g. "Ressourcenbuchungssystem") would overflow the card -->
+						<h2 class="h3 leistung-title">
 							{leistung.label}
 						</h2>
 						{#if leistung.beschreibung}
@@ -49,12 +53,30 @@
 								{asText(leistung.beschreibung)}
 							</p>
 						{/if}
-						<div class="mt-4">
+						{#if leistung.price !== null}
+							<p class="mt-3 font-semibold tabular-nums">
+								{formatPrice(leistung.price, currency)}
+								<span class="text-sm font-normal opacity-60">{$_('exkl. MwSt.')}</span>
+							</p>
+						{/if}
+						<div class="mt-4 flex flex-wrap gap-3">
 							<Button
 								href="{langPrefix}/leistung/{leistung.uid}"
 								text={$_('Mehr erfahren')}
 								size="sm"
+								mb={false}
 							/>
+							{#if leistung.price !== null}
+								<AddToCartButton
+									item={{
+										type: 'leistung',
+										uid: leistung.uid ?? '',
+										label: leistung.label ?? leistung.uid ?? '',
+										price: leistung.price,
+										billingType: 'Einmalig'
+									}}
+								/>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -66,5 +88,10 @@
 <style>
 	:global([data-anim-stagger] > *) {
 		opacity: 0;
+	}
+
+	.leistung-title {
+		hyphens: auto;
+		overflow-wrap: anywhere;
 	}
 </style>

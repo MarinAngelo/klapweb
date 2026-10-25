@@ -1,0 +1,102 @@
+{
+	"id": "newsletter",
+	"label": "Newsletter",
+	"format": "custom",
+	"repeatable": true,
+	"status": true,
+	"json": {
+		"Inhalt": {
+			"uid": {
+				"type": "UID",
+				"config": {
+					"label": "UID",
+					"placeholder": "z.B. vorschau-funktion-2026-09"
+				}
+			},
+			"subject": {
+				"type": "Text",
+				"config": {
+					"label": "Betreff",
+					"placeholder": "Betreff der E-Mail"
+				}
+			},
+			"preheader": {
+				"type": "Text",
+				"config": {
+					"label": "Vorschautext im Posteingang",
+					"placeholder": "Kurzer Satz, der im Posteingang neben dem Betreff erscheint"
+				}
+			},
+			"body": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Inhalt",
+					"placeholder": "Text der E-Mail – {{Name}}, {{Vorname}}, {{Nachname}} und {{Firma}} werden pro Empfänger ersetzt",
+					"allowTargetBlank": true,
+					"multi": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible"
+					]
+				}
+			},
+			"cta_label": {
+				"type": "Text",
+				"config": {
+					"label": "Button-Text (optional)",
+					"placeholder": "z.B. Jetzt ausprobieren"
+				}
+			},
+			"cta_link": {
+				"type": "Link",
+				"config": {
+					"label": "Button-Link (optional)",
+					"allowTargetBlank": true,
+					"customtypes": ["page"]
+				}
+			}
+		}
+	}
+}

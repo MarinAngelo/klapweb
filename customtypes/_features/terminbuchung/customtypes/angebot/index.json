@@ -1,6 +1,6 @@
 {
 	"id": "angebot",
-	"label": "Angebot",
+	"label": "Buchbares Angebot",
 	"format": "custom",
 	"repeatable": true,
 	"status": true,
@@ -30,9 +30,24 @@
 				"type": "Number",
 				"config": { "label": "Puffer danach (Minuten)", "placeholder": "0" }
 			},
+			"vorlaufzeit": {
+				"type": "Number",
+				"config": {
+					"label": "Vorlaufzeit (Minuten)",
+					"placeholder": "0 = bis Terminbeginn buchbar"
+				}
+			},
 			"preis": {
 				"type": "Number",
 				"config": { "label": "Preis (optional)", "placeholder": "" }
+			},
+			"ort": {
+				"type": "Link",
+				"config": {
+					"label": "Ort",
+					"select": "document",
+					"customtypes": ["ort"]
+				}
 			},
 			"aktiv": {
 				"type": "Boolean",

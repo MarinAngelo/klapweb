@@ -3,9 +3,9 @@ import { error } from '@sveltejs/kit';
 
 export const prerender = true;
 
-export async function load({ params, parent, fetch }) {
+export async function load({ params, parent, fetch, cookies }) {
 	const { lang } = await parent();
-	const client = createClient({ fetch });
+	const client = createClient({ fetch, cookies });
 
 	try {
 		const leistungen = await client.getAllByType('leistung', {
@@ -19,6 +19,7 @@ export async function load({ params, parent, fetch }) {
 				uid: doc.uid,
 				label: doc.data.label,
 				beschreibung: doc.data.beschreibung,
+				price: ((doc.data as Record<string, unknown>).price_chf as number | null) ?? null,
 				first_publication_date: doc.first_publication_date
 			}))
 		};

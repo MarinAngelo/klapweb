@@ -1,86 +1,148 @@
 <script lang="ts">
-    import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-    import AddressBlock from '$lib/components/AddressBlock.svelte';
-    import { _ } from '$lib/stores/i18n'; // Unser neuer Store
-    import { page } from '$app/stores';
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import AddressBlock from '$lib/components/AddressBlock.svelte';
+	import { _ } from '$lib/stores/i18n'; // Unser neuer Store
+	import { page } from '$app/stores';
+	import { consentCategories, consentServices, type ConsentCategory } from '$lib/consent/services';
+	import { consentSettingsOpen } from '$lib/stores/consent';
 
-    export let data: any;
+	export let data: any;
 
-    // 1. Zentrale Datenquelle (Settings)
-    $: settings = data?.settings?.data || $page.data?.settings?.data;
+	// Functional services always; others only if detected in the CMS content (see +page.ts)
+	$: siteServices = (data?.siteServices ?? []) as string[];
+	$: serviceGroups = (Object.keys(consentCategories) as ConsentCategory[])
+		.map((category) => ({
+			category,
+			services: Object.entries(consentServices)
+				.filter(
+					([id, service]) =>
+						service.category === category &&
+						(category === 'functional' || siteServices.includes(id))
+				)
+				.map(([, service]) => service)
+		}))
+		.filter((group) => group.services.length > 0);
 
-    // 2. Einzel-Variablen mit Fallbacks aus dem i18n-Store
-    $: personCompany = settings?.responsible_person_company ?? $_('Verantwortliche Person/Firma fehlt');
-    $: email = settings?.responsible_email ?? settings?.e_mail ?? $_('E-Mail fehlt');
-    
-    $: address = (Array.isArray(settings?.responsible_address) && settings.responsible_address.length > 0)
-        ? settings.responsible_address
-        : [{ type: 'paragraph', text: $_('Adresse fehlt'), spans: [] }];
-    
-    $: privacyField = (Array.isArray(settings?.privacy_policy) && settings.privacy_policy.length > 0) 
-        ? settings.privacy_policy 
-        : [];
+	// 1. Zentrale Datenquelle (Settings)
+	$: settings = data?.settings?.data || $page.data?.settings?.data;
 
-    $: companyId = settings?.company_identification_number ?? '';
+	// 2. Einzel-Variablen mit Fallbacks aus dem i18n-Store
+	$: personCompany =
+		settings?.responsible_person_company ?? $_('Verantwortliche Person/Firma fehlt');
+	$: email = settings?.responsible_email ?? settings?.e_mail ?? $_('E-Mail fehlt');
 
-    $: cookiesField = (Array.isArray(settings?.cookies_text) && settings.cookies_text.length > 0)
-        ? settings.cookies_text
-        : [];
+	$: address =
+		Array.isArray(settings?.responsible_address) && settings.responsible_address.length > 0
+			? settings.responsible_address
+			: [{ type: 'paragraph', text: $_('Adresse fehlt'), spans: [] }];
 
-    /** * Da das Fallback für die Datenschutzerklärung sehr lang ist, 
-     * ist es oft besser, es hier als Objekt zu lassen, 
-     * aber die Texte dennoch über den Store zu ziehen.
-     */
-    $: fallback = [
-        { 
-            type: 'heading2', 
-            text: $_('Erhebung und Verarbeitung von Daten'), 
-            spans: [] 
-        },
-        { 
-            type: 'paragraph', 
-            text: $_('Beim Besuch dieser Website werden Zugriffsdaten gespeichert...'), 
-            spans: [] 
-        }
-    ];
+	$: privacyField =
+		Array.isArray(settings?.privacy_policy) && settings.privacy_policy.length > 0
+			? settings.privacy_policy
+			: [];
+
+	$: companyId = settings?.company_identification_number ?? '';
+
+	$: cookiesField =
+		Array.isArray(settings?.cookies_text) && settings.cookies_text.length > 0
+			? settings.cookies_text
+			: [];
+
+	/** * Da das Fallback für die Datenschutzerklärung sehr lang ist,
+	 * ist es oft besser, es hier als Objekt zu lassen,
+	 * aber die Texte dennoch über den Store zu ziehen.
+	 */
+	$: fallback = [
+		{
+			type: 'heading2',
+			text: $_('Erhebung und Verarbeitung von Daten'),
+			spans: []
+		},
+		{
+			type: 'paragraph',
+			text: $_('Beim Besuch dieser Website werden Zugriffsdaten gespeichert...'),
+			spans: []
+		}
+	];
 </script>
 
 <main class="prose mx-auto py-12 px-4 sm:px-6">
-    <h1 class="break-words hyphens-auto">
-        {$_('Datenschutz')}
-    </h1>
-    
-    <p>
-        {$_('Diese Website verarbeitet personenbezogene Daten gemäß den gesetzlichen Bestimmungen.')}
-    </p>
+	<h1 class="break-words hyphens-auto">
+		{$_('Datenschutz')}
+	</h1>
 
-    <h2>{$_('Verantwortliche Stelle')}</h2>
-    
-    <AddressBlock
-        responsible_person_company={personCompany}
-        responsible_address={address}
-        responsible_email={email}
-    />
+	<p>
+		{$_('Diese Website verarbeitet personenbezogene Daten gemäß den gesetzlichen Bestimmungen.')}
+	</p>
 
-    {#if companyId}
-        <p>{$_('UID')}: {companyId}</p>
-    {/if}
+	<h2>{$_('Verantwortliche Stelle')}</h2>
 
-    <h2>{$_('Einsatz von Cookies')}</h2>
-    
-    {#if cookiesField && cookiesField.length > 0}
-        <PrismicRichText field={cookiesField} />
-    {:else}
-        <p class="whitespace-pre-line">{$_('Cookie-Informationstext')}</p>
-    {/if}
+	<AddressBlock
+		responsible_person_company={personCompany}
+		responsible_address={address}
+		responsible_email={email}
+	/>
 
-    <PrismicRichText
-        field={privacyField && privacyField.length > 0 ? privacyField : fallback}
-    />
+	{#if companyId}
+		<p>{$_('UID')}: {companyId}</p>
+	{/if}
+
+	<h2>{$_('Einsatz von Cookies')}</h2>
+
+	{#if cookiesField && cookiesField.length > 0}
+		<PrismicRichText field={cookiesField} />
+	{:else}
+		<p class="whitespace-pre-line">{$_('Cookie-Informationstext')}</p>
+	{/if}
+
+	<!-- Generated from src/lib/consent/services.ts + services detected in the CMS content -->
+	<h3>{$_('Verwendete Cookies und Dienste')}</h3>
+	{#each serviceGroups as group}
+		<h4>{$_(consentCategories[group.category].label)}</h4>
+		<p>{$_(consentCategories[group.category].description)}</p>
+		<ul>
+			{#each group.services as service}
+				<li>
+					<strong>{$_(service.label)}</strong> – {$_(service.provider)}<br />
+					{$_('Zweck')}: {$_(service.purpose)}<br />
+					{$_('Cookies / Daten')}: {service.storage.map((entry) => $_(entry)).join(', ')}
+					{#if service.privacyUrl}
+						<br /><a href={service.privacyUrl} target="_blank" rel="noopener noreferrer"
+							>{$_('Datenschutz des Anbieters')}</a
+						>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	{/each}
+	{#if serviceGroups.some((group) => group.category !== 'functional')}
+		<p>
+			{$_('Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen')}:
+			<button
+				type="button"
+				class="consent-settings-link"
+				on:click={() => consentSettingsOpen.set(true)}
+			>
+				{$_('Cookie-Einstellungen')}
+			</button>
+		</p>
+	{/if}
+
+	<PrismicRichText field={privacyField && privacyField.length > 0 ? privacyField : fallback} />
 </main>
 
 <style>
-    .prose {
-        max-width: 65ch;
-    }
+	.prose {
+		max-width: 65ch;
+	}
+
+	.consent-settings-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		color: var(--page-link-color, inherit);
+		text-decoration: underline;
+		cursor: pointer;
+	}
 </style>

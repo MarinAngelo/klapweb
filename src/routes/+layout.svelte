@@ -15,6 +15,8 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
+	import PageUpButton from '$lib/components/PageUpButton.svelte';
+	import CookieBanner from '$lib/components/CookieBanner.svelte';
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
@@ -92,6 +94,8 @@
 
 		const p = $page.data.page;
 		const segments = $page.url.pathname.split('/').filter(Boolean);
+		// Prismic-Vorschau (/preview/…): Präfix ignorieren
+		if (segments[0] === 'preview') segments.shift();
 		const isLangSegment = locales?.includes(segments[0]);
 		const currentSlug = isLangSegment ? segments[1] : segments[0];
 
@@ -332,12 +336,12 @@
 		$page.data?.page?.data?.slices?.length === 1 &&
 		$page.data?.page?.data?.slices?.[0]?.slice_type === 'text_with_image' &&
 		$page.data?.page?.data?.slices?.[0]?.primary?.fullscreen === true;
-	$: isPreview = $page.url.pathname.startsWith('/preview/');
+	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
 	$: stickyHeader =
 		!isLandingPage &&
-		!isPreview &&
+		!isSlicePreview &&
 		!isDokuPage &&
 		!isNoChrome &&
 		(prismicTheme?.data?.sticky_header ?? false);
@@ -434,7 +438,7 @@
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
+	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
 		<Header
 			{navigation}
 			{settings}
@@ -471,15 +475,18 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isPreview && !isDokuPage && !isNoChrome}
+	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
 
+<PageUpButton />
+<CookieBanner {lang} mainLang={data.mainLang} />
+
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
 {#if chatActive}
-	<ChatWidget botName={chatBotName} greeting={chatGreeting} />
+	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
 {/if}
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->

@@ -1,25 +1,84 @@
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
+import { building } from '$app/environment';
+import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
 
+// In-Memory-Cache für Session→User-Auflösung.
+// Ohne Cache kostet jeder Request mit Session-Cookie zwei serielle
+// Netlify-Blobs-Calls (getSession + getUserByEmail) = 2–5 s pro Navigation in Dev.
+// Kurzer TTL: Logout löscht das Cookie clientseitig, E-Mail-Verifizierung
+// spätestens nach TTL sichtbar.
+type CachedUser = { id: string; email: string; name: string; verified: boolean } | null;
+const _userCache = new Map<string, { user: CachedUser; at: number }>();
+const USER_CACHE_TTL_MS = 60 * 1000; // 60 Sekunden
+const USER_CACHE_MAX = 500;
+
+function getCachedUser(token: string): CachedUser | undefined {
+	const entry = _userCache.get(token);
+	if (!entry) return undefined;
+	if (Date.now() - entry.at > USER_CACHE_TTL_MS) {
+		_userCache.delete(token);
+		return undefined;
+	}
+	return entry.user;
+}
+
+function setCachedUser(token: string, user: CachedUser): void {
+	if (_userCache.size >= USER_CACHE_MAX) {
+		// Ältesten Eintrag entfernen (Map iteriert in Insertion-Order)
+		const oldest = _userCache.keys().next().value;
+		if (oldest) _userCache.delete(oldest);
+	}
+	_userCache.set(token, { user, at: Date.now() });
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
+	// ── Admin-Panel: nur mit Session-Cookie (Login unter /admin) ─────────────────
+	// Never read event.url.searchParams/search outside this branch: SvelteKit throws on
+	// prerendered pages if the hook merely accesses them. /admin/* is never prerendered.
+	const { pathname } = event.url;
+	if (!building && pathname.startsWith('/admin/')) {
+		// Transition: old bookmarks with ?secret=… log in once, then the secret is removed from the URL
+		const legacySecret = event.url.searchParams.get('secret');
+		if (legacySecret !== null) {
+			if (isValidAdminPassword(legacySecret)) startAdminSession(event.cookies);
+			const clean = new URL(event.url);
+			clean.searchParams.delete('secret');
+			throw redirect(303, clean.pathname + clean.search);
+		}
+		if (!isAdmin(event.cookies)) {
+			throw redirect(303, `/admin?next=${encodeURIComponent(pathname + event.url.search)}`);
+		}
+	}
+
 	const sessionToken = event.cookies.get('klap_user_session');
 	if (sessionToken) {
-		try {
-			const session = await getSession(sessionToken);
-			if (session) {
-				const user = await getUserByEmail(session.email);
-				if (user) {
-					event.locals.user = {
-						id: user.id,
-						email: user.email,
-						name: user.name,
-						verified: user.verified
-					};
+		const cached = getCachedUser(sessionToken);
+		if (cached !== undefined) {
+			if (cached) event.locals.user = cached;
+		} else {
+			try {
+				const session = await getSession(sessionToken);
+				if (session) {
+					const user = await getUserByEmail(session.email);
+					if (user) {
+						event.locals.user = {
+							id: user.id,
+							email: user.email,
+							name: user.name,
+							verified: user.verified
+						};
+						setCachedUser(sessionToken, event.locals.user);
+					} else {
+						setCachedUser(sessionToken, null);
+					}
+				} else {
+					setCachedUser(sessionToken, null);
 				}
+			} catch {
+				// Blobs nicht verfügbar (z.B. lokal ohne ENV) — ignorieren
 			}
-		} catch {
-			// Blobs nicht verfügbar (z.B. lokal ohne ENV) — ignorieren
 		}
 	}
 

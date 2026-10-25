@@ -1,10 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import Button from '$lib/components/Button.svelte';
 	export let data: PageData;
-
-	import { page } from '$app/stores';
-	$: secret = $page.url.searchParams.get('secret') ?? '';
 
 	function fmtDate(ds: string | null | undefined) {
 		if (!ds) return '–';
@@ -110,8 +108,9 @@
 				>+ Neue Buchung</button
 			>
 			<Button
-				href="/admin/dashboard?secret={secret}"
-				text="← Dashboard"
+				href="/admin/dashboard"
+				text="Dashboard"
+				leadingIcon="left"
 				color="#374151"
 				bgColor="transparent"
 				hoverColor="#111827"
@@ -121,12 +120,11 @@
 			/>
 			<form
 				method="POST"
-				action="?/deleteAll&secret={secret}"
+				action="?/deleteAll"
 				on:submit={(e) => {
 					if (!confirm('Alle Buchungen löschen?')) e.preventDefault();
 				}}
 			>
-				<input type="hidden" name="secret" value={secret} />
 				<Button
 					text="Alle löschen"
 					color="#dc2626"
@@ -149,7 +147,7 @@
 	{#if showCreate}
 		<form
 			method="POST"
-			action="?/create&secret={secret}"
+			action="?/create"
 			style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:1.25rem;margin-bottom:2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem;"
 		>
 			<h3 style="grid-column:1/-1;margin:0 0 0.25rem;font-size:0.95rem;font-weight:700;">
@@ -288,33 +286,33 @@
 								>
 									<!-- Zurück -->
 									{#if b.status !== 'pending'}
-										<form method="POST" action="?/zurueck&secret={secret}">
+										<form method="POST" action="?/zurueck">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
 												title="Einen Schritt zurück (kein Mail)"
 												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
 											>
-												←
+												<SvgIcons name="left" size="1em" color="currentColor" />
 											</button>
 										</form>
 									{/if}
 									<!-- Voraus ohne Mail -->
 									{#if b.status !== 'abgerechnet'}
-										<form method="POST" action="?/voraus&secret={secret}">
+										<form method="POST" action="?/voraus">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
 												title="Einen Schritt voraus (kein Mail)"
 												style="font-size:0.75rem;background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;padding:2px 7px;color:#6b7280;"
 											>
-												→
+												<SvgIcons name="right" size="1em" color="currentColor" />
 											</button>
 										</form>
 									{/if}
 									<!-- Vorwärts -->
 									{#if nextAction(b)}
-										<form method="POST" action="?/{nextAction(b)}&secret={secret}">
+										<form method="POST" action="?/{nextAction(b)}">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
@@ -325,7 +323,7 @@
 										</form>
 									{:else if b.status === 'checked_out'}
 										<a
-											href="/api/freigabe-abrechnung?id={encodeURIComponent(b.id)}&secret={secret}"
+											href="/api/freigabe-abrechnung?id={encodeURIComponent(b.id)}"
 											target="_blank"
 											style="font-size:0.7rem;background:#5b21b6;color:#fff;border-radius:4px;padding:2px 8px;font-weight:600;text-decoration:none;white-space:nowrap;"
 											>{NEXT_LABEL[b.status]}</a
@@ -333,7 +331,7 @@
 									{/if}
 									<!-- Reminder senden -->
 									{#if b.status === 'confirmed' || b.status === 'checked_in'}
-										<form method="POST" action="?/sendReminder&secret={secret}">
+										<form method="POST" action="?/sendReminder">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
@@ -350,7 +348,7 @@
 										</form>
 									{/if}
 									{#if b.status === 'checked_in' || b.status === 'checked_out'}
-										<form method="POST" action="?/sendAbreiseReminder&secret={secret}">
+										<form method="POST" action="?/sendAbreiseReminder">
 											<input type="hidden" name="id" value={b.id} />
 											<button
 												type="submit"
@@ -371,7 +369,7 @@
 									<!-- Löschen -->
 									<form
 										method="POST"
-										action="?/delete&secret={secret}"
+										action="?/delete"
 										on:submit={(e) => confirmDelete(e, `${b.ressourceUid} ${fmtDate(b.von)}`)}
 									>
 										<input type="hidden" name="id" value={b.id} />

@@ -1,29 +1,27 @@
 import type { PageServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { getGatedAdminSections } from '$lib/server/features';
 
 export const prerender = false;
 
 const OVERRIDES_PATH = join(process.cwd(), 'gating.overrides.json');
 
-export const load: PageServerLoad = async ({ url }) => {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) {
-		throw redirect(303, '/admin');
-	}
-
-	let disabledSections: string[] = [];
+export const load: PageServerLoad = async () => {
+	let overrides: { enabled?: string[]; disabled?: string[]; admin_sections_disabled?: string[] } =
+		{};
 	if (existsSync(OVERRIDES_PATH)) {
 		try {
-			const overrides = JSON.parse(readFileSync(OVERRIDES_PATH, 'utf-8'));
-			disabledSections = overrides.admin_sections_disabled ?? [];
+			overrides = JSON.parse(readFileSync(OVERRIDES_PATH, 'utf-8'));
 		} catch {
-			// Overrides nicht lesbar → alle Sections anzeigen
+			// Overrides nicht lesbar → nur Plan-/Feature-Gates aus gating.json
 		}
 	}
 
-	return { secret: provided, disabledSections };
+	// Hidden: manually disabled in agency panel + plan/feature gate in gating.json inactive
+	const disabledSections = [
+		...new Set([...(overrides.admin_sections_disabled ?? []), ...getGatedAdminSections(overrides)])
+	];
+
+	return { disabledSections };
 };

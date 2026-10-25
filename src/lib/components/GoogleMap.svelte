@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
+	import ConsentGate from '$lib/components/ConsentGate.svelte';
+	import { resolveMapUrl, type MapProvider } from '$lib/utils/mapUrl';
 
+	/** Google Maps or OpenStreetMap URL */
 	export let mapUrl: string | null | undefined = undefined;
 	export let mapHeight: number = 400;
 	/** 0–1, CSS-Overlay-Opacity über der Karte */
@@ -11,77 +14,46 @@
 	export let mobileVollbreite: boolean = false;
 
 	let embedUrl = '';
-	let resolvedUrl = '';
+	let directionsUrl = '';
+	let provider: MapProvider = 'google_maps';
 
-	$: directionsUrl = resolvedUrl ? toDirectionsUrl(resolvedUrl) : '';
-
-	function toDirectionsUrl(resolved: string): string {
-		if (!resolved) return '';
-		const placeMatch = resolved.match(/\/maps\/place\/([^/@?]+)/);
-		if (placeMatch) {
-			const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-			return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place)}`;
-		}
-		const coordMatch = resolved.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-		if (coordMatch) {
-			return `https://www.google.com/maps/dir/?api=1&destination=${coordMatch[1]},${coordMatch[2]}`;
-		}
-		try {
-			const q = new URL(resolved).searchParams.get('q');
-			if (q) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
-		} catch {}
-		return '';
-	}
+	$: mapTitle = provider === 'openstreetmap' ? 'OpenStreetMap' : 'Google Maps';
 
 	onMount(async () => {
 		const raw = mapUrl?.trim();
 		if (!raw) return;
-
-		if (raw.includes('google.com/maps/embed') || raw.includes('output=embed')) {
-			embedUrl = raw;
-			resolvedUrl = raw;
-			return;
-		}
-
-		try {
-			const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(raw)}`);
-			if (res.ok) {
-				const data = await res.json();
-				embedUrl = data.embedUrl;
-				resolvedUrl = data.resolvedUrl || data.embedUrl;
-			}
-		} catch {
-			embedUrl = raw;
-		}
+		({ provider, embedUrl, directionsUrl } = await resolveMapUrl(raw));
 	});
 </script>
 
 {#if embedUrl}
 	<div class="flex flex-col gap-3">
-		<div
-			class="relative overflow-hidden {!roundCorners
-				? ''
-				: mobileVollbreite
-					? '-mx-6 md:mx-0 md:rounded-3xl'
-					: 'rounded-3xl'}"
-		>
-			<iframe
-				src={embedUrl}
-				width="100%"
-				height={mapHeight}
-				style="border: 0; display: block; min-height: {mapHeight}px;"
-				allowfullscreen={true}
-				loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"
-				title="Google Maps"
-			></iframe>
-			{#if mapOpacity > 0}
-				<div
-					class="absolute inset-0"
-					style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
-				></div>
-			{/if}
-		</div>
+		<ConsentGate service={provider} minHeight={mapHeight}>
+			<div
+				class="relative overflow-hidden {!roundCorners
+					? ''
+					: mobileVollbreite
+						? '-mx-6 md:mx-0 md:rounded-3xl'
+						: 'rounded-3xl'}"
+			>
+				<iframe
+					src={embedUrl}
+					width="100%"
+					height={mapHeight}
+					style="border: 0; display: block; min-height: {mapHeight}px;"
+					allowfullscreen={true}
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+					title={mapTitle}
+				></iframe>
+				{#if mapOpacity > 0}
+					<div
+						class="absolute inset-0"
+						style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
+					></div>
+				{/if}
+			</div>
+		</ConsentGate>
 		{#if directionsUrl}
 			<a
 				href={directionsUrl}

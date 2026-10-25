@@ -4,8 +4,12 @@
 
 <svelte:head><title>Anmelden</title></svelte:head>
 
-<div style="font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;">
-	<div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 1rem;">
+<div
+	style="font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;"
+>
+	<div
+		style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 1rem;"
+	>
 		<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Anmelden</h1>
 
 		<form method="POST" style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -45,7 +49,9 @@
 			</button>
 		</form>
 
-		<div style="font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #f3f4f6;">
+		<div
+			style="font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #f3f4f6;"
+		>
 			<a href="/konto/registrierung" style="color: #4b5563;">Noch kein Konto? Registrieren</a>
 			<a href="/konto/passwort-reset" style="color: #4b5563;">Passwort vergessen?</a>
 		</div>

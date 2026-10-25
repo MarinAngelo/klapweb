@@ -1,7 +1,7 @@
 {
 	"id": "code_einbetten",
 	"type": "SharedSlice",
-	"name": "GoogleMapEinbetten",
+	"name": "MapEinbetten",
 	"description": "CodeEinbetten",
 	"variations": [
 		{
@@ -15,8 +15,8 @@
 				"map_url": {
 					"type": "Text",
 					"config": {
-						"label": "Google Maps URL",
-						"placeholder": "Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)"
+						"label": "Karten-URL (OpenStreetMap oder Google Maps)",
+						"placeholder": "Google Maps (maps.app.goo.gl/...) oder OpenStreetMap (openstreetmap.org/?mlat=...&mlon=...)"
 					}
 				},
 				"map_height": {

@@ -6,7 +6,7 @@
  */
 import type { RequestHandler } from '@sveltejs/kit';
 import { getAnnahme, updateAnnahme, berechneCredits } from '$lib/server/aufgaben';
-import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
+import { getBuchungByReferenz, getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 

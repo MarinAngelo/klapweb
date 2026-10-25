@@ -64,6 +64,7 @@ Konkrete Regeln:
   - **Achtung:** API-ID nur umbenennen wenn das Feld noch keinen Inhalt hat — sonst gehen Daten verloren
 - TypeScript-Casts (`as any`) nie im Svelte-Template — immer im `<script>`-Block
 - Scroll-Animationen: kein reaktiver State, nur `bind:this` + direktes `element.style` im RAF
+- **Animationsfelder in Slice-Modellen:** Wenn eine Variation die Felder `animate`, `anim_direction`, `anim_delay` und `anim_duration` verwendet, stehen diese vier Felder immer als letzter Block in `primary` — nach allen Inhalts-, Layout- und Darstellungsfeldern. `Timeline` und `Galerie` sind Ausnahmen: Sie besitzen derzeit nur das Boolean-Feld `animate`, weil ihre Animation fest im Code definiert ist.
 - Heading-Tags (`h1`–`h4`) haben globale Grössen in `app.css` — nie mit `text-*`-Klassen überschreiben
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 - **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)
@@ -77,6 +78,15 @@ Konkrete Regeln:
 - **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
 - **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
 - **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
+
+## Cookie-Banner (Schweizer Recht, Opt-out)
+
+- Rechtsgrundlage: Art. 45c FMG + DSG → informieren + Ablehnung ermöglichen (keine vorgängige Einwilligung wie in der EU)
+- **Jeder Dienst, der Cookies setzt, im Browser speichert oder Daten (z.B. IP) an Dritte überträgt, muss in `src/lib/consent/services.ts` registriert werden** (Kategorie, Anbieter, Zweck, Speicher, Datenschutz-URL; Texte als i18n-Keys)
+- Nicht-funktionale Inhalte (iframes, externe Scripts) immer mit `<ConsentGate service="…" minHeight={…}>` umschliessen — nur dann erscheint der Banner auf der Seite und nur dann kann der Besucher ablehnen
+- Banner erscheint nur auf Seiten, die einen nicht-funktionalen Dienst nutzen; Auswahl in `localStorage` (`klap_consent`); Footer-Link „Cookie-Einstellungen“ öffnet den Dialog
+- Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen
+- Wird die Bedeutung gespeicherter Auswahlen geändert: `CONSENT_VERSION` in `src/lib/stores/consent.ts` erhöhen → Banner erscheint erneut
 
 ## Netlify Blobs
 
@@ -128,15 +138,20 @@ Konkrete Regeln:
 
 ### Übersicht
 
-| Datei                          | Zweck                                                        | Committed |
-| ------------------------------ | ------------------------------------------------------------ | --------- |
-| `gating.json`                  | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln | Ja        |
-| `slicemachine.config.json`     | Wählt den aktiven Plan (`"plan": "starter"`)                 | Ja        |
-| `scripts/build-customtypes.js` | Liest `gating.json` + `base.json` → generiert Output         | Ja        |
-| `src/lib/slices/*/base.json`   | Slice-Quelldatei (kein `_meta` mehr nötig)                   | Ja        |
-| `src/lib/slices/*/full.json`   | Slice mit Extra-Variationen (für Features)                   | Ja        |
-| `src/lib/slices/*/model.json`  | Generiert — gitignored                                       | Nein      |
-| `customtypes/*/index.json`     | Generiert — gitignored                                       | Nein      |
+| Datei                                                           | Zweck                                                           | Committed |
+| --------------------------------------------------------------- | --------------------------------------------------------------- | --------- |
+| `gating.json`                                                   | Einzige Konfigurationsquelle: Pläne, Features, Gating-Regeln    | Ja        |
+| `slicemachine.config.json`                                      | Wählt den aktiven Plan (`"plan": "starter"`)                    | Ja        |
+| `scripts/build-customtypes.js`                                  | Liest `gating.json` + `base.json` → generiert Output            | Ja        |
+| `src/lib/slices/*/base.json`                                    | Slice-Quelldatei (kein `_meta` mehr nötig)                      | Ja        |
+| `src/lib/slices/*/full.json`                                    | Slice mit Extra-Variationen (für Features)                      | Ja        |
+| `src/lib/slices/*/model.json`                                   | Generiert — gitignored                                          | Nein      |
+| `customtypes/*/index.json`                                      | Generiert — gitignored                                          | Nein      |
+| `customtypes/_features/{feature}/customtypes/{type}/index.json` | Quelle für Custom Types mit Feature-Gate                        | Ja        |
+| `customtypes/_plans/{plan}/customtypes/{type}/index.json`       | Quelle für Custom Types mit Plan-Gate (z.B. `ort`)              | Ja        |
+| `src/lib/generated/prismic-field-reference.json`                | Generiert (planabhängig, auch bei `npm run build`) — gitignored | Nein      |
+
+**Gated Custom Types:** `customtypes/{type}/index.json` ist nur eine Kopie der Quelle in `_features/` bzw. `_plans/` und wird bei inaktivem Gate gelöscht. Änderungen in der Slice Machine UI landen in der Kopie → das Script überschreibt sie nicht, sondern warnt mit dem `cp`-Befehl, um sie in die Quelle zu übernehmen. Neuer Custom Type mit Plan-Gate: Quelle unter `_plans/{plan}/…` anlegen + Pfad in `.gitignore` ergänzen.
 
 ### gating.json — Struktur
 
@@ -221,9 +236,19 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
 
+## Admin-Anmeldung
+
+- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h), Logout im Dashboard
+- **Alle `/admin/*`-Routen werden zentral in `hooks.server.ts` geschützt** — keine eigenen Secret-Prüfungen in Seiten/Actions, **nie `?secret=` in Links, Formularen oder Fetches**
+- Alte Lesezeichen mit `?secret=` melden einmal an und werden ohne Secret umgeleitet
+- **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
+- APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
+- `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
+- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+
 ## Admin-Panel — Rechnungen & Kunden
 
-### Rechnungsverwaltung (`/admin/rechnungen?secret=<ADMIN_SECRET>`)
+### Rechnungsverwaltung (`/admin/rechnungen`)
 
 **Datenstruktur:** `ManualInvoiceRecord` mit:
 
@@ -257,7 +282,10 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
 
-### Kunden-Management (`/admin/kunden?secret=<ADMIN_SECRET>`)
+### Kunden-Management (`/admin/kunden`)
+
+- Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
+- Feld `lang` (Prismic-Locale, z.B. `de-ch`): Dropdown mit den Sprachen aus dem Prismic-Repository
 
 **Datenstruktur:** Kunden aus Netlify Blobs, mit:
 
@@ -272,6 +300,15 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Kunden sind **unabhängig** von Rechnungen
 - Ein Kunde kann mehrere Rechnungen haben
 - Duplikat-Prüfung (E-Mail primär, dann Name) verhindert Mehrfacherfassung
+
+### Warenkorb (Leistungen + Pakete)
+
+- Leistung hat Feld `price_chf` («Preis exkl. MwSt. (CHF)», immer einmalig); ohne Preis kein «In den Warenkorb»
+- Paketseiten (Page mit «E-Commerce aktiv»): Kauf-Schaltfläche = Direktkauf wie bisher, daneben «In den Warenkorb»
+- Store `src/lib/stores/cart.ts` (localStorage `klap_cart`, Consent-Dienst `cart`), Seite `/warenkorb`, Icon mit Anzahl in der Navbar
+- Transport nur als Referenzen `?warenkorb=leistung:<uid>,page:<uid>` (`src/lib/utils/cartSpec.ts`) → Beauftragung → Zusammenfassung → `/api/invoice` (`cart`). **Preise immer serverseitig** via `src/lib/server/cartLines.ts`, nie aus dem Browser
+- Pakete im Warenkorb bringen ihre Zusatzleistungen (Pflicht) mit; Rabatt-Code gilt für Hauptpositionen, nicht für Zusatzleistungen
+- Stripe (Payment Links pro Produkt) ist beim Warenkorb ausgeblendet; Rechnung + PDF mit allen Positionen
 
 ### E-Commerce Checkout-Anpassungen
 
@@ -303,3 +340,23 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
 Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+
+## Chat-Bot (`/api/chat`, `/admin/chatbot`)
+
+- Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings (`chat_active`, Name, Begrüssung, Wissensbasis pro Sprache, Fallback Hauptsprache)
+- Wissensbasis-Vorlage für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich)
+- Anthropic-Aufruf mit `globalThis.fetch` — der SvelteKit-Event-`fetch` setzt einen Origin-Header → 401 (CORS)
+- Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
+- **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
+
+## Newsletter / Info-Mails (`/admin/newsletter`)
+
+- Feature `newsletter` (gating.json, ab Professionell), Admin-Bereich `newsletter`
+- **Inhalt in Prismic:** Custom Type `newsletter` (Quelle `customtypes/_features/newsletter/…`): Betreff, Vorschautext, Rich Text, optionaler Button. Platzhalter `{{Name}}` (Vor- + Nachname, sonst Firma), `{{Vorname}}`, `{{Nachname}}`, `{{Firma}}` pro Empfänger
+- **Vorschau:** „Preview the page“ in Prismic → `/api/preview` löst Newsletter selbst auf (nicht im Route Resolver, weil Repos ohne den Typ das ablehnen würden) → `/preview/newsletter/<uid>`; Web-Ansicht `/newsletter/<uid>`
+- **Empfänger:** alle Kunden (`kunden`-Store) mit E-Mail + bestätigte Abonnenten (`newsletter_abonnenten`), dedupliziert, ohne Abgemeldete
+- **Anmeldung:** Formular-Variante `newsletterSignup` („Newsletter abonnieren“, Feature `newsletter`) → `/api/newsletter/anmelden` sendet Bestätigungsmail (Double-Opt-in, signierter Link 7 Tage gültig, nichts gespeichert) → `/newsletter/bestaetigen` speichert erst per Button (Mail-Scanner bestätigen nichts). Honeypot-Feld gegen Bots, gleiche Antwort für bekannte/unbekannte Adressen
+- **Versand:** `src/lib/server/newsletter.ts`, Resend Batch-API (100 pro Aufruf); Test-Mail zuerst, Versand nur mit Bestätigung; Verlauf im Blob-Store `newsletter_versand`
+- **CH-Recht (UWG Art. 3 lit. o):** jede Mail mit Absender-Angaben (Settings) + Abmelde-Link; `List-Unsubscribe` + One-Click (`/api/newsletter/abmelden`). Abmeldungen im Store `newsletter_abmeldungen` (Key = SHA-256 der E-Mail), Links HMAC-signiert mit `NEWSLETTER_SECRET` bzw. `ADMIN_SECRET`
+- **Abonnenten-Übersicht** im Newsletter-Admin: Name, E-Mail, Sprache, „bestätigt am“ (= Nachweis der Einwilligung), Status; „Entfernen“ löscht den Abonnenten und trägt die Adresse als abgemeldet ein; CSV-Export `/admin/newsletter/abonnenten.csv`
+- Abmelde-Seite `/newsletter/abmelden` hat bewusst kein Feature-Gate (Abmeldung muss immer möglich sein)

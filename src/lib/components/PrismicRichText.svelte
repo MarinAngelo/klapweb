@@ -13,32 +13,34 @@
 	import Strong from './PrismicRichText/Strong.svelte';
 	import Hyperlink from './PrismicRichText/Hyperlink.svelte';
 	import Label from './PrismicRichText/Label.svelte';
+	import Embed from './PrismicRichText/Embed.svelte';
 	import { variables } from '$lib/stores/variables';
 	import { replaceTokens } from '$lib/utils/replaceTokens';
 
 	export let field: ComponentProps<PrismicRichText>['field'];
 	export let components: ComponentProps<PrismicRichText>['components'] = {};
 
-	$: processedField = field ? replaceTokens(field as any, $variables) as typeof field : field;
+	$: processedField = field ? (replaceTokens(field as any, $variables) as typeof field) : field;
 </script>
 
 {#if field && field.length > 0}
-<PrismicRichText
-	field={processedField}
-	components={{
-		heading1: Heading1,
-		heading2: Heading2,
-		heading3: Heading3,
-		paragraph: Paragraph,
-		oList: OList,
-		oListItem: OListItem,
-		list: List,
-		listItem: ListItem,
-		preformatted: Preformatted,
-		strong: Strong,
-		hyperlink: Hyperlink,
-		label: Label,
-		...components
-	}}
-/>
+	<PrismicRichText
+		field={processedField}
+		components={{
+			heading1: Heading1,
+			heading2: Heading2,
+			heading3: Heading3,
+			paragraph: Paragraph,
+			oList: OList,
+			oListItem: OListItem,
+			list: List,
+			listItem: ListItem,
+			preformatted: Preformatted,
+			strong: Strong,
+			hyperlink: Hyperlink,
+			label: Label,
+			embed: Embed,
+			...components
+		}}
+	/>
 {/if}

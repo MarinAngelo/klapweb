@@ -1,10 +1,19 @@
 <script lang="ts">
+	import { onMount, tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
+	import { consentServices } from '$lib/consent/services';
+	import { allowCategory, isServiceAllowed, registerServiceUsage } from '$lib/stores/consent';
 
-	export let botName: string = 'Assistent';
-	export let greeting: string = 'Hallo! Wie kann ich helfen?';
+	/** Empty = translated default */
+	export let botName = '';
+	export let greeting = '';
+	/** Page language → knowledge base of this language */
+	export let lang = '';
 
-	type Message = { role: 'user' | 'bot'; text: string };
+	const SERVICE_ID = 'ai_chat';
+
+	// `errorKey` messages are shown but never sent back to the model
+	type Message = { role: 'user' | 'bot'; text?: string; errorKey?: string };
 
 	let isOpen = false;
 	let input = '';
@@ -12,13 +21,29 @@
 	let messages: Message[] = [];
 	let messagesEl: HTMLElement;
 
-	$: if (isOpen && messages.length === 0) {
-		messages = [{ role: 'bot', text: greeting }];
+	$: displayName = botName || $_('Assistent');
+	$: chatAllowed = $isServiceAllowed(SERVICE_ID);
+
+	// Opt-out consent: the chat sends messages to Anthropic → banner/settings must list it
+	onMount(() => registerServiceUsage(SERVICE_ID));
+
+	const errorKeys: Record<string, string> = {
+		rate_limit: 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',
+		invalid: 'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).',
+		unavailable: 'Der Chat ist zurzeit nicht verfügbar.',
+		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.'
+	};
+
+	/** Conversation for the API: greeting and error messages excluded */
+	function history() {
+		return messages
+			.filter((m, i) => m.text && !m.errorKey && !(i === 0 && m.role === 'bot'))
+			.map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }));
 	}
 
 	async function send() {
 		const text = input.trim();
-		if (!text || loading) return;
+		if (!text || loading || !chatAllowed) return;
 
 		input = '';
 		messages = [...messages, { role: 'user', text }];
@@ -29,12 +54,14 @@
 			const res = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ message: text })
+				body: JSON.stringify({ messages: history(), lang })
 			});
-			const data = await res.json();
-			messages = [...messages, { role: 'bot', text: data.reply || data.error || 'Fehler' }];
+			const data = await res.json().catch(() => ({}));
+			messages = data.reply
+				? [...messages, { role: 'bot', text: data.reply }]
+				: [...messages, { role: 'bot', errorKey: errorKeys[data.error] ?? errorKeys.failed }];
 		} catch {
-			messages = [...messages, { role: 'bot', text: 'Verbindungsfehler.' }];
+			messages = [...messages, { role: 'bot', errorKey: 'Verbindungsfehler.' }];
 		} finally {
 			loading = false;
 			tick().then(scrollToBottom);
@@ -52,27 +79,13 @@
 		}
 	}
 
-	import { tick, onMount } from 'svelte';
-
-	let visible = false;
-
-	onMount(() => {
-		const threshold = window.innerHeight;
-		function onScroll() {
-			visible = window.scrollY >= threshold;
-		}
-		onScroll();
-		window.addEventListener('scroll', onScroll, { passive: true });
-		return () => window.removeEventListener('scroll', onScroll);
-	});
+	$: if (isOpen && messages.length === 0) {
+		messages = [{ role: 'bot', text: greeting || $_('Hallo! Wie kann ich helfen?') }];
+	}
 </script>
 
 <div
-	style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9000; display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; transition: opacity 0.3s, transform 0.3s; opacity: {visible
-		? 1
-		: 0}; transform: {visible ? 'translateY(0)' : 'translateY(1rem)'}; pointer-events: {visible
-		? 'auto'
-		: 'none'};"
+	style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9000; display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;"
 >
 	{#if isOpen}
 		<div
@@ -92,7 +105,7 @@
 			<div
 				style="background: #111827; color: white; padding: 0.875rem 1rem; display: flex; align-items: center; justify-content: space-between;"
 			>
-				<span style="font-weight: 600; font-size: 0.9375rem;">{botName}</span>
+				<span style="font-weight: 600; font-size: 0.9375rem;">{displayName}</span>
 				<button
 					on:click={() => (isOpen = false)}
 					aria-label={$_('Chat schliessen')}
@@ -132,7 +145,7 @@
 						white-space: pre-wrap;
 					"
 						>
-							{msg.text}
+							{msg.errorKey ? $_(msg.errorKey) : msg.text}
 						</div>
 					</div>
 				{/each}
@@ -148,8 +161,30 @@
 				{/if}
 			</div>
 
+			{#if !chatAllowed}
+				<!-- Visitor rejected the category of this service in the cookie settings -->
+				<div
+					style="padding: 0.75rem; border-top: 1px solid #f3f4f6; font-size: 0.8125rem; color: #374151; display: flex; flex-direction: column; gap: 0.5rem;"
+				>
+					<p style="margin: 0;">
+						{$_('Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.')}
+					</p>
+					<button
+						type="button"
+						on:click={() => allowCategory(consentServices[SERVICE_ID].category)}
+						style="align-self: flex-start; background: #111827; color: white; border: none; border-radius: 0.375rem; padding: 0.375rem 0.75rem; cursor: pointer; font-size: 0.8125rem;"
+					>
+						{$_('Chat erlauben')}
+					</button>
+				</div>
+			{/if}
+
 			<!-- Input -->
-			<div style="padding: 0.75rem; border-top: 1px solid #f3f4f6; display: flex; gap: 0.5rem;">
+			<div
+				style="padding: 0.75rem; border-top: 1px solid #f3f4f6; display: {chatAllowed
+					? 'flex'
+					: 'none'}; gap: 0.5rem;"
+			>
 				<input
 					type="text"
 					bind:value={input}
@@ -188,6 +223,11 @@
 					</svg>
 				</button>
 			</div>
+			{#if chatAllowed}
+				<p style="margin: 0; padding: 0 0.75rem 0.625rem; font-size: 0.6875rem; color: #6b7280;">
+					{$_('Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.')}
+				</p>
+			{/if}
 		</div>
 	{/if}
 

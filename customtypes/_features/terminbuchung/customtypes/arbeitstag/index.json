@@ -59,7 +59,7 @@
 						"angebot": {
 							"type": "Link",
 							"config": {
-								"label": "Angebot",
+								"label": "Buchbares Angebot",
 								"select": "document",
 								"customtypes": ["angebot"]
 							}

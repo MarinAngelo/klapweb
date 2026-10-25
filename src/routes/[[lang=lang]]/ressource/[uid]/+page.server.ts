@@ -1,9 +1,19 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 
-export async function load({ params, parent, fetch }: { params: { uid: string; lang?: string }; parent: () => Promise<{ lang: string }>; fetch: typeof globalThis.fetch }) {
+export async function load({
+	params,
+	parent,
+	fetch,
+	cookies
+}: {
+	params: { uid: string; lang?: string };
+	parent: () => Promise<{ lang: string }>;
+	fetch: typeof globalThis.fetch;
+	cookies: import('@sveltejs/kit').Cookies;
+}) {
 	const { lang } = await parent();
-	const client = createClient({ fetch });
+	const client = createClient({ fetch, cookies });
 
 	// Load the ressource page document
 	let doc: any;

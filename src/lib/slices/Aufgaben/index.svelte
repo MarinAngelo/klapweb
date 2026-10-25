@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { PrismicRichText } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import FileField from '$lib/components/FileField.svelte';
@@ -247,10 +248,14 @@
 	>
 		{#if loggedIn}
 			{#if primary.heading}
-				<div class="mb-4"><PrismicRichText field={primary.heading} /></div>
+				<div class="mb-4">
+					<PrismicRichText field={primary.heading} components={{ embed: RichTextEmbed }} />
+				</div>
 			{/if}
 			{#if primary.intro}
-				<div class="mb-8 prose"><PrismicRichText field={primary.intro} /></div>
+				<div class="mb-8 prose">
+					<PrismicRichText field={primary.intro} components={{ embed: RichTextEmbed }} />
+				</div>
 			{/if}
 		{/if}
 
@@ -362,7 +367,10 @@
 												<div class="flex flex-col">
 													{#if aufgabe.beschreibung}
 														<div class="prose">
-															<PrismicRichText field={aufgabe.beschreibung} />
+															<PrismicRichText
+																field={aufgabe.beschreibung}
+																components={{ embed: RichTextEmbed }}
+															/>
 														</div>
 													{/if}
 												</div>
@@ -389,7 +397,10 @@
 																<p class="font-medium">{w.titel}</p>
 																{#if w.beschreibung}
 																	<div class="prose text-sm opacity-80">
-																		<PrismicRichText field={w.beschreibung} />
+																		<PrismicRichText
+																			field={w.beschreibung}
+																			components={{ embed: RichTextEmbed }}
+																		/>
 																	</div>
 																{/if}
 															</div>
@@ -562,7 +573,10 @@
 											<div class="flex flex-col">
 												{#if aufgabe.beschreibung}
 													<div class="prose">
-														<PrismicRichText field={aufgabe.beschreibung} />
+														<PrismicRichText
+															field={aufgabe.beschreibung}
+															components={{ embed: RichTextEmbed }}
+														/>
 													</div>
 												{/if}
 											</div>
@@ -589,7 +603,10 @@
 															<p class="font-medium">{w.titel}</p>
 															{#if w.beschreibung}
 																<div class="prose text-sm opacity-80">
-																	<PrismicRichText field={w.beschreibung} />
+																	<PrismicRichText
+																		field={w.beschreibung}
+																		components={{ embed: RichTextEmbed }}
+																	/>
 																</div>
 															{/if}
 														</div>

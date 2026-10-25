@@ -6,6 +6,14 @@
 	const formatDate = (datum: string, uhrzeit: string) =>
 		formatDateWithWeekday(datum, uhrzeit || null) + (uhrzeit ? ' Uhr' : '');
 
+	type BookingWithOrt = (typeof data.bookings)[number] & {
+		ort?: { name: string; adresse: string } | null;
+	};
+	const formatOrt = (booking: BookingWithOrt): string | null => {
+		const adresse = booking.ort?.adresse?.trim();
+		return adresse || null;
+	};
+
 	const today = new Date().toISOString().slice(0, 10);
 	$: upcoming = data.bookings.filter((b) => b.datum >= today);
 	$: past = data.bookings.filter((b) => b.datum < today);
@@ -72,6 +80,9 @@
 							<span style="font-size: 0.875rem; color: #6b7280;"
 								>{formatDate(booking.datum, booking.uhrzeit)}</span
 							>
+							{#if formatOrt(booking)}
+								<span style="font-size: 0.875rem; color: #6b7280;">📍 {formatOrt(booking)}</span>
+							{/if}
 						</li>
 					{/each}
 				</ul>
@@ -97,6 +108,9 @@
 							<span style="font-size: 0.875rem; color: #6b7280;"
 								>{formatDate(booking.datum, booking.uhrzeit)}</span
 							>
+							{#if formatOrt(booking)}
+								<span style="font-size: 0.875rem; color: #6b7280;">📍 {formatOrt(booking)}</span>
+							{/if}
 						</li>
 					{/each}
 				</ul>

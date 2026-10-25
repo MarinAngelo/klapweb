@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { asText } from '@prismicio/helpers';
 	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -137,7 +138,7 @@ END:VCALENDAR`;
 
 		{#if primary.description}
 			<div>
-				<PrismicRichText field={primary.description} />
+				<PrismicRichText field={primary.description} components={{ embed: RichTextEmbed }} />
 			</div>
 		{/if}
 
@@ -191,7 +192,7 @@ END:VCALENDAR`;
 				{#if primary.location_text}
 					<div class="mt-4">
 						<strong>Ort:</strong>
-						<PrismicRichText field={primary.location_text} />
+						<PrismicRichText field={primary.location_text} components={{ embed: RichTextEmbed }} />
 					</div>
 				{/if}
 				{#if primary.geopoint?.latitude && primary.geopoint?.longitude}

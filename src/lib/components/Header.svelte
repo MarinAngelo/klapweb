@@ -4,7 +4,7 @@
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content, PrismicDocument } from '@prismicio/client';
 	import { asText } from '@prismicio/client';
-	import { onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
@@ -25,6 +25,8 @@
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
+	// With bottom curve: header surface + wave are painted in one backdrop layer (see markup)
+	let backdropEl: HTMLElement | undefined;
 	let observer: ResizeObserver;
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 	let revealRafId: number;
@@ -46,23 +48,32 @@
 			const heroEl = document.querySelector(
 				'[data-slice-type="hero"], [data-slice-type="p5_grafik"]'
 			) as HTMLElement | null;
-			const scrollY = window.scrollY;
-			const delay = window.innerHeight * 0.5;
-			let opacity: number;
-			if (scrollY < delay) {
-				opacity = headerBgOpacity;
-			} else {
-				const heroBottom = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
-				const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
-				opacity = headerBgOpacity + (1 - headerBgOpacity) * progress;
-			}
+			const opacity = getScrollOpacity(heroEl);
 			const bg = hexToRgba(headerBgColor, opacity);
 			headerEl.style.setProperty('--navbar-current-bg', bg);
-			if (stickyHeader) {
+			if (useBackdrop && backdropEl) {
+				backdropEl.style.opacity = String(opacity);
+			} else {
 				headerEl.style.backgroundColor = bg;
 			}
 		});
 	}
+
+	function getScrollOpacity(heroEl?: HTMLElement | null): number {
+		const scrollY = window.scrollY;
+		const delay = window.innerHeight * 0.5;
+		if (scrollY < delay) return headerBgOpacity;
+		const heroBottom = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
+		const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
+		return headerBgOpacity + (1 - headerBgOpacity) * progress;
+	}
+
+	function syncCurveToHeader() {
+		if (!backdropEl) return;
+		backdropEl.style.opacity = $isMenuOpen ? '1' : String(getScrollOpacity());
+	}
+
+	afterUpdate(() => requestAnimationFrame(syncCurveToHeader));
 
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || $theme.logoHeight;
@@ -99,16 +110,14 @@
 	$: headerBgColor = prismicTheme?.data?.header_bg_color || $theme.headerBgColor;
 	$: bottomCurveEnabled = prismicTheme?.data?.header_bottom_curve === true;
 	$: bottomCurveColor = prismicTheme?.data?.header_bottom_curve_color || headerBgColor;
-	$: bottomCurveHeight = Math.max(0, Number(prismicTheme?.data?.header_bottom_curve_height ?? 32));
-	$: bottomCurveAmplitude = Math.min(
-		bottomCurveHeight,
-		Math.max(0, Number(prismicTheme?.data?.header_bottom_curve_amplitude ?? 16))
-	);
-	$: bottomCurveWaves = Math.min(
-		8,
-		Math.max(1, Number(prismicTheme?.data?.header_bottom_curve_waves ?? 1))
-	);
+	$: bottomCurveHeight = prismicTheme?.data?.header_bottom_curve_height ?? 32;
+	$: bottomCurveAmplitude = prismicTheme?.data?.header_bottom_curve_amplitude ?? 16;
+	$: bottomCurveWaves = prismicTheme?.data?.header_bottom_curve_waves ?? 1;
 	$: bottomCurveStartAtMax = prismicTheme?.data?.header_bottom_curve_start === 'Maximale Höhe';
+	// Header surface and wave share one fully opaque layer whose opacity is faded as a whole:
+	// the wave can overlap the surface by 1px (no hairline on fractional device pixel ratios)
+	// without the overlap looking darker while the header is semi-transparent.
+	$: useBackdrop = bottomCurveEnabled && bottomCurveHeight > 0;
 	$: bottomCurvePath = (() => {
 		const points = 32;
 		const values = Array.from({ length: points + 1 }, (_, index) => {
@@ -125,7 +134,9 @@
 	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
 	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
-	$: if (headerEl) headerEl.style.setProperty('--navbar-current-bg', computedBgColor);
+	$: if (headerEl) {
+		headerEl.style.setProperty('--navbar-current-bg', computedBgColor);
+	}
 
 	function updateHeaderHeight() {
 		// 1. ZUERST PRÜFEN: Mobile Landscape?
@@ -152,6 +163,7 @@
 
 		// Initialer Aufruf
 		updateHeaderHeight();
+		requestAnimationFrame(syncCurveToHeader);
 
 		// Zusätzlicher Resize Listener für Desktop
 		window.addEventListener('resize', updateHeaderHeight);
@@ -204,9 +216,27 @@
 	style:top="0"
 	style:left="0"
 	style:z-index="9999"
-	style:background-color={computedBgColor}
+	style:background-color={useBackdrop ? 'transparent' : computedBgColor}
 	style:color={headerColor}
 >
+	{#if useBackdrop}
+		<div
+			class="header-backdrop"
+			bind:this={backdropEl}
+			aria-hidden="true"
+			style="opacity: {$isMenuOpen ? 1 : headerBgOpacity};"
+		>
+			<div class="header-backdrop-fill" style="background-color: {headerBgColor};"></div>
+			<svg
+				class="header-bottom-curve"
+				viewBox={`0 0 100 ${bottomCurveHeight}`}
+				preserveAspectRatio="none"
+				style={`height: ${bottomCurveHeight}px;`}
+			>
+				<path d={bottomCurvePath} fill={bottomCurveColor || headerBgColor} />
+			</svg>
+		</div>
+	{/if}
 	<Bounded
 		tag="div"
 		yPadding="none"
@@ -286,24 +316,6 @@
 			{/if}
 		</div>
 	</Bounded>
-	{#if bottomCurveHeight > 0}
-		<svg
-			class="header-bottom-curve"
-			class:enabled={bottomCurveEnabled}
-			aria-hidden="true"
-			data-curve-enabled={bottomCurveEnabled}
-			data-curve-color={bottomCurveColor}
-			data-curve-height={bottomCurveHeight}
-			data-curve-amplitude={bottomCurveAmplitude}
-			data-curve-waves={bottomCurveWaves}
-			data-curve-start={bottomCurveStartAtMax ? 'Maximale Höhe' : '0'}
-			viewBox={`0 0 100 ${bottomCurveHeight}`}
-			preserveAspectRatio="none"
-			style={`height: ${bottomCurveHeight}px; bottom: -${bottomCurveHeight}px; display: ${bottomCurveEnabled ? 'block' : 'none'};`}
-		>
-			<path d={bottomCurvePath} fill={bottomCurveColor} />
-		</svg>
-	{/if}
 </header>
 
 <style>
@@ -312,13 +324,24 @@
 			display: none !important;
 		}
 	}
+	/* Below the header content (header has z-index → own stacking context) */
+	.header-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		transition: opacity 0.7s ease-in-out;
+	}
+	.header-backdrop-fill {
+		position: absolute;
+		inset: 0;
+	}
 	.header-bottom-curve {
 		position: absolute;
 		left: 0;
-		bottom: -1px;
-		z-index: 0;
+		/* overlap the surface by 1px → no hairline between header and wave */
+		top: calc(100% - 1px);
 		width: 100%;
-		pointer-events: none;
 		display: block;
 	}
 </style>

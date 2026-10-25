@@ -11,10 +11,15 @@
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import { formatPrice } from '$lib/pricing';
+	import { clearCart } from '$lib/stores/cart';
 	import type { ProductData } from './+page.server';
+	import type { CheckoutLine } from '$lib/server/cartLines';
 
 	export let data: {
 		product: ProductData | null;
+		/** Cart checkout: all positions (prices resolved on the server) */
+		cartLines?: CheckoutLine[];
+		cartSpec?: string;
 		pageTitle: string;
 		checkoutButtonText: string;
 		baseCurrency: string;
@@ -131,8 +136,9 @@
 		}
 	});
 
-	$: serviceKey = checkoutData?.data['dienstleistung'] ?? '';
-	$: displayLabel = data.product?.label ?? serviceKey;
+	$: isCart = !!data.cartLines;
+	$: serviceKey = isCart ? 'warenkorb' : (checkoutData?.data['dienstleistung'] ?? '');
+	$: productLabel = data.product?.label ?? serviceKey;
 	$: baseDisplayPrice = data.priceRange ? customEventPrice : (data.product?.displayAmount ?? null);
 	// Additional costs converted to selected currency
 	$: additionalCostDisplay = (() => {
@@ -142,54 +148,70 @@
 		return rate ? Math.round(data.additionalCostChf * rate * 100) / 100 : data.additionalCostChf;
 	})();
 
-	// Convert base price to selected currency using pre-fetched rates
-	$: displayPrice = (() => {
-		if (baseDisplayPrice === null) return null;
-		if (selectedCurrency === data.baseCurrency) return baseDisplayPrice;
-		const rate = data.rates[selectedCurrency];
-		if (rate == null) return baseDisplayPrice;
-		return Math.round(baseDisplayPrice * rate * 100) / 100;
-	})();
+	// Positions: cart lines, or the single product followed by its add-ons
+	$: lines = (data.cartLines ??
+		(data.product
+			? [
+					{
+						label: productLabel,
+						price: baseDisplayPrice,
+						billingType: data.product.billingType,
+						kind: 'main'
+					},
+					...data.product.addons.map((addon) => ({
+						label: addon.label,
+						price: addon.displayAmount,
+						billingType: addon.billingType,
+						kind: 'addon'
+					}))
+				]
+			: [])) as CheckoutLine[];
+	$: displayLabel = isCart
+		? lines
+				.filter((l) => l.kind === 'main')
+				.map((l) => l.label)
+				.join(', ')
+		: productLabel;
 
-	// Price after applying discount code
-	$: effectiveDisplayPrice = (() => {
-		if (displayPrice === null) return null;
-		if (codeDiscountPct <= 0) return displayPrice;
-		return Math.round(displayPrice * (1 - codeDiscountPct / 100) * 100) / 100;
-	})();
+	// Convert a base-currency amount to the selected currency using pre-fetched rates
+	function toSelectedCurrency(amount: number | null, currency: string): number | null {
+		if (amount === null) return null;
+		if (currency === data.baseCurrency) return amount;
+		const rate = data.rates[currency];
+		if (rate == null) return amount;
+		return Math.round(amount * rate * 100) / 100;
+	}
 
-	// Convert addon prices to selected currency
-	$: addonDisplayPrices = (data.product?.addons ?? []).map((addon) => {
-		if (addon.displayAmount === null) return null;
-		if (selectedCurrency === data.baseCurrency) return addon.displayAmount;
-		const rate = data.rates[selectedCurrency];
-		if (rate == null) return addon.displayAmount;
-		return Math.round(addon.displayAmount * rate * 100) / 100;
-	});
+	$: lineDisplayPrices = lines.map((l) => toSelectedCurrency(l.price, selectedCurrency));
+	// Discount code applies to main positions only (not to add-ons such as hosting)
+	$: lineEffectivePrices = lineDisplayPrices.map((price, i) =>
+		price !== null && codeDiscountPct > 0 && lines[i].kind === 'main'
+			? Math.round(price * (1 - codeDiscountPct / 100) * 100) / 100
+			: price
+	);
 
-	// Totals grouped by billing type (main product + addons)
+	// Single-product layout uses the first position
+	$: displayPrice = lineDisplayPrices[0] ?? null;
+	$: effectiveDisplayPrice = lineEffectivePrices[0] ?? null;
+	$: hasPrice = lineEffectivePrices.some((p) => p !== null);
+
+	// Totals grouped by billing type
 	$: groupedTotals = (() => {
 		const totals: Record<string, number> = {};
-		const mainType = data.product?.billingType ?? 'Einmalig';
-		if (effectiveDisplayPrice !== null) {
-			totals[mainType] = (totals[mainType] ?? 0) + effectiveDisplayPrice;
-		}
-		(data.product?.addons ?? []).forEach((addon, i) => {
-			const price = addonDisplayPrices[i];
+		lines.forEach((line, i) => {
+			const price = lineEffectivePrices[i];
 			if (price === null) return;
-			const type = addon.billingType ?? 'Einmalig';
+			const type = line.billingType ?? 'Einmalig';
 			totals[type] = (totals[type] ?? 0) + price;
 		});
 		return Object.entries(totals);
 	})();
 
-	$: hasAddons = (data.product?.addons ?? []).length > 0;
+	$: isMultiLine = lines.length > 1;
 
-	$: grandTotal = (() => {
-		if (effectiveDisplayPrice === null) return null;
-		const addonSum = addonDisplayPrices.reduce((s, p) => s + (p ?? 0), 0);
-		return effectiveDisplayPrice + addonSum + (additionalCostDisplay ?? 0);
-	})();
+	$: grandTotal = hasPrice
+		? lineEffectivePrices.reduce<number>((s, p) => s + (p ?? 0), 0) + (additionalCostDisplay ?? 0)
+		: null;
 
 	$: stripeUrl =
 		data.product?.stripeUrl && checkoutData?.data['email']
@@ -238,6 +260,7 @@
 						serviceKey,
 						selectedCurrency,
 						discountCode: appliedCode || undefined,
+						...(isCart && { cart: data.cartSpec, lang }),
 						...(data.isEventCheckout && {
 							isEventCheckout: true,
 							eventPrice: grandTotal,
@@ -260,6 +283,7 @@
 					}).catch(() => {});
 				}
 				sessionStorage.removeItem('checkoutData');
+				if (isCart) clearCart();
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
 					`/beauftragung/bestaetigung?method=rechnung&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
@@ -304,6 +328,7 @@
 			// Dev-Modus: Netlify-POST überspringen
 			if (import.meta.env.DEV || data.isEventCheckout) {
 				sessionStorage.removeItem('checkoutData');
+				if (isCart) clearCart();
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
 					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
@@ -337,6 +362,7 @@
 					}).catch(() => {});
 				}
 				sessionStorage.removeItem('checkoutData');
+				if (isCart) clearCart();
 				sessionStorage.removeItem('preferredCurrency');
 				goto(
 					`/beauftragung/bestaetigung?method=bar&service=${serviceParam}&label=${labelParam}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
@@ -370,41 +396,48 @@
 				{data.eventTexts?.orderLabel ?? t('Ihre Bestellung', lang)}
 			</p>
 
-			{#if hasAddons}
-				<!-- Row layout: main product + addons side by side -->
-				<div class="flex items-baseline justify-between gap-4 mt-2">
-					<p class="text-lg font-semibold">
-						{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
-					</p>
-					{#if effectiveDisplayPrice !== null}
-						<p class="text-lg font-semibold tabular-nums shrink-0">
-							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1"
-									>{formatPrice(displayPrice, selectedCurrency)}</span
-								>{/if}{formatPrice(effectiveDisplayPrice, selectedCurrency)}
-						</p>
-					{/if}
-				</div>
-				<p class="text-sm opacity-60 mt-0.5">{t(data.product?.billingType ?? 'Einmalig', lang)}</p>
-
-				{#each data.product?.addons ?? [] as addon, i}
-					<div
-						class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t"
-						style="border-color: {borderColor}44;"
-					>
-						<p class="text-base opacity-80">+ {addon.label}</p>
-						{#if addonDisplayPrices[i] !== null}
-							<p class="text-base tabular-nums shrink-0 opacity-80">
-								{formatPrice(addonDisplayPrices[i], selectedCurrency)}
+			{#if isMultiLine}
+				<!-- Row layout: positions (cart items or main product) with their add-ons -->
+				{#each lines as line, i}
+					{#if line.kind === 'main'}
+						<div
+							class="flex items-baseline justify-between gap-4 {i === 0
+								? 'mt-2'
+								: 'mt-4 pt-3 border-t'}"
+							style="border-color: {borderColor}44;"
+						>
+							<p class="text-lg font-semibold">
+								{line.label || (checkoutData.data['dienstleistung'] ?? '—')}
 							</p>
-						{:else}
-							<p class="text-sm opacity-60">{t('auf Anfrage', lang)}</p>
-						{/if}
-					</div>
-					<p class="text-sm opacity-60 mt-0.5">{t(addon.billingType ?? 'Einmalig', lang)}</p>
+							{#if lineEffectivePrices[i] !== null}
+								<p class="text-lg font-semibold tabular-nums shrink-0">
+									{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1"
+											>{formatPrice(lineDisplayPrices[i] ?? 0, selectedCurrency)}</span
+										>{/if}{formatPrice(lineEffectivePrices[i] ?? 0, selectedCurrency)}
+								</p>
+							{/if}
+						</div>
+						<p class="text-sm opacity-60 mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
+					{:else}
+						<div
+							class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t"
+							style="border-color: {borderColor}44;"
+						>
+							<p class="text-base opacity-80">+ {line.label}</p>
+							{#if lineDisplayPrices[i] !== null}
+								<p class="text-base tabular-nums shrink-0 opacity-80">
+									{formatPrice(lineDisplayPrices[i] ?? 0, selectedCurrency)}
+								</p>
+							{:else}
+								<p class="text-sm opacity-60">{t('auf Anfrage', lang)}</p>
+							{/if}
+						</div>
+						<p class="text-sm opacity-60 mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
+					{/if}
 				{/each}
 
 				<!-- Grouped totals + grand total -->
-				{#if effectiveDisplayPrice !== null}
+				{#if hasPrice}
 					<div class="mt-4 pt-3 border-t" style="border-color: {borderColor};">
 						{#each groupedTotals as [type, total]}
 							<div class="flex justify-between text-sm mt-1">
@@ -490,7 +523,7 @@
 				{/if}
 			{/if}
 
-			{#if effectiveDisplayPrice !== null}
+			{#if hasPrice}
 				{#if additionalCostDisplay}
 					<div
 						class="flex justify-between mt-2 pt-2 border-t"
@@ -570,7 +603,7 @@
 						{/if}
 					{/if}
 				</div>
-			{:else if !hasAddons}
+			{:else if !isMultiLine}
 				<p class="text-sm opacity-60 mt-1">{t('Preis wird bei Rückfrage mitgeteilt.', lang)}</p>
 			{/if}
 		</div>

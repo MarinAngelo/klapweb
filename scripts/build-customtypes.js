@@ -25,10 +25,24 @@
  *   page.json / settings.json  → Tab-Overlays für Custom Types (Inhalt bleibt dort)
  *   customtypes/<type>/index.json → Feature-eigene Custom Types
  *
+ * Plan-Dateien in customtypes/_plans/<plan>/customtypes/<type>/index.json:
+ *   Quelle für Custom Types mit Plan-Gate (gating.json customTypes.<type>.plan)
+ *
+ * customtypes/<type>/index.json von Feature-/Plan-Typen ist nur eine generierte Kopie
+ * (gitignored) und wird bei inaktivem Gate gelöscht.
+ *
  * slicemachine.config.json: "plan" wählt den aktiven Plan.
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'fs';
+import {
+	readFileSync,
+	writeFileSync,
+	existsSync,
+	readdirSync,
+	mkdirSync,
+	rmSync,
+	statSync
+} from 'fs';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -52,6 +66,33 @@ function writeIfChanged(path, data) {
 	}
 	mkdirSync(dirname(fullPath), { recursive: true });
 	writeFileSync(fullPath, newContent);
+}
+
+/**
+ * Copies a custom type source file to its generated location customtypes/<type>/index.json.
+ * If the generated file was edited afterwards (e.g. in the Slice Machine UI), it is NOT
+ * overwritten — those edits would otherwise be lost silently. Copy them into the source instead.
+ */
+function copyCustomType(srcPath, typeId, label) {
+	const targetPath = `customtypes/${typeId}/index.json`;
+	const srcFull = join(ROOT, srcPath);
+	const targetFull = join(ROOT, targetPath);
+	const srcContent = JSON.stringify(JSON.parse(readFileSync(srcFull, 'utf-8')), null, '\t') + '\n';
+	if (existsSync(targetFull)) {
+		const targetContent = readFileSync(targetFull, 'utf-8');
+		if (targetContent === srcContent) {
+			console.log(`✓ ${targetPath} (${label})`);
+			return;
+		}
+		if (statSync(targetFull).mtimeMs > statSync(srcFull).mtimeMs) {
+			console.warn(`⚠ ${targetPath} wurde geändert (Slice Machine?) und ist neuer als die Quelle.`);
+			console.warn(`  Nicht überschrieben. Änderungen übernehmen: cp ${targetPath} ${srcPath}`);
+			return;
+		}
+	}
+	mkdirSync(dirname(targetFull), { recursive: true });
+	writeFileSync(targetFull, srcContent);
+	console.log(`✓ ${targetPath} (${label})`);
 }
 
 const config = read('slicemachine.config.json');
@@ -191,6 +232,11 @@ function describeField(fieldConfig, label, elementType) {
 	return `Legt den Wert für ${subject} fest.`;
 }
 
+// Eigene Beschreibungen (scripts/field-descriptions.json) überschreiben die automatisch erzeugten
+const fieldDescriptionOverrides = existsSync(join(ROOT, 'scripts/field-descriptions.json'))
+	? read('scripts/field-descriptions.json')
+	: {};
+
 function collectFieldReference() {
 	const fieldMap = [];
 	const customTypesDir = join(ROOT, 'customtypes');
@@ -284,6 +330,17 @@ function collectFieldReference() {
 		if (!tabOrder.has(groupKey)) tabOrder.set(groupKey, new Map());
 		const groupTabs = tabOrder.get(groupKey);
 		if (!groupTabs.has(field.tab)) groupTabs.set(field.tab, groupTabs.size);
+	}
+
+	for (const entry of fieldMap) {
+		const override = fieldDescriptionOverrides[entry.path];
+		if (typeof override === 'string' && override) entry.description = override;
+	}
+	const unknown = Object.keys(fieldDescriptionOverrides).filter(
+		(path) => !path.startsWith('_') && !fieldMap.some((entry) => entry.path === path)
+	);
+	if (unknown.length) {
+		console.warn(`⚠ scripts/field-descriptions.json: unbekannte Feldpfade: ${unknown.join(', ')}`);
 	}
 
 	return fieldMap.sort((a, b) => {
@@ -427,11 +484,42 @@ if (slicesWithoutBase.length > 0) {
 	console.warn(`  Lösung: base.json aus Git-History restaurieren oder neu erstellen.`);
 }
 
+const animationFields = ['animate', 'anim_direction', 'anim_delay', 'anim_duration'];
+
+function validateAnimationFieldOrder(model, path) {
+	for (const variation of model.variations ?? []) {
+		const fieldNames = Object.keys(variation.primary ?? {});
+		const present = animationFields.filter((field) => fieldNames.includes(field));
+		if (!present.length) continue;
+
+		// Timeline/Galerie verwenden bewusst nur den festen Animate-Schalter.
+		if (present.length === 1 && present[0] === 'animate') {
+			if (fieldNames.at(-1) !== 'animate') {
+				throw new Error(
+					`${path} / ${variation.id}: Das Feld animate muss am Ende von primary stehen.`
+				);
+			}
+			continue;
+		}
+
+		const lastFields = fieldNames.slice(-animationFields.length);
+		if (
+			present.length !== animationFields.length ||
+			lastFields.join('|') !== animationFields.join('|')
+		) {
+			throw new Error(
+				`${path} / ${variation.id}: Animationsfelder müssen als letzter primary-Block in der Reihenfolge ${animationFields.join(', ')} stehen.`
+			);
+		}
+	}
+}
+
 for (const sliceName of allSlices) {
 	const basePath = `src/lib/slices/${sliceName}/base.json`;
 	if (!existsSync(join(ROOT, basePath))) continue;
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
+	validateAnimationFieldOrder(base, basePath);
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)
@@ -453,6 +541,7 @@ for (const sliceName of allSlices) {
 	const fullModelPath = `src/lib/slices/${sliceName}/model.json`;
 	const fullPath = `src/lib/slices/${sliceName}/full.json`;
 	const fullExists = existsSync(join(ROOT, fullPath));
+	if (fullExists) validateAnimationFieldOrder(read(fullPath), fullPath);
 
 	// Extra-Variationen aus gating.json.slices[name].variations (ersetzt slices.json)
 	const activeExtraIds = new Set(
@@ -512,12 +601,27 @@ for (const feature of allFeatures) {
 		.map((d) => d.name);
 
 	for (const typeName of typeNames) {
-		const src = join(ctDir, typeName, 'index.json');
-		if (!existsSync(src)) continue;
-		const def = JSON.parse(readFileSync(src, 'utf-8'));
-		write(`customtypes/${typeName}/index.json`, def);
-		console.log(`✓ customtypes/${typeName}/index.json (feature: ${feature})`);
+		const srcPath = `customtypes/_features/${feature}/customtypes/${typeName}/index.json`;
+		if (!existsSync(join(ROOT, srcPath))) continue;
+		copyCustomType(srcPath, typeName, `feature: ${feature}`);
 	}
+}
+
+// ── 4b. Plan-basierte Custom Types ───────────────────────────────────────────────
+// Quelle: customtypes/_plans/<plan>/customtypes/<type>/index.json (versioniert).
+// customtypes/<type>/index.json ist nur die generierte Kopie (gitignored) — Schritt 5
+// darf sie löschen, ohne dass die Quelle verloren geht.
+
+for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
+	if (gate.feature || !gate.plan) continue; // Feature-basierte oben; settings (nur Feld-Gates) nicht betroffen
+	if (!isActive(gate)) continue;
+
+	const srcPath = `customtypes/_plans/${gate.plan}/customtypes/${typeId}/index.json`;
+	if (!existsSync(join(ROOT, srcPath))) {
+		console.warn(`⚠ ${srcPath} fehlt (plan: ${gate.plan})`);
+		continue;
+	}
+	copyCustomType(srcPath, typeId, `plan: ${gate.plan}`);
 }
 
 console.log(`\nFeatures active: [${allFeatures.join(', ') || 'none'}]`);
@@ -538,9 +642,10 @@ for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 // ── Pre-Build-Check: Existenz aller aktiven Custom-Type-Basisdateien ─────────────
 for (const [typeId, gate] of Object.entries(gating.customTypes ?? {})) {
 	if (!isActive(gate)) continue;
-	if (!gate.feature) continue; // managedTypes (page/settings) ohne feature-Gate überspringen
-	// Feature-Ordner-Pfad
-	let basePath = `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`;
+	if (!gate.feature && !gate.plan) continue; // managedTypes (page/settings) ohne Gate überspringen
+	const basePath = gate.feature
+		? `customtypes/_features/${gate.feature}/customtypes/${typeId}/index.json`
+		: `customtypes/_plans/${gate.plan}/customtypes/${typeId}/index.json`;
 	if (!existsSync(join(ROOT, basePath))) {
 		console.error(`❌ FEHLER: Basisdatei für aktiven Custom Type "${typeId}" fehlt: ${basePath}`);
 		process.exit(1);

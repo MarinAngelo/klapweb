@@ -1,5 +1,5 @@
 /**
- * GET /api/bestaetige-buchung?id=...&secret=...
+ * GET /api/bestaetige-buchung?id=...&token=...  (token = adminActionToken('bestaetige-buchung', id))
  *
  * Bestätigt eine Buchungsanfrage und sendet die Bestätigungsmail an den Mieter.
  *
@@ -13,17 +13,15 @@ import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
+import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
 	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
 }
 
-export const GET: RequestHandler = async ({ url, fetch }) => {
+export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const id = url.searchParams.get('id');
-	const secret = url.searchParams.get('secret');
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (!adminSecret || secret !== adminSecret) {
+	if (!isAuthorizedAdminAction('bestaetige-buchung', id ?? '', url, cookies)) {
 		return html(403, 'Kein Zugriff');
 	}
 	if (!id) {
@@ -44,7 +42,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	if (buchung.status === 'confirmed' && !forceResend) {
 		return html(
 			200,
-			`Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt. <a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(secret ?? '')}&resend=true">Bestätigungsmail erneut senden</a>`
+			`Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt. <a href="?id=${encodeURIComponent(id)}&token=${adminActionToken('bestaetige-buchung', id)}&resend=true">Bestätigungsmail erneut senden</a>`
 		);
 	}
 

@@ -9,6 +9,7 @@ import { createAnnahme } from '$lib/server/aufgaben';
 import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: any;
@@ -102,7 +103,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		}
 
 		if (resendKey && emailFrom && adminEmail && adminSecret) {
-			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&secret=${encodeURIComponent(adminSecret)}`;
+			// Token only authorises this approval — the admin password is never sent by mail
+			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&token=${adminActionToken('freigabe-aufgabe', annahme.id)}`;
 			try {
 				const { Resend } = await import('resend');
 				const resend = new Resend(resendKey);

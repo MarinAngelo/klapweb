@@ -3,12 +3,23 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { sanitizeHtml } from '$lib/utils/sanitizeHtml';
+	import { servicesInHtml } from '$lib/consent/services';
+	import ConsentGate from '$lib/components/ConsentGate.svelte';
 
 	export let slice: Content.HtmlCodeSlice;
 	const p = slice.primary ?? ({} as any);
 
 	const htmlCode = (p.html_code?.[0] as { text: string })?.text || '';
 	const sanitizedHtmlCode = sanitizeHtml(htmlCode);
+
+	// External iframes/scripts → consent required (one known service, otherwise generic)
+	const externalServices = servicesInHtml(htmlCode);
+	const consentServiceId =
+		externalServices.length === 1
+			? externalServices[0]
+			: externalServices.length
+				? 'external_embed'
+				: '';
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
@@ -26,7 +37,13 @@
 		class="html-code-container {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
 		style="--hr-color: var(--page-color);"
 	>
-		{@html sanitizedHtmlCode}
+		{#if consentServiceId}
+			<ConsentGate service={consentServiceId}>
+				{@html sanitizedHtmlCode}
+			</ConsentGate>
+		{:else}
+			{@html sanitizedHtmlCode}
+		{/if}
 	</div>
 </Bounded>
 
