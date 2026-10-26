@@ -1928,7 +1928,7 @@
 				</tbody>
 			</table>
 			<p class="table-label">
-				Tab: Online-Handel <span style="font-size:0.8em;opacity:0.6;"
+				Tab: Online-Handel <span class="[font-size:0.8em] [opacity:0.6]"
 					>(Feature: ecommerce · Plan: individuell)</span
 				>
 			</p>
@@ -1969,7 +1969,7 @@
 				</tbody>
 			</table>
 			<p class="table-label">
-				Tab: Leistungen <span style="font-size:0.8em;opacity:0.6;"
+				Tab: Leistungen <span class="[font-size:0.8em] [opacity:0.6]"
 					>(Feature: ecommerce · Plan: individuell)</span
 				>
 			</p>
@@ -3448,7 +3448,7 @@
 							Ankunftserinnerung an Mieter (sofort, nicht via Scheduler)</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler, 08:00 UTC)</td><td
 							>Falls Anreise = übermorgen &amp; <code>reminderSent = false</code> → ✉ Ankunftserinnerung
 							an Mieter</td
@@ -3459,12 +3459,12 @@
 							>→ Check-in → ✉ Interne Benachrichtigung an Betreiber</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler)</td><td
 							>24h nach Ankunft → ✉ Nach-Ankunft-Mail an Mieter</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler)</td><td
 							>12h vor Abreise → ✉ Abreiseerinnerung an Mieter</td
 						></tr

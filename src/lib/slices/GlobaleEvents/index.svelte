@@ -299,7 +299,7 @@
 		{#if isFilled.image(parentEvent.image)}
 			<!-- overflow-x-hidden hier statt am Bounded-Parent, damit native selects korrekt positioniert werden -->
 			<div class="overflow-x-hidden">
-				<div class="aspect-[16/7] overflow-hidden -mx-6" style="width: calc(100% + 3rem)">
+				<div class="aspect-[16/7] overflow-hidden -mx-6 w-[calc(100%+3rem)]">
 					<PrismicImage field={parentEvent.image} class="w-full h-full object-cover" />
 				</div>
 			</div>
@@ -322,7 +322,7 @@
 			<div>
 				<h2 class="mt-0 mb-1">{parentEvent.title ?? ''}</h2>
 				{#if parentEvent.subtitle}
-					<p class="opacity-70 mb-0">{parentEvent.subtitle}</p>
+					<p class="text-muted mb-0">{parentEvent.subtitle}</p>
 				{/if}
 			</div>
 
@@ -340,7 +340,7 @@
 				</div>
 			{/if}
 
-			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+			<hr class="divider-page" />
 
 			<!-- Veranstalter & Kontakt -->
 			{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone || parentEvent.event_language || parentEvent.target_audience || parentEvent.min_age || parentEvent.accessibility_info || parentEvent.additional_info?.length || (parentEvent.status && parentEvent.status !== 'Kein') || isFullyBooked || deadlineExpired || isConfirmed}
@@ -370,7 +370,7 @@
 					</div>
 				{/if}
 				{#if parentEvent.organizer || parentEvent.contact_email || parentEvent.contact_phone}
-					<div class="opacity-60 flex flex-wrap gap-3">
+					<div class="text-muted flex flex-wrap gap-3">
 						{#if parentEvent.organizer}
 							<span>
 								{$_('Veranstalter')}:
@@ -405,7 +405,7 @@
 						parentEvent.min_participants
 					].filter(Boolean).length}
 					<ul
-						class="opacity-60 text-sm flex flex-col gap-1 {detailCount === 1
+						class="text-muted text-sm flex flex-col gap-1 {detailCount === 1
 							? 'list-none pl-0'
 							: 'list-disc pl-4'}"
 					>
@@ -433,12 +433,12 @@
 
 				<!-- Weitere Hinweise -->
 				{#if parentEvent.additional_info?.length}
-					<div class="opacity-70 text-sm">
+					<div class="text-muted text-sm">
 						<PrismicRichText field={parentEvent.additional_info} />
 					</div>
 				{/if}
 
-				<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+				<hr class="divider-page" />
 			{/if}
 
 			<!-- Datum & Ort (gruppiert) -->
@@ -457,10 +457,10 @@
 						<div>
 							<div>{dateRange}</div>
 							{#if parentEvent.timezone}
-								<div class="opacity-60">{parentEvent.timezone}</div>
+								<div class="text-muted">{parentEvent.timezone}</div>
 							{/if}
 							{#if parentEvent.doors_open}
-								<div class="opacity-60">{$_('Einlass ab')} {parentEvent.doors_open}</div>
+								<div class="text-muted">{$_('Einlass ab')} {parentEvent.doors_open}</div>
 							{/if}
 						</div>
 					</div>
@@ -476,8 +476,7 @@
 								href={parentEvent.online_url.url}
 								target="_blank"
 								rel="noopener"
-								class="underline ml-1"
-								style="color: var(--page-link-color)">Link</a
+								class="underline ml-1">Link</a
 							>
 						{/if}
 					</div>
@@ -504,26 +503,19 @@
 							href={parentEvent.website.url}
 							target={parentEvent.website.target ?? '_blank'}
 							rel="noopener"
-							class="underline"
-							style="color: var(--page-link-color)">{parentEvent.website.url}</a
+							class="underline">{parentEvent.website.url}</a
 						>
 					</div>
 				{/if}
 
 				<!-- Wegbeschreibung -->
 				{#if parentEvent.directions?.length}
-					<details
-						class="rounded overflow-hidden"
-						style="border: 1px solid color-mix(in srgb, var(--page-color) 15%, transparent);"
-					>
+					<details class="rounded overflow-hidden border border-page-soft">
 						<summary class="flex items-center justify-between px-3 py-2 cursor-pointer list-none">
 							<span>{$_('Wegbeschreibung')}</span>
-							<span class="text-xs opacity-60">▾</span>
+							<span class="text-xs text-muted">▾</span>
 						</summary>
-						<div
-							class="px-3 pb-3 pt-2 opacity-80"
-							style="border-top: 1px solid color-mix(in srgb, var(--page-color) 8%, transparent);"
-						>
+						<div class="px-3 pb-3 pt-2 opacity-80 border-t border-page-faint">
 							<PrismicRichText field={parentEvent.directions} />
 							{#if parentEvent.directions_pdf_button}
 								<Button
@@ -552,7 +544,7 @@
 				{/if}
 			</div>
 
-			<hr style="border-color: color-mix(in srgb, var(--page-color) 10%, transparent)" />
+			<hr class="divider-page" />
 
 			<!-- Preis -->
 			{#if parentEvent.is_free || parentEvent.price_text?.length || parentEvent.ticket_price_chf || parentEvent.additional_costs_chf}
@@ -561,12 +553,12 @@
 						{#if parentEvent.is_free}
 							<span class="font-medium">{$_('Kostenlos')}</span>
 						{:else if parentEvent.ticket_price_chf}
-							{#if parentEvent.ticket_price_label}<span class="opacity-60"
+							{#if parentEvent.ticket_price_label}<span class="text-muted"
 									>{parentEvent.ticket_price_label}:</span
 								>{/if}
 							<span class="font-medium"
 								>{priceDisplay}{#if parentEvent.payment_rechnung_enabled !== false || parentEvent.payment_bar_enabled !== false},&nbsp;<span
-										class="font-normal opacity-60"
+										class="font-normal text-muted"
 										>{[
 											parentEvent.payment_rechnung_enabled !== false
 												? parentEvent.payment_rechnung_label || $_('Gegen Rechnung')
@@ -580,7 +572,7 @@
 									>{/if}</span
 							>
 							{#if parentEvent.price_show_eur && eurRate !== null}
-								{#if parentEvent.price_eur_label}<span class="opacity-60 text-sm"
+								{#if parentEvent.price_eur_label}<span class="text-muted text-sm"
 										>{parentEvent.price_eur_label}</span
 									>{/if}
 								<InputField
@@ -600,14 +592,14 @@
 					</div>
 					{#if parentEvent.additional_costs_chf}
 						<div class="flex flex-wrap items-center gap-2">
-							{#if parentEvent.additional_costs_label}<span class="opacity-60"
+							{#if parentEvent.additional_costs_label}<span class="text-muted"
 									>{parentEvent.additional_costs_label}:</span
 								>{/if}
 							<span class="font-medium">{additionalCostsDisplay}</span>
 						</div>
 					{/if}
 					{#if parentEvent.registration_required}
-						<span class="opacity-60">· {$_('Anmeldung erforderlich')}</span>
+						<span class="text-muted">· {$_('Anmeldung erforderlich')}</span>
 					{/if}
 				</div>
 			{/if}
@@ -649,10 +641,7 @@
 
 			<!-- ── UNTERER BEREICH: Termine ── -->
 			{#if events.length}
-				<div
-					class="pt-4 border-t flex flex-col gap-3"
-					style="border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
-				>
+				<div class="pt-4 border-t flex flex-col gap-3 border-link-faint">
 					<h3 class="mt-0 mb-1">{$_('Termine')}</h3>
 
 					{#each events as ev}
@@ -665,8 +654,7 @@
 						)}
 
 						<div
-							class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0"
-							style="border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent)"
+							class="flex flex-wrap items-start gap-4 py-3 border-b last:border-b-0 border-link-subtle"
 						>
 							<!-- Status -->
 							{#if isFullyBooked}
@@ -699,10 +687,10 @@
 									{#if dateRange}
 										<div>{dateRange}</div>
 										{#if ev.timezone}
-											<div class="opacity-60">{ev.timezone}</div>
+											<div class="text-muted">{ev.timezone}</div>
 										{/if}
 										{#if ev.doors_open}
-											<div class="opacity-60">{$_('Einlass ab')} {ev.doors_open}</div>
+											<div class="text-muted">{$_('Einlass ab')} {ev.doors_open}</div>
 										{/if}
 									{:else}
 										<div class="opacity-40">{$_('Datum noch nicht festgelegt')}</div>
@@ -712,7 +700,7 @@
 
 							<!-- Preis -->
 							{#if ev.individually_bookable && (ev.individual_is_free || ev.individual_price_text?.length)}
-								<div class="shrink-0 opacity-70">
+								<div class="shrink-0 text-muted">
 									{#if ev.individual_is_free}
 										{$_('Kostenlos')}
 									{:else}
@@ -720,7 +708,7 @@
 									{/if}
 								</div>
 							{:else if !ev.individually_bookable && (ev.is_free || ev.price_text?.length)}
-								<div class="shrink-0 opacity-70">
+								<div class="shrink-0 text-muted">
 									{#if ev.is_free}
 										{$_('Kostenlos')}
 									{:else}
@@ -781,19 +769,17 @@
 		{@const modalRegistrationText = buildRegistrationText(selectedEvent)}
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 		<div
-			class="fixed inset-0 flex items-center justify-center z-50"
-			style="background-color: rgba(0,0,0,0.5);"
+			class="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
 			on:click|self={() => (showRegistrationModal = false)}
 			on:keydown={(e) => e.key === 'Escape' && (showRegistrationModal = false)}
 			role="dialog"
 			aria-modal="true"
 		>
 			<div
-				class="rounded-xl shadow-xl p-8 max-w-sm w-full mx-4 flex flex-col gap-4"
-				style="background-color: var(--page-bg-color); color: var(--page-color); border: 1px solid color-mix(in srgb, var(--page-link-color) 12.5%, transparent)"
+				class="rounded-xl shadow-xl p-8 max-w-sm w-full mx-4 flex flex-col gap-4 modal-card border border-link-faint"
 			>
 				<h3 class="mt-0 mb-0">{$_('Anmeldung')}</h3>
-				<p class="opacity-70 mb-0">{$_('Wähle deine bevorzugte Methode zur Anmeldung:')}</p>
+				<p class="text-muted mb-0">{$_('Wähle deine bevorzugte Methode zur Anmeldung:')}</p>
 
 				<div class="flex flex-col gap-3">
 					{#if modalEmail}
@@ -801,13 +787,12 @@
 							href="mailto:{modalEmail}?subject=Anmeldung: {modalTitle}&body={encodeURIComponent(
 								modalRegistrationText
 							)}"
-							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
+							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80 border-link-soft"
 						>
 							<span class="text-xl">✉️</span>
 							<div>
 								<div class="font-medium">{$_('Per E-Mail')}</div>
-								<div class="opacity-60">{modalEmail}</div>
+								<div class="text-muted">{modalEmail}</div>
 							</div>
 						</a>
 					{/if}
@@ -819,13 +804,12 @@
 							href="https://wa.me/{waNumber}?text={waText}"
 							target="_blank"
 							rel="noopener"
-							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
+							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80 border-link-soft"
 						>
 							<span class="text-xl">💬</span>
 							<div>
 								<div class="font-medium">{$_('Per WhatsApp')}</div>
-								<div class="opacity-60">{modalWhatsapp}</div>
+								<div class="text-muted">{modalWhatsapp}</div>
 							</div>
 						</a>
 					{/if}
@@ -843,13 +827,12 @@
 							href="{tgTarget}?text={tgText}"
 							target="_blank"
 							rel="noopener"
-							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80"
-							style="border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent)"
+							class="flex items-center gap-3 px-4 py-3 rounded-lg border transition-opacity hover:opacity-80 border-link-soft"
 						>
 							<span class="text-xl">✈️</span>
 							<div>
 								<div class="font-medium">{$_('Per Telegram')}</div>
-								<div class="opacity-60">{tgHandle}</div>
+								<div class="text-muted">{tgHandle}</div>
 							</div>
 						</a>
 					{/if}

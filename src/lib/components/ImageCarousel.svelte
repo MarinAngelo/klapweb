@@ -198,9 +198,9 @@
 					{#if has(current)}
 						<div
 							class="absolute inset-0"
-							style={transitionMode === 'Ken Burns'
-								? `animation: kb${current % 4} ${intervalMs + transitionMs}ms linear forwards;`
-								: ''}
+							style:animation={transitionMode === 'Ken Burns'
+								? `kb${current % 4} ${intervalMs + transitionMs}ms linear forwards`
+								: undefined}
 						>
 							<PrismicImage
 								field={images[current].image}
@@ -242,8 +242,7 @@
 			{/if}
 
 			<div
-				class="swipe-overlay absolute inset-0 z-[60]"
-				style="touch-action: pan-y;"
+				class="swipe-overlay absolute inset-0 z-[60] [touch-action:pan-y]"
 				on:pointerdown={onPointerDown}
 				on:pointerup={onPointerUp}
 				on:pointercancel={() => {

@@ -48,12 +48,12 @@
 <Bounded
 	as="section"
 	yPadding="base"
-	style="background-color: {bgColor}; color: {textColor}; --page-color: {textColor};"
+	class="color-scope {mobileVollbreite ? 'overflow-x-clip' : ''}"
+	style="--scope-color: {textColor}; --scope-bg: {bgColor}; --page-color: {textColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
 	<div
 		class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch {mobileVollbreite
@@ -70,7 +70,8 @@
 								src={embedUrl}
 								width="100%"
 								height={mapHeight}
-								style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+								class="block h-full border-0"
+								style:min-height="{mapHeight}px"
 								allowfullscreen={true}
 								loading="lazy"
 								referrerpolicy="no-referrer-when-downgrade"
@@ -78,8 +79,9 @@
 							></iframe>
 							{#if mapOpacity > 0}
 								<div
-									class="absolute inset-0"
-									style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+									class="absolute inset-0 pointer-events-none"
+									style:background-color={bgColor}
+									style:opacity={mapOpacity}
 								></div>
 							{/if}
 						</ConsentGate>
@@ -90,8 +92,7 @@
 						href={directionsUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
-						style="border-color: {textColor}; color: {textColor};"
+						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70 scope-border-solid scope-text"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +111,8 @@
 			</div>
 			<div
 				class="text-col flex flex-col justify-center {textCenterH ? 'text-center' : ''}"
-				style="--text-zoom-desktop: {textZoomDesktop}; --text-zoom-mobile: {textZoomMobile};"
+				style:--text-zoom-desktop={textZoomDesktop}
+				style:--text-zoom-mobile={textZoomMobile}
 			>
 				<PrismicRichText field={p.text} />
 			</div>
@@ -118,7 +120,8 @@
 			<!-- Text links, Karte rechts -->
 			<div
 				class="text-col flex flex-col justify-center {textCenterH ? 'text-center' : ''}"
-				style="--text-zoom-desktop: {textZoomDesktop}; --text-zoom-mobile: {textZoomMobile};"
+				style:--text-zoom-desktop={textZoomDesktop}
+				style:--text-zoom-mobile={textZoomMobile}
 			>
 				<PrismicRichText field={p.text} />
 			</div>
@@ -130,7 +133,8 @@
 								src={embedUrl}
 								width="100%"
 								height={mapHeight}
-								style="border: 0; display: block; min-height: {mapHeight}px; height: 100%;"
+								class="block h-full border-0"
+								style:min-height="{mapHeight}px"
 								allowfullscreen={true}
 								loading="lazy"
 								referrerpolicy="no-referrer-when-downgrade"
@@ -138,8 +142,9 @@
 							></iframe>
 							{#if mapOpacity > 0}
 								<div
-									class="absolute inset-0"
-									style="background-color: {bgColor}; opacity: {mapOpacity}; pointer-events: none;"
+									class="absolute inset-0 pointer-events-none"
+									style:background-color={bgColor}
+									style:opacity={mapOpacity}
 								></div>
 							{/if}
 						</ConsentGate>
@@ -150,8 +155,7 @@
 						href={directionsUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70"
-						style="border-color: {textColor}; color: {textColor};"
+						class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full border text-sm font-medium transition-opacity hover:opacity-70 scope-border-solid scope-text"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

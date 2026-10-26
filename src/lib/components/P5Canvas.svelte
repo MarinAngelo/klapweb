@@ -57,4 +57,4 @@
 	});
 </script>
 
-<div bind:this={container} style="width: {width}; height: {height}; overflow: hidden; display: block;"></div>
+<div class="overflow-hidden block" bind:this={container} style:width style:height></div>

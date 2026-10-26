@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { formatDateWithWeekday } from '$lib/utils/formatDate';
 	export let data: PageData;
 
@@ -108,212 +108,69 @@
 	$: allFreeSelected =
 		data.freeSlots.length > 0 && selectedFreeSlots.length === data.freeSlots.length;
 	$: someFreeSelected = selectedFreeSlots.length > 0;
-
-	const tdStyle = 'padding: 0.5rem 0.75rem;';
-	const tdNowrap = tdStyle + ' white-space: nowrap;';
 </script>
 
 <svelte:head><title>Buchungen</title></svelte:head>
 
-<div style="font-family: sans-serif; padding: 2rem; max-width: 1100px; margin: 0 auto;">
-	<div class="page-header">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Terminverwaltung</h1>
-		<div class="header-actions">
-			<Button
-				href="/admin/dashboard"
-				text="Dashboard"
-				leadingIcon="left"
-				color="#374151"
-				bgColor="transparent"
-				hoverColor="#111827"
-				hoverBgColor="transparent"
-				size="sm"
-				mb={false}
-			/>
-			<form
-				method="POST"
-				action="?/deleteAll"
-				on:submit={(e) => {
-					if (!confirm('Alle Buchungen löschen?')) e.preventDefault();
-				}}
-			>
-				<Button
-					text="Alle löschen"
-					color="#dc2626"
-					bgColor="transparent"
-					hoverColor="#991b1b"
-					hoverBgColor="transparent"
-					size="sm"
-					mb={false}
-				/>
-			</form>
-		</div>
-	</div>
+<div class="admin-container">
+	<AdminHeader title="Terminverwaltung">
+		<form
+			method="POST"
+			action="?/deleteAll"
+			on:submit={(e) => {
+				if (!confirm('Alle Buchungen löschen?')) e.preventDefault();
+			}}
+		>
+			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
+		</form>
+	</AdminHeader>
 
 	{#if data.blobError}
-		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">
-			Fehler: {data.blobError}
-		</p>
+		<p class="admin-notice admin-notice-error admin-mono">Fehler: {data.blobError}</p>
 	{/if}
 
 	<!-- Gebuchte Termine -->
-	<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem;">
-		Gebuchte Termine ({data.bookings.length})
-	</h2>
-
-	{#if data.bookings.length === 0}
-		<p style="opacity: 0.5; margin-bottom: 2rem;">Noch keine Buchungen.</p>
-	{:else}
-		<div style="overflow-x: auto; margin-bottom: 2.5rem;">
-			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-				<thead>
-					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each ['Termin', 'Titel', 'Ort', 'Name', 'E-Mail', 'Gebucht am', ''] as col}
-							<th style={tdNowrap}>{col}</th>
-						{/each}
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.bookings as b}
-						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style={tdNowrap}>{fmtDate(b.datum, b.uhrzeit, b.endzeit)}</td>
-							<td style={tdStyle}>{b.titel || b.terminId}</td>
-							<td style="{tdStyle} opacity: 0.7;">{getOrtName(b)}</td>
-							<td style={tdStyle}>{b.name ?? '–'}</td>
-							<td style={tdStyle}>{b.email ?? '–'}</td>
-							<td style="{tdNowrap} opacity: 0.6;">
-								{new Date(b.bookedAt).toLocaleString('de-CH', {
-									day: '2-digit',
-									month: '2-digit',
-									year: 'numeric',
-									hour: '2-digit',
-									minute: '2-digit'
-								})}
-							</td>
-							<td style={tdStyle}>
-								<form
-									method="POST"
-									action="?/delete"
-									on:submit|preventDefault={(e) => confirmDelete(e, b.titel || b.terminId)}
-								>
-									<input type="hidden" name="id" value={b.terminId} />
-									<button
-										type="submit"
-										style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
-									>
-										Löschen
-									</button>
-								</form>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	{/if}
-
-	<!-- Freie Termine -->
-	<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem;">
-		Freie Termine ({data.freeSlots.length})
-	</h2>
-
-	{#if data.freeSlots.length === 0}
-		<p style="opacity: 0.5; margin-bottom: 2rem;">Keine freien Termine.</p>
-	{:else}
-		<form
-			method="POST"
-			action="?/cancelSelected"
-			on:submit={confirmBulkCancel}
-			style="margin-bottom: 2.5rem;"
-		>
-			<div
-				style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap;"
-			>
-				<button
-					type="submit"
-					disabled={!someFreeSelected}
-					style="font-size: 0.8rem; background: #d97706; color: #fff; border: none; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-weight: 600; opacity: {someFreeSelected
-						? 1
-						: 0.45};"
-				>
-					Ausgewählte sperren ({selectedFreeSlots.length})
-				</button>
-				<button
-					type="button"
-					on:click={toggleMobileSelectionMode}
-					style="font-size: 0.8rem; background: {mobileSelectionMode
-						? '#0369a1'
-						: '#e0f2fe'}; color: {mobileSelectionMode
-						? '#fff'
-						: '#0369a1'}; border: 1px solid #7dd3fc; border-radius: 4px; cursor: pointer; padding: 4px 10px; font-weight: 600;"
-				>
-					{mobileSelectionMode ? 'Auswahlmodus beenden' : 'Bereich auswählen'}
-				</button>
-				<span style="font-size: 0.8rem; color: #6b7280;">
-					{#if mobileSelectionMode && mobileRangeStartIndex === null}
-						Startpunkt antippen
-					{:else if mobileSelectionMode}
-						Endpunkt antippen
-					{:else}
-						{someFreeSelected ? `${selectedFreeSlots.length} ausgewählt` : 'Keine Auswahl'}
-					{/if}
-				</span>
-			</div>
-			<div style="overflow-x: auto;">
-				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+	<section class="admin-card">
+		<h2 class="admin-card-title">
+			Gebuchte Termine <span class="admin-count">({data.bookings.length})</span>
+		</h2>
+		{#if data.bookings.length === 0}
+			<p class="admin-empty">Noch keine Buchungen.</p>
+		{:else}
+			<div class="admin-table-wrap">
+				<table class="admin-table">
 					<thead>
-						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							<th style={tdNowrap}>
-								<input
-									type="checkbox"
-									aria-label="Alle freien Termine auswählen"
-									checked={allFreeSelected}
-									on:change={(e) => toggleAllFreeSlots(e.currentTarget.checked)}
-								/>
-							</th>
-							{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer', 'Zeitzone', ''] as col}
-								<th style={tdNowrap}>{col}</th>
+						<tr>
+							{#each ['Termin', 'Titel', 'Ort', 'Name', 'E-Mail', 'Gebucht am', ''] as col}
+								<th>{col}</th>
 							{/each}
 						</tr>
 					</thead>
 					<tbody>
-						{#each data.freeSlots as s, i}
-							<tr
-								style="border-bottom: 1px solid #e5e7eb; {mobileSelectionMode &&
-								mobileRangeStartIndex === i
-									? 'background: #e0f2fe;'
-									: ''}"
-							>
-								<td style={tdNowrap}>
-									<input
-										type="checkbox"
-										name="slotId"
-										value={s.id}
-										aria-label={`Termin ${s.titel} auswählen`}
-										bind:group={selectedFreeSlots}
-										on:click={(e) => onFreeSlotClick(e, i)}
-										on:keydown={(e) => onFreeSlotKeydown(e, i)}
-										on:change={() => onFreeSlotChange(i)}
-									/>
+						{#each data.bookings as b}
+							<tr>
+								<td class="nowrap">{fmtDate(b.datum, b.uhrzeit, b.endzeit)}</td>
+								<td>{b.titel || b.terminId}</td>
+								<td class="admin-muted">{getOrtName(b)}</td>
+								<td>{b.name ?? '–'}</td>
+								<td>{b.email ?? '–'}</td>
+								<td class="nowrap admin-muted">
+									{new Date(b.bookedAt).toLocaleString('de-CH', {
+										day: '2-digit',
+										month: '2-digit',
+										year: 'numeric',
+										hour: '2-digit',
+										minute: '2-digit'
+									})}
 								</td>
-								<td style="{tdNowrap} opacity: 0.8;">{formatDateWithWeekday(s.datum, null)}</td>
-								<td style="{tdNowrap} opacity: 0.8;">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
-								<td style={tdStyle}>{s.titel}</td>
-								<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
-								<td style="{tdStyle} opacity: 0.6;">{s.zeitzone}</td>
-								<td style={tdStyle}>
+								<td>
 									<form
 										method="POST"
-										action="?/cancel"
-										on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
+										action="?/delete"
+										on:submit|preventDefault={(e) => confirmDelete(e, b.titel || b.terminId)}
 									>
-										<input type="hidden" name="id" value={s.id} />
-										<button
-											type="submit"
-											style="color: #d97706; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
-										>
-											Sperren
-										</button>
+										<input type="hidden" name="id" value={b.terminId} />
+										<button type="submit" class="admin-link-danger text-xs">Löschen</button>
 									</form>
 								</td>
 							</tr>
@@ -321,78 +178,166 @@
 					</tbody>
 				</table>
 			</div>
-		</form>
-	{/if}
+		{/if}
+	</section>
+
+	<!-- Freie Termine -->
+	<section class="admin-card">
+		<h2 class="admin-card-title">
+			Freie Termine <span class="admin-count">({data.freeSlots.length})</span>
+		</h2>
+		{#if data.freeSlots.length === 0}
+			<p class="admin-empty">Keine freien Termine.</p>
+		{:else}
+			<form method="POST" action="?/cancelSelected" on:submit={confirmBulkCancel}>
+				<div class="mb-3 flex flex-wrap items-center gap-3">
+					<button
+						type="submit"
+						disabled={!someFreeSelected}
+						class="admin-btn admin-btn-warn admin-btn-sm"
+					>
+						Ausgewählte sperren ({selectedFreeSlots.length})
+					</button>
+					<button
+						type="button"
+						on:click={toggleMobileSelectionMode}
+						class="admin-btn admin-btn-sm"
+						class:admin-btn-toggle-on={mobileSelectionMode}
+					>
+						{mobileSelectionMode ? 'Auswahlmodus beenden' : 'Bereich auswählen'}
+					</button>
+					<span class="admin-muted text-xs">
+						{#if mobileSelectionMode && mobileRangeStartIndex === null}
+							Startpunkt antippen
+						{:else if mobileSelectionMode}
+							Endpunkt antippen
+						{:else}
+							{someFreeSelected ? `${selectedFreeSlots.length} ausgewählt` : 'Keine Auswahl'}
+						{/if}
+					</span>
+				</div>
+				<div class="admin-table-wrap">
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>
+									<input
+										type="checkbox"
+										class="admin-checkbox"
+										aria-label="Alle freien Termine auswählen"
+										checked={allFreeSelected}
+										on:change={(e) => toggleAllFreeSlots(e.currentTarget.checked)}
+									/>
+								</th>
+								{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer', 'Zeitzone', ''] as col}
+									<th>{col}</th>
+								{/each}
+							</tr>
+						</thead>
+						<tbody>
+							{#each data.freeSlots as s, i}
+								<tr class:admin-row-selected={mobileSelectionMode && mobileRangeStartIndex === i}>
+									<td class="nowrap">
+										<input
+											type="checkbox"
+											class="admin-checkbox"
+											name="slotId"
+											value={s.id}
+											aria-label={`Termin ${s.titel} auswählen`}
+											bind:group={selectedFreeSlots}
+											on:click={(e) => onFreeSlotClick(e, i)}
+											on:keydown={(e) => onFreeSlotKeydown(e, i)}
+											on:change={() => onFreeSlotChange(i)}
+										/>
+									</td>
+									<td class="nowrap">{formatDateWithWeekday(s.datum, null)}</td>
+									<td class="nowrap">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
+									<td>{s.titel}</td>
+									<td class="nowrap">{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+									<td class="admin-muted">{s.zeitzone}</td>
+									<td>
+										<form
+											method="POST"
+											action="?/cancel"
+											on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
+										>
+											<input type="hidden" name="id" value={s.id} />
+											<button type="submit" class="admin-link-warn text-xs">Sperren</button>
+										</form>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</form>
+		{/if}
+	</section>
 
 	<!-- Vergangene Termine -->
 	{#if data.pastSlots?.length > 0}
-		<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; opacity: 0.5;">
-			Vergangene Termine ({data.pastSlots.length})
-		</h2>
-		<div style="overflow-x: auto; margin-bottom: 2.5rem;">
-			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; opacity: 0.5;">
-				<thead>
-					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer'] as col}
-							<th style={tdNowrap}>{col}</th>
-						{/each}
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.pastSlots as s}
-						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style={tdNowrap}>{formatDateWithWeekday(s.datum, null)}</td>
-							<td style={tdNowrap}>{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
-							<td style={tdStyle}>{s.titel}</td>
-							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+		<section class="admin-card">
+			<h2 class="admin-card-title admin-muted">
+				Vergangene Termine <span class="admin-count">({data.pastSlots.length})</span>
+			</h2>
+			<div class="admin-table-wrap">
+				<table class="admin-table admin-table-muted">
+					<thead>
+						<tr>
+							{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer'] as col}
+								<th>{col}</th>
+							{/each}
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+					<tbody>
+						{#each data.pastSlots as s}
+							<tr>
+								<td class="nowrap">{formatDateWithWeekday(s.datum, null)}</td>
+								<td class="nowrap">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
+								<td>{s.titel}</td>
+								<td class="nowrap">{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</section>
 	{/if}
 
 	<!-- Gesperrte Termine -->
 	{#if data.cancelledSlots.length > 0}
-		<h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; opacity: 0.6;">
-			Gesperrte Termine ({data.cancelledSlots.length})
-		</h2>
-		<div style="overflow-x: auto;">
-			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; opacity: 0.7;">
-				<thead>
-					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer', ''] as col}
-							<th style={tdNowrap}>{col}</th>
-						{/each}
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.cancelledSlots as s}
-						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style="{tdNowrap} text-decoration: line-through;"
-								>{formatDateWithWeekday(s.datum, null)}</td
-							>
-							<td style="{tdNowrap} text-decoration: line-through;"
-								>{fmtTimeRange(s.uhrzeit, s.endzeit)}</td
-							>
-							<td style="{tdStyle} text-decoration: line-through;">{s.titel}</td>
-							<td style={tdNowrap}>{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
-							<td style={tdStyle}>
-								<form method="POST" action="?/uncancel">
-									<input type="hidden" name="id" value={s.id} />
-									<button
-										type="submit"
-										style="color: #059669; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
-									>
-										Freigeben
-									</button>
-								</form>
-							</td>
+		<section class="admin-card">
+			<h2 class="admin-card-title admin-muted">
+				Gesperrte Termine <span class="admin-count">({data.cancelledSlots.length})</span>
+			</h2>
+			<div class="admin-table-wrap">
+				<table class="admin-table admin-table-muted">
+					<thead>
+						<tr>
+							{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer', ''] as col}
+								<th>{col}</th>
+							{/each}
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+					<tbody>
+						{#each data.cancelledSlots as s}
+							<tr>
+								<td class="nowrap line-through">{formatDateWithWeekday(s.datum, null)}</td>
+								<td class="nowrap line-through">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
+								<td class="line-through">{s.titel}</td>
+								<td class="nowrap">{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+								<td>
+									<form method="POST" action="?/uncancel">
+										<input type="hidden" name="id" value={s.id} />
+										<button type="submit" class="admin-link-success text-xs">Freigeben</button>
+									</form>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</section>
 	{/if}
 
 	{#if actionLoading}
@@ -401,59 +346,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.page-header {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		margin-bottom: 2rem;
-	}
-
-	.header-actions {
-		margin-left: auto;
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	@media (max-width: 640px) {
-		.page-header {
-			align-items: flex-start;
-			flex-wrap: wrap;
-		}
-
-		.header-actions {
-			margin-left: 0;
-			flex: 0 0 100%;
-			justify-content: flex-start;
-			flex-wrap: wrap;
-		}
-	}
-
-	.admin-loading-overlay {
-		position: fixed;
-		inset: 0;
-		background: rgba(255, 255, 255, 0.7);
-		backdrop-filter: blur(4px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 9999;
-	}
-
-	.admin-loading-spinner {
-		width: 3rem;
-		height: 3rem;
-		border: 4px solid #e5e7eb;
-		border-top-color: #1e2d5a;
-		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-</style>

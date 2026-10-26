@@ -84,6 +84,8 @@ Theme-Farben kommen zur Laufzeit aus Prismic (CSS-Variablen via `themeUpdater.ts
 Regeln:
 
 - **Keine Inline-`style="…"`** für statische Werte oder Theme-Variablen — stattdessen Tailwind-Theme-Farbe oder zentrale Klasse; fehlt etwas: in `app.css` ergänzen
+- **CMS-Farben in Slices:** Wrapper bekommt `class="color-scope"` + nur CSS-Variablen (`--scope-color`, `--scope-bg`); Tönungen/Rahmen/Buttons via `.scope-*`-Klassen. Auf **Komponenten** (`Bounded`, `PrismicLink` …) ist ein `style="…"`-Attribut nur mit CSS-Variablen/CMS-Werten erlaubt (dort gibt es keine `style:`-Direktive)
+- **Admin & Kundenkonto** (`/admin`, `/konto`): neutrales, theme-unabhängiges UI-Kit `.admin-*` (app.css › Admin-UI), Kopfzeile via `AdminHeader.svelte` — keine eigenen Styles pro Seite
 - **Keine Tailwind-Palette-Farben** (`text-gray-500`, `bg-red-100` …) im öffentlichen Frontend — sie ignorieren das Theme. Ausnahme: Fehlermeldungen (`text-red-600`) und Admin
 - **Kein `opacity-*` für Text** — zu wenig Kontrast; `.text-muted` verwenden (`opacity-*` nur für dekorative Elemente/Platzhalter)
 - **Text auf eigenem Hintergrund** (Panels, Buttons) braucht eine kontrastgeprüfte Farbe: neue Fälle in `updateContrastColors()` ergänzen, nicht per Hand abdunkeln

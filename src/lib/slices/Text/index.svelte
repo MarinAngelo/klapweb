@@ -30,14 +30,14 @@
 {#if visible}
 	<Bounded
 		as="section"
-		class="leading-relaxed"
+		class="color-scope leading-relaxed font-[var(--page-font)]"
 		{yPaddingSame}
 		{yPaddingSize}
 		{marginTopSize}
 		innerBackgroundColor={innerApply ? bgColor : undefined}
-		style="font-family: var(--page-font); --page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {innerApply
+		style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-color: {textColor}; --scope-bg: {innerApply
 			? $theme.pageBgColor
-			: bgColor}; color: {textColor};"
+			: bgColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}

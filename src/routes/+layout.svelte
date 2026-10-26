@@ -439,7 +439,7 @@
 
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
-<div style="background-color: var(--page-bg-color); min-height: 100vh;">
+<div class="bg-page-bg [min-height:100vh]">
 	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
 		<Header
 			{navigation}
@@ -457,14 +457,11 @@
 
 	<main
 		id="main-content"
-		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
+		style:padding-top={stickyHeader && !hasBannerOverlap ? `${$headerHeight}px` : undefined}
 		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
-			<Bounded
-				as="section"
-				style="background-color: var(--page-bg-color); color: var(--page-color);"
-			>
+			<Bounded class="bg-page-bg text-page" as="section">
 				<!--Seiten Titel Page Title-->
 				<h1 use:reveal={titleAnimation} class="tracking-tight mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
@@ -497,9 +494,9 @@
 		@import '$lib/components/CrosshairDevTool.css';
 	</style>
 	<button
+		class="fixed [top:8px] [right:8px] [z-index:1000001] [width:28px] [height:28px] p-0 [background:#fff] [border:1px_solid_#ccc] [border-radius:50%] [box-shadow:0_2px_8px_#0001] [font-size:18px] [line-height:26px] cursor-pointer [opacity:0.7] flex items-center justify-center"
 		on:click={() => showCrosshair.update((v) => !v)}
 		aria-label={$showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden'}
-		style="position:fixed;top:8px;right:8px;z-index:1000001;width:28px;height:28px;padding:0;background:#fff;border:1px solid #ccc;border-radius:50%;box-shadow:0 2px 8px #0001;font-size:18px;line-height:26px;cursor:pointer;opacity:0.7;display:flex;align-items:center;justify-content:center;"
 	>
 		+
 	</button>

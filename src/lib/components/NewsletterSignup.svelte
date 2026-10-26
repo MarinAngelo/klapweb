@@ -132,7 +132,7 @@
 			</label>
 
 			{#if errorKey}
-				<p role="alert" class="text-sm" style="color: #dc2626;">{$_(errorKey)}</p>
+				<p role="alert" class="text-sm [color:#dc2626]">{$_(errorKey)}</p>
 			{/if}
 
 			<div>

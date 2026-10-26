@@ -26,15 +26,19 @@
 	<!-- SVG-Code kommt aus Prismic-CMS (admin-only → vertrauenswürdig) -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	<span
-		class="svgicon-cms inline-flex items-center justify-center flex-shrink-0"
-		style="width: {size}; height: {size}; color: {color}; vertical-align: middle;"
+		class="svgicon-cms inline-flex items-center justify-center flex-shrink-0 [vertical-align:middle]"
+		style:width={size}
+		style:height={size}
+		style:color
 		aria-hidden="true">{@html svgCode}</span
 	>
 {:else if cmsIcon?.image_url}
 	<img
+		class="[object-fit:contain] [vertical-align:middle]"
 		src={cmsIcon.image_url}
 		alt={cmsIcon.image_alt || ''}
-		style="width: {size}; height: {size}; object-fit: contain; vertical-align: middle;"
+		style:width={size}
+		style:height={size}
 		aria-hidden="true"
 	/>
 {:else if resolvedName === 'menu'}

@@ -34,11 +34,9 @@
 	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners
 		? 'rounded-2xl'
 		: ''}"
-	style="
-		background-color: {bodyBgColor || $theme.pageBgColor};
-		--custom-card-color: {bodyColor || $theme.pageColor};
-		{hasBorderColor ? `border-color: ${actualBorderColor};` : ''}
-	"
+	style:background-color={bodyBgColor || $theme.pageBgColor}
+	style:--custom-card-color={bodyColor || $theme.pageColor}
+	style:border-color={actualBorderColor || undefined}
 >
 	{#if isFilled.image(card.image)}
 		<div class="relative">

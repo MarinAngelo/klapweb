@@ -232,7 +232,7 @@
 		<div class="editor-container">
 			<div class="header">
 				<h1>{$_('Agency Gating Editor')}</h1>
-				<form method="POST" action="?/logout" style="display: inline;">
+				<form class="[display:inline]" method="POST" action="?/logout">
 					<button type="submit" class="btn btn-secondary">{$_('Abmelden')}</button>
 				</form>
 			</div>
@@ -318,7 +318,7 @@
 					<strong>{$_('Ausgewählte Features')}:</strong>
 					{selectedFeatures.join(', ') || $_('keine')}
 				</p>
-				<p style="color: #666; font-size: 0.9rem;">
+				<p class="[color:#666] [font-size:0.9rem]">
 					{$_('Zusätzlich')}: {selectedFeatures
 						.filter((f) => !planFeatures.includes(f))
 						.join(', ') || $_('keine')} / {$_('Entfernt')}: {planFeatures
