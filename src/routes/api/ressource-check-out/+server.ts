@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { plainTextMail } from '$lib/server/mailText';
 import { checkOutBuchung, updateRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
@@ -64,30 +65,32 @@ export async function POST({ request, fetch, url }) {
 				from: emailFrom,
 				to: toEmail,
 				subject: `Abrechnung freigeben: ${buchung.ressourceName ?? buchung.ressourceUid} – ${buchung.name ?? '–'}`,
-				text: [
-					`${buchung.name ?? '–'} hat ausgecheckt.`,
-					``,
-					`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-					`Anreise:   ${vonD}.${vonM}.${vonY}`,
-					`Abreise:   ${bisD}.${bisM}.${bisY}`,
-					`Personen:  ${buchung.personen}`,
-					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : []),
-					...(kommentar ? [``, `Kommentar:`, kommentar] : []),
-					``,
-					`─────────────────────────────────────`,
-					`ABRECHNUNG`,
-					`─────────────────────────────────────`,
-					`Mietpreis:         ${fmt(buchung.preisCHF)}`,
-					`Credits (Aufgaben): ${fmt(creditsCHF)}`,
-					`─────────────────────────────────────`,
-					`Total:             ${fmt(abrechnungBetrag)}`,
-					``,
-					`Erledigte Aufgaben:`,
-					...aufgabenZeilen,
-					``,
-					`Abrechnung prüfen, korrigieren und freigeben:`,
-					freigabeLink
-				].join('\n')
+				...plainTextMail(
+					[
+						`${buchung.name ?? '–'} hat ausgecheckt.`,
+						``,
+						`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
+						`Anreise:   ${vonD}.${vonM}.${vonY}`,
+						`Abreise:   ${bisD}.${bisM}.${bisY}`,
+						`Personen:  ${buchung.personen}`,
+						...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : []),
+						...(kommentar ? [``, `Kommentar:`, kommentar] : []),
+						``,
+						`─────────────────────────────────────`,
+						`ABRECHNUNG`,
+						`─────────────────────────────────────`,
+						`Mietpreis:         ${fmt(buchung.preisCHF)}`,
+						`Credits (Aufgaben): ${fmt(creditsCHF)}`,
+						`─────────────────────────────────────`,
+						`Total:             ${fmt(abrechnungBetrag)}`,
+						``,
+						`Erledigte Aufgaben:`,
+						...aufgabenZeilen,
+						``,
+						`Abrechnung prüfen, korrigieren und freigeben:`,
+						freigabeLink
+					].join('\n')
+				)
 			});
 		} catch (e) {
 			console.error('Check-out Abrechnungs-Mail Fehler:', e);

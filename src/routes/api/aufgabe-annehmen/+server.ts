@@ -4,6 +4,7 @@
  * Body: { buchungId, aufgabeUid } — title and credits are read from Prismic
  */
 import type { RequestHandler } from '@sveltejs/kit';
+import { plainTextMail } from '$lib/server/mailText';
 import { createAnnahme, listAlleAnnahmen } from '$lib/server/aufgaben';
 import { annahmeFehler, loadKatalog } from '$lib/server/aufgabenKatalog';
 import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
@@ -135,18 +136,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					from: emailFrom,
 					to: adminEmail,
 					subject: `Aufgabe angenommen: ${anzeigeTitel}`,
-					text: [
-						`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
-						``,
-						`Aufgabe: ${anzeigeTitel}`,
-						`Name:    ${guestName}`,
-						`E-Mail:  ${guestEmail}`,
-						`Buchung: ${buchungId}`,
-						``,
-						`─────────────────────────────────────`,
-						`Annahme freigeben (Nutzer erhält dann die Bestätigungsmail):`,
-						freigabeLink
-					].join('\n')
+					...plainTextMail(
+						[
+							`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
+							``,
+							`Aufgabe: ${anzeigeTitel}`,
+							`Name:    ${guestName}`,
+							`E-Mail:  ${guestEmail}`,
+							`Buchung: ${buchungId}`,
+							``,
+							`─────────────────────────────────────`,
+							`Annahme freigeben (Nutzer erhält dann die Bestätigungsmail):`,
+							freigabeLink
+						].join('\n')
+					)
 				});
 				if (e) console.error('Aufgabe Operator-Mail fehlgeschlagen:', e);
 			} catch (e) {

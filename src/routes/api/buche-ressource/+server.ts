@@ -20,6 +20,7 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
+import { plainTextMail } from '$lib/server/mailText';
 import { parseBookingLang } from '$lib/server/ressourceMail';
 import { bucheRessource, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
@@ -218,21 +219,23 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 				from: emailFrom,
 				to: toEmail,
 				subject: `Neue Buchungsanfrage: ${ressourceName}`,
-				text: [
-					`Neue Buchungsanfrage eingegangen.`,
-					``,
-					buchungsDetails,
-					``,
-					`Kontakt:`,
-					`Name:     ${name}`,
-					`E-Mail:   ${email}`,
-					...(telefon ? [`Telefon:  ${telefon}`] : []),
-					...(nachricht ? [``, `Nachricht:`, nachricht] : []),
-					``,
-					`─────────────────────────────────────`,
-					`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
-					bestaetigungsLink
-				].join('\n')
+				...plainTextMail(
+					[
+						`Neue Buchungsanfrage eingegangen.`,
+						``,
+						buchungsDetails,
+						``,
+						`Kontakt:`,
+						`Name:     ${name}`,
+						`E-Mail:   ${email}`,
+						...(telefon ? [`Telefon:  ${telefon}`] : []),
+						...(nachricht ? [``, `Nachricht:`, nachricht] : []),
+						``,
+						`─────────────────────────────────────`,
+						`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
+						bestaetigungsLink
+					].join('\n')
+				)
 			});
 			if (mailError) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', mailError);
 		} catch (e) {
