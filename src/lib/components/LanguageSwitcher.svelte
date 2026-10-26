@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { staticRoutes } from '$lib/i18n/i18n';
+	import { preferredLang } from '$lib/stores/preferredLang';
 
 	export let locales: string[] = [];
 	export let lang: string = '';
@@ -51,6 +52,7 @@
 		{#each links as item}
 			<a
 				href={item.href}
+				on:click={() => preferredLang.set(item.loc)}
 				class="nav-link text-lg font-bold uppercase transition-all {lang === item.loc
 					? 'underline'
 					: 'text-muted no-underline hover:underline'}"

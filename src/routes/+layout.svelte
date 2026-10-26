@@ -4,11 +4,12 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { building } from '$app/environment';
+	import { browser, building } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
-	import { repositoryName } from '$lib/prismicio';
+	import { repositoryName, createClient } from '$lib/prismicio';
+	import { preferredLang, uiLang } from '$lib/stores/preferredLang';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
@@ -153,6 +154,60 @@
 	}));
 
 	// --- SEO HREFLANG ---
+	// --- REMEMBERED LANGUAGE ---
+	// Pages under /<locale>/… and the language switcher set the preference. On a page without
+	// translation (main language URL) header, footer and UI texts stay in that language.
+	$: if (browser && showSwitcher && lang !== mainLang && $page.status === 200 && !isAdminPage)
+		preferredLang.set(lang);
+	$: wantedChromeLang =
+		browser &&
+		showSwitcher &&
+		!isAdminPage &&
+		lang === mainLang &&
+		$preferredLang &&
+		$preferredLang !== mainLang &&
+		locales?.includes($preferredLang)
+			? $preferredLang
+			: lang;
+
+	// Settings + navigation of the remembered language, loaded once per language in the browser
+	let chromeData: Record<string, { settings: any; navigation: any }> = {};
+	const chromeLoading = new Set<string>();
+	async function loadChrome(l: string) {
+		chromeLoading.add(l);
+		const client = createClient();
+		try {
+			const [s, n] = await Promise.all([
+				client.getSingle('settings', { lang: l }),
+				client.getSingle('navigation', { lang: l })
+			]);
+			chromeData = { ...chromeData, [l]: { settings: s, navigation: n } };
+		} catch {
+			// no settings/navigation in that language → stay in the page language
+		}
+	}
+	$: if (
+		wantedChromeLang !== lang &&
+		!chromeData[wantedChromeLang] &&
+		!chromeLoading.has(wantedChromeLang)
+	)
+		loadChrome(wantedChromeLang);
+	$: chrome = wantedChromeLang !== lang ? chromeData[wantedChromeLang] : undefined;
+	$: chromeLang = chrome ? wantedChromeLang : lang;
+	$: chromeSettings = chrome?.settings ?? settings;
+	$: chromeNavigation = chrome?.navigation ?? navigation;
+	$: uiLang.set(chromeLang !== lang ? chromeLang : null);
+
+	// Page exists in the remembered language (e.g. link from German content) → open the translation
+	$: if (browser && wantedChromeLang !== lang && $page.status === 200) {
+		const doc = $page.data.page ?? $page.data.doc ?? $page.data.leistung;
+		const target = doc?.alternate_languages?.some((a: any) => a.lang === wantedChromeLang)
+			? allAlternates.find((a: any) => a.lang === wantedChromeLang)?.href
+			: null;
+		if (target && target !== $page.url.pathname)
+			goto(target + $page.url.search + $page.url.hash, { replaceState: true });
+	}
+
 	$: seoAlternates = allAlternates.map((alt) => ({
 		lang: alt.lang,
 		href: `${cleanBaseUrl}${alt.href}`
@@ -454,10 +509,10 @@
 <div class="bg-page-bg [min-height:100vh]">
 	{#if !hideChrome}
 		<Header
-			{navigation}
-			{settings}
+			navigation={chromeNavigation}
+			settings={chromeSettings}
 			{prismicTheme}
-			{lang}
+			lang={chromeLang}
 			{locales}
 			{allAlternates}
 			{showSwitcher}
@@ -487,17 +542,22 @@
 	</main>
 
 	{#if !hideChrome}
-		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
+		<Footer
+			navigation={chromeNavigation}
+			settings={chromeSettings}
+			lang={chromeLang}
+			mainLang={data.mainLang}
+		/>
 	{/if}
 </div>
 
 <PageUpButton />
-<CookieBanner {lang} mainLang={data.mainLang} />
+<CookieBanner lang={chromeLang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
 {#if chatActive && !isAdminPage}
-	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
+	<ChatWidget botName={chatBotName} greeting={chatGreeting} lang={chromeLang} />
 {/if}
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
