@@ -2,7 +2,9 @@
 	import { PrismicRichText } from '@prismicio/svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
-	import Checkbox from '$lib/components/Checkbox.svelte';
+	import RememberMe from '$lib/components/auth/RememberMe.svelte';
+	import CancelLogin from '$lib/components/auth/CancelLogin.svelte';
+	import { REMEMBER_SECONDS } from '$lib/auth/remember';
 	import AufgabeDetails from './AufgabeDetails.svelte';
 	import AufgabeAnnehmen from './AufgabeAnnehmen.svelte';
 	import PrioritaetBadge from './PrioritaetBadge.svelte';
@@ -26,7 +28,7 @@
 	// "Remember me": booking reference in localStorage, registered as functional
 	// consent service "aufgaben_login"
 	const REMEMBER_KEY = 'klap_aufgaben_login';
-	const REMEMBER_MS = 14 * 24 * 60 * 60 * 1000;
+	const REMEMBER_MS = REMEMBER_SECONDS * 1000;
 
 	function saveRemembered() {
 		try {
@@ -283,16 +285,6 @@
 		}
 	}
 
-	// Leave the page: back if there is history, otherwise to the start page
-	function cancelLogin() {
-		if (history.length > 1) history.back();
-		else goto('/');
-	}
-
-	function handleModalKeydown(e: KeyboardEvent) {
-		if (!loggedIn && e.key === 'Escape') cancelLogin();
-	}
-
 	// Leave to the start page; state is not reset first so the login modal doesn't flash
 	function logout() {
 		clearRemembered();
@@ -349,8 +341,6 @@
 	$: textColor = primary?.text_color || '';
 </script>
 
-<svelte:window on:keydown={handleModalKeydown} />
-
 <Bounded {slice}>
 	<div style:background-color={bgColor || undefined} style:color={textColor || undefined}>
 		{#if loggedIn}
@@ -398,10 +388,7 @@
 									class="form-input"
 								/>
 							</div>
-							<label for="aufgaben-remember" class="flex items-start gap-2 cursor-pointer text-sm">
-								<Checkbox id="aufgaben-remember" bind:checked={rememberMe} />
-								<span>{$_('Angemeldet bleiben (14 Tage)')}</span>
-							</label>
+							<RememberMe id="aufgaben-remember" bind:checked={rememberMe} />
 							{#if loginError}
 								<p class="text-sm text-red-600">{loginError}</p>
 							{/if}
@@ -412,9 +399,7 @@
 							>
 								{loginLoading ? $_('Wird geladen…') : $_('Einloggen')}
 							</button>
-							<button type="button" on:click={cancelLogin} class="text-sm underline text-muted">
-								{$_('Abbrechen')}
-							</button>
+							<CancelLogin />
 						</form>
 					</div>
 				</div>

@@ -12,6 +12,7 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import { createHmac, timingSafeEqual } from 'crypto';
 import type { Cookies } from '@sveltejs/kit';
+import { REMEMBER_SECONDS } from '$lib/auth/remember';
 
 export const ADMIN_COOKIE = 'admin_session';
 const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
@@ -36,14 +37,16 @@ export function isValidAdminPassword(password: string | null | undefined): boole
 	return timingSafeEqual(digest(password), digest(secret));
 }
 
-export function startAdminSession(cookies: Cookies): void {
-	const exp = String(Date.now() + SESSION_MAX_AGE_SECONDS * 1000);
+/** remember = "Angemeldet bleiben" → REMEMBER_DAYS instead of 8 h */
+export function startAdminSession(cookies: Cookies, remember = false): void {
+	const maxAge = remember ? REMEMBER_SECONDS : SESSION_MAX_AGE_SECONDS;
+	const exp = String(Date.now() + maxAge * 1000);
 	cookies.set(ADMIN_COOKIE, `${exp}.${hmac('admin-session', exp)}`, {
 		path: '/',
 		httpOnly: true,
 		secure: !dev,
 		sameSite: 'lax',
-		maxAge: SESSION_MAX_AGE_SECONDS
+		maxAge
 	});
 }
 
