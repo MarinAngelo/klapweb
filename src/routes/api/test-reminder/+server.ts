@@ -11,6 +11,7 @@
  */
 
 import { json } from '@sveltejs/kit';
+import { getRessourceDocForBooking } from '$lib/server/ressourceMail';
 import { env } from '$env/dynamic/private';
 import { isAdmin } from '$lib/server/adminAuth';
 import { getStore } from '@netlify/blobs';
@@ -98,7 +99,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	for (const buchung of upcoming) {
 		try {
-			const doc = await client.getByUID('ressource', buchung.ressourceUid);
+			const doc = await getRessourceDocForBooking(client, buchung);
 			const d = doc.data as any;
 
 			const textField =

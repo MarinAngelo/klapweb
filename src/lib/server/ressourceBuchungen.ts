@@ -33,6 +33,7 @@ export interface RessourceBuchung {
 	email?: string;
 	telefon?: string;
 	nachricht?: string;
+	lang?: string; // Prismic locale of the booking page → language of the guest mails
 	checkedInAt?: string;
 	checkOutAt?: string;
 	checkInItems?: string[];

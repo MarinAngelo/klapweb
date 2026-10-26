@@ -799,6 +799,48 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Buchungsbestätigung: {ressource}': {
+		'de-ch': 'Buchungsbestätigung: {ressource}',
+		'en-us': 'Booking confirmation: {ressource}'
+	},
+	'Ihre Anreise: {ressource}': {
+		'de-ch': 'Ihre Anreise: {ressource}',
+		'en-us': 'Your arrival: {ressource}'
+	},
+	'Ihre Abreise morgen: {ressource}': {
+		'de-ch': 'Ihre Abreise morgen: {ressource}',
+		'en-us': 'Your departure tomorrow: {ressource}'
+	},
+	'Guten Tag {name}': { 'de-ch': 'Guten Tag {name}', 'en-us': 'Hello {name}' },
+	'Hallo {name},': { 'de-ch': 'Hallo {name},', 'en-us': 'Hello {name},' },
+	'Ihre Buchungsanfrage wurde bestätigt.': {
+		'de-ch': 'Ihre Buchungsanfrage wurde bestätigt.',
+		'en-us': 'Your booking request has been confirmed.'
+	},
+	'Ihre Buchungsreferenz': { 'de-ch': 'Ihre Buchungsreferenz', 'en-us': 'Your booking reference' },
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)': {
+		'de-ch': '(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)',
+		'en-us': '(You will need it for check-in and check-out on our website.)'
+	},
+	'Wir melden uns in Kürze zur Zahlungsabwicklung.': {
+		'de-ch': 'Wir melden uns in Kürze zur Zahlungsabwicklung.',
+		'en-us': 'We will contact you shortly regarding payment.'
+	},
+	'Freundliche Grüsse': { 'de-ch': 'Freundliche Grüsse', 'en-us': 'Kind regards' },
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).': {
+		'de-ch': 'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).',
+		'en-us': 'we look forward to your arrival on {anreise} (departure: {abreise}).'
+	},
+	Türcode: { 'de-ch': 'Türcode', 'en-us': 'Door code' },
+	'Bei Fragen': { 'de-ch': 'Bei Fragen', 'en-us': 'Questions' },
+	Referenz: { 'de-ch': 'Referenz', 'en-us': 'Reference' },
+	Ressource: { 'de-ch': 'Ressource', 'en-us': 'Accommodation' },
+	Zimmer: { 'de-ch': 'Zimmer', 'en-us': 'Rooms' },
+	Doppelbett: { 'de-ch': 'Doppelbett', 'en-us': 'Double bed' },
+	'Doppelbett (140 cm)': { 'de-ch': 'Doppelbett (140 cm)', 'en-us': 'Double bed (140 cm)' },
+	Einzelbett: { 'de-ch': 'Einzelbett', 'en-us': 'Single bed' },
+	Stockbett: { 'de-ch': 'Stockbett', 'en-us': 'Bunk bed' },
+	Schlafsofa: { 'de-ch': 'Schlafsofa', 'en-us': 'Sofa bed' },
 	'Merkt sich die gewählte Sprache der Website.': {
 		'de-ch': 'Merkt sich die gewählte Sprache der Website.',
 		'en-us': 'Remembers the language you selected for this website.'

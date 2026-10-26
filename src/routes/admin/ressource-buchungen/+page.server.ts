@@ -14,6 +14,12 @@ import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
+import {
+	bestaetigungFallbackText,
+	bestaetigungTokens,
+	fallbackSubject,
+	getRessourceDocForBooking
+} from '$lib/server/ressourceMail';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
 	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
@@ -59,49 +65,28 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
-	const naechte = Math.round(
-		(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
-	);
-
-	const vonFormatted = formatDateWithWeekday(buchung.von, null, 'de-CH', 'long');
-	const bisFormatted = formatDateWithWeekday(buchung.bis, null, 'de-CH', 'long');
-
-	const zimmerauswahl = buchung.zimmerauswahl ?? [];
-	const zimmerHtml = zimmerauswahl.length
-		? `<ul>${zimmerauswahl.map((z) => `<li>${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})</li>`).join('')}</ul>`
-		: 'Ganze Wohnung';
-
-	const tokenMap: Record<string, string> = {
-		Name: buchung.name ?? '',
-		Ressource: buchung.ressourceName ?? buchung.ressourceUid,
-		RessourceUid: buchung.ressourceUid,
-		Anreise: vonFormatted,
-		Abreise: bisFormatted,
-		Nächte: String(naechte),
-		Personen: String(buchung.personen),
-		Zimmer: zimmerHtml,
-		Total: fmt(buchung.preisCHF),
-		Buchungsreferenz: buchung.referenz ?? buchung.id
-	};
-
-	let betreff = `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`;
-	let mailHtml: string | null = null;
-
+	// CMS template in the booking language (fallback: main language)
+	let ressourceName: string | undefined;
+	let cmsBetreff = '';
+	let cmsTextField: prismic.RichTextField | undefined;
 	try {
 		const client = createClient({ fetch });
-		const doc = await client.getByUID('ressource', buchung.ressourceUid);
+		const doc = await getRessourceDocForBooking(client, buchung);
 		const d = doc.data as any;
-
-		const cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim();
-		if (cmsBetreff) betreff = replaceTokens(cmsBetreff, tokenMap);
-
-		const cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
-		if (cmsTextField?.length) {
-			mailHtml = replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap);
-		}
+		ressourceName = d.name;
+		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
+		cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
 	} catch {
 		// Prismic unavailable — use fallback
 	}
+
+	const tokenMap = bestaetigungTokens(buchung, ressourceName);
+	const betreff = cmsBetreff
+		? replaceTokens(cmsBetreff, tokenMap)
+		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
+	const mailHtml = cmsTextField?.length
+		? replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap)
+		: null;
 
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);
@@ -115,33 +100,11 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 		});
 		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
 	} else {
-		const zimmerZeilen = zimmerauswahl.map(
-			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
-		);
 		const { error: e } = await resend.emails.send({
 			from: emailFrom,
 			to: buchung.email,
 			subject: betreff,
-			text: [
-				`Guten Tag ${buchung.name}`,
-				``,
-				`Ihre Buchungsanfrage wurde bestätigt.`,
-				``,
-				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				`Anreise:   ${vonFormatted}`,
-				`Abreise:   ${bisFormatted}`,
-				`Nächte:    ${naechte}`,
-				`Personen:  ${buchung.personen}`,
-				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
-				`Total:     ${fmt(buchung.preisCHF)}`,
-				``,
-				`Ihre Buchungsreferenz: ${buchung.referenz ?? buchung.id}`,
-				`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
-				``,
-				`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
-				``,
-				`Freundliche Grüsse`
-			].join('\n')
+			text: bestaetigungFallbackText(buchung, tokenMap)
 		});
 		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
 	}

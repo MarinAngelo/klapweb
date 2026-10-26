@@ -38,6 +38,11 @@ function formatDate(dateStr: string): string {
 	return `${d}.${m}.${y}`;
 }
 
+// Fallback subjects only (translations.ts needs SvelteKit and is not available here)
+function isEnglish(buchung: any): boolean {
+	return typeof buchung.lang === 'string' && buchung.lang.startsWith('en');
+}
+
 function replaceTokens(html: string, tokens: Record<string, string>): string {
 	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
 }
@@ -146,6 +151,18 @@ export default async function handler() {
 		};
 	}
 
+	// Resource document in the booking language (buchung.lang), otherwise main language
+	async function getDoc(buchung: any) {
+		if (buchung.lang) {
+			try {
+				return await client.getByUID('ressource', buchung.ressourceUid, { lang: buchung.lang });
+			} catch {
+				// no translation
+			}
+		}
+		return client.getByUID('ressource', buchung.ressourceUid);
+	}
+
 	function doorCode(uid: string) {
 		const key = uid.toUpperCase().replace(/-/g, '_');
 		return process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '';
@@ -161,7 +178,7 @@ export default async function handler() {
 
 		for (const buchung of upcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.abreise_text as any[] | undefined;
@@ -174,7 +191,7 @@ export default async function handler() {
 
 				const betreff =
 					(d.abreise_betreff as string)?.trim() ||
-					`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
+					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
 					prismic.asHTML(textField) ?? '',
@@ -217,7 +234,7 @@ export default async function handler() {
 
 		for (const buchung of ankunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.reminder_text as any[] | undefined;
@@ -230,7 +247,7 @@ export default async function handler() {
 
 				const betreff =
 					(d.reminder_betreff as string)?.trim() ||
-					`Ihre Anreise morgen: ${d.name ?? buchung.ressourceUid}`;
+					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
 					prismic.asHTML(textField) ?? '',
@@ -273,7 +290,7 @@ export default async function handler() {
 
 		for (const buchung of nachAnkunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.nach_ankunft_text as any[] | undefined;

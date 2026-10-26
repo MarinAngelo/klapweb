@@ -20,6 +20,7 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
+import { parseBookingLang } from '$lib/server/ressourceMail';
 import { bucheRessource, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
@@ -68,6 +69,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		email?: string;
 		telefon?: string;
 		nachricht?: string;
+		lang?: string;
 	};
 
 	try {
@@ -161,7 +163,8 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 				name,
 				email,
 				telefon,
-				nachricht
+				nachricht,
+				...(parseBookingLang(body.lang) ? { lang: parseBookingLang(body.lang)! } : {})
 			},
 			conflictUids
 		);

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { Content } from '@prismicio/client';
 	import { PrismicRichText } from '@prismicio/svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
@@ -255,7 +256,8 @@
 					name,
 					email,
 					telefon,
-					nachricht
+					nachricht,
+					lang: context?.lang ?? $page.data?.lang
 				})
 			});
 			const data = await res.json();
