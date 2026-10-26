@@ -745,3 +745,75 @@ p {
 .skip-link:focus {
 	top: 0;
 }
+
+/* ── Shared UI building blocks (forms, panels, modals) ─────────────────────────
+   Colors follow the page theme (--page-color / --page-bg-color). */
+
+/* Text input / textarea with bottom border */
+.form-input {
+	@apply mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm;
+	background-color: var(--page-bg-color);
+	color: var(--page-color);
+	border-bottom-color: var(--page-color);
+}
+
+/* Filled button in page colors (inverted); --btn-solid-color is contrast-adjusted (themeUpdater) */
+.btn-solid {
+	border: 1px solid var(--page-color);
+	background-color: var(--page-color);
+	color: var(--btn-solid-color, var(--page-bg-color));
+}
+/* Disabled: outline instead of transparency — stays readable, clearly inactive */
+.btn-solid:disabled,
+.btn-solid.is-disabled {
+	background-color: transparent;
+	border-style: dashed;
+	color: inherit;
+	cursor: not-allowed;
+}
+
+/* Lightly tinted card with bottom border (accordion items, lists) */
+.panel-tinted {
+	/* --panel-bg / --panel-color are computed in themeUpdater (contrast-safe text color) */
+	border-color: var(--panel-color, var(--page-color));
+	background-color: var(--panel-bg, color-mix(in srgb, var(--page-color) 7%, transparent));
+	color: var(--panel-color, inherit);
+}
+
+/* Secondary text (labels, hints): toned down but still readable — instead of opacity-50/60 */
+.text-muted {
+	color: color-mix(in srgb, currentColor 85%, transparent);
+}
+
+.border-page {
+	border-color: var(--page-color);
+}
+
+/* Collapsible body: toggle .is-open (animated via grid rows) */
+.collapse-body {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 300ms ease-out;
+}
+.collapse-body.is-open {
+	grid-template-rows: 1fr;
+}
+
+/* Modal: dimmed backdrop + card in page colors */
+.modal-backdrop {
+	background-color: rgba(0, 0, 0, 0.45);
+}
+.modal-card {
+	background-color: var(--page-bg-color);
+	color: var(--page-color);
+}
+
+/* Photo upload slot (4:3) and busy overlay on top of it */
+.photo-slot {
+	aspect-ratio: 4 / 3;
+	border-color: var(--page-color);
+	background-color: color-mix(in srgb, var(--page-color) 6%, transparent);
+}
+.busy-overlay {
+	background-color: color-mix(in srgb, var(--page-bg-color) 70%, transparent);
+}

@@ -9,10 +9,9 @@
 
 {#if prioritaet}
 	<span
-		class="inline-block shrink-0 rounded-full border px-2 py-0.5 text-xs font-normal tracking-normal align-middle"
+		class="inline-block shrink-0 rounded-full border border-current px-2 py-0.5 text-xs font-normal tracking-normal align-middle"
 		class:font-semibold={isHigh}
-		class:opacity-60={!isHigh}
-		style="border-color: currentColor;"
+		class:text-muted={!isHigh}
 		title={$_('Priorität')}
 	>
 		{$_(prioritaet)}

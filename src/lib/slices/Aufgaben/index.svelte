@@ -15,10 +15,6 @@
 	export let slice: any;
 	export const index: number = 0;
 
-	const inputStyle = `background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);`;
-	const inputClass =
-		'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm';
-
 	// ── Auth state ────────────────────────────────────────────────────────────
 	let buchungId = '';
 	let loggedIn = false;
@@ -125,6 +121,8 @@
 	let aufgaben: Aufgabe[] = [];
 	let annahmen: Annahme[] = [];
 	let aufgabenLoading = false;
+	// Rate for time-based credits of this booking (per minute)
+	let tarif: { chfProMinute: number | null; eurProMinute: number | null } | null = null;
 
 	// ── Per-task action state ─────────────────────────────────────────────────
 	let actionLoading: Record<string, boolean> = {};
@@ -189,7 +187,7 @@
 				return;
 			}
 			annahmen = await res.json();
-			await loadAufgaben();
+			await Promise.all([loadAufgaben(), loadTarif()]);
 			loggedIn = true;
 			if (rememberMe) saveRemembered();
 			else clearRemembered();
@@ -197,6 +195,15 @@
 			loginError = $_('Ein Fehler ist aufgetreten');
 		} finally {
 			loginLoading = false;
+		}
+	}
+
+	async function loadTarif() {
+		try {
+			const res = await fetch(`/api/aufgaben-tarif?buchungId=${encodeURIComponent(buchungId)}`);
+			tarif = res.ok ? await res.json() : null;
+		} catch {
+			tarif = null; // non-critical: rate is only shown as a hint
 		}
 	}
 
@@ -345,12 +352,7 @@
 <svelte:window on:keydown={handleModalKeydown} />
 
 <Bounded {slice}>
-	<div
-		style={[
-			bgColor ? `background-color:${bgColor};` : '',
-			textColor ? `color:${textColor};` : ''
-		].join('')}
-	>
+	<div style:background-color={bgColor || undefined} style:color={textColor || undefined}>
 		{#if loggedIn}
 			{#if primary.heading}
 				<div class="mb-4">
@@ -378,13 +380,9 @@
 			<!-- Login Modal -->
 			{#if !restoring}
 				<div
-					class="fixed inset-0 z-[10000] flex items-center justify-center p-4 backdrop-blur-sm"
-					style="background-color: rgba(0,0,0,0.45);"
+					class="modal-backdrop fixed inset-0 z-[10000] flex items-center justify-center p-4 backdrop-blur-sm"
 				>
-					<div
-						class="w-full max-w-sm rounded-2xl shadow-2xl p-8 flex flex-col gap-5"
-						style="background-color: var(--page-bg-color); color: var(--page-color);"
-					>
+					<div class="modal-card w-full max-w-sm rounded-2xl shadow-2xl p-8 flex flex-col gap-5">
 						<h2 class="text-2xl font-bold">{$_('Aufgabenliste')}</h2>
 						<p class="text-base">
 							{$_('Bitte melde dich mit der Buchungs-ID an, die du per E-Mail erhalten hast.')}
@@ -397,8 +395,7 @@
 									type="text"
 									bind:value={buchungId}
 									required
-									class={inputClass}
-									style={inputStyle}
+									class="form-input"
 								/>
 							</div>
 							<label for="aufgaben-remember" class="flex items-start gap-2 cursor-pointer text-sm">
@@ -411,14 +408,11 @@
 							<button
 								type="submit"
 								disabled={loginLoading}
-								class="mt-2 px-6 py-2 text-sm font-medium rounded"
-								style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {loginLoading
-									? 0.6
-									: 1};"
+								class="btn-solid mt-2 px-6 py-2 text-sm font-medium rounded"
 							>
 								{loginLoading ? $_('Wird geladen…') : $_('Einloggen')}
 							</button>
-							<button type="button" on:click={cancelLogin} class="text-sm underline opacity-60">
+							<button type="button" on:click={cancelLogin} class="text-sm underline text-muted">
 								{$_('Abbrechen')}
 							</button>
 						</form>
@@ -428,8 +422,8 @@
 		{:else}
 			<!-- Eingeloggt -->
 			<div class="flex items-center justify-between mb-6">
-				<p class="text-sm opacity-60">{$_('Buchungs-Referenz')}: {buchungId}</p>
-				<button on:click={logout} class="text-sm underline opacity-60">{$_('Abmelden')}</button>
+				<p class="text-sm text-muted">{$_('Buchungs-Referenz')}: {buchungId}</p>
+				<button on:click={logout} class="text-sm underline text-muted">{$_('Abmelden')}</button>
 			</div>
 
 			<!-- Meine Aufgaben -->
@@ -438,10 +432,7 @@
 				<div class="flex flex-col gap-4 mb-8">
 					{#each meineAufgaben as a, i (a.id)}
 						{@const aufgabe = aufgabenMap.get(a.aufgabeUid)}
-						<div
-							class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
-							style="border-color: var(--page-color); background-color: var(--page-color-11, color-mix(in srgb, var(--page-color) 7%, transparent));"
-						>
+						<div class="panel-tinted border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3">
 							<button
 								class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 pb-5 md:pb-1 text-left"
 								aria-expanded={$meineOpenIndex === i}
@@ -449,7 +440,7 @@
 							>
 								<span class="flex flex-col gap-0.5 min-w-0">
 									<span>{annahmeTitel(a)}</span>
-									<span class="text-sm font-normal opacity-60">
+									<span class="text-sm font-normal text-muted">
 										{statusLabels[a.status] ?? a.status}{#if a.credits != null}
 											· {a.credits} {$_('Credits')}{/if}{#if a.minuten != null}
 											· {a.minuten} min{/if}
@@ -467,10 +458,7 @@
 								</svg>
 							</button>
 
-							<div
-								class="accordion-body"
-								style="grid-template-rows: {$meineOpenIndex === i ? '1fr' : '0fr'};"
-							>
+							<div class="collapse-body" class:is-open={$meineOpenIndex === i}>
 								<div class="overflow-hidden">
 									<div class="pb-4 pt-2 flex flex-col gap-8">
 										<!-- Aufgaben-Infos (gleich wie verfügbare Aufgaben) -->
@@ -489,8 +477,7 @@
 														<div class="flex flex-col gap-1">
 															<label
 																for="foto-{key}"
-																class="block border rounded-lg overflow-hidden cursor-pointer relative"
-																style="border-color: var(--page-color); aspect-ratio: 4/3; background-color: color-mix(in srgb, var(--page-color) 6%, transparent);"
+																class="photo-slot block border rounded-lg overflow-hidden cursor-pointer relative"
 															>
 																{#if url}
 																	<img
@@ -500,7 +487,7 @@
 																	/>
 																{:else}
 																	<span
-																		class="absolute inset-0 flex flex-col items-center justify-center gap-1 text-xs opacity-60"
+																		class="absolute inset-0 flex flex-col items-center justify-center gap-1 text-xs text-muted"
 																	>
 																		<span class="text-xl">📷</span>
 																		{art === 'vorher' ? $_('Vorher') : $_('Nachher')}
@@ -508,8 +495,7 @@
 																{/if}
 																{#if fotoUploading[key]}
 																	<span
-																		class="absolute inset-0 flex items-center justify-center text-xs"
-																		style="background-color: color-mix(in srgb, var(--page-bg-color) 70%, transparent);"
+																		class="busy-overlay absolute inset-0 flex items-center justify-center text-xs"
 																		>{$_('Wird hochgeladen…')}</span
 																	>
 																{/if}
@@ -544,8 +530,7 @@
 														type="number"
 														min="1"
 														bind:value={minutenInput[a.id]}
-														class={inputClass}
-														style={inputStyle}
+														class="form-input"
 														placeholder={$_('Minuten eingeben')}
 													/>
 												{/if}
@@ -557,8 +542,7 @@
 													bind:value={kommentarInput[a.id]}
 													rows="3"
 													required
-													class={inputClass}
-													style={inputStyle}
+													class="form-input"
 													placeholder={$_('Kommentar eingeben')}
 												></textarea>
 												<FileField
@@ -573,12 +557,7 @@
 													type="button"
 													disabled={actionLoading[a.id]}
 													on:click={() => aufgabeAbgeben(a)}
-													class="px-4 py-1.5 text-sm rounded self-end"
-													style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {actionLoading[
-														a.id
-													]
-														? 0.6
-														: 1};"
+													class="btn-solid px-4 py-1.5 text-sm rounded self-end"
 												>
 													{actionLoading[a.id] ? $_('Wird geladen…') : $_('Aufgabe abgeben')}
 												</button>
@@ -595,17 +574,14 @@
 			<!-- Verfügbare Aufgaben -->
 			<h3 class="text-lg font-semibold mb-3">{$_('Verfügbare Aufgaben')}</h3>
 			{#if aufgabenLoading}
-				<p class="text-sm opacity-60">{$_('Wird geladen…')}</p>
+				<p class="text-sm text-muted">{$_('Wird geladen…')}</p>
 			{:else if verfuegbareAufgaben.length === 0}
-				<p class="text-sm opacity-60">{$_('Keine Aufgaben verfügbar')}</p>
+				<p class="text-sm text-muted">{$_('Keine Aufgaben verfügbar')}</p>
 			{:else}
 				<div class="flex flex-col gap-4">
 					{#each verfuegbareAufgaben as aufgabe, i (aufgabe.uid)}
 						{@const teile = teilaufgabenMap.get(aufgabe.uid) ?? []}
-						<div
-							class="border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3"
-							style="border-color: var(--page-color); background-color: var(--page-color-11, color-mix(in srgb, var(--page-color) 7%, transparent));"
-						>
+						<div class="panel-tinted border-b pb-0 md:pb-4 md:rounded-t min-w-0 px-3">
 							<button
 								class="text-2xl font-semibold tracking-tight inline-flex items-center justify-between w-full mt-3 py-1 pb-5 md:pb-1 text-left"
 								aria-expanded={$aufgabenOpenIndex === i}
@@ -627,10 +603,7 @@
 								</svg>
 							</button>
 
-							<div
-								class="accordion-body"
-								style="grid-template-rows: {$aufgabenOpenIndex === i ? '1fr' : '0fr'};"
-							>
+							<div class="collapse-body" class:is-open={$aufgabenOpenIndex === i}>
 								<div class="overflow-hidden">
 									<div class="pb-4 pt-2 flex flex-col gap-8">
 										<AufgabeDetails {aufgabe} />
@@ -639,7 +612,7 @@
 											<!-- Teilaufgaben: each can be accepted on its own -->
 											<div class="flex flex-col gap-2">
 												<p class="text-sm font-medium">{$_('Teilaufgaben')}</p>
-												<p class="text-sm opacity-60">
+												<p class="text-sm text-muted">
 													{fortschritt(teile)}{#if aufgabe.enforce_order}
 														· {$_('in vorgegebener Reihenfolge')}{/if}
 												</p>
@@ -653,14 +626,11 @@
 											</div>
 											<ol class="flex flex-col gap-6">
 												{#each teile as teil, j (teil.uid)}
-													<li
-														class="flex flex-col gap-4 border-l-2 pl-4"
-														style="border-color: var(--page-color);"
-													>
+													<li class="border-page flex flex-col gap-4 border-l-2 pl-4">
 														<p class="text-lg font-semibold">
 															{aufgabe.enforce_order ? `${j + 1}. ` : ''}{teil.titel}
 															{#if teil.erledigt}
-																<span class="text-sm font-normal opacity-60"
+																<span class="text-sm font-normal text-muted"
 																	>· {$_('Erledigt')}</span
 																>
 															{/if}
@@ -670,6 +640,7 @@
 															aufgabe={teil}
 															loading={actionLoading[teil.uid]}
 															error={actionError[teil.uid]}
+															{tarif}
 															accepted={eigeneOffen.has(teil.uid)}
 															{haftungsausschlussUrl}
 															bind:haftungAccepted
@@ -684,6 +655,7 @@
 												{aufgabe}
 												loading={actionLoading[aufgabe.uid]}
 												error={actionError[aufgabe.uid]}
+												{tarif}
 												accepted={eigeneOffen.has(aufgabe.uid)}
 												{haftungsausschlussUrl}
 												bind:haftungAccepted
@@ -700,10 +672,3 @@
 		{/if}
 	</div>
 </Bounded>
-
-<style>
-	.accordion-body {
-		display: grid;
-		transition: grid-template-rows 300ms ease-out;
-	}
-</style>

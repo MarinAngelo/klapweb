@@ -62,8 +62,8 @@
 				"type": "Select",
 				"config": {
 					"label": "Credit-Typ",
-					"options": ["Fest", "Offen (Zeitbasiert)"],
-					"default_value": "Fest"
+					"options": ["Offen (Zeitbasiert)", "Fest"],
+					"default_value": "Offen (Zeitbasiert)"
 				}
 			},
 			"credit_betrag": {
