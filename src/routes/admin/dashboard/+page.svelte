@@ -78,9 +78,12 @@
 <div class="admin-container-narrow">
 	<div class="admin-header">
 		<h1>{$_('Dashboard')}</h1>
-		<form method="POST" action="/admin?/logout" class="admin-header-actions">
-			<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
-		</form>
+		<div class="admin-header-actions">
+			<a href="/" class="admin-btn">⌂ {$_('Zur Website')}</a>
+			<form method="POST" action="/admin?/logout">
+				<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
+			</form>
+		</div>
 	</div>
 
 	<div class="grid gap-3">

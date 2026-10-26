@@ -7,6 +7,8 @@
 	export let count: number | undefined = undefined;
 	/** Show "← Dashboard" link above the title */
 	export let back = true;
+	/** Show "Zur Website" button (admin pages have no site header) */
+	export let home = true;
 </script>
 
 {#if back}
@@ -17,7 +19,10 @@
 		{title}
 		{#if count != null}<span class="admin-count">({count})</span>{/if}
 	</h1>
-	{#if $$slots.default}
-		<div class="admin-header-actions"><slot /></div>
-	{/if}
+	<div class="admin-header-actions">
+		{#if home}
+			<a href="/" class="admin-btn">⌂ {$_('Zur Website')}</a>
+		{/if}
+		<slot />
+	</div>
 </div>
