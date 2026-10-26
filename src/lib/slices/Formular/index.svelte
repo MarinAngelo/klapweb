@@ -605,8 +605,8 @@
 					<div class="mt-8 flex justify-center md:justify-end">
 						<Button
 							text={submitting
-								? 'Wird gesendet…'
-								: slice.primary?.submitt_button_text || 'Absenden'}
+								? t('Wird gesendet…', lang)
+								: slice.primary?.submitt_button_text || t('Absenden', lang)}
 							disabled={!!linkError || submitting}
 							link={undefined}
 							styleName={submitBtnStyle}
@@ -623,10 +623,16 @@
 
 	{#if showModal}
 		<Modal
-			title={formSubmittetTitle || 'Vielen Dank!'}
+			title={formSubmittetTitle || t('Vielen Dank!', lang)}
 			message={formSubmittetText?.length
 				? formSubmittetText
-				: [{ type: 'paragraph', text: 'Ihre Nachricht wurde erfolgreich gesendet.', spans: [] }]}
+				: [
+						{
+							type: 'paragraph',
+							text: t('Ihre Nachricht wurde erfolgreich gesendet.', lang),
+							spans: []
+						}
+					]}
 			onClose={() => (showModal = false)}
 		/>
 	{/if}

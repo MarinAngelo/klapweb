@@ -45,11 +45,12 @@
 		<p>
 			Marinus Angelo Klap<br />
 			<strong>Website:</strong>
-			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline">
-				Klap Web
-			</a><br />
-			<strong>E-Mail:</strong>
-			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline">marinus.angelo@klap-web.ch</a>
+			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline"> Klap Web </a><br
+			/>
+			<strong>{$_('E-Mail')}:</strong>
+			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline"
+				>marinus.angelo@klap-web.ch</a
+			>
 		</p>
 
 		{#if contacts.length > 0}
@@ -65,11 +66,8 @@
 					/>
 					{#if contact.website?.url}
 						<p>
-							<strong>Website:</strong> <a
-								href={contact.website.url}
-								target="_blank"
-								class="hover:underline"
-							>
+							<strong>Website:</strong>
+							<a href={contact.website.url} target="_blank" class="hover:underline">
 								{contact.website.text || contact.website.url}
 							</a>
 						</p>

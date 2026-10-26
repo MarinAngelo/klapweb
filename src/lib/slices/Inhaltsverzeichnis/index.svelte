@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onMount, tick } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import { planFilter } from '$lib/stores/planFilter';
@@ -19,7 +20,7 @@
 	$: linkHoverColor =
 		slice.primary.link_hover_color ||
 		(linksMode ? $theme.headerLinkHoverColor : 'var(--page-link-hover-color)');
-	$: tocTitle = slice.primary.title || 'Inhalt';
+	$: tocTitle = slice.primary.title || $_('Inhalt');
 	$: tiefe = slice.primary.tiefe || 'H2 und H3';
 	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
 	$: desktopTopSticky = !linksMode && slice.primary.sticky === true;

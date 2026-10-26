@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { reveal } from '$lib/actions/reveal';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -72,14 +73,14 @@
 	<button
 		class="prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block"
 		on:click={prevImage}
-		aria-label="Vorheriges Bild"
+		aria-label={$_('Vorheriges Bild')}
 	>
 		&#10094;
 	</button>
 	<button
 		class="next absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block"
 		on:click={nextImage}
-		aria-label="Nächstes Bild"
+		aria-label={$_('Nächstes Bild')}
 	>
 		&#10095;
 	</button>

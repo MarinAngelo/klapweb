@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
@@ -92,12 +93,21 @@
 			}));
 		}
 
-		const p = $page.data.page;
+		// Prismic document of the current page (pages: data.page, ressource: data.doc, leistung: data.leistung)
+		const p = $page.data.page ?? $page.data.doc ?? $page.data.leistung;
 		const segments = $page.url.pathname.split('/').filter(Boolean);
 		// Prismic-Vorschau (/preview/…): Präfix ignorieren
 		if (segments[0] === 'preview') segments.shift();
 		const isLangSegment = locales?.includes(segments[0]);
 		const currentSlug = isLangSegment ? segments[1] : segments[0];
+		// Route prefix before the UID, e.g. "/ressource" or "/leistung" (empty for normal pages)
+		const pathSegments = isLangSegment ? segments.slice(1) : segments;
+		const routePrefix = $page.params.uid
+			? pathSegments
+					.slice(0, -1)
+					.map((seg) => `/${seg}`)
+					.join('')
+			: '';
 
 		// A. Statische Routen Mapping (Fix für /undefined)
 		for (const key in staticRoutes) {
@@ -121,9 +131,9 @@
 			return p.alternate_languages.map((alt: any) => ({
 				lang: alt.lang,
 				href:
-					alt.lang === dynamicDefaultLang
-						? `/${alt.uid === 'home' ? '' : alt.uid}`
-						: `/${alt.lang}/${alt.uid === 'home' ? '' : alt.uid}`
+					(alt.lang === dynamicDefaultLang ? '' : `/${alt.lang}`) +
+					routePrefix +
+					`/${alt.uid === 'home' ? '' : alt.uid}`
 			}));
 		}
 
@@ -134,7 +144,7 @@
 			const slug = currentUid === 'home' ? '' : `/${currentUid}`;
 			return {
 				lang: l,
-				href: `${prefix}${slug}`
+				href: `${prefix}${routePrefix}${slug}`
 			};
 		});
 	})().map((item) => ({
@@ -439,7 +449,7 @@
 	</script>
 {/if}
 
-<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+<a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
 <div class="bg-page-bg [min-height:100vh]">
 	{#if !hideChrome}

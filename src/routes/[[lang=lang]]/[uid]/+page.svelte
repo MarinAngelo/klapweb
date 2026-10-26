@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { SliceZone } from '@prismicio/svelte';
 	import { components } from '$lib/slices';
 	import { currencySelection } from '$lib/stores/currency';
@@ -39,7 +40,7 @@
 {#if showSelector}
 	<Bounded yPadding="none" class="bg-page-bg">
 		<div class="text-muted flex justify-end items-center gap-2 py-2 text-sm">
-			<span>Währung:</span>
+			<span>{$_('Währung')}:</span>
 			<InputField
 				field={{
 					field_name: '',

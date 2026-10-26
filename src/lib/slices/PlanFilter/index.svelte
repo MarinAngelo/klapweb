@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onDestroy } from 'svelte';
 	import { planFilter } from '$lib/stores/planFilter';
 	import gating from '../../../../gating.json';
@@ -38,7 +39,7 @@
 				value={$planFilter ?? ''}
 				on:change={(e) => planFilter.set(e.currentTarget.value || null)}
 			>
-				<option value="">Alle Pläne</option>
+				<option value="">{$_('Alle Pläne')}</option>
 				{#each plans as plan}
 					<option value={plan.id}>{plan.label}</option>
 				{/each}

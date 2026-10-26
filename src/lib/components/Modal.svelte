@@ -2,6 +2,7 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import type { RichTextField } from '@prismicio/types';
+	import { _ } from '$lib/stores/i18n';
 
 	export let title: string = 'Vielen Dank!';
 	export let message: RichTextField = [
@@ -20,6 +21,6 @@
 		<div class="mb-6">
 			<PrismicRichText field={message} />
 		</div>
-		<Button link={undefined} text="Schließen" on:click={onClose} />
+		<Button link={undefined} text={$_('Schliessen')} on:click={onClose} />
 	</div>
 </div>
