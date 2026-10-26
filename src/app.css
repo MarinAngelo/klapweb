@@ -785,10 +785,6 @@ p {
 	color: color-mix(in srgb, currentColor 85%, transparent);
 }
 
-.border-page {
-	border-color: var(--page-color);
-}
-
 /* Collapsible body: toggle .is-open (animated via grid rows) */
 .collapse-body {
 	display: grid;
