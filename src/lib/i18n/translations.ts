@@ -789,6 +789,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'E-Mail und Passwort erforderlich',
 		'en-us': 'Email and password required'
 	},
+	'Zur Website': { 'de-ch': 'Zur Website', 'en-us': 'To website' },
 	'Passwortgeschützte Seite': {
 		'de-ch': 'Passwortgeschützte Seite',
 		'en-us': 'Password-protected page'
