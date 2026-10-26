@@ -28,7 +28,7 @@
 
 {#if aufgabe.werkzeuge?.length > 0}
 	<div class="flex flex-col gap-6">
-		<p class="text-xs font-medium uppercase opacity-50">{$_('Benötigte Werkzeuge')}</p>
+		<p class="text-xs font-medium uppercase text-muted">{$_('Benötigte Werkzeuge')}</p>
 		{#each aufgabe.werkzeuge as w}
 			<div class="grid grid-cols-1 gap-8 {w.bild?.url ? 'md:grid-cols-2' : ''}">
 				<div class="flex flex-col gap-1">

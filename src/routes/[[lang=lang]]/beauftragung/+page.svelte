@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
 	import InputField from '$lib/components/InputField.svelte';
@@ -392,38 +390,36 @@
 	}
 
 	$: lang = $page.data.lang || 'de-ch';
-	$: bgColor = get(theme).pageBgColor;
-	$: pageColor = get(theme).pageColor;
 </script>
 
 <svelte:head>
 	<title>{data.pageTitle || t('Beauftragung', lang)}</title>
 </svelte:head>
 
-<Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
+<Bounded as="section" class="bg-page-bg text-page">
 	<Heading tag="h1">{data.pageTitle || t('Beauftragung', lang)}</Heading>
 
 	<form on:submit={handleSubmit} novalidate class="mt-8 space-y-6">
 		<!-- Tab navigation (only when extra fields exist) -->
 		{#if hasTabs}
-			<div class="flex border-b" style="border-color: {pageColor}33;">
+			<div class="scope-border-strong flex border-b">
 				<button
 					type="button"
 					on:click={() => (activeTab = 'rechnung')}
-					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
-					style="border-color: {activeTab === 'rechnung'
-						? pageColor
-						: 'transparent'}; opacity: {activeTab === 'rechnung' ? 1 : 0.5};"
+					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors {activeTab ===
+					'rechnung'
+						? 'border-page'
+						: 'border-transparent text-muted'}"
 				>
 					{t('Rechnungsadresse', lang)}{hasInvoiceErrors ? ' ●' : ''}
 				</button>
 				<button
 					type="button"
 					on:click={() => (activeTab = 'weitere')}
-					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors"
-					style="border-color: {activeTab === 'weitere'
-						? pageColor
-						: 'transparent'}; opacity: {activeTab === 'weitere' ? 1 : 0.5};"
+					class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors {activeTab ===
+					'weitere'
+						? 'border-page'
+						: 'border-transparent text-muted'}"
 				>
 					{t('Weitere Angaben', lang)}{hasExtraErrors ? ' ●' : ''}
 				</button>
@@ -442,8 +438,7 @@
 							<div class="flex mt-1">
 								<select
 									name="tel_vorwahl"
-									class="p-2 rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 shrink-0"
-									style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px; width: 110px;"
+									class="p-2 rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 shrink-0 bg-page-bg text-page border-page text-[18px] w-[110px]"
 								>
 									{#each vorwahlen as v}
 										{#if v.code === '—'}<option disabled>──────────</option>{:else}<option
@@ -458,16 +453,14 @@
 									required={f.required}
 									inputmode="numeric"
 									pattern="[0-9\s\-\+\(\)]*"
-									class="p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-									style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+									class="p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 bg-page-bg text-page border-page text-[18px] sm:leading-5"
 								/>
 							</div>
 						{:else if f.type === 'select'}
 							<select
 								id={f.key}
 								name={f.key}
-								class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-								style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+								class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 bg-page-bg text-page border-page text-[18px] sm:leading-5"
 							>
 								<option value="">{t('Bitte wählen', lang)}</option>
 								{#each laender as l}
@@ -482,8 +475,7 @@
 								name={f.key}
 								type={f.type}
 								required={f.required}
-								class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-								style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+								class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 bg-page-bg text-page border-page text-[18px] sm:leading-5"
 							/>
 						{/if}
 						{#if fieldErrors[f.key]}
@@ -524,20 +516,17 @@
 					id="kommentare"
 					name="kommentare"
 					rows="4"
-					class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 resize-none"
-					style="background-color: {bgColor}; color: {pageColor}; border-bottom-color: {pageColor}; font-size: 18px;"
+					class="mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 resize-none bg-page-bg text-page border-page text-[18px]"
 				></textarea>
 			</div>
 		{/if}
 
-		<p class="text-xs opacity-60">* {t('Pflichtfelder', lang)}</p>
+		<p class="text-xs text-muted">* {t('Pflichtfelder', lang)}</p>
 
 		<button
 			type="submit"
 			disabled={isSubmitting}
-			class="button-prismic-link inline-block px-6 py-3 font-semibold rounded-full border transition duration-200 ease-in-out"
-			style="background-color: {get(theme).pageButtonBgColor}; color: {get(theme)
-				.pageButtonColor}; border-color: {get(theme).pageButtonColor};"
+			class="btn-page button-prismic-link inline-block px-6 py-3 font-semibold rounded-full border transition duration-200 ease-in-out"
 		>
 			{isSubmitting
 				? t('Bitte warten…', lang)

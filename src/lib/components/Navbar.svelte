@@ -111,7 +111,7 @@
 <nav
 	aria-label="Hauptnavigation"
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
-	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
+	style:font-family={headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'}
 >
 	<div class="flex lg:hidden h-full items-center gap-3">
 		<!-- Mobile: cart stays visible next to the burger -->
@@ -137,10 +137,12 @@
 		class={`${
 			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
-		style={$isMenuOpen
-			? // 1px overlap with the header → no hairline on fractional device pixel ratios
-				`top: ${Math.max(0, $headerHeight - 1)}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
-			: ''}
+		class:bottom-0={$isMenuOpen}
+		class:overflow-y-auto={$isMenuOpen}
+		style:top={$isMenuOpen
+			? /* 1px overlap with the header → no hairline on fractional device pixel ratios */ `${Math.max(0, $headerHeight - 1)}px`
+			: undefined}
+		style:background-color={$isMenuOpen ? headerBgColor : undefined}
 	>
 		<ul
 			class="flex flex-col items-start text-left gap-6 w-full
@@ -165,7 +167,8 @@
 					{:else if item.link?.url}
 						<li
 							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
@@ -177,13 +180,14 @@
 						class="text-xl font-semibold {currentPath === item.link.url
 							? 'underline'
 							: ''} hover:no-underline"
-						style="color: {headerLinkColor}; --hover-text-color: {headerLinkHoverColor};"
+						style:color={headerLinkColor}
+						style:--hover-text-color={headerLinkHoverColor}
 					>
 						<PrismicLink
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
-							class="transition nav-link"
-							style="color: inherit; font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
+							class="transition nav-link !text-inherit"
+							style="font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -214,7 +218,8 @@
 							href="/konto"
 							on:click={() => isMenuOpen.set(false)}
 							class="nav-link flex items-center gap-1.5 transition"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 							title={user.name}
 						>
 							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
@@ -225,7 +230,8 @@
 							href="/konto/anmelden"
 							on:click={() => isMenuOpen.set(false)}
 							class="nav-link flex items-center gap-1.5 transition"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 						>
 							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
 							<span class="lg:hidden">Anmelden</span>

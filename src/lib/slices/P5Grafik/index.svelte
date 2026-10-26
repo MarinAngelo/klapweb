@@ -151,17 +151,15 @@
 		class="relative z-0 overflow-visible"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		style="
-			background-color: {canvasBg};
-			color: {color};
-			height: {$bannerHeight};
-			min-height: {$bannerHeight === 'auto' ? '100vh' : 'unset'};
-			font-family: {presetFont
+		style:background-color={canvasBg}
+		style:color
+		style:height={$bannerHeight}
+		style:min-height={$bannerHeight === 'auto' ? '100vh' : 'unset'}
+		style:font-family={presetFont
 			? `'${presetFont}'`
 			: isFilled.contentRelationship(p.font) && p.font.data?.name
 				? p.font.data.name
-				: 'inherit'};
-		"
+				: 'inherit'}
 	>
 		<!-- p5 canvas als Hintergrund -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
@@ -172,9 +170,8 @@
 		{#if overlayOpacity > 0}
 			<div
 				class="absolute inset-0 pointer-events-none"
-				style="background-color: {overlayColor}; opacity: {$isMobile
-					? textOverlayOpacity
-					: overlayOpacity};"
+				style:background-color={overlayColor}
+				style:opacity={$isMobile ? textOverlayOpacity : overlayOpacity}
 			></div>
 		{/if}
 
@@ -183,8 +180,9 @@
 			<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
 			{#if mounted && isFullScreenMobile && !switchOffTextOverlay}
 				<div
-					class="absolute inset-0"
-					style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none;"
+					class="absolute inset-0 pointer-events-none"
+					style:background-color={textOverlayColor}
+					style:opacity={textOverlayOpacity}
 					aria-hidden="true"
 				></div>
 			{/if}
@@ -193,22 +191,23 @@
 					<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
 					{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay)}
 						<div
-							class="absolute inset-0"
-							style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
+							class="absolute inset-0 pointer-events-none [border-radius:3rem]"
+							style:background-color={textOverlayColor}
+							style:opacity={textOverlayOpacity}
 							aria-hidden="true"
 						></div>
 					{/if}
 					<div
 						use:reveal={fadeIn}
 						class="relative z-10 text-center"
-						style="padding: {effectiveContentPadding};"
+						style:padding={effectiveContentPadding}
 					>
 						<div
 							class="leading-loose tracking-wider-all"
-							style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
+							style:zoom={$isMobile && mobileFontScale !== 1.0 ? mobileFontScale : undefined}
 						>
 							{#if p.text}
-								<div style="--page-color: {color}; color: {color};">
+								<div style:--page-color={color} style:color>
 									<PrismicRichText field={p.text} />
 								</div>
 							{/if}
@@ -233,9 +232,10 @@
 {:else}
 	<!-- ── Standard-Variation: Vollbild ── -->
 	<section
+		class="[width:100vw] [height:100vh] relative [left:50%] [right:50%] [margin-left:-50vw] [margin-right:-50vw] overflow-hidden"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		style="background-color: {canvasBg}; width: 100vw; height: 100vh; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; overflow: hidden;"
+		style:background-color={canvasBg}
 	>
 		<P5Canvas {sketch} width="100%" height="100%" />
 	</section>

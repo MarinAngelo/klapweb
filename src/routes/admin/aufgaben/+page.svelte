@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { enhance } from '$app/forms';
 	import { formatDateTimeShort } from '$lib/utils/formatDate';
 	export let data: PageData;
@@ -12,11 +12,17 @@
 		erledigt: 'Erledigt'
 	};
 
-	const statusColors: Record<string, string> = {
-		angenommen: '#fef3c7',
-		annahme_bestaetigt: '#dbeafe',
-		abgegeben: '#ede9fe',
-		erledigt: '#dcfce7'
+	const statusBadge: Record<string, string> = {
+		angenommen: 'admin-badge-yellow',
+		annahme_bestaetigt: 'admin-badge-blue',
+		abgegeben: 'admin-badge-purple',
+		erledigt: 'admin-badge-green'
+	};
+
+	const prioBadge: Record<string, string> = {
+		Hoch: 'admin-badge-red',
+		Mittel: '',
+		Gering: 'admin-badge-green'
 	};
 
 	const fmtDate = (iso: string | undefined) => (iso ? formatDateTimeShort(iso) : '–');
@@ -32,9 +38,6 @@
 		}, {})
 	).sort(([, a], [, b]) => groupTitle(a[0]).localeCompare(groupTitle(b[0])));
 
-	const tdStyle = 'padding: 0.5rem 0.75rem; vertical-align: top;';
-	const tdNowrap = tdStyle + ' white-space: nowrap;';
-
 	let erledigtMinuten: Record<string, string> = {};
 
 	function confirmLoeschen(e: SubmitEvent, name: string) {
@@ -44,213 +47,175 @@
 
 <svelte:head><title>Aufgaben-Annahmen</title></svelte:head>
 
-<div style="font-family: sans-serif; padding: 2rem; max-width: 1200px; margin: 0 auto;">
-	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Aufgaben-Annahmen</h1>
-		<span style="font-size: 0.875rem; color: #6b7280;">{data.annahmen.length} Einträge</span>
-		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
-			<Button
-				href="/admin/dashboard"
-				text="Dashboard"
-				leadingIcon="left"
-				color="#374151"
-				bgColor="transparent"
-				hoverColor="#111827"
-				hoverBgColor="transparent"
-				size="sm"
-				mb={false}
-			/>
-			<form
-				method="POST"
-				action="?/deleteAll"
-				on:submit={(e) => {
-					if (!confirm('Alle Aufgaben löschen?')) e.preventDefault();
-				}}
-			>
-				<Button
-					text="Alle löschen"
-					color="#dc2626"
-					bgColor="transparent"
-					hoverColor="#991b1b"
-					hoverBgColor="transparent"
-					size="sm"
-					mb={false}
-				/>
-			</form>
-		</div>
-	</div>
+<div class="admin-container">
+	<AdminHeader title="Aufgaben-Annahmen" count={data.annahmen.length}>
+		<form
+			method="POST"
+			action="?/deleteAll"
+			on:submit={(e) => {
+				if (!confirm('Alle Aufgaben löschen?')) e.preventDefault();
+			}}
+		>
+			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
+		</form>
+	</AdminHeader>
 
 	{#if data.blobError}
-		<p style="color: red; font-family: monospace; font-size: 0.8rem; margin-bottom: 1rem;">
-			Fehler: {data.blobError}
-		</p>
+		<p class="admin-notice admin-notice-error admin-mono">Fehler: {data.blobError}</p>
 	{/if}
 
 	{#if data.annahmen.length === 0}
-		<p style="opacity: 0.5;">Noch keine Annahmen vorhanden.</p>
+		<p class="admin-empty">Noch keine Annahmen vorhanden.</p>
 	{:else}
 		{#each grouped as [aufgabeUid, annahmen]}
-			<h2
-				style="font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb;"
-			>
-				{groupTitle(annahmen[0]) || aufgabeUid}
-				<span style="font-weight: 400; opacity: 0.5; font-size: 0.875rem;">({annahmen.length})</span
-				>
-			</h2>
-			<div style="overflow-x: auto;">
-				<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-					<thead>
-						<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-							{#each ['Status', 'Name', 'E-Mail', 'Buchung', 'Credit-Typ', 'Credits', 'Minuten', 'Kommentar', 'Angenommen am', 'Erledigt am', 'Aktionen'] as col}
-								<th style="padding: 0.5rem 0.75rem; font-weight: 600; white-space: nowrap;"
-									>{col}</th
-								>
-							{/each}
-						</tr>
-					</thead>
-					<tbody>
-						{#each annahmen as a}
-							<tr style="border-bottom: 1px solid #f3f4f6;">
-								<td style={tdNowrap}>
-									<span
-										style="padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; background: {statusColors[
-											a.status
-										] ?? '#f3f4f6'};"
-									>
-										{statusLabels[a.status] ?? a.status}
-									</span>
-								</td>
-								<td style={tdNowrap}>{a.name}</td>
-								<td style={tdNowrap}>{a.email}</td>
-								<td style="padding: 0.5rem 0.75rem; font-size: 0.75rem;">
-									<span style="opacity: 0.5;">Buchungs-ID:</span><br />
-									<span style="font-family: monospace; word-break: break-all; user-select: all;"
-										>{a.buchungId}</span
-									>
-								</td>
-								<td style={tdNowrap}
-									>{a.bonus ? 'Bonus' : a.creditTyp === 'fest' ? 'Fest' : 'Zeitbasiert'}</td
-								>
-								<td style={tdNowrap}
-									>{a.credits != null
-										? a.credits
-										: a.creditBetrag != null
-											? a.creditBetrag
-											: '–'}</td
-								>
-								<td style={tdNowrap}>{a.minuten != null ? `${a.minuten} min` : '–'}</td>
-								<td
-									style="padding: 0.5rem 0.75rem; max-width: 200px; font-size: 0.75rem; opacity: 0.8;"
-									>{a.kommentar ?? '–'}</td
-								>
-								<td style={tdNowrap}>{fmtDate(a.angenommenAt)}</td>
-								<td style={tdNowrap}>{fmtDate(a.erledigtAt)}</td>
-								<td style={tdStyle}>
-									<div
-										style="display: flex; flex-direction: column; gap: 0.375rem; min-width: 220px;"
-									>
-										{#if a.status === 'angenommen'}
-											<form method="POST" action="?/bestaetigen" use:enhance>
-												<input type="hidden" name="id" value={a.id} />
-												<button
-													type="submit"
-													style="width: 100%; padding: 0.25rem 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;"
-												>
-													Annahme bestätigen
-												</button>
-											</form>
-										{/if}
-										{#if a.status === 'abgegeben'}
-											<form
-												method="POST"
-												action="?/freigeben"
-												use:enhance
-												style="display: flex; flex-direction: column; gap: 0.25rem;"
-											>
-												<input type="hidden" name="id" value={a.id} />
-												<label for="credits-{a.id}" style="font-size: 0.7rem; color: #6b7280;"
-													>Credits (anpassen)</label
-												>
-												<input
-													id="credits-{a.id}"
-													type="number"
-													name="credits"
-													step="0.01"
-													value={0}
-													style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.75rem; width: 100%;"
-												/>
-												<textarea
-													name="betreiber_antwort"
-													rows="3"
-													placeholder="Antwort an Mieter (optional)"
-													style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.75rem; width: 100%; resize: vertical;"
-												></textarea>
-												<button
-													type="submit"
-													style="width: 100%; padding: 0.25rem 0.75rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;"
-												>
-													✓ Freigeben &amp; Erledigt
-												</button>
-											</form>
-										{/if}
-										{#if !['abgegeben', 'erledigt'].includes(a.status)}
-											<form
-												method="POST"
-												action="?/erledigt"
-												use:enhance
-												style="display: flex; flex-direction: column; gap: 0.25rem;"
-											>
-												<input type="hidden" name="id" value={a.id} />
-												{#if a.creditTyp === 'offen'}
-													<input
-														type="number"
-														name="minuten"
-														min="1"
-														placeholder="Minuten"
-														bind:value={erledigtMinuten[a.id]}
-														style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.75rem; width: 100%;"
-													/>
-												{/if}
-												<button
-													type="submit"
-													style="width: 100%; padding: 0.25rem 0.75rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;"
-												>
-													Als erledigt markieren
-												</button>
-											</form>
-										{/if}
-										{#if a.status !== 'angenommen' && !a.bonus}
-											<form method="POST" action="?/zuruecksetzen" use:enhance>
-												<input type="hidden" name="id" value={a.id} />
-												<button
-													type="submit"
-													style="width: 100%; padding: 0.25rem 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;"
-												>
-													↺ Zurücksetzen
-												</button>
-											</form>
-										{/if}
-										<form
-											method="POST"
-											action="?/loeschen"
-											use:enhance
-											on:submit={(e) => confirmLoeschen(e, a.name)}
-										>
-											<input type="hidden" name="id" value={a.id} />
-											<button
-												type="submit"
-												style="width: 100%; padding: 0.25rem 0.75rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;"
-											>
-												Löschen
-											</button>
-										</form>
-									</div>
-								</td>
+			{@const prio = !annahmen[0]?.bonus ? data.prioritaeten[annahmen[0]?.aufgabeUid] : undefined}
+			<section class="admin-card">
+				<h2 class="admin-card-title">
+					{groupTitle(annahmen[0]) || aufgabeUid}
+					{#if prio}
+						<span class="admin-badge {prioBadge[prio] ?? ''}">Priorität: {prio}</span>
+					{/if}
+					<span class="admin-count">({annahmen.length})</span>
+				</h2>
+				<div class="admin-table-wrap">
+					<table class="admin-table">
+						<thead>
+							<tr>
+								{#each ['Status', 'Name', 'E-Mail', 'Buchung', 'Credit-Typ', 'Credits', 'Minuten', 'Kommentar', 'Angenommen am', 'Erledigt am', 'Aktionen'] as col}
+									<th>{col}</th>
+								{/each}
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+						</thead>
+						<tbody>
+							{#each annahmen as a}
+								<tr>
+									<td class="nowrap">
+										<span class="admin-badge {statusBadge[a.status] ?? ''}">
+											{statusLabels[a.status] ?? a.status}
+										</span>
+									</td>
+									<td class="nowrap">{a.name}</td>
+									<td class="nowrap">{a.email}</td>
+									<td class="text-xs">
+										<span class="admin-muted">Buchungs-ID:</span><br />
+										<span class="admin-mono select-all">{a.buchungId}</span>
+									</td>
+									<td class="nowrap"
+										>{a.bonus ? 'Bonus' : a.creditTyp === 'fest' ? 'Fest' : 'Zeitbasiert'}</td
+									>
+									<td class="nowrap"
+										>{a.credits != null
+											? a.credits
+											: a.creditBetrag != null
+												? a.creditBetrag
+												: '–'}</td
+									>
+									<td class="nowrap">{a.minuten != null ? `${a.minuten} min` : '–'}</td>
+									<td class="max-w-[200px] text-xs">{a.kommentar ?? '–'}</td>
+									<td class="nowrap">{fmtDate(a.angenommenAt)}</td>
+									<td class="nowrap">{fmtDate(a.erledigtAt)}</td>
+									<td>
+										<div class="flex min-w-[220px] flex-col gap-1.5">
+											{#if a.status === 'angenommen'}
+												<form method="POST" action="?/bestaetigen" use:enhance>
+													<input type="hidden" name="id" value={a.id} />
+													<button
+														type="submit"
+														class="admin-btn admin-btn-primary admin-btn-sm admin-btn-block"
+													>
+														Annahme bestätigen
+													</button>
+												</form>
+											{/if}
+											{#if a.status === 'abgegeben'}
+												<form
+													method="POST"
+													action="?/freigeben"
+													use:enhance
+													class="flex flex-col gap-1"
+												>
+													<input type="hidden" name="id" value={a.id} />
+													<label for="credits-{a.id}" class="admin-hint mt-0"
+														>Credits (anpassen)</label
+													>
+													<input
+														id="credits-{a.id}"
+														type="number"
+														name="credits"
+														step="0.01"
+														value={0}
+														class="admin-input admin-input-sm"
+													/>
+													<textarea
+														name="betreiber_antwort"
+														rows="3"
+														placeholder="Antwort an Mieter (optional)"
+														class="admin-input admin-input-sm resize-y"
+													></textarea>
+													<button
+														type="submit"
+														class="admin-btn admin-btn-success admin-btn-sm admin-btn-block"
+													>
+														✓ Freigeben &amp; Erledigt
+													</button>
+												</form>
+											{/if}
+											{#if !['abgegeben', 'erledigt'].includes(a.status)}
+												<form
+													method="POST"
+													action="?/erledigt"
+													use:enhance
+													class="flex flex-col gap-1"
+												>
+													<input type="hidden" name="id" value={a.id} />
+													{#if a.creditTyp === 'offen'}
+														<input
+															type="number"
+															name="minuten"
+															min="1"
+															placeholder="Minuten"
+															bind:value={erledigtMinuten[a.id]}
+															class="admin-input admin-input-sm"
+														/>
+													{/if}
+													<button
+														type="submit"
+														class="admin-btn admin-btn-success admin-btn-sm admin-btn-block"
+													>
+														Als erledigt markieren
+													</button>
+												</form>
+											{/if}
+											{#if a.status !== 'angenommen' && !a.bonus}
+												<form method="POST" action="?/zuruecksetzen" use:enhance>
+													<input type="hidden" name="id" value={a.id} />
+													<button type="submit" class="admin-btn admin-btn-sm admin-btn-block">
+														↺ Zurücksetzen
+													</button>
+												</form>
+											{/if}
+											<form
+												method="POST"
+												action="?/loeschen"
+												use:enhance
+												on:submit={(e) => confirmLoeschen(e, a.name)}
+											>
+												<input type="hidden" name="id" value={a.id} />
+												<button
+													type="submit"
+													class="admin-btn admin-btn-danger-outline admin-btn-sm admin-btn-block"
+												>
+													Löschen
+												</button>
+											</form>
+										</div>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</section>
 		{/each}
 	{/if}
 </div>

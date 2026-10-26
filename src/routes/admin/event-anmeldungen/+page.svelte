@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import type { EventRegistration } from '$lib/server/eventRegistrations';
-	import Bounded from '$lib/components/Bounded.svelte';
 
 	export let data: PageData;
 
@@ -93,161 +92,82 @@
 		a.download = `${group.label}-${new Date().toISOString().slice(0, 10)}.csv`;
 		a.click();
 	}
-
-	let openDownloadMenu: string | null = null;
 </script>
 
 <svelte:head><title>Event Anmeldungen – Admin</title></svelte:head>
 
-<Bounded
-	tag="div"
-	yPadding="sm"
-	style="font-family: sans-serif; min-height: 100vh; background: #f9fafb;"
->
-	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">Event Anmeldungen</h1>
-		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
-			<Button
-				href="/admin/dashboard"
-				text="Dashboard"
-				leadingIcon="left"
-				color="#374151"
-				bgColor="transparent"
-				hoverColor="#111827"
-				hoverBgColor="transparent"
-				size="sm"
-				mb={false}
-			/>
-			<form
-				method="POST"
-				action="?/deleteAll"
-				on:submit={(e) => {
-					if (!confirm('Alle Anmeldungen löschen?')) e.preventDefault();
-				}}
-			>
-				<Button
-					text="Alle löschen"
-					color="#dc2626"
-					bgColor="transparent"
-					hoverColor="#991b1b"
-					hoverBgColor="transparent"
-					size="sm"
-					mb={false}
-				/>
-			</form>
-		</div>
-	</div>
+<div class="admin-container">
+	<AdminHeader title="Event Anmeldungen" count={data.registrations.length}>
+		<form
+			method="POST"
+			action="?/deleteAll"
+			on:submit={(e) => {
+				if (!confirm('Alle Anmeldungen löschen?')) e.preventDefault();
+			}}
+		>
+			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
+		</form>
+	</AdminHeader>
 
 	{#if data.registrations.length === 0}
-		<p style="color: #6b7280;">Noch keine Anmeldungen vorhanden.</p>
+		<p class="admin-empty">Noch keine Anmeldungen vorhanden.</p>
 	{:else}
 		{#each groups as group}
-			<div
-				style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 1.5rem; overflow: hidden;"
-			>
-				<div
-					style="padding: 1rem 1.25rem; background: #f3f4f6; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;"
-				>
-					<div>
-						<span style="font-weight: 600;">{group.label}</span>
-						{#if data.eventDates[group.uid]?.start}
-							<span style="font-size: 0.8rem; color: #374151; margin-left: 0.5rem;">
-								{fmtEventDateRange(
-									data.eventDates[group.uid].start,
-									data.eventDates[group.uid].end
-								)}
-							</span>
-						{/if}
-					</div>
-					<div style="display: flex; align-items: center; gap: 0.75rem;">
-						<span style="font-size: 0.875rem; color: #374151;"
+			<section class="admin-card">
+				<div class="admin-card-title">
+					<h2>{group.label}</h2>
+					{#if data.eventDates[group.uid]?.start}
+						<span class="admin-muted text-sm">
+							{fmtEventDateRange(data.eventDates[group.uid].start, data.eventDates[group.uid].end)}
+						</span>
+					{/if}
+					<div class="ml-auto flex items-center gap-2">
+						<span class="admin-muted text-sm"
 							>{group.registrations.length} Anmeldung{group.registrations.length !== 1
 								? 'en'
 								: ''}</span
 						>
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div style="position: relative;" on:mouseleave={() => (openDownloadMenu = null)}>
-							<Button
-								text="Liste"
-								leadingIcon="down"
-								color="#065f46"
-								bgColor="transparent"
-								hoverColor="#064e3b"
-								hoverBgColor="transparent"
-								size="sm"
-								mb={false}
-								on:click={() =>
-									(openDownloadMenu = openDownloadMenu === group.uid ? null : group.uid)}
-							/>
-							{#if openDownloadMenu === group.uid}
-								<div
-									style="position: absolute; right: 0; top: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 110px; z-index: 50;"
-								>
-									<button
-										on:click={() => {
-											downloadCsv(group);
-											openDownloadMenu = null;
-										}}
-										style="display: block; width: 100%; text-align: left; padding: 0.5rem 1rem; font-size: 0.875rem; background: none; border: none; cursor: pointer; font-family: sans-serif;"
-										>CSV</button
-									>
-									<a
-										href="/admin/event-anmeldungen/download?uid={encodeURIComponent(group.uid)}"
-										style="display: block; padding: 0.5rem 1rem; font-size: 0.875rem; color: inherit; text-decoration: none;"
-										on:click={() => (openDownloadMenu = null)}>PDF</a
-									>
-								</div>
-							{/if}
-						</div>
+						<button type="button" class="admin-btn admin-btn-sm" on:click={() => downloadCsv(group)}
+							>↓ CSV</button
+						>
+						<a
+							href="/admin/event-anmeldungen/download?uid={encodeURIComponent(group.uid)}"
+							class="admin-btn admin-btn-sm">↓ PDF</a
+						>
 					</div>
 				</div>
 
-				<div style="overflow-x: auto;">
-					<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+				<div class="admin-table-wrap">
+					<table class="admin-table">
 						<thead>
-							<tr style="border-bottom: 1px solid #e5e7eb; color: #6b7280; text-align: left;">
-								<th style="padding: 0.625rem 1.25rem; font-weight: 500;">Datum</th>
-								<th style="padding: 0.625rem 1rem; font-weight: 500;">Name</th>
-								<th style="padding: 0.625rem 1rem; font-weight: 500;">E-Mail</th>
-
-								<th style="padding: 0.625rem 1rem; font-weight: 500;">Betrag</th>
-								<th style="padding: 0.625rem 1rem; font-weight: 500;">Zahlung</th>
-								<th style="padding: 0.625rem 1.25rem 0.625rem 1rem; font-weight: 500;">Rechnung</th>
-								<th style="padding: 0.625rem 1rem; font-weight: 500;"></th>
-								<th style="padding: 0.625rem 1rem; font-weight: 500;"></th>
+							<tr>
+								<th>Datum</th>
+								<th>Name</th>
+								<th>E-Mail</th>
+								<th>Betrag</th>
+								<th>Zahlung</th>
+								<th>Rechnung</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{#each group.registrations as r}
-								<tr style="border-bottom: 1px solid #f3f4f6;">
-									<td style="padding: 0.625rem 1.25rem; white-space: nowrap; color: #6b7280;"
-										>{fmtDate(r.date)}</td
-									>
-									<td style="padding: 0.625rem 1rem; white-space: nowrap;"
-										>{r.vorname} {r.nachname}</td
-									>
-									<td style="padding: 0.625rem 1rem;">{r.email ?? '—'}</td>
-									<td
-										style="padding: 0.625rem 1rem; white-space: nowrap; font-variant-numeric: tabular-nums;"
-										>{fmtAmount(r.amount, r.currency)}</td
-									>
-									<td style="padding: 0.625rem 1rem;">
+								<tr>
+									<td class="nowrap admin-muted">{fmtDate(r.date)}</td>
+									<td class="nowrap">{r.vorname} {r.nachname}</td>
+									<td>{r.email ?? '—'}</td>
+									<td class="nowrap tabular-nums">{fmtAmount(r.amount, r.currency)}</td>
+									<td>
 										<span
-											style="display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; background: {r.paymentMethod ===
-											'rechnung'
-												? '#dbeafe'
-												: '#d1fae5'}; color: {r.paymentMethod === 'rechnung'
-												? '#1d4ed8'
-												: '#065f46'};"
+											class="admin-badge {r.paymentMethod === 'rechnung'
+												? 'admin-badge-blue'
+												: 'admin-badge-green'}"
 										>
 											{r.paymentMethod === 'rechnung' ? 'Rechnung' : 'Bar'}
 										</span>
 									</td>
-									<td
-										style="padding: 0.625rem 1.25rem 0.625rem 1rem; white-space: nowrap; font-size: 0.75rem; color: #6b7280;"
-										>{r.invoiceNumber}</td
-									>
-									<td style="padding: 0.625rem 1rem;">
+									<td class="nowrap admin-muted text-xs">{r.invoiceNumber}</td>
+									<td>
 										<form
 											method="POST"
 											action="?/delete"
@@ -256,11 +176,7 @@
 											}}
 										>
 											<input type="hidden" name="id" value={r.id} />
-											<button
-												type="submit"
-												style="background: none; border: none; cursor: pointer; color: #dc2626; font-size: 0.75rem; padding: 0;"
-												>Löschen</button
-											>
+											<button type="submit" class="admin-link-danger text-xs">Löschen</button>
 										</form>
 									</td>
 								</tr>
@@ -268,7 +184,7 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
+			</section>
 		{/each}
 	{/if}
-</Bounded>
+</div>

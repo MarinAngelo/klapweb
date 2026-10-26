@@ -772,9 +772,27 @@ export const translations: Record<string, Record<string, string>> = {
 	'Abgabe fehlgeschlagen': { 'de-ch': 'Abgabe fehlgeschlagen', 'en-us': 'Submission failed' },
 	Einloggen: { 'de-ch': 'Anmelden', 'en-us': 'Log in' },
 	Abbrechen: { 'de-ch': 'Abbrechen', 'en-us': 'Cancel' },
-	'Angemeldet bleiben (14 Tage)': {
-		'de-ch': 'Angemeldet bleiben (14 Tage)',
-		'en-us': 'Remember me (14 days)'
+	'Angemeldet bleiben ({tage} Tage)': {
+		'de-ch': 'Angemeldet bleiben ({tage} Tage)',
+		'en-us': 'Remember me ({tage} days)'
+	},
+	'Noch kein Konto? Registrieren': {
+		'de-ch': 'Noch kein Konto? Registrieren',
+		'en-us': 'No account yet? Sign up'
+	},
+	'Passwort vergessen?': { 'de-ch': 'Passwort vergessen?', 'en-us': 'Forgot password?' },
+	'E-Mail oder Passwort ungültig': {
+		'de-ch': 'E-Mail oder Passwort ungültig',
+		'en-us': 'Invalid email or password'
+	},
+	'E-Mail und Passwort erforderlich': {
+		'de-ch': 'E-Mail und Passwort erforderlich',
+		'en-us': 'Email and password required'
+	},
+	'Zur Website': { 'de-ch': 'Zur Website', 'en-us': 'To website' },
+	'Passwortgeschützte Seite': {
+		'de-ch': 'Passwortgeschützte Seite',
+		'en-us': 'Password-protected page'
 	},
 	'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).': {
 		'de-ch': 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
@@ -786,6 +804,10 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
 	Teilaufgaben: { 'de-ch': 'Teilaufgaben', 'en-us': 'Subtasks' },
+	'Min.': { 'de-ch': 'Min.', 'en-us': 'min' },
+	Priorität: { 'de-ch': 'Priorität', 'en-us': 'Priority' },
+	Hoch: { 'de-ch': 'Hoch', 'en-us': 'High' },
+	Gering: { 'de-ch': 'Gering', 'en-us': 'Low' },
 	Credits: { 'de-ch': 'Credits', 'en-us': 'credits' },
 	'{erledigt} von {total} Teilaufgaben erledigt': {
 		'de-ch': '{erledigt} von {total} Teilaufgaben erledigt',

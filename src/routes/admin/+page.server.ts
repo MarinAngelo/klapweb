@@ -5,6 +5,7 @@ import {
 	isValidAdminPassword,
 	startAdminSession
 } from '$lib/server/adminAuth';
+import { wantsRemember } from '$lib/auth/remember';
 
 export const prerender = false;
 
@@ -24,7 +25,7 @@ export const actions = {
 		if (!isValidAdminPassword(String(form.get('password') ?? ''))) {
 			return fail(401, { error: 'Falsches Passwort.' });
 		}
-		startAdminSession(cookies);
+		startAdminSession(cookies, wantsRemember(form));
 		throw redirect(303, safeNext(url.searchParams.get('next')));
 	},
 

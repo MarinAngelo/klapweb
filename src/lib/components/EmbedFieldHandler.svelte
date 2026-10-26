@@ -28,7 +28,7 @@
 </script>
 
 {#if embed && embed.html}
-	<div class="media-embed-html w-full max-w-3xl mx-auto mb-6" style="text-align:center">
+	<div class="media-embed-html w-full max-w-3xl mx-auto mb-6 text-center">
 		<ConsentGate service={consentServiceId} minHeight={300}>
 			{@html embed.html}
 		</ConsentGate>
@@ -46,7 +46,7 @@
 		</ConsentGate>
 	</div>
 {:else if embed?.embed_url}
-	<div style="text-align:center">
+	<div class="text-center">
 		<Button
 			link={{ url: embed.embed_url, target: '_blank' }}
 			text={$_('Medienlink öffnen')}

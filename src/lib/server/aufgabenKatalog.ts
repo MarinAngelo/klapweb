@@ -27,12 +27,19 @@ export interface KatalogWerkzeug {
 	bild: { url: string; alt: string } | null;
 }
 
+export type Prioritaet = 'Hoch' | 'Mittel' | 'Gering';
+const PRIORITAET_RANG: Record<Prioritaet, number> = { Hoch: 0, Mittel: 1, Gering: 2 };
+
+/** Sort key: Hoch < Mittel < Gering */
+export const prioritaetRang = (p: Prioritaet) => PRIORITAET_RANG[p] ?? 1;
+
 export interface KatalogAufgabe {
 	uid: string;
 	titel: string;
 	beschreibung: unknown;
 	bild: { url: string; alt: string } | null;
 	aktiv: boolean;
+	prioritaet: Prioritaet;
 	maxAnnahmen: number;
 	creditTyp: string;
 	creditBetrag: number | null;
@@ -74,8 +81,9 @@ export async function loadKatalog(fetch: Fetch, lang = 'de-ch'): Promise<Katalog
 			beschreibung: d.beschreibung ?? null,
 			bild: d.bild?.url ? { url: d.bild.url, alt: d.bild.alt ?? '' } : null,
 			aktiv: d.aktiv !== false,
+			prioritaet: (d.priority in PRIORITAET_RANG ? d.priority : 'Mittel') as Prioritaet,
 			maxAnnahmen: d.max_annahmen ?? 0,
-			creditTyp: d.credit_typ ?? 'Fest',
+			creditTyp: d.credit_typ ?? 'Offen (Zeitbasiert)',
 			creditBetrag: d.credit_betrag ?? null,
 			werkzeuge,
 			parentUid,
@@ -85,13 +93,17 @@ export async function loadKatalog(fetch: Fetch, lang = 'de-ch'): Promise<Katalog
 		};
 	});
 
-	// Subtasks of an inactive or missing main task are hidden as well
+	// Subtasks inherit the main task's priority; those of an inactive main task are hidden
 	const byUid = new Map(katalog.map((a) => [a.uid, a]));
 	for (const a of katalog) {
 		if (!a.parentUid) continue;
 		const parent = byUid.get(a.parentUid);
-		if (!parent) a.parentUid = null;
-		else if (!parent.aktiv) a.aktiv = false;
+		if (!parent) {
+			a.parentUid = null;
+			continue;
+		}
+		a.prioritaet = parent.prioritaet;
+		if (!parent.aktiv) a.aktiv = false;
 	}
 	return katalog;
 }
@@ -221,6 +233,7 @@ export async function katalogMitStatus(fetch: Fetch, lang: string) {
 
 	return katalog
 		.filter((a) => a.aktiv)
+		.sort((a, b) => prioritaetRang(a.prioritaet) - prioritaetRang(b.prioritaet))
 		.map((a) => {
 			const s = status.get(a.uid) ?? { annahmen: 0, erledigt: 0 };
 			return {
@@ -229,6 +242,7 @@ export async function katalogMitStatus(fetch: Fetch, lang: string) {
 				beschreibung: a.beschreibung,
 				bild: a.bild,
 				aktiv: a.aktiv,
+				prioritaet: a.prioritaet,
 				max_annahmen: a.maxAnnahmen,
 				credit_typ: a.creditTyp,
 				credit_betrag: a.creditBetrag,

@@ -69,6 +69,29 @@ Konkrete Regeln:
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 - **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)
 
+## CSS-Konzept
+
+Theme-Farben kommen zur Laufzeit aus Prismic (CSS-Variablen via `themeUpdater.ts`) — Tailwind kennt sie nur über Variablen. Jede Ebene hat eine feste Rolle:
+
+| Ebene                                        | Zuständig für                                            | Beispiel                                                                      |
+| -------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Tailwind-Utilities                           | Layout, Abstände, Grössen, Responsive                    | `flex gap-3 md:grid-cols-2`                                                   |
+| Tailwind-Theme-Farben (`tailwind.config.ts`) | Einzelne Farb-Zuweisungen aus dem Theme                  | `text-page`, `bg-page-bg`, `border-page`, `text-panel`                        |
+| `app.css` (zentrale Klassen)                 | Wiederkehrende Bausteine mit Theme-Bezug                 | `.btn-solid`, `.panel-tinted`, `.form-input`, `.text-muted`, `.collapse-body` |
+| `updateContrastColors()` (themeUpdater)      | Abgeleitete, kontrastsichere Farben (WCAG AA)            | `--panel-bg`, `--panel-color`, `--btn-solid-color`                            |
+| Inline `style:`                              | **Nur** Werte direkt aus dem CMS (z.B. Slice-`bg_color`) | `style:background-color={bgColor \|\| undefined}`                             |
+
+Regeln:
+
+- **Keine Inline-`style="…"`** für statische Werte oder Theme-Variablen — stattdessen Tailwind-Theme-Farbe oder zentrale Klasse; fehlt etwas: in `app.css` ergänzen
+- **CMS-Farben in Slices:** Wrapper bekommt `class="color-scope"` + nur CSS-Variablen (`--scope-color`, `--scope-bg`); Tönungen/Rahmen/Buttons via `.scope-*`-Klassen. Auf **Komponenten** (`Bounded`, `PrismicLink` …) ist ein `style="…"`-Attribut nur mit CSS-Variablen/CMS-Werten erlaubt (dort gibt es keine `style:`-Direktive)
+- **Admin & Kundenkonto** (`/admin`, `/konto`): neutrales, theme-unabhängiges UI-Kit `.admin-*` (app.css › Admin-UI), Kopfzeile via `AdminHeader.svelte` — keine eigenen Styles pro Seite
+- **Keine Tailwind-Palette-Farben** (`text-gray-500`, `bg-red-100` …) im öffentlichen Frontend — sie ignorieren das Theme. Ausnahme: Fehlermeldungen (`text-red-600`) und Admin
+- **Kein `opacity-*` für Text** — zu wenig Kontrast; `.text-muted` verwenden (`opacity-*` nur für dekorative Elemente/Platzhalter)
+- **Text auf eigenem Hintergrund** (Panels, Buttons) braucht eine kontrastgeprüfte Farbe: neue Fälle in `updateContrastColors()` ergänzen, nicht per Hand abdunkeln
+- Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
+- Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
+
 ## i18n
 
 - **Niemals UI-Text hardcodieren** — jeden sichtbaren String über den `$_`-Store ausgeben
@@ -108,6 +131,7 @@ Details: `docs/git-strategie.md`
 - Kunden `basis`/`professional`: Code identisch mit `main`
 - Kunden `individuell` + `klap-web-ch`: dürfen abweichen, **nie nach `main` mergen** — nur reine Kern-Commits per `cherry-pick`
 - Ein Commit ist entweder Kern oder Kunde, nie beides; Kern-Änderungen (Erweiterungspunkte) zuerst in `main`
+- **Nach jedem Cherry-Pick nach `main` sofort `git merge main` im Ursprungs-Branch** — sonst bleibt die Merge-Base alt und spätere Änderungen auf `main` an denselben Zeilen erzeugen Konflikte
 - Vor Kundenanpassung prüfen: reicht Konfiguration? Sonst Erweiterungspunkt im Kern, dann neue Dateien statt Kern-Dateien ändern
 
 ## slicemachine.config.json Protection
@@ -248,13 +272,19 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 
 ## Admin-Anmeldung
 
-- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h), Logout im Dashboard
+- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h; mit „Angemeldet bleiben“ 14 Tage), Logout im Dashboard
 - **Alle `/admin/*`-Routen werden zentral in `hooks.server.ts` geschützt** — keine eigenen Secret-Prüfungen in Seiten/Actions, **nie `?secret=` in Links, Formularen oder Fetches**
 - Alte Lesezeichen mit `?secret=` melden einmal an und werden ohne Secret umgeleitet
 - **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
 - APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
 - `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
 - **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+
+## Anmeldungen (alle Logins)
+
+- Admin, Kundenkonto, passwortgeschützte Seiten, Agency-Editor, Aufgabenliste: gemeinsame Komponenten `src/lib/components/auth/` — `RememberMe.svelte` („Angemeldet bleiben“, Feld `remember`), `CancelLogin.svelte` („Abbrechen“ + Escape → vorherige Seite dieser Website, sonst Startseite), `LoginCard.svelte` (Login im Website-Stil)
+- Dauer zentral in `src/lib/auth/remember.ts` (`REMEMBER_DAYS` = 14); Server liest den Haken mit `wantsRemember(formData)`. Ohne Haken: Admin 8 h, Seiten-Passwort 24 h, Agency 1 h, Kundenkonto Browser-Sitzung (Server max. 1 Tag)
+- Neue Anmeldung → dieselben Komponenten + `wantsRemember()` verwenden
 
 ## Admin-Panel — Rechnungen & Kunden
 

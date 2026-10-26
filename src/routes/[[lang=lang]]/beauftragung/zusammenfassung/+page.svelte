@@ -2,8 +2,6 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import { t } from '$lib/i18n/translations';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
@@ -375,24 +373,21 @@
 	}
 
 	$: lang = $page.data.lang || 'de-ch';
-	$: bgColor = get(theme).pageBgColor;
-	$: pageColor = get(theme).pageColor;
-	$: borderColor = get(theme).pageColor;
 </script>
 
 <svelte:head>
 	<title>{data.pageTitle || t('Bestellübersicht', lang)}</title>
 </svelte:head>
 
-<Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
+<Bounded as="section" class="bg-page-bg text-page">
 	{#if !checkoutData}
 		<p>{t('Laden…', lang)}</p>
 	{:else}
 		<Heading tag="h1">{data.pageTitle || t('Bestellübersicht', lang)}</Heading>
 
 		<!-- Dienstleistung + Preis -->
-		<div class="mb-10 p-6 border" style="border-color: {borderColor};">
-			<p class="text-sm uppercase tracking-wide opacity-60 mb-1">
+		<div class="border-page mb-10 p-6 border">
+			<p class="text-sm uppercase tracking-wide text-muted mb-1">
 				{data.eventTexts?.orderLabel ?? t('Ihre Bestellung', lang)}
 			</p>
 
@@ -401,10 +396,9 @@
 				{#each lines as line, i}
 					{#if line.kind === 'main'}
 						<div
-							class="flex items-baseline justify-between gap-4 {i === 0
+							class="scope-border-strong flex items-baseline justify-between gap-4 {i === 0
 								? 'mt-2'
 								: 'mt-4 pt-3 border-t'}"
-							style="border-color: {borderColor}44;"
 						>
 							<p class="text-lg font-semibold">
 								{line.label || (checkoutData.data['dienstleistung'] ?? '—')}
@@ -417,41 +411,37 @@
 								</p>
 							{/if}
 						</div>
-						<p class="text-sm opacity-60 mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
+						<p class="text-sm text-muted mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
 					{:else}
 						<div
-							class="flex items-baseline justify-between gap-4 mt-3 pt-3 border-t"
-							style="border-color: {borderColor}44;"
+							class="scope-border-strong flex items-baseline justify-between gap-4 mt-3 pt-3 border-t"
 						>
-							<p class="text-base opacity-80">+ {line.label}</p>
+							<p class="text-base text-muted">+ {line.label}</p>
 							{#if lineDisplayPrices[i] !== null}
-								<p class="text-base tabular-nums shrink-0 opacity-80">
+								<p class="text-base tabular-nums shrink-0 text-muted">
 									{formatPrice(lineDisplayPrices[i] ?? 0, selectedCurrency)}
 								</p>
 							{:else}
-								<p class="text-sm opacity-60">{t('auf Anfrage', lang)}</p>
+								<p class="text-sm text-muted">{t('auf Anfrage', lang)}</p>
 							{/if}
 						</div>
-						<p class="text-sm opacity-60 mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
+						<p class="text-sm text-muted mt-0.5">{t(line.billingType ?? 'Einmalig', lang)}</p>
 					{/if}
 				{/each}
 
 				<!-- Grouped totals + grand total -->
 				{#if hasPrice}
-					<div class="mt-4 pt-3 border-t" style="border-color: {borderColor};">
+					<div class="border-page mt-4 pt-3 border-t">
 						{#each groupedTotals as [type, total]}
 							<div class="flex justify-between text-sm mt-1">
-								<span class="opacity-60">{t('Total', lang)} {t(type, lang)}:</span>
+								<span class="text-muted">{t('Total', lang)} {t(type, lang)}:</span>
 								<span class="font-semibold tabular-nums"
 									>{formatPrice(total, selectedCurrency)}</span
 								>
 							</div>
 						{/each}
 						{#if grandTotal !== null && groupedTotals.length > 1}
-							<div
-								class="flex justify-between mt-2 pt-2 border-t"
-								style="border-color: {borderColor}44;"
-							>
+							<div class="scope-border-strong flex justify-between mt-2 pt-2 border-t">
 								<span class="font-bold">{t('Total', lang)}</span>
 								<span class="font-bold tabular-nums"
 									>{formatPrice(grandTotal, selectedCurrency)}</span
@@ -466,8 +456,8 @@
 					{displayLabel || (checkoutData.data['dienstleistung'] ?? '—')}
 				</p>
 				{#if data.priceRange && data.product?.price != null}
-					<div class="mt-3 pt-3 border-t" style="border-color: {borderColor};">
-						<label class="block text-sm opacity-60 mb-1" for="custom-event-price"
+					<div class="border-page mt-3 pt-3 border-t">
+						<label class="block text-sm text-muted mb-1" for="custom-event-price"
 							>{t('Preis', lang)} ({data.baseCurrency}
 							{data.product.price} – {data.priceRange})</label
 						>
@@ -479,14 +469,13 @@
 							step="1"
 							bind:value={customEventPrice}
 							on:change={clampEventPrice}
-							class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 w-32"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+							class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 w-32 bg-page-bg text-page border-page"
 						/>
 					</div>
 				{/if}
 				{#if effectiveDisplayPrice !== null}
-					<div class="flex justify-between mt-3 pt-3 border-t" style="border-color: {borderColor};">
-						<span class="opacity-60">{data.eventTexts?.priceLabel ?? t('Preis', lang)}</span>
+					<div class="border-page flex justify-between mt-3 pt-3 border-t">
+						<span class="text-muted">{data.eventTexts?.priceLabel ?? t('Preis', lang)}</span>
 						<span class="font-semibold tabular-nums">
 							{#if codeDiscountPct > 0}<span class="line-through opacity-40 text-base mr-1"
 									>{formatPrice(displayPrice, selectedCurrency)}</span
@@ -500,7 +489,7 @@
 									'Monat',
 									lang
 								)}{/if}{#if data.paymentMethods.rechnung || data.paymentMethods.bar},&nbsp;<span
-									class="font-normal opacity-60"
+									class="font-normal text-muted"
 									>{[
 										data.paymentMethods.rechnung
 											? (data.eventTexts?.rechnungLabel ?? t('Gegen Rechnung', lang))
@@ -516,36 +505,30 @@
 					</div>
 				{/if}
 				{#if data.product?.billingType}
-					<p class="text-sm opacity-60 mt-0.5">
+					<p class="text-sm text-muted mt-0.5">
 						{t('Abrechnungsart:', lang)}
-						<span class="font-medium" style="opacity: 1;">{t(data.product.billingType, lang)}</span>
+						<span class="font-medium">{t(data.product.billingType, lang)}</span>
 					</p>
 				{/if}
 			{/if}
 
 			{#if hasPrice}
 				{#if additionalCostDisplay}
-					<div
-						class="flex justify-between mt-2 pt-2 border-t"
-						style="border-color: {borderColor}44;"
-					>
-						<span class="opacity-60">{data.additionalCostLabel ?? t('Zusatzkosten', lang)}</span>
+					<div class="scope-border-strong flex justify-between mt-2 pt-2 border-t">
+						<span class="text-muted">{data.additionalCostLabel ?? t('Zusatzkosten', lang)}</span>
 						<span class="tabular-nums">{formatPrice(additionalCostDisplay, selectedCurrency)}</span>
 					</div>
-					<div
-						class="flex justify-between mt-2 pt-2 border-t font-semibold"
-						style="border-color: {borderColor};"
-					>
+					<div class="border-page flex justify-between mt-2 pt-2 border-t font-semibold">
 						<span>{t('Total', lang)}</span>
 						<span class="tabular-nums">{formatPrice(grandTotal, selectedCurrency)}</span>
 					</div>
 				{/if}
-				<p class="text-sm opacity-60 mt-2">{t('exkl. MwSt.', lang)}</p>
+				<p class="text-sm text-muted mt-2">{t('exkl. MwSt.', lang)}</p>
 
 				<!-- Currency selector -->
 				{#if data.additionalCodes.length > 0}
 					<div class="mt-3 flex items-center gap-2">
-						<label for="currency-select" class="text-sm opacity-60">{t('Währung:', lang)}</label>
+						<label for="currency-select" class="text-sm text-muted">{t('Währung:', lang)}</label>
 						<InputField
 							inputId="currency-select"
 							field={{
@@ -567,12 +550,12 @@
 				<div class="mt-4">
 					{#if appliedCode}
 						<div class="flex items-center gap-3">
-							<span class="text-sm" style="color: {pageColor};">
+							<span class="text-sm text-page">
 								{t('Code angewendet:', lang)} «{appliedCode}» -{codeDiscountPct}%
 							</span>
 							<button
 								type="button"
-								class="text-xs underline opacity-60 hover:opacity-100"
+								class="text-xs underline text-muted hover:opacity-100"
 								on:click={removeCode}
 							>
 								{t('Entfernen', lang)}
@@ -584,14 +567,12 @@
 								type="text"
 								bind:value={discountCodeInput}
 								placeholder={t('Rabatt-Code', lang)}
-								class="themed-input p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm"
-								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color); width: 160px;"
+								class="p-2 border-b focus:border-b-2 focus:outline-none focus:ring-0 text-sm bg-page-bg text-page border-page w-40"
 								on:keydown={(e) => e.key === 'Enter' && applyDiscountCode()}
 							/>
 							<button
 								type="button"
-								class="text-sm px-3 py-1 border"
-								style="border-color: {pageColor}44;"
+								class="scope-border-strong text-sm px-3 py-1 border"
 								disabled={codeLoading || !discountCodeInput.trim()}
 								on:click={applyDiscountCode}
 							>
@@ -599,19 +580,19 @@
 							</button>
 						</div>
 						{#if codeError}
-							<p class="text-xs mt-1" style="color: #dc2626;">{codeError}</p>
+							<p class="text-xs mt-1 text-red-600">{codeError}</p>
 						{/if}
 					{/if}
 				</div>
 			{:else if !isMultiLine}
-				<p class="text-sm opacity-60 mt-1">{t('Preis wird bei Rückfrage mitgeteilt.', lang)}</p>
+				<p class="text-sm text-muted mt-1">{t('Preis wird bei Rückfrage mitgeteilt.', lang)}</p>
 			{/if}
 		</div>
 
 		<!-- Ihre Angaben -->
 		<div class="mb-10">
 			<Heading tag="h2">{t('Ihre Angaben', lang)}</Heading>
-			<dl class="divide-y" style="border-color: {borderColor}; opacity: 0.8;">
+			<dl class="text-muted divide-y divide-page">
 				{#each Object.entries(checkoutData.data) as [key, value]}
 					{#if value && !hiddenKeys.has(key) && key !== 'dienstleistung'}
 						<div class="py-3 grid grid-cols-2 gap-4">
@@ -630,20 +611,20 @@
 				<!-- Kreditkarte / TWINT -->
 				{#if data.paymentMethods.stripe}
 					<label
-						class="flex items-start gap-4 p-4 border cursor-pointer"
-						style="border-color: {selectedPayment === 'stripe' ? pageColor : pageColor + '44'};"
+						class="flex items-start gap-4 p-4 border cursor-pointer {selectedPayment === 'stripe'
+							? 'border-page'
+							: 'scope-border-strong'}"
 					>
 						<input
 							type="radio"
 							name="payment"
 							value="stripe"
 							bind:group={selectedPayment}
-							class="mt-1 shrink-0"
-							style="accent-color: {pageColor};"
+							class="mt-1 shrink-0 accent-page"
 						/>
 						<div>
 							<p class="font-semibold">{t('Kreditkarte / TWINT', lang)}</p>
-							<p class="text-sm opacity-60 mt-0.5">
+							<p class="text-sm text-muted mt-0.5">
 								{t('Sofortige, sichere Zahlung via Stripe.', lang)}
 							</p>
 						</div>
@@ -653,22 +634,22 @@
 				<!-- Gegen Rechnung -->
 				{#if data.paymentMethods.rechnung}
 					<label
-						class="flex items-start gap-4 p-4 border cursor-pointer"
-						style="border-color: {selectedPayment === 'rechnung' ? pageColor : pageColor + '44'};"
+						class="flex items-start gap-4 p-4 border cursor-pointer {selectedPayment === 'rechnung'
+							? 'border-page'
+							: 'scope-border-strong'}"
 					>
 						<input
 							type="radio"
 							name="payment"
 							value="rechnung"
 							bind:group={selectedPayment}
-							class="mt-1 shrink-0"
-							style="accent-color: {pageColor};"
+							class="mt-1 shrink-0 accent-page"
 						/>
 						<div>
 							<p class="font-semibold">
 								{data.eventTexts?.rechnungLabel ?? t('Gegen Rechnung', lang)}
 							</p>
-							<p class="text-sm opacity-60 mt-0.5">
+							<p class="text-sm text-muted mt-0.5">
 								{data.eventTexts?.rechnungDescription ??
 									t('Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.', lang)}
 							</p>
@@ -679,20 +660,20 @@
 				<!-- Gegen Bar -->
 				{#if data.paymentMethods.bar}
 					<label
-						class="flex items-start gap-4 p-4 border cursor-pointer"
-						style="border-color: {selectedPayment === 'bar' ? pageColor : pageColor + '44'};"
+						class="flex items-start gap-4 p-4 border cursor-pointer {selectedPayment === 'bar'
+							? 'border-page'
+							: 'scope-border-strong'}"
 					>
 						<input
 							type="radio"
 							name="payment"
 							value="bar"
 							bind:group={selectedPayment}
-							class="mt-1 shrink-0"
-							style="accent-color: {pageColor};"
+							class="mt-1 shrink-0 accent-page"
 						/>
 						<div>
 							<p class="font-semibold">{data.eventTexts?.barLabel ?? t('Gegen Bar', lang)}</p>
-							<p class="text-sm opacity-60 mt-0.5">
+							<p class="text-sm text-muted mt-0.5">
 								{data.eventTexts?.barDescription ??
 									data.barDescription ??
 									t('Wir melden uns zur Terminvereinbarung.', lang)}
@@ -737,10 +718,3 @@
 		</div>
 	{/if}
 </Bounded>
-
-<style>
-	.themed-input::placeholder {
-		color: var(--page-color);
-		opacity: 0.5;
-	}
-</style>

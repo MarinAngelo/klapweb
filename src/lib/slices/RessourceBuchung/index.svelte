@@ -330,7 +330,8 @@
 	as="section"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
-	style="background-color: {bgColor}; color: {textColor};"
+	class="color-scope"
+	style="--scope-color: {textColor}; --scope-bg: {bgColor};"
 >
 	<div class="flex flex-col gap-8 w-full">
 		{#if slice.primary.heading?.length}
@@ -344,13 +345,8 @@
 		{/if}
 
 		{#if calendarLoading}
-			<div class="flex items-center justify-center py-20 gap-3 text-sm opacity-60">
-				<svg
-					class="animate-spin w-6 h-6 shrink-0"
-					viewBox="0 0 24 24"
-					fill="none"
-					style="color:{textColor};"
-				>
+			<div class="flex items-center justify-center py-20 gap-3 text-sm text-muted">
+				<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
 					<circle
 						class="opacity-25"
 						cx="12"
@@ -364,7 +360,7 @@
 				{$_('Verfügbarkeit wird geladen…')}
 			</div>
 		{:else if success}
-			<div class="max-w-xl rounded p-6" style="border: 1px solid {textColor}44;">
+			<div class="scope-border-strong max-w-xl rounded border p-6">
 				<p class="text-lg font-semibold mb-2">
 					{slice.primary.success_heading || $_('Anfrage erhalten!')}
 				</p>
@@ -382,20 +378,20 @@
 			<div class="flex items-center gap-3 text-sm">
 				<div class="flex items-center gap-2">
 					<span
-						class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-						style="background-color: {textColor}; color: {bgColor};">1</span
+						class="scope-btn-solid w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+						>1</span
 					>
 					<span class="font-medium">{$_('Verfügbarkeit')}</span>
 				</div>
-				<div class="flex-1 h-px opacity-30" style="background-color: {textColor};"></div>
+				<div class="scope-fill flex-1 h-px opacity-30"></div>
 				<div class="flex items-center gap-2">
 					<span
-						class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all"
-						style="background-color: {step === 2 ? textColor : 'transparent'}; color: {step === 2
-							? bgColor
-							: textColor}; border: 2px solid {textColor}; opacity: {step === 2 ? 1 : 0.4};">2</span
+						class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
+						2
+							? 'scope-btn-solid'
+							: 'scope-text opacity-40'}">2</span
 					>
-					<span style="opacity: {step === 2 ? 1 : 0.4};">{$_('Kontakt')}</span>
+					<span class:opacity-40={step !== 2}>{$_('Kontakt')}</span>
 				</div>
 			</div>
 
@@ -407,22 +403,16 @@
 						<button
 							type="button"
 							on:click={() => switchBuchungsart('zimmer')}
-							class="px-4 py-2 rounded text-sm font-medium transition-all"
-							style="background-color: {buchungsart === 'zimmer'
-								? textColor
-								: 'transparent'}; color: {buchungsart === 'zimmer'
-								? bgColor
-								: textColor}; border: 1px solid {textColor}44;">{$_('Einzelzimmer')}</button
+							class="px-4 py-2 rounded text-sm font-medium transition-all {buchungsart === 'zimmer'
+								? 'scope-btn-solid'
+								: 'scope-btn-outline'}">{$_('Einzelzimmer')}</button
 						>
 						<button
 							type="button"
 							on:click={() => switchBuchungsart('wohnung')}
-							class="px-4 py-2 rounded text-sm font-medium transition-all"
-							style="background-color: {buchungsart === 'wohnung'
-								? textColor
-								: 'transparent'}; color: {buchungsart === 'wohnung'
-								? bgColor
-								: textColor}; border: 1px solid {textColor}44;">{$_('Ganze Wohnung')}</button
+							class="px-4 py-2 rounded text-sm font-medium transition-all {buchungsart === 'wohnung'
+								? 'scope-btn-solid'
+								: 'scope-btn-outline'}">{$_('Ganze Wohnung')}</button
 						>
 					</div>
 				{/if}
@@ -450,16 +440,12 @@
 				{/if}
 
 				<!-- Calendar -->
-				<div
-					class="rounded p-5 relative"
-					style="background: #83bd69; border: 1px solid {textColor}22;"
-				>
+				<div class="scope-border scope-tint relative rounded border p-5">
 					<RessourceKalender
 						bookedRanges={calendarBookedRanges}
 						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
 						bind:von
 						bind:bis
-						{textColor}
 					/>
 				</div>
 
@@ -476,8 +462,7 @@
 									bind:value={von}
 									min={today}
 									required
-									class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-									style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+									class="form-input form-input-lg"
 								/>
 							</div>
 							<div>
@@ -488,14 +473,13 @@
 									bind:value={bis}
 									min={bisMin}
 									required
-									class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-									style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+									class="form-input form-input-lg"
 								/>
 							</div>
 						</div>
 
 						{#if priceError}
-							<p class="text-sm" style="color: #e53e3e;">{priceError}</p>
+							<p class="text-sm text-red-600">{priceError}</p>
 						{/if}
 
 						<!-- Personen -->
@@ -511,7 +495,7 @@
 								bind:value={personen}
 							/>
 							{#if ressource?.maxPersonen}
-								<span class="opacity-60 text-xs"
+								<span class="text-muted text-xs"
 									>{$_('Maximal')} {ressource.maxPersonen} {$_('Personen')}</span
 								>
 							{/if}
@@ -526,21 +510,20 @@
 									{@const belegt = belegteZimmerNamen.has(zimmerName)}
 									<label
 										for="zimmer-{i}"
-										class="flex items-center gap-3 text-sm"
-										style={belegt ? 'opacity: 0.4; cursor: not-allowed;' : 'cursor: pointer;'}
+										class="flex items-center gap-3 text-sm {belegt
+											? 'opacity-40 cursor-not-allowed'
+											: 'cursor-pointer'}"
 									>
 										<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
-										<span class="flex-1" style={belegt ? 'text-decoration: line-through;' : ''}
-											>{zimmerName}</span
-										>
-										<span class="opacity-60">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
+										<span class="flex-1" class:line-through={belegt}>{zimmerName}</span>
+										<span class="text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
 										{#if belegt && (von || bis)}
-											<span class="text-xs" style="color: #991b1b;">{$_('Belegt')}</span>
+											<span class="text-xs text-red-800">{$_('Belegt')}</span>
 										{/if}
 									</label>
 								{/each}
 								{#if zimmerError}
-									<p class="text-sm mt-1" style="color: #e53e3e;">{zimmerError}</p>
+									<p class="text-sm mt-1 text-red-600">{zimmerError}</p>
 								{/if}
 							</fieldset>
 						{/if}
@@ -550,8 +533,7 @@
 							type="button"
 							on:click={goToStep2}
 							disabled={!step1Valid}
-							class="mt-2 px-6 py-3 font-medium transition-opacity disabled:opacity-40"
-							style="background-color: {textColor}; color: {bgColor};"
+							class="scope-btn-solid mt-2 px-6 py-3 font-medium transition-opacity"
 						>
 							{$_('Weiter')}
 							<SvgIcons name="right" size="1em" />
@@ -562,19 +544,13 @@
 					<div class="flex flex-col gap-6">
 						<!-- Price preview -->
 						{#if von && bis && !priceError}
-							<div
-								class="rounded p-5"
-								style="border: 1px solid {textColor}22; background: {textColor}08;"
-							>
-								<p class="text-sm opacity-60 mb-3">{$_('Preisvorschau')}</p>
+							<div class="scope-border scope-tint rounded border p-5">
+								<p class="text-sm text-muted mb-3">{$_('Preisvorschau')}</p>
 								<div class="flex justify-between text-sm mb-1">
 									<span>{anzahlNaechte} {anzahlNaechte === 1 ? $_('Nacht') : $_('Nächte')}</span>
 									<span>{preisFormatted}</span>
 								</div>
-								<div
-									class="flex justify-between font-semibold border-t pt-2 mt-2"
-									style="border-color: {textColor}22;"
-								>
+								<div class="scope-border flex justify-between font-semibold border-t pt-2 mt-2">
 									<span>{$_('Total')}</span>
 									<span>{preisFormatted}</span>
 								</div>
@@ -588,32 +564,25 @@
 								<div class="flex flex-col gap-1">
 									{#each ressource?.schlafzimmer ?? [] as zimmer}
 										{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
-										<details
-											class="rounded overflow-hidden"
-											style="border: 1px solid {textColor}22;"
-										>
+										<details class="scope-border overflow-hidden rounded border">
 											<summary
 												class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer list-none"
 											>
 												<span>{zimmerName}</span>
-												<span class="flex items-center gap-2 opacity-60 shrink-0 ml-2">
+												<span class="flex items-center gap-2 text-muted shrink-0 ml-2">
 													<span>{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
 													<span class="text-xs">▾</span>
 												</span>
 											</summary>
-											<div
-												class="px-3 pb-3 pt-2 flex flex-col gap-2"
-												style="border-top: 1px solid {textColor}11;"
-											>
+											<div class="scope-border px-3 pb-3 pt-2 flex flex-col gap-2 border-t">
 												{#if zimmer.bild?.url}
 													<img
 														src={zimmer.bild.url}
 														alt={zimmer.bild.alt || zimmerName}
-														class="w-full rounded object-cover"
-														style="max-height: 200px;"
+														class="w-full max-h-[200px] rounded object-cover"
 													/>
 												{/if}
-												<p class="text-xs opacity-60">{zimmer.anzahl_betten}× {zimmer.bett_typ}</p>
+												<p class="text-xs text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</p>
 											</div>
 										</details>
 									{/each}
@@ -622,7 +591,7 @@
 						{/if}
 
 						<!-- Rules -->
-						<div class="text-sm opacity-60 flex flex-col gap-1">
+						<div class="text-sm text-muted flex flex-col gap-1">
 							{#if (ressource?.minNaechte ?? 0) > 1}
 								<p>{$_('Mindestaufenthalt')}: {ressource?.minNaechte} {$_('Nächte')}</p>
 							{/if}
@@ -641,31 +610,28 @@
 				<!-- ── STEP 2: Kontaktformular ── -->
 			{:else}
 				<!-- Buchungs-Zusammenfassung -->
-				<div
-					class="rounded p-5 flex flex-col gap-2"
-					style="border: 1px solid {textColor}22; background: {textColor}06;"
-				>
+				<div class="scope-border scope-tint rounded border p-5 flex flex-col gap-2">
 					<p class="text-sm font-semibold mb-1">{$_('Ihre Auswahl')}</p>
 					<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
 						<div>
-							<p class="opacity-60 text-xs">{$_('Anreise')}</p>
+							<p class="text-muted text-xs">{$_('Anreise')}</p>
 							<p class="font-medium">{formatDate(von)}</p>
 						</div>
 						<div>
-							<p class="opacity-60 text-xs">{$_('Abreise')}</p>
+							<p class="text-muted text-xs">{$_('Abreise')}</p>
 							<p class="font-medium">{formatDate(bis)}</p>
 						</div>
 						<div>
-							<p class="opacity-60 text-xs">{$_('Nächte')}</p>
+							<p class="text-muted text-xs">{$_('Nächte')}</p>
 							<p class="font-medium">{anzahlNaechte}</p>
 						</div>
 						<div>
-							<p class="opacity-60 text-xs">{$_('Personen')}</p>
+							<p class="text-muted text-xs">{$_('Personen')}</p>
 							<p class="font-medium">{personen}</p>
 						</div>
 					</div>
 					{#if showZimmerSelection && selectedZimmer.length > 0}
-						<p class="text-xs opacity-60 mt-1">
+						<p class="text-xs text-muted mt-1">
 							{$_('Zimmer')}: {selectedZimmer.map((z) => z.zimmer_name || z.bett_typ).join(', ')}
 						</p>
 					{/if}
@@ -675,7 +641,7 @@
 					<button
 						type="button"
 						on:click={backToStep1}
-						class="text-xs underline opacity-60 hover:opacity-100 text-left mt-1 w-fit"
+						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit"
 					>
 						<SvgIcons name="left" size="1em" />
 						{$_('Auswahl ändern')}
@@ -691,8 +657,7 @@
 							type="text"
 							bind:value={name}
 							required
-							class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+							class="form-input form-input-lg"
 						/>
 					</div>
 
@@ -703,8 +668,7 @@
 							type="email"
 							bind:value={email}
 							required
-							class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+							class="form-input form-input-lg"
 						/>
 					</div>
 
@@ -721,46 +685,40 @@
 							id="referenz-email"
 							type="email"
 							bind:value={referenzEmail}
-							class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-							style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+							class="form-input form-input-lg"
 						/>
 						{#if referenzEmailChecking}
-							<p class="text-xs opacity-50 -mt-3">{$_('Wird geprüft…')}</p>
+							<p class="text-xs text-muted -mt-3">{$_('Wird geprüft…')}</p>
 						{:else if referenzEmail && referenzEmail.includes('@')}
 							{#if referenzEmailFound === true}
-								<p class="text-xs -mt-3" style="color: #16a34a;">✓ {$_('E-Mail gefunden')}</p>
+								<p class="text-xs -mt-3 text-green-700">✓ {$_('E-Mail gefunden')}</p>
 							{:else if referenzEmailFound === false}
-								<p class="text-xs -mt-3" style="color: #dc2626;">✗ {$_('E-Mail nicht gefunden')}</p>
+								<p class="text-xs -mt-3 text-red-600">✗ {$_('E-Mail nicht gefunden')}</p>
 							{/if}
 						{/if}
 					</div>
 
 					<div>
 						<label for="nachricht" class="block text-base font-bold">{$_('Nachricht')}</label>
-						<div
-							class="border-b focus-within:border-b-2"
-							style="border-bottom-color: var(--page-color);"
-						>
+						<div class="border-page border-b focus-within:border-b-2">
 							<textarea
 								id="nachricht"
 								bind:value={nachricht}
 								rows="4"
-								class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 resize-none"
-								style="background-color: var(--page-bg-color); color: var(--page-color);"
+								class="mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 resize-none bg-page-bg text-page form-input-lg"
 							></textarea>
 						</div>
 					</div>
 
 					{#if errorMsg}
-						<p class="text-sm" style="color: #e53e3e;">{errorMsg}</p>
+						<p class="text-sm text-red-600">{errorMsg}</p>
 					{/if}
 
 					<div class="flex gap-3 flex-wrap pt-2">
 						<button
 							type="button"
 							on:click={backToStep1}
-							class="px-6 py-3 font-medium transition-opacity"
-							style="background-color: transparent; color: {textColor}; border: 1px solid {textColor}44;"
+							class="scope-btn-outline px-6 py-3 font-medium transition-opacity"
 						>
 							<SvgIcons name="left" size="1em" />
 							{$_('Zurück')}
@@ -768,8 +726,7 @@
 						<button
 							type="submit"
 							disabled={!formValid || loading}
-							class="px-6 py-3 font-medium transition-opacity disabled:opacity-40"
-							style="background-color: {textColor}; color: {bgColor};"
+							class="scope-btn-solid px-6 py-3 font-medium transition-opacity"
 						>
 							{loading ? $_('Wird gesendet…') : slice.primary.submit_label || $_('Jetzt anfragen')}
 						</button>
@@ -777,14 +734,7 @@
 				</form>
 			{/if}
 		{:else}
-			<p class="opacity-60 text-sm">{$_('Keine Ressource verknüpft')}</p>
+			<p class="text-muted text-sm">{$_('Keine Ressource verknüpft')}</p>
 		{/if}
 	</div>
 </Bounded>
-
-<style>
-	.input {
-		font-size: 18px;
-		line-height: 1.5;
-	}
-</style>

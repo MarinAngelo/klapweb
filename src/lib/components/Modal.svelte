@@ -14,11 +14,8 @@
 	export let onClose: () => void;
 </script>
 
-<div class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0,0,0,0.4);">
-	<div
-		class="rounded-lg shadow-lg p-8 max-w-md w-full mx-4"
-		style="background-color: var(--page-bg-color); color: var(--page-color);"
-	>
+<div class="fixed inset-0 flex items-center justify-center z-50 [background-color:rgba(0,0,0,0.4)]">
+	<div class="rounded-lg shadow-lg p-8 max-w-md w-full mx-4 bg-page-bg text-page">
 		<p class="text-xl font-bold mb-4">{title}</p>
 		<div class="mb-6">
 			<PrismicRichText field={message} />

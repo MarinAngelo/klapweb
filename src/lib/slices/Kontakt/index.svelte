@@ -71,8 +71,9 @@
 </script>
 
 <Bounded
+	class="color-scope"
 	as="section"
-	style="background-color: {bgColor};"
+	style="--scope-bg: {bgColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	marginTopSize={primary.margin_top}
@@ -85,11 +86,8 @@
 
 	<div
 		class="flex flex-wrap {layout === 'Vertikal'
-			? 'flex-col items-start'
+			? `flex-col ${align === 'Rechts' ? 'items-end' : align === 'Mitte' ? 'items-center' : 'items-start'}`
 			: (alignClass[align] ?? 'justify-center')} gap-3"
-		style={layout === 'Vertikal'
-			? `align-items: ${align === 'Rechts' ? 'flex-end' : align === 'Mitte' ? 'center' : 'flex-start'}`
-			: ''}
 	>
 		{#each slice.items as item}
 			{@const label = item.label || item.app}
@@ -104,8 +102,8 @@
 				rel="noopener noreferrer"
 				class="kontakt-btn inline-flex items-center rounded-full font-semibold transition-opacity hover:opacity-85 {sizeClass[
 					buttonSize
-				] ?? sizeClass['Mittel']}"
-				style="background-color: {color}; color: #fff; text-decoration: none;"
+				] ?? sizeClass['Mittel']} [color:#fff] no-underline"
+				style:background-color={color}
 			>
 				{#if item.app === 'WhatsApp'}
 					<svg width={sz} height={sz} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

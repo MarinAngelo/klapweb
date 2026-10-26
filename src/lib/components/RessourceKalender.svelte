@@ -5,7 +5,6 @@
 	export let allZimmerNamen: string[] = [];
 	export let von = '';
 	export let bis = '';
-	export let textColor = '#000000';
 	export let ganzeRessource = false; // wenn true, blockiert auch Teilbuchungen
 	export let partialGeklickt = false;
 
@@ -16,10 +15,16 @@
 	let viewMonth = today.getMonth();
 
 	function prevMonth() {
-		if (viewMonth === 0) { viewMonth = 11; viewYear--; } else viewMonth--;
+		if (viewMonth === 0) {
+			viewMonth = 11;
+			viewYear--;
+		} else viewMonth--;
 	}
 	function nextMonth() {
-		if (viewMonth === 11) { viewMonth = 0; viewYear++; } else viewMonth++;
+		if (viewMonth === 11) {
+			viewMonth = 0;
+			viewYear++;
+		} else viewMonth++;
 	}
 
 	function daysInMonth(year: number, month: number) {
@@ -74,15 +79,23 @@
 		return [...new Set(covering.flatMap((r) => r.zimmer))];
 	}
 
-	function isPast(ds: string) { return ds < todayStr; }
+	function isPast(ds: string) {
+		return ds < todayStr;
+	}
 	function isSelected(ds: string) {
 		if (!von) return false;
 		if (!bis) return ds === von;
 		return ds >= von && ds < bis;
 	}
-	function isRangeStart(ds: string) { return ds === von; }
-	function isRangeEnd(ds: string) { return !!bis && ds === bis; }
-	function isToday(ds: string) { return ds === todayStr; }
+	function isRangeStart(ds: string) {
+		return ds === von;
+	}
+	function isRangeEnd(ds: string) {
+		return !!bis && ds === bis;
+	}
+	function isToday(ds: string) {
+		return ds === todayStr;
+	}
 
 	function isBlocked(ds: string): boolean {
 		const s = getStatus(ds);
@@ -96,21 +109,32 @@
 			return;
 		}
 		if (von && !bis && ds === von) {
-			von = ''; bis = '';
+			von = '';
+			bis = '';
 		} else if (!von || (von && bis)) {
-			von = ds; bis = '';
+			von = ds;
+			bis = '';
 		} else if (ds <= von) {
-			von = ds; bis = '';
+			von = ds;
+			bis = '';
 		} else {
 			const cur = new Date(von + 'T12:00:00Z');
 			cur.setUTCDate(cur.getUTCDate() + 1);
 			const endD = new Date(ds + 'T12:00:00Z');
 			let crossesBlocked = false;
 			while (cur < endD) {
-				if (isBlocked(cur.toISOString().slice(0, 10))) { crossesBlocked = true; break; }
+				if (isBlocked(cur.toISOString().slice(0, 10))) {
+					crossesBlocked = true;
+					break;
+				}
 				cur.setUTCDate(cur.getUTCDate() + 1);
 			}
-			if (crossesBlocked) { von = ds; bis = ''; } else { bis = ds; }
+			if (crossesBlocked) {
+				von = ds;
+				bis = '';
+			} else {
+				bis = ds;
+			}
 		}
 	}
 
@@ -130,7 +154,8 @@
 	}
 
 	$: month1 = { year: viewYear, month: viewMonth };
-	$: month2 = viewMonth === 11 ? { year: viewYear + 1, month: 0 } : { year: viewYear, month: viewMonth + 1 };
+	$: month2 =
+		viewMonth === 11 ? { year: viewYear + 1, month: 0 } : { year: viewYear, month: viewMonth + 1 };
 	$: cells1 = buildMonth(month1.year, month1.month);
 	$: cells2 = buildMonth(month2.year, month2.month);
 
@@ -138,41 +163,60 @@
 	$: allCells = { cells1, cells2, statusMap, von, bis, hoverDate };
 
 	const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-	const monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-		'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+	const monthNames = [
+		'Januar',
+		'Februar',
+		'März',
+		'April',
+		'Mai',
+		'Juni',
+		'Juli',
+		'August',
+		'September',
+		'Oktober',
+		'November',
+		'Dezember'
+	];
 </script>
 
-<div class="select-none" style="color: {textColor};">
+<div class="scope-text select-none">
 	<!-- Navigation -->
 	<div class="flex items-center justify-between mb-4">
-		<button type="button" on:click={prevMonth}
-			class="px-3 py-1 rounded text-sm opacity-60 hover:opacity-100 transition-opacity"
-			style="border: 1px solid {textColor}33;">‹</button>
-		<span class="text-sm font-medium opacity-70">
-			{monthNames[month1.month]} {month1.year} – {monthNames[month2.month]} {month2.year}
+		<button
+			type="button"
+			on:click={prevMonth}
+			class="scope-border-strong px-3 py-1 rounded border text-sm transition-opacity hover:opacity-70"
+			>‹</button
+		>
+		<span class="text-muted text-sm font-medium">
+			{monthNames[month1.month]}
+			{month1.year} – {monthNames[month2.month]}
+			{month2.year}
 		</span>
-		<button type="button" on:click={nextMonth}
-			class="px-3 py-1 rounded text-sm opacity-60 hover:opacity-100 transition-opacity"
-			style="border: 1px solid {textColor}33;">›</button>
+		<button
+			type="button"
+			on:click={nextMonth}
+			class="scope-border-strong px-3 py-1 rounded border text-sm transition-opacity hover:opacity-70"
+			>›</button
+		>
 	</div>
 
 	<!-- Two months -->
 	{#key allCells}
-	<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-		{#each [{ m: month1, cells: cells1 }, { m: month2, cells: cells2 }] as { m, cells }}
-			<div>
-				<p class="text-sm font-semibold text-center mb-2">{monthNames[m.month]} {m.year}</p>
-				<div class="grid grid-cols-7 mb-1">
-					{#each weekdays as wd}
-						<div class="text-center text-xs py-1">{wd}</div>
-					{/each}
-				</div>
-				<div class="grid grid-cols-7">
-					{#each cells as cell}
-						{#if cell.day === null}
-							<div></div>
-						{:else}
-							{#if true}
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+			{#each [{ m: month1, cells: cells1 }, { m: month2, cells: cells2 }] as { m, cells }}
+				<div>
+					<p class="text-sm font-semibold text-center mb-2">{monthNames[m.month]} {m.year}</p>
+					<div class="grid grid-cols-7 mb-1">
+						{#each weekdays as wd}
+							<div class="text-center text-xs py-1">{wd}</div>
+						{/each}
+					</div>
+					<div class="grid grid-cols-7">
+						{#each cells as cell}
+							{#if cell.day === null}
+								<div></div>
+							{:else if true}
 								{@const status = getStatus(cell.ds)}
 								{@const past = isPast(cell.ds)}
 								{@const sel = isSelected(cell.ds)}
@@ -182,50 +226,55 @@
 								{@const blocked = isBlocked(cell.ds)}
 								{@const disabled = blocked || past}
 								{@const belegteNamen = status === 'partial' ? getBelegteNamen(cell.ds) : []}
-								{@const freieNamen = status === 'partial' ? allZimmerNamen.filter(n => !belegteNamen.includes(n)) : []}
+								{@const freieNamen =
+									status === 'partial'
+										? allZimmerNamen.filter((n) => !belegteNamen.includes(n))
+										: []}
 								<button
 									type="button"
 									on:click={() => handleDayClick(cell.ds)}
-									on:mouseenter={() => { if (!disabled) hoverDate = cell.ds; }}
-									on:mouseleave={() => { hoverDate = ''; }}
+									on:mouseenter={() => {
+										if (!disabled) hoverDate = cell.ds;
+									}}
+									on:mouseleave={() => {
+										hoverDate = '';
+									}}
 									{disabled}
 									class="h-8 text-xs rounded transition-colors"
-									style="
-										{status === 'full' ? 'background:#e29898;color:#5c1f1f;cursor:default;' : ''}
-										{status === 'partial' ? `background:#dcfce7;color:#166534;cursor:${ganzeRessource ? 'default' : 'pointer'};` : ''}
-										{past && status === 'free' ? 'opacity:0.3;cursor:default;' : ''}
-										{(sel || start || end || hover) && !blocked ? 'background:#2563eb;color:#fff;cursor:pointer;' : ''}
-										{isToday(cell.ds) && !sel && status === 'free' ? 'font-weight:700;' : ''}
-									"
-									title={
-										status === 'full' ? $_('Voll belegt') :
-										status === 'partial' ? `${$_('Teilweise belegt')} · ${$_('Frei')}: ${freieNamen.join(', ')}` :
-										''
-									}
+									class:cal-day-full={status === 'full'}
+									class:cal-day-partial={status === 'partial'}
+									class:cursor-default={status === 'partial' && ganzeRessource}
+									class:cal-day-past={past && status === 'free'}
+									class:cal-day-selected={(sel || start || end || hover) && !blocked}
+									class:font-bold={isToday(cell.ds) && !sel && status === 'free'}
+									title={status === 'full'
+										? $_('Voll belegt')
+										: status === 'partial'
+											? `${$_('Teilweise belegt')} · ${$_('Frei')}: ${freieNamen.join(', ')}`
+											: ''}
 								>
 									{cell.day}
 								</button>
 							{/if}
-						{/if}
-					{/each}
+						{/each}
+					</div>
 				</div>
-			</div>
-		{/each}
-	</div>
+			{/each}
+		</div>
 	{/key}
 
 	<!-- Legend -->
-	<div class="flex flex-wrap gap-4 mt-4 text-xs opacity-60">
+	<div class="text-muted flex flex-wrap gap-4 mt-4 text-xs">
 		<span class="flex items-center gap-1">
-			<span class="inline-block w-3 h-3 rounded" style="background:#e29898;"></span>
+			<span class="cal-day-full inline-block w-3 h-3 rounded"></span>
 			{$_('Voll belegt')}
 		</span>
 		<span class="flex items-center gap-1">
-			<span class="inline-block w-3 h-3 rounded" style="background:#dcfce7;"></span>
+			<span class="cal-day-partial inline-block w-3 h-3 rounded"></span>
 			{$_('Teilweise belegt')}
 		</span>
 		<span class="flex items-center gap-1">
-			<span class="inline-block w-3 h-3 rounded" style="background:#2563eb;"></span>
+			<span class="cal-day-selected inline-block w-3 h-3 rounded"></span>
 			{$_('Gewählter Zeitraum')}
 		</span>
 	</div>

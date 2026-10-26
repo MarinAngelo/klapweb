@@ -1,4 +1,8 @@
 <script lang="ts">
+	import LoginCard from '$lib/components/auth/LoginCard.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import RememberMe from '$lib/components/auth/RememberMe.svelte';
+	import CancelLogin from '$lib/components/auth/CancelLogin.svelte';
 	import type { ActionData, PageData } from './$types';
 	import { _ } from '$lib/stores/i18n';
 
@@ -200,73 +204,83 @@
 	}
 </script>
 
-<div class="container">
-	{#if !data.authenticated}
-		<!-- Login Form -->
-		<div class="login-container">
-			<h1>{$_('Agency Gating Editor')}</h1>
-			<p class="intro">{$_('Bitte geben Sie das Agentur-Passwort ein:')}</p>
-
-			<form method="POST" action="?/login" class="login-form">
-				<div class="form-group">
-					<label for="secret">{$_('Passwort')}</label>
-					<input
-						id="secret"
-						name="secret"
-						type="password"
-						bind:value={passwordInput}
-						placeholder={$_('Passwort eingeben')}
-						required
-					/>
-				</div>
-
-				{#if loginError}
-					<div class="error-message" role="alert">{$_(loginError)}</div>
-				{/if}
-
-				<button type="submit" class="btn btn-primary">{$_('Anmelden')}</button>
-			</form>
-		</div>
-	{:else}
-		<!-- Editor -->
-		<div class="editor-container">
-			<div class="header">
-				<h1>{$_('Agency Gating Editor')}</h1>
-				<form method="POST" action="?/logout" style="display: inline;">
-					<button type="submit" class="btn btn-secondary">{$_('Abmelden')}</button>
+{#if !data.authenticated}
+	<!-- Login in the look of the site (same as /admin) -->
+	<LoginCard title={$_('Agency Gating Editor')} action="?/login">
+		<p class="m-0 text-sm">{$_('Bitte geben Sie das Agentur-Passwort ein:')}</p>
+		<input
+			id="secret"
+			name="secret"
+			type="password"
+			bind:value={passwordInput}
+			aria-label={$_('Passwort')}
+			placeholder={$_('Passwort eingeben')}
+			autocomplete="current-password"
+			required
+			class="form-input"
+		/>
+		<RememberMe />
+		{#if loginError}
+			<p role="alert" class="m-0 text-sm text-red-600">{$_(loginError)}</p>
+		{/if}
+		<button type="submit" class="btn-solid rounded px-6 py-2 text-sm font-medium">
+			{$_('Anmelden')}
+		</button>
+		<CancelLogin />
+	</LoginCard>
+{:else}
+	<!-- Editor: neutral admin UI (app.css › Admin-UI), like /admin -->
+	<div class="admin">
+		<div class="admin-container">
+			<AdminHeader title={$_('Agency Gating Editor')} back={false}>
+				<form method="POST" action="?/logout">
+					<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
 				</form>
-			</div>
+			</AdminHeader>
 
-			<form method="POST" action="?/save" on:submit={handleSave} class="form">
-				<div class="form-group">
-					<label for="plan">{$_('Plan')}</label>
-					<select id="plan" name="plan" bind:value={selectedPlan}>
+			{#if (data.missingEnv?.length ?? 0) > 0}
+				<button
+					type="button"
+					class="admin-notice admin-notice-warn w-full cursor-pointer text-left"
+					on:click={() => (showEnvWarning = true)}
+				>
+					⚠ {data.missingEnv?.length}
+					{data.missingEnv?.length === 1
+						? $_('aktives Feature mit fehlenden Umgebungsvariablen')
+						: $_('aktive Features mit fehlenden Umgebungsvariablen')}
+					— {$_('Details anzeigen')}
+				</button>
+			{/if}
+
+			<form method="POST" action="?/save" on:submit={handleSave} class="admin-card">
+				<div class="mb-4">
+					<label for="plan" class="admin-label">{$_('Plan')}</label>
+					<select id="plan" name="plan" bind:value={selectedPlan} class="admin-input">
 						{#each getPlans() as { id, label }}
-							<option value={id}>
-								{label}
-							</option>
+							<option value={id}>{label}</option>
 						{/each}
 					</select>
 				</div>
 
-				<div class="form-group">
-					<fieldset>
-						<legend>{$_('Features')}</legend>
+				<fieldset class="admin-fieldset">
+					<legend>{$_('Features')}</legend>
+					<div class="grid gap-2 sm:grid-cols-2">
 						{#each allFeatures as { id, label, inPlan }}
-							<label class="checkbox-label">
+							<label class="flex cursor-pointer items-center gap-2 text-sm">
 								<input
 									type="checkbox"
+									class="admin-checkbox"
 									checked={selectedFeatures.includes(id)}
 									on:change={() => toggleFeature(id)}
 								/>
 								<span>
 									{label}
 									{#if inPlan}
-										<span class="badge">{$_('im Plan')}</span>
+										<span class="admin-badge admin-badge-blue">{$_('im Plan')}</span>
 									{/if}
 									{#if getMissingEnv(id).length > 0}
 										<span
-											class="badge badge-warning"
+											class="admin-badge admin-badge-yellow"
 											title="{$_('Fehlende Umgebungsvariablen')}: {getMissingEnv(id).join(', ')}"
 										>
 											⚠ Env
@@ -275,8 +289,8 @@
 								</span>
 							</label>
 						{/each}
-					</fieldset>
-				</div>
+					</div>
+				</fieldset>
 
 				<input type="hidden" name="overrides" value={JSON.stringify(selectedFeatures)} />
 				<input
@@ -285,13 +299,17 @@
 					value={JSON.stringify(disabledSections)}
 				/>
 
-				<div class="form-group">
-					<fieldset>
-						<legend>{$_('Admin-Bereiche')}</legend>
+				<fieldset class="admin-fieldset">
+					<legend>{$_('Admin-Bereiche')}</legend>
+					<div class="grid gap-2 sm:grid-cols-2">
 						{#each adminSectionList as section}
-							<label class="checkbox-label" class:gate-inactive={!section.gateActive}>
+							<label
+								class="flex cursor-pointer items-center gap-2 text-sm"
+								class:admin-muted={!section.gateActive}
+							>
 								<input
 									type="checkbox"
+									class="admin-checkbox"
 									checked={section.gateActive && !disabledSections.includes(section.id)}
 									disabled={!section.gateActive}
 									on:change={() => toggleSection(section.id)}
@@ -299,26 +317,28 @@
 								<span>
 									{section.label}
 									{#if section.gateLabel}
-										<span class="badge" title={$_('Gate in gating.json')}>{section.gateLabel}</span>
+										<span class="admin-badge" title={$_('Gate in gating.json')}
+											>{section.gateLabel}</span
+										>
 									{/if}
 								</span>
 							</label>
 						{/each}
-					</fieldset>
-				</div>
+					</div>
+				</fieldset>
 
-				<button type="submit" class="btn btn-primary">{$_('Speichern')}</button>
+				<button type="submit" class="admin-btn admin-btn-primary">{$_('Speichern')}</button>
 			</form>
 
-			<div class="info">
-				<strong>{$_('Übersicht')}:</strong>
+			<div class="admin-notice">
+				<p><strong>{$_('Übersicht')}</strong></p>
 				<p>{$_('Plan')}: {getPlans().find((p) => p.id === selectedPlan)?.label}</p>
 				<p>{$_('Plan-Features')}: {planFeatures.join(', ') || $_('keine')}</p>
 				<p>
 					<strong>{$_('Ausgewählte Features')}:</strong>
 					{selectedFeatures.join(', ') || $_('keine')}
 				</p>
-				<p style="color: #666; font-size: 0.9rem;">
+				<p class="admin-muted text-sm">
 					{$_('Zusätzlich')}: {selectedFeatures
 						.filter((f) => !planFeatures.includes(f))
 						.join(', ') || $_('keine')} / {$_('Entfernt')}: {planFeatures
@@ -328,54 +348,62 @@
 			</div>
 
 			{#if data.canEditDefinition}
-				<form method="POST" action="?/savePlanDefinition" class="form definition">
+				<form method="POST" action="?/savePlanDefinition" class="admin-card">
 					<input type="hidden" name="feature_plans" value={JSON.stringify(changedFeaturePlans)} />
-					<fieldset>
-						<legend>{$_('Plan-Definition (global)')}</legend>
-						<p class="definition-warning">
-							⚠ {$_(
-								'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.'
-							)}
-						</p>
+					<h2 class="admin-card-title">{$_('Plan-Definition (global)')}</h2>
+					<p class="admin-notice admin-notice-warn">
+						⚠ {$_(
+							'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.'
+						)}
+					</p>
+					<div class="mb-4 flex flex-col">
 						{#each allFeatures as { id, label }}
-							<div class="definition-row">
-								<label for="def-{id}">
+							<div
+								class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 py-2"
+							>
+								<label for="def-{id}" class="text-sm">
 									{label}
 									{#if getFeaturePlanList(id).length > 1}
-										<span class="badge" title={getFeaturePlanList(id).join(', ')}
+										<span class="admin-badge" title={getFeaturePlanList(id).join(', ')}
 											>{$_('Mehrere Pläne')}</span
 										>
 									{/if}
 								</label>
-								<select id="def-{id}" bind:value={featurePlans[id]}>
+								<select
+									id="def-{id}"
+									bind:value={featurePlans[id]}
+									class="admin-input admin-input-sm w-auto"
+								>
 									{#each getPlans() as plan}
 										<option value={plan.id}>{$_('ab')} {plan.label}</option>
 									{/each}
 								</select>
 							</div>
 						{/each}
-					</fieldset>
-					<button type="submit" class="btn btn-primary" disabled={!definitionChanged}>
+					</div>
+					<button type="submit" class="admin-btn admin-btn-primary" disabled={!definitionChanged}>
 						{$_('Plan-Definition speichern')}
 					</button>
 				</form>
 			{/if}
 
-			<section class="overview">
-				<h2>{$_('Gating-Übersicht')}</h2>
-				<p class="overview-intro">
+			<section class="admin-card">
+				<h2 class="admin-card-title">{$_('Gating-Übersicht')}</h2>
+				<p class="admin-intro">
 					{$_(
 						'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.'
 					)}
 				</p>
 
 				{#if unknownGateItems.length > 0}
-					<div class="overview-warning">
+					<div class="admin-notice admin-notice-error">
 						<strong>⚠ {$_('Unbekannte Features oder Pläne referenziert')}:</strong>
-						<ul>
+						<ul class="mt-1 list-disc pl-5">
 							{#each unknownGateItems as item}
 								<li>
-									<code>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code>
+									<code class="admin-mono"
+										>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code
+									>
 									({item.gate.feature ?? item.gate.plan})
 								</li>
 							{/each}
@@ -383,26 +411,30 @@
 					</div>
 				{/if}
 
-				<h3>{$_('Nach Feature')}</h3>
+				<h3 class="mb-3 mt-4">{$_('Nach Feature')}</h3>
 				{#each featureOverview as feature}
-					<div class="overview-card" class:inactive={!selectedFeatures.includes(feature.id)}>
-						<div class="overview-card-head">
+					<div
+						class="mb-3 rounded-md border border-gray-200 p-3"
+						class:opacity-50={!selectedFeatures.includes(feature.id)}
+					>
+						<div class="mb-2 flex flex-wrap items-center gap-2">
 							<strong>{feature.label}</strong>
-							<code class="overview-id">{feature.id}</code>
+							<code class="admin-mono admin-muted">{feature.id}</code>
 							{#each feature.plans as plan}
-								<span class="badge">{$_('ab')} {plan}</span>
+								<span class="admin-badge">{$_('ab')} {plan}</span>
 							{/each}
 						</div>
 						{#if feature.env.length}
-							<div class="overview-env">Env: {feature.env.join(', ')}</div>
+							<div class="admin-muted mb-2 text-xs">Env: {feature.env.join(', ')}</div>
 						{/if}
 						{#if feature.groups.length}
 							{#each feature.groups as group}
-								<div class="overview-group">
-									<span class="overview-kind">{$_(kindLabels[group.kind])}</span>
-									<div class="overview-items">
+								<div class="mb-1 flex flex-wrap items-baseline gap-2 text-sm">
+									<span class="admin-muted w-28 shrink-0 text-xs">{$_(kindLabels[group.kind])}</span
+									>
+									<div class="flex flex-wrap gap-1">
 										{#each group.items as item}
-											<code class="overview-item"
+											<code class="admin-mono rounded bg-gray-100 px-1.5 py-0.5"
 												>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code
 											>
 										{/each}
@@ -410,7 +442,7 @@
 								</div>
 							{/each}
 						{:else}
-							<div class="overview-empty">
+							<div class="admin-muted text-xs">
 								{$_('Keine Zuordnung in gating.json (nur im Code abgefragt)')}
 							</div>
 						{/if}
@@ -418,19 +450,23 @@
 				{/each}
 
 				{#if planOverview.length}
-					<h3>{$_('Nach Plan (ohne Feature)')}</h3>
+					<h3 class="mb-3 mt-6">{$_('Nach Plan (ohne Feature)')}</h3>
 					{#each planOverview as plan}
-						<div class="overview-card" class:inactive={!selectedPlanChain.includes(plan.id)}>
-							<div class="overview-card-head">
+						<div
+							class="mb-3 rounded-md border border-gray-200 p-3"
+							class:opacity-50={!selectedPlanChain.includes(plan.id)}
+						>
+							<div class="mb-2 flex flex-wrap items-center gap-2">
 								<strong>{$_('ab')} {plan.label}</strong>
-								<code class="overview-id">{plan.id}</code>
+								<code class="admin-mono admin-muted">{plan.id}</code>
 							</div>
 							{#each plan.groups as group}
-								<div class="overview-group">
-									<span class="overview-kind">{$_(kindLabels[group.kind])}</span>
-									<div class="overview-items">
+								<div class="mb-1 flex flex-wrap items-baseline gap-2 text-sm">
+									<span class="admin-muted w-28 shrink-0 text-xs">{$_(kindLabels[group.kind])}</span
+									>
+									<div class="flex flex-wrap gap-1">
 										{#each group.items as item}
-											<code class="overview-item"
+											<code class="admin-mono rounded bg-gray-100 px-1.5 py-0.5"
 												>{item.target}{item.detail ? ` → ${item.detail}` : ''}</code
 											>
 										{/each}
@@ -441,461 +477,47 @@
 					{/each}
 				{/if}
 			</section>
-
-			{#if (data.missingEnv?.length ?? 0) > 0}
-				<button type="button" class="env-warning-bar" on:click={() => (showEnvWarning = true)}>
-					⚠ {data.missingEnv?.length}
-					{data.missingEnv?.length === 1
-						? $_('aktives Feature mit fehlenden Umgebungsvariablen')
-						: $_('aktive Features mit fehlenden Umgebungsvariablen')}
-					— {$_('Details anzeigen')}
-				</button>
-			{/if}
 		</div>
-	{/if}
-</div>
+	</div>
+{/if}
 
 {#if showEnvWarning && data.authenticated}
 	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-	<div class="modal-backdrop" on:click={() => (showEnvWarning = false)}>
-		<div class="modal" role="dialog" aria-modal="true" on:click|stopPropagation>
-			<h2>⚠ {$_('Fehlende Umgebungsvariablen')}</h2>
-			<p class="modal-intro">
+	<div class="admin admin-modal-backdrop min-h-0" on:click={() => (showEnvWarning = false)}>
+		<div class="admin-modal" role="dialog" aria-modal="true" on:click|stopPropagation>
+			<h2 class="mb-3">⚠ {$_('Fehlende Umgebungsvariablen')}</h2>
+			<p class="admin-intro">
 				{$_(
 					'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.'
 				)}
 			</p>
 
 			{#each data.missingEnv ?? [] as entry}
-				<div class="modal-feature">
+				<div class="mb-3">
 					<strong>{entry.label}</strong>
-					<ul>
+					<ul class="mt-1 list-disc pl-5">
 						{#each entry.missing as name}
-							<li><code>{name}</code></li>
+							<li><code class="admin-mono">{name}</code></li>
 						{/each}
 					</ul>
 				</div>
 			{/each}
 
-			<p class="modal-hint">
+			<p class="admin-hint mb-4">
 				<strong>{$_('Setzen')}:</strong>
-				{$_('Lokal in der Datei')} <code>.env</code>, {$_('auf Netlify unter')}
+				{$_('Lokal in der Datei')} <code class="admin-mono">.env</code>, {$_('auf Netlify unter')}
 				<strong>Site Settings → Environment variables</strong>. {$_(
 					'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.'
 				)}
 			</p>
 
-			<button type="button" class="btn btn-primary" on:click={() => (showEnvWarning = false)}>
+			<button
+				type="button"
+				class="admin-btn admin-btn-primary"
+				on:click={() => (showEnvWarning = false)}
+			>
 				{$_('Verstanden')}
 			</button>
 		</div>
 	</div>
 {/if}
-
-<style>
-	.container {
-		max-width: 600px;
-		margin: 2rem auto;
-		padding: 2rem;
-	}
-
-	.login-container {
-		text-align: center;
-	}
-
-	.login-container h1 {
-		margin-bottom: 1rem;
-	}
-
-	.intro {
-		color: #666;
-		margin-bottom: 2rem;
-	}
-
-	.login-form {
-		background: #f9f9f9;
-		padding: 2rem;
-		border-radius: 8px;
-		border: 1px solid #e0e0e0;
-	}
-
-	.editor-container .header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 2px solid #e0e0e0;
-	}
-
-	.editor-container h1 {
-		margin: 0;
-	}
-
-	.form {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		margin-bottom: 2rem;
-	}
-
-	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	label {
-		font-weight: 600;
-		font-size: 0.95rem;
-	}
-
-	input[type='password'],
-	select {
-		padding: 0.75rem;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		font-size: 1rem;
-		font-family: inherit;
-	}
-
-	input[type='password']:focus,
-	select:focus {
-		outline: none;
-		border-color: #333;
-		box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.1);
-	}
-
-	fieldset {
-		border: 1px solid #e0e0e0;
-		border-radius: 4px;
-		padding: 1rem;
-		margin: 0;
-	}
-
-	legend {
-		padding: 0 0.5rem;
-		font-weight: 600;
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin: 0.5rem 0;
-		cursor: pointer;
-	}
-
-	.checkbox-label input[type='checkbox'] {
-		cursor: pointer;
-	}
-
-	.checkbox-label.gate-inactive {
-		opacity: 0.45;
-		cursor: not-allowed;
-	}
-
-	.text-muted {
-		color: #666;
-		font-style: italic;
-		margin: 0;
-	}
-
-	.error-message {
-		background: #fee;
-		color: #c33;
-		padding: 0.75rem;
-		border-radius: 4px;
-		margin-bottom: 1rem;
-		font-size: 0.95rem;
-	}
-
-	.btn {
-		padding: 0.75rem 1.5rem;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 1rem;
-		font-weight: 600;
-		transition: background-color 0.2s;
-		font-family: inherit;
-	}
-
-	.btn-primary {
-		background-color: #333;
-		color: white;
-	}
-
-	.btn-primary:hover {
-		background-color: #555;
-	}
-
-	.btn-secondary {
-		background-color: #999;
-		color: white;
-		padding: 0.5rem 1rem;
-		font-size: 0.9rem;
-	}
-
-	.btn-secondary:hover {
-		background-color: #777;
-	}
-
-	.info {
-		margin-top: 2rem;
-		padding: 1rem;
-		background-color: #f5f5f5;
-		border-radius: 4px;
-	}
-
-	.info p {
-		margin: 0.5rem 0;
-	}
-
-	.badge {
-		display: inline-block;
-		background-color: #ddd;
-		color: #333;
-		padding: 0.2rem 0.5rem;
-		border-radius: 3px;
-		font-size: 0.8rem;
-		margin-left: 0.5rem;
-		font-weight: normal;
-	}
-
-	.checkbox-label span {
-		display: flex;
-		align-items: center;
-	}
-
-	.badge-warning {
-		background: #fff3cd;
-		color: #856404;
-	}
-
-	.overview {
-		margin: 2rem 0;
-	}
-
-	.overview h2 {
-		margin: 0 0 0.5rem;
-		font-size: 1.25rem;
-	}
-
-	.overview h3 {
-		margin: 1.5rem 0 0.75rem;
-		font-size: 1rem;
-	}
-
-	.overview-intro {
-		color: #666;
-		font-size: 0.9rem;
-		margin: 0;
-	}
-
-	.overview-warning {
-		background: #fff3cd;
-		color: #856404;
-		border: 1px solid #ffeeba;
-		border-radius: 4px;
-		padding: 0.75rem 1rem;
-		margin-top: 1rem;
-		font-size: 0.9rem;
-	}
-
-	.overview-warning ul {
-		margin: 0.5rem 0 0;
-		padding-left: 1.25rem;
-	}
-
-	.overview-card {
-		border: 1px solid #e0e0e0;
-		border-radius: 4px;
-		padding: 0.75rem 1rem;
-		margin-bottom: 0.75rem;
-		transition: opacity 0.2s;
-	}
-
-	.overview-card.inactive {
-		opacity: 0.45;
-	}
-
-	.overview-card-head {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.overview-card-head .badge {
-		margin-left: 0;
-	}
-
-	.overview-id {
-		font-size: 0.8rem;
-		color: #666;
-	}
-
-	.overview-env {
-		font-size: 0.8rem;
-		color: #856404;
-		margin-top: 0.35rem;
-	}
-
-	.overview-group {
-		display: grid;
-		grid-template-columns: 9.5rem 1fr;
-		gap: 0.5rem;
-		margin-top: 0.5rem;
-		font-size: 0.85rem;
-	}
-
-	.overview-kind {
-		color: #666;
-	}
-
-	.overview-items {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.3rem;
-	}
-
-	.overview-item {
-		background: #f0f0f0;
-		padding: 0.1rem 0.4rem;
-		border-radius: 3px;
-		font-size: 0.8rem;
-		overflow-wrap: anywhere;
-	}
-
-	.overview-empty {
-		color: #999;
-		font-size: 0.85rem;
-		font-style: italic;
-		margin-top: 0.5rem;
-	}
-
-	@media (max-width: 480px) {
-		.overview-group {
-			grid-template-columns: 1fr;
-			gap: 0.25rem;
-		}
-	}
-
-	.definition {
-		margin-top: 2rem;
-		gap: 1rem;
-	}
-
-	.definition-warning {
-		background: #fff3cd;
-		color: #856404;
-		padding: 0.5rem 0.75rem;
-		border-radius: 4px;
-		font-size: 0.9rem;
-		margin: 0 0 1rem;
-	}
-
-	.definition-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
-		margin: 0.5rem 0;
-	}
-
-	.definition-row label {
-		display: flex;
-		align-items: center;
-	}
-
-	.definition-row select {
-		padding: 0.4rem 0.5rem;
-		font-size: 0.9rem;
-	}
-
-	.btn:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
-	}
-
-	.env-warning-bar {
-		width: 100%;
-		padding: 0.75rem 1rem;
-		background: #fff3cd;
-		color: #856404;
-		border: 1px solid #ffeeba;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 0.95rem;
-		font-family: inherit;
-		text-align: left;
-	}
-
-	.env-warning-bar:hover {
-		background: #ffeeba;
-	}
-
-	.modal-backdrop {
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 1000;
-		padding: 1rem;
-	}
-
-	.modal {
-		background: #fff;
-		border-radius: 8px;
-		padding: 2rem;
-		max-width: 500px;
-		width: 100%;
-		max-height: 80vh;
-		overflow-y: auto;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-	}
-
-	.modal h2 {
-		margin: 0 0 1rem;
-		font-size: 1.25rem;
-	}
-
-	.modal-intro {
-		color: #666;
-		margin-bottom: 1.5rem;
-	}
-
-	.modal-feature {
-		background: #fff3cd;
-		border: 1px solid #ffeeba;
-		border-radius: 4px;
-		padding: 0.75rem 1rem;
-		margin-bottom: 0.75rem;
-	}
-
-	.modal-feature ul {
-		margin: 0.5rem 0 0;
-		padding-left: 1.25rem;
-	}
-
-	.modal-feature code,
-	.modal-hint code {
-		background: rgba(0, 0, 0, 0.08);
-		padding: 0.1rem 0.35rem;
-		border-radius: 3px;
-		font-size: 0.85rem;
-	}
-
-	.modal-hint {
-		color: #666;
-		font-size: 0.9rem;
-		margin: 1.5rem 0;
-	}
-
-	.info p {
-		margin: 0.5rem 0;
-	}
-</style>

@@ -29,7 +29,6 @@
 		getLegalHref(lang, mainLang, deSlug, enSlug);
 
 	$: ({ footerColor } = $theme);
-	$: footerMarginTop = $theme.noMarginTop ? '0' : '10rem';
 	$: footerCurveEnabled = $theme.footerTopCurve;
 	$: footerCurveColor =
 		$theme.footerTopCurveColor || $theme.footerBgColor || 'var(--footer-bg-color)';
@@ -59,23 +58,19 @@
 </script>
 
 {#if settings && navigation}
-	<div class="footer-shell" style="margin-top: {footerMarginTop};">
+	<div class="footer-shell" class:mt-40={!$theme.noMarginTop}>
 		{#if footerCurveEnabled && footerCurveHeight > 0}
 			<svg
 				class="footer-top-curve"
 				aria-hidden="true"
 				viewBox={`0 0 100 ${footerCurveHeight}`}
 				preserveAspectRatio="none"
-				style={`height: ${footerCurveHeight}px;`}
+				style:height="{footerCurveHeight}px"
 			>
 				<path d={footerCurvePath} fill={footerCurveColor} />
 			</svg>
 		{/if}
-		<Bounded
-			tag="footer"
-			yPadding="none"
-			style="background-color: var(--footer-bg-color); color: var(--footer-color) !important; font-family: var(--page-font); margin-top: 0; padding-top: 3rem; padding-bottom: 1rem; overflow: visible;"
-		>
+		<Bounded tag="footer" yPadding="none" class="footer-body">
 			<div class="w-full h-full">
 				<div class="flex flex-col sm:flex-row sm:justify-center items-center lg:gap-4">
 					<ul class="flex flex-col items-center gap-0 mb-10">
@@ -88,16 +83,14 @@
 											href={webUrl.url}
 											target={webUrl.target || '_self'}
 											rel="noopener noreferrer"
-											class="footer-nav-link hover:underline text-sm leading-tight text-center"
-											style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
+											class="footer-nav-link footer-text-top hover:underline leading-tight text-center"
 										>
 											<PrismicText field={link.label} />
 										</a>
 									{:else}
 										<PrismicLink
 											field={link.link}
-											class="footer-nav-link hover:underline text-sm leading-tight text-center"
-											style="color: var(--footer-link-color); font-size: var(--footer-font-size-top-bar-rem);"
+											class="footer-nav-link footer-text-top hover:underline leading-tight text-center"
 										>
 											<PrismicText field={link.label} />
 										</PrismicLink>
@@ -110,12 +103,11 @@
 
 				{#if email}
 					<div class="flex justify-center items-center h-full mb-9">
-						<p style="color: var(--footer-color); font-size: var(--footer-font-size-top-bar-rem);">
+						<p class="footer-text-top">
 							{$_('Kontakt')}:
 							<a
 								href={`mailto:${email}`}
-								class="footer-link text-center hover:underline"
-								style="font-size: var(--footer-font-size-top-bar-rem); color: var(--footer-link-color);"
+								class="footer-link footer-text-top text-center hover:underline"
 							>
 								{email}
 							</a>
@@ -126,14 +118,10 @@
 				<hr class="border-current opacity-20 mb-6" />
 
 				<div class="mt-4 text-center">
-					<p
-						class=" footer-buttonbar-p"
-						style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
-					>
+					<p class="footer-buttonbar-p">
 						<a
 							href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
 							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);"
 						>
 							{$_('Datenschutz')}
 						</a>
@@ -143,7 +131,6 @@
 						<a
 							href={getStaticHref('impressum', 'legal-notice')}
 							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);"
 						>
 							{$_('Impressum')}
 						</a>
@@ -153,7 +140,6 @@
 							<a
 								href={getStaticHref('agb', 'terms-and-conditions')}
 								class="footer-link hover:underline"
-								style="color: var(--footer-link-color);"
 							>
 								{$_('AGB')}
 							</a>
@@ -163,7 +149,6 @@
 							<a
 								href={getStaticHref('haftungsausschluss', 'disclaimer')}
 								class="footer-link hover:underline"
-								style="color: var(--footer-link-color);"
 							>
 								{$_('Haftungsausschluss')}
 							</a>
@@ -173,60 +158,46 @@
 						<button
 							type="button"
 							class="footer-link footer-consent-link hover:underline"
-							style="color: var(--footer-link-color);"
 							on:click={() => consentSettingsOpen.set(true)}
 						>
 							{$_('Cookie-Einstellungen')}
 						</button>
 					</p>
 
-					<p
-						class=" footer-buttonbar-p"
-						style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
-					>
+					<p class="footer-buttonbar-p">
 						{$_('Website erstellt mit')}
 						<a
 							href="https://svelte.dev"
 							target="_blank"
 							rel="noopener noreferrer nofollow"
-							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);">Svelte</a
+							class="footer-link hover:underline">Svelte</a
 						>
 						&nbsp;|&nbsp;
 						<a
 							href="https://prismic.io"
 							target="_blank"
 							rel="noopener noreferrer nofollow"
-							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);">Prismic</a
+							class="footer-link hover:underline">Prismic</a
 						>
 					</p>
-					<p
-						class=" footer-buttonbar-p"
-						style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
-					>
+					<p class="footer-buttonbar-p">
 						{$_('Gehostet auf')}
 						<a
 							href="https://www.netlify.com/"
 							target="_blank"
 							rel="noopener noreferrer nofollow"
-							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);">Netlify</a
+							class="footer-link hover:underline">Netlify</a
 						>
 						&nbsp;|&nbsp;
 						<a
 							href="https://resend.com/"
 							target="_blank"
 							rel="noopener noreferrer nofollow"
-							class="footer-link hover:underline"
-							style="color: var(--footer-link-color);">Resend</a
+							class="footer-link hover:underline">Resend</a
 						>
 					</p>
 
-					<p
-						class=" footer-buttonbar-p"
-						style="font-size: var(--footer-font-size-button-bar-rem); color: var(--footer-color);"
-					>
+					<p class="footer-buttonbar-p">
 						&copy; {currentYear}
 						{responsiblePersonCompany}. {$_('Alle Rechte vorbehalten.')}
 					</p>

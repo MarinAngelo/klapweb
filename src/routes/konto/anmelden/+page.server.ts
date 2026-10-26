@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { verifyPassword } from '$lib/server/users';
 import { createSession } from '$lib/server/sessions';
 import { FEATURE_KUNDENKONTO } from '$lib/server/features';
+import { REMEMBER_DAYS, REMEMBER_SECONDS, wantsRemember } from '$lib/auth/remember';
 
 export const prerender = false;
 
@@ -27,13 +28,15 @@ export const actions: Actions = {
 			return fail(403, { error: 'E-Mail oder Passwort ungültig' });
 		}
 
-		const token = await createSession(user.id, user.email, user.name);
+		// "Angemeldet bleiben": REMEMBER_DAYS; otherwise browser-session cookie (server: max. 1 day)
+		const remember = wantsRemember(data);
+		const token = await createSession(user.id, user.email, user.name, remember ? REMEMBER_DAYS : 1);
 
 		cookies.set('klap_user_session', token, {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			maxAge: 60 * 60 * 24 * 30
+			...(remember ? { maxAge: REMEMBER_SECONDS } : {})
 		});
 
 		throw redirect(303, '/konto');

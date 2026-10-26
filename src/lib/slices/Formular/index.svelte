@@ -2,8 +2,6 @@
 	import type { FormSlice, FormSliceDefaultPrimaryFormFieldsItem } from '../../../prismicio-types';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Heading from '$lib/components/Heading.svelte';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
@@ -448,23 +446,22 @@
 	as="section"
 	{yPaddingSize}
 	{marginTopSize}
-	style="background-color: {get(theme).pageBgColor}; color: {get(theme).pageColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class="bg-page-bg text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<!-- kauf variation: only provides config data via Settings, renders nothing -->
 	{#if isKauf}
 		<!-- intentionally empty -->
 	{:else if isEinChecken || isAusChecken}
-		<div style="background-color: {checkPrimary.bg_color || get(theme).pageBgColor};">
+		<div class="bg-page-bg" style:background-color={checkPrimary.bg_color || undefined}>
 			{#if checkSuccess}
 				{#if checkPrimary.success_text?.length}
 					<PrismicRichText field={checkPrimary.success_text} />
 				{:else}
-					<p style="color: #065f46; font-weight: 600;">
+					<p class="[color:#065f46] font-semibold">
 						{isEinChecken
 							? t('Erfolgreich eingecheckt.', lang)
 							: t('Erfolgreich ausgecheckt.', lang)}
@@ -494,10 +491,7 @@
 						<button
 							type="submit"
 							disabled={checkSubmitting}
-							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
-							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(
-								theme
-							).headerColor || '#fff'};"
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40 bg-header-bg text-header"
 						>
 							{checkSubmitting ? '…' : t('Weiter', lang)}
 						</button>
@@ -539,10 +533,7 @@
 						<button
 							type="submit"
 							disabled={checkSubmitting}
-							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40"
-							style="background-color: {get(theme).headerBgColor || 'currentColor'}; color: {get(
-								theme
-							).headerColor || '#fff'};"
+							class="self-start px-5 py-2 rounded text-sm font-semibold transition-opacity disabled:opacity-40 bg-header-bg text-header"
 						>
 							{checkSubmitting ? '…' : checkPrimary.submit_label || t('Abschicken', lang)}
 						</button>

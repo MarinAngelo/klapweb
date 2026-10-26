@@ -43,6 +43,14 @@
 					"default_value": true
 				}
 			},
+			"priority": {
+				"type": "Select",
+				"config": {
+					"label": "Priorität (Teilaufgaben übernehmen die Priorität der Hauptaufgabe)",
+					"options": ["Hoch", "Mittel", "Gering"],
+					"default_value": "Mittel"
+				}
+			},
 			"max_annahmen": {
 				"type": "Number",
 				"config": {
@@ -54,8 +62,8 @@
 				"type": "Select",
 				"config": {
 					"label": "Credit-Typ",
-					"options": ["Fest", "Offen (Zeitbasiert)"],
-					"default_value": "Fest"
+					"options": ["Offen (Zeitbasiert)", "Fest"],
+					"default_value": "Offen (Zeitbasiert)"
 				}
 			},
 			"credit_betrag": {

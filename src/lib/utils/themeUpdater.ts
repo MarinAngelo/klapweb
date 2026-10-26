@@ -1,6 +1,7 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
 import { presetFontUrls } from '$lib/utils/presetFonts';
+import { mixHex, readableColor } from '$lib/utils/color';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -368,4 +369,27 @@ export function updateTheme(data: ThemeUpdateData): void {
 			document.head.appendChild(link);
 		}
 	}
+}
+
+/**
+ * Contrast-safe derived colors (WCAG AA), set as CSS variables:
+ * - --panel-bg / --panel-color: tinted panels (.panel-tinted, e.g. accordion items) are
+ *   darker/lighter than the page background → text color adjusted for them
+ * - --btn-solid-color: text on filled buttons (.btn-solid, background = page color)
+ * Without hex colors the CSS fallbacks apply.
+ */
+export function updateContrastColors(pageColor: string, pageBgColor: string): void {
+	if (typeof document === 'undefined') return;
+	const root = document.documentElement;
+	const isHex = (c: string) => /^#[0-9a-f]{6}/i.test(c?.trim() ?? '');
+	if (!isHex(pageColor) || !isHex(pageBgColor)) {
+		root.style.removeProperty('--panel-bg');
+		root.style.removeProperty('--panel-color');
+		root.style.removeProperty('--btn-solid-color');
+		return;
+	}
+	const panelBg = mixHex(pageBgColor.trim(), pageColor.trim(), 0.07);
+	root.style.setProperty('--panel-bg', panelBg);
+	root.style.setProperty('--panel-color', readableColor(pageColor.trim(), panelBg));
+	root.style.setProperty('--btn-solid-color', readableColor(pageBgColor.trim(), pageColor.trim()));
 }

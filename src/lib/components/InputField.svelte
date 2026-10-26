@@ -408,12 +408,7 @@
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input'}
 				on:input
 				on:blur
 				on:change
@@ -426,12 +421,7 @@
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input'}
 				on:input
 				on:blur
 				on:change
@@ -446,12 +436,7 @@
 				min={field.min ?? undefined}
 				max={field.max ?? undefined}
 				placeholder={field.placeholder ?? ''}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input'}
 				on:blur
 				on:change
 			/>
@@ -466,11 +451,8 @@
 				maxlength={field.maxlength ?? undefined}
 				autocomplete="off"
 				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none uppercase tracking-widest font-mono code-input'
-					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm uppercase tracking-widest font-mono code-input'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+					? 'form-input-compact uppercase tracking-widest font-mono code-input'
+					: 'input form-input uppercase tracking-widest font-mono code-input'}
 				on:input={handleCodeInput}
 				on:blur
 				on:change
@@ -483,25 +465,16 @@
 				bind:value={textValue}
 				required={field.required}
 				placeholder={field.placeholder ?? ''}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input'}
 				on:blur
 				on:change
 			/>
 		{:else if htmlType === 'tel'}
 			{#if compact}
-				<div
-					class="flex items-center border"
-					style="border-color: color-mix(in srgb, var(--page-color) 27%, transparent);"
-				>
+				<div class="form-input-compact flex items-center p-0">
 					<select
 						bind:value={prefix}
-						class="p-2 shrink-0 focus:outline-none bg-transparent"
-						style="color: var(--page-color); border: none;"
+						class="p-2 shrink-0 focus:outline-none bg-transparent text-page border-0"
 					>
 						{#each countryPrefixes as cp}
 							<option value={cp.prefix}>{cp.label}</option>
@@ -515,22 +488,17 @@
 						placeholder={field.placeholder ?? ''}
 						pattern={'[0-9 \\-\\(\\)]{4,25}'}
 						inputmode="numeric"
-						class="py-2 pr-3 flex-1 focus:outline-none bg-transparent"
-						style="color: var(--page-color); border: none;"
+						class="py-2 pr-3 flex-1 focus:outline-none bg-transparent text-page border-0"
 						on:input={sanitizeTel}
 						on:blur
 						on:change
 					/>
 				</div>
 			{:else}
-				<div
-					class="flex items-end mt-1 border-b focus-within:border-b-2"
-					style="border-bottom-color: var(--page-color);"
-				>
+				<div class="form-input-underline flex items-end mt-1">
 					<select
 						bind:value={prefix}
-						class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer"
-						style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
+						class="input p-2 shrink-0 focus:outline-none focus:ring-0 appearance-none cursor-pointer bg-page-bg text-page border-0"
 					>
 						{#each countryPrefixes as cp}
 							<option value={cp.prefix}>{cp.label}</option>
@@ -544,8 +512,7 @@
 						placeholder={field.placeholder ?? ''}
 						pattern={'[0-9 \\-\\(\\)]{4,25}'}
 						inputmode="numeric"
-						class="input p-2 flex-1 focus:outline-none focus:ring-0"
-						style="background-color: var(--page-bg-color); color: var(--page-color); border: none;"
+						class="input p-2 flex-1 focus:outline-none focus:ring-0 bg-page-bg text-page border-0"
 						on:input={sanitizeTel}
 						on:blur
 						on:change
@@ -561,24 +528,19 @@
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
 					rows="4"
-					class="w-full border px-3 py-2 bg-transparent focus:outline-none"
-					style="border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);"
+					class="form-input-compact"
 					on:blur
 					on:change
 				></textarea>
 			{:else}
-				<div
-					class="border-b focus-within:border-b-2"
-					style="border-bottom-color: var(--page-color);"
-				>
+				<div class="form-input-underline">
 					<textarea
 						id={key}
 						name={key}
 						required={field.required}
 						placeholder={field.placeholder ?? ''}
 						rows="4"
-						class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0"
-						style="background-color: var(--page-bg-color); color: var(--page-color);"
+						class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 bg-page-bg text-page"
 						on:blur
 						on:change
 					></textarea>
@@ -589,12 +551,7 @@
 				id={inputId ?? key}
 				name={inputId ?? key}
 				required={field.required}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input rounded-md'}
 				on:blur
 				on:change
 			>
@@ -602,8 +559,8 @@
 				{#each field.options?.split(',') || [] as option}
 					<option
 						value={option?.trim() ?? ''}
-						style="background-color: {selectOptionBg}; color: var(--page-color);"
-						>{option?.trim() ?? ''}</option
+						class="text-page"
+						style:background-color={selectOptionBg}>{option?.trim() ?? ''}</option
 					>
 				{/each}
 			</select>
@@ -627,20 +584,14 @@
 				id={inputId ?? key}
 				name={inputId ?? key}
 				required={field.required}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input rounded-md'}
 				on:blur
 				on:change
 			>
 				<option value="" disabled selected>Bitte auswählen</option>
 				{#each countries as country}
-					<option
-						value={country}
-						style="background-color: {selectOptionBg}; color: var(--page-color);">{country}</option
+					<option value={country} class="text-page" style:background-color={selectOptionBg}
+						>{country}</option
 					>
 				{/each}
 			</select>
@@ -743,20 +694,14 @@
 				id={key}
 				name={key}
 				required={field.required}
-				class={compact
-					? 'w-full border px-3 py-2 bg-transparent focus:outline-none'
-					: 'input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0'}
-				style={compact
-					? 'border-color: color-mix(in srgb, var(--page-color) 27%, transparent); color: var(--page-color);'
-					: 'background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);'}
+				class={compact ? 'form-input-compact' : 'input form-input rounded-md'}
 				on:blur
 				on:change
 			>
 				<option value="">Zeitzone wählen</option>
 				{#each TIMEZONES as tz}
-					<option
-						value={tz.value}
-						style="background-color: {selectOptionBg}; color: var(--page-color);">{tz.label}</option
+					<option value={tz.value} class="text-page" style:background-color={selectOptionBg}
+						>{tz.label}</option
 					>
 				{/each}
 			</select>

@@ -224,14 +224,14 @@
 			class="header-backdrop"
 			bind:this={backdropEl}
 			aria-hidden="true"
-			style="opacity: {$isMenuOpen ? 1 : headerBgOpacity};"
+			style:opacity={$isMenuOpen ? 1 : headerBgOpacity}
 		>
-			<div class="header-backdrop-fill" style="background-color: {headerBgColor};"></div>
+			<div class="header-backdrop-fill" style:background-color={headerBgColor}></div>
 			<svg
 				class="header-bottom-curve"
 				viewBox={`0 0 100 ${bottomCurveHeight}`}
 				preserveAspectRatio="none"
-				style={`height: ${bottomCurveHeight}px;`}
+				style:height="{bottomCurveHeight}px"
 			>
 				<path d={bottomCurvePath} fill={bottomCurveColor || headerBgColor} />
 			</svg>
@@ -254,11 +254,12 @@
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
-								style="height: {logoHeight}rem; {dims
-									? `aspect-ratio: ${dims.width} / ${dims.height};`
-									: 'width: auto;'} background-color: {logoColor}; -webkit-mask-image: url('{prismicTheme
-									.data.logo.url}'); mask-image: url('{prismicTheme.data.logo
-									.url}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center left; mask-position: center left;"
+								class="logo-mask"
+								class:w-auto={!dims}
+								style:height="{logoHeight}rem"
+								style:aspect-ratio={dims ? `${dims.width} / ${dims.height}` : undefined}
+								style:background-color={logoColor}
+								style:--logo-url="url('{prismicTheme.data.logo.url}')"
 							></div>
 						{:else}
 							<PrismicImage
@@ -273,22 +274,20 @@
 					<a
 						href={lang === mainLang ? '/' : `/${lang}`}
 						class="site-title-link mt-6 mb-6 inline-block"
-						style="color: {headerLinkColor};"
+						style:color={headerLinkColor}
 						aria-label={logoLabel}
 					>
 						<span
 							class="text-xl font-semibold tracking-tight site-title-text"
-							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont
-								? siteTitleFont
-								: 'var(--page-font), sans-serif'};"
+							style:font-size="{siteTitleFontSize}rem"
+							style:font-family={siteTitleFont ? siteTitleFont : 'var(--page-font), sans-serif'}
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
 						<span
 							class="site-title-text"
-							style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont
-								? siteTitleFont
-								: 'var(--page-font), sans-serif'};"
+							style:font-size="{siteSubtitleFontSize}rem"
+							style:font-family={siteTitleFont ? siteTitleFont : 'var(--page-font), sans-serif'}
 						>
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>

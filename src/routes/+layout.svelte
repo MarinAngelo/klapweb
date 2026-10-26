@@ -20,7 +20,7 @@
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
-	import { updateTheme } from '$lib/utils/themeUpdater';
+	import { updateTheme, updateContrastColors } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { variables } from '$lib/stores/variables';
@@ -280,6 +280,8 @@
 			updateTheme(data);
 		}
 	}
+	// Text colors with enough contrast on panels/buttons (follows page-level overrides too)
+	$: updateContrastColors($theme.pageColor, $theme.pageBgColor);
 	$: pageFontName =
 		prismicTheme?.data?.page_font?.data?.name ||
 		fonts?.find((f: any) => f.id === prismicTheme?.data?.page_font?.id)?.data?.name ||
@@ -340,12 +342,14 @@
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
-	$: stickyHeader =
-		!isLandingPage &&
-		!isSlicePreview &&
-		!isDokuPage &&
-		!isNoChrome &&
-		(prismicTheme?.data?.sticky_header ?? false);
+	// Admin area (after login): neutral tool UI like a landing page — no site header/footer/chat.
+	// The login page /admin itself keeps the site look.
+	$: isAdminPage =
+		$page.url.pathname.startsWith('/admin/') ||
+		// Agency editor: login keeps the site look, the editor itself is neutral
+		($page.url.pathname.startsWith('/agency/') && $page.data?.authenticated === true);
+	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -438,8 +442,8 @@
 
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
-<div style="background-color: var(--page-bg-color); min-height: 100vh;">
-	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
+<div class="bg-page-bg [min-height:100vh]">
+	{#if !hideChrome}
 		<Header
 			{navigation}
 			{settings}
@@ -456,14 +460,11 @@
 
 	<main
 		id="main-content"
-		style={stickyHeader && !hasBannerOverlap ? `padding-top: ${$headerHeight}px` : ''}
+		style:padding-top={stickyHeader && !hasBannerOverlap ? `${$headerHeight}px` : undefined}
 		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
 		{#if $page.data?.title && !hasBannerOverlap && !isDokuPage}
-			<Bounded
-				as="section"
-				style="background-color: var(--page-bg-color); color: var(--page-color);"
-			>
+			<Bounded class="bg-page-bg text-page" as="section">
 				<!--Seiten Titel Page Title-->
 				<h1 use:reveal={titleAnimation} class="tracking-tight mt-12 mb-4 first:mt-0">
 					{$page.data?.title}
@@ -476,7 +477,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
+	{#if !hideChrome}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
@@ -488,7 +489,7 @@
 {#if klapstudioActive}
 	<KlapStudio bind:open={studioOpen} />
 {/if}
-{#if chatActive}
+{#if chatActive && !isAdminPage}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
 {/if}
 
@@ -498,9 +499,9 @@
 		@import '$lib/components/CrosshairDevTool.css';
 	</style>
 	<button
+		class="fixed [top:8px] [right:8px] [z-index:1000001] [width:28px] [height:28px] p-0 [background:#fff] [border:1px_solid_#ccc] [border-radius:50%] [box-shadow:0_2px_8px_#0001] [font-size:18px] [line-height:26px] cursor-pointer [opacity:0.7] flex items-center justify-center"
 		on:click={() => showCrosshair.update((v) => !v)}
 		aria-label={$showCrosshair ? 'Fadenkreuz ausblenden' : 'Fadenkreuz einblenden'}
-		style="position:fixed;top:8px;right:8px;z-index:1000001;width:28px;height:28px;padding:0;background:#fff;border:1px solid #ccc;border-radius:50%;box-shadow:0 2px 8px #0001;font-size:18px;line-height:26px;cursor:pointer;opacity:0.7;display:flex;align-items:center;justify-content:center;"
 	>
 		+
 	</button>

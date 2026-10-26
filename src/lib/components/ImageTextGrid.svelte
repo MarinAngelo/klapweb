@@ -115,7 +115,7 @@
 			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen
 				? 'md:h-full'
 				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
-			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
+			style:background-color={imageBgColor || undefined}
 		>
 			{#if activeImages.length > 1}
 				<BildSlider
@@ -127,10 +127,7 @@
 					{lightbox}
 				/>
 			{:else if image}
-				<div
-					class="relative {fullscreen ? 'md:h-full' : ''}"
-					style="background-color: {imageBgColor};"
-				>
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -160,8 +157,9 @@
 									? ''
 									: noRoundMobile
 										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
-							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+										: 'rounded-3xl'} pointer-events-none"
+							style:background-color={overlayColor}
+							style:opacity={overlayOpacity}
 						></div>
 					{/if}
 				</div>
@@ -174,8 +172,11 @@
 				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
 				? 'text-center'
 				: ''}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
-				2}px;"
+			style:--mob-pad={mobilePadding}
+			style:--mob-pad-top={mobilePaddingTop}
+			style:--desk-pad={desktopPadding}
+			style:--desk-pad-y={desktopPaddingY}
+			style:--fullscreen-text-offset="{$headerHeight / 2}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
@@ -193,8 +194,11 @@
 				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
 				? 'text-center'
 				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY}; --fullscreen-text-offset: {$headerHeight /
-				2}px;"
+			style:--mob-pad={mobilePadding}
+			style:--mob-pad-top={mobilePaddingTop}
+			style:--desk-pad={desktopPadding}
+			style:--desk-pad-y={desktopPaddingY}
+			style:--fullscreen-text-offset="{$headerHeight / 2}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
@@ -207,8 +211,12 @@
 			bind:this={imageColumn}
 			class="{mobileTextFirst ? '' : 'order-first md:order-none'} {fullscreen
 				? 'md:h-full'
-				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
-			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
+				: ''} {imageRound
+				? 'md:rounded-full'
+				: noRound
+					? ''
+					: 'md:rounded-3xl'} overflow-hidden pb-0"
+			style:background-color={imageBgColor || undefined}
 		>
 			{#if activeImages.length > 1}
 				<BildSlider
@@ -220,10 +228,7 @@
 					{lightbox}
 				/>
 			{:else if image}
-				<div
-					class="relative {fullscreen ? 'md:h-full' : ''}"
-					style="background-color: {imageBgColor};"
-				>
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -253,8 +258,9 @@
 									? ''
 									: noRoundMobile
 										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
-							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+										: 'rounded-3xl'} pointer-events-none"
+							style:background-color={overlayColor}
+							style:opacity={overlayOpacity}
 						></div>
 					{/if}
 				</div>

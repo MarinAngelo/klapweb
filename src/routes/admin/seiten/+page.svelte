@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	export let data: PageData;
 
 	// Logged-in admins open protected pages without password (admin session cookie)
@@ -12,53 +12,45 @@
 
 <svelte:head><title>Passwortgeschützte Seiten</title></svelte:head>
 
-<div style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
-	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">🔒 Passwortgeschützte Seiten</h1>
-		<a
-			href="/admin/dashboard"
-			style="margin-left: auto; font-size: 0.875rem; color: #6b7280; text-decoration: none;"
-			><SvgIcons name="left" size="1em" /> Dashboard</a
-		>
-	</div>
+<div class="admin-container">
+	<AdminHeader title="🔒 Passwortgeschützte Seiten" count={data.pages.length} />
 
-	{#if data.pages.length === 0}
-		<p style="opacity: 0.5;">Keine passwortgeschützten Seiten gefunden.</p>
-	{:else}
-		<p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">
-			Links öffnen die Seite direkt ohne Passwortabfrage (Admin-Bypass).
-		</p>
-		<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-			<thead>
-				<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-					<th style="padding: 0.5rem 0.75rem;">Titel</th>
-					<th style="padding: 0.5rem 0.75rem;">UID</th>
-					<th style="padding: 0.5rem 0.75rem;">Sprache</th>
-					<th style="padding: 0.5rem 0.75rem;">Aktion</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each data.pages as p}
-					<tr style="border-bottom: 1px solid #f3f4f6;">
-						<td style="padding: 0.5rem 0.75rem; font-weight: 600;">{p.title}</td>
-						<td
-							style="padding: 0.5rem 0.75rem; font-family: monospace; font-size: 0.8rem; opacity: 0.7;"
-							>{p.uid}</td
-						>
-						<td style="padding: 0.5rem 0.75rem; opacity: 0.6;">{p.lang}</td>
-						<td style="padding: 0.5rem 0.75rem;">
-							<a
-								href={pageHref(p.uid, p.lang)}
-								target="_blank"
-								rel="noopener"
-								style="background: #1e2d5a; color: #fff; border-radius: 4px; padding: 3px 10px; font-size: 0.75rem; text-decoration: none; font-weight: 600;"
-							>
-								Öffnen (bypass) ↗
-							</a>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	{/if}
+	<section class="admin-card">
+		{#if data.pages.length === 0}
+			<p class="admin-empty">Keine passwortgeschützten Seiten gefunden.</p>
+		{:else}
+			<p class="admin-intro">Links öffnen die Seite direkt ohne Passwortabfrage (Admin-Bypass).</p>
+			<div class="admin-table-wrap">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th>Titel</th>
+							<th>UID</th>
+							<th>Sprache</th>
+							<th>Aktion</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.pages as p}
+							<tr>
+								<td class="font-semibold">{p.title}</td>
+								<td class="admin-mono admin-muted">{p.uid}</td>
+								<td class="admin-muted">{p.lang}</td>
+								<td>
+									<a
+										href={pageHref(p.uid, p.lang)}
+										target="_blank"
+										rel="noopener"
+										class="admin-btn admin-btn-dark admin-btn-sm"
+									>
+										Öffnen (bypass) ↗
+									</a>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	</section>
 </div>

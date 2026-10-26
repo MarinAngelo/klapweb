@@ -82,8 +82,9 @@
 				? `var(--btn-${variant}-hover-bg)`
 				: 'var(--page-button-hover-bg-color)');
 
-	$: baseClass = `button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
-	$: baseStyle = `background-color: ${resolvedBgColor}; color: ${resolvedColor}; border-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
+	$: baseClass = `btn-dynamic button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
+	// Only CSS variables (CMS/theme values); colors applied by .btn-dynamic (app.css)
+	$: baseStyle = `--btn-bg: ${resolvedBgColor}; --btn-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
 </script>
 
 {#if href}
