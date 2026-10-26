@@ -1,4 +1,7 @@
 <script lang="ts">
+	import RememberMe from '$lib/components/auth/RememberMe.svelte';
+	import CancelLogin from '$lib/components/auth/CancelLogin.svelte';
+
 	export let form: { error?: string } | null = null;
 </script>
 
@@ -33,11 +36,14 @@
 				/>
 			</div>
 
+			<RememberMe />
+
 			{#if form?.error}
 				<p class="admin-error-text">{form.error}</p>
 			{/if}
 
 			<button type="submit" class="admin-btn admin-btn-dark mt-1 py-2"> Anmelden </button>
+			<CancelLogin />
 		</form>
 
 		<div class="flex flex-col gap-2 border-t border-gray-100 pt-3 text-sm">

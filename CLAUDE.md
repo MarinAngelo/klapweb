@@ -272,13 +272,19 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 
 ## Admin-Anmeldung
 
-- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h), Logout im Dashboard
+- Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h; mit „Angemeldet bleiben“ 14 Tage), Logout im Dashboard
 - **Alle `/admin/*`-Routen werden zentral in `hooks.server.ts` geschützt** — keine eigenen Secret-Prüfungen in Seiten/Actions, **nie `?secret=` in Links, Formularen oder Fetches**
 - Alte Lesezeichen mit `?secret=` melden einmal an und werden ohne Secret umgeleitet
 - **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
 - APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
 - `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
 - **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+
+## Anmeldungen (alle Logins)
+
+- Admin, Kundenkonto, passwortgeschützte Seiten, Agency-Editor, Aufgabenliste: gemeinsame Komponenten `src/lib/components/auth/` — `RememberMe.svelte` („Angemeldet bleiben“, Feld `remember`), `CancelLogin.svelte` („Abbrechen“ + Escape → vorherige Seite dieser Website, sonst Startseite), `LoginCard.svelte` (Login im Website-Stil)
+- Dauer zentral in `src/lib/auth/remember.ts` (`REMEMBER_DAYS` = 14); Server liest den Haken mit `wantsRemember(formData)`. Ohne Haken: Admin 8 h, Seiten-Passwort 24 h, Agency 1 h, Kundenkonto Browser-Sitzung (Server max. 1 Tag)
+- Neue Anmeldung → dieselben Komponenten + `wantsRemember()` verwenden
 
 ## Admin-Panel — Rechnungen & Kunden
 

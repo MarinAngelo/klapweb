@@ -2,6 +2,7 @@ import { redirect, fail } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 import { grantPageAccess, isValidPagePassword, safeRedirectPath } from '$lib/server/pageAuth';
 import type { Actions } from './$types';
+import { wantsRemember } from '$lib/auth/remember';
 
 export const prerender = false;
 
@@ -20,7 +21,7 @@ export const actions: Actions = {
 		}
 
 		// Signed cookie — the password itself is never stored in the browser
-		grantPageAccess(cookies, pagePassword);
+		grantPageAccess(cookies, pagePassword, wantsRemember(data));
 
 		throw redirect(303, redirectTo);
 	}

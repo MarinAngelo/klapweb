@@ -772,9 +772,13 @@ export const translations: Record<string, Record<string, string>> = {
 	'Abgabe fehlgeschlagen': { 'de-ch': 'Abgabe fehlgeschlagen', 'en-us': 'Submission failed' },
 	Einloggen: { 'de-ch': 'Anmelden', 'en-us': 'Log in' },
 	Abbrechen: { 'de-ch': 'Abbrechen', 'en-us': 'Cancel' },
-	'Angemeldet bleiben (14 Tage)': {
-		'de-ch': 'Angemeldet bleiben (14 Tage)',
-		'en-us': 'Remember me (14 days)'
+	'Angemeldet bleiben ({tage} Tage)': {
+		'de-ch': 'Angemeldet bleiben ({tage} Tage)',
+		'en-us': 'Remember me ({tage} days)'
+	},
+	'Passwortgeschützte Seite': {
+		'de-ch': 'Passwortgeschützte Seite',
+		'en-us': 'Password-protected page'
 	},
 	'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).': {
 		'de-ch': 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',

@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { join } from 'path';
+import { REMEMBER_SECONDS, wantsRemember } from '$lib/auth/remember';
 
 export const prerender = false;
 
@@ -29,8 +30,8 @@ function sign(value: string, secret: string): string {
 	return createHmac('sha256', secret).update(value).digest('base64url');
 }
 
-function createAuthCookie(secret: string): string {
-	const exp = String(Date.now() + AUTH_MAX_AGE_SECONDS * 1000);
+function createAuthCookie(secret: string, maxAgeSeconds: number): string {
+	const exp = String(Date.now() + maxAgeSeconds * 1000);
 	return `${exp}.${sign(exp, secret)}`;
 }
 
@@ -208,12 +209,13 @@ export const actions = {
 			return fail(401, { error: 'Falsches Passwort' });
 		}
 
-		// Signiertes Auth-Cookie (gültig für 1 Stunde)
-		cookies.set(AUTH_COOKIE, createAuthCookie(expectedSecret), {
+		// Signiertes Auth-Cookie (1 Stunde, mit „Angemeldet bleiben“ REMEMBER_DAYS)
+		const maxAge = wantsRemember(data) ? REMEMBER_SECONDS : AUTH_MAX_AGE_SECONDS;
+		cookies.set(AUTH_COOKIE, createAuthCookie(expectedSecret, maxAge), {
 			httpOnly: true,
 			secure: !dev, // Lokal http://localhost erlauben
 			sameSite: 'strict',
-			maxAge: AUTH_MAX_AGE_SECONDS,
+			maxAge,
 			path: '/'
 		});
 

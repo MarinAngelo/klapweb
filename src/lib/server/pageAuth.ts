@@ -9,6 +9,7 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import { createHmac, timingSafeEqual } from 'crypto';
 import type { Cookies } from '@sveltejs/kit';
+import { REMEMBER_SECONDS } from '$lib/auth/remember';
 
 export const PAGE_AUTH_COOKIE = 'klap_auth';
 const MAX_AGE_SECONDS = 24 * 60 * 60;
@@ -35,14 +36,16 @@ export function isValidPagePassword(
 	return timingSafeEqual(digest(input), digest(pagePassword));
 }
 
-export function grantPageAccess(cookies: Cookies, pagePassword: string): void {
-	const exp = String(Date.now() + MAX_AGE_SECONDS * 1000);
+/** remember = "Angemeldet bleiben" → REMEMBER_DAYS instead of 24 h */
+export function grantPageAccess(cookies: Cookies, pagePassword: string, remember = false): void {
+	const maxAge = remember ? REMEMBER_SECONDS : MAX_AGE_SECONDS;
+	const exp = String(Date.now() + maxAge * 1000);
 	cookies.set(PAGE_AUTH_COOKIE, `${exp}.${sign(exp, pagePassword)}`, {
 		path: '/',
 		httpOnly: true,
 		secure: !dev,
 		sameSite: 'strict',
-		maxAge: MAX_AGE_SECONDS
+		maxAge
 	});
 }
 

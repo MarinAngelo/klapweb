@@ -1,4 +1,6 @@
 <script lang="ts">
+	import RememberMe from '$lib/components/auth/RememberMe.svelte';
+	import CancelLogin from '$lib/components/auth/CancelLogin.svelte';
 	import type { ActionData, PageData } from './$types';
 	import { _ } from '$lib/stores/i18n';
 
@@ -220,11 +222,14 @@
 					/>
 				</div>
 
+				<RememberMe />
+
 				{#if loginError}
 					<div class="error-message" role="alert">{$_(loginError)}</div>
 				{/if}
 
 				<button type="submit" class="btn btn-primary">{$_('Anmelden')}</button>
+				<CancelLogin />
 			</form>
 		</div>
 	{:else}
