@@ -341,8 +341,9 @@
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
-	// Admin area: neutral tool UI like a landing page — no site header/footer/chat
-	$: isAdminPage = $page.url.pathname === '/admin' || $page.url.pathname.startsWith('/admin/');
+	// Admin area (after login): neutral tool UI like a landing page — no site header/footer/chat.
+	// The login page /admin itself keeps the site look.
+	$: isAdminPage = $page.url.pathname.startsWith('/admin/');
 	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
