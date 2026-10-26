@@ -786,6 +786,9 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
 	Teilaufgaben: { 'de-ch': 'Teilaufgaben', 'en-us': 'Subtasks' },
+	Priorität: { 'de-ch': 'Priorität', 'en-us': 'Priority' },
+	Hoch: { 'de-ch': 'Hoch', 'en-us': 'High' },
+	Gering: { 'de-ch': 'Gering', 'en-us': 'Low' },
 	Credits: { 'de-ch': 'Credits', 'en-us': 'credits' },
 	'{erledigt} von {total} Teilaufgaben erledigt': {
 		'de-ch': '{erledigt} von {total} Teilaufgaben erledigt',

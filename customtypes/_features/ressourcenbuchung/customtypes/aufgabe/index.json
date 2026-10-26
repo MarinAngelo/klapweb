@@ -43,6 +43,14 @@
 					"default_value": true
 				}
 			},
+			"priority": {
+				"type": "Select",
+				"config": {
+					"label": "Priorität",
+					"options": ["Hoch", "Mittel", "Gering"],
+					"default_value": "Mittel"
+				}
+			},
 			"max_annahmen": {
 				"type": "Number",
 				"config": {

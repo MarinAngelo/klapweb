@@ -19,6 +19,12 @@
 		erledigt: '#dcfce7'
 	};
 
+	const prioColors: Record<string, string> = {
+		Hoch: '#fee2e2',
+		Mittel: '#f3f4f6',
+		Gering: '#ecfdf5'
+	};
+
 	const fmtDate = (iso: string | undefined) => (iso ? formatDateTimeShort(iso) : '–');
 
 	// Group by aufgabeUid; subtasks appear as "Main task › Subtask", sorted so they stay together
@@ -94,6 +100,13 @@
 				style="font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb;"
 			>
 				{groupTitle(annahmen[0]) || aufgabeUid}
+				{#if !annahmen[0]?.bonus && data.prioritaeten[annahmen[0]?.aufgabeUid]}
+					<span
+						style="font-weight: 400; font-size: 0.75rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: {prioColors[
+							data.prioritaeten[annahmen[0].aufgabeUid]
+						] ?? '#f3f4f6'};">Priorität: {data.prioritaeten[annahmen[0].aufgabeUid]}</span
+					>
+				{/if}
 				<span style="font-weight: 400; opacity: 0.5; font-size: 0.875rem;">({annahmen.length})</span
 				>
 			</h2>
