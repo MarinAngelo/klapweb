@@ -799,6 +799,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Merkt sich die gewählte Sprache der Website.': {
+		'de-ch': 'Merkt sich die gewählte Sprache der Website.',
+		'en-us': 'Remembers the language you selected for this website.'
+	},
 	'Termin gebucht': { 'de-ch': 'Termin gebucht', 'en-us': 'Appointment booked' },
 	Angebot: { 'de-ch': 'Angebot', 'en-us': 'Offer' },
 	Zeit: { 'de-ch': 'Zeit', 'en-us': 'Time' },

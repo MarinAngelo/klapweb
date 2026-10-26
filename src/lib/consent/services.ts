@@ -77,6 +77,13 @@ export const consentServices: Record<string, ConsentService> = {
 		purpose: 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
 		storage: ['klap_cart (Local Storage)']
 	},
+	language: {
+		label: 'Sprache',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich die gewählte Sprache der Website.',
+		storage: ['klap_lang (Local Storage)']
+	},
 	aufgaben_login: {
 		label: 'Aufgabenliste',
 		provider: 'Website-Betreiber',
