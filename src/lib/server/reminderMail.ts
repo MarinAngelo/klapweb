@@ -9,6 +9,8 @@ import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
 import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchungen';
 import { env } from '$env/dynamic/private';
+import { t } from '$lib/i18n/translations';
+import { fallbackSubject, getRessourceDocForBooking, mailLang } from './ressourceMail';
 
 function replaceTokens(html: string, tokens: Record<string, string>): string {
 	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
@@ -69,7 +71,7 @@ export async function maybeSendAnkunftsErinnerung(
 	try {
 		const client = createClient({ fetch });
 		const [doc, settings] = await Promise.all([
-			client.getByUID('ressource', buchung.ressourceUid),
+			getRessourceDocForBooking(client, buchung),
 			client.getSingle('settings').catch(() => null)
 		]);
 		const d = doc.data as any;
@@ -86,7 +88,8 @@ export async function maybeSendAnkunftsErinnerung(
 		};
 
 		const betreff =
-			(d.reminder_betreff as string)?.trim() || `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;
+			(d.reminder_betreff as string)?.trim() ||
+			fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name);
 
 		let html: string;
 		if (textField?.length) {
@@ -96,11 +99,15 @@ export async function maybeSendAnkunftsErinnerung(
 			console.log(
 				`[reminderMail] reminder_text leer für ${buchung.ressourceUid} — sende Fallback-Mail`
 			);
-			html = `<p>Hallo ${tokens.Name},</p>
-<p>wir freuen uns auf Ihre Anreise am <strong>${tokens.Anreise}</strong> (Abreise: ${tokens.Abreise}).</p>
-${tokens.Türcode ? `<p><strong>Türcode:</strong> ${tokens.Türcode}</p>` : ''}
-${tokens.WhatsApp ? `<p>Bei Fragen: ${tokens.WhatsApp}</p>` : ''}
-<p>Referenz: ${tokens.Buchungsreferenz}</p>`;
+			const lang = mailLang(buchung);
+			const intro = t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).', lang)
+				.replace('{anreise}', `<strong>${tokens.Anreise}</strong>`)
+				.replace('{abreise}', tokens.Abreise);
+			html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
+<p>${intro}</p>
+${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
+${tokens.WhatsApp ? `<p>${t('Bei Fragen', lang)}: ${tokens.WhatsApp}</p>` : ''}
+<p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
 		}
 
 		const { Resend } = await import('resend');
@@ -140,7 +147,7 @@ export async function sendAbreiseErinnerung(
 	try {
 		const client = createClient({ fetch });
 		const [doc, settings] = await Promise.all([
-			client.getByUID('ressource', buchung.ressourceUid),
+			getRessourceDocForBooking(client, buchung),
 			client.getSingle('settings').catch(() => null)
 		]);
 		const d = doc.data as any;
@@ -160,7 +167,7 @@ export async function sendAbreiseErinnerung(
 
 		const betreff =
 			(d.abreise_betreff as string)?.trim() ||
-			`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
+			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
 		const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
 
 		const { Resend } = await import('resend');
