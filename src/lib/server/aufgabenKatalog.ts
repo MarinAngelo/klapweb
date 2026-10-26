@@ -93,13 +93,17 @@ export async function loadKatalog(fetch: Fetch, lang = 'de-ch'): Promise<Katalog
 		};
 	});
 
-	// Subtasks of an inactive or missing main task are hidden as well
+	// Subtasks inherit the main task's priority; those of an inactive main task are hidden
 	const byUid = new Map(katalog.map((a) => [a.uid, a]));
 	for (const a of katalog) {
 		if (!a.parentUid) continue;
 		const parent = byUid.get(a.parentUid);
-		if (!parent) a.parentUid = null;
-		else if (!parent.aktiv) a.aktiv = false;
+		if (!parent) {
+			a.parentUid = null;
+			continue;
+		}
+		a.prioritaet = parent.prioritaet;
+		if (!parent.aktiv) a.aktiv = false;
 	}
 	return katalog;
 }

@@ -108,6 +108,7 @@ Details: `docs/git-strategie.md`
 - Kunden `basis`/`professional`: Code identisch mit `main`
 - Kunden `individuell` + `klap-web-ch`: dürfen abweichen, **nie nach `main` mergen** — nur reine Kern-Commits per `cherry-pick`
 - Ein Commit ist entweder Kern oder Kunde, nie beides; Kern-Änderungen (Erweiterungspunkte) zuerst in `main`
+- **Nach jedem Cherry-Pick nach `main` sofort `git merge main` im Ursprungs-Branch** — sonst bleibt die Merge-Base alt und spätere Änderungen auf `main` an denselben Zeilen erzeugen Konflikte
 - Vor Kundenanpassung prüfen: reicht Konfiguration? Sonst Erweiterungspunkt im Kern, dann neue Dateien statt Kern-Dateien ändern
 
 ## slicemachine.config.json Protection
