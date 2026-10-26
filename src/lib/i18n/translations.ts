@@ -799,6 +799,35 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Tag wählen': { 'de-ch': 'Tag wählen', 'en-us': 'Select day' },
+	'Tag ändern': { 'de-ch': 'Tag ändern', 'en-us': 'Change day' },
+	'Zeit wählen': { 'de-ch': 'Zeit wählen', 'en-us': 'Select time' },
+	Angebote: { 'de-ch': 'Angebote', 'en-us': 'Offers' },
+	'Zeit ändern': { 'de-ch': 'Zeit ändern', 'en-us': 'Change time' },
+	UID: { 'de-ch': 'UID', 'en-us': 'Company ID (UID)' },
+	Wegbeschreibung: { 'de-ch': 'Wegbeschreibung', 'en-us': 'Directions' },
+	Verfügbarkeit: { 'de-ch': 'Verfügbarkeit', 'en-us': 'Availability' },
+	'Ihre Auswahl': { 'de-ch': 'Ihre Auswahl', 'en-us': 'Your selection' },
+	'Auswahl ändern': { 'de-ch': 'Auswahl ändern', 'en-us': 'Change selection' },
+	'Bitte wählen': { 'de-ch': 'Bitte wählen', 'en-us': 'Please select' },
+	Zusatzkosten: { 'de-ch': 'Zusatzkosten', 'en-us': 'Additional costs' },
+	'Keine weiteren Inhalte verfügbar': {
+		'de-ch': 'Keine weiteren Inhalte verfügbar',
+		'en-us': 'No further content available'
+	},
+	'Alle Leistungen anzeigen': { 'de-ch': 'Alle Leistungen anzeigen', 'en-us': 'Show all services' },
+	'Übersicht unserer Leistungen und Services': {
+		'de-ch': 'Übersicht unserer Leistungen und Services',
+		'en-us': 'Overview of our services'
+	},
+	'Entdecken Sie unser Leistungsportfolio': {
+		'de-ch': 'Entdecken Sie unser Leistungsportfolio',
+		'en-us': 'Discover our range of services'
+	},
+	'Keine Leistungen verfügbar': {
+		'de-ch': 'Keine Leistungen verfügbar',
+		'en-us': 'No services available'
+	},
 	'Buchungsbestätigung: {ressource}': {
 		'de-ch': 'Buchungsbestätigung: {ressource}',
 		'en-us': 'Booking confirmation: {ressource}'

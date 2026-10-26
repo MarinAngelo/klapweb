@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
+import { plainTextMail } from '$lib/server/mailText';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import {
 	listAlleRessourceBuchungen,
@@ -152,28 +153,30 @@ async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freiga
 		from: emailFrom,
 		to: toEmail,
 		subject: `Abrechnung freigeben: ${buchung.ressourceName ?? buchung.ressourceUid} – ${buchung.name ?? '–'}`,
-		text: [
-			`${buchung.name ?? '–'} hat ausgecheckt.`,
-			``,
-			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-			`Anreise:   ${fmtD(buchung.von)}`,
-			`Abreise:   ${fmtD(buchung.bis)}`,
-			`Personen:  ${buchung.personen}`,
-			``,
-			`─────────────────────────────────────`,
-			`ABRECHNUNG`,
-			`─────────────────────────────────────`,
-			`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-			`Credits (Aufgaben): ${fmt(creditsCHF)}`,
-			`─────────────────────────────────────`,
-			`Total:              ${fmt(abrechnungBetrag)}`,
-			``,
-			`Erledigte Aufgaben:`,
-			...aufgabenZeilen,
-			``,
-			`Abrechnung prüfen, korrigieren und freigeben:`,
-			freigabeUrl
-		].join('\n')
+		...plainTextMail(
+			[
+				`${buchung.name ?? '–'} hat ausgecheckt.`,
+				``,
+				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
+				`Anreise:   ${fmtD(buchung.von)}`,
+				`Abreise:   ${fmtD(buchung.bis)}`,
+				`Personen:  ${buchung.personen}`,
+				``,
+				`─────────────────────────────────────`,
+				`ABRECHNUNG`,
+				`─────────────────────────────────────`,
+				`Mietpreis:          ${fmt(buchung.preisCHF)}`,
+				`Credits (Aufgaben): ${fmt(creditsCHF)}`,
+				`─────────────────────────────────────`,
+				`Total:              ${fmt(abrechnungBetrag)}`,
+				``,
+				`Erledigte Aufgaben:`,
+				...aufgabenZeilen,
+				``,
+				`Abrechnung prüfen, korrigieren und freigeben:`,
+				freigabeUrl
+			].join('\n')
+		)
 	});
 }
 
