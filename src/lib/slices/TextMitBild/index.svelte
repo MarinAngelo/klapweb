@@ -129,6 +129,16 @@
 					.join(' ')
 			: ''
 		: undefined;
+
+	// CMS colors as CSS variables only (app.css › .color-scope)
+	$: sectionStyle = [
+		`--scope-bg: ${innerApply ? 'var(--page-bg-color)' : p.bg_color || 'var(--page-bg-color)'}`,
+		`--scope-color: ${p.color || 'var(--page-color)'}`,
+		p.color && `--page-color: ${p.color}`,
+		fullscreen && `--fullscreen-height: ${fullscreenHeight}`
+	]
+		.filter(Boolean)
+		.join('; ');
 </script>
 
 {#if visible}
@@ -143,16 +153,13 @@
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			style="background-color: {innerApply
-				? 'var(--page-bg-color)'
-				: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color
-				? ` --page-color: ${p.color};`
-				: ''}"
+			class="color-scope"
+			style={sectionStyle}
 		>
 			{#if p.section_title}
 				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 			{/if}
-			<div class="flex flex-col" style="gap: {rowGap};">
+			<div class="flex flex-col" style:gap={rowGap}>
 				{#each multiItemsWithImages as item, i}
 					<ImageTextGrid
 						image={isFilled.image(item.image) ? item.image : null}
@@ -196,16 +203,12 @@
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
 			{marginTopSize}
 			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
-			style="background-color: {innerApply
-				? 'var(--page-bg-color)'
-				: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};{p.color
-				? ` --page-color: ${p.color};`
-				: ''}{fullscreen ? ` --fullscreen-height: ${fullscreenHeight};` : ''}"
+			style={sectionStyle}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			class={`${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
+			class={`color-scope ${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
 		>
 			<div class={fullscreen ? 'h-full flex-1' : ''}>
 				<ImageTextGrid

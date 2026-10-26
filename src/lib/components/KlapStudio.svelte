@@ -695,12 +695,12 @@
 		<div class="section-label">{$_('Standard-Schriftart')}</div>
 		<label class="row">
 			<span>{$_('Schriftwechsel')}</span>
-			<div style="display: flex; align-items: center; gap: 0.5rem;">
+			<div class="flex items-center [gap:0.5rem]">
 				<button
-					class="font-cycle-btn"
-					style="min-width: 8rem; font-family: {currentFontIndex >= 0
+					class="font-cycle-btn [min-width:8rem]"
+					style:font-family={currentFontIndex >= 0
 						? `'${presetFontNames[currentFontIndex]}', sans-serif`
-						: 'inherit'};"
+						: 'inherit'}
 					on:click={() => cycleFont(1)}
 					title={$_('Nächste Schriftart wählen')}
 				>

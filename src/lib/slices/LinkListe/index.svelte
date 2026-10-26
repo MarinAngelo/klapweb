@@ -69,14 +69,15 @@
 </script>
 
 <Bounded
+	class="color-scope"
 	as="section"
 	yPaddingSame={p.y_padding_same ?? false}
 	yPaddingSize={p.y_padding}
 	marginTopSize={p.margin_top}
 	innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
-	style="background-color: {innerApply
+	style="--scope-bg: {innerApply
 		? 'var(--page-bg-color)'
-		: p.bg_color || 'var(--page-bg-color)'}; color: {p.color || 'var(--page-color)'};"
+		: p.bg_color || 'var(--page-bg-color)'}; --scope-color: {p.color || 'var(--page-color)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -110,8 +111,7 @@
 						href={h}
 						target={ext ? '_blank' : undefined}
 						rel={ext ? 'noopener noreferrer' : undefined}
-						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl no-underline"
-						style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); background: color-mix(in srgb, currentColor 5%, transparent);"
+						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl no-underline [box-shadow:0_2px_12px_rgba(0,0,0,0.08)] [background:color-mix(in_srgb,_currentColor_5%,_transparent)]"
 					>
 						<div class="aspect-video w-full overflow-hidden bg-current/5 relative">
 							{#if isFilled.image(item.bild)}
@@ -143,8 +143,7 @@
 		{:else if layout === 'Kompakt'}
 			<!-- ── Kompakt ── -->
 			<ul
-				class="flex flex-col divide-y"
-				style="border-color: color-mix(in srgb, currentColor 10%, transparent);"
+				class="flex flex-col divide-y [border-color:color-mix(in_srgb,_currentColor_10%,_transparent)]"
 			>
 				{#each group.items as item}
 					{@const gi = allItems.indexOf(item)}
@@ -183,12 +182,10 @@
 							href={h}
 							target={ext ? '_blank' : undefined}
 							rel={ext ? 'noopener noreferrer' : undefined}
-							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md no-underline"
-							style="background: color-mix(in srgb, currentColor 4%, transparent);"
+							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md no-underline [background:color-mix(in_srgb,_currentColor_4%,_transparent)]"
 						>
 							<div
-								class="w-28 md:w-36 flex-shrink-0 aspect-video rounded-lg overflow-hidden relative"
-								style="background: color-mix(in srgb, currentColor 8%, transparent);"
+								class="w-28 md:w-36 flex-shrink-0 aspect-video rounded-lg overflow-hidden relative [background:color-mix(in_srgb,_currentColor_8%,_transparent)]"
 							>
 								{#if isFilled.image(item.bild)}
 									<PrismicImage field={item.bild} class="w-full h-full object-cover" />

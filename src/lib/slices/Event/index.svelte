@@ -125,8 +125,7 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: var(--page-color)"
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class="text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 		{#if primary.title}

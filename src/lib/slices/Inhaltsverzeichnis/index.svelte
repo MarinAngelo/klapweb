@@ -186,8 +186,10 @@
 <Bounded
 	as="nav"
 	yPadding="base-top"
-	class="toc-slice {linksMode ? 'toc-links-mode' : 'toc-top-mode'}"
-	style="--page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor}; font-family: var(--page-font);"
+	class="color-scope font-[var(--page-font)] toc-slice {linksMode
+		? 'toc-links-mode'
+		: 'toc-top-mode'}"
+	style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-bg: {bgColor}; --scope-color: {textColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	aria-label={tocTitle}
@@ -199,13 +201,14 @@
 				class="toc-sidebar hidden md:block"
 				class:header-scrolled-away={headerScrolledAway}
 				class:at-footer={sidebarAtFooter}
-				style="--toc-color: {textColor}; --toc-bg: {bgColor ||
-					$theme.pageBgColor}; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-top: {headerScrolledAway
-					? 0
-					: $headerHeight || 80}px; --toc-sidebar-max-height: {sidebarMaxHeight
-					? `${sidebarMaxHeight}px`
-					: 'none'}; --toc-track-color: {$theme.pageBgColor ||
-					'#f8fafc'}; --toc-thumb-color: {$theme.footerBgColor || '#d1d5db'};"
+				style:--toc-color={textColor}
+				style:--toc-bg={bgColor || $theme.pageBgColor}
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--toc-top="{headerScrolledAway ? 0 : $headerHeight || 80}px"
+				style:--toc-sidebar-max-height={sidebarMaxHeight ? `${sidebarMaxHeight}px` : 'none'}
+				style:--toc-track-color={$theme.pageBgColor || '#f8fafc'}
+				style:--toc-thumb-color={$theme.footerBgColor || '#d1d5db'}
 				class:visible={!dismissed}
 				aria-label={tocTitle}
 			>
@@ -213,9 +216,7 @@
 					<h5>{tocTitle}</h5>
 				</div>
 				<ul class="space-y-2 text-sm">
-					{#each tocEntries as entry}<li
-							style="padding-left: {entry.level === 3 ? '0.75rem' : '0'};"
-						>
+					{#each tocEntries as entry}<li style:padding-left={entry.level === 3 ? '0.75rem' : '0'}>
 							<a
 								href="#{entry.id}"
 								class="toc-link block"
@@ -227,13 +228,15 @@
 			</nav>
 		{:else}
 			{#if desktopTopPinned}
-				<div class="hidden md:block" style="height: {desktopTopHeight}px;"></div>
+				<div class="hidden md:block" style:height="{desktopTopHeight}px"></div>
 			{/if}
 			<div
 				class="hidden md:block toc-top-sheet"
 				class:pinned={desktopTopPinned}
 				bind:this={desktopTopEl}
-				style="--toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --toc-desktop-top: {$headerHeight}px;"
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--toc-desktop-top="{$headerHeight}px"
 			>
 				<h5 class="toc-top-title">{tocTitle}</h5>
 				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
@@ -244,8 +247,7 @@
 								on:click={() => activate(group.h2.id)}
 								class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
 							>{#if group.h3s.length}<ul
-									class="flex flex-col gap-0.5 pl-3 border-l"
-									style="border-color: currentColor; opacity: 0.4;"
+									class="flex flex-col gap-0.5 pl-3 border-l [border-color:currentColor] [opacity:0.4]"
 								>
 									{#each group.h3s as sub}<li>
 											<a
@@ -264,7 +266,9 @@
 		{#if mobilePinned}
 			<div
 				class="md:hidden"
-				style="height: {mobileSheetHeight}px; background-color: {mobileBg}; color: {mobileActiveColor};"
+				style:height="{mobileSheetHeight}px"
+				style:background-color={mobileBg}
+				style:color={mobileActiveColor}
 			></div>
 		{/if}
 
@@ -273,7 +277,16 @@
 			class:open={mobileOpen}
 			class:pinned={mobilePinned}
 			bind:this={mobileSheetEl}
-			style="--toc-color: {mobileActiveColor}; --toc-bg: {mobileBg}; --toc-dim: {mobileDimColor}; --toc-mobile-top: {$headerHeight}px; --toc-link-color: {linkColor}; --toc-link-hover-color: {linkHoverColor}; --page-color: {mobileActiveColor}; --page-bg-color: {mobileBg}; color: {mobileActiveColor}; background-color: {mobileBg};"
+			style:--toc-color={mobileActiveColor}
+			style:--toc-bg={mobileBg}
+			style:--toc-dim={mobileDimColor}
+			style:--toc-mobile-top="{$headerHeight}px"
+			style:--toc-link-color={linkColor}
+			style:--toc-link-hover-color={linkHoverColor}
+			style:--page-color={mobileActiveColor}
+			style:--page-bg-color={mobileBg}
+			style:color={mobileActiveColor}
+			style:background-color={mobileBg}
 		>
 			<button
 				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"

@@ -69,6 +69,29 @@ Konkrete Regeln:
 - CSS-Variablen (`--header-color` etc.) können leer sein → Store-Werte bevorzugen
 - **Placeholder-Farbe ist global gelöst** (app.css): Tailwind-Preflight setzt fixes `#9ca3af`, wird überschrieben mit `color-mix(in srgb, currentColor 55%, transparent)`. Keine komponenten-lokalen `::placeholder`-Regeln schreiben — Ausnahme nur bei bewusst abweichender Farbe (z.B. `.code-input`)
 
+## CSS-Konzept
+
+Theme-Farben kommen zur Laufzeit aus Prismic (CSS-Variablen via `themeUpdater.ts`) — Tailwind kennt sie nur über Variablen. Jede Ebene hat eine feste Rolle:
+
+| Ebene                                        | Zuständig für                                            | Beispiel                                                                      |
+| -------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Tailwind-Utilities                           | Layout, Abstände, Grössen, Responsive                    | `flex gap-3 md:grid-cols-2`                                                   |
+| Tailwind-Theme-Farben (`tailwind.config.ts`) | Einzelne Farb-Zuweisungen aus dem Theme                  | `text-page`, `bg-page-bg`, `border-page`, `text-panel`                        |
+| `app.css` (zentrale Klassen)                 | Wiederkehrende Bausteine mit Theme-Bezug                 | `.btn-solid`, `.panel-tinted`, `.form-input`, `.text-muted`, `.collapse-body` |
+| `updateContrastColors()` (themeUpdater)      | Abgeleitete, kontrastsichere Farben (WCAG AA)            | `--panel-bg`, `--panel-color`, `--btn-solid-color`                            |
+| Inline `style:`                              | **Nur** Werte direkt aus dem CMS (z.B. Slice-`bg_color`) | `style:background-color={bgColor \|\| undefined}`                             |
+
+Regeln:
+
+- **Keine Inline-`style="…"`** für statische Werte oder Theme-Variablen — stattdessen Tailwind-Theme-Farbe oder zentrale Klasse; fehlt etwas: in `app.css` ergänzen
+- **CMS-Farben in Slices:** Wrapper bekommt `class="color-scope"` + nur CSS-Variablen (`--scope-color`, `--scope-bg`); Tönungen/Rahmen/Buttons via `.scope-*`-Klassen. Auf **Komponenten** (`Bounded`, `PrismicLink` …) ist ein `style="…"`-Attribut nur mit CSS-Variablen/CMS-Werten erlaubt (dort gibt es keine `style:`-Direktive)
+- **Admin & Kundenkonto** (`/admin`, `/konto`): neutrales, theme-unabhängiges UI-Kit `.admin-*` (app.css › Admin-UI), Kopfzeile via `AdminHeader.svelte` — keine eigenen Styles pro Seite
+- **Keine Tailwind-Palette-Farben** (`text-gray-500`, `bg-red-100` …) im öffentlichen Frontend — sie ignorieren das Theme. Ausnahme: Fehlermeldungen (`text-red-600`) und Admin
+- **Kein `opacity-*` für Text** — zu wenig Kontrast; `.text-muted` verwenden (`opacity-*` nur für dekorative Elemente/Platzhalter)
+- **Text auf eigenem Hintergrund** (Panels, Buttons) braucht eine kontrastgeprüfte Farbe: neue Fälle in `updateContrastColors()` ergänzen, nicht per Hand abdunkeln
+- Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
+- Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
+
 ## i18n
 
 - **Niemals UI-Text hardcodieren** — jeden sichtbaren String über den `$_`-Store ausgeben

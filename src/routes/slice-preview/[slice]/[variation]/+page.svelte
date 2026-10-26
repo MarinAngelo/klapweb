@@ -28,7 +28,7 @@
 	});
 </script>
 
-<div style="background: {bg};">
+<div style:background={bg}>
 	{#if mockSlice && Component}
 		<svelte:component
 			this={Component}

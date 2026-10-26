@@ -37,10 +37,11 @@
 						: 'rounded-3xl'}"
 			>
 				<iframe
+					class="border-0 block"
 					src={embedUrl}
 					width="100%"
 					height={mapHeight}
-					style="border: 0; display: block; min-height: {mapHeight}px;"
+					style:min-height="{mapHeight}px"
 					allowfullscreen={true}
 					loading="lazy"
 					referrerpolicy="no-referrer-when-downgrade"
@@ -48,8 +49,8 @@
 				></iframe>
 				{#if mapOpacity > 0}
 					<div
-						class="absolute inset-0"
-						style="background-color: var(--page-bg-color); opacity: {mapOpacity}; pointer-events: none;"
+						class="absolute inset-0 bg-page-bg pointer-events-none"
+						style:opacity={mapOpacity}
 					></div>
 				{/if}
 			</div>
@@ -59,8 +60,7 @@
 				href={directionsUrl}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full text-sm font-medium transition-opacity hover:opacity-70"
-				style="color: var(--page-color);"
+				class="inline-flex items-center gap-2 self-center md:self-start px-4 py-2 rounded-full text-sm font-medium transition-opacity hover:opacity-70 text-page"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

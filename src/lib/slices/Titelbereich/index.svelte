@@ -261,6 +261,12 @@
 			cancelAnimationFrame(rafId);
 		};
 	});
+	$: sectionFont = presetFont
+		? `'${presetFont}'`
+		: ('font' in slice.primary &&
+				isFilled.contentRelationship(slice.primary.font) &&
+				slice.primary.font.data?.name) ||
+			'inherit';
 </script>
 
 <BannerThemeSync bannerOverlap={btsBannerOverlap} headerBgOpacityRaw={btsHeaderBgOpacity} />
@@ -274,17 +280,11 @@
 	bind:this={sectionEl}
 	class="relative z-0 overflow-visible {isBlobVariation && blobShape ? 'titelbereich-blob' : ''}"
 	data-slice-type={slice.slice_type}
-	style="color: {color};
-		background-color: {bgColor ?? 'transparent'};
-		height: {$bannerHeight};
-		{$bannerHeight === 'auto' ? 'min-height: 100vh;' : ''}
-		font-family: {presetFont
-		? `'${presetFont}'`
-		: ('font' in slice.primary &&
-				isFilled.contentRelationship(slice.primary.font) &&
-				slice.primary.font.data?.name) ||
-			'inherit'};
-	"
+	class:min-h-screen={$bannerHeight === 'auto'}
+	style:color
+	style:background-color={bgColor ?? 'transparent'}
+	style:height={$bannerHeight}
+	style:font-family={sectionFont}
 >
 	{#if !isBlobVariation}
 		<GradientBackground
@@ -302,7 +302,9 @@
 		<div class="titelbereich-blob-surface" aria-hidden="true">
 			<div
 				class="titelbereich-blob-shape titelbereich-blob-custom"
-				style={`--blob-color: ${blobColor}; transform: translate(${blobPositionX - 50}%, ${blobPositionY - 50}%) rotate(${blobRotation}deg) scale(${blobCanvasScale});`}
+				style:--blob-color={blobColor}
+				style:transform="translate({blobPositionX - 50}%, {blobPositionY - 50}%) rotate({blobRotation}deg)
+				scale({blobCanvasScale})"
 			>
 				{#if blobSvgCode}
 					<!-- SVG-Code stammt aus einem vertrauenswürdigen Agency/CMS-Feld. -->
@@ -321,22 +323,20 @@
 	{/if}
 	{#if image && typeof image.url === 'string' && image.url}
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<div bind:this={parallaxInner} class="absolute inset-x-0" style="height: 120%; top: -10%;">
+			<div bind:this={parallaxInner} class="absolute inset-x-0 h-[120%] top-[-10%]">
 				<ResponsivePrismicImage
 					{image}
 					sizes="100vw"
 					widths={[1280, 1920, 2560]}
 					className="absolute inset-0 h-full w-full object-cover select-none"
-					style=""
 				/>
 			</div>
 		</div>
 		<!-- Color overlay over the image -->
 		<div
 			class="absolute inset-0 h-full w-full pointer-events-none select-none"
-			style="background-color: {overlayColor}; opacity: {$isMobile
-				? textOverlayOpacity
-				: overlayOpacity};"
+			style:background-color={overlayColor}
+			style:opacity={$isMobile ? textOverlayOpacity : overlayOpacity}
 		></div>
 	{/if}
 	{#if slice.variation === 'mitBildKarusell'}
@@ -365,8 +365,9 @@
 		<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
 		{#if mounted && isFullScreenMobile && !switchOffTextOverlay && !isBlobVariation}
 			<div
-				class="absolute inset-0"
-				style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none;"
+				class="absolute inset-0 pointer-events-none"
+				style:background-color={textOverlayColor}
+				style:opacity={textOverlayOpacity}
 				aria-hidden="true"
 			></div>
 		{/if}
@@ -375,8 +376,9 @@
 				<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
 				{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay) && !isBlobVariation}
 					<div
-						class="absolute inset-0"
-						style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
+						class="absolute inset-0 pointer-events-none rounded-[3rem]"
+						style:background-color={textOverlayColor}
+						style:opacity={textOverlayOpacity}
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -385,7 +387,7 @@
 				<div
 					use:reveal={fadeIn}
 					class="relative z-10 text-center"
-					style="padding: {effectiveContentPadding};"
+					style:padding={effectiveContentPadding}
 				>
 					<style>
 						.leading-loose.tracking-wider-all * {
@@ -395,11 +397,11 @@
 					<div
 						bind:this={richTextDiv}
 						class="leading-loose tracking-wider-all"
-						style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
+						style:zoom={$isMobile && mobileFontScale !== 1.0 ? mobileFontScale : undefined}
 					>
 						{#if activeText.length}
 							{#key carouselCurrent}
-								<div style="--page-color: {color}; color: {color};" in:fade={{ duration: 600 }}>
+								<div style:--page-color={color} style:color in:fade={{ duration: 600 }}>
 									<PrismicRichText field={activeText} />
 								</div>
 							{/key}
@@ -429,7 +431,8 @@
 			aria-hidden="true"
 			viewBox={`0 0 100 ${blobWaveHeight}`}
 			preserveAspectRatio="none"
-			style={`height: ${blobWaveHeight}px; bottom: -${blobWaveHeight}px;`}
+			style:height="{blobWaveHeight}px"
+			style:bottom="-{blobWaveHeight}px"
 		>
 			<path d={blobWavePath} fill={bgColor ?? 'var(--page-bg-color)'} />
 		</svg>

@@ -34,8 +34,9 @@
 	class={mobileVollbreite ? 'overflow-x-clip' : ''}
 >
 	<div
-		class="html-code-container {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
-		style="--hr-color: var(--page-color);"
+		class="html-code-container {mobileVollbreite
+			? '-mx-6 md:mx-0 px-6 md:px-0'
+			: ''} [--hr-color:var(--page-color)]"
 	>
 		{#if consentServiceId}
 			<ConsentGate service={consentServiceId}>

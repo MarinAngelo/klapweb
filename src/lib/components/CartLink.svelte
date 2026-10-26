@@ -18,7 +18,8 @@
 		{href}
 		on:click={() => isMenuOpen.set(false)}
 		class="nav-link relative inline-flex items-center transition"
-		style="color: {color}; {fontSize ? `font-size: ${fontSize}rem;` : ''}"
+		style:color
+		style:font-size={fontSize ? `${fontSize}rem` : undefined}
 		aria-label={label}
 		title={label}
 	>

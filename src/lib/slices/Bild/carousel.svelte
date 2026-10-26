@@ -56,7 +56,7 @@
 >
 	<div
 		class="carousel-images flex transition-transform duration-500"
-		style="transform: translateX(-{currentIndex * 100}%);"
+		style:transform="translateX(-{currentIndex * 100}%)"
 	>
 		{#each images as image, index}
 			<div class="carousel-item flex-shrink-0 w-full">

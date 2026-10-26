@@ -24,8 +24,7 @@
 
 <Bounded
 	tag="section"
-	class={clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}
-	style="background-color: var(--page-bg-color);"
+	class="bg-page-bg {clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -42,7 +41,7 @@
 				animationOptions={anim.options}
 			/>
 		{:else if isFilled.image(p.image)}
-			<div style="background-color: var(--page-bg-color);">
+			<div class="bg-page-bg">
 				{#if lightbox}
 					<Lightbox src={p.image.url ?? ''} alt={p.image.alt ?? ''}>
 						<PrismicImage field={p.image} sizes="100vw" class="w-full" />

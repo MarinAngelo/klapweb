@@ -21,8 +21,10 @@
 <Bounded
 	tag="div"
 	yPadding="base-top"
-	class={slice.primary?.sticky ? 'sticky top-0 z-10' : ''}
-	style="background-color: {slice.primary?.bg_color || 'var(--page-bg-color, #fff)'}; color: {slice.primary?.text_color || 'var(--page-color, #000)'};"
+	class="color-scope {slice.primary?.sticky ? 'sticky top-0 z-10' : ''}"
+	style="--scope-bg: {slice.primary?.bg_color ||
+		'var(--page-bg-color, #fff)'}; --scope-color: {slice.primary?.text_color ||
+		'var(--page-color, #000)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -32,8 +34,7 @@
 		</div>
 		<div>
 			<select
-				class="input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0"
-				style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
+				class="input mt-1 p-2 block w-full rounded-md border-b focus:border-b-2 focus:outline-none focus:ring-0 bg-page-bg text-page border-page"
 				value={$planFilter ?? ''}
 				on:change={(e) => planFilter.set(e.currentTarget.value || null)}
 			>

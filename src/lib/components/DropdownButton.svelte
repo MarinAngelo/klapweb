@@ -13,7 +13,8 @@
 	type="button"
 	on:click={onClick}
 	class="font-semibold tracking-tight inline-flex items-center"
-	style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+	style:color={headerLinkColor}
+	style:font-size="{headerLinkFontSize}rem"
 	aria-haspopup="true"
 	aria-expanded={isOpen}
 >

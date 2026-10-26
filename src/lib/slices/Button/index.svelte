@@ -116,17 +116,14 @@
 				href="/beauftragung{$page.params.uid
 					? `?dienstleistung=${encodeURIComponent($page.params.uid)}`
 					: ''}"
-				class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+				class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 					? 'flex w-full items-center justify-center sm:inline-flex sm:items-center sm:w-auto'
 					: 'inline-flex items-center gap-2'}"
-				style="
-					background-color: {buttonBgColor};
-					color: {buttonColor};
-					border-color: {buttonColor};
-					--hover-text-color: {buttonHoverColor};
-					--hover-bg-color: {buttonHoverBgColor};
-					--focus-ring-color: {buttonColor};
-				"
+				style:--btn-bg={buttonBgColor}
+				style:--btn-color={buttonColor}
+				style:--hover-text-color={buttonHoverColor}
+				style:--hover-bg-color={buttonHoverBgColor}
+				style:--focus-ring-color={buttonColor}
 			>
 				{p.button_text || 'Jetzt beauftragen'}{#if btnIcon}&nbsp;<SvgIcons
 						name={btnIcon}
@@ -141,17 +138,14 @@
 			{#if beauftragungHref}
 				<a
 					href={beauftragungHref}
-					class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+					class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 						? 'flex w-full items-center justify-center sm:inline-flex sm:items-center sm:w-auto'
 						: 'inline-flex items-center gap-2'}"
-					style="
-						background-color: {buttonBgColor};
-						color: {buttonColor};
-						border-color: {buttonColor};
-						--hover-text-color: {buttonHoverColor};
-						--hover-bg-color: {buttonHoverBgColor};
-						--focus-ring-color: {buttonColor};
-					"
+					style:--btn-bg={buttonBgColor}
+					style:--btn-color={buttonColor}
+					style:--hover-text-color={buttonHoverColor}
+					style:--hover-bg-color={buttonHoverBgColor}
+					style:--focus-ring-color={buttonColor}
 				>
 					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
 							name={btnIcon}
@@ -162,17 +156,10 @@
 			{:else}
 				<PrismicLink
 					field={p.button_link}
-					class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+					class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 						? 'flex w-full items-center justify-center sm:inline-flex sm:items-center sm:w-auto'
 						: 'inline-flex items-center gap-2'}"
-					style="
-						background-color: {buttonBgColor};
-						color: {buttonColor};
-						border-color: {buttonColor};
-						--hover-text-color: {buttonHoverColor};
-						--hover-bg-color: {buttonHoverBgColor};
-						--focus-ring-color: {buttonColor};
-					"
+					style="--btn-bg: {buttonBgColor}; --btn-color: {buttonColor}; --hover-text-color: {buttonHoverColor}; --hover-bg-color: {buttonHoverBgColor}; --focus-ring-color: {buttonColor};"
 				>
 					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
 							name={btnIcon}

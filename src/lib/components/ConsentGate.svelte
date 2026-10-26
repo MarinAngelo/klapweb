@@ -38,7 +38,7 @@
 {#if mounted && allowed}
 	<slot />
 {:else if mounted}
-	<div class="consent-placeholder" style="min-height: {minHeight}px;">
+	<div class="consent-placeholder" style:min-height="{minHeight}px">
 		<p class="consent-placeholder-title">{$_(definition.label)}</p>
 		<p class="consent-placeholder-text">
 			{$_('Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.')}
@@ -68,7 +68,7 @@
 	</div>
 {:else}
 	<!-- SSR / before hydration: reserve space only -->
-	<div style="min-height: {minHeight}px;" aria-hidden="true"></div>
+	<div style:min-height="{minHeight}px" aria-hidden="true"></div>
 {/if}
 
 <style>

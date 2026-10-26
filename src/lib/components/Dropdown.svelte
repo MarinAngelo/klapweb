@@ -113,7 +113,8 @@
 		bind:this={containerEl}
 		class="relative"
 		role="navigation"
-		style="--header-link-hover-color: {headerLinkHoverColor}; --normal-text-color: {headerLinkColor};"
+		style:--header-link-hover-color={headerLinkHoverColor}
+		style:--normal-text-color={headerLinkColor}
 		on:mouseenter={openDropdown}
 		on:mouseleave={closeDropdown}
 	>
@@ -127,23 +128,16 @@
 
 		{#if isOpen}
 			<ul
-				class="dropdown-menu left-0 shadow-lg z-40 rounded pt-4 pb-4"
-				style="background-color: {dropdownBg ||
-					headerBgColor}; min-width: 14rem; --dropdown-top: {dropdownTop}px;"
+				class="dropdown-menu left-0 shadow-lg z-40 rounded pt-4 pb-4 [min-width:14rem]"
+				style:background-color={dropdownBg || headerBgColor}
+				style:--dropdown-top="{dropdownTop}px"
 			>
 				{#each subItems as dropdownItem}
 					<li
 						class="{currentPath === dropdownItem.link.url
 							? 'underline'
-							: ''} px-5 py-0 font-semibold tracking-tight block text-left"
-						style="
-				font-size: {headerLinkFontSize}rem;
-				white-space: normal;
-				overflow-wrap: break-word;
-				hyphens: auto;
-				min-width: 14rem;
-				text-align: left;
-			"
+							: ''} px-5 py-0 font-semibold tracking-tight block text-left [white-space:normal] [overflow-wrap:break-word] [hyphens:auto] [min-width:14rem] text-left"
+						style:font-size="{headerLinkFontSize}rem"
 					>
 						<PrismicLink
 							field={dropdownItem.link}
