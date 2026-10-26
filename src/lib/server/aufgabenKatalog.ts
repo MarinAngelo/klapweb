@@ -83,7 +83,7 @@ export async function loadKatalog(fetch: Fetch, lang = 'de-ch'): Promise<Katalog
 			aktiv: d.aktiv !== false,
 			prioritaet: (d.priority in PRIORITAET_RANG ? d.priority : 'Mittel') as Prioritaet,
 			maxAnnahmen: d.max_annahmen ?? 0,
-			creditTyp: d.credit_typ ?? 'Fest',
+			creditTyp: d.credit_typ ?? 'Offen (Zeitbasiert)',
 			creditBetrag: d.credit_betrag ?? null,
 			werkzeuge,
 			parentUid,

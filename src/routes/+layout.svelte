@@ -20,7 +20,7 @@
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
-	import { updateTheme } from '$lib/utils/themeUpdater';
+	import { updateTheme, updateContrastColors } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import { variables } from '$lib/stores/variables';
@@ -279,6 +279,8 @@
 			updateTheme(data);
 		}
 	}
+	// Text colors with enough contrast on panels/buttons (follows page-level overrides too)
+	$: updateContrastColors($theme.pageColor, $theme.pageBgColor);
 	$: pageFontName =
 		prismicTheme?.data?.page_font?.data?.name ||
 		fonts?.find((f: any) => f.id === prismicTheme?.data?.page_font?.id)?.data?.name ||
