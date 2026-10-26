@@ -7,12 +7,12 @@ import {
 	berechneCredits
 } from '$lib/server/aufgaben';
 import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
-import { bonusEntfernen, bonusPruefen } from '$lib/server/aufgabenKatalog';
+import { bonusEntfernen, bonusPruefen, loadKatalog } from '$lib/server/aufgabenKatalog';
 import { env } from '$env/dynamic/private';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ fetch }) => {
 	let annahmen: Awaited<ReturnType<typeof listAlleAnnahmen>> = [];
 	let blobError: string | null = null;
 
@@ -22,7 +22,15 @@ export const load: PageServerLoad = async () => {
 		blobError = String(e);
 	}
 
-	return { annahmen, blobError };
+	// Current priority per task uid (from Prismic, may change after acceptance)
+	let prioritaeten: Record<string, string> = {};
+	try {
+		prioritaeten = Object.fromEntries((await loadKatalog(fetch)).map((a) => [a.uid, a.prioritaet]));
+	} catch {
+		/* non-critical */
+	}
+
+	return { annahmen, blobError, prioritaeten };
 };
 
 export const actions: Actions = {

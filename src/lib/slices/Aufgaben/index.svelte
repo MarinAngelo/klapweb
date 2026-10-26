@@ -5,6 +5,7 @@
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import AufgabeDetails from './AufgabeDetails.svelte';
 	import AufgabeAnnehmen from './AufgabeAnnehmen.svelte';
+	import PrioritaetBadge from './PrioritaetBadge.svelte';
 	import FileField from '$lib/components/FileField.svelte';
 	import { useOpenIndex } from '$lib/utils/useOpenIndex';
 	import { _ } from '$lib/stores/i18n';
@@ -107,6 +108,7 @@
 		beschreibung: any;
 		bild: { url: string; alt: string } | null;
 		aktiv: boolean;
+		prioritaet: 'Hoch' | 'Mittel' | 'Gering';
 		max_annahmen: number;
 		credit_typ: string;
 		credit_betrag: number | null;
@@ -306,10 +308,16 @@
 	$: verfuegbareAufgaben = aufgaben.filter((a) => a.aktiv && !a.parent_uid);
 	$: meineAufgaben = annahmen;
 	$: aufgabenMap = new Map(aufgaben.map((a) => [a.uid, a]));
-	// Subtasks per main task, sorted by position (API sends them flat)
+	// Subtasks per main task, sorted by position, then priority (API sends them flat)
+	const prioritaetRang = (p: Aufgabe['prioritaet']) => ({ Hoch: 0, Mittel: 1, Gering: 2 })[p] ?? 1;
 	$: teilaufgabenMap = aufgaben
 		.filter((a) => a.parent_uid)
-		.sort((a, b) => a.position - b.position || a.titel.localeCompare(b.titel))
+		.sort(
+			(a, b) =>
+				a.position - b.position ||
+				prioritaetRang(a.prioritaet) - prioritaetRang(b.prioritaet) ||
+				a.titel.localeCompare(b.titel)
+		)
 		.reduce((map, a) => {
 			map.set(a.parent_uid!, [...(map.get(a.parent_uid!) ?? []), a]);
 			return map;
@@ -609,7 +617,10 @@
 								aria-expanded={$aufgabenOpenIndex === i}
 								on:click={() => toggleAufgabe(i)}
 							>
-								{aufgabe.titel}
+								<span class="inline-flex flex-wrap items-center gap-2 min-w-0">
+									{aufgabe.titel}
+									<PrioritaetBadge prioritaet={aufgabe.prioritaet} />
+								</span>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
@@ -654,6 +665,7 @@
 													>
 														<p class="text-lg font-semibold">
 															{aufgabe.enforce_order ? `${j + 1}. ` : ''}{teil.titel}
+															<PrioritaetBadge prioritaet={teil.prioritaet} />
 															{#if teil.erledigt}
 																<span class="text-sm font-normal opacity-60"
 																	>· {$_('Erledigt')}</span
