@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { variables } from '$lib/stores/variables';
 	import { addonRows } from '$lib/stores/addonRows';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -43,7 +44,7 @@
 			suffix: ''
 		},
 		{
-			label: p.label_restbetrag || 'Restpreis nach Veröffentlichung',
+			label: p.label_restbetrag || $_('Restpreis nach Veröffentlichung'),
 			value: $variables['Restbetrag'],
 			suffix: ''
 		}

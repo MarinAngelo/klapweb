@@ -102,6 +102,12 @@ Regeln:
 - **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
 - **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
 
+### Mehrsprachige Inhalte (Prismic)
+
+- Hat das Prismic-Repo mehr als eine Sprache, braucht **jede statisch generierte Seite** eine Übersetzung in allen Sprachen (sonst 404 unter `/en-us/…`)
+- `scripts/check-translations.js` prüft die Typen in `TRANSLATED_TYPES` (`page`, `leistung`, `ressource`) bei `npm run dev` und `npm run build` (nur Warnung); `npm run check:translations` endet mit Fehler bei Lücken
+- Neuer Custom Type mit eigener (prerender-)Route → in `TRANSLATED_TYPES` ergänzen
+
 ## Cookie-Banner (Schweizer Recht, Opt-out)
 
 - Rechtsgrundlage: Art. 45c FMG + DSG → informieren + Ablehnung ermöglichen (keine vorgängige Einwilligung wie in der EU)

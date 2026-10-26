@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onMount } from 'svelte';
 	import { PrismicImage } from '@prismicio/svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -278,7 +279,7 @@
 		<div class="lb-content" on:click|stopPropagation>
 			<img src={image?.url ?? ''} alt={image?.alt ?? ''} class="lb-img" />
 		</div>
-		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen"
+		<button type="button" class="lb-close" on:click={closeLightbox} aria-label={$_('Schliessen')}
 			>×</button
 		>
 	</dialog>

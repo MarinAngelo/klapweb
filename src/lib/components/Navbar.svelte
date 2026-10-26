@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicLink, PrismicText } from '@prismicio/svelte';
 	import { page } from '$app/stores'; // NEU: Für die Pfad-Überwachung
 	import Dropdown from './Dropdown.svelte';
@@ -122,7 +123,7 @@
 </script>
 
 <nav
-	aria-label="Hauptnavigation"
+	aria-label={$_('Hauptnavigation')}
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
 	style:font-family={headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'}
 >
@@ -132,7 +133,7 @@
 		<button
 			class="btn btn-square btn-ghost h-10 w-10"
 			on:click={toggleMenu}
-			aria-label="Menü"
+			aria-label={$_('Menü')}
 			aria-expanded={$isMenuOpen}
 			aria-controls="main-nav-menu"
 		>
@@ -249,7 +250,7 @@
 							style:font-size="{headerLinkFontSize}rem"
 						>
 							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
-							<span class="lg:hidden">Anmelden</span>
+							<span class="lg:hidden">{$_('Anmelden')}</span>
 						</a>
 					{/if}
 				</li>

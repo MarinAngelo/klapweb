@@ -296,6 +296,15 @@ export const translations: Record<string, Record<string, string>> = {
 	Unten: { 'de-ch': 'Unten', 'en-us': 'Bottom' },
 	'kein Abstand': { 'de-ch': 'kein Abstand', 'en-us': 'No spacing' },
 	wenig: { 'de-ch': 'wenig', 'en-us': 'Little' },
+	'Leider gibt es für diese Seite noch keine Übersetzung.': {
+		'de-ch': 'Leider gibt es für diese Seite noch keine Übersetzung.',
+		'en-us': 'Unfortunately, there is no translation for this page yet.'
+	},
+	'Weiterleitung zur Version auf {sprache} in {n} Sekunden …': {
+		'de-ch': 'Weiterleitung zur Version auf {sprache} in {n} Sekunden …',
+		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
+	},
+	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
@@ -788,6 +797,106 @@ export const translations: Record<string, Record<string, string>> = {
 	'E-Mail und Passwort erforderlich': {
 		'de-ch': 'E-Mail und Passwort erforderlich',
 		'en-us': 'Email and password required'
+	},
+	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Termin gebucht': { 'de-ch': 'Termin gebucht', 'en-us': 'Appointment booked' },
+	Angebot: { 'de-ch': 'Angebot', 'en-us': 'Offer' },
+	Zeit: { 'de-ch': 'Zeit', 'en-us': 'Time' },
+	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
+	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
+	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
+	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
+	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
+	'Weitere Termine buchen': {
+		'de-ch': 'Weitere Termine buchen',
+		'en-us': 'Book more appointments'
+	},
+	'Buchung stornieren': { 'de-ch': 'Buchung stornieren', 'en-us': 'Cancel booking' },
+	'Bestellung bestätigt': { 'de-ch': 'Bestellung bestätigt', 'en-us': 'Order confirmed' },
+	'Ihre Bestellung ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung ist bei uns eingegangen.',
+		'en-us': 'We have received your order.'
+	},
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung {leistung} ist bei uns eingegangen.',
+		'en-us': 'We have received your order {leistung}.'
+	},
+	Währung: { 'de-ch': 'Währung', 'en-us': 'Currency' },
+	'Zum Inhalt springen': { 'de-ch': 'Zum Inhalt springen', 'en-us': 'Skip to content' },
+	'Zum Kalender hinzufügen (.ics)': {
+		'de-ch': 'Zum Kalender hinzufügen (.ics)',
+		'en-us': 'Add to calendar (.ics)'
+	},
+	'In Google Calendar öffnen': {
+		'de-ch': 'In Google Calendar öffnen',
+		'en-us': 'Open in Google Calendar'
+	},
+	'Standort auf Google Maps anzeigen': {
+		'de-ch': 'Standort auf Google Maps anzeigen',
+		'en-us': 'Show location on Google Maps'
+	},
+	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
+	'Zurzeit sind keine Durchführungen geplant': {
+		'de-ch': 'Zurzeit sind keine Durchführungen geplant',
+		'en-us': 'No dates are currently scheduled'
+	},
+	'Jetzt bestellen': { 'de-ch': 'Jetzt bestellen', 'en-us': 'Order now' },
+	'Alles von {plan} und:': {
+		'de-ch': 'Alles von {plan} und:',
+		'en-us': 'Everything in {plan}, plus:'
+	},
+	'Alle Pläne': { 'de-ch': 'Alle Pläne', 'en-us': 'All plans' },
+	'Restpreis nach Veröffentlichung': {
+		'de-ch': 'Restpreis nach Veröffentlichung',
+		'en-us': 'Remaining price after launch'
+	},
+	Abgegeben: { 'de-ch': 'Abgegeben', 'en-us': 'Submitted' },
+	'Vorheriges Bild': { 'de-ch': 'Vorheriges Bild', 'en-us': 'Previous image' },
+	'Nächstes Bild': { 'de-ch': 'Nächstes Bild', 'en-us': 'Next image' },
+	'Vorheriges Zitat': { 'de-ch': 'Vorheriges Zitat', 'en-us': 'Previous quote' },
+	'Nächstes Zitat': { 'de-ch': 'Nächstes Zitat', 'en-us': 'Next quote' },
+	'Lightbox schliessen': { 'de-ch': 'Lightbox schliessen', 'en-us': 'Close lightbox' },
+	Bildvorschau: { 'de-ch': 'Bildvorschau', 'en-us': 'Image preview' },
+	Bildkarussell: { 'de-ch': 'Bildkarussell', 'en-us': 'Image carousel' },
+	Kundenstimmen: { 'de-ch': 'Kundenstimmen', 'en-us': 'Testimonials' },
+	'Code kopieren': { 'de-ch': 'Code kopieren', 'en-us': 'Copy code' },
+	'Vorher/Nachher-Vergleich': {
+		'de-ch': 'Vorher/Nachher-Vergleich',
+		'en-us': 'Before/after comparison'
+	},
+	'Bitte auswählen': { 'de-ch': 'Bitte auswählen', 'en-us': 'Please select' },
+	'Termine werden geladen…': {
+		'de-ch': 'Termine werden geladen…',
+		'en-us': 'Loading appointments…'
+	},
+	'Termine konnten nicht geladen werden.': {
+		'de-ch': 'Termine konnten nicht geladen werden.',
+		'en-us': 'Appointments could not be loaded.'
+	},
+	'Keine verfügbaren Termine.': {
+		'de-ch': 'Keine verfügbaren Termine.',
+		'en-us': 'No available appointments.'
+	},
+	'Zeitzone wählen': { 'de-ch': 'Zeitzone wählen', 'en-us': 'Select time zone' },
+	Ganztägig: { 'de-ch': 'Ganztägig', 'en-us': 'All day' },
+	Menü: { 'de-ch': 'Menü', 'en-us': 'Menu' },
+	Hauptnavigation: { 'de-ch': 'Hauptnavigation', 'en-us': 'Main navigation' },
+	'Keine Bilder vorhanden': { 'de-ch': 'Keine Bilder vorhanden', 'en-us': 'No images available' },
+	'Mehr Informationen': { 'de-ch': 'Mehr Informationen', 'en-us': 'More information' },
+	'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.': {
+		'de-ch': 'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.',
+		'en-us': 'Our terms and conditions are currently being updated.'
+	},
+	'Der Haftungsausschluss wird derzeit aktualisiert.': {
+		'de-ch': 'Der Haftungsausschluss wird derzeit aktualisiert.',
+		'en-us': 'The disclaimer is currently being updated.'
+	},
+	Absenden: { 'de-ch': 'Absenden', 'en-us': 'Send' },
+	'Vielen Dank!': { 'de-ch': 'Vielen Dank!', 'en-us': 'Thank you!' },
+	'Ihre Nachricht wurde erfolgreich gesendet.': {
+		'de-ch': 'Ihre Nachricht wurde erfolgreich gesendet.',
+		'en-us': 'Your message has been sent successfully.'
 	},
 	'Zur Website': { 'de-ch': 'Zur Website', 'en-us': 'To website' },
 	'Passwortgeschützte Seite': {

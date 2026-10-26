@@ -126,7 +126,7 @@
 		: 'var(--page-button-color)';
 	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
-	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
+	$: ctaLabel = (slice.primary as any)?.cta_label || $_('Jetzt bestellen');
 	$: mobileVollbreite = (slice.primary as any)?.mobile_full_width ?? false;
 
 	// --- Team variation ---
@@ -234,7 +234,7 @@
 							<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
 								{#if i > 0}
 									<li class="text-sm opacity-60 italic pb-1">
-										Alles von {planItems[i - 1].name} und:
+										{$_('Alles von {plan} und:').replace('{plan}', planItems[i - 1].name)}
 									</li>
 								{/if}
 								{#each plan.features as feat}

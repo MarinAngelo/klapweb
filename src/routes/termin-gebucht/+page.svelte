@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { page } from '$app/stores';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Heading from '$lib/components/Heading.svelte';
@@ -21,7 +22,7 @@
 	$: ort = q.get('ort') ?? '';
 </script>
 
-<svelte:head><title>Termin gebucht</title></svelte:head>
+<svelte:head><title>{$_('Termin gebucht')}</title></svelte:head>
 
 <Bounded as="section" yPadding="lg">
 	<div class="max-w-prose mx-auto text-center">
@@ -29,39 +30,39 @@
 
 		<div class="text-left inline-block">
 			{#if titel}
-				<p><strong>Angebot:</strong> {titel}</p>
+				<p><strong>{$_('Angebot')}:</strong> {titel}</p>
 			{/if}
 			{#if ort}
-				<p><strong>Ort:</strong> {ort}</p>
+				<p><strong>{$_('Ort')}:</strong> {ort}</p>
 			{/if}
 			{#if datum}
-				<p><strong>Datum:</strong> {datum}</p>
+				<p><strong>{$_('Datum')}:</strong> {datum}</p>
 			{/if}
 			{#if uhrzeit}
-				<p><strong>Zeit:</strong> {uhrzeit}{endzeit ? ' – ' + endzeit : ''} Uhr</p>
+				<p><strong>{$_('Zeit')}:</strong> {uhrzeit}{endzeit ? ' – ' + endzeit : ''} {$_('Uhr')}</p>
 			{/if}
 			{#if dauer}
-				<p><strong>Dauer:</strong> {dauer} Minuten</p>
+				<p><strong>{$_('Dauer')}:</strong> {dauer} {$_('Minuten')}</p>
 			{/if}
 		</div>
 
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
 			{#if gcalLink}
-				<Button href={gcalLink} text="Zum Kalender hinzufügen" />
+				<Button href={gcalLink} text={$_('Zum Kalender hinzufügen')} />
 			{/if}
 			{#if icsLink}
-				<Button href={icsLink} text=".ics herunterladen" />
+				<Button href={icsLink} text={$_('.ics herunterladen')} />
 			{/if}
 		</div>
 
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			<Button href="/" text="Zurück zur Homepage" />
-			<Button href={returnTo} text="Weitere Termine buchen" />
+			<Button href="/" text={$_('Zurück zur Homepage')} />
+			<Button href={returnTo} text={$_('Weitere Termine buchen')} />
 		</div>
 
 		{#if stornoLink}
 			<div class="mt-6">
-				<Button href={stornoLink} text="Buchung stornieren" color="#dc2626" />
+				<Button href={stornoLink} text={$_('Buchung stornieren')} color="#dc2626" />
 			</div>
 		{/if}
 	</div>

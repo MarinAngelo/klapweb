@@ -426,7 +426,9 @@
 								<span class="flex flex-col gap-0.5 min-w-0">
 									<span>{annahmeTitel(a)}</span>
 									<span class="text-sm font-normal text-muted">
-										{statusLabels[a.status] ?? a.status}{#if a.credits != null}
+										{statusLabels[a.status]
+											? $_(statusLabels[a.status])
+											: a.status}{#if a.credits != null}
 											· {a.credits} {$_('Credits')}{/if}{#if a.minuten != null}
 											· {a.minuten} min{/if}
 									</span>
