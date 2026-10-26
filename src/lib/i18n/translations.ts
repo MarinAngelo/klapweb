@@ -776,6 +776,19 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Angemeldet bleiben ({tage} Tage)',
 		'en-us': 'Remember me ({tage} days)'
 	},
+	'Noch kein Konto? Registrieren': {
+		'de-ch': 'Noch kein Konto? Registrieren',
+		'en-us': 'No account yet? Sign up'
+	},
+	'Passwort vergessen?': { 'de-ch': 'Passwort vergessen?', 'en-us': 'Forgot password?' },
+	'E-Mail oder Passwort ungültig': {
+		'de-ch': 'E-Mail oder Passwort ungültig',
+		'en-us': 'Invalid email or password'
+	},
+	'E-Mail und Passwort erforderlich': {
+		'de-ch': 'E-Mail und Passwort erforderlich',
+		'en-us': 'Email and password required'
+	},
 	'Passwortgeschützte Seite': {
 		'de-ch': 'Passwortgeschützte Seite',
 		'en-us': 'Password-protected page'

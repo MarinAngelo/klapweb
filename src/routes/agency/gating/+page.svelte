@@ -1,4 +1,5 @@
 <script lang="ts">
+	import LoginCard from '$lib/components/auth/LoginCard.svelte';
 	import RememberMe from '$lib/components/auth/RememberMe.svelte';
 	import CancelLogin from '$lib/components/auth/CancelLogin.svelte';
 	import type { ActionData, PageData } from './$types';
@@ -202,37 +203,32 @@
 	}
 </script>
 
-<div class="container">
-	{#if !data.authenticated}
-		<!-- Login Form -->
-		<div class="login-container">
-			<h1>{$_('Agency Gating Editor')}</h1>
-			<p class="intro">{$_('Bitte geben Sie das Agentur-Passwort ein:')}</p>
-
-			<form method="POST" action="?/login" class="login-form">
-				<div class="form-group">
-					<label for="secret">{$_('Passwort')}</label>
-					<input
-						id="secret"
-						name="secret"
-						type="password"
-						bind:value={passwordInput}
-						placeholder={$_('Passwort eingeben')}
-						required
-					/>
-				</div>
-
-				<RememberMe />
-
-				{#if loginError}
-					<div class="error-message" role="alert">{$_(loginError)}</div>
-				{/if}
-
-				<button type="submit" class="btn btn-primary">{$_('Anmelden')}</button>
-				<CancelLogin />
-			</form>
-		</div>
-	{:else}
+{#if !data.authenticated}
+	<!-- Login in the look of the site (same as /admin) -->
+	<LoginCard title={$_('Agency Gating Editor')} action="?/login">
+		<p class="m-0 text-sm">{$_('Bitte geben Sie das Agentur-Passwort ein:')}</p>
+		<input
+			id="secret"
+			name="secret"
+			type="password"
+			bind:value={passwordInput}
+			aria-label={$_('Passwort')}
+			placeholder={$_('Passwort eingeben')}
+			autocomplete="current-password"
+			required
+			class="form-input"
+		/>
+		<RememberMe />
+		{#if loginError}
+			<p role="alert" class="m-0 text-sm text-red-600">{$_(loginError)}</p>
+		{/if}
+		<button type="submit" class="btn-solid rounded px-6 py-2 text-sm font-medium">
+			{$_('Anmelden')}
+		</button>
+		<CancelLogin />
+	</LoginCard>
+{:else}
+	<div class="container">
 		<!-- Editor -->
 		<div class="editor-container">
 			<div class="header">
@@ -457,8 +453,8 @@
 				</button>
 			{/if}
 		</div>
-	{/if}
-</div>
+	</div>
+{/if}
 
 {#if showEnvWarning && data.authenticated}
 	<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
@@ -504,26 +500,6 @@
 		padding: 2rem;
 	}
 
-	.login-container {
-		text-align: center;
-	}
-
-	.login-container h1 {
-		margin-bottom: 1rem;
-	}
-
-	.intro {
-		color: #666;
-		margin-bottom: 2rem;
-	}
-
-	.login-form {
-		background: #f9f9f9;
-		padding: 2rem;
-		border-radius: 8px;
-		border: 1px solid #e0e0e0;
-	}
-
 	.editor-container .header {
 		display: flex;
 		justify-content: space-between;
@@ -555,7 +531,6 @@
 		font-size: 0.95rem;
 	}
 
-	input[type='password'],
 	select {
 		padding: 0.75rem;
 		border: 1px solid #ccc;
@@ -564,7 +539,6 @@
 		font-family: inherit;
 	}
 
-	input[type='password']:focus,
 	select:focus {
 		outline: none;
 		border-color: #333;
@@ -598,21 +572,6 @@
 	.checkbox-label.gate-inactive {
 		opacity: 0.45;
 		cursor: not-allowed;
-	}
-
-	.text-muted {
-		color: #666;
-		font-style: italic;
-		margin: 0;
-	}
-
-	.error-message {
-		background: #fee;
-		color: #c33;
-		padding: 0.75rem;
-		border-radius: 4px;
-		margin-bottom: 1rem;
-		font-size: 0.95rem;
 	}
 
 	.btn {
