@@ -341,12 +341,11 @@
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
 	$: isNoChrome = !building && $page.url.searchParams.get('no_chrome') === 'true';
-	$: stickyHeader =
-		!isLandingPage &&
-		!isSlicePreview &&
-		!isDokuPage &&
-		!isNoChrome &&
-		(prismicTheme?.data?.sticky_header ?? false);
+	// Admin area (after login): neutral tool UI like a landing page — no site header/footer/chat.
+	// The login page /admin itself keeps the site look.
+	$: isAdminPage = $page.url.pathname.startsWith('/admin/');
+	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
@@ -440,7 +439,7 @@
 <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div class="bg-page-bg [min-height:100vh]">
-	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
+	{#if !hideChrome}
 		<Header
 			{navigation}
 			{settings}
@@ -474,7 +473,7 @@
 		{/key}
 	</main>
 
-	{#if !isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome}
+	{#if !hideChrome}
 		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
 	{/if}
 </div>
@@ -484,7 +483,7 @@
 
 <PrismicPreview {repositoryName} />
 <KlapStudio bind:open={studioOpen} />
-{#if chatActive}
+{#if chatActive && !isAdminPage}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
 {/if}
 
