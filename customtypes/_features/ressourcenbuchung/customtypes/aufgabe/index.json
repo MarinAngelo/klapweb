@@ -46,7 +46,7 @@
 			"priority": {
 				"type": "Select",
 				"config": {
-					"label": "Priorität",
+					"label": "Priorität (Teilaufgaben übernehmen die Priorität der Hauptaufgabe)",
 					"options": ["Hoch", "Mittel", "Gering"],
 					"default_value": "Mittel"
 				}
