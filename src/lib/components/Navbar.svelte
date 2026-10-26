@@ -70,10 +70,22 @@
 		}
 	}
 
+	// Crossing the desktop breakpoint (e.g. window resized while the mobile menu is open):
+	// close the mobile menu, otherwise its mobile-only styles (scroll container, body scroll
+	// lock) stay active on desktop
+	let desktopQuery: MediaQueryList | null = null;
+	function handleDesktopChange(e: MediaQueryListEvent) {
+		if (e.matches) isMenuOpen.set(false);
+		// Open submenus keep the position measured for the other layout → close them as well
+		window.dispatchEvent(new CustomEvent('close-dropdown'));
+	}
+
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			window.addEventListener('scroll', handleWindowScroll, { passive: true });
 			window.addEventListener('touchmove', handleTouchmove, { passive: true });
+			desktopQuery = window.matchMedia('(min-width: 1024px)');
+			desktopQuery.addEventListener('change', handleDesktopChange);
 		}
 	});
 
@@ -82,6 +94,7 @@
 			window.removeEventListener('scroll', handleWindowScroll);
 			window.removeEventListener('touchmove', handleTouchmove);
 		}
+		desktopQuery?.removeEventListener('change', handleDesktopChange);
 		if (typeof document !== 'undefined') {
 			document.body.style.overflow = '';
 		}
@@ -135,10 +148,10 @@
 		id="main-nav-menu"
 		bind:this={menuEl}
 		class={`${
-			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
+			$isMenuOpen
+				? 'fixed left-0 right-0 bottom-0 z-50 flex flex-col items-start text-left p-8 overflow-y-auto lg:overflow-visible'
+				: 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
-		class:bottom-0={$isMenuOpen}
-		class:overflow-y-auto={$isMenuOpen}
 		style:top={$isMenuOpen
 			? /* 1px overlap with the header → no hairline on fractional device pixel ratios */ `${Math.max(0, $headerHeight - 1)}px`
 			: undefined}
@@ -198,6 +211,8 @@
 			{#if showSwitcher && lang && locales}
 				<li
 					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4"
+					style:color={headerLinkColor}
+					style:--hover-text-color={headerLinkHoverColor}
 				>
 					<LanguageSwitcher {lang} {locales} {allAlternates} />
 				</li>

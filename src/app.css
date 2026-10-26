@@ -70,6 +70,18 @@ input[type='number'] {
 	font-family: var(--page-font), sans-serif !important;
 	opacity: var(--heading-opacity, 1);
 }
+/* Long German compounds (e.g. "Ressourcenbuchungssystem") must not overflow on mobile:
+   hyphenate where the browser can (html lang), otherwise break inside the word.
+   Only takes effect when a word does not fit on a line. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+	hyphens: auto;
+}
 h1 {
 	@apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
 	color: var(--page-color);

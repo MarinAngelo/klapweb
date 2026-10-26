@@ -44,8 +44,7 @@
 							delay: i * 100
 						}}
 					>
-						<!-- Long German compounds (e.g. "Ressourcenbuchungssystem") would overflow the card -->
-						<h2 class="h3 leistung-title">
+						<h2 class="h3">
 							{leistung.label}
 						</h2>
 						{#if leistung.beschreibung}
@@ -88,10 +87,5 @@
 <style>
 	:global([data-anim-stagger] > *) {
 		opacity: 0;
-	}
-
-	.leistung-title {
-		hyphens: auto;
-		overflow-wrap: anywhere;
 	}
 </style>
