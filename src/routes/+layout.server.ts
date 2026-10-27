@@ -124,7 +124,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
 
-		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
+		// Token values in the page language (English: field «Wert (EN)», fallback German)
+		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data, lang);
 
 		// Aktives Theme bestimmen (Feld activ == true)
 		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;

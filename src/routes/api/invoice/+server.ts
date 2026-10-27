@@ -51,7 +51,7 @@ interface CompanyInfo {
 
 /** Replaces {{TOKEN}} placeholders in a plain string. */
 function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
 }
 
 /** Converts Prismic StructuredText blocks to a plain-text string with token replacement. */

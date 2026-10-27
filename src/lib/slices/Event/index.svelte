@@ -1,7 +1,8 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { asText } from '@prismicio/helpers';
-	import { PrismicRichText } from '@prismicio/svelte';
 	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import type { Content } from '@prismicio/client';

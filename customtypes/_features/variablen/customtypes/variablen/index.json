@@ -25,6 +25,13 @@
 								"label": "Wert",
 								"placeholder": "z.B. Klap GmbH oder +41 44 123 45 67"
 							}
+						},
+						"value_en": {
+							"type": "Text",
+							"config": {
+								"label": "Wert (EN)",
+								"placeholder": "Englischer Wert — leer = deutscher Wert wird verwendet"
+							}
 						}
 					}
 				}
