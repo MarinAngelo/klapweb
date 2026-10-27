@@ -19,7 +19,11 @@ export function replaceTokens(
 		if (!block.text) return block;
 		return {
 			...block,
-			text: block.text.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? `{{${key}}}`)
+			// Any name without braces — \w would miss umlauts ({{Buchungseinschränkung}})
+			text: block.text.replace(
+				/\{\{([^{}]+)\}\}/g,
+				(match, key: string) => vars[key.trim()] ?? match
+			)
 		};
 	});
 }
