@@ -6,6 +6,7 @@
  * wird die Ankunftserinnerung sofort geschickt statt auf den Scheduler zu warten.
  */
 import { createClient } from '$lib/prismicio';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
 import * as prismic from '@prismicio/client';
 import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchungen';
 import { env } from '$env/dynamic/private';
@@ -26,9 +27,10 @@ function doorCode(uid: string): string {
 	return process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '';
 }
 
-function whatsAppLink(tel: string): string {
-	const number = tel.replace(/[^\d]/g, '');
-	return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+/** {{Messenger-Apps}} (Signal, Telegram, WhatsApp); {{WhatsApp}} = old name, same buttons */
+function messengerTokens(tel: string | undefined): Record<string, string> {
+	const html = messengerButtonsHtml(tel);
+	return { 'Messenger-Apps': html, WhatsApp: html };
 }
 
 function dateInDays(n: number): string {
@@ -84,7 +86,7 @@ export async function maybeSendAnkunftsErinnerung(
 			Anreise: fmtDate(buchung.von),
 			Abreise: fmtDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			WhatsApp: waTel ? whatsAppLink(waTel) : ''
+			...messengerTokens(waTel)
 		};
 
 		const betreff =
@@ -106,7 +108,7 @@ export async function maybeSendAnkunftsErinnerung(
 			html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
 <p>${intro}</p>
 ${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
-${tokens.WhatsApp ? `<p>${t('Bei Fragen', lang)}: ${tokens.WhatsApp}</p>` : ''}
+${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
 <p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
 		}
 
@@ -162,7 +164,7 @@ export async function sendAbreiseErinnerung(
 			Anreise: fmtDate(buchung.von),
 			Abreise: fmtDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			WhatsApp: waTel ? whatsAppLink(waTel) : ''
+			...messengerTokens(waTel)
 		};
 
 		const betreff =

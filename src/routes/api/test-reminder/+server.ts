@@ -11,6 +11,7 @@
  */
 
 import { json } from '@sveltejs/kit';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
 import { getRessourceDocForBooking } from '$lib/server/ressourceMail';
 import { env } from '$env/dynamic/private';
 import { isAdmin } from '$lib/server/adminAuth';
@@ -95,6 +96,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	const results: any[] = [];
 	const client = prismic.createClient(repoName);
+	// {{Messenger-Apps}} (Signal, Telegram, WhatsApp) with the number from the settings
+	const settings = await client.getSingle('settings').catch(() => null);
+	const messengerHtml = messengerButtonsHtml((settings?.data as any)?.whatsapp_tel);
 	const resend = dryRun ? null : new Resend(resendKey);
 
 	for (const buchung of upcoming) {
@@ -138,7 +142,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				Name: buchung.name || '',
 				Anreise: formatDate(buchung.von),
 				Abreise: formatDate(buchung.bis),
-				Buchungsreferenz: buchung.id || ''
+				Buchungsreferenz: buchung.id || '',
+				'Messenger-Apps': messengerHtml,
+				WhatsApp: messengerHtml
 			});
 
 			if (dryRun) {

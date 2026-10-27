@@ -37,7 +37,11 @@
 		},
 		Telegram: {
 			color: '#229ED9',
-			buildHref: (v) => `https://t.me/${v.replace(/^@/, '')}`
+			// Phone number → t.me/+<digits> (no spaces), otherwise username (without @)
+			buildHref: (v) =>
+				/^[+\d][\d\s()/-]*$/.test(v.trim())
+					? `https://t.me/+${v.replace(/[^\d]/g, '')}`
+					: `https://t.me/${v.replace(/^@/, '')}`
 		},
 		Signal: {
 			color: '#3a76f0',
