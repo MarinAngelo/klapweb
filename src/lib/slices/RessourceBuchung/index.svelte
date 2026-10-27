@@ -516,7 +516,7 @@
 									>
 										<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
 										<span class="flex-1" class:line-through={belegt}>{zimmerName}</span>
-										<span class="text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
+										<span class="text-muted">{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
 										{#if belegt && (von || bis)}
 											<span class="text-xs text-red-800">{$_('Belegt')}</span>
 										{/if}
@@ -533,7 +533,7 @@
 							type="button"
 							on:click={goToStep2}
 							disabled={!step1Valid}
-							class="scope-btn-solid mt-2 px-6 py-3 font-medium transition-opacity"
+							class="scope-btn-solid mt-2 inline-flex items-center gap-2 self-start px-6 py-3 font-medium transition-opacity"
 						>
 							{$_('Weiter')}
 							<SvgIcons name="right" size="1em" />
@@ -570,7 +570,7 @@
 											>
 												<span>{zimmerName}</span>
 												<span class="flex items-center gap-2 text-muted shrink-0 ml-2">
-													<span>{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
+													<span>{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
 													<span class="text-xs">▾</span>
 												</span>
 											</summary>
@@ -582,7 +582,9 @@
 														class="w-full max-h-[200px] rounded object-cover"
 													/>
 												{/if}
-												<p class="text-xs text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</p>
+												<p class="text-xs text-muted">
+													{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}
+												</p>
 											</div>
 										</details>
 									{/each}
@@ -641,7 +643,7 @@
 					<button
 						type="button"
 						on:click={backToStep1}
-						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit"
+						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit inline-flex items-center gap-1"
 					>
 						<SvgIcons name="left" size="1em" />
 						{$_('Auswahl ändern')}
@@ -718,7 +720,7 @@
 						<button
 							type="button"
 							on:click={backToStep1}
-							class="scope-btn-outline px-6 py-3 font-medium transition-opacity"
+							class="scope-btn-outline inline-flex items-center gap-2 px-6 py-3 font-medium transition-opacity"
 						>
 							<SvgIcons name="left" size="1em" />
 							{$_('Zurück')}
