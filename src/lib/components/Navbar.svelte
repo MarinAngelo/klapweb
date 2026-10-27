@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { _ } from '$lib/stores/i18n';
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { PrismicText } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { page } from '$app/stores'; // NEU: Für die Pfad-Überwachung
 	import Dropdown from './Dropdown.svelte';
 	import SvgIcon from './SvgIcons.svelte';

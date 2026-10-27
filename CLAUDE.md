@@ -108,6 +108,8 @@ Regeln:
 - Hat das Prismic-Repo mehr als eine Sprache, braucht **jede statisch generierte Seite** eine Übersetzung in allen Sprachen (sonst 404 unter `/en-us/…`)
 - `scripts/check-translations.js` prüft die Typen in `TRANSLATED_TYPES` (`page`, `leistung`, `ressource`) bei `npm run dev` und `npm run build` (nur Warnung); `npm run check:translations` endet mit Fehler bei Lücken
 - Neuer Custom Type mit eigener (prerender-)Route → in `TRANSLATED_TYPES` ergänzen
+- **Links immer über `$lib/components/PrismicLink.svelte`** (nicht `@prismicio/svelte`) bzw. `$linkHref(field)` (`$lib/stores/linkContext`): setzt URLs für Ressource/Leistung und hält Besucher in ihrer Sprache (`/en-us/…`). Neue Route ausserhalb `[[lang=lang]]` → in `UNLOCALIZED_ROUTES` (`src/lib/utils/documentLinks.ts`) eintragen
+- Hreflang nur für echte Übersetzungen (`verified` in `allAlternates`, `+layout.svelte`), nie für geratene URLs
 
 ## Cookie-Banner (Schweizer Recht, Opt-out)
 
@@ -223,6 +225,12 @@ Details: `docs/git-strategie.md`
 	}
 }
 ```
+
+### Lokale Feature-Schalter (`gating.overrides.json`)
+
+- Agency-Editor (`/agency/gating`) speichert zusätzliche/abgeschaltete Features in `gating.overrides.json` (gitignored)
+- **Pro Prismic-Repository** (`repositoryName` aus `slicemachine.config.json`): `{ "repos": { "<repo>": { enabled, disabled, admin_sections_disabled } } }` — die Datei bleibt beim Branch-Wechsel liegen, Schalter eines Branches dürfen nie für ein anderes Repo gelten (sonst löscht `slicemachine push` Custom Types)
+- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`
 
 ### Plan-Hierarchie & Features
 

@@ -11,6 +11,7 @@
 	import { repositoryName, createClient } from '$lib/prismicio';
 	import { preferredLang, uiLang, translationNoticeShown } from '$lib/stores/preferredLang';
 	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
+	import { linkContext } from '$lib/stores/linkContext';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
@@ -92,7 +93,8 @@
 		if ($page.status !== 200) {
 			return (locales || []).map((l: string) => ({
 				lang: l,
-				href: l === dynamicDefaultLang ? '/' : `/${l}`
+				href: l === dynamicDefaultLang ? '/' : `/${l}`,
+				verified: false
 			}));
 		}
 
@@ -123,7 +125,8 @@
 					const prefix = l === dynamicDefaultLang ? '' : `/${l}`;
 					return {
 						lang: l,
-						href: `${prefix}/${targetSlug}`
+						href: `${prefix}/${targetSlug}`,
+						verified: true // static route exists in every language
 					};
 				});
 			}
@@ -137,7 +140,8 @@
 				href:
 					(alt.lang === dynamicDefaultLang ? '' : `/${alt.lang}`) +
 					routePrefix +
-					`/${alt.uid === 'home' ? '' : alt.uid}`
+					`/${alt.uid === 'home' ? '' : alt.uid}`,
+				verified: true // real translation in Prismic
 			}));
 		}
 
@@ -148,7 +152,9 @@
 			const slug = currentUid === 'home' ? '' : `/${currentUid}`;
 			return {
 				lang: l,
-				href: `${prefix}${routePrefix}${slug}`
+				href: `${prefix}${routePrefix}${slug}`,
+				// Guessed URL for other languages (switcher → "no translation" notice), not for SEO
+				verified: l === lang
 			};
 		});
 	})().map((item) => ({
@@ -207,6 +213,7 @@
 		locales ?? []
 	);
 	$: uiLang.set(chromeLang !== lang ? chromeLang : null);
+	$: linkContext.set({ lang: chromeLang, mainLang: dynamicDefaultLang, locales: locales ?? [] });
 
 	// Page exists in the remembered language (e.g. link from German content) → open the translation
 	$: if (browser && wantedChromeLang !== lang && $page.status === 200) {
@@ -226,10 +233,18 @@
 	// Shown once per page and visit (translationNoticeShown)
 	let missingTranslationNotice: { lang: string; path: string } | null = null;
 
-	$: seoAlternates = allAlternates.map((alt) => ({
-		lang: alt.lang,
-		href: `${cleanBaseUrl}${alt.href}`
-	}));
+	// Hreflang only for pages that really exist in the language (no guessed URLs → no 404s for search engines)
+	$: verifiedAlternates = allAlternates.filter((alt) => alt.verified);
+	$: seoAlternates =
+		verifiedAlternates.length > 1
+			? verifiedAlternates.map((alt) => ({
+					lang: alt.lang,
+					href: `${cleanBaseUrl}${alt.href}`
+				}))
+			: [];
+	$: xDefaultAlternate = seoAlternates.length
+		? verifiedAlternates.find((a) => a.lang === dynamicDefaultLang)
+		: undefined;
 
 	// --- VARIABLES / TOKEN MAP ---
 	// Nur updaten wenn sich der Inhalt wirklich geändert hat (verhindert Re-Render-Kaskade).
@@ -482,13 +497,8 @@
 		{#each seoAlternates as alt}
 			<link rel="alternate" hreflang={alt.lang} href={alt.href} />
 		{/each}
-		{#if seoAlternates.length > 0}
-			<link
-				rel="alternate"
-				hreflang="x-default"
-				href={cleanBaseUrl +
-					(allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
-			/>
+		{#if xDefaultAlternate}
+			<link rel="alternate" hreflang="x-default" href={cleanBaseUrl + xDefaultAlternate.href} />
 		{/if}
 	{/if}
 

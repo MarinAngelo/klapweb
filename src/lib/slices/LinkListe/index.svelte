@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { isFilled, asLink } from '@prismicio/client';
+	import { isFilled } from '@prismicio/client';
+	import { linkHref } from '$lib/stores/linkContext';
 	import { PrismicImage } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -31,7 +32,7 @@
 	})();
 
 	function href(item: any): string {
-		return asLink(item.url) ?? '#';
+		return $linkHref(item.url) ?? '#';
 	}
 
 	function domain(item: any): string {

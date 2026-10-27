@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { _ } from '$lib/stores/i18n';
 	import { asText } from '@prismicio/helpers';
-	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
+	import { PrismicRichText } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
