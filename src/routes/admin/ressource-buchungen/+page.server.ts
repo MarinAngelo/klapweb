@@ -1,4 +1,10 @@
 import type { PageServerLoad, Actions } from './$types';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
 import { plainTextMail } from '$lib/server/mailText';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import {
@@ -21,10 +27,6 @@ import {
 	fallbackSubject,
 	getRessourceDocForBooking
 } from '$lib/server/ressourceMail';
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
 
 export const prerender = false;
 
@@ -69,10 +71,16 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	// CMS template in the booking language (fallback: main language)
 	let ressourceName: string | undefined;
 	let cmsBetreff = '';
+	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
+	let vars: ReturnType<typeof mailVariables> = {};
 	let cmsTextField: prismic.RichTextField | undefined;
 	try {
 		const client = createClient({ fetch });
-		const doc = await getRessourceDocForBooking(client, buchung);
+		const [doc, variablesData] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			loadVariablesData(client)
+		]);
+		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
 		ressourceName = d.name;
 		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
@@ -83,10 +91,10 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 
 	const tokenMap = bestaetigungTokens(buchung, ressourceName);
 	const betreff = cmsBetreff
-		? replaceTokens(cmsBetreff, tokenMap)
+		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
 	const mailHtml = cmsTextField?.length
-		? replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap)
+		? renderMailHtml(prismic.asHTML(cmsTextField) ?? '', tokenMap, vars)
 		: null;
 
 	const { Resend } = await import('resend');

@@ -115,6 +115,14 @@ Unterstützte Tokens:
 
 `{{Messenger-Apps}}` fügt drei Buttons ein: **Signal**, **Telegram** und **WhatsApp** (wie auf der Kontaktseite), alle mit der Nummer aus den Settings (Feld «Messenger-Nummer»). Ohne Nummer bleibt die Stelle leer. Das alte Token `{{WhatsApp}}` funktioniert weiterhin und liefert dieselben Buttons.
 
+**Gleiche Texte für mehrere Ressourcen (Variablen):** Wiederkehrende Textblöcke einmal im Dokument **Variablen** erfassen und in den Mailtexten nur den Token einsetzen, z.B. `{{Anreisetext}}`.
+
+- Feld **Text (mehrzeilig)** bzw. **Text (mehrzeilig, EN)**: Absätze, Listen und Links; hat Vorrang vor «Wert»
+- Im Variablentext dürfen die Buchungs-Tokens stehen (`{{Name}}`, `{{Anreise}}` …) — sie werden pro Buchung ersetzt
+- Steht der Token allein in einem Absatz, wird er durch den ganzen mehrzeiligen Text ersetzt
+- Sprache: englische Buchungen verwenden die EN-Felder, sonst bzw. wenn leer die deutschen
+- Gilt für alle Gäste-Mails (Bestätigung, Erinnerungen) inkl. Betreff
+
 ---
 
 ## 3. Allgemeine E-Mail-Einstellungen

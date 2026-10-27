@@ -799,6 +799,16 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Unbekannter Token': { 'de-ch': 'Unbekannter Token', 'en-us': 'Unknown token' },
+	'Meintest du': { 'de-ch': 'Meintest du', 'en-us': 'Did you mean' },
+	'Token-Namen prüfen oder im Dokument Variablen anlegen': {
+		'de-ch': 'Token-Namen prüfen oder im Dokument Variablen anlegen',
+		'en-us': 'Check the token name or create it in the Variables document'
+	},
+	'Link- und Token-Probleme': {
+		'de-ch': 'Link- und Token-Probleme',
+		'en-us': 'Link and token problems'
+	},
 	'Inhalte prüfen': { 'de-ch': 'Inhalte prüfen', 'en-us': 'Check content' },
 	'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden': {
 		'de-ch': 'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden',

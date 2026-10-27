@@ -7,6 +7,12 @@
  *   {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}
  */
 import type { RequestHandler } from '@sveltejs/kit';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
 import { getRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
@@ -19,10 +25,6 @@ import {
 	fallbackSubject,
 	getRessourceDocForBooking
 } from '$lib/server/ressourceMail';
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
 
 export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const id = url.searchParams.get('id');
@@ -67,12 +69,18 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	let ressourceName: string | undefined;
 	let mailHtml: string | null = null;
 	let cmsBetreff = '';
+	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
+	let vars: ReturnType<typeof mailVariables> = {};
 	let cmsTextField: prismic.RichTextField | undefined;
 	let cmsDebug = '';
 
 	try {
 		const client = createClient({ fetch });
-		const doc = await getRessourceDocForBooking(client, buchung);
+		const [doc, variablesData] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			loadVariablesData(client)
+		]);
+		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
 		ressourceName = d.name;
 		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
@@ -84,10 +92,10 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 
 	const tokenMap = bestaetigungTokens(buchung, ressourceName);
 	const betreff = cmsBetreff
-		? replaceTokens(cmsBetreff, tokenMap)
+		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
 	if (cmsTextField?.length) {
-		mailHtml = replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap);
+		mailHtml = renderMailHtml(prismic.asHTML(cmsTextField) ?? '', tokenMap, vars);
 	}
 
 	// ── Mail senden ───────────────────────────────────────────────────────────

@@ -125,7 +125,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		// Token values in the page language (English: field «Wert (EN)», fallback German)
-		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data, lang);
+		const { plain: variables, rich: richVariables } = buildTokenMap(
+			(variablenDoc as { data?: unknown })?.data,
+			lang
+		);
 
 		// Aktives Theme bestimmen (Feld activ == true)
 		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;
@@ -233,6 +236,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatGreeting,
 			locales: allLocales,
 			variables,
+			richVariables,
 			user: locals.user ?? null
 		};
 	} catch (e: any) {

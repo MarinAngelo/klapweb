@@ -28,7 +28,7 @@
 	import { updateTheme, updateContrastColors } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { variables } from '$lib/stores/variables';
+	import { variables, richVariables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
 	import { addonRows } from '$lib/stores/addonRows';
 	import { getFontSize } from '$lib/utils/fontMapper';
@@ -261,6 +261,7 @@
 	//   {{PreisRabatt}}      – Preis × (1 − Rabatt/100)
 	//   {{AnzahlungBetrag}}  – PreisRabatt × Anzahlung/100
 	//   {{Restbetrag}}       – PreisRabatt − AnzahlungBetrag
+	$: richVariables.set(data.richVariables ?? {});
 	let _prevVarsStr = '{}';
 	$: {
 		const base = data.variables ?? {};
