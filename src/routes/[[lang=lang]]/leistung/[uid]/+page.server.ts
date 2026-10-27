@@ -1,4 +1,6 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
+import * as prismic from '@prismicio/client';
 import { asText } from '@prismicio/client';
 import { error } from '@sveltejs/kit';
 
@@ -28,6 +30,10 @@ export async function load({ params, parent, fetch, cookies }) {
 		};
 	} catch (e: any) {
 		if (e.status === 404) throw e;
+		// No document in this language (e.g. translation missing) → 404, not a server error
+		if (e instanceof prismic.NotFoundError) {
+			throw error(404, { message: 'Leistung nicht gefunden' });
+		}
 		console.error('Leistung detail load error:', e);
 		throw error(500, { message: 'Fehler beim Laden der Leistung.' });
 	}
@@ -35,10 +41,13 @@ export async function load({ params, parent, fetch, cookies }) {
 
 export async function entries() {
 	const client = createClient();
-	const leistungen = await client.getAllByType('leistung', { lang: '*', pageSize: 100 });
+	const [leistungen, mainLang] = await Promise.all([
+		client.getAllByType('leistung', { lang: '*', pageSize: 100 }),
+		getMainLang(client)
+	]);
 
 	return leistungen.map((doc) => ({
-		lang: doc.lang === 'de' ? 'de-de' : doc.lang,
+		...langParam(doc.lang === 'de' ? 'de-de' : doc.lang, mainLang),
 		uid: doc.uid
 	}));
 }
