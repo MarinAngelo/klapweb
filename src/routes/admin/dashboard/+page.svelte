@@ -62,6 +62,13 @@
 			icon: '💬'
 		},
 		{
+			id: 'inhalte',
+			title: 'Inhalte prüfen',
+			description: 'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden',
+			href: `/admin/inhalte`,
+			icon: '🔎'
+		},
+		{
 			id: 'seiten',
 			title: 'Passwortgeschützte Seiten',
 			description: 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',

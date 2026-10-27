@@ -799,6 +799,50 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Inhalte prüfen': { 'de-ch': 'Inhalte prüfen', 'en-us': 'Check content' },
+	'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden': {
+		'de-ch': 'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden',
+		'en-us': 'Find missing translations and broken links in Prismic'
+	},
+	'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.': {
+		'de-ch': 'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.',
+		'en-us': 'Prismic is unreachable, the check could not run.'
+	},
+	'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.': {
+		'de-ch': 'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.',
+		'en-us': 'All good: no missing translations and no link problems.'
+	},
+	'Link-Probleme': { 'de-ch': 'Link-Probleme', 'en-us': 'Link problems' },
+	Dokument: { 'de-ch': 'Dokument', 'en-us': 'Document' },
+	Problem: { 'de-ch': 'Problem', 'en-us': 'Problem' },
+	Lösung: { 'de-ch': 'Lösung', 'en-us': 'Solution' },
+	'Web-Link ohne «/» am Anfang': {
+		'de-ch': 'Web-Link ohne «/» am Anfang',
+		'en-us': 'Web link without leading «/»'
+	},
+	'«/» voranstellen oder als Link auf ein Prismic-Dokument setzen': {
+		'de-ch': '«/» voranstellen oder als Link auf ein Prismic-Dokument setzen',
+		'en-us': 'Add a leading «/» or link to a Prismic document instead'
+	},
+	'Verlinkt die Version in der Hauptsprache': {
+		'de-ch': 'Verlinkt die Version in der Hauptsprache',
+		'en-us': 'Links to the main language version'
+	},
+	'Übersetzung verlinken': { 'de-ch': 'Übersetzung verlinken', 'en-us': 'Link the translation' },
+	'In Prismic öffnen': { 'de-ch': 'In Prismic öffnen', 'en-us': 'Open in Prismic' },
+	'Fehlende Übersetzungen': { 'de-ch': 'Fehlende Übersetzungen', 'en-us': 'Missing translations' },
+	'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.':
+		{
+			'de-ch':
+				'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.',
+			'en-us':
+				'Visitors see a notice and the main language version instead. In Prismic: open the document → choose the language → «Create translation» → publish.'
+		},
+	'Fehlt in': { 'de-ch': 'Fehlt in', 'en-us': 'Missing in' },
+	'Diese Seite ist noch nicht übersetzt.': {
+		'de-ch': 'Diese Seite ist noch nicht übersetzt.',
+		'en-us': 'This page has not been translated yet.'
+	},
 	'Die Seite wird auf {sprache} angezeigt ({n} s) …': {
 		'de-ch': 'Die Seite wird auf {sprache} angezeigt ({n} s) …',
 		'en-us': 'This page is shown in {sprache} ({n} s) …'

@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { staticRoutes } from '$lib/i18n/i18n';
 	import { preferredLang } from '$lib/stores/preferredLang';
+	import { t } from '$lib/i18n/translations';
 
 	export let locales: string[] = [];
 	export let lang: string = '';
@@ -14,7 +15,13 @@
 		// 1. Wenn allAlternates vom Layout bereitstehen, nutzen wir diese (garantiert synchron)
 		const match = allAlternates.find((a) => a.lang === loc);
 		if (match && match.href) {
-			return { loc, href: match.href, label: loc.split('-')[0] };
+			// verified = false: page not translated into this language → shown greyed out
+			return {
+				loc,
+				href: match.href,
+				label: loc.split('-')[0],
+				available: match.verified !== false
+			};
 		}
 
 		// 2. Fallback-Logik (identisch mit Layout-Logik)
@@ -42,7 +49,8 @@
 		return {
 			loc,
 			href,
-			label: loc.split('-')[0]
+			label: loc.split('-')[0],
+			available: true
 		};
 	});
 </script>
@@ -50,16 +58,24 @@
 <div class="flex gap-3 items-center">
 	{#if links}
 		{#each links as item}
-			<a
-				href={item.href}
-				on:click={() => preferredLang.set(item.loc)}
-				class="nav-link text-lg font-bold uppercase transition-all {lang === item.loc
-					? 'underline'
-					: 'text-muted no-underline hover:underline'}"
-				aria-current={lang === item.loc ? 'true' : undefined}
-			>
-				{item.label}
-			</a>
+			{#if item.available || lang === item.loc}
+				<a
+					href={item.href}
+					on:click={() => preferredLang.set(item.loc)}
+					class="nav-link text-lg font-bold uppercase transition-all {lang === item.loc
+						? 'underline'
+						: 'text-muted no-underline hover:underline'}"
+					aria-current={lang === item.loc ? 'true' : undefined}
+				>
+					{item.label}
+				</a>
+			{:else}
+				<span
+					class="text-lg font-bold uppercase text-muted line-through cursor-not-allowed"
+					title={t('Diese Seite ist noch nicht übersetzt.', item.loc)}
+					aria-disabled="true">{item.label}</span
+				>
+			{/if}
 
 			{#if item.loc !== links[links.length - 1].loc}
 				<span class="text-muted text-[10px]" aria-hidden="true">|</span>
