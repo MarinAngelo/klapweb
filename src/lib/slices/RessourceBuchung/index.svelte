@@ -352,12 +352,6 @@
 			<PrismicRichText field={slice.primary.heading} components={{ embed: RichTextEmbed }} />
 		{/if}
 
-		{#if slice.primary.intro?.length}
-			<div class="mb-0 max-w-2xl">
-				<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
-			</div>
-		{/if}
-
 		{#if calendarLoading}
 			<div class="flex items-center justify-center py-20 gap-3 text-sm text-muted">
 				<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
@@ -375,10 +369,10 @@
 			</div>
 		{:else if ressource}
 			<!-- Step indicator -->
-			<div class="flex items-center gap-3 text-sm">
+			<div class="flex items-center gap-3 text-base md:text-lg">
 				<div class="flex items-center gap-2">
 					<span
-						class="scope-btn-solid w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+						class="scope-btn-solid w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
 						>1</span
 					>
 					<span class="font-medium">{$_('Verfügbarkeit')}</span>
@@ -386,7 +380,7 @@
 				<div class="scope-fill flex-1 h-px opacity-30"></div>
 				<div class="flex items-center gap-2">
 					<span
-						class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
+						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
 						2
 							? 'scope-btn-solid'
 							: 'scope-text opacity-40'}">2</span
@@ -441,6 +435,12 @@
 
 				<!-- Calendar -->
 				<div class="scope-border scope-tint relative rounded border p-5">
+					<!-- Intro (e.g. "Please refer to the legend") belongs to the calendar → only in step 1 -->
+					{#if slice.primary.intro?.length}
+						<div class="mb-4 max-w-2xl">
+							<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
+						</div>
+					{/if}
 					<RessourceKalender
 						bookedRanges={calendarBookedRanges}
 						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
@@ -683,21 +683,35 @@
 						<label for="referenz-email" class="block text-base font-bold"
 							>{$_('Freundes-Referenz-E-Mail Adresse')}</label
 						>
-						<input
-							id="referenz-email"
-							type="email"
-							bind:value={referenzEmail}
-							class="form-input form-input-lg"
-						/>
-						{#if referenzEmailChecking}
-							<p class="text-xs text-muted -mt-3">{$_('Wird geprüft…')}</p>
-						{:else if referenzEmail && referenzEmail.includes('@')}
-							{#if referenzEmailFound === true}
-								<p class="text-xs -mt-3 text-green-700">✓ {$_('E-Mail gefunden')}</p>
-							{:else if referenzEmailFound === false}
-								<p class="text-xs -mt-3 text-red-600">✗ {$_('E-Mail nicht gefunden')}</p>
-							{/if}
-						{/if}
+						<!-- Check result behind the input (right edge), not below it -->
+						<div class="relative">
+							<input
+								id="referenz-email"
+								type="email"
+								bind:value={referenzEmail}
+								aria-describedby="referenz-email-status"
+								class="form-input form-input-lg pr-44"
+							/>
+							<span
+								id="referenz-email-status"
+								class="absolute right-2 top-[calc(50%+2px)] flex -translate-y-1/2 items-center gap-1.5 text-xs pointer-events-none"
+								aria-live="polite"
+							>
+								{#if referenzEmailChecking}
+									<span
+										class="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent text-muted"
+										aria-hidden="true"
+									></span>
+									<span class="text-muted">{$_('Wird geprüft…')}</span>
+								{:else if referenzEmail && referenzEmail.includes('@')}
+									{#if referenzEmailFound === true}
+										<span class="text-green-700">✓ {$_('E-Mail gefunden')}</span>
+									{:else if referenzEmailFound === false}
+										<span class="text-red-600">✗ {$_('E-Mail nicht gefunden')}</span>
+									{/if}
+								{/if}
+							</span>
+						</div>
 					</div>
 
 					<div>
