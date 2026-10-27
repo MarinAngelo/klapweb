@@ -9,7 +9,7 @@
 	import { asText } from '@prismicio/client';
 
 	import { repositoryName, createClient } from '$lib/prismicio';
-	import { preferredLang, uiLang } from '$lib/stores/preferredLang';
+	import { preferredLang, uiLang, translationNoticeShown } from '$lib/stores/preferredLang';
 	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
@@ -20,6 +20,7 @@
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
 	import CookieBanner from '$lib/components/CookieBanner.svelte';
+	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
@@ -198,7 +199,13 @@
 	$: chromeLang = chrome ? wantedChromeLang : lang;
 	$: chromeSettings = chrome?.settings ?? settings;
 	// Document links to ressource/leistung get their url here (not in the Route Resolver)
-	$: chromeNavigation = withDocumentLinkUrls(chrome?.navigation ?? navigation, dynamicDefaultLang);
+	// Internal links of a secondary language navigation keep the /<lang> prefix
+	$: chromeNavigation = withDocumentLinkUrls(
+		chrome?.navigation ?? navigation,
+		dynamicDefaultLang,
+		chromeLang,
+		locales ?? []
+	);
 	$: uiLang.set(chromeLang !== lang ? chromeLang : null);
 
 	// Page exists in the remembered language (e.g. link from German content) → open the translation
@@ -209,7 +216,15 @@
 			: null;
 		if (target && target !== $page.url.pathname)
 			goto(target + $page.url.search + $page.url.hash, { replaceState: true });
+		// Prismic page without translation (e.g. link in the English navigation to the German
+		// page) → notice in the remembered language, the page stays in the main language
+		else if (!target && doc && !translationNoticeShown.has($page.url.pathname)) {
+			translationNoticeShown.add($page.url.pathname);
+			missingTranslationNotice = { lang: wantedChromeLang, path: $page.url.pathname };
+		}
 	}
+	// Shown once per page and visit (translationNoticeShown)
+	let missingTranslationNotice: { lang: string; path: string } | null = null;
 
 	$: seoAlternates = allAlternates.map((alt) => ({
 		lang: alt.lang,
@@ -553,6 +568,14 @@
 		/>
 	{/if}
 </div>
+
+{#if missingTranslationNotice?.path === $page.url.pathname}
+	<MissingTranslationModal
+		lang={missingTranslationNotice.lang}
+		mainLang={dynamicDefaultLang}
+		on:close={() => (missingTranslationNotice = null)}
+	/>
+{/if}
 
 <PageUpButton />
 <CookieBanner lang={chromeLang} mainLang={data.mainLang} />

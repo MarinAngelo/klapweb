@@ -31,10 +31,24 @@ export function documentLinkUrl(link: LinkField | null | undefined, mainLang: st
 	return `${langPrefix}${prefix}/${link.uid}`;
 }
 
+/**
+ * Internal link in a secondary language navigation: keep the visitor in that language.
+ * '/check-out' in the English navigation → '/en-us/check-out'. Without translation the
+ * error page shows the "no translation" notice and redirects to the main language version.
+ */
+export function localizedPath(url: string, navLang: string, mainLang: string, locales: string[]) {
+	if (navLang === mainLang || !url.startsWith('/') || url.startsWith('//')) return url;
+	const first = url.split(/[/?#]/)[1] ?? '';
+	if (locales.includes(first)) return url; // already has a language prefix
+	return `/${navLang}${url === '/' ? '' : url}`;
+}
+
 /** Navigation document with resolved urls in data.links[].link */
 export function withDocumentLinkUrls<T extends { data?: any } | null | undefined>(
 	navigation: T,
-	mainLang: string
+	mainLang: string,
+	navLang: string = mainLang,
+	locales: string[] = []
 ): T {
 	const links = navigation?.data?.links;
 	if (!Array.isArray(links)) return navigation;
@@ -43,8 +57,10 @@ export function withDocumentLinkUrls<T extends { data?: any } | null | undefined
 		data: {
 			...navigation!.data,
 			links: links.map((item: any) => {
-				const url = documentLinkUrl(item?.link, mainLang);
-				return url ? { ...item, link: { ...item.link, url } } : item;
+				const resolved = documentLinkUrl(item?.link, mainLang) ?? item?.link?.url;
+				if (!resolved) return item;
+				const url = localizedPath(resolved, navLang, mainLang, locales);
+				return url === item.link.url ? item : { ...item, link: { ...item.link, url } };
 			})
 		}
 	};

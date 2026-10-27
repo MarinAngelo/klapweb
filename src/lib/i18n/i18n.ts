@@ -28,6 +28,10 @@ export const staticRoutes: Record<string, Record<string, string>> = {
 	agb: {
 		de: 'agb',
 		en: 'terms-and-conditions'
+	},
+	haftungsausschluss: {
+		de: 'haftungsausschluss',
+		en: 'disclaimer'
 	}
 };
 

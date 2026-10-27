@@ -4,10 +4,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { _ } from '$lib/stores/i18n';
-	import { t } from '$lib/i18n/translations';
 	import { errorPageLanding } from '$lib/stores/errorPageLanding';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
 	$: targetLang = $page.params.lang || $page.data.mainLang || 'de-ch';
 	$: homeHref = targetLang === 'de-ch' ? '/' : `/${targetLang}`;
@@ -34,20 +34,6 @@
 	$: missingTranslation = $page.status === 404 && !!pathLang;
 	// url.search is not available while prerendering → only in the browser
 	$: defaultHref = '/' + segments.slice(1).join('/') + (browser ? $page.url.search : '');
-	const TRANSLATION_REDIRECT_SECONDS = 5;
-
-	// Name of the default language in the visitor's language, e.g. "Deutsch" / "German"
-	$: defaultLangName = (() => {
-		try {
-			return (
-				new Intl.DisplayNames([pathLang || mainLang], { type: 'language' }).of(
-					mainLang.split('-')[0]
-				) ?? mainLang
-			);
-		} catch {
-			return mainLang;
-		}
-	})();
 
 	let countdown = 15;
 	let timer: any;
@@ -57,8 +43,11 @@
 		mounted = true;
 		errorPageLanding.set(true);
 
-		countdown = missingTranslation ? TRANSLATION_REDIRECT_SECONDS : 15;
-		const target = missingTranslation ? defaultHref : homeHref;
+		// Missing translation: MissingTranslationModal redirects itself
+		if (missingTranslation) return () => errorPageLanding.set(false);
+
+		countdown = 15;
+		const target = homeHref;
 		timer = setInterval(() => {
 			if (countdown > 1) {
 				countdown -= 1;
@@ -78,30 +67,7 @@
 </script>
 
 {#if mounted && missingTranslation}
-	<div
-		class="modal-backdrop fixed inset-0 z-[10000] flex items-center justify-center p-4"
-		role="dialog"
-		aria-modal="true"
-		aria-labelledby="no-translation-title"
-	>
-		<div
-			class="modal-card flex w-full max-w-md flex-col gap-4 rounded-lg p-8 text-center shadow-xl"
-		>
-			<h2 id="no-translation-title" class="m-0">
-				{t('Leider gibt es für diese Seite noch keine Übersetzung.', pathLang)}
-			</h2>
-			<p class="m-0 text-muted" aria-live="polite">
-				{t('Weiterleitung zur Version auf {sprache} in {n} Sekunden …', pathLang)
-					.replace('{sprache}', defaultLangName)
-					.replace('{n}', String(countdown))}
-			</p>
-			<a
-				href={defaultHref}
-				class="btn-solid self-center rounded px-6 py-2 text-sm font-medium no-underline"
-				data-sveltekit-replacestate>{t('Jetzt wechseln', pathLang)}</a
-			>
-		</div>
-	</div>
+	<MissingTranslationModal lang={pathLang} {mainLang} href={defaultHref} />
 {:else if mounted}
 	<div class="error-container">
 		<Bounded as="section" class="text-center">
