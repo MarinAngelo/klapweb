@@ -129,7 +129,8 @@
 
 		// B. Prismic Dokumente mit Übersetzungen
 		if (p?.alternate_languages?.length > 0) {
-			return p.alternate_languages.map((alt: any) => ({
+			// Current language included as well, otherwise the switcher builds it without routePrefix
+			return [{ lang: p.lang ?? lang, uid: p.uid }, ...p.alternate_languages].map((alt: any) => ({
 				lang: alt.lang,
 				href:
 					(alt.lang === dynamicDefaultLang ? '' : `/${alt.lang}`) +

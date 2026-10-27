@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { _ } from '$lib/stores/i18n';
@@ -31,7 +32,8 @@
 		);
 	})();
 	$: missingTranslation = $page.status === 404 && !!pathLang;
-	$: defaultHref = '/' + segments.slice(1).join('/') + $page.url.search;
+	// url.search is not available while prerendering → only in the browser
+	$: defaultHref = '/' + segments.slice(1).join('/') + (browser ? $page.url.search : '');
 	const TRANSLATION_REDIRECT_SECONDS = 5;
 
 	// Name of the default language in the visitor's language, e.g. "Deutsch" / "German"
