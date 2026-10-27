@@ -58,7 +58,7 @@ export function bestaetigungTokens(
 		? `<ul>${zimmerauswahl
 				.map((z) => {
 					const bett = t(z.bett_typ, lang);
-					return `<li>${z.zimmer_name || bett} (${z.anzahl_betten}× ${bett})</li>`;
+					return `<li>${z.zimmer_label || z.zimmer_name || bett} (${z.anzahl_betten}× ${bett})</li>`;
 				})
 				.join('')}</ul>`
 		: t('Ganze Wohnung', lang);
@@ -96,7 +96,7 @@ export function bestaetigungFallbackText(
 	const label = (key: string) => `${t(key, lang)}:`.padEnd(11);
 	const zimmerZeilen = (buchung.zimmerauswahl ?? []).map((z) => {
 		const bett = t(z.bett_typ, lang);
-		return `           · ${z.zimmer_name || bett} (${z.anzahl_betten}× ${bett})`;
+		return `           · ${z.zimmer_label || z.zimmer_name || bett} (${z.anzahl_betten}× ${bett})`;
 	});
 	return [
 		t('Guten Tag {name}', lang).replace('{name}', buchung.name ?? ''),

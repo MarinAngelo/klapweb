@@ -40,6 +40,27 @@ Im Prismic-Dashboard unter **Ressource → Neues Dokument erstellen**.
 
 Sind Schlafzimmer erfasst, können Gäste im Buchungsformular konkrete Zimmer auswählen. Überschneidungen werden dann auf Zimmer-Ebene geprüft.
 
+> **⚠ Schlafzimmer in mehreren Sprachen – Reihenfolge nie ändern**
+>
+> Massgebend für Buchungen ist der **Zimmername im Dokument der Hauptsprache** (z.B. Deutsch). Er wird bei jeder Buchung gespeichert, auch wenn der Gast auf der englischen Seite bucht.
+>
+> In den Übersetzungen erkennt das System das passende Zimmer nur an seiner **Position in der Liste**: Das 1. Zimmer auf Englisch ist das 1. Zimmer auf Deutsch, das 2. das 2. usw.
+>
+> | Position | Deutsch (massgebend) | Englisch             |
+> | -------- | -------------------- | -------------------- |
+> | 1        | West Zimmer          | West-Facing Bedroom  |
+> | 2        | Ost Zimmer           | East-Facing Bedroom  |
+> | 3        | Nord Zimmer          | North-Facing Bedroom |
+>
+> **Darum gilt:**
+>
+> - **Reihenfolge in allen Sprachen gleich halten.** Wird ein Zimmer nur in einer Übersetzung verschoben, bucht der Gast ein anderes Zimmer als angezeigt, und der Belegungsplan stimmt nicht mehr.
+> - **Zimmer immer in allen Sprachen gleichzeitig hinzufügen oder entfernen**, an derselben Position.
+> - **Zimmernamen in der Hauptsprache nicht umbenennen**, solange es Buchungen für dieses Zimmer gibt. Bestehende Buchungen lassen sich sonst keinem Zimmer mehr zuordnen. Das System sperrt dann zur Sicherheit für diese Zeiträume die ganze Wohnung.
+> - Zimmernamen in den **Übersetzungen** dürfen jederzeit angepasst werden.
+>
+> **Kontrolle nach Änderungen:** Den Belegungsplan der Ressource in allen Sprachen öffnen (z.B. `/ressource/<uid>` und `/en-us/ressource/<uid>`). Belegte Zeiträume und Zimmer müssen identisch sein.
+
 ### Tab: Preise & Regeln
 
 | Feld                           | Bedeutung                                                 |
@@ -313,6 +334,9 @@ Damit können diese E-Mails bei einer erneuten Bestätigung wieder korrekt ausge
 
 **Kann dieselbe Ressource auf mehreren Seiten verlinkt sein?**  
 Ja. Das Feld „Ressource" im Slice bestimmt, welche Ressource gebucht wird — mehrere Seiten können auf dieselbe Ressource zeigen.
+
+**Der Belegungsplan sieht in Deutsch und Englisch unterschiedlich aus. Warum?**
+Meist wurden die Schlafzimmer in einer Übersetzung umsortiert, hinzugefügt oder gelöscht, oder ein Zimmer wurde in der Hauptsprache umbenannt. Reihenfolge und Anzahl der Zimmer in allen Sprachen angleichen (siehe Kasten in Abschnitt 1, Tab Kapazität).
 
 **Warum ist die Abreise-E-Mail nicht im Hauptablauf sichtbar?**
 Bei `checked_in` ist sie sichtbar, solange sie noch nicht gesendet wurde. Nach dem Versand wechselt der Hauptbutton automatisch zu **Check-out**.
