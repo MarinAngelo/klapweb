@@ -31,7 +31,8 @@
 </script>
 
 {#if beschreibung?.length}
-	<Bounded yPadding="sm">
+	<!-- No bottom padding: the booking slice below brings its own top spacing -->
+	<Bounded yPadding="sm-top">
 		<PrismicRichText field={beschreibung} components={{ embed: RichTextEmbed }} />
 	</Bounded>
 {/if}
