@@ -9,7 +9,8 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 
 	try {
 		const allUids = await getRelatedRessourceUids(uid, fetch);
-		const perioden = await getBelegtePerioden(allUids);
+		const lang = url.searchParams.get('lang') ?? undefined;
+		const perioden = await getBelegtePerioden(allUids, lang);
 		return new Response(JSON.stringify(perioden), {
 			headers: { 'Content-Type': 'application/json' }
 		});

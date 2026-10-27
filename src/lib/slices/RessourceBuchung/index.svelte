@@ -10,6 +10,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: Content.RessourceBuchungSlice;
@@ -125,7 +126,9 @@
 
 		async function refreshVerfuegbarkeit() {
 			try {
-				const res = await fetch(`/api/ressource-verfuegbarkeit?uid=${uid}`);
+				const res = await fetch(
+					`/api/ressource-verfuegbarkeit?uid=${uid}&lang=${context?.lang ?? $page.data?.lang ?? ''}`
+				);
 				if (res.ok) bookedRanges = await res.json();
 			} catch {
 				/* non-critical */
@@ -229,6 +232,15 @@
 
 	function goToStep2() {
 		if (step1Valid) step = 2;
+	}
+	// After the success modal: back to a fresh step 1 (calendar shows the new booking)
+	function closeSuccess() {
+		success = false;
+		step = 1;
+		von = '';
+		bis = '';
+		nachricht = '';
+		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => false);
 	}
 	function backToStep1() {
 		step = 1;
@@ -360,20 +372,6 @@
 					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
 				</svg>
 				{$_('Verfügbarkeit wird geladen…')}
-			</div>
-		{:else if success}
-			<div class="scope-border-strong max-w-xl rounded border p-6">
-				<p class="text-lg font-semibold mb-2">
-					{slice.primary.success_heading || $_('Anfrage erhalten!')}
-				</p>
-				{#if slice.primary.success_text?.length}
-					<PrismicRichText
-						field={slice.primary.success_text}
-						components={{ embed: RichTextEmbed }}
-					/>
-				{:else}
-					<p>{$_('Wir melden uns in Kürze bei Ihnen.')}</p>
-				{/if}
 			</div>
 		{:else if ressource}
 			<!-- Step indicator -->
@@ -739,4 +737,12 @@
 			<p class="text-muted text-sm">{$_('Keine Ressource verknüpft')}</p>
 		{/if}
 	</div>
+	{#if success}
+		<Modal
+			title={slice.primary.success_heading || $_('Anfrage erhalten!')}
+			message={slice.primary.success_text}
+			text={$_('Wir melden uns in Kürze bei Ihnen.')}
+			onClose={closeSuccess}
+		/>
+	{/if}
 </Bounded>
