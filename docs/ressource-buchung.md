@@ -110,10 +110,10 @@ Unterstützte Tokens:
 {{Anreise}}
 {{Abreise}}
 {{Buchungsreferenz}}
-{{WhatsApp}}
+{{Messenger-Apps}}
 ```
 
-Der WhatsApp-Link wird nur eingefügt, wenn in den Settings eine WhatsApp-Nummer hinterlegt ist.
+`{{Messenger-Apps}}` fügt drei Buttons ein: **Signal**, **Telegram** und **WhatsApp** (wie auf der Kontaktseite), alle mit der Nummer aus den Settings (Feld «Messenger-Nummer»). Ohne Nummer bleibt die Stelle leer. Das alte Token `{{WhatsApp}}` funktioniert weiterhin und liefert dieselben Buttons.
 
 ---
 
