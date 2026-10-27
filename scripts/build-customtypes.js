@@ -21,6 +21,10 @@
  *                  variations: { id  → { plan?, feature? } }   // Variations-Ebene
  *                })
  *
+ * Link-Ziele (gating.json features.<feature>.linkTargets): aktive Features ergänzen ihre
+ *   Custom Types in den Link-Feldern der Navigation (neben "page"), z.B. ressource, leistung.
+ *   URL ohne Route Resolver: src/lib/utils/documentLinks.ts
+ *
  * Feature-Dateien in customtypes/_features/<feature>/:
  *   page.json / settings.json  → Tab-Overlays für Custom Types (Inhalt bleibt dort)
  *   customtypes/<type>/index.json → Feature-eigene Custom Types
@@ -354,9 +358,28 @@ function collectFieldReference() {
 	});
 }
 
+// ── Link-Ziele aktiver Features ──────────────────────────────────────────────────
+// Nur in der Navigation: dort löst documentLinks.ts die URL auf (Route Resolver darf
+// gated Typen nicht kennen — Repos ohne den Typ lehnen sonst jede Abfrage ab).
+
+const linkTargetTypes = ['navigation'];
+const activeLinkTargets = [
+	...new Set(allFeatures.flatMap((f) => gating.features?.[f]?.linkTargets ?? []))
+];
+
+function addLinkTargets(node) {
+	if (!node || typeof node !== 'object') return;
+	if (node.type === 'Link' && node.config?.customtypes?.includes('page')) {
+		for (const target of activeLinkTargets) {
+			if (!node.config.customtypes.includes(target)) node.config.customtypes.push(target);
+		}
+	}
+	for (const value of Object.values(node)) addLinkTargets(value);
+}
+
 // ── 1. Custom Types ──────────────────────────────────────────────────────────────
 
-const managedTypes = ['page', 'settings'];
+const managedTypes = ['page', 'settings', 'navigation'];
 
 // ── Warnung: Slice-Choices in index.json aber nicht in base.json ─────────────────
 // Passiert wenn man in der Slice Machine UI einen Slice zur Page hinzufügt,
@@ -459,6 +482,8 @@ for (const type of managedTypes) {
 			}
 		}
 	}
+
+	if (linkTargetTypes.includes(type)) addLinkTargets(doc.json);
 
 	write(`customtypes/${type}/index.json`, doc);
 	console.log(`✓ customtypes/${type}/index.json`);

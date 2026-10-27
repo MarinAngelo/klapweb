@@ -10,6 +10,7 @@
 
 	import { repositoryName, createClient } from '$lib/prismicio';
 	import { preferredLang, uiLang } from '$lib/stores/preferredLang';
+	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
@@ -196,7 +197,8 @@
 	$: chrome = wantedChromeLang !== lang ? chromeData[wantedChromeLang] : undefined;
 	$: chromeLang = chrome ? wantedChromeLang : lang;
 	$: chromeSettings = chrome?.settings ?? settings;
-	$: chromeNavigation = chrome?.navigation ?? navigation;
+	// Document links to ressource/leistung get their url here (not in the Route Resolver)
+	$: chromeNavigation = withDocumentLinkUrls(chrome?.navigation ?? navigation, dynamicDefaultLang);
 	$: uiLang.set(chromeLang !== lang ? chromeLang : null);
 
 	// Page exists in the remembered language (e.g. link from German content) → open the translation

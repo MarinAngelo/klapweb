@@ -36,6 +36,7 @@
 		"ecommerce": {
 			"label": "E-Commerce",
 			"plans": ["individuell"],
+			"linkTargets": ["leistung"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"p5js": {
@@ -49,6 +50,7 @@
 		"ressourcenbuchung": {
 			"label": "Ressourcen-Buchung",
 			"plans": ["individuell"],
+			"linkTargets": ["ressource"],
 			"env": [
 				"NETLIFY_SITE_ID",
 				"NETLIFY_TOKEN",
