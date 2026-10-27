@@ -28,7 +28,7 @@
 
 	{#if data.links.length}
 		<section class="admin-card">
-			<h2>{$_('Link-Probleme')} ({data.links.length})</h2>
+			<h2>{$_('Link- und Token-Probleme')} ({data.links.length})</h2>
 			<div class="admin-table-wrap">
 				<table class="admin-table">
 					<thead>
@@ -55,6 +55,17 @@
 									<td>
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
+									</td>
+								{:else if p.kind === 'unknown_token'}
+									<td>
+										{$_('Unbekannter Token')}: <span class="admin-mono">{p.token}</span>
+									</td>
+									<td>
+										{#if p.suggestion}
+											{$_('Meintest du')} <span class="admin-mono">{p.suggestion}</span>?
+										{:else}
+											{$_('Token-Namen prüfen oder im Dokument Variablen anlegen')}
+										{/if}
 									</td>
 								{:else}
 									<td>

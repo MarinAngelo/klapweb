@@ -114,6 +114,7 @@ Regeln:
 - **Rechtliche Seiten:** eine Route `src/routes/[[lang=lang]]/[legal=legal]` für alle Slugs (`staticRoutes` in `src/lib/i18n/i18n.ts`, Matcher `src/params/legal.ts`). Neue rechtliche Seite → Eintrag in `staticRoutes` + Komponente in `[legal=legal]/+page.svelte`
 - `check-translations.js` meldet auch Link-Probleme: Web-Links ohne führenden `/`, Links in Übersetzungen auf die Hauptsprache trotz vorhandener Übersetzung
 - **Für Redakteure:** dieselbe Prüfung live unter `/admin/inhalte` (Dashboard «Inhalte prüfen»), mit Link zum Dokument in Prismic. Prüflogik nur in `src/lib/contentCheck.js` (Script + Admin), `TRANSLATED_TYPES` steht dort
+- Prüfung meldet auch **unbekannte Tokens** `{{…}}` (mit Vorschlag bei Tippfehlern). Bekannt = `CODE_TOKENS` in `contentCheck.js` + Variablen aus Prismic. **Neuer Token im Code → in `CODE_TOKENS` eintragen**
 
 ## Cookie-Banner (Schweizer Recht, Opt-out)
 

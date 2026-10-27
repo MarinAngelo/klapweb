@@ -25,13 +25,15 @@ async function main() {
 	);
 
 	if (links.length) {
-		console.warn(`⚠ ${links.length} Link-Problem(e) in Prismic:`);
+		console.warn(`⚠ ${links.length} Link-/Token-Problem(e) in Prismic:`);
 		for (const p of links) {
 			const where = `${p.doc.type}/${p.doc.uid ?? p.doc.id} (${p.doc.lang})`;
 			console.warn(
 				p.kind === 'relative'
 					? `  → ${where}: Web-Link ohne "/" am Anfang → "${p.url}"`
-					: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
+					: p.kind === 'unknown_token'
+						? `  → ${where}: unbekannter Token ${p.token}${p.suggestion ? ` — meintest du ${p.suggestion}?` : ''}`
+						: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
 			);
 		}
 	} else {

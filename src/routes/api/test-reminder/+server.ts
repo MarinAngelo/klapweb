@@ -11,6 +11,12 @@
  */
 
 import { json } from '@sveltejs/kit';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
 import { messengerButtonsHtml } from '$lib/messengerLinks.js';
 import { getRessourceDocForBooking } from '$lib/server/ressourceMail';
 import { env } from '$env/dynamic/private';
@@ -23,10 +29,6 @@ import type { RequestHandler } from './$types';
 import { formatDateShort } from '$lib/utils/formatDate';
 
 const formatDate = formatDateShort;
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
 
 function dateInDays(days: number): string {
 	const d = new Date();
@@ -99,12 +101,15 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	// {{Messenger-Apps}} (Signal, Telegram, WhatsApp) with the number from the settings
 	const settings = await client.getSingle('settings').catch(() => null);
 	const messengerHtml = messengerButtonsHtml((settings?.data as any)?.whatsapp_tel);
+	const variablesData = await loadVariablesData(client);
 	const resend = dryRun ? null : new Resend(resendKey);
 
 	for (const buchung of upcoming) {
 		try {
 			const doc = await getRessourceDocForBooking(client, buchung);
 			const d = doc.data as any;
+			// Variablen (incl. multi-line text) in the booking language
+			const vars = mailVariables(variablesData, buchung.lang);
 
 			const textField =
 				type === 'abreise'
@@ -124,7 +129,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				continue;
 			}
 
-			const betreff =
+			const betreffRaw =
 				type === 'abreise'
 					? (d.abreise_betreff as string)?.trim() ||
 						`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`
@@ -137,7 +142,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			const uidKey = buchung.ressourceUid.toUpperCase().replace(/-/g, '_');
 			const doorCode = env[`DOOR_CODE_${uidKey}`] || env.DOOR_CODE || '';
 
-			const html = replaceTokens(prismic.asHTML(textField) ?? '', {
+			const tokens: Record<string, string> = {
 				Türcode: doorCode,
 				Name: buchung.name || '',
 				Anreise: formatDate(buchung.von),
@@ -145,7 +150,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				Buchungsreferenz: buchung.id || '',
 				'Messenger-Apps': messengerHtml,
 				WhatsApp: messengerHtml
-			});
+			};
+			const betreff = renderMailText(betreffRaw, tokens, vars);
+			const html = renderMailHtml(prismic.asHTML(textField as any) ?? '', tokens, vars);
 
 			if (dryRun) {
 				results.push({

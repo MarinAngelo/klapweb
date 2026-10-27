@@ -24,6 +24,12 @@
  */
 
 import type { Config } from '@netlify/functions';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '../../src/lib/variables.js';
 import { messengerButtonsHtml } from '../../src/lib/messengerLinks.js';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
@@ -44,8 +50,13 @@ function isEnglish(buchung: any): boolean {
 	return typeof buchung.lang === 'string' && buchung.lang.startsWith('en');
 }
 
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
+// Variablen (incl. multi-line text) first, then booking tokens — see src/lib/variables.js
+function replaceTokens(
+	html: string,
+	tokens: Record<string, string>,
+	vars: Record<string, { html: string; text: string }>
+): string {
+	return renderMailHtml(html, tokens, vars);
 }
 
 function dateInDays(days: number): string {
@@ -137,6 +148,7 @@ export default async function handler() {
 	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 	// {{Messenger-Apps}}: Signal, Telegram, WhatsApp; {{WhatsApp}} = old name, same buttons
 	const messengerHtml = messengerButtonsHtml(waTel);
+	const variablesData = await loadVariablesData(client);
 
 	function tokens(buchung: any, doorCode: string) {
 		return {
@@ -189,12 +201,17 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.abreise_betreff as string)?.trim() ||
+					renderMailText(
+						(d.abreise_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
 					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
 					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang)
 				);
 
 				const error = await sendMail(
@@ -245,12 +262,17 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.reminder_betreff as string)?.trim() ||
+					renderMailText(
+						(d.reminder_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
 					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
 					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang)
 				);
 
 				const error = await sendMail(
@@ -301,12 +323,16 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.nach_ankunft_betreff as string)?.trim() ||
-					`Willkommen: ${d.name ?? buchung.ressourceUid}`;
+					renderMailText(
+						(d.nach_ankunft_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) || `Willkommen: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
 					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang)
 				);
 
 				const error = await sendMail(
