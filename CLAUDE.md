@@ -107,9 +107,13 @@ Regeln:
 
 - Hat das Prismic-Repo mehr als eine Sprache, braucht **jede statisch generierte Seite** eine Übersetzung in allen Sprachen (sonst 404 unter `/en-us/…`)
 - `scripts/check-translations.js` prüft die Typen in `TRANSLATED_TYPES` (`page`, `leistung`, `ressource`) bei `npm run dev` und `npm run build` (nur Warnung); `npm run check:translations` endet mit Fehler bei Lücken
-- Neuer Custom Type mit eigener (prerender-)Route → in `TRANSLATED_TYPES` ergänzen
+- Neuer Custom Type mit eigener (prerender-)Route → in `TRANSLATED_TYPES` (`src/lib/contentCheck.js`) ergänzen
 - **Links immer über `$lib/components/PrismicLink.svelte`** (nicht `@prismicio/svelte`) bzw. `$linkHref(field)` (`$lib/stores/linkContext`): setzt URLs für Ressource/Leistung und hält Besucher in ihrer Sprache (`/en-us/…`). Neue Route ausserhalb `[[lang=lang]]` → in `UNLOCALIZED_ROUTES` (`src/lib/utils/documentLinks.ts`) eintragen
-- Hreflang nur für echte Übersetzungen (`verified` in `allAlternates`, `+layout.svelte`), nie für geratene URLs
+- Hreflang nur für echte Übersetzungen (`verified` in `allAlternates`, `+layout.svelte`), nie für geratene URLs; Sprach-Umschalter zeigt nicht übersetzte Sprachen durchgestrichen statt als Link
+- Gemerkte Sprache (`klap_lang`): Inline-Script im `<head>` leitet vor dem ersten Rendern auf die Übersetzung um (Ziel aus den Hreflang-Tags)
+- **Rechtliche Seiten:** eine Route `src/routes/[[lang=lang]]/[legal=legal]` für alle Slugs (`staticRoutes` in `src/lib/i18n/i18n.ts`, Matcher `src/params/legal.ts`). Neue rechtliche Seite → Eintrag in `staticRoutes` + Komponente in `[legal=legal]/+page.svelte`
+- `check-translations.js` meldet auch Link-Probleme: Web-Links ohne führenden `/`, Links in Übersetzungen auf die Hauptsprache trotz vorhandener Übersetzung
+- **Für Redakteure:** dieselbe Prüfung live unter `/admin/inhalte` (Dashboard «Inhalte prüfen»), mit Link zum Dokument in Prismic. Prüflogik nur in `src/lib/contentCheck.js` (Script + Admin), `TRANSLATED_TYPES` steht dort
 
 ## Cookie-Banner (Schweizer Recht, Opt-out)
 

@@ -153,8 +153,9 @@
 			return {
 				lang: l,
 				href: `${prefix}${routePrefix}${slug}`,
-				// Guessed URL for other languages (switcher → "no translation" notice), not for SEO
-				verified: l === lang
+				// Own language exists; routes under [[lang=lang]] without Prismic document (warenkorb,
+				// beauftragung …) exist in every language; otherwise a guessed URL (not for SEO/switcher)
+				verified: l === lang || (!p && !!$page.route.id?.startsWith('/[[lang=lang]]'))
 			};
 		});
 	})().map((item) => ({
@@ -230,6 +231,10 @@
 			missingTranslationNotice = { lang: wantedChromeLang, path: $page.url.pathname };
 		}
 	}
+	// Inline <head> script (runs before the first paint on full page loads); client-side
+	// navigations are handled by the reactive redirect above
+	const rememberedLangScript = `<script>(function(){try{var pref=localStorage.getItem('klap_lang');if(!pref)return;var links=[].slice.call(document.querySelectorAll('link[rel=alternate][hreflang]'));var first=location.pathname.split('/')[1];if(links.some(function(l){return l.hreflang===first}))return;var t=links.filter(function(l){return l.hreflang===pref})[0];if(!t)return;var path=new URL(t.href).pathname;if(path!==location.pathname)location.replace(path+location.search+location.hash)}catch(e){}})()<\/script>`;
+
 	// Shown once per page and visit (translationNoticeShown)
 	let missingTranslationNotice: { lang: string; path: string } | null = null;
 
@@ -499,6 +504,11 @@
 		{/each}
 		{#if xDefaultAlternate}
 			<link rel="alternate" hreflang="x-default" href={cleanBaseUrl + xDefaultAlternate.href} />
+		{/if}
+		{#if seoAlternates.length}
+			<!-- Remembered language: redirect before the first paint (no flash of the main language).
+			     Only on main language URLs, target from the hreflang tags above (real translations). -->
+			{@html rememberedLangScript}
 		{/if}
 	{/if}
 
