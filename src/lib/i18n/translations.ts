@@ -799,6 +799,11 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Die Seite wird auf {sprache} angezeigt ({n} s) …': {
+		'de-ch': 'Die Seite wird auf {sprache} angezeigt ({n} s) …',
+		'en-us': 'This page is shown in {sprache} ({n} s) …'
+	},
+	OK: { 'de-ch': 'OK', 'en-us': 'OK' },
 	'Tag wählen': { 'de-ch': 'Tag wählen', 'en-us': 'Select day' },
 	'Tag ändern': { 'de-ch': 'Tag ändern', 'en-us': 'Change day' },
 	'Zeit wählen': { 'de-ch': 'Zeit wählen', 'en-us': 'Select time' },

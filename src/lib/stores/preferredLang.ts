@@ -33,3 +33,6 @@ preferredLang.subscribe((value) => {
 
 /** Effective UI language of the current page (set by the root layout) */
 export const uiLang = writable<string | null>(null);
+
+/** Paths that already showed the "no translation" notice in this visit (error page redirect, layout) */
+export const translationNoticeShown = new Set<string>();
