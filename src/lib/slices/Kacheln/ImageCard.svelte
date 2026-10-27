@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
+	import { PrismicImage } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { convertNumber } from '../../utils/convertNumber';

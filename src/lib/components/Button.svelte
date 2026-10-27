@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { page } from '$app/stores';
 	import { t } from '$lib/i18n/translations';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';

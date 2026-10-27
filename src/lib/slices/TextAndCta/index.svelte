@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isFilled } from '@prismicio/client';
-	import { PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';

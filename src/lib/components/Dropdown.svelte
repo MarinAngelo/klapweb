@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { PrismicText } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import DropdownButton from './DropdownButton.svelte';
 	import SvgIcons from './SvgIcons.svelte';
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';

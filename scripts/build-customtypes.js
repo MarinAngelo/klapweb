@@ -47,6 +47,7 @@ import {
 	rmSync,
 	statSync
 } from 'fs';
+import { readOverrides } from '../src/lib/gatingOverrides.js';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -101,10 +102,8 @@ function copyCustomType(srcPath, typeId, label) {
 
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
-const overridesPath = join(ROOT, 'gating.overrides.json');
-const overrides = existsSync(overridesPath)
-	? read('gating.overrides.json')
-	: { enabled: [], disabled: [] };
+// Lokale Feature-Schalter des Agency-Editors, pro Prismic-Repository (src/lib/gatingOverrides.js)
+const overrides = readOverrides(ROOT);
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
 
@@ -122,8 +121,7 @@ const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
 
-// Zusätzliche Features aus gating.overrides.json (Branch-spezifisch)
-// Format: { enabled: [...], disabled: [...] }
+// Zusätzliche Features aus gating.overrides.json (pro Repository, siehe gatingOverrides.js)
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
 const disabledFeatures = overrides.disabled ?? [];
 const allFeatures = [
