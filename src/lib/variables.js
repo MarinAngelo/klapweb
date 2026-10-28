@@ -29,8 +29,21 @@ export const tokenKey = (name) =>
 // Rich text fields come from untyped document data
 /** @type {(field: any, separator?: string) => string} */
 const richText = (field, separator = ' ') => prismic.asText(field, { separator }) ?? '';
+// Mail titles: fixed sizes/margins inline — mail clients ignore stylesheets and differ in defaults
+const HEADING_STYLE = {
+	heading1: 'font-size:24px;line-height:1.3;font-weight:700;margin:28px 0 12px;',
+	heading2: 'font-size:20px;line-height:1.3;font-weight:700;margin:24px 0 10px;',
+	heading3: 'font-size:17px;line-height:1.3;font-weight:700;margin:20px 0 8px;'
+};
 /** @type {(field: any) => string} */
-const richHtml = (field) => prismic.asHTML(field) ?? '';
+const richHtml = (field) =>
+	prismic.asHTML(field, {
+		serializer: {
+			heading1: ({ children }) => `<h1 style="${HEADING_STYLE.heading1}">${children}</h1>`,
+			heading2: ({ children }) => `<h2 style="${HEADING_STYLE.heading2}">${children}</h2>`,
+			heading3: ({ children }) => `<h3 style="${HEADING_STYLE.heading3}">${children}</h3>`
+		}
+	}) ?? '';
 
 /** @param {any} field */
 const filledRich = (field) => Array.isArray(field) && richText(field).trim() !== '';
