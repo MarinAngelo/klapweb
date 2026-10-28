@@ -110,13 +110,16 @@ export function wrapMail(content, theme, options = {}) {
 		font: 'Arial, Helvetica, sans-serif'
 	};
 	const lang = (options.lang ?? 'de').slice(0, 2);
+	// bgcolor attributes in addition to CSS: Outlook & co. ignore CSS backgrounds on tables;
+	// no outer padding → the page colour reaches the edges (no white frame)
 	return `<!DOCTYPE html>
-<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(options.subject ?? t.siteName)}</title></head>
-<body style="margin:0;padding:0;background:${t.bg};">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bg};padding:24px 12px;"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
-${t.siteName ? `<tr><td style="background:${t.headerBg};color:${t.headerColor};padding:18px 28px;font-family:${t.font};font-size:20px;font-weight:700;border-radius:10px 10px 0 0;">${escapeHtml(t.siteName)}</td></tr>` : ''}
-<tr><td style="background:${t.bg};color:${t.color};padding:28px;font-family:${t.font};font-size:16px;line-height:1.6;">${content}</td></tr>
+<html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>${escapeHtml(options.subject ?? t.siteName)}</title>
+<style>html,body{margin:0!important;padding:0!important;background:${t.bg}!important;}</style></head>
+<body bgcolor="${t.bg}" style="margin:0;padding:0;background:${t.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${t.bg}" style="background:${t.bg};width:100%;"><tr><td align="center" bgcolor="${t.bg}" style="background:${t.bg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
+${t.siteName ? `<tr><td bgcolor="${t.headerBg}" style="background:${t.headerBg};color:${t.headerColor};padding:18px 28px;font-family:${t.font};font-size:20px;font-weight:700;">${escapeHtml(t.siteName)}</td></tr>` : ''}
+<tr><td bgcolor="${t.bg}" style="background:${t.bg};color:${t.color};padding:28px;font-family:${t.font};font-size:16px;line-height:1.6;">${content}</td></tr>
 </table></td></tr></table>
 </body></html>`;
 }
