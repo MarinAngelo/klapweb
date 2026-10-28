@@ -11,6 +11,7 @@
  * Plain JS without SvelteKit aliases: also imported by netlify/functions/send-reminders.ts.
  */
 import * as prismic from '@prismicio/client';
+import { mailSerializer } from './mailLayout.js';
 
 const TOKEN = /\{\{([^{}]+)\}\}/g;
 
@@ -29,21 +30,9 @@ export const tokenKey = (name) =>
 // Rich text fields come from untyped document data
 /** @type {(field: any, separator?: string) => string} */
 const richText = (field, separator = ' ') => prismic.asText(field, { separator }) ?? '';
-// Mail titles: fixed sizes/margins inline — mail clients ignore stylesheets and differ in defaults
-const HEADING_STYLE = {
-	heading1: 'font-size:24px;line-height:1.3;font-weight:700;margin:28px 0 12px;',
-	heading2: 'font-size:20px;line-height:1.3;font-weight:700;margin:24px 0 10px;',
-	heading3: 'font-size:17px;line-height:1.3;font-weight:700;margin:20px 0 8px;'
-};
-/** @type {(field: any) => string} */
-const richHtml = (field) =>
-	prismic.asHTML(field, {
-		serializer: {
-			heading1: ({ children }) => `<h1 style="${HEADING_STYLE.heading1}">${children}</h1>`,
-			heading2: ({ children }) => `<h2 style="${HEADING_STYLE.heading2}">${children}</h2>`,
-			heading3: ({ children }) => `<h3 style="${HEADING_STYLE.heading3}">${children}</h3>`
-		}
-	}) ?? '';
+/** @type {(field: any, theme?: import('./mailLayout.js').MailTheme | null) => string} */
+const richHtml = (field, theme) =>
+	prismic.asHTML(field, { serializer: mailSerializer(theme) }) ?? '';
 
 /** @param {any} field */
 const filledRich = (field) => Array.isArray(field) && richText(field).trim() !== '';
@@ -221,8 +210,9 @@ export function expandTokensInField(field, plain, rich) {
  * @param {any[] | string} template  rich text field of the mail template (preferred) or HTML
  * @param {Record<string, string>} tokens  booking tokens (already HTML)
  * @param {Record<string, MailVariable>} vars
+ * @param {import('./mailLayout.js').MailTheme | null} [theme]  page colours for titles/links
  */
-export function renderMailHtml(template, tokens, vars) {
+export function renderMailHtml(template, tokens, vars, theme) {
 	if (Array.isArray(template)) {
 		// On the Prismic data: robust against formatting that covers only part of a token
 		/** @type {Record<string, string>} */
@@ -233,7 +223,7 @@ export function renderMailHtml(template, tokens, vars) {
 			plain[key] = v.text;
 			if (v.rich) rich[key] = v.rich;
 		}
-		const html = richHtml(expandTokensInField(template, plain, rich));
+		const html = richHtml(expandTokensInField(template, plain, rich), theme);
 		return html.replace(TOKEN, (_, key) => tokens[tokenKey(key)] ?? '');
 	}
 	const withVars = template

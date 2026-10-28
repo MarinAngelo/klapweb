@@ -7,6 +7,7 @@
  *   {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}
  */
 import type { RequestHandler } from '@sveltejs/kit';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
 import {
 	loadVariablesData,
 	mailVariables,
@@ -69,6 +70,8 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	let ressourceName: string | undefined;
 	let mailHtml: string | null = null;
 	let cmsBetreff = '';
+	// Page colours (active theme) for the mail layout
+	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
 	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
 	let vars: ReturnType<typeof mailVariables> = {};
 	let cmsTextField: prismic.RichTextField | undefined;
@@ -76,10 +79,12 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, variablesData] = await Promise.all([
+		const [doc, variablesData, theme] = await Promise.all([
 			getRessourceDocForBooking(client, buchung),
-			loadVariablesData(client)
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
+		mailTheme = theme;
 		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
 		ressourceName = d.name;
@@ -95,7 +100,10 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
 	if (cmsTextField?.length) {
-		mailHtml = renderMailHtml(cmsTextField ?? [], tokenMap, vars);
+		mailHtml = wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
+			lang: buchung.lang,
+			subject: betreff
+		});
 	}
 
 	// ── Mail senden ───────────────────────────────────────────────────────────

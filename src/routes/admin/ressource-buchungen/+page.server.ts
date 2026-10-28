@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
 import {
 	loadVariablesData,
 	mailVariables,
@@ -71,15 +72,19 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	// CMS template in the booking language (fallback: main language)
 	let ressourceName: string | undefined;
 	let cmsBetreff = '';
+	// Page colours (active theme) for the mail layout
+	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
 	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
 	let vars: ReturnType<typeof mailVariables> = {};
 	let cmsTextField: prismic.RichTextField | undefined;
 	try {
 		const client = createClient({ fetch });
-		const [doc, variablesData] = await Promise.all([
+		const [doc, variablesData, theme] = await Promise.all([
 			getRessourceDocForBooking(client, buchung),
-			loadVariablesData(client)
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
+		mailTheme = theme;
 		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
 		ressourceName = d.name;
@@ -93,7 +98,12 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	const betreff = cmsBetreff
 		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
-	const mailHtml = cmsTextField?.length ? renderMailHtml(cmsTextField ?? [], tokenMap, vars) : null;
+	const mailHtml = cmsTextField?.length
+		? wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
+				lang: buchung.lang,
+				subject: betreff
+			})
+		: null;
 
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);

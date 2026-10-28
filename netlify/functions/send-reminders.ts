@@ -24,6 +24,7 @@
  */
 
 import type { Config } from '@netlify/functions';
+import { loadMailTheme, wrapMail, type MailTheme } from '../../src/lib/mailLayout.js';
 import {
 	loadVariablesData,
 	mailVariables,
@@ -54,9 +55,11 @@ function isEnglish(buchung: any): boolean {
 function replaceTokens(
 	field: any[],
 	tokens: Record<string, string>,
-	vars: ReturnType<typeof mailVariables>
+	vars: ReturnType<typeof mailVariables>,
+	theme: MailTheme | null = null
 ): string {
-	return renderMailHtml(field, tokens, vars);
+	// Layout in the page colours (header with site name, page background/text)
+	return wrapMail(renderMailHtml(field, tokens, vars, theme), theme);
 }
 
 function dateInDays(days: number): string {
@@ -149,6 +152,13 @@ export default async function handler() {
 	// {{Messenger-Apps}}: Signal, Telegram, WhatsApp; {{WhatsApp}} = old name, same buttons
 	const messengerHtml = messengerButtonsHtml(waTel);
 	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, MailTheme>();
+	async function themeFor(lang?: string): Promise<MailTheme> {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, await loadMailTheme(client, lang));
+		return themes.get(key)!;
+	}
 
 	function tokens(buchung: any, doorCode: string) {
 		return {
@@ -208,10 +218,12 @@ export default async function handler() {
 					) ||
 					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
 					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
-					mailVariables(variablesData, buchung.lang)
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(
@@ -269,10 +281,12 @@ export default async function handler() {
 					) ||
 					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
 					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
-					mailVariables(variablesData, buchung.lang)
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(
@@ -329,10 +343,12 @@ export default async function handler() {
 						mailVariables(variablesData, buchung.lang)
 					) || `Willkommen: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
 					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
-					mailVariables(variablesData, buchung.lang)
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(

@@ -6,6 +6,7 @@
  * wird die Ankunftserinnerung sofort geschickt statt auf den Scheduler zu warten.
  */
 import { createClient } from '$lib/prismicio';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
 import {
 	loadVariablesData,
 	mailVariables,
@@ -74,10 +75,11 @@ export async function maybeSendAnkunftsErinnerung(
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings, variablesData] = await Promise.all([
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
 			getRessourceDocForBooking(client, buchung),
 			client.getSingle('settings').catch(() => null),
-			loadVariablesData(client)
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
 		const d = doc.data as any;
 		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
@@ -100,7 +102,7 @@ export async function maybeSendAnkunftsErinnerung(
 
 		let html: string;
 		if (textField?.length) {
-			html = renderMailHtml(textField ?? [], tokens, vars);
+			html = renderMailHtml(textField ?? [], tokens, vars, mailTheme);
 		} else {
 			// Fallback wenn reminder_text in Prismic nicht gesetzt
 			console.log(
@@ -116,6 +118,8 @@ ${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türco
 ${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
 <p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
 		}
+		// Layout in the page colours
+		html = wrapMail(html, mailTheme, { lang: buchung.lang, subject: betreff });
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({
@@ -153,10 +157,11 @@ export async function sendAbreiseErinnerung(
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings, variablesData] = await Promise.all([
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
 			getRessourceDocForBooking(client, buchung),
 			client.getSingle('settings').catch(() => null),
-			loadVariablesData(client)
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
 		const d = doc.data as any;
 		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
@@ -178,7 +183,10 @@ export async function sendAbreiseErinnerung(
 		const betreff =
 			renderMailText((d.abreise_betreff as string)?.trim() ?? '', tokens, vars) ||
 			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
-		const html = renderMailHtml(textField ?? [], tokens, vars);
+		const html = wrapMail(renderMailHtml(textField ?? [], tokens, vars, mailTheme), mailTheme, {
+			lang: buchung.lang,
+			subject: betreff
+		});
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({
