@@ -27,7 +27,8 @@ function fmtDate(dateStr: string): string {
 
 function doorCode(uid: string): string {
 	const key = uid.toUpperCase().replace(/-/g, '_');
-	return process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '';
+	// $env (not process.env): in dev only $env contains the values from .env
+	return env[`DOOR_CODE_${key}`] || env.DOOR_CODE || '';
 }
 
 /** {{Messenger-Apps}} (Signal, Telegram, WhatsApp); {{WhatsApp}} = old name, same buttons */
