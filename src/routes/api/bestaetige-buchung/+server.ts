@@ -95,7 +95,7 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
 	if (cmsTextField?.length) {
-		mailHtml = renderMailHtml(prismic.asHTML(cmsTextField) ?? '', tokenMap, vars);
+		mailHtml = renderMailHtml(cmsTextField ?? [], tokenMap, vars);
 	}
 
 	// ── Mail senden ───────────────────────────────────────────────────────────

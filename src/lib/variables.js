@@ -101,21 +101,24 @@ export function websiteVariables(data, lang) {
 	return { plain, rich };
 }
 
+/** @typedef {{ html: string; text: string; rich?: any[] }} MailVariable */
+
 /**
- * Mails: key → { html, text } in the booking language
+ * Mails: key → { html, text, rich } in the booking language
  * @param {VariablesData | null | undefined} data  see loadVariablesData
  * @param {string} [lang]
- * @returns {Record<string, { html: string; text: string }>}
+ * @returns {Record<string, MailVariable>}
  */
 export function mailVariables(data, lang) {
-	/** @type {Record<string, { html: string; text: string }>} */
+	/** @type {Record<string, MailVariable>} */
 	const map = {};
 	for (const entry of entries(data, lang)) {
 		const value = pick(entry);
 		if (value.rich) {
 			map[tokenKey(entry.schluessel)] = {
 				html: richHtml(value.rich),
-				text: richText(value.rich, '\n\n')
+				text: richText(value.rich, '\n\n'),
+				rich: value.rich
 			};
 		} else if (value.plain != null) {
 			map[tokenKey(entry.schluessel)] = { html: escapeHtml(value.plain), text: value.plain };
@@ -151,14 +154,76 @@ export async function loadVariablesData(client, mainLang) {
 	}
 }
 
+const ALONE = /^\s*\{\{([^{}]+)\}\}\s*$/;
+
+/**
+ * Replaces the {{tokens}} of one rich text block and keeps its formatting spans consistent:
+ * spans after a token are shifted, spans around a whole token grow/shrink, spans that cover
+ * only part of a token are dropped ("{{<strong>WiFi}}</strong>" would break the token).
+ * @param {any} block
+ * @param {(name: string) => string | null} replacer  null = keep the token
+ */
+function replaceInBlock(block, replacer) {
+	if (typeof block?.text !== 'string' || !block.text.includes('{{')) return block;
+	let text = block.text;
+	/** @type {any[]} */
+	let spans = (block.spans ?? []).map((/** @type {any} */ sp) => ({ ...sp }));
+	for (const m of [...block.text.matchAll(TOKEN)].reverse()) {
+		const start = m.index ?? 0;
+		const end = start + m[0].length;
+		const value = replacer(m[1]) ?? m[0];
+		const delta = value.length - (end - start);
+		text = text.slice(0, start) + value + text.slice(end);
+		spans = spans.flatMap((sp) => {
+			if (sp.end <= start) return [sp];
+			if (sp.start >= end) return [{ ...sp, start: sp.start + delta, end: sp.end + delta }];
+			if (sp.start <= start && sp.end >= end) return [{ ...sp, end: sp.end + delta }];
+			return []; // covers only part of the token
+		});
+	}
+	return { ...block, text, spans };
+}
+
+/**
+ * Expands variables in a rich text field (Prismic data, before serializing):
+ * - token alone in a paragraph + multi-line value → its paragraphs
+ * - otherwise inline text; unknown tokens stay (spans normalized)
+ * @param {any[]} field
+ * @param {Record<string, string>} plain
+ * @param {Record<string, any[]>} rich
+ * @returns {any[]}
+ */
+export function expandTokensInField(field, plain, rich) {
+	const expanded = field.flatMap((block) => {
+		const alone = block?.type === 'paragraph' ? block.text?.match(ALONE) : null;
+		if (alone && rich[tokenKey(alone[1])]) return rich[tokenKey(alone[1])];
+		return [replaceInBlock(block, (name) => plain[tokenKey(name)] ?? null)];
+	});
+	// Tokens inside inserted variable texts (e.g. {{Name}}): normalize their spans as well
+	return expanded.map((block) => replaceInBlock(block, () => null));
+}
+
 /**
  * Mail body: variables (incl. multi-line) first, then booking tokens; unknown tokens → ''
- * @param {string} html  serialized rich text of the mail template
+ * @param {any[] | string} template  rich text field of the mail template (preferred) or HTML
  * @param {Record<string, string>} tokens  booking tokens (already HTML)
- * @param {Record<string, { html: string; text: string }>} vars
+ * @param {Record<string, MailVariable>} vars
  */
-export function renderMailHtml(html, tokens, vars) {
-	const withVars = html
+export function renderMailHtml(template, tokens, vars) {
+	if (Array.isArray(template)) {
+		// On the Prismic data: robust against formatting that covers only part of a token
+		/** @type {Record<string, string>} */
+		const plain = {};
+		/** @type {Record<string, any[]>} */
+		const rich = {};
+		for (const [key, v] of Object.entries(vars)) {
+			plain[key] = v.text;
+			if (v.rich) rich[key] = v.rich;
+		}
+		const html = richHtml(expandTokensInField(template, plain, rich));
+		return html.replace(TOKEN, (_, key) => tokens[tokenKey(key)] ?? '');
+	}
+	const withVars = template
 		// Token alone in a paragraph → whole multi-line text (no <p> inside <p>)
 		.replace(/<p>\s*\{\{([^{}]+)\}\}\s*<\/p>/g, (match, key) => vars[tokenKey(key)]?.html ?? match)
 		// Inline: single paragraph without its <p> wrapper
@@ -175,7 +240,7 @@ export function renderMailHtml(html, tokens, vars) {
  * Mail subject / plain text: variables (as text) first, then booking tokens
  * @param {string} text
  * @param {Record<string, string>} tokens
- * @param {Record<string, { html: string; text: string }>} vars
+ * @param {Record<string, MailVariable>} vars
  */
 export function renderMailText(text, tokens, vars) {
 	return text

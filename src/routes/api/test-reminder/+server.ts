@@ -152,7 +152,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				WhatsApp: messengerHtml
 			};
 			const betreff = renderMailText(betreffRaw, tokens, vars);
-			const html = renderMailHtml(prismic.asHTML(textField as any) ?? '', tokens, vars);
+			const html = renderMailHtml((textField as any) ?? [], tokens, vars);
 
 			if (dryRun) {
 				results.push({

@@ -93,9 +93,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	const betreff = cmsBetreff
 		? renderMailText(cmsBetreff, tokenMap, vars)
 		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
-	const mailHtml = cmsTextField?.length
-		? renderMailHtml(prismic.asHTML(cmsTextField) ?? '', tokenMap, vars)
-		: null;
+	const mailHtml = cmsTextField?.length ? renderMailHtml(cmsTextField ?? [], tokenMap, vars) : null;
 
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);
