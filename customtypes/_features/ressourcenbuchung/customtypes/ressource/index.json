@@ -238,7 +238,7 @@
 					"label": "Bestätigung – E-Mail Text",
 					"placeholder": "Tokens: {{Name}}, {{Ressource}}, {{RessourceUid}}, {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
+					"multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": [
 						"highlight",
 						"note",
@@ -302,7 +302,7 @@
 					"label": "Vor Ankunft – E-Mail Text",
 					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{Messenger-Apps}}",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
+					"multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": [
 						"highlight",
 						"note",
@@ -364,7 +364,7 @@
 					"label": "Nach Ankunft – E-Mail Text",
 					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{Messenger-Apps}}",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
+					"multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": [
 						"highlight",
 						"note",
@@ -426,7 +426,7 @@
 					"label": "Vor Abreise – E-Mail Text",
 					"placeholder": "Ersetzt Tokens: {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{Messenger-Apps}}",
 					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
+					"multi": "paragraph,heading1,heading2,heading3,strong,em,hyperlink,list-item,o-list-item",
 					"labels": [
 						"highlight",
 						"note",
