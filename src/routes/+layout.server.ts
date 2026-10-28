@@ -1,6 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
+import { loadVariablesData } from '$lib/variables.js';
 import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO, FEATURE_KUNDENKONTO } from '$lib/server/features';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
@@ -85,7 +86,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			client.getAllByType('font').catch(() => []),
 			client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
 			client.getAllByType('icon', { lang: '*' }).catch(() => []),
-			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
+			// All language versions (translation of the Variablen document, fallback main language)
+			loadVariablesData(client, mainLang),
 			// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
 			lang !== mainLang
 				? client.getSingle('settings', { lang: mainLang }).catch(() => null)
@@ -124,11 +126,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
 
-		// Token values in the page language (English: field «Wert (EN)», fallback German)
-		const { plain: variables, rich: richVariables } = buildTokenMap(
-			(variablenDoc as { data?: unknown })?.data,
-			lang
-		);
+		// Token values in the page language (Prismic translation of Variablen, fallback main language)
+		const { plain: variables, rich: richVariables } = buildTokenMap(variablenDoc, lang);
 
 		// Aktives Theme bestimmen (Feld activ == true)
 		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;

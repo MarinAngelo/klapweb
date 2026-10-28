@@ -117,10 +117,10 @@ Unterstützte Tokens:
 
 **Gleiche Texte für mehrere Ressourcen (Variablen):** Wiederkehrende Textblöcke einmal im Dokument **Variablen** erfassen und in den Mailtexten nur den Token einsetzen, z.B. `{{Anreisetext}}`.
 
-- Feld **Text (mehrzeilig)** bzw. **Text (mehrzeilig, EN)**: Absätze, Listen und Links; hat Vorrang vor «Wert»
+- Feld **Text (mehrzeilig)**: Absätze, Listen und Links; hat Vorrang vor «Wert»
 - Im Variablentext dürfen die Buchungs-Tokens stehen (`{{Name}}`, `{{Anreise}}` …) — sie werden pro Buchung ersetzt
 - Steht der Token allein in einem Absatz, wird er durch den ganzen mehrzeiligen Text ersetzt
-- Sprache: englische Buchungen verwenden die EN-Felder, sonst bzw. wenn leer die deutschen
+- Sprache: Dokument **Variablen** in Prismic übersetzen (z.B. en-us, gleiche Token-Namen). Englische Buchungen verwenden die englische Fassung; fehlt dort ein Eintrag oder ist er leer, gilt der deutsche
 - Gilt für alle Gäste-Mails (Bestätigung, Erinnerungen) inkl. Betreff
 
 ---
