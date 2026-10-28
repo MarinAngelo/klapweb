@@ -11,6 +11,7 @@
  */
 
 import { json } from '@sveltejs/kit';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
 import {
 	loadVariablesData,
 	mailVariables,
@@ -102,6 +103,13 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const settings = await client.getSingle('settings').catch(() => null);
 	const messengerHtml = messengerButtonsHtml((settings?.data as any)?.whatsapp_tel);
 	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, Promise<Awaited<ReturnType<typeof loadMailTheme>>>>();
+	const themeFor = (lang?: string) => {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, loadMailTheme(client, lang));
+		return themes.get(key)!;
+	};
 	const resend = dryRun ? null : new Resend(resendKey);
 
 	for (const buchung of upcoming) {
@@ -152,7 +160,12 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 				WhatsApp: messengerHtml
 			};
 			const betreff = renderMailText(betreffRaw, tokens, vars);
-			const html = renderMailHtml((textField as any) ?? [], tokens, vars);
+			const mailTheme = await themeFor(buchung.lang);
+			const html = wrapMail(
+				renderMailHtml((textField as any) ?? [], tokens, vars, mailTheme),
+				mailTheme,
+				{ lang: buchung.lang, subject: betreff }
+			);
 
 			if (dryRun) {
 				results.push({
