@@ -52,11 +52,11 @@ function isEnglish(buchung: any): boolean {
 
 // Variablen (incl. multi-line text) first, then booking tokens — see src/lib/variables.js
 function replaceTokens(
-	html: string,
+	field: any[],
 	tokens: Record<string, string>,
-	vars: Record<string, { html: string; text: string }>
+	vars: ReturnType<typeof mailVariables>
 ): string {
-	return renderMailHtml(html, tokens, vars);
+	return renderMailHtml(field, tokens, vars);
 }
 
 function dateInDays(days: number): string {
@@ -209,7 +209,7 @@ export default async function handler() {
 					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
+					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
 					mailVariables(variablesData, buchung.lang)
 				);
@@ -270,7 +270,7 @@ export default async function handler() {
 					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
+					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
 					mailVariables(variablesData, buchung.lang)
 				);
@@ -330,7 +330,7 @@ export default async function handler() {
 					) || `Willkommen: ${d.name ?? buchung.ressourceUid}`;
 
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
+					textField,
 					tokens(buchung, doorCode(buchung.ressourceUid)),
 					mailVariables(variablesData, buchung.lang)
 				);

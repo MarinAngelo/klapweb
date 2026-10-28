@@ -100,7 +100,7 @@ export async function maybeSendAnkunftsErinnerung(
 
 		let html: string;
 		if (textField?.length) {
-			html = renderMailHtml(prismic.asHTML(textField) ?? '', tokens, vars);
+			html = renderMailHtml(textField ?? [], tokens, vars);
 		} else {
 			// Fallback wenn reminder_text in Prismic nicht gesetzt
 			console.log(
@@ -178,7 +178,7 @@ export async function sendAbreiseErinnerung(
 		const betreff =
 			renderMailText((d.abreise_betreff as string)?.trim() ?? '', tokens, vars) ||
 			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
-		const html = renderMailHtml(prismic.asHTML(textField) ?? '', tokens, vars);
+		const html = renderMailHtml(textField ?? [], tokens, vars);
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({
