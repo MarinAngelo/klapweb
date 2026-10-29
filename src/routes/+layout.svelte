@@ -11,6 +11,7 @@
 	import { repositoryName, createClient } from '$lib/prismicio';
 	import { preferredLang, uiLang, translationNoticeShown } from '$lib/stores/preferredLang';
 	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
+	import { localFontCss } from '$lib/fontSources.js';
 	import { linkContext } from '$lib/stores/linkContext';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
@@ -408,22 +409,13 @@
 		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
 	}
 
-	$: googleFontsUrl = (() => {
-		if (!Array.isArray(fonts)) return null;
-		const families = fonts
-			.filter((f) => f?.data?.provider === 'Google')
-			.map(
-				(f) =>
-					`family=${f.data.name.replace(/\s+/g, '+')}${f.data.variants ? ':' + f.data.variants : ''}`
-			);
-		return families.length
-			? `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`
-			: null;
-	})();
+	// Self-hosted (scripts/self-host-fonts.js) — visitors never contact Google
+	$: localFontUrls = Array.isArray(fonts)
+		? fonts
+				.filter((f: any) => ['Google', 'Lokal'].includes(f?.data?.provider) && f?.data?.name)
+				.map((f: any) => localFontCss(f.data.name))
+		: [];
 
-	$: adobeFontUrl = settings?.data?.adobe_font_id
-		? `https://use.typekit.net/${settings.data.adobe_font_id}.css`
-		: null;
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
@@ -525,23 +517,8 @@
 	<meta name="twitter:description" content={finalDesc} />
 	<meta name="twitter:image" content={finalImage} />
 
-	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
-	{#if adobeFontUrl}
-		<link rel="preconnect" href="https://p.typekit.net" crossorigin />
-		<link rel="dns-prefetch" href="https://p.typekit.net" />
-	{/if}
+	{#each localFontUrls as href}<link rel="stylesheet" {href} />{/each}
 </svelte:head>
-
-{#if adobeFontUrl}
-	<script>
-		const link = document.createElement('link');
-		link.rel = 'stylesheet';
-		link.href = `${adobeFontUrl}`;
-		link.crossOrigin = 'anonymous';
-		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
-		document.head.appendChild(link);
-	</script>
-{/if}
 
 <a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 

@@ -1312,11 +1312,6 @@
 							>Standard Open Graph Bild</td
 						></tr
 					>
-					<tr
-						><td><code>adobe_font_id</code></td><td>Text</td><td
-							>Adobe Fonts Project-ID (lädt Typekit-Script)</td
-						></tr
-					>
 					<tr><td><code>favicon</code></td><td>Bild (32×32)</td><td>Favicon</td></tr>
 					<tr
 						><td><code>pwa_enabled</code> <span class="field-gate">Individuell</span></td><td
@@ -1554,7 +1549,9 @@
 					<tr><td><code>uid</code></td><td>UID</td><td>Slug</td></tr>
 					<tr><td><code>name</code></td><td>Text</td><td>Name der Schrift</td></tr>
 					<tr
-						><td><code>provider</code></td><td>Auswahl</td><td>Anbieter: Google / Adobe / Lokal</td
+						><td><code>provider</code></td><td>Auswahl</td><td
+							>Anbieter: Google (selbst gehostet) / Lokal (Schriftdateien in Prismic, selbst
+							gehostet)</td
 						></tr
 					>
 					<tr

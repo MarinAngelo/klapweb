@@ -92,6 +92,14 @@ Regeln:
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
 
+## Schriften (selbst gehostet, kein Google)
+
+- Google-Schriften werden beim `npm run dev` / `build` von `scripts/self-host-fonts.js` nach `static/fonts/` geladen (gitignored): eine CSS pro Schrift (`/fonts/<slug>.css`) + woff2. Besucher laden nie von Google
+- Quellen: vordefinierte Schriften `PRESET_FONTS` (`src/lib/fontSources.js`) + Prismic-Font-Dokumente mit Anbieter «Google» (Feld «Varianten»)
+- Anbieter «Lokal»: Gruppe «Schriftdateien» (Datei aus der Mediathek, Gewicht, Stil) → Script lädt die Dateien ebenfalls nach `static/fonts/` und erzeugt `@font-face` (eigene Domain, keine CORS-Probleme)
+- **Nie** `fonts.googleapis.com` / `fonts.gstatic.com` einbinden — Schrift-URL immer über `localFontCss(name)`
+- Neues Font-Dokument in Prismic → wird beim nächsten Build/Dev-Start geladen (`npm run fonts` manuell)
+
 ## i18n
 
 - **Niemals UI-Text hardcodieren** — jeden sichtbaren String über den `$_`-Store ausgeben
