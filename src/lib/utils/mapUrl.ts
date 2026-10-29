@@ -18,7 +18,39 @@ export function getMapProvider(url: string | null | undefined): MapProvider {
 
 type OsmLocation = { lat: number; lon: number; zoom: number; embedUrl?: string };
 
-/** Reads position from OSM URLs: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html?bbox=…&marker=… */
+/**
+ * Decodes an OSM short link code (osm.org/go/<code>, "Share → Short link"), same algorithm
+ * as openstreetmap.org: 6 bits per character interleave x/y, trailing "-" adjust the zoom.
+ */
+function decodeOsmShortLink(code: string): OsmLocation | null {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_~';
+	const sc = code.replace(/@/g, '~'); // legacy character
+	let x = 0;
+	let y = 0;
+	let z = -8;
+	let i = 0;
+	for (; i < sc.length; i++) {
+		const digit = chars.indexOf(sc[i]);
+		if (digit === -1) break;
+		x *= 8;
+		y *= 8;
+		for (let j = 2; j >= 0; j--) {
+			if (digit & (1 << (2 * j + 1))) x += 1 << j;
+			if (digit & (1 << (2 * j))) y += 1 << j;
+		}
+		z += 3;
+	}
+	if (i === 0) return null;
+	const lon = x * 2 ** (2 - 3 * i) * 90 - 180;
+	const lat = y * 2 ** (2 - 3 * i) * 45 - 90;
+	if (sc[i] === '-') {
+		z -= 2;
+		if (sc[i + 1] === '-') z += 1;
+	}
+	return { lat, lon, zoom: Math.max(1, Math.min(19, z)) };
+}
+
+/** Reads position from OSM URLs: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html?bbox=…&marker=…, osm.org/go/<code> */
 function parseOsmUrl(raw: string): OsmLocation | null {
 	let url: URL;
 	try {
@@ -27,6 +59,11 @@ function parseOsmUrl(raw: string): OsmLocation | null {
 		return null;
 	}
 	const params = url.searchParams;
+
+	// Short link osm.org/go/<code>
+	const shortMatch = url.pathname.match(/^\/go\/([A-Za-z0-9_~@-]+)/);
+	if (shortMatch) return decodeOsmShortLink(shortMatch[1]);
+
 	const hashMatch = url.hash.match(/map=(\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)/);
 	const zoom = hashMatch ? Math.round(Number(hashMatch[1])) : Number(params.get('zoom')) || 16;
 
