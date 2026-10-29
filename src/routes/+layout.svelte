@@ -443,7 +443,7 @@
 	$: isAdminPage =
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
-		($page.url.pathname.startsWith('/agency/') && $page.data?.authenticated === true);
+		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
 	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 

@@ -12,6 +12,7 @@
 		"check:translations": "node scripts/check-translations.js --strict",
 		"check:i18n": "node scripts/check-i18n-keys.js",
 		"fonts": "node scripts/self-host-fonts.js",
+		"wissensbasis": "node scripts/chatbot-wissensbasis.js",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",

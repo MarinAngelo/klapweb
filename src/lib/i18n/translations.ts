@@ -799,6 +799,24 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Agency Dashboard': { 'de-ch': 'Agency Dashboard', 'en-us': 'Agency dashboard' },
+	'Plan und Feature-Schalter dieser Website': {
+		'de-ch': 'Plan und Feature-Schalter dieser Website',
+		'en-us': 'Plan and feature switches of this website'
+	},
+	'Erklärungen zu den Prismic-Feldern für die Website-Betreiber pflegen': {
+		'de-ch': 'Erklärungen zu den Prismic-Feldern für die Website-Betreiber pflegen',
+		'en-us': 'Maintain explanations of the Prismic fields for website operators'
+	},
+	'So sehen die Website-Betreiber die Referenz': {
+		'de-ch': 'So sehen die Website-Betreiber die Referenz',
+		'en-us': 'How website operators see the reference'
+	},
+	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
+	'Verwaltung der Website (eigene Anmeldung)': {
+		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
+		'en-us': 'Website administration (separate login)'
+	},
 	Hilfe: { 'de-ch': 'Hilfe', 'en-us': 'Help' },
 	'Prismic-Feldreferenz': { 'de-ch': 'Prismic-Feldreferenz', 'en-us': 'Prismic field reference' },
 	'Alle Felder der Inhaltstypen und Bausteine mit Erklärung': {

@@ -151,7 +151,8 @@ export async function POST({ request, fetch, getClientAddress }) {
 	// Rules repeated after the (long) knowledge base: the model weights the end of the prompt more
 	const closingRules = [
 		'WICHTIGE REGELN:',
-		'1. Answer in the language of the visitor’s last message (English question → English answer, French → French). Translate the knowledge base content if necessary.',
+		// The knowledge base is long and German → the language rule must be explicit and first
+		'1. LANGUAGE (most important rule): Detect the language of the visitor’s LAST message and write your ENTIRE reply in that language (English question → English answer, French → French, never German unless the visitor writes German). Translate the knowledge base content. Keep names of fields, buttons and documents exactly as written in the knowledge base (they appear like that in the backend), optionally with a translation in parentheses.',
 		'2. Reiner Text, kein Markdown, keine Emojis.',
 		'3. Steht etwas nicht in der Wissensbasis, behaupte weder, dass es angeboten wird, noch dass es nicht angeboten wird. Sag, dass du dazu keine Information hast, und verweise auf die Kontaktseite.'
 	].join('\n');
