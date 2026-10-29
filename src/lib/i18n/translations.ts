@@ -799,6 +799,30 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Feldreferenz – Beschreibungen': {
+		'de-ch': 'Feldreferenz – Beschreibungen',
+		'en-us': 'Field reference – descriptions'
+	},
+	'Gating-Editor': { 'de-ch': 'Gating-Editor', 'en-us': 'Gating editor' },
+	'Referenz ansehen': { 'de-ch': 'Referenz ansehen', 'en-us': 'View reference' },
+	'Beschreibungen für die Prismic-Feldreferenz der Website-Betreiber. Leer = automatische Beschreibung (grau). Gilt für alle Kunden-Branches: auf main pflegen und committen.':
+		{
+			'de-ch':
+				'Beschreibungen für die Prismic-Feldreferenz der Website-Betreiber. Leer = automatische Beschreibung (grau). Gilt für alle Kunden-Branches: auf main pflegen und committen.',
+			'en-us':
+				'Descriptions for the Prismic field reference of the website operators. Empty = automatic description (grey). Applies to all customer branches: maintain and commit on main.'
+		},
+	'Felder beschrieben': { 'de-ch': 'Felder beschrieben', 'en-us': 'fields described' },
+	'Bearbeiten nur auf dem lokalen Dev-Server möglich (die Datei wird committet).': {
+		'de-ch': 'Bearbeiten nur auf dem lokalen Dev-Server möglich (die Datei wird committet).',
+		'en-us': 'Editing is only possible on the local dev server (the file is committed).'
+	},
+	'Gespeichert.': { 'de-ch': 'Gespeichert.', 'en-us': 'Saved.' },
+	'Leer = deutsche Beschreibung': {
+		'de-ch': 'Leer = deutsche Beschreibung',
+		'en-us': 'Empty = German description'
+	},
+	'Wird gespeichert…': { 'de-ch': 'Wird gespeichert…', 'en-us': 'Saving…' },
 	Gespräche: { 'de-ch': 'Gespräche', 'en-us': 'Conversations' },
 	Frage: { 'de-ch': 'Frage', 'en-us': 'Question' },
 	'Fragen und Antworten werden ohne IP-Adresse gespeichert und nach {tage} Tagen automatisch gelöscht.':

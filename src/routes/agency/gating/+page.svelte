@@ -233,6 +233,7 @@
 	<div class="admin">
 		<div class="admin-container">
 			<AdminHeader title={$_('Agency Gating Editor')} back={false}>
+				<a href="/agency/feldreferenz" class="admin-btn">{$_('Feldreferenz – Beschreibungen')}</a>
 				<form method="POST" action="?/logout">
 					<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
 				</form>

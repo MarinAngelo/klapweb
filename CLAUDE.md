@@ -299,6 +299,13 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
 
+## Agency-Bereich (`/agency/*`)
+
+- Anmeldung mit `AGENCY_SECRET` (gemeinsam: `src/lib/server/agencyAuth.ts`), Login im Website-Stil (`LoginCard`), Editor im neutralen Admin-UI
+- `/agency/gating`: Plan + Feature-Schalter
+- `/agency/feldreferenz`: Beschreibungen (DE/EN) für die Prismic-Feldreferenz der Website-Betreiber (`/prismic-feldreferenz`) → `src/lib/fieldDescriptions.json` (committet, auf `main` pflegen, gilt für alle Branches; Schlüssel `<Custom Type oder Slice>.<Feld-API-ID>`). Ohne Eintrag: automatischer Text aus `build-customtypes.js`
+- Dateien, die committet werden, sind nur im lokalen Dev-Server bearbeitbar
+
 ## Admin-Anmeldung
 
 - Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h; mit „Angemeldet bleiben“ 14 Tage), Logout im Dashboard
