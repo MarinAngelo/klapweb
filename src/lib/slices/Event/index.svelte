@@ -1,6 +1,10 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import { asText } from '@prismicio/helpers';
-	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -124,8 +128,7 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: var(--page-color)"
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class="text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 		{#if primary.title}
@@ -137,7 +140,7 @@ END:VCALENDAR`;
 
 		{#if primary.description}
 			<div>
-				<PrismicRichText field={primary.description} />
+				<PrismicRichText field={primary.description} components={{ embed: RichTextEmbed }} />
 			</div>
 		{/if}
 
@@ -168,7 +171,7 @@ END:VCALENDAR`;
 						target="_blank"
 						data-type="prismic-link"
 					>
-						Zum Kalender hinzufügen (.ics)
+						{$_('Zum Kalender hinzufügen (.ics)')}
 					</PrismicLink><br />
 
 					<PrismicLink
@@ -185,13 +188,13 @@ END:VCALENDAR`;
 						target="_blank"
 						data-type="prismic-link"
 					>
-						In Google Calendar öffnen
+						{$_('In Google Calendar öffnen')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.location_text}
 					<div class="mt-4">
-						<strong>Ort:</strong>
-						<PrismicRichText field={primary.location_text} />
+						<strong>{$_('Ort')}:</strong>
+						<PrismicRichText field={primary.location_text} components={{ embed: RichTextEmbed }} />
 					</div>
 				{/if}
 				{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
@@ -203,13 +206,13 @@ END:VCALENDAR`;
 						target="_blank"
 						data-type="prismic-link"
 					>
-						Standort auf Google Maps anzeigen
+						{$_('Standort auf Google Maps anzeigen')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.additional_dates.length > 0}
 					{#if allDates.length > 0 && primary.additional_dates.length > 0}
 						<div class="mt-4">
-							<strong>Daten:</strong>
+							<strong>{$_('Daten')}:</strong>
 							{#each allDates as date}
 								<p>
 									- {date
@@ -219,7 +222,7 @@ END:VCALENDAR`;
 							{/each}
 						</div>
 					{:else}
-						<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
+						<div class="mt-4 text-red-500">{$_('Zurzeit sind keine Durchführungen geplant')}</div>
 					{/if}
 				{/if}
 			</div>

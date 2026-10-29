@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { theme } from '$lib/stores/theme';
 	export let html: string;
 
@@ -9,18 +10,10 @@
 </script>
 
 <span class="tooltip-wrap">
-	<button
-		type="button"
-		class="icon"
-		aria-describedby={id}
-		aria-label="Mehr Informationen"
-	>ⓘ</button>
-	<span
-		{id}
-		role="tooltip"
-		class="tip"
-		style="background: {bg}; color: {color};"
-	>{@html html}</span>
+	<button type="button" class="icon" aria-describedby={id} aria-label={$_('Mehr Informationen')}
+		>ⓘ</button
+	>
+	<span {id} role="tooltip" class="tip" style:background={bg} style:color>{@html html}</span>
 </span>
 
 <style>

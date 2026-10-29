@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
+	import { onMount } from 'svelte';
 	import { PrismicImage } from '@prismicio/svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import BildLupe from '$lib/components/BildLupe.svelte';
 	import BildSlider from '$lib/components/BildSlider.svelte';
 	import { isFilled } from '@prismicio/client';
+	import { headerHeight } from '$lib/stores/headerHeight';
 
 	export let image: any;
 	export let images: any[] | undefined = undefined;
@@ -36,6 +39,47 @@
 	export let textCenterH: boolean = false;
 	export let fullscreen: boolean = false;
 
+	let imageColumn: HTMLDivElement;
+	let textColumn: HTMLDivElement;
+
+	function syncMobileColumnHeight() {
+		if (!imageColumn || !textColumn) return;
+
+		const isMobile = window.matchMedia('(max-width: 767px)').matches;
+		if (!isMobile) {
+			textColumn.style.removeProperty('--mobile-image-height');
+			return;
+		}
+
+		const imageHeight = imageColumn.getBoundingClientRect().height;
+		textColumn.style.removeProperty('--mobile-image-height');
+		const textHeight = textColumn.scrollHeight;
+		if (imageHeight > textHeight) {
+			textColumn.style.setProperty('--mobile-image-height', `${imageHeight}px`);
+		} else {
+			textColumn.style.removeProperty('--mobile-image-height');
+		}
+	}
+
+	onMount(() => {
+		const observer = new ResizeObserver(syncMobileColumnHeight);
+		const imageElements = imageColumn.querySelectorAll('img');
+		const frame = requestAnimationFrame(syncMobileColumnHeight);
+		observer.observe(imageColumn);
+		imageElements.forEach((element) => element.addEventListener('load', syncMobileColumnHeight));
+		window.addEventListener('resize', syncMobileColumnHeight);
+		syncMobileColumnHeight();
+
+		return () => {
+			cancelAnimationFrame(frame);
+			imageElements.forEach((element) =>
+				element.removeEventListener('load', syncMobileColumnHeight)
+			);
+			window.removeEventListener('resize', syncMobileColumnHeight);
+			observer.disconnect();
+		};
+	});
+
 	$: overlayOpacity = 1 - overlayTransparency / 100;
 
 	let dialog: HTMLDialogElement;
@@ -61,16 +105,18 @@
 
 <div
 	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen
-		? 'md:h-full'
+		? 'md:h-full md:min-h-0 md:grid-rows-1'
 		: ''}"
+	style:width={fullscreen ? '100vw' : '100%'}
 >
 	{#if imageLeft}
 		<!-- Bild links, Text rechts -->
 		<div
+			bind:this={imageColumn}
 			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen
 				? 'md:h-full'
 				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
-			style={imageBgColor ? `background-color: ${imageBgColor};` : ''}
+			style:background-color={imageBgColor || undefined}
 		>
 			{#if activeImages.length > 1}
 				<BildSlider
@@ -82,10 +128,7 @@
 					{lightbox}
 				/>
 			{:else if image}
-				<div
-					class="relative {fullscreen ? 'md:h-full' : ''}"
-					style="background-color: {imageBgColor};"
-				>
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -115,46 +158,66 @@
 									? ''
 									: noRoundMobile
 										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
-							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+										: 'rounded-3xl'} pointer-events-none"
+							style:background-color={overlayColor}
+							style:opacity={overlayOpacity}
 						></div>
 					{/if}
 				</div>
 			{/if}
 		</div>
 		<div
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {textCenterV
-				? 'self-center'
-				: ''} {textCenterH ? 'text-center' : ''}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
+			bind:this={textColumn}
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {fullscreen
+				? 'md:h-full md:min-h-0 fullscreen-text-col'
+				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
+				? 'text-center'
+				: ''}"
+			style:--mob-pad={mobilePadding}
+			style:--mob-pad-top={mobilePaddingTop}
+			style:--desk-pad={desktopPadding}
+			style:--desk-pad-y={desktopPaddingY}
+			style:--fullscreen-text-offset="{$headerHeight / 2}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
+				<div class={fullscreen || textCenterV ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 	{:else}
 		<!-- Text links, Bild rechts -->
 		<div
-			class="text-col flex flex-col {textCenterV ? 'self-center' : ''} {textCenterH
+			bind:this={textColumn}
+			class="text-col flex flex-col {fullscreen
+				? 'md:h-full md:min-h-0 fullscreen-text-col'
+				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
 				? 'text-center'
 				: ''} {mobileTextFirst ? '' : 'order-last md:order-none'}"
-			style="--mob-pad: {mobilePadding}; --mob-pad-top: {mobilePaddingTop}; --desk-pad: {desktopPadding}; --desk-pad-y: {desktopPaddingY};"
+			style:--mob-pad={mobilePadding}
+			style:--mob-pad-top={mobilePaddingTop}
+			style:--desk-pad={desktopPadding}
+			style:--desk-pad-y={desktopPaddingY}
+			style:--fullscreen-text-offset="{$headerHeight / 2}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
 			</div>
 			{#if $$slots.default}
-				<div class="mt-auto pt-0 md:pt-4"><slot /></div>
+				<div class={fullscreen || textCenterV ? '' : 'mt-auto pt-0 md:pt-4'}><slot /></div>
 			{/if}
 		</div>
 		<div
+			bind:this={imageColumn}
 			class="{mobileTextFirst ? '' : 'order-first md:order-none'} {fullscreen
 				? 'md:h-full'
-				: ''} {imageRound ? 'md:rounded-full' : noRound ? '' : 'md:rounded-3xl'} overflow-hidden"
-			style="padding-bottom: 0; {imageBgColor ? `background-color: ${imageBgColor};` : ''}"
+				: ''} {imageRound
+				? 'md:rounded-full'
+				: noRound
+					? ''
+					: 'md:rounded-3xl'} overflow-hidden pb-0"
+			style:background-color={imageBgColor || undefined}
 		>
 			{#if activeImages.length > 1}
 				<BildSlider
@@ -166,10 +229,7 @@
 					{lightbox}
 				/>
 			{:else if image}
-				<div
-					class="relative {fullscreen ? 'md:h-full' : ''}"
-					style="background-color: {imageBgColor};"
-				>
+				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -199,8 +259,9 @@
 									? ''
 									: noRoundMobile
 										? 'md:rounded-3xl'
-										: 'rounded-3xl'}"
-							style="background-color: {overlayColor}; opacity: {overlayOpacity}; pointer-events: none;"
+										: 'rounded-3xl'} pointer-events-none"
+							style:background-color={overlayColor}
+							style:opacity={overlayOpacity}
 						></div>
 					{/if}
 				</div>
@@ -218,7 +279,7 @@
 		<div class="lb-content" on:click|stopPropagation>
 			<img src={image?.url ?? ''} alt={image?.alt ?? ''} class="lb-img" />
 		</div>
-		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen"
+		<button type="button" class="lb-close" on:click={closeLightbox} aria-label={$_('Schliessen')}
 			>×</button
 		>
 	</dialog>
@@ -278,6 +339,11 @@
 			padding-right: var(--mob-pad, 0);
 			padding-top: var(--mob-pad-top, var(--mob-pad, 0));
 			padding-bottom: 0;
+			min-height: var(--mobile-image-height, auto);
+		}
+
+		.mobile-vertical-center {
+			padding-bottom: var(--mob-pad-top, var(--mob-pad, 0));
 		}
 
 		.text-content p {
@@ -295,6 +361,10 @@
 	}
 
 	@media (min-width: 768px) {
+		.fullscreen-text-col {
+			transform: translateY(calc(-1 * var(--fullscreen-text-offset, 0px)));
+		}
+
 		.text-col {
 			padding-left: var(--desk-pad, 0);
 			padding-right: var(--desk-pad, 0);

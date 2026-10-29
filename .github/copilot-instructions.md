@@ -31,6 +31,9 @@
 - **Komponentenstruktur**: Subfolder für thematische Gruppierung (z.B. `legal/`, `PrismicRichText/`)
 - **Utils**: Hilfsfunktionen in `src/lib/utils/` (z.B. `color.ts`, `addMarginIfLastIsHeading.ts`)
 - **UI-Elemente (Input, Select, Textarea)**: Immer zuerst `src/lib/components/InputField.svelte` als Referenz lesen — kein eigenes Styling erfinden. Select/Input korrekt: `border-b` (nicht `border`!), `background-color: var(--page-bg-color)`, `color: var(--page-color)`, `border-bottom-color: var(--page-color)`. Optionen: `background-color: {shadeColor($theme.pageBgColor, -30)}`. Vor jeder Implementierung existierende Verwendungen im Projekt per grep suchen.
+- **Formularfelder zentralisieren**: Alle benutzereingaberelevanten HTML5-Felder (`input`, `select`, `textarea`) müssen über `src/lib/components/InputField.svelte` definiert und verwendet werden. Unterstützt `InputField` einen benötigten HTML5-Typ noch nicht, zuerst `InputField.svelte` erweitern. Direkte Controls nur für technische Sonderfälle wie `hidden`, `FileField.svelte`, native Farb-/Studio-Controls oder interne Steuerungen verwenden.
+- **Feldgruppen**: Wenn mehrere Form-Controls denselben Label- und Abstandsaufbau benötigen, `src/lib/components/FieldGroup.svelte` verwenden. Keine lokalen Margin-Hacks zur Ausrichtung einzelner Felder.
+- **Automatische Prüfung**: `npm run check:form-controls` prüft neu gestagte Svelte-Änderungen auf direkte Formularfelder. Der Check läuft zusätzlich vor jedem Commit; bei einem neuen direkten Control muss `InputField.svelte` verwendet oder der technische Sonderfall nachvollziehbar begründet werden.
 
 ## Beispiele & Patterns
 

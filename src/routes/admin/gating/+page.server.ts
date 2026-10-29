@@ -3,21 +3,12 @@ export const prerender = false;
 import type { PageServerLoad, Actions } from './$types';
 import { error } from '@sveltejs/kit';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { env } from '$env/dynamic/private';
 
 const GATING_PATH = 'gating.json';
 const SM_CONFIG_PATH = 'slicemachine.config.json';
 const SLICES_DIR = 'src/lib/slices';
 
-function checkAuth(url: URL) {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-}
-
-export const load: PageServerLoad = async ({ url }) => {
-	checkAuth(url);
-
+export const load: PageServerLoad = async () => {
 	const gating = JSON.parse(readFileSync(GATING_PATH, 'utf-8'));
 
 	const sliceNames = readdirSync(SLICES_DIR).filter((name) => {
@@ -40,8 +31,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 export const actions: Actions = {
-	save: async ({ request, url }) => {
-		checkAuth(url);
+	save: async ({ request }) => {
 		const formData = await request.formData();
 		const raw = formData.get('gating') as string;
 

@@ -19,7 +19,7 @@
 
 	/** Optionale Props */
 	export let className = 'w-full h-auto object-cover';
-	export let style: string | undefined;
+	export let style: string | undefined = undefined;
 	export let widths: number[] = [1280, 1920, 2560];
 	export let sizes = '100vw';
 	export let loading: HTMLImageElement['loading'] = 'eager';
@@ -59,6 +59,7 @@
 				dimensions: image.dimensions,
 				edit: image.edit
 			}}
+			alt={image.alt || ''}
 			{widths}
 			{sizes}
 			class={className}

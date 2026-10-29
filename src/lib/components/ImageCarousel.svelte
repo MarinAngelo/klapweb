@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -98,14 +99,22 @@
 	function inTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
 	function outTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
@@ -179,7 +188,7 @@
 		<div
 			class="carousel-container relative w-full h-full overflow-hidden"
 			role="region"
-			aria-label="Image carousel"
+			aria-label={$_('Bildkarussell')}
 		>
 			{#key currentKey}
 				<div
@@ -190,12 +199,13 @@
 					{#if has(current)}
 						<div
 							class="absolute inset-0"
-							style={transitionMode === 'Ken Burns'
-								? `animation: kb${current % 4} ${intervalMs + transitionMs}ms linear forwards;`
-								: ''}
+							style:animation={transitionMode === 'Ken Burns'
+								? `kb${current % 4} ${intervalMs + transitionMs}ms linear forwards`
+								: undefined}
 						>
 							<PrismicImage
 								field={images[current].image}
+								alt={images[current].image?.alt || ''}
 								sizes="100vw"
 								class="w-full h-full object-cover select-none pointer-events-none"
 							/>
@@ -209,7 +219,7 @@
 			<button
 				class="nav-arrow absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
 				on:click={prev}
-				aria-label="Vorheriges Bild"
+				aria-label={$_('Vorheriges Bild')}
 				type="button"
 			>
 				<span class="text-xl font-bold">&#10094;</span>
@@ -218,7 +228,7 @@
 			<button
 				class="nav-arrow absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
 				on:click={next}
-				aria-label="Nächstes Bild"
+				aria-label={$_('Nächstes Bild')}
 				type="button"
 			>
 				<span class="text-xl font-bold">&#10095;</span>
@@ -233,34 +243,51 @@
 			{/if}
 
 			<div
-				class="swipe-overlay absolute inset-0 z-[60]"
-				style="touch-action: pan-y;"
+				class="swipe-overlay absolute inset-0 z-[60] [touch-action:pan-y]"
 				on:pointerdown={onPointerDown}
 				on:pointerup={onPointerUp}
-				on:pointercancel={() => { swiping = false; }}
+				on:pointercancel={() => {
+					swiping = false;
+				}}
 			/>
 		</div>
 	</div>
 {:else}
-	<p class="sr-only">Keine Bilder vorhanden</p>
+	<p class="sr-only">{$_('Keine Bilder vorhanden')}</p>
 {/if}
 
 <style>
 	@keyframes kb0 {
-		from { transform: scale(1.0) translate(0%, 0%); }
-		to   { transform: scale(1.12) translate(0%, 0%); }
+		from {
+			transform: scale(1) translate(0%, 0%);
+		}
+		to {
+			transform: scale(1.12) translate(0%, 0%);
+		}
 	}
 	@keyframes kb1 {
-		from { transform: scale(1.12) translate(0%, 0%); }
-		to   { transform: scale(1.0) translate(0%, 0%); }
+		from {
+			transform: scale(1.12) translate(0%, 0%);
+		}
+		to {
+			transform: scale(1) translate(0%, 0%);
+		}
 	}
 	@keyframes kb2 {
-		from { transform: scale(1.08) translate(-1.5%, -0.5%); }
-		to   { transform: scale(1.08) translate(1.5%, 0.5%); }
+		from {
+			transform: scale(1.08) translate(-1.5%, -0.5%);
+		}
+		to {
+			transform: scale(1.08) translate(1.5%, 0.5%);
+		}
 	}
 	@keyframes kb3 {
-		from { transform: scale(1.08) translate(1.5%, 0.5%); }
-		to   { transform: scale(1.08) translate(-1.5%, -0.5%); }
+		from {
+			transform: scale(1.08) translate(1.5%, 0.5%);
+		}
+		to {
+			transform: scale(1.08) translate(-1.5%, -0.5%);
+		}
 	}
 
 	/* 1. Pfeile ausblenden auf allen Touch-Geräten */

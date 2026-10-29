@@ -8,7 +8,7 @@
  *   NETLIFY_SITE_ID  — Site Settings → General → Site ID
  *   NETLIFY_TOKEN    — User Settings → Applications → Personal access tokens (expiry: never)
  *
- * Admin view: /admin/rechnungen?secret=<ADMIN_SECRET>
+ * Admin view: /admin/rechnungen (Login unter /admin)
  *
  * Called from:
  *   - src/routes/admin/rechnungen/+page.server.ts (Create, Preview, Email)
@@ -58,9 +58,7 @@ function getInvoiceStore() {
 	return getStore({ name: 'manuelle_rechnungen', siteID, token });
 }
 
-export async function saveManualInvoice(
-	record: Omit<ManualInvoiceRecord, 'id'>
-): Promise<string> {
+export async function saveManualInvoice(record: Omit<ManualInvoiceRecord, 'id'>): Promise<string> {
 	const store = getInvoiceStore();
 	const id = `${Date.now()}_${crypto.randomUUID()}`;
 	await store.setJSON(id, { id, ...record });

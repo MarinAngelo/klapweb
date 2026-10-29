@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { swipe } from '$lib/actions/swipe';
 
@@ -12,8 +13,12 @@
 	let current = 0;
 	let dialog: HTMLDialogElement;
 
-	function prev() { current = (current - 1 + images.length) % images.length; }
-	function next() { current = (current + 1) % images.length; }
+	function prev() {
+		current = (current - 1 + images.length) % images.length;
+	}
+	function next() {
+		current = (current + 1) % images.length;
+	}
 
 	function openLightbox() {
 		if (!dialog) return;
@@ -31,7 +36,13 @@
 		if (e.target === dialog) closeLightbox();
 	}
 
-	$: roundClass = imageRound ? 'rounded-full' : noRound ? '' : noRoundMobile ? 'md:rounded-3xl' : 'rounded-3xl';
+	$: roundClass = imageRound
+		? 'rounded-full'
+		: noRound
+			? ''
+			: noRoundMobile
+				? 'md:rounded-3xl'
+				: 'rounded-3xl';
 	$: currentImage = images[current];
 </script>
 
@@ -43,7 +54,9 @@
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
-			class="w-full md:h-full transition-opacity duration-500 {i === current ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}"
+			class="w-full md:h-full transition-opacity duration-500 {i === current
+				? 'opacity-100'
+				: 'opacity-0 absolute inset-0 pointer-events-none'}"
 			class:lb-trigger={lightbox}
 			on:click={lightbox ? openLightbox : undefined}
 		>
@@ -59,27 +72,27 @@
 		<button
 			type="button"
 			on:click|stopPropagation={prev}
-			aria-label="Vorheriges Bild"
-			class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full"
-			style="background: rgba(0,0,0,0.35); color: #fff;"
-		>‹</button>
+			aria-label={$_('Vorheriges Bild')}
+			class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full [background:rgba(0,0,0,0.35)] [color:#fff]"
+			>‹</button
+		>
 
 		<button
 			type="button"
 			on:click|stopPropagation={next}
-			aria-label="Nächstes Bild"
-			class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full"
-			style="background: rgba(0,0,0,0.35); color: #fff;"
-		>›</button>
+			aria-label={$_('Nächstes Bild')}
+			class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full [background:rgba(0,0,0,0.35)] [color:#fff]"
+			>›</button
+		>
 
 		<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
 			{#each images as _, i}
 				<button
 					type="button"
-					on:click|stopPropagation={() => current = i}
+					on:click|stopPropagation={() => (current = i)}
 					aria-label="Bild {i + 1}"
-					class="w-2 h-2 rounded-full transition-opacity"
-					style="background: #fff; opacity: {i === current ? 1 : 0.45};"
+					class="w-2 h-2 rounded-full transition-opacity [background:#fff]"
+					style:opacity={i === current ? 1 : 0.45}
 				/>
 			{/each}
 		</div>
@@ -95,7 +108,9 @@
 		<div class="lb-content" on:click|stopPropagation>
 			<img src={currentImage.url ?? ''} alt={currentImage.alt ?? ''} class="lb-img" />
 		</div>
-		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen">×</button>
+		<button type="button" class="lb-close" on:click={closeLightbox} aria-label={$_('Schliessen')}
+			>×</button
+		>
 	</dialog>
 {/if}
 
@@ -142,15 +157,27 @@
 		transition: opacity 0.15s;
 	}
 
-	.lb-close:hover { opacity: 1; }
+	.lb-close:hover {
+		opacity: 1;
+	}
 
 	@keyframes lb-in {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	@keyframes lb-zoom {
-		from { transform: scale(0.92); opacity: 0; }
-		to { transform: scale(1); opacity: 1; }
+		from {
+			transform: scale(0.92);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 </style>

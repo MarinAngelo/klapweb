@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { theme } from '$lib/stores/theme';
 	import { t } from '$lib/i18n/translations';
 	import { get } from 'svelte/store';
 	import { isFilled } from '@prismicio/client';
@@ -24,19 +23,16 @@
 	$: variables.update((v) => ({ ...v, Dienstleistung: serviceLabel }));
 
 	$: lang = $page.data.lang || 'de-ch';
-	$: bgColor = get(theme).pageBgColor;
-	$: pageColor = get(theme).pageColor;
-	$: borderColor = get(theme).pageColor;
 
 	$: returnUrlRaw = $page.url.searchParams.get('return_url') ?? '';
 	$: backHref = returnUrlRaw.startsWith('/') ? returnUrlRaw : '/';
 </script>
 
 <svelte:head>
-	<title>Bestellung bestätigt</title>
+	<title>{t('Bestellung bestätigt', lang)}</title>
 </svelte:head>
 
-<Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
+<Bounded class="bg-page-bg text-page" as="section">
 	{#if isSimulated}
 		<div class="mb-8 px-4 py-3 border border-yellow-500 text-yellow-600 text-sm">
 			<strong>DEV-Simulation:</strong> Zahlungsart: <code>{method}</code>
@@ -60,12 +56,13 @@
 	<p class="text-lg mb-6">
 		{#if data.confirmationIntro}
 			{data.confirmationIntro}
-		{:else}
-			Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
-		{/if}
+		{:else if serviceLabel}{t('Ihre Bestellung {leistung} ist bei uns eingegangen.', lang).replace(
+				'{leistung}',
+				serviceLabel
+			)}{:else}{t('Ihre Bestellung ist bei uns eingegangen.', lang)}{/if}
 	</p>
 
-	<div class="mb-8 p-6 border" style="border-color: {borderColor};">
+	<div class="border-page mb-8 p-6 border">
 		{#if isFilled.richText(confirmationText)}
 			<PrismicRichText field={confirmationText} />
 		{:else if method === 'rechnung'}

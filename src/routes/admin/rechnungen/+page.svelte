@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import type { PageData, SubmitFunction } from './$types';
-	import { onMount } from 'svelte';
 	import { formatDateShort } from '$lib/utils/formatDate';
-	import Button from '$lib/components/Button.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 
 	export let data: PageData;
 
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
-	let adminSecret = '';
 
 	let items: Array<{ description: string; quantity: number; unitPrice: number }> = [
 		{ description: '', quantity: 1, unitPrice: 0 }
@@ -43,10 +40,6 @@
 		land: ''
 	};
 	let newCustomerLoading = false;
-
-	onMount(() => {
-		adminSecret = new URLSearchParams(window.location.search).get('secret') || '';
-	});
 
 	function getSelectedCustomer() {
 		return data.customers.find((c) => c.id === selectedCustomerId);
@@ -170,7 +163,6 @@
 		if (!confirm(`Wirklich löschen: ${invoiceNumber}?`)) return;
 
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', invoiceId);
 
 		try {
@@ -213,7 +205,6 @@
 
 		editPdfLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-number', editingInvoice.invoiceNumber);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
@@ -256,7 +247,6 @@
 
 		isLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', editingInvoiceId);
 
 		try {
@@ -291,7 +281,6 @@
 		isLoading = true;
 
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('invoice-id', editingInvoiceId);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
@@ -355,7 +344,6 @@
 
 		newCustomerLoading = true;
 		const formData = new FormData();
-		formData.set('secret', adminSecret);
 		formData.set('vorname', newCustomerForm.vorname);
 		formData.set('nachname', newCustomerForm.nachname);
 		formData.set('firma', newCustomerForm.firma);
@@ -366,7 +354,7 @@
 		formData.set('land', newCustomerForm.land);
 
 		try {
-			const res = await fetch('/admin/kunden?/create&secret=' + adminSecret, {
+			const res = await fetch('/admin/kunden?/create', {
 				method: 'POST',
 				body: formData
 			});
@@ -394,100 +382,73 @@
 	$: total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 </script>
 
-<div class="container mx-auto p-6">
-	<div class="flex items-center gap-4 mb-6">
-		<h1 class="text-3xl font-bold">Rechnungen</h1>
-		<div class="ml-auto flex items-center gap-2">
-			<Button
-				href="/admin/dashboard?secret={adminSecret}"
-				text="← Dashboard"
-				color="#374151"
-				bgColor="transparent"
-				hoverColor="#111827"
-				hoverBgColor="transparent"
-				size="sm"
-				mb={false}
-			/>
-			<form
-				method="POST"
-				action="?/deleteAll&secret={adminSecret}"
-				on:submit={(e) => {
-					if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
-				}}
-			>
-				<input type="hidden" name="secret" value={adminSecret} />
-				<Button
-					text="Alle löschen"
-					color="#dc2626"
-					bgColor="transparent"
-					hoverColor="#991b1b"
-					hoverBgColor="transparent"
-					size="sm"
-					mb={false}
-				/>
-			</form>
-		</div>
-	</div>
+<div class="admin-container">
+	<AdminHeader title="Rechnungen" count={data.invoices.length}>
+		<form
+			method="POST"
+			action="?/deleteAll"
+			on:submit={(e) => {
+				if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
+			}}
+		>
+			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
+		</form>
+	</AdminHeader>
 
 	<!-- Übersicht Rechnungen -->
-	<div class="bg-white rounded-lg shadow p-6 mb-6">
-		<h2 class="text-xl font-bold mb-4">Gespeicherte Rechnungen ({data.invoices.length})</h2>
+	<section class="admin-card">
+		<h2 class="admin-card-title">Gespeicherte Rechnungen</h2>
 
 		{#if data.invoices.length === 0}
-			<p class="text-gray-500">Noch keine Rechnungen vorhanden.</p>
+			<p class="admin-empty">Noch keine Rechnungen vorhanden.</p>
 		{:else}
-			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
+			<div class="admin-table-wrap">
+				<table class="admin-table">
 					<thead>
-						<tr class="border-b">
-							<th class="text-left py-2">Nummer</th>
-							<th class="text-left py-2">Datum</th>
-							<th class="text-left py-2">Kunde</th>
-							<th class="text-left py-2">E-Mail</th>
-							<th class="text-left py-2">Versand</th>
-							<th class="text-left py-2">Zahlung</th>
-							<th class="text-left py-2">Zahlungsart</th>
-							<th class="text-left py-2">Aktion</th>
+						<tr>
+							<th>Nummer</th>
+							<th>Datum</th>
+							<th>Kunde</th>
+							<th>E-Mail</th>
+							<th>Versand</th>
+							<th>Zahlung</th>
+							<th>Zahlungsart</th>
+							<th>Aktion</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each data.invoices as inv}
-							<tr class="border-b hover:bg-gray-50">
-								<td class="py-2 font-mono text-blue-600">{inv.invoiceNumber}</td>
-								<td class="py-2">{formatDateShort(inv.date?.slice(0, 10))}</td>
-								<td class="py-2">{inv.vorname} {inv.nachname}</td>
-								<td class="py-2 text-gray-600">{inv.email || '—'}</td>
-								<td class="py-2">
+							<tr>
+								<td class="admin-mono nowrap">{inv.invoiceNumber}</td>
+								<td>{formatDateShort(inv.date?.slice(0, 10))}</td>
+								<td>{inv.vorname} {inv.nachname}</td>
+								<td class="admin-muted">{inv.email || '—'}</td>
+								<td>
 									<span
-										class={`inline-block px-2 py-1 rounded text-xs font-medium ${
-											inv.status === 'gesendet'
-												? 'bg-green-100 text-green-800'
-												: 'bg-yellow-100 text-yellow-800'
-										}`}
+										class="admin-badge {inv.status === 'gesendet'
+											? 'admin-badge-green'
+											: 'admin-badge-yellow'}"
 									>
 										{inv.status === 'gesendet' ? '✓ gesendet' : '● gespeichert'}
 									</span>
 								</td>
-								<td class="py-2">
+								<td>
 									<span
-										class={`inline-block px-2 py-1 rounded text-xs font-medium ${inv.paymentStatus === 'bezahlt' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+										class="admin-badge {inv.paymentStatus === 'bezahlt'
+											? 'admin-badge-green'
+											: 'admin-badge-orange'}"
 									>
 										{inv.paymentStatus === 'bezahlt' ? '✓ bezahlt' : '⏱ offen'}
 									</span>
 								</td>
-								<td class="py-2">
+								<td>
 									<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
 								</td>
-								<td class="py-2 space-x-2">
-									<button
-										on:click={() => openEdit(inv.id)}
-										class="text-blue-600 hover:text-blue-800 font-medium"
-									>
-										Bearbeiten
-									</button>
+								<td class="nowrap space-x-3">
+									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>
 									<button
 										on:click={() => deleteInvoice(inv.id, inv.invoiceNumber)}
-										class="text-red-600 hover:text-red-800 font-medium"
+										class="admin-link-danger"
 									>
 										Löschen
 									</button>
@@ -498,33 +459,28 @@
 				</table>
 			</div>
 		{/if}
-	</div>
+	</section>
 
 	<!-- Neue Rechnung erstellen -->
-	<div class="bg-white rounded-lg shadow p-6">
-		<Button
-			text={isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
-			color="#ffffff"
-			bgColor="#2563eb"
-			hoverColor="#ffffff"
-			hoverBgColor="#1d4ed8"
-			size="sm"
-			mb={false}
+	<section class="admin-card">
+		<button
+			type="button"
+			class="admin-btn admin-btn-primary"
 			on:click={() => (isFormOpen = !isFormOpen)}
-		/>
+		>
+			{isFormOpen ? '✕ Formular schliessen' : '+ Neue Rechnung'}
+		</button>
 
 		{#if isFormOpen}
-			<form method="POST" action="?/preview" use:enhance={handlePreview} class="space-y-4">
-				<input type="hidden" name="secret" value={adminSecret} />
-
+			<form method="POST" action="?/preview" use:enhance={handlePreview} class="mt-4 space-y-4">
 				<!-- Kunden Auswahl -->
-				<fieldset class="border rounded p-4 bg-gray-50">
-					<legend class="px-2 font-bold">Kunde wählen</legend>
+				<fieldset class="admin-fieldset">
+					<legend>Kunde wählen</legend>
 
 					<div class="mt-4 space-y-3">
 						<div>
-							<label class="block text-sm font-medium mb-2">Bestehender Kunde</label>
-							<select bind:value={selectedCustomerId} class="w-full border rounded px-3 py-2">
+							<label class="admin-label">Bestehender Kunde</label>
+							<select bind:value={selectedCustomerId} class="admin-input">
 								<option value="">-- Kunde auswählen --</option>
 								{#each data.customers as customer}
 									<option value={customer.id}>
@@ -545,7 +501,7 @@
 							<button
 								type="button"
 								on:click={() => (isNewCustomerModalOpen = true)}
-								class="text-blue-600 hover:text-blue-800 font-medium text-sm"
+								class="admin-link text-sm"
 							>
 								+ Neuer Kunde
 							</button>
@@ -554,7 +510,7 @@
 						{#if selectedCustomerId}
 							{@const customer = getSelectedCustomer()}
 							{#if customer}
-								<div class="bg-white rounded p-3 text-sm border">
+								<div class="rounded-md border border-gray-200 bg-white p-3 text-sm">
 									<strong>{customer.vorname} {customer.nachname}</strong>
 									{#if customer.firma}
 										<div>{customer.firma}</div>
@@ -576,8 +532,8 @@
 				</fieldset>
 
 				<!-- Leistungsposten -->
-				<fieldset class="border rounded p-4 bg-gray-50">
-					<legend class="px-2 font-bold">Leistungsposten</legend>
+				<fieldset class="admin-fieldset">
+					<legend>Leistungsposten</legend>
 
 					<div class="space-y-3 mt-4">
 						{#each items as item, idx (idx)}
@@ -587,7 +543,7 @@
 									placeholder="Beschreibung"
 									value={item.description}
 									on:input={(e) => updateItem(idx, 'description', e.currentTarget.value)}
-									class="flex-1 border rounded px-2 py-1"
+									class="admin-input admin-input-sm flex-1"
 									required
 								/>
 								<input
@@ -596,7 +552,7 @@
 									placeholder="Menge"
 									value={item.quantity}
 									on:input={(e) => updateItem(idx, 'quantity', e.currentTarget.value)}
-									class="w-16 border rounded px-2 py-1"
+									class="admin-input admin-input-sm w-16"
 									required
 								/>
 								<input
@@ -605,13 +561,13 @@
 									placeholder="Preis"
 									value={item.unitPrice}
 									on:input={(e) => updateItem(idx, 'unitPrice', e.currentTarget.value)}
-									class="w-20 border rounded px-2 py-1"
+									class="admin-input admin-input-sm w-20"
 									required
 								/>
 								<button
 									type="button"
 									on:click={() => removeItem(idx)}
-									class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+									class="admin-btn admin-btn-danger admin-btn-sm"
 								>
 									−
 								</button>
@@ -619,122 +575,118 @@
 						{/each}
 					</div>
 
-					<button
-						type="button"
-						on:click={addItem}
-						class="mt-3 bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500 text-sm"
-					>
+					<button type="button" on:click={addItem} class="admin-btn admin-btn-sm mt-3">
 						+ Posten hinzufügen
 					</button>
 
-					<div class="mt-4 pt-4 border-t font-bold text-lg">
+					<div class="mt-4 border-t border-gray-200 pt-4 text-lg font-bold">
 						Total: {data.companyInfo.currency}
 						{total.toFixed(2)}
 					</div>
 				</fieldset>
 
 				<!-- Notizen -->
-				<fieldset class="border rounded p-4 bg-gray-50">
-					<legend class="px-2 font-bold">Notizen (optional)</legend>
+				<fieldset class="admin-fieldset">
+					<legend>Notizen (optional)</legend>
 					<textarea
 						name="notes"
 						placeholder="Z.B. Zahlungsweiterleitung, Referenz, etc."
 						bind:value={notes}
-						class="w-full border rounded px-2 py-1 mt-2 h-20"
+						class="admin-input mt-2 h-20"
 					/>
 				</fieldset>
 
 				<button
 					type="submit"
 					disabled={isLoading || !selectedCustomerId}
-					class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+					class="admin-btn admin-btn-primary"
 				>
 					{isLoading ? 'Wird generiert...' : '📄 PDF Vorschau'}
 				</button>
 			</form>
 		{/if}
-	</div>
+	</section>
 
 	<!-- Neuer Kunde Modal -->
 	{#if isNewCustomerModalOpen}
-		<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-			<div class="bg-white rounded-lg max-w-md w-full">
-				<div class="p-6">
-					<h2 class="text-xl font-bold mb-4">Neuer Kunde</h2>
+		<div class="admin-modal-backdrop">
+			<div class="admin-modal max-w-md">
+				<div>
+					<h2 class="mb-4">Neuer Kunde</h2>
 
 					<div class="space-y-3">
 						<div>
-							<label class="block text-sm font-medium mb-1">Vorname *</label>
+							<label class="admin-label">Vorname *</label>
 							<input
 								type="text"
 								bind:value={newCustomerForm.vorname}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 								required
 							/>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium mb-1">Nachname *</label>
+							<label class="admin-label">Nachname *</label>
 							<input
 								type="text"
 								bind:value={newCustomerForm.nachname}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 								required
 							/>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium mb-1">Firma</label>
+							<label class="admin-label">Firma</label>
 							<input
 								type="text"
 								bind:value={newCustomerForm.firma}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 							/>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium mb-1">E-Mail</label>
+							<label class="admin-label">E-Mail</label>
 							<input
 								type="email"
 								bind:value={newCustomerForm.email}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 							/>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium mb-1">Adresse</label>
+							<label class="admin-label">Adresse</label>
 							<input
 								type="text"
 								bind:value={newCustomerForm.adresse}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 							/>
 						</div>
 
 						<div class="grid grid-cols-2 gap-2">
 							<div>
-								<label class="block text-sm font-medium mb-1">PLZ</label>
+								<label class="admin-label">PLZ</label>
 								<input
 									type="text"
 									bind:value={newCustomerForm.plz}
-									class="w-full border rounded px-2 py-1"
+									class="admin-input admin-input-sm"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium mb-1">Ort</label>
+								<label class="admin-label">Ort</label>
 								<input
 									type="text"
 									bind:value={newCustomerForm.ort}
-									class="w-full border rounded px-2 py-1"
+									class="admin-input admin-input-sm"
 								/>
 							</div>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium mb-1">Land</label>
+							<label class="admin-label">Land</label>
 							<input
 								type="text"
 								bind:value={newCustomerForm.land}
-								class="w-full border rounded px-2 py-1"
+								class="admin-input admin-input-sm"
 							/>
 						</div>
 					</div>
@@ -743,7 +695,7 @@
 						<button
 							type="button"
 							on:click={() => (isNewCustomerModalOpen = false)}
-							class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+							class="admin-btn"
 						>
 							Abbrechen
 						</button>
@@ -751,7 +703,7 @@
 							type="button"
 							on:click={saveNewCustomer}
 							disabled={newCustomerLoading}
-							class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
+							class="admin-btn admin-btn-success"
 						>
 							{newCustomerLoading ? 'Wird gespeichert...' : '✓ Speichern'}
 						</button>
@@ -763,34 +715,28 @@
 
 	<!-- Edit Modal (unverändert) -->
 	{#if isEditModalOpen && editingInvoice}
-		<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-			<div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-auto">
-				<div class="p-6">
+		<div class="admin-modal-backdrop">
+			<div class="admin-modal">
+				<div>
 					<div class="flex justify-between items-center mb-4">
-						<h2 class="text-xl font-bold">Rechnung {editingInvoice.invoiceNumber}</h2>
+						<h2>Rechnung {editingInvoice.invoiceNumber}</h2>
 					</div>
 
 					<!-- Tabs -->
-					<div class="flex gap-2 mb-4 border-b">
+					<div class="admin-tabs">
 						<button
 							type="button"
 							on:click={() => (editModalTab = 'view')}
-							class={`px-4 py-2 font-medium ${
-								editModalTab === 'view'
-									? 'border-b-2 border-blue-600 text-blue-600'
-									: 'text-gray-600 hover:text-gray-900'
-							}`}
+							class="admin-tab"
+							class:is-active={editModalTab === 'view'}
 						>
 							👁️ Anzeigen
 						</button>
 						<button
 							type="button"
 							on:click={() => (editModalTab = 'edit')}
-							class={`px-4 py-2 font-medium ${
-								editModalTab === 'edit'
-									? 'border-b-2 border-blue-600 text-blue-600'
-									: 'text-gray-600 hover:text-gray-900'
-							}`}
+							class="admin-tab"
+							class:is-active={editModalTab === 'edit'}
 						>
 							✎ Bearbeiten
 						</button>
@@ -798,11 +744,8 @@
 							type="button"
 							on:click={generateEditPdf}
 							disabled={editPdfLoading}
-							class={`px-4 py-2 font-medium ${
-								editModalTab === 'pdf'
-									? 'border-b-2 border-blue-600 text-blue-600'
-									: 'text-gray-600 hover:text-gray-900'
-							} ${editPdfLoading ? 'opacity-50' : ''}`}
+							class="admin-tab"
+							class:is-active={editModalTab === 'pdf'}
 						>
 							📄 PDF {editPdfLoading ? '(wird geladen...)' : ''}
 						</button>
@@ -811,62 +754,62 @@
 					{#if editModalTab === 'edit'}
 						<!-- Edit Form -->
 						<div class="space-y-4">
-							<fieldset class="border rounded p-4 bg-gray-50">
-								<legend class="px-2 font-bold">Kundenangaben</legend>
+							<fieldset class="admin-fieldset">
+								<legend>Kundenangaben</legend>
 								<div class="grid grid-cols-2 gap-4 mt-4">
 									<input
 										type="text"
 										placeholder="Vorname"
 										bind:value={editingInvoice.vorname}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="text"
 										placeholder="Nachname"
 										bind:value={editingInvoice.nachname}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="text"
 										placeholder="Firma"
 										bind:value={editingInvoice.firma}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="email"
 										placeholder="E-Mail"
 										bind:value={editingInvoice.email}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="text"
 										placeholder="Adresse"
 										bind:value={editingInvoice.adresse}
-										class="border rounded px-2 py-1 col-span-2"
+										class="admin-input admin-input-sm col-span-2"
 									/>
 									<input
 										type="text"
 										placeholder="PLZ"
 										bind:value={editingInvoice.plz}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="text"
 										placeholder="Ort"
 										bind:value={editingInvoice.ort}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 									<input
 										type="text"
 										placeholder="Land"
 										bind:value={editingInvoice.land}
-										class="border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									/>
 								</div>
 							</fieldset>
 
-							<fieldset class="border rounded p-4 bg-gray-50">
-								<legend class="px-2 font-bold">Leistungsposten</legend>
+							<fieldset class="admin-fieldset">
+								<legend>Leistungsposten</legend>
 								<div class="space-y-3 mt-4">
 									{#each editingInvoice.items as item, idx (idx)}
 										<div class="flex gap-2 items-end">
@@ -874,7 +817,7 @@
 												type="text"
 												placeholder="Beschreibung"
 												bind:value={item.description}
-												class="flex-1 border rounded px-2 py-1"
+												class="admin-input admin-input-sm flex-1"
 											/>
 											<input
 												type="number"
@@ -882,7 +825,7 @@
 												bind:value={item.quantity}
 												min="1"
 												step="1"
-												class="w-16 border rounded px-2 py-1"
+												class="admin-input admin-input-sm w-16"
 											/>
 											<input
 												type="number"
@@ -890,14 +833,14 @@
 												bind:value={item.unitPrice}
 												min="0"
 												step="0.01"
-												class="w-20 border rounded px-2 py-1"
+												class="admin-input admin-input-sm w-20"
 											/>
 											<button
 												type="button"
 												on:click={() => {
 													editingInvoice.items = editingInvoice.items.filter((_, i) => i !== idx);
 												}}
-												class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+												class="admin-btn admin-btn-danger admin-btn-sm"
 											>
 												−
 											</button>
@@ -913,27 +856,27 @@
 											{ description: '', quantity: 1, unitPrice: 0 }
 										];
 									}}
-									class="mt-3 bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500 text-sm"
+									class="admin-btn admin-btn-sm mt-3"
 								>
 									+ Posten hinzufügen
 								</button>
 							</fieldset>
 
-							<fieldset class="border rounded p-4 bg-gray-50">
-								<legend class="px-2 font-bold">Notizen</legend>
+							<fieldset class="admin-fieldset">
+								<legend>Notizen</legend>
 								<textarea
 									placeholder="Notizen"
 									bind:value={editingInvoice.notes}
-									class="w-full border rounded px-2 py-1 mt-2 h-20"
+									class="admin-input mt-2 h-20"
 								/>
 							</fieldset>
 
-							<fieldset class="border rounded p-4 bg-gray-50">
-								<legend class="px-2 font-bold">Zahlungsstatus</legend>
+							<fieldset class="admin-fieldset">
+								<legend>Zahlungsstatus</legend>
 								<div class="mt-2">
 									<select
 										bind:value={editingInvoice.paymentStatus}
-										class="w-full border rounded px-2 py-1"
+										class="admin-input admin-input-sm"
 									>
 										<option value="offen">⏱ offen</option>
 										<option value="bezahlt">✓ bezahlt</option>
@@ -970,21 +913,21 @@
 
 							<div>
 								<strong>Leistungsposten:</strong>
-								<table class="w-full text-xs mt-2 border">
+								<table class="admin-table admin-subtable mt-2">
 									<thead>
-										<tr class="bg-gray-100">
-											<th class="border px-2 py-1 text-left">Beschreibung</th>
-											<th class="border px-2 py-1 text-right w-16">Menge</th>
-											<th class="border px-2 py-1 text-right w-20">Preis</th>
-											<th class="border px-2 py-1 text-right w-20">Total</th>
+										<tr>
+											<th>Beschreibung</th>
+											<th class="w-16 text-right">Menge</th>
+											<th class="w-20 text-right">Preis</th>
+											<th class="w-20 text-right">Total</th>
 										</tr>
 									</thead>
 									<tbody>
 										{#each editingInvoice.items as item}
-											<tr class="border-b">
-												<td class="border px-2 py-1">{item.description}</td>
-												<td class="border px-2 py-1 text-right">{item.quantity}</td>
-												<td class="border px-2 py-1 text-right">{item.unitPrice.toFixed(2)}</td>
+											<tr>
+												<td>{item.description}</td>
+												<td class="text-right">{item.quantity}</td>
+												<td class="text-right">{item.unitPrice.toFixed(2)}</td>
 												<td class="border px-2 py-1 text-right"
 													>{(item.quantity * item.unitPrice).toFixed(2)}</td
 												>
@@ -997,13 +940,13 @@
 							{#if editingInvoice.notes}
 								<div>
 									<strong>Notizen:</strong>
-									<p class="text-gray-600">{editingInvoice.notes}</p>
+									<p class="admin-muted">{editingInvoice.notes}</p>
 								</div>
 							{/if}
 						</div>
 					{:else if editModalTab === 'pdf' && editPdfBase64}
 						<!-- PDF View -->
-						<div class="border rounded p-4 bg-gray-50 h-96">
+						<div class="h-96 rounded-md border border-gray-200 bg-gray-50 p-4">
 							<iframe
 								title="PDF Preview"
 								src="data:application/pdf;base64,{editPdfBase64}"
@@ -1018,12 +961,12 @@
 								<button
 									on:click={sendInvoiceEmail}
 									disabled={isLoading}
-									class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+									class="admin-btn admin-btn-primary"
 								>
 									{isLoading ? 'Wird versendet...' : '📧 Versenden'}
 								</button>
 							{:else if editingInvoice?.status === 'gesendet'}
-								<span class="text-green-600 font-medium">✓ Versendet</span>
+								<span class="admin-badge admin-badge-green">✓ Versendet</span>
 							{/if}
 						</div>
 						<div class="space-x-2">
@@ -1031,16 +974,12 @@
 								<button
 									on:click={saveEdit}
 									disabled={isLoading}
-									class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
+									class="admin-btn admin-btn-success"
 								>
 									{isLoading ? 'Wird gespeichert...' : '💾 Speichern'}
 								</button>
 							{/if}
-							<button
-								type="button"
-								on:click={() => (isEditModalOpen = false)}
-								class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-							>
+							<button type="button" on:click={() => (isEditModalOpen = false)} class="admin-btn">
 								Schließen
 							</button>
 						</div>
@@ -1052,12 +991,12 @@
 
 	<!-- PDF Vorschau & Speichern -->
 	{#if isPreviewOpen && previewPdfBase64}
-		<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-			<div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-auto">
-				<div class="p-6">
-					<h2 class="text-xl font-bold mb-4">Rechnung {currentInvoiceNumber}</h2>
+		<div class="admin-modal-backdrop">
+			<div class="admin-modal max-w-4xl">
+				<div>
+					<h2 class="mb-4">Rechnung {currentInvoiceNumber}</h2>
 
-					<div class="mb-4 border rounded p-4 bg-gray-50 h-96">
+					<div class="mb-4 h-96 rounded-md border border-gray-200 bg-gray-50 p-4">
 						<iframe
 							title="PDF Preview"
 							src="data:application/pdf;base64,{previewPdfBase64}"
@@ -1066,10 +1005,9 @@
 					</div>
 
 					<form method="POST" action="?/save" use:enhance={handleSave} class="space-y-4">
-						<input type="hidden" name="secret" value={adminSecret} />
 						<input type="hidden" name="notes" value={notes} />
 						<label class="flex items-center gap-2">
-							<input type="checkbox" bind:checked={sendEmail} class="rounded" />
+							<input type="checkbox" bind:checked={sendEmail} class="admin-checkbox" />
 							<span>E-Mail an Kunde senden</span>
 						</label>
 
@@ -1080,22 +1018,14 @@
 									isPreviewOpen = false;
 									downloadPdf();
 								}}
-								class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+								class="admin-btn"
 							>
 								⬇ Speichern & Download
 							</button>
-							<button
-								type="submit"
-								disabled={isLoading}
-								class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
-							>
+							<button type="submit" disabled={isLoading} class="admin-btn admin-btn-success">
 								{isLoading ? 'Wird gespeichert...' : '✓ Speichern'}
 							</button>
-							<button
-								type="button"
-								on:click={() => (isPreviewOpen = false)}
-								class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-							>
+							<button type="button" on:click={() => (isPreviewOpen = false)} class="admin-btn">
 								Abbrechen
 							</button>
 						</div>
@@ -1105,9 +1035,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	:global(body) {
-		@apply bg-gray-100;
-	}
-</style>

@@ -1,9 +1,12 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error, redirect, isRedirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
+import { isAdmin } from '$lib/server/adminAuth';
+import { hasPageAccess } from '$lib/server/pageAuth';
 
 export interface AddonRow {
 	label: string;
@@ -20,7 +23,8 @@ export interface PlaeneFeature {
 
 export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
-	const client = createClient({ fetch });
+	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
+	const client = createClient({ fetch, cookies });
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
@@ -40,13 +44,16 @@ export async function load({ params, parent, fetch, cookies }) {
 				: []
 		});
 
-		// Password protection
+		// Password protection – angemeldete Admins (Session-Cookie) sehen die Seite ohne Passwort
 		if ((page.data as any).password_protected === true) {
-			const pagePassword = (settings.data as any).page_password as string | null;
-			const authCookie = cookies.get('klap_auth');
-			if (!pagePassword || authCookie !== pagePassword) {
-				const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
-				throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+			const isAdminBypass = isAdmin(cookies);
+
+			if (!isAdminBypass) {
+				const pagePassword = (settings.data as any).page_password as string | null;
+				if (!hasPageAccess(cookies, pagePassword)) {
+					const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
+					throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+				}
 			}
 		}
 
@@ -238,14 +245,17 @@ export async function load({ params, parent, fetch, cookies }) {
 /** @type {import('./$types').EntryGenerator} */
 export async function entries() {
 	const client = createClient();
-	const pages = await client.getAllByType('page', { lang: '*' });
+	const [pages, mainLang] = await Promise.all([
+		client.getAllByType('page', { lang: '*' }),
+		getMainLang(client)
+	]);
 
 	return pages
 		.map((page) => {
 			if (page.uid === 'home') return null;
 			if (page.uid === 'beauftragung') return null; // static route
 			return {
-				lang: page.lang,
+				...langParam(page.lang, mainLang),
 				uid: page.uid
 			};
 		})

@@ -1,5 +1,5 @@
 /**
- * GET /api/bestaetige-buchung?id=...&secret=...
+ * GET /api/bestaetige-buchung?id=...&token=...  (token = adminActionToken('bestaetige-buchung', id))
  *
  * Bestätigt eine Buchungsanfrage und sendet die Bestätigungsmail an den Mieter.
  *
@@ -7,23 +7,29 @@
  *   {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
 import { getRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
+import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
+import {
+	bestaetigungFallbackText,
+	bestaetigungTokens,
+	fallbackSubject,
+	getRessourceDocForBooking
+} from '$lib/server/ressourceMail';
 
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
-
-export const GET: RequestHandler = async ({ url, fetch }) => {
+export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const id = url.searchParams.get('id');
-	const secret = url.searchParams.get('secret');
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (!adminSecret || secret !== adminSecret) {
+	if (!isAuthorizedAdminAction('bestaetige-buchung', id ?? '', url, cookies)) {
 		return html(403, 'Kein Zugriff');
 	}
 	if (!id) {
@@ -44,7 +50,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	if (buchung.status === 'confirmed' && !forceResend) {
 		return html(
 			200,
-			`Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt. <a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(secret ?? '')}&resend=true">Bestätigungsmail erneut senden</a>`
+			`Buchung von ${buchung.name ?? '–'} (${buchung.von} – ${buchung.bis}) wurde bereits bestätigt. <a href="?id=${encodeURIComponent(id)}&token=${adminActionToken('bestaetige-buchung', id)}&resend=true">Bestätigungsmail erneut senden</a>`
 		);
 	}
 
@@ -60,60 +66,49 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	// Ankunftserinnerung sofort senden wenn Ankunft < 48h
 	await maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 
-	// ── Datums- und Preisformatierung ─────────────────────────────────────────
-	const vonFormatted = formatDateWithWeekday(buchung.von, null, 'de-CH', 'long');
-	const bisFormatted = formatDateWithWeekday(buchung.bis, null, 'de-CH', 'long');
-	const naechte = Math.round(
-		(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
-	);
-	const preisFormatted = new Intl.NumberFormat('de-CH', {
-		style: 'currency',
-		currency: 'CHF'
-	}).format(buchung.preisCHF);
-
-	const zimmerauswahl = buchung.zimmerauswahl ?? [];
-	const zimmerHtml = zimmerauswahl.length
-		? `<ul>${zimmerauswahl.map((z) => `<li>${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})</li>`).join('')}</ul>`
-		: 'Ganze Wohnung';
-
-	const tokenMap: Record<string, string> = {
-		Name: buchung.name ?? '',
-		Ressource: buchung.ressourceName ?? buchung.ressourceUid,
-		RessourceUid: buchung.ressourceUid,
-		Anreise: vonFormatted,
-		Abreise: bisFormatted,
-		Nächte: String(naechte),
-		Personen: String(buchung.personen),
-		Zimmer: zimmerHtml,
-		Total: preisFormatted,
-		Buchungsreferenz: buchung.referenz ?? buchung.id
-	};
-
-	// ── CMS-Template laden (immer, unabhängig von Mail-Env-Vars) ─────────────
-	let betreff = `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`;
+	// ── CMS-Template in der Buchungssprache laden (Fallback: Hauptsprache) ───
+	let ressourceName: string | undefined;
 	let mailHtml: string | null = null;
+	let cmsBetreff = '';
+	// Page colours (active theme) for the mail layout
+	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
+	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
+	let vars: ReturnType<typeof mailVariables> = {};
+	let cmsTextField: prismic.RichTextField | undefined;
 	let cmsDebug = '';
 
 	try {
 		const client = createClient({ fetch });
-		const doc = await client.getByUID('ressource', buchung.ressourceUid);
+		const [doc, variablesData, theme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
+		]);
+		mailTheme = theme;
+		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
-
-		const cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim();
-		if (cmsBetreff) betreff = replaceTokens(cmsBetreff, tokenMap);
-
-		const cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
-		cmsDebug = `Prismic OK — uid=${buchung.ressourceUid}, betreff="${cmsBetreff ?? '(leer)'}", text.length=${cmsTextField?.length ?? 0}`;
-		if (cmsTextField?.length) {
-			mailHtml = replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap);
-		}
+		ressourceName = d.name;
+		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
+		cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
+		cmsDebug = `Prismic OK — uid=${buchung.ressourceUid}, lang=${doc.lang}, betreff="${cmsBetreff || '(leer)'}", text.length=${cmsTextField?.length ?? 0}`;
 	} catch (err) {
 		cmsDebug = `Prismic Fehler: ${err}`;
 	}
 
+	const tokenMap = bestaetigungTokens(buchung, ressourceName);
+	const betreff = cmsBetreff
+		? renderMailText(cmsBetreff, tokenMap, vars)
+		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
+	if (cmsTextField?.length) {
+		mailHtml = wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
+			lang: buchung.lang,
+			subject: betreff
+		});
+	}
+
 	// ── Mail senden ───────────────────────────────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	let mailGesendet = false;
 	let mailFehler = '';
 
@@ -137,31 +132,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 			}
 		} else {
 			// Fallback: plain text
-			const zimmerZeilen = zimmerauswahl.map(
-				(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
-			);
-			const plainText = [
-				`Guten Tag ${buchung.name}`,
-				``,
-				`Ihre Buchungsanfrage wurde bestätigt.`,
-				``,
-				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid} (${buchung.ressourceUid})`,
-				`Anreise:   ${vonFormatted}`,
-				`Abreise:   ${bisFormatted}`,
-				`Nächte:    ${naechte}`,
-				`Personen:  ${buchung.personen}`,
-				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
-				`Total:     ${preisFormatted}`,
-				``,
-				`Ihre Buchungsreferenz:`,
-				``,
-				`${buchung.referenz ?? buchung.id}`,
-				`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
-				``,
-				`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
-				``,
-				`Freundliche Grüsse`
-			].join('\n');
+			const plainText = bestaetigungFallbackText(buchung, tokenMap);
 
 			try {
 				const { Resend } = await import('resend');

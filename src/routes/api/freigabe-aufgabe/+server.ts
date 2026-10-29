@@ -1,5 +1,5 @@
 /**
- * GET /api/freigabe-aufgabe?id=...&secret=...
+ * GET /api/freigabe-aufgabe?id=...&token=...  (token = adminActionToken('freigabe-aufgabe', id))
  *
  * Bestätigt eine Aufgaben-Annahme und sendet die Bestätigungsmail an den Nutzer.
  * Link wird dem Betreiber per E-Mail zugestellt.
@@ -7,13 +7,12 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { getAnnahme, updateAnnahme } from '$lib/server/aufgaben';
 import { env } from '$env/dynamic/private';
+import { isAuthorizedAdminAction } from '$lib/server/adminAuth';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, cookies }) => {
 	const id = url.searchParams.get('id');
-	const secret = url.searchParams.get('secret');
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (!adminSecret || secret !== adminSecret) return html(403, 'Kein Zugriff');
+	if (!isAuthorizedAdminAction('freigabe-aufgabe', id ?? '', url, cookies))
+		return html(403, 'Kein Zugriff');
 	if (!id) return html(400, 'Annahme-ID fehlt');
 
 	let annahme;
@@ -29,46 +28,56 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	try {
-		await updateAnnahme(id, { status: 'annahme_bestaetigt', bestaetgtAt: new Date().toISOString() });
+		await updateAnnahme(id, {
+			status: 'annahme_bestaetigt',
+			bestaetgtAt: new Date().toISOString()
+		});
 	} catch (e) {
 		return html(500, `Fehler beim Freigeben: ${e}`);
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 
 	if (resendKey && emailFrom && annahme.email) {
-		import('resend').then(({ Resend }) => {
-			const resend = new Resend(resendKey);
-			resend.emails.send({
-				from: emailFrom,
-				to: annahme!.email!,
-				subject: `Aufgabe bestätigt: ${annahme!.aufgabeTitel}`,
-				text: [
-					`Guten Tag ${annahme!.name}`,
-					``,
-					`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
-					``,
-					`Aufgabe: ${annahme!.aufgabeTitel}`,
-					`Credits: ${annahme!.creditTyp === 'fest' ? `${annahme!.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
-					``,
-					`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
-					`Buchungs-ID: ${annahme!.buchungId}`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
-			}).then(({ error: e }) => {
-				if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
-			});
-		}).catch((e) => console.error('Resend import fehlgeschlagen:', e));
+		import('resend')
+			.then(({ Resend }) => {
+				const resend = new Resend(resendKey);
+				resend.emails
+					.send({
+						from: emailFrom,
+						to: annahme!.email!,
+						subject: `Aufgabe bestätigt: ${annahme!.aufgabeTitel}`,
+						text: [
+							`Guten Tag ${annahme!.name}`,
+							``,
+							`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
+							``,
+							`Aufgabe: ${annahme!.aufgabeTitel}`,
+							`Credits: ${annahme!.creditTyp === 'fest' ? `${annahme!.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
+							``,
+							`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
+							`Buchungs-ID: ${annahme!.buchungId}`,
+							``,
+							`Freundliche Grüsse`
+						].join('\n')
+					})
+					.then(({ error: e }) => {
+						if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
+					});
+			})
+			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	}
 
-	return html(200, `
+	return html(
+		200,
+		`
 		<strong>Aufgabe freigegeben ✓</strong><br><br>
 		Nutzer: ${annahme.name} (${annahme.email ?? '–'})<br>
 		Aufgabe: ${annahme.aufgabeTitel}<br>
 		${annahme.email ? `Bestätigungsmail wurde an <strong>${annahme.email}</strong> gesendet.` : 'Keine E-Mail hinterlegt.'}
-	`);
+	`
+	);
 };
 
 function html(status: number, body: string) {

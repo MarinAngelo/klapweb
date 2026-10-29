@@ -162,7 +162,7 @@ export const translations: Record<string, Record<string, string>> = {
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
 	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
 	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
-	GoogleMapEinbetten: { 'de-ch': 'GoogleMapEinbetten', 'en-us': 'Embed Google Map' },
+	MapEinbetten: { 'de-ch': 'MapEinbetten', 'en-us': 'Embed map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
 	Kacheln: { 'de-ch': 'Kacheln', 'en-us': 'Tiles' },
@@ -203,10 +203,11 @@ export const translations: Record<string, Record<string, string>> = {
 	'2 Spalten': { 'de-ch': '2 Spalten', 'en-us': '2 Columns' },
 	'Bild Links (Vorher)': { 'de-ch': 'Bild Links (Vorher)', 'en-us': 'Image Left (Before)' },
 	'Bild Rechts (Nachher)': { 'de-ch': 'Bild Rechts (Nachher)', 'en-us': 'Image Right (After)' },
-	'Abstand oben / unten gleich': {
-		'de-ch': 'Abstand oben / unten gleich',
+	'Innerer Abstand oben / unten gleich': {
+		'de-ch': 'Innerer Abstand oben / unten gleich',
 		'en-us': 'Equal top/bottom spacing'
 	},
+	'Nach oben': { 'de-ch': 'Nach oben', 'en-us': 'Back to top' },
 	'Animation aktivieren': { 'de-ch': 'Animation aktivieren', 'en-us': 'Enable animation' },
 	'Animations-Richtung': { 'de-ch': 'Animations-Richtung', 'en-us': 'Animation direction' },
 	'Animationsdauer (ms)': { 'de-ch': 'Animationsdauer (ms)', 'en-us': 'Animation duration (ms)' },
@@ -295,6 +296,15 @@ export const translations: Record<string, Record<string, string>> = {
 	Unten: { 'de-ch': 'Unten', 'en-us': 'Bottom' },
 	'kein Abstand': { 'de-ch': 'kein Abstand', 'en-us': 'No spacing' },
 	wenig: { 'de-ch': 'wenig', 'en-us': 'Little' },
+	'Leider gibt es für diese Seite noch keine Übersetzung.': {
+		'de-ch': 'Leider gibt es für diese Seite noch keine Übersetzung.',
+		'en-us': 'Unfortunately, there is no translation for this page yet.'
+	},
+	'Weiterleitung zur Version auf {sprache} in {n} Sekunden …': {
+		'de-ch': 'Weiterleitung zur Version auf {sprache} in {n} Sekunden …',
+		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
+	},
+	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
@@ -743,6 +753,7 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	// Aufgaben Slice
 	'Buchungs-ID': { 'de-ch': 'Buchungs-ID', 'en-us': 'Booking ID' },
+	'Buchungs-Referenz': { 'de-ch': 'Buchungs-Referenz', 'en-us': 'Booking reference' },
 	'Mit Buchungs-ID anmelden': {
 		'de-ch': 'Mit Buchungs-ID anmelden',
 		'en-us': 'Log in with booking ID'
@@ -755,10 +766,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Aufgaben: { 'de-ch': 'Aufgaben', 'en-us': 'Tasks' },
 	'Aufgabe annehmen': { 'de-ch': 'Aufgabe annehmen', 'en-us': 'Accept task' },
 	'Aufgabe abgeben': { 'de-ch': 'Aufgabe abgeben', 'en-us': 'Submit task' },
-	'Aufgabe bereits angenommen': {
-		'de-ch': 'Aufgabe bereits angenommen',
-		'en-us': 'Task already accepted'
-	},
 	Angenommen: { 'de-ch': 'Angenommen', 'en-us': 'Accepted' },
 	Erledigt: { 'de-ch': 'Erledigt', 'en-us': 'Done' },
 	'Credits verdient': { 'de-ch': 'Credits verdient', 'en-us': 'Credits earned' },
@@ -773,11 +780,336 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Abgabe fehlgeschlagen': { 'de-ch': 'Abgabe fehlgeschlagen', 'en-us': 'Submission failed' },
 	Einloggen: { 'de-ch': 'Anmelden', 'en-us': 'Log in' },
+	Abbrechen: { 'de-ch': 'Abbrechen', 'en-us': 'Cancel' },
+	'Angemeldet bleiben ({tage} Tage)': {
+		'de-ch': 'Angemeldet bleiben ({tage} Tage)',
+		'en-us': 'Remember me ({tage} days)'
+	},
+	'Noch kein Konto? Registrieren': {
+		'de-ch': 'Noch kein Konto? Registrieren',
+		'en-us': 'No account yet? Sign up'
+	},
+	'Passwort vergessen?': { 'de-ch': 'Passwort vergessen?', 'en-us': 'Forgot password?' },
+	'E-Mail oder Passwort ungültig': {
+		'de-ch': 'E-Mail oder Passwort ungültig',
+		'en-us': 'Invalid email or password'
+	},
+	'E-Mail und Passwort erforderlich': {
+		'de-ch': 'E-Mail und Passwort erforderlich',
+		'en-us': 'Email and password required'
+	},
+	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Jetzt beauftragen': { 'de-ch': 'Jetzt beauftragen', 'en-us': 'Order now' },
+	Gesamtpreis: { 'de-ch': 'Gesamtpreis', 'en-us': 'Total price' },
+	Rabatt: { 'de-ch': 'Rabatt', 'en-us': 'Discount' },
+	'Anzahlung nach Auftragserteilung': {
+		'de-ch': 'Anzahlung nach Auftragserteilung',
+		'en-us': 'Deposit after placing the order'
+	},
+	'Inhalte filtern nach Plan:': {
+		'de-ch': 'Inhalte filtern nach Plan:',
+		'en-us': 'Filter content by plan:'
+	},
+	'Suchen …': { 'de-ch': 'Suchen …', 'en-us': 'Search …' },
+	Startseite: { 'de-ch': 'Startseite', 'en-us': 'Home page' },
+	Termin: { 'de-ch': 'Termin', 'en-us': 'Appointment' },
+	'Unbekannter Token': { 'de-ch': 'Unbekannter Token', 'en-us': 'Unknown token' },
+	'Meintest du': { 'de-ch': 'Meintest du', 'en-us': 'Did you mean' },
+	'Token-Namen prüfen oder im Dokument Variablen anlegen': {
+		'de-ch': 'Token-Namen prüfen oder im Dokument Variablen anlegen',
+		'en-us': 'Check the token name or create it in the Variables document'
+	},
+	'Link- und Token-Probleme': {
+		'de-ch': 'Link- und Token-Probleme',
+		'en-us': 'Link and token problems'
+	},
+	'Inhalte prüfen': { 'de-ch': 'Inhalte prüfen', 'en-us': 'Check content' },
+	'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden': {
+		'de-ch': 'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden',
+		'en-us': 'Find missing translations and broken links in Prismic'
+	},
+	'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.': {
+		'de-ch': 'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.',
+		'en-us': 'Prismic is unreachable, the check could not run.'
+	},
+	'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.': {
+		'de-ch': 'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.',
+		'en-us': 'All good: no missing translations and no link problems.'
+	},
+	'Link-Probleme': { 'de-ch': 'Link-Probleme', 'en-us': 'Link problems' },
+	Dokument: { 'de-ch': 'Dokument', 'en-us': 'Document' },
+	Problem: { 'de-ch': 'Problem', 'en-us': 'Problem' },
+	Lösung: { 'de-ch': 'Lösung', 'en-us': 'Solution' },
+	'Web-Link ohne «/» am Anfang': {
+		'de-ch': 'Web-Link ohne «/» am Anfang',
+		'en-us': 'Web link without leading «/»'
+	},
+	'«/» voranstellen oder als Link auf ein Prismic-Dokument setzen': {
+		'de-ch': '«/» voranstellen oder als Link auf ein Prismic-Dokument setzen',
+		'en-us': 'Add a leading «/» or link to a Prismic document instead'
+	},
+	'Verlinkt die Version in der Hauptsprache': {
+		'de-ch': 'Verlinkt die Version in der Hauptsprache',
+		'en-us': 'Links to the main language version'
+	},
+	'Übersetzung verlinken': { 'de-ch': 'Übersetzung verlinken', 'en-us': 'Link the translation' },
+	'In Prismic öffnen': { 'de-ch': 'In Prismic öffnen', 'en-us': 'Open in Prismic' },
+	'Fehlende Übersetzungen': { 'de-ch': 'Fehlende Übersetzungen', 'en-us': 'Missing translations' },
+	'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.':
+		{
+			'de-ch':
+				'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.',
+			'en-us':
+				'Visitors see a notice and the main language version instead. In Prismic: open the document → choose the language → «Create translation» → publish.'
+		},
+	'Fehlt in': { 'de-ch': 'Fehlt in', 'en-us': 'Missing in' },
+	'Diese Seite ist noch nicht übersetzt.': {
+		'de-ch': 'Diese Seite ist noch nicht übersetzt.',
+		'en-us': 'This page has not been translated yet.'
+	},
+	'Die Seite wird auf {sprache} angezeigt ({n} s) …': {
+		'de-ch': 'Die Seite wird auf {sprache} angezeigt ({n} s) …',
+		'en-us': 'This page is shown in {sprache} ({n} s) …'
+	},
+	OK: { 'de-ch': 'OK', 'en-us': 'OK' },
+	'Tag wählen': { 'de-ch': 'Tag wählen', 'en-us': 'Select day' },
+	'Tag ändern': { 'de-ch': 'Tag ändern', 'en-us': 'Change day' },
+	'Zeit wählen': { 'de-ch': 'Zeit wählen', 'en-us': 'Select time' },
+	Angebote: { 'de-ch': 'Angebote', 'en-us': 'Offers' },
+	'Zeit ändern': { 'de-ch': 'Zeit ändern', 'en-us': 'Change time' },
+	UID: { 'de-ch': 'UID', 'en-us': 'Company ID (UID)' },
+	Wegbeschreibung: { 'de-ch': 'Wegbeschreibung', 'en-us': 'Directions' },
+	Verfügbarkeit: { 'de-ch': 'Verfügbarkeit', 'en-us': 'Availability' },
+	'Ihre Auswahl': { 'de-ch': 'Ihre Auswahl', 'en-us': 'Your selection' },
+	'Auswahl ändern': { 'de-ch': 'Auswahl ändern', 'en-us': 'Change selection' },
+	'Bitte wählen': { 'de-ch': 'Bitte wählen', 'en-us': 'Please select' },
+	Zusatzkosten: { 'de-ch': 'Zusatzkosten', 'en-us': 'Additional costs' },
+	'Keine weiteren Inhalte verfügbar': {
+		'de-ch': 'Keine weiteren Inhalte verfügbar',
+		'en-us': 'No further content available'
+	},
+	'Alle Leistungen anzeigen': { 'de-ch': 'Alle Leistungen anzeigen', 'en-us': 'Show all services' },
+	'Übersicht unserer Leistungen und Services': {
+		'de-ch': 'Übersicht unserer Leistungen und Services',
+		'en-us': 'Overview of our services'
+	},
+	'Entdecken Sie unser Leistungsportfolio': {
+		'de-ch': 'Entdecken Sie unser Leistungsportfolio',
+		'en-us': 'Discover our range of services'
+	},
+	'Keine Leistungen verfügbar': {
+		'de-ch': 'Keine Leistungen verfügbar',
+		'en-us': 'No services available'
+	},
+	'Buchungsbestätigung: {ressource}': {
+		'de-ch': 'Buchungsbestätigung: {ressource}',
+		'en-us': 'Booking confirmation: {ressource}'
+	},
+	'Ihre Anreise: {ressource}': {
+		'de-ch': 'Ihre Anreise: {ressource}',
+		'en-us': 'Your arrival: {ressource}'
+	},
+	'Ihre Abreise morgen: {ressource}': {
+		'de-ch': 'Ihre Abreise morgen: {ressource}',
+		'en-us': 'Your departure tomorrow: {ressource}'
+	},
+	'Guten Tag {name}': { 'de-ch': 'Guten Tag {name}', 'en-us': 'Hello {name}' },
+	'Hallo {name},': { 'de-ch': 'Hallo {name},', 'en-us': 'Hello {name},' },
+	'Ihre Buchungsanfrage wurde bestätigt.': {
+		'de-ch': 'Ihre Buchungsanfrage wurde bestätigt.',
+		'en-us': 'Your booking request has been confirmed.'
+	},
+	'Ihre Buchungsreferenz': { 'de-ch': 'Ihre Buchungsreferenz', 'en-us': 'Your booking reference' },
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)': {
+		'de-ch': '(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)',
+		'en-us': '(You will need it for check-in and check-out on our website.)'
+	},
+	'Wir melden uns in Kürze zur Zahlungsabwicklung.': {
+		'de-ch': 'Wir melden uns in Kürze zur Zahlungsabwicklung.',
+		'en-us': 'We will contact you shortly regarding payment.'
+	},
+	'Freundliche Grüsse': { 'de-ch': 'Freundliche Grüsse', 'en-us': 'Kind regards' },
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).': {
+		'de-ch': 'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).',
+		'en-us': 'we look forward to your arrival on {anreise} (departure: {abreise}).'
+	},
+	Türcode: { 'de-ch': 'Türcode', 'en-us': 'Door code' },
+	'Bei Fragen': { 'de-ch': 'Bei Fragen', 'en-us': 'Questions' },
+	Referenz: { 'de-ch': 'Referenz', 'en-us': 'Reference' },
+	Ressource: { 'de-ch': 'Ressource', 'en-us': 'Accommodation' },
+	Zimmer: { 'de-ch': 'Zimmer', 'en-us': 'Rooms' },
+	Doppelbett: { 'de-ch': 'Doppelbett', 'en-us': 'Double bed' },
+	'Doppelbett (140 cm)': { 'de-ch': 'Doppelbett (140 cm)', 'en-us': 'Double bed (140 cm)' },
+	Einzelbett: { 'de-ch': 'Einzelbett', 'en-us': 'Single bed' },
+	Stockbett: { 'de-ch': 'Stockbett', 'en-us': 'Bunk bed' },
+	Schlafsofa: { 'de-ch': 'Schlafsofa', 'en-us': 'Sofa bed' },
+	'Merkt sich die gewählte Sprache der Website.': {
+		'de-ch': 'Merkt sich die gewählte Sprache der Website.',
+		'en-us': 'Remembers the language you selected for this website.'
+	},
+	'Termin gebucht': { 'de-ch': 'Termin gebucht', 'en-us': 'Appointment booked' },
+	Angebot: { 'de-ch': 'Angebot', 'en-us': 'Offer' },
+	Zeit: { 'de-ch': 'Zeit', 'en-us': 'Time' },
+	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
+	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
+	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
+	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
+	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
+	'Weitere Termine buchen': {
+		'de-ch': 'Weitere Termine buchen',
+		'en-us': 'Book more appointments'
+	},
+	'Buchung stornieren': { 'de-ch': 'Buchung stornieren', 'en-us': 'Cancel booking' },
+	'Bestellung bestätigt': { 'de-ch': 'Bestellung bestätigt', 'en-us': 'Order confirmed' },
+	'Ihre Bestellung ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung ist bei uns eingegangen.',
+		'en-us': 'We have received your order.'
+	},
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung {leistung} ist bei uns eingegangen.',
+		'en-us': 'We have received your order {leistung}.'
+	},
+	Währung: { 'de-ch': 'Währung', 'en-us': 'Currency' },
+	'Zum Inhalt springen': { 'de-ch': 'Zum Inhalt springen', 'en-us': 'Skip to content' },
+	'Zum Kalender hinzufügen (.ics)': {
+		'de-ch': 'Zum Kalender hinzufügen (.ics)',
+		'en-us': 'Add to calendar (.ics)'
+	},
+	'In Google Calendar öffnen': {
+		'de-ch': 'In Google Calendar öffnen',
+		'en-us': 'Open in Google Calendar'
+	},
+	'Standort auf Google Maps anzeigen': {
+		'de-ch': 'Standort auf Google Maps anzeigen',
+		'en-us': 'Show location on Google Maps'
+	},
+	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
+	'Zurzeit sind keine Durchführungen geplant': {
+		'de-ch': 'Zurzeit sind keine Durchführungen geplant',
+		'en-us': 'No dates are currently scheduled'
+	},
+	'Jetzt bestellen': { 'de-ch': 'Jetzt bestellen', 'en-us': 'Order now' },
+	'Alles von {plan} und:': {
+		'de-ch': 'Alles von {plan} und:',
+		'en-us': 'Everything in {plan}, plus:'
+	},
+	'Alle Pläne': { 'de-ch': 'Alle Pläne', 'en-us': 'All plans' },
+	'Restpreis nach Veröffentlichung': {
+		'de-ch': 'Restpreis nach Veröffentlichung',
+		'en-us': 'Remaining price after launch'
+	},
+	Abgegeben: { 'de-ch': 'Abgegeben', 'en-us': 'Submitted' },
+	'Vorheriges Bild': { 'de-ch': 'Vorheriges Bild', 'en-us': 'Previous image' },
+	'Nächstes Bild': { 'de-ch': 'Nächstes Bild', 'en-us': 'Next image' },
+	'Vorheriges Zitat': { 'de-ch': 'Vorheriges Zitat', 'en-us': 'Previous quote' },
+	'Nächstes Zitat': { 'de-ch': 'Nächstes Zitat', 'en-us': 'Next quote' },
+	'Lightbox schliessen': { 'de-ch': 'Lightbox schliessen', 'en-us': 'Close lightbox' },
+	Bildvorschau: { 'de-ch': 'Bildvorschau', 'en-us': 'Image preview' },
+	Bildkarussell: { 'de-ch': 'Bildkarussell', 'en-us': 'Image carousel' },
+	Kundenstimmen: { 'de-ch': 'Kundenstimmen', 'en-us': 'Testimonials' },
+	'Code kopieren': { 'de-ch': 'Code kopieren', 'en-us': 'Copy code' },
+	'Vorher/Nachher-Vergleich': {
+		'de-ch': 'Vorher/Nachher-Vergleich',
+		'en-us': 'Before/after comparison'
+	},
+	'Bitte auswählen': { 'de-ch': 'Bitte auswählen', 'en-us': 'Please select' },
+	'Termine werden geladen…': {
+		'de-ch': 'Termine werden geladen…',
+		'en-us': 'Loading appointments…'
+	},
+	'Termine konnten nicht geladen werden.': {
+		'de-ch': 'Termine konnten nicht geladen werden.',
+		'en-us': 'Appointments could not be loaded.'
+	},
+	'Keine verfügbaren Termine.': {
+		'de-ch': 'Keine verfügbaren Termine.',
+		'en-us': 'No available appointments.'
+	},
+	'Zeitzone wählen': { 'de-ch': 'Zeitzone wählen', 'en-us': 'Select time zone' },
+	Ganztägig: { 'de-ch': 'Ganztägig', 'en-us': 'All day' },
+	Menü: { 'de-ch': 'Menü', 'en-us': 'Menu' },
+	Hauptnavigation: { 'de-ch': 'Hauptnavigation', 'en-us': 'Main navigation' },
+	'Keine Bilder vorhanden': { 'de-ch': 'Keine Bilder vorhanden', 'en-us': 'No images available' },
+	'Mehr Informationen': { 'de-ch': 'Mehr Informationen', 'en-us': 'More information' },
+	'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.': {
+		'de-ch': 'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.',
+		'en-us': 'Our terms and conditions are currently being updated.'
+	},
+	'Der Haftungsausschluss wird derzeit aktualisiert.': {
+		'de-ch': 'Der Haftungsausschluss wird derzeit aktualisiert.',
+		'en-us': 'The disclaimer is currently being updated.'
+	},
+	Absenden: { 'de-ch': 'Absenden', 'en-us': 'Send' },
+	'Vielen Dank!': { 'de-ch': 'Vielen Dank!', 'en-us': 'Thank you!' },
+	'Ihre Nachricht wurde erfolgreich gesendet.': {
+		'de-ch': 'Ihre Nachricht wurde erfolgreich gesendet.',
+		'en-us': 'Your message has been sent successfully.'
+	},
+	'Zur Website': { 'de-ch': 'Zur Website', 'en-us': 'To website' },
+	'Passwortgeschützte Seite': {
+		'de-ch': 'Passwortgeschützte Seite',
+		'en-us': 'Password-protected page'
+	},
+	'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).': {
+		'de-ch': 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
+		'en-us': 'Remembers your booking reference for the task list (max. 14 days).'
+	},
 	'Ungültige Kombination von Buchungs-ID und E-Mail': {
 		'de-ch': 'Ungültige Kombination von Buchungs-ID und E-Mail',
 		'en-us': 'Invalid combination of booking ID and email'
 	},
 	'Meine Aufgaben': { 'de-ch': 'Meine Aufgaben', 'en-us': 'My tasks' },
+	Teilaufgaben: { 'de-ch': 'Teilaufgaben', 'en-us': 'Subtasks' },
+	'Min.': { 'de-ch': 'Min.', 'en-us': 'min' },
+	Priorität: { 'de-ch': 'Priorität', 'en-us': 'Priority' },
+	Hoch: { 'de-ch': 'Hoch', 'en-us': 'High' },
+	Gering: { 'de-ch': 'Gering', 'en-us': 'Low' },
+	Credits: { 'de-ch': 'Credits', 'en-us': 'credits' },
+	'{erledigt} von {total} Teilaufgaben erledigt': {
+		'de-ch': '{erledigt} von {total} Teilaufgaben erledigt',
+		'en-us': '{erledigt} of {total} subtasks done'
+	},
+	'Du: {erledigt} von {total}': {
+		'de-ch': 'Du: {erledigt} von {total}',
+		'en-us': 'You: {erledigt} of {total}'
+	},
+	'in vorgegebener Reihenfolge': {
+		'de-ch': 'in vorgegebener Reihenfolge',
+		'en-us': 'in the given order'
+	},
+	'Bonus, wenn du alle Teilaufgaben erledigst:': {
+		'de-ch': 'Bonus, wenn du alle Teilaufgaben erledigst:',
+		'en-us': 'Bonus if you complete all subtasks:'
+	},
+	'Von dir angenommen': { 'de-ch': 'Von dir angenommen', 'en-us': 'Accepted by you' },
+	'Bereits vergeben': { 'de-ch': 'Bereits vergeben', 'en-us': 'Already taken' },
+	'Verfügbar, sobald erledigt:': {
+		'de-ch': 'Verfügbar, sobald erledigt:',
+		'en-us': 'Available once completed:'
+	},
+	'Aufgabe nicht verfügbar': { 'de-ch': 'Aufgabe nicht verfügbar', 'en-us': 'Task not available' },
+	'Bitte eine der Teilaufgaben annehmen': {
+		'de-ch': 'Bitte eine der Teilaufgaben annehmen',
+		'en-us': 'Please accept one of the subtasks'
+	},
+	'Aufgabe ist bereits angenommen': {
+		'de-ch': 'Aufgabe ist bereits angenommen',
+		'en-us': 'Task has already been accepted'
+	},
+	'Aufgabe ist bereits vergeben': {
+		'de-ch': 'Aufgabe ist bereits vergeben',
+		'en-us': 'Task is already taken'
+	},
+	'Vorherige Teilaufgaben müssen zuerst erledigt sein': {
+		'de-ch': 'Vorherige Teilaufgaben müssen zuerst erledigt sein',
+		'en-us': 'Previous subtasks must be completed first'
+	},
+	'Aufgabe konnte nicht geprüft werden': {
+		'de-ch': 'Aufgabe konnte nicht geprüft werden',
+		'en-us': 'Task could not be checked'
+	},
+	'Buchung nicht gefunden': { 'de-ch': 'Buchung nicht gefunden', 'en-us': 'Booking not found' },
 	'Verfügbare Aufgaben': { 'de-ch': 'Verfügbare Aufgaben', 'en-us': 'Available tasks' },
 	Abmelden: { 'de-ch': 'Abmelden', 'en-us': 'Log out' },
 	Fest: { 'de-ch': 'Fest', 'en-us': 'Fixed' },
@@ -787,6 +1119,34 @@ export const translations: Record<string, Record<string, string>> = {
 	'Minuten eingeben': { 'de-ch': 'Minuten eingeben', 'en-us': 'Enter minutes' },
 	'Benötigte Werkzeuge': { 'de-ch': 'Benötigte Werkzeuge', 'en-us': 'Required tools' },
 	'Kommentar (optional)': { 'de-ch': 'Kommentar (optional)', 'en-us': 'Comment (optional)' },
+	'Kommentar oder Beschreibung der Aufgabe': {
+		'de-ch': 'Kommentar oder Beschreibung der Aufgabe',
+		'en-us': 'Comment or description of the task'
+	},
+	'Kommentar ist erforderlich': {
+		'de-ch': 'Kommentar ist erforderlich',
+		'en-us': 'Comment is required'
+	},
+	Fotos: { 'de-ch': 'Fotos', 'en-us': 'Photos' },
+	Vorher: { 'de-ch': 'Vorher', 'en-us': 'Before' },
+	Nachher: { 'de-ch': 'Nachher', 'en-us': 'After' },
+	'Wird hochgeladen…': { 'de-ch': 'Wird hochgeladen…', 'en-us': 'Uploading…' },
+	'Foto konnte nicht hochgeladen werden': {
+		'de-ch': 'Foto konnte nicht hochgeladen werden',
+		'en-us': 'Photo could not be uploaded'
+	},
+	'Aufgaben können erst ab dem Anreisetag angenommen werden': {
+		'de-ch': 'Aufgaben können erst ab dem Anreisetag angenommen werden',
+		'en-us': 'Tasks can only be accepted from the arrival day'
+	},
+	'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich': {
+		'de-ch': 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich',
+		'en-us': 'The stay has ended — no more tasks possible'
+	},
+	'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)': {
+		'de-ch': 'Abgabe nur während des Aufenthalts möglich (Anreise bis Abreise)',
+		'en-us': 'Submission only possible during the stay (arrival to departure)'
+	},
 	'Anhang (optional)': { 'de-ch': 'Anhang (optional)', 'en-us': 'Attachment (optional)' },
 	'Kommentar eingeben': { 'de-ch': 'Kommentar eingeben', 'en-us': 'Enter comment' },
 	'Ich habe den': { 'de-ch': 'Ich habe den', 'en-us': 'I have read the' },
@@ -805,7 +1165,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Kostenlos: { 'de-ch': 'Kostenlos', 'en-us': 'Free' },
 	'Anmeldung erforderlich': { 'de-ch': 'Anmeldung erforderlich', 'en-us': 'Registration required' },
 	Anmelden: { 'de-ch': 'Anmelden', 'en-us': 'Register' },
-	Ausgebucht: { 'de-ch': 'Ausgebucht', 'en-us': 'Sold out' },
 	Ticket: { 'de-ch': 'Ticket', 'en-us': 'Ticket' },
 	Tickets: { 'de-ch': 'Tickets', 'en-us': 'Tickets' },
 	Veranstalter: { 'de-ch': 'Veranstalter', 'en-us': 'Organizer' },
@@ -861,7 +1220,852 @@ export const translations: Record<string, Record<string, string>> = {
 	'Chat schliessen': { 'de-ch': 'Chat schliessen', 'en-us': 'Close chat' },
 	'Nachricht eingeben': { 'de-ch': 'Nachricht eingeben…', 'en-us': 'Type a message…' },
 	Senden: { 'de-ch': 'Senden', 'en-us': 'Send' },
-	Tippt: { 'de-ch': 'Tippt…', 'en-us': 'Typing…' }
+	Tippt: { 'de-ch': 'Tippt…', 'en-us': 'Typing…' },
+	Assistent: { 'de-ch': 'Assistent', 'en-us': 'Assistant' },
+	'Hallo! Wie kann ich helfen?': {
+		'de-ch': 'Hallo! Wie kann ich helfen?',
+		'en-us': 'Hi! How can I help?'
+	},
+	'Verbindungsfehler.': { 'de-ch': 'Verbindungsfehler.', 'en-us': 'Connection error.' },
+	'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.': {
+		'de-ch': 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',
+		'en-us': 'Too many messages. Please try again in a few minutes.'
+	},
+	'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).': {
+		'de-ch': 'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).',
+		'en-us': 'The message is empty or too long (max. 1000 characters).'
+	},
+	'Der Chat ist zurzeit nicht verfügbar.': {
+		'de-ch': 'Der Chat ist zurzeit nicht verfügbar.',
+		'en-us': 'The chat is currently unavailable.'
+	},
+	'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.': {
+		'de-ch': 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.',
+		'en-us': 'The chat could not reply. Please try again.'
+	},
+	'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.': {
+		'de-ch': 'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.',
+		'en-us': 'You have declined the AI chat in the cookie settings.'
+	},
+	'Chat erlauben': { 'de-ch': 'Chat erlauben', 'en-us': 'Allow chat' },
+	'Chat-Bot': { 'de-ch': 'Chat-Bot', 'en-us': 'Chatbot' },
+	Kosten: { 'de-ch': 'Kosten', 'en-us': 'Costs' },
+	Fragen: { 'de-ch': 'Fragen', 'en-us': 'Questions' },
+	Zeitraum: { 'de-ch': 'Zeitraum', 'en-us': 'Period' },
+	'Tokens Eingabe': { 'de-ch': 'Tokens Eingabe', 'en-us': 'Input tokens' },
+	'davon aus Cache': { 'de-ch': 'davon aus Cache', 'en-us': 'of which cached' },
+	'Tokens Antwort': { 'de-ch': 'Tokens Antwort', 'en-us': 'Output tokens' },
+	'Durchschnitt pro Frage': { 'de-ch': 'Durchschnitt pro Frage', 'en-us': 'Average per question' },
+	'Pro Tag': { 'de-ch': 'Pro Tag', 'en-us': 'Per day' },
+	'Pro Monat': { 'de-ch': 'Pro Monat', 'en-us': 'Per month' },
+	Eingabe: { 'de-ch': 'Eingabe', 'en-us': 'Input' },
+	Antwort: { 'de-ch': 'Antwort', 'en-us': 'Output' },
+	'Cache schreiben': { 'de-ch': 'Cache schreiben', 'en-us': 'Cache write' },
+	'Cache lesen': { 'de-ch': 'Cache lesen', 'en-us': 'Cache read' },
+	'Berechnungsgrundlage pro Million Tokens': {
+		'de-ch': 'Berechnungsgrundlage pro Million Tokens',
+		'en-us': 'Prices per million tokens'
+	},
+	'Fragen und geschätzte KI-Kosten pro Tag und Monat': {
+		'de-ch': 'Fragen und geschätzte KI-Kosten pro Tag und Monat',
+		'en-us': 'Questions and estimated AI costs per day and month'
+	},
+	'Geschätzte Kosten der KI-Antworten nach den Listenpreisen des Anbieters (Anthropic, Claude Haiku). Verbindlich ist die Abrechnung des Anbieters.':
+		{
+			'de-ch':
+				'Geschätzte Kosten der KI-Antworten nach den Listenpreisen des Anbieters (Anthropic, Claude Haiku). Verbindlich ist die Abrechnung des Anbieters.',
+			'en-us':
+				'Estimated cost of the AI answers based on the provider’s list prices (Anthropic, Claude Haiku). The provider’s invoice is binding.'
+		},
+	'Die Wissensbasis wird 5 Minuten zwischengespeichert: Folgefragen in dieser Zeit sind deutlich günstiger.':
+		{
+			'de-ch':
+				'Die Wissensbasis wird 5 Minuten zwischengespeichert: Folgefragen in dieser Zeit sind deutlich günstiger.',
+			'en-us':
+				'The knowledge base is cached for 5 minutes: follow-up questions within that time are much cheaper.'
+		},
+	'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.': {
+		'de-ch': 'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.',
+		'en-us': 'Your messages are sent to Anthropic to generate a reply.'
+	},
+	'KI-Chat': { 'de-ch': 'KI-Chat', 'en-us': 'AI chat' },
+	'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.':
+		{
+			'de-ch':
+				'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.',
+			'en-us':
+				'Chat assistant that answers your questions using artificial intelligence. Your messages are sent to an external provider for this.'
+		},
+	'Chat-Assistent (Claude)': {
+		'de-ch': 'Chat-Assistent (Claude)',
+		'en-us': 'Chat assistant (Claude)'
+	},
+	'Anthropic PBC (USA)': { 'de-ch': 'Anthropic PBC (USA)', 'en-us': 'Anthropic PBC (USA)' },
+	'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.': {
+		'de-ch': 'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.',
+		'en-us': 'Answers questions in the chat window using artificial intelligence.'
+	},
+	'Keine Cookies': { 'de-ch': 'Keine Cookies', 'en-us': 'No cookies' },
+	'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)': {
+		'de-ch':
+			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)',
+		'en-us': 'Your chat messages are passed via our server to Anthropic (only when you send them)'
+	},
+	'Beispiel Firma GmbH': { 'de-ch': 'Beispiel Firma GmbH', 'en-us': 'Example Corp Ltd' },
+	'Check-in': { 'de-ch': 'Check-in', 'en-us': 'Check-in' },
+	'Check-out': { 'de-ch': 'Check-out', 'en-us': 'Check-out' },
+	LinkListe: { 'de-ch': 'LinkListe', 'en-us': 'Link List' },
+	PlanFilter: { 'de-ch': 'PlanFilter', 'en-us': 'Plan Filter' },
+	RessourceBuchung: { 'de-ch': 'RessourceBuchung', 'en-us': 'Resource Booking' },
+	'Multi (Mehrere Zeilen)': {
+		'de-ch': 'Multi (Mehrere Zeilen)',
+		'en-us': 'Multi (Multiple Lines)'
+	},
+	Farbverlauf: { 'de-ch': 'Farbverlauf', 'en-us': 'Gradient' },
+	Einzelzitat: { 'de-ch': 'Einzelzitat', 'en-us': 'Single Quote' },
+	Testimonials: { 'de-ch': 'Testimonials', 'en-us': 'Testimonials' },
+	'Kartenhöhe (px)': { 'de-ch': 'Kartenhöhe (px)', 'en-us': 'Card Height (px)' },
+	'Schrift horizontal zentrieren': {
+		'de-ch': 'Schrift horizontal zentrieren',
+		'en-us': 'Center text horizontally'
+	},
+	'Karte links': { 'de-ch': 'Karte links', 'en-us': 'Card left' },
+	Tabellenwerkzeuge: { 'de-ch': 'Tabellenwerkzeuge', 'en-us': 'Table tools' },
+	Suche: { 'de-ch': 'Suche', 'en-us': 'Search' },
+	'Feld, Name oder Beschreibung': {
+		'de-ch': 'Feld, Name oder Beschreibung',
+		'en-us': 'Field, name or description'
+	},
+	'Element Typ': { 'de-ch': 'Element Typ', 'en-us': 'Element type' },
+	Alle: { 'de-ch': 'Alle', 'en-us': 'All' },
+	'Page Type': { 'de-ch': 'Page Type', 'en-us': 'Page Type' },
+	'Custom Type': { 'de-ch': 'Custom Type', 'en-us': 'Custom Type' },
+	Slice: { 'de-ch': 'Slice', 'en-us': 'Slice' },
+	'Sortieren nach': { 'de-ch': 'Sortieren nach', 'en-us': 'Sort by' },
+	'Tab / Variante': { 'de-ch': 'Tab / Variante', 'en-us': 'Tab / Variant' },
+	Feld: { 'de-ch': 'Feld', 'en-us': 'Field' },
+	Typ: { 'de-ch': 'Typ', 'en-us': 'Type' },
+	'Absteigend sortieren': { 'de-ch': 'Absteigend sortieren', 'en-us': 'Sort descending' },
+	'Aufsteigend sortieren': { 'de-ch': 'Aufsteigend sortieren', 'en-us': 'Sort ascending' },
+	Zurücksetzen: { 'de-ch': 'Zurücksetzen', 'en-us': 'Reset' },
+	von: { 'de-ch': 'von', 'en-us': 'of' },
+	Feldern: { 'de-ch': 'Feldern', 'en-us': 'fields' },
+	'Keine aktiven Felder für diesen Branch gefunden.': {
+		'de-ch': 'Keine aktiven Felder für diesen Branch gefunden.',
+		'en-us': 'No active fields found for this branch.'
+	},
+	'Keine Felder für diese Auswahl gefunden.': {
+		'de-ch': 'Keine Felder für diese Auswahl gefunden.',
+		'en-us': 'No fields found for this selection.'
+	},
+	Seitennavigation: { 'de-ch': 'Seitennavigation', 'en-us': 'Pagination' },
+	'Vorherige Seite': { 'de-ch': 'Vorherige Seite', 'en-us': 'Previous page' },
+	'Nächste Seite': { 'de-ch': 'Nächste Seite', 'en-us': 'Next page' },
+	// Agency Gating Editor
+	'Agency Gating Editor': { 'de-ch': 'Agency Gating Editor', 'en-us': 'Agency Gating Editor' },
+	'Bitte geben Sie das Agentur-Passwort ein:': {
+		'de-ch': 'Bitte geben Sie das Agentur-Passwort ein:',
+		'en-us': 'Please enter the agency password:'
+	},
+	Passwort: { 'de-ch': 'Passwort', 'en-us': 'Password' },
+	'Passwort eingeben': { 'de-ch': 'Passwort eingeben', 'en-us': 'Enter password' },
+	Features: { 'de-ch': 'Features', 'en-us': 'Features' },
+	'im Plan': { 'de-ch': 'im Plan', 'en-us': 'in plan' },
+	'Fehlende Umgebungsvariablen': {
+		'de-ch': 'Fehlende Umgebungsvariablen',
+		'en-us': 'Missing environment variables'
+	},
+	'Admin-Bereiche': { 'de-ch': 'Admin-Bereiche', 'en-us': 'Admin sections' },
+	Speichern: { 'de-ch': 'Speichern', 'en-us': 'Save' },
+	Übersicht: { 'de-ch': 'Übersicht', 'en-us': 'Overview' },
+	'Plan-Features': { 'de-ch': 'Plan-Features', 'en-us': 'Plan features' },
+	keine: { 'de-ch': 'keine', 'en-us': 'none' },
+	'Ausgewählte Features': { 'de-ch': 'Ausgewählte Features', 'en-us': 'Selected features' },
+	Zusätzlich: { 'de-ch': 'Zusätzlich', 'en-us': 'Additional' },
+	Entfernt: { 'de-ch': 'Entfernt', 'en-us': 'Removed' },
+	'Plan-Definition (global)': {
+		'de-ch': 'Plan-Definition (global)',
+		'en-us': 'Plan definition (global)'
+	},
+	'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.':
+		{
+			'de-ch':
+				'Ändert gating.json – gilt nach Commit und Merge für alle Branches bzw. Kunden, nicht nur für dieses Projekt.',
+			'en-us':
+				'Changes gating.json – after commit and merge it applies to all branches/customers, not just this project.'
+		},
+	'Mehrere Pläne': { 'de-ch': 'Mehrere Pläne', 'en-us': 'Multiple plans' },
+	ab: { 'de-ch': 'ab', 'en-us': 'from' },
+	'Plan-Definition speichern': {
+		'de-ch': 'Plan-Definition speichern',
+		'en-us': 'Save plan definition'
+	},
+	'aktives Feature mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktives Feature mit fehlenden Umgebungsvariablen',
+		'en-us': 'active feature with missing environment variables'
+	},
+	'aktive Features mit fehlenden Umgebungsvariablen': {
+		'de-ch': 'aktive Features mit fehlenden Umgebungsvariablen',
+		'en-us': 'active features with missing environment variables'
+	},
+	'Details anzeigen': { 'de-ch': 'Details anzeigen', 'en-us': 'Show details' },
+	'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.':
+		{
+			'de-ch':
+				'Für folgende aktive Features sind benötigte Umgebungsvariablen nicht gesetzt. Die betroffenen Funktionen (z.B. E-Mail-Versand, Datenbankzugriff) werden nicht funktionieren.',
+			'en-us':
+				'Required environment variables are not set for the following active features. The affected functions (e.g. email sending, database access) will not work.'
+		},
+	Setzen: { 'de-ch': 'Setzen', 'en-us': 'Set' },
+	'Lokal in der Datei': { 'de-ch': 'Lokal in der Datei', 'en-us': 'Locally in the file' },
+	'auf Netlify unter': { 'de-ch': 'auf Netlify unter', 'en-us': 'on Netlify under' },
+	'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.':
+		{
+			'de-ch':
+				'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.',
+			'en-us':
+				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
+		},
+	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
+	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
+	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
+	'Gate in gating.json': { 'de-ch': 'Gate in gating.json', 'en-us': 'Gate in gating.json' },
+	oder: { 'de-ch': 'oder', 'en-us': 'or' },
+	'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.':
+		{
+			'de-ch':
+				'Alle Einträge aus gating.json: welche Custom Types, Slices, Variationen und Felder zu welchem Feature bzw. Plan gehören. Abgeblendet = mit der aktuellen Auswahl inaktiv.',
+			'en-us':
+				'All entries from gating.json: which custom types, slices, variations and fields belong to which feature or plan. Dimmed = inactive with the current selection.'
+		},
+	'Unbekannte Features oder Pläne referenziert': {
+		'de-ch': 'Unbekannte Features oder Pläne referenziert',
+		'en-us': 'Unknown features or plans referenced'
+	},
+	'Nach Feature': { 'de-ch': 'Nach Feature', 'en-us': 'By feature' },
+	'Nach Plan (ohne Feature)': {
+		'de-ch': 'Nach Plan (ohne Feature)',
+		'en-us': 'By plan (without feature)'
+	},
+	'Keine Zuordnung in gating.json (nur im Code abgefragt)': {
+		'de-ch': 'Keine Zuordnung in gating.json (nur im Code abgefragt)',
+		'en-us': 'No assignment in gating.json (checked in code only)'
+	},
+	'Custom Types': { 'de-ch': 'Custom Types', 'en-us': 'Custom types' },
+	'Custom-Type-Felder': { 'de-ch': 'Custom-Type-Felder', 'en-us': 'Custom type fields' },
+	'Tab-Overlays': { 'de-ch': 'Tab-Overlays', 'en-us': 'Tab overlays' },
+	Slices: { 'de-ch': 'Slices', 'en-us': 'Slices' },
+	'Slice-Variationen': { 'de-ch': 'Slice-Variationen', 'en-us': 'Slice variations' },
+	'Slice-Felder': { 'de-ch': 'Slice-Felder', 'en-us': 'Slice fields' },
+	// Cookie consent
+	'Verwendete Cookies und Dienste': {
+		'de-ch': 'Verwendete Cookies und Dienste',
+		'en-us': 'Cookies and services used'
+	},
+	Zweck: { 'de-ch': 'Zweck', 'en-us': 'Purpose' },
+	'Cookies / Daten': { 'de-ch': 'Cookies / Daten', 'en-us': 'Cookies / data' },
+	'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen': {
+		'de-ch': 'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen',
+		'en-us': 'You can decline or re-allow non-functional services at any time'
+	},
+	'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.': {
+		'de-ch': 'Auf dieser Seite werden keine Dienste dieser Kategorie verwendet.',
+		'en-us': 'No services of this category are used on this page.'
+	},
+	'Cookie-Einstellungen': { 'de-ch': 'Cookie-Einstellungen', 'en-us': 'Cookie settings' },
+	'Cookie-Hinweis': { 'de-ch': 'Cookie-Hinweis', 'en-us': 'Cookie notice' },
+	'Cookies & externe Inhalte': {
+		'de-ch': 'Cookies & externe Inhalte',
+		'en-us': 'Cookies & external content'
+	},
+	'Diese Seite lädt Inhalte von Drittanbietern': {
+		'de-ch': 'Diese Seite lädt Inhalte von Drittanbietern',
+		'en-us': 'This page loads content from third parties'
+	},
+	'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.':
+		{
+			'de-ch':
+				'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.',
+			'en-us':
+				'This may set cookies and transmit data such as your IP address. You can decline this at any time.'
+		},
+	Ablehnen: { 'de-ch': 'Ablehnen', 'en-us': 'Decline' },
+	Einstellungen: { 'de-ch': 'Einstellungen', 'en-us': 'Settings' },
+	Einverstanden: { 'de-ch': 'Einverstanden', 'en-us': 'Accept' },
+	'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.':
+		{
+			'de-ch':
+				'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.',
+			'en-us':
+				'Here you can see which cookies and services this website uses. You can decline non-functional services.'
+		},
+	'Immer aktiv': { 'de-ch': 'Immer aktiv', 'en-us': 'Always active' },
+	'auf dieser Seite': { 'de-ch': 'auf dieser Seite', 'en-us': 'on this page' },
+	'Datenschutz des Anbieters': {
+		'de-ch': 'Datenschutz des Anbieters',
+		'en-us': "Provider's privacy policy"
+	},
+	'Alle ablehnen': { 'de-ch': 'Alle ablehnen', 'en-us': 'Decline all' },
+	'Auswahl speichern': { 'de-ch': 'Auswahl speichern', 'en-us': 'Save selection' },
+	'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.': {
+		'de-ch': 'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.',
+		'en-us': 'This content is not loaded because you declined external content.'
+	},
+	'Beim Laden werden Daten an folgenden Anbieter übertragen': {
+		'de-ch': 'Beim Laden werden Daten an folgenden Anbieter übertragen',
+		'en-us': 'Loading it transmits data to the following provider'
+	},
+	'Einmal laden': { 'de-ch': 'Einmal laden', 'en-us': 'Load once' },
+	'Immer erlauben': { 'de-ch': 'Immer erlauben', 'en-us': 'Always allow' },
+	Funktional: { 'de-ch': 'Funktional', 'en-us': 'Functional' },
+	'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.':
+		{
+			'de-ch':
+				'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.',
+			'en-us':
+				'Required for the website to work (e.g. login, protected pages, your cookie choice). Cannot be disabled.'
+		},
+	'Externe Inhalte': { 'de-ch': 'Externe Inhalte', 'en-us': 'External content' },
+	'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.':
+		{
+			'de-ch':
+				'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.',
+			'en-us':
+				'Maps, videos and other embedded third-party content. These may set cookies and receive your IP address.'
+		},
+	Statistik: { 'de-ch': 'Statistik', 'en-us': 'Statistics' },
+	'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.': {
+		'de-ch': 'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.',
+		'en-us': 'Anonymous or pseudonymous analysis of how this website is used.'
+	},
+	Marketing: { 'de-ch': 'Marketing', 'en-us': 'Marketing' },
+	'Werbung und Wiedererkennung über verschiedene Websites hinweg.': {
+		'de-ch': 'Werbung und Wiedererkennung über verschiedene Websites hinweg.',
+		'en-us': 'Advertising and recognition across different websites.'
+	},
+	Benutzerkonto: { 'de-ch': 'Benutzerkonto', 'en-us': 'User account' },
+	'Website-Betreiber': { 'de-ch': 'Website-Betreiber', 'en-us': 'Website operator' },
+	'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.': {
+		'de-ch': 'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.',
+		'en-us': 'Keeps you signed in to your user account.'
+	},
+	'klap_user_session (Cookie)': {
+		'de-ch': 'klap_user_session (Cookie)',
+		'en-us': 'klap_user_session (cookie)'
+	},
+	'Passwortgeschützte Seiten': {
+		'de-ch': 'Passwortgeschützte Seiten',
+		'en-us': 'Password-protected pages'
+	},
+	'Merkt sich die Freigabe passwortgeschützter Seiten.': {
+		'de-ch': 'Merkt sich die Freigabe passwortgeschützter Seiten.',
+		'en-us': 'Remembers access to password-protected pages.'
+	},
+	'klap_auth (Cookie)': { 'de-ch': 'klap_auth (Cookie)', 'en-us': 'klap_auth (cookie)' },
+	'Cookie-Auswahl': { 'de-ch': 'Cookie-Auswahl', 'en-us': 'Cookie choice' },
+	'Speichert Ihre Auswahl in diesem Cookie-Dialog.': {
+		'de-ch': 'Speichert Ihre Auswahl in diesem Cookie-Dialog.',
+		'en-us': 'Stores your choice in this cookie dialog.'
+	},
+	'klap_cart (Local Storage)': {
+		'de-ch': 'klap_cart (Local Storage)',
+		'en-us': 'klap_cart (local storage)'
+	},
+	'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.': {
+		'de-ch': 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
+		'en-us': 'Remembers the services in your cart until you order.'
+	},
+	Warenkorb: { 'de-ch': 'Warenkorb', 'en-us': 'Cart' },
+	'In den Warenkorb': { 'de-ch': 'In den Warenkorb', 'en-us': 'Add to cart' },
+	'Im Warenkorb': { 'de-ch': 'Im Warenkorb', 'en-us': 'In cart' },
+	'Ihr Warenkorb ist leer.': { 'de-ch': 'Ihr Warenkorb ist leer.', 'en-us': 'Your cart is empty.' },
+	'Leistungen ansehen': { 'de-ch': 'Leistungen ansehen', 'en-us': 'View services' },
+	'Zur Kasse': { 'de-ch': 'Zur Kasse', 'en-us': 'Checkout' },
+	'Weitere Leistungen': { 'de-ch': 'Weitere Leistungen', 'en-us': 'More services' },
+	'Zusatzleistungen der Pakete (z. B. Hosting) werden in der Bestellübersicht ergänzt.': {
+		'de-ch': 'Zusatzleistungen der Pakete (z. B. Hosting) werden in der Bestellübersicht ergänzt.',
+		'en-us': 'Add-ons of packages (e.g. hosting) are added in the order summary.'
+	},
+	'klap_consent (Local Storage)': {
+		'de-ch': 'klap_consent (Local Storage)',
+		'en-us': 'klap_consent (local storage)'
+	},
+	'Anzeige interaktiver Karten.': {
+		'de-ch': 'Anzeige interaktiver Karten.',
+		'en-us': 'Display of interactive maps.'
+	},
+	'Google-Cookies (z.B. NID)': {
+		'de-ch': 'Google-Cookies (z.B. NID)',
+		'en-us': 'Google cookies (e.g. NID)'
+	},
+	'Übertragung der IP-Adresse an Google': {
+		'de-ch': 'Übertragung der IP-Adresse an Google',
+		'en-us': 'Transmission of your IP address to Google'
+	},
+	'Wiedergabe eingebetteter Videos.': {
+		'de-ch': 'Wiedergabe eingebetteter Videos.',
+		'en-us': 'Playback of embedded videos.'
+	},
+	'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)': {
+		'de-ch': 'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)',
+		'en-us': 'YouTube cookies (e.g. VISITOR_INFO1_LIVE, YSC)'
+	},
+	'Vimeo-Cookies (z.B. vuid)': {
+		'de-ch': 'Vimeo-Cookies (z.B. vuid)',
+		'en-us': 'Vimeo cookies (e.g. vuid)'
+	},
+	'Übertragung der IP-Adresse an Vimeo': {
+		'de-ch': 'Übertragung der IP-Adresse an Vimeo',
+		'en-us': 'Transmission of your IP address to Vimeo'
+	},
+	'Eingebetteter Inhalt': { 'de-ch': 'Eingebetteter Inhalt', 'en-us': 'Embedded content' },
+	Drittanbieter: { 'de-ch': 'Drittanbieter', 'en-us': 'Third party' },
+	'Anzeige von Inhalten, die von einer externen Website geladen werden.': {
+		'de-ch': 'Anzeige von Inhalten, die von einer externen Website geladen werden.',
+		'en-us': 'Display of content loaded from an external website.'
+	},
+	'Cookies des Anbieters möglich': {
+		'de-ch': 'Cookies des Anbieters möglich',
+		'en-us': 'Provider cookies possible'
+	},
+	'Übertragung der IP-Adresse an den Anbieter': {
+		'de-ch': 'Übertragung der IP-Adresse an den Anbieter',
+		'en-us': 'Transmission of your IP address to the provider'
+	},
+	'Google Maps': { 'de-ch': 'Google Maps', 'en-us': 'Google Maps' },
+	OpenStreetMap: { 'de-ch': 'OpenStreetMap', 'en-us': 'OpenStreetMap' },
+	Dailymotion: { 'de-ch': 'Dailymotion', 'en-us': 'Dailymotion' },
+	'Dailymotion SA': { 'de-ch': 'Dailymotion SA', 'en-us': 'Dailymotion SA' },
+	'Dailymotion-Cookies (z.B. dmvk, ts)': {
+		'de-ch': 'Dailymotion-Cookies (z.B. dmvk, ts)',
+		'en-us': 'Dailymotion cookies (e.g. dmvk, ts)'
+	},
+	'Übertragung der IP-Adresse an Dailymotion': {
+		'de-ch': 'Übertragung der IP-Adresse an Dailymotion',
+		'en-us': 'Transmission of your IP address to Dailymotion'
+	},
+	SoundCloud: { 'de-ch': 'SoundCloud', 'en-us': 'SoundCloud' },
+	'SoundCloud Global Limited & Co. KG': {
+		'de-ch': 'SoundCloud Global Limited & Co. KG',
+		'en-us': 'SoundCloud Global Limited & Co. KG'
+	},
+	'Wiedergabe eingebetteter Audioinhalte.': {
+		'de-ch': 'Wiedergabe eingebetteter Audioinhalte.',
+		'en-us': 'Playback of embedded audio content.'
+	},
+	'SoundCloud-Cookies (z.B. sc_anonymous_id)': {
+		'de-ch': 'SoundCloud-Cookies (z.B. sc_anonymous_id)',
+		'en-us': 'SoundCloud cookies (e.g. sc_anonymous_id)'
+	},
+	'Übertragung der IP-Adresse an SoundCloud': {
+		'de-ch': 'Übertragung der IP-Adresse an SoundCloud',
+		'en-us': 'Transmission of your IP address to SoundCloud'
+	},
+	Spotify: { 'de-ch': 'Spotify', 'en-us': 'Spotify' },
+	'Spotify AB': { 'de-ch': 'Spotify AB', 'en-us': 'Spotify AB' },
+	'Spotify-Cookies (z.B. sp_t)': {
+		'de-ch': 'Spotify-Cookies (z.B. sp_t)',
+		'en-us': 'Spotify cookies (e.g. sp_t)'
+	},
+	'Übertragung der IP-Adresse an Spotify': {
+		'de-ch': 'Übertragung der IP-Adresse an Spotify',
+		'en-us': 'Transmission of your IP address to Spotify'
+	},
+	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
+	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
+	'OpenStreetMap Foundation': {
+		'de-ch': 'OpenStreetMap Foundation',
+		'en-us': 'OpenStreetMap Foundation'
+	},
+	'Keine Tracking-Cookies': { 'de-ch': 'Keine Tracking-Cookies', 'en-us': 'No tracking cookies' },
+	'Übertragung der IP-Adresse an die OpenStreetMap Foundation': {
+		'de-ch': 'Übertragung der IP-Adresse an die OpenStreetMap Foundation',
+		'en-us': 'Transmission of your IP address to the OpenStreetMap Foundation'
+	},
+	YouTube: { 'de-ch': 'YouTube', 'en-us': 'YouTube' },
+	Vimeo: { 'de-ch': 'Vimeo', 'en-us': 'Vimeo' },
+	'Google Ireland Ltd. / Google LLC': {
+		'de-ch': 'Google Ireland Ltd. / Google LLC',
+		'en-us': 'Google Ireland Ltd. / Google LLC'
+	},
+	'Vimeo.com Inc.': { 'de-ch': 'Vimeo.com Inc.', 'en-us': 'Vimeo.com Inc.' },
+	// Newsletter / Admin-Dashboard
+	'Zurück zum Dashboard': { 'de-ch': 'Zurück zum Dashboard', 'en-us': 'Back to dashboard' },
+	Newsletter: { 'de-ch': 'Newsletter', 'en-us': 'Newsletter' },
+	'Info-Mails an alle Kunden senden. Die Mails verfassen Sie in Prismic (Typ „Newsletter“) und veröffentlichen sie dort – danach erscheinen sie hier.':
+		{
+			'de-ch':
+				'Info-Mails an alle Kunden senden. Die Mails verfassen Sie in Prismic (Typ „Newsletter“) und veröffentlichen sie dort – danach erscheinen sie hier.',
+			'en-us':
+				'Send info mails to all customers. Write them in Prismic (type “Newsletter”) and publish them there – they will then appear here.'
+		},
+	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.': {
+		'de-ch': 'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.',
+		'en-us': 'Email sending not configured: RESEND_API_KEY and EMAIL_FROM_ADDRESS are missing.'
+	},
+	'Test-Mail gesendet an': { 'de-ch': 'Test-Mail gesendet an', 'en-us': 'Test mail sent to' },
+	'Info-Mail gesendet an': { 'de-ch': 'Info-Mail gesendet an', 'en-us': 'Info mail sent to' },
+	Empfänger: { 'de-ch': 'Empfänger', 'en-us': 'recipients' },
+	Abgemeldet: { 'de-ch': 'Abgemeldet', 'en-us': 'Unsubscribed' },
+	Versände: { 'de-ch': 'Versände', 'en-us': 'Sends' },
+	'Noch keine veröffentlichten Newsletter. Legen Sie in Prismic ein Dokument vom Typ „Newsletter“ an und veröffentlichen Sie es.':
+		{
+			'de-ch':
+				'Noch keine veröffentlichten Newsletter. Legen Sie in Prismic ein Dokument vom Typ „Newsletter“ an und veröffentlichen Sie es.',
+			'en-us':
+				'No published newsletters yet. Create a document of type “Newsletter” in Prismic and publish it.'
+		},
+	'Newsletter wählen': { 'de-ch': 'Newsletter wählen', 'en-us': 'Choose newsletter' },
+	'Vorschau öffnen': { 'de-ch': 'Vorschau öffnen', 'en-us': 'Open preview' },
+	'Dieser Newsletter wurde bereits versendet': {
+		'de-ch': 'Dieser Newsletter wurde bereits versendet',
+		'en-us': 'This newsletter has already been sent'
+	},
+	'1. Test-Mail an mich': { 'de-ch': '1. Test-Mail an mich', 'en-us': '1. Test mail to me' },
+	'Test-Adresse': { 'de-ch': 'Test-Adresse', 'en-us': 'Test address' },
+	'Wird gesendet …': { 'de-ch': 'Wird gesendet …', 'en-us': 'Sending …' },
+	'Test senden': { 'de-ch': 'Test senden', 'en-us': 'Send test' },
+	'2. An alle Kunden senden': {
+		'de-ch': '2. An alle Kunden senden',
+		'en-us': '2. Send to all customers'
+	},
+	'Ich möchte diesen Newsletter jetzt an': {
+		'de-ch': 'Ich möchte diesen Newsletter jetzt an',
+		'en-us': 'I want to send this newsletter to'
+	},
+	'senden.': { 'de-ch': 'senden.', 'en-us': 'now.' },
+	'Jetzt senden': { 'de-ch': 'Jetzt senden', 'en-us': 'Send now' },
+	Verlauf: { 'de-ch': 'Verlauf', 'en-us': 'History' },
+	Datum: { 'de-ch': 'Datum', 'en-us': 'Date' },
+	Betreff: { 'de-ch': 'Betreff', 'en-us': 'Subject' },
+	Fehler: { 'de-ch': 'Fehler', 'en-us': 'Errors' },
+	'Jede Mail enthält Ihre Absender-Angaben und einen Abmelde-Link. Abgemeldete Adressen werden automatisch ausgeschlossen.':
+		{
+			'de-ch':
+				'Jede Mail enthält Ihre Absender-Angaben und einen Abmelde-Link. Abgemeldete Adressen werden automatisch ausgeschlossen.',
+			'en-us':
+				'Every mail contains your sender details and an unsubscribe link. Unsubscribed addresses are excluded automatically.'
+		},
+	'Admin Dashboard': { 'de-ch': 'Admin Dashboard', 'en-us': 'Admin dashboard' },
+	Dashboard: { 'de-ch': 'Dashboard', 'en-us': 'Dashboard' },
+	Rechnungen: { 'de-ch': 'Rechnungen', 'en-us': 'Invoices' },
+	'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)': {
+		'de-ch': 'Rechnungen erstellen, bearbeiten, versenden (E-Commerce + Manuell)',
+		'en-us': 'Create, edit and send invoices (e-commerce + manual)'
+	},
+	Kunden: { 'de-ch': 'Kunden', 'en-us': 'Customers' },
+	'Bestellungen und Kundendaten einsehen, neue Kunden erfassen': {
+		'de-ch': 'Bestellungen und Kundendaten einsehen, neue Kunden erfassen',
+		'en-us': 'View orders and customer data, add new customers'
+	},
+	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Buchungen anzeigen, löschen, Termine sperren': {
+		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
+		'en-us': 'View and delete bookings, block time slots'
+	},
+	'Ressource-Buchungen': { 'de-ch': 'Ressource-Buchungen', 'en-us': 'Resource bookings' },
+	'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen': {
+		'de-ch': 'Ferienhäuser, Räume etc. — Buchungen einsehen und löschen',
+		'en-us': 'Holiday homes, rooms etc. — view and delete bookings'
+	},
+	'Angenommene Aufgaben bestätigen und als erledigt markieren': {
+		'de-ch': 'Angenommene Aufgaben bestätigen und als erledigt markieren',
+		'en-us': 'Confirm accepted tasks and mark them as done'
+	},
+	'Event Anmeldungen': { 'de-ch': 'Event Anmeldungen', 'en-us': 'Event registrations' },
+	'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event': {
+		'de-ch': 'Anmeldungen aus Event-Checkouts einsehen, gruppiert nach Event',
+		'en-us': 'View registrations from event checkouts, grouped by event'
+	},
+	'Info-Mails aus Prismic an alle Kunden senden': {
+		'de-ch': 'Info-Mails aus Prismic an alle Kunden senden',
+		'en-us': 'Send info mails from Prismic to all customers'
+	},
+	'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen': {
+		'de-ch': 'Alle geschützten Seiten anzeigen und ohne Passwortabfrage öffnen',
+		'en-us': 'Show all protected pages and open them without password'
+	},
+	'Info-Mails abbestellen': {
+		'de-ch': 'Info-Mails abbestellen',
+		'en-us': 'Unsubscribe from info mails'
+	},
+	'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.': {
+		'de-ch': 'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.',
+		'en-us': 'You have been unsubscribed and will not receive any further info mails.'
+	},
+	'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.': {
+		'de-ch': 'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.',
+		'en-us': 'This unsubscribe link is invalid. Please use the link from the email.'
+	},
+	'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?': {
+		'de-ch': 'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?',
+		'en-us': 'Do you want to stop receiving info mails at this email address?'
+	},
+	'Web-Ansicht der Info-Mail – Platzhalter mit Beispiel-Empfänger': {
+		'de-ch': 'Web-Ansicht der Info-Mail – Platzhalter mit Beispiel-Empfänger',
+		'en-us': 'Web view of the info mail – placeholders filled with an example recipient'
+	},
+	'Sie erhalten diese E-Mail als Kundin oder Kunde von': {
+		'de-ch': 'Sie erhalten diese E-Mail als Kundin oder Kunde von',
+		'en-us': 'You are receiving this email as a customer of'
+	},
+	'Keine weiteren Info-Mails erhalten': {
+		'de-ch': 'Keine weiteren Info-Mails erhalten',
+		'en-us': 'Unsubscribe from info mails'
+	},
+	'Ungültiger Abmelde-Link': {
+		'de-ch': 'Ungültiger Abmelde-Link',
+		'en-us': 'Invalid unsubscribe link'
+	},
+	'Die Abmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Abmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'Unsubscribing failed. Please try again later.'
+	},
+	'Newsletter und Test-Adresse angeben': {
+		'de-ch': 'Newsletter und Test-Adresse angeben',
+		'en-us': 'Specify newsletter and test address'
+	},
+	'Newsletter nicht gefunden': {
+		'de-ch': 'Newsletter nicht gefunden',
+		'en-us': 'Newsletter not found'
+	},
+	'Bitte den Versand bestätigen': {
+		'de-ch': 'Bitte den Versand bestätigen',
+		'en-us': 'Please confirm sending'
+	},
+	'Keine Empfänger vorhanden': {
+		'de-ch': 'Keine Empfänger vorhanden',
+		'en-us': 'No recipients available'
+	},
+	'2. An ausgewählte Kunden senden': {
+		'de-ch': '2. An ausgewählte Kunden senden',
+		'en-us': '2. Send to selected customers'
+	},
+	'3. An alle Kunden senden': {
+		'de-ch': '3. An alle Kunden senden',
+		'en-us': '3. Send to all customers'
+	},
+	'Kunden suchen …': { 'de-ch': 'Kunden suchen …', 'en-us': 'Search customers …' },
+	'Alle auswählen': { 'de-ch': 'Alle auswählen', 'en-us': 'Select all' },
+	'Keine Kunden gefunden': { 'de-ch': 'Keine Kunden gefunden', 'en-us': 'No customers found' },
+	'ausgewählte Empfänger': { 'de-ch': 'ausgewählte Empfänger', 'en-us': 'selected recipients' },
+	'An Auswahl senden': { 'de-ch': 'An Auswahl senden', 'en-us': 'Send to selection' },
+	'Versand an': { 'de-ch': 'Versand an', 'en-us': 'Sent to' },
+	Auswahl: { 'de-ch': 'Auswahl', 'en-us': 'Selection' },
+	'Bitte mindestens einen Kunden auswählen': {
+		'de-ch': 'Bitte mindestens einen Kunden auswählen',
+		'en-us': 'Please select at least one customer'
+	},
+	// Admin: Kunden
+	'wirklich löschen?': { 'de-ch': 'wirklich löschen?', 'en-us': 'really delete?' },
+	'Kunde erfasst': { 'de-ch': 'Kunde erfasst', 'en-us': 'Customer added' },
+	'Fehler beim Erfassen': { 'de-ch': 'Fehler beim Erfassen', 'en-us': 'Error while adding' },
+	'Unbekannter Fehler': { 'de-ch': 'Unbekannter Fehler', 'en-us': 'Unknown error' },
+	'Server-Fehler': { 'de-ch': 'Server-Fehler', 'en-us': 'Server error' },
+	'Sprache konnte nicht gespeichert werden': {
+		'de-ch': 'Sprache konnte nicht gespeichert werden',
+		'en-us': 'Language could not be saved'
+	},
+	Kundenliste: { 'de-ch': 'Kundenliste', 'en-us': 'Customer list' },
+	'Alle Kunden löschen?': { 'de-ch': 'Alle Kunden löschen?', 'en-us': 'Delete all customers?' },
+	'Alle löschen': { 'de-ch': 'Alle löschen', 'en-us': 'Delete all' },
+	'Formular schliessen': { 'de-ch': 'Formular schliessen', 'en-us': 'Close form' },
+	'Neuer Kunde': { 'de-ch': 'Neuer Kunde', 'en-us': 'New customer' },
+	'Wird gespeichert …': { 'de-ch': 'Wird gespeichert …', 'en-us': 'Saving …' },
+	'Noch keine Einträge.': { 'de-ch': 'Noch keine Einträge.', 'en-us': 'No entries yet.' },
+	Löschen: { 'de-ch': 'Löschen', 'en-us': 'Delete' },
+	Quelle: { 'de-ch': 'Quelle', 'en-us': 'Source' },
+	'Manuell erfasst': { 'de-ch': 'Manuell erfasst', 'en-us': 'Added manually' },
+	Terminbuchung: { 'de-ch': 'Terminbuchung', 'en-us': 'Appointment booking' },
+	'E-Commerce': { 'de-ch': 'E-Commerce', 'en-us': 'E-commerce' },
+	'Kunde fehlt': { 'de-ch': 'Kunde fehlt', 'en-us': 'Customer missing' },
+	'Unbekannte Sprache': { 'de-ch': 'Unbekannte Sprache', 'en-us': 'Unknown language' },
+	// Newsletter-Anmeldung (Double-Opt-in)
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		{
+			'de-ch':
+				'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.',
+			'en-us':
+				'Almost done! We have sent you an email. Please confirm your sign-up using the link in it.'
+		},
+	'Ich möchte Info-Mails erhalten. Die Einwilligung kann ich jederzeit über den Abmelde-Link in jeder E-Mail widerrufen.':
+		{
+			'de-ch':
+				'Ich möchte Info-Mails erhalten. Die Einwilligung kann ich jederzeit über den Abmelde-Link in jeder E-Mail widerrufen.',
+			'en-us':
+				'I would like to receive info mails. I can withdraw my consent at any time via the unsubscribe link in every email.'
+		},
+	'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.': {
+		'de-ch': 'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.',
+		'en-us': 'Please confirm that you would like to receive info mails.'
+	},
+	'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The sign-up failed. Please try again later.'
+	},
+	'Bitte geben Sie eine gültige E-Mail-Adresse ein.': {
+		'de-ch': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+		'en-us': 'Please enter a valid email address.'
+	},
+	'Anmeldung bestätigen': { 'de-ch': 'Anmeldung bestätigen', 'en-us': 'Confirm sign-up' },
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.': {
+		'de-ch': 'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.',
+		'en-us': 'Thank you! Your sign-up is confirmed. You will now receive our info mails.'
+	},
+	'Dieser Bestätigungslink ist ungültig oder abgelaufen.': {
+		'de-ch': 'Dieser Bestätigungslink ist ungültig oder abgelaufen.',
+		'en-us': 'This confirmation link is invalid or has expired.'
+	},
+	'Bitte melden Sie sich erneut an.': {
+		'de-ch': 'Bitte melden Sie sich erneut an.',
+		'en-us': 'Please sign up again.'
+	},
+	'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:': {
+		'de-ch': 'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:',
+		'en-us': 'Please confirm the sign-up for info mails with this email address:'
+	},
+	'Die Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The confirmation failed. Please try again later.'
+	},
+	'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von': {
+		'de-ch': 'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von',
+		'en-us': 'You are receiving this email because you subscribed to the info mails of'
+	},
+	'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails': {
+		'de-ch': 'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails',
+		'en-us': 'Please confirm your sign-up for the info mails'
+	},
+	'Guten Tag': { 'de-ch': 'Guten Tag', 'en-us': 'Hello' },
+	'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.':
+		{
+			'de-ch':
+				'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.',
+			'en-us':
+				'You have signed up for the info mails. Please confirm your sign-up by clicking the button. The link is valid for 7 days.'
+		},
+	'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.': {
+		'de-ch': 'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.',
+		'en-us': 'If you did not sign up, simply ignore this email.'
+	},
+	Abonnent: { 'de-ch': 'Abonnent', 'en-us': 'Subscriber' },
+	// Newsletter: Abonnenten-Übersicht
+	'Abonnent wirklich entfernen? Die Adresse erhält danach keine Info-Mails mehr.': {
+		'de-ch': 'Abonnent wirklich entfernen? Die Adresse erhält danach keine Info-Mails mehr.',
+		'en-us': 'Really remove subscriber? The address will no longer receive info mails.'
+	},
+	'Abonnent entfernt': { 'de-ch': 'Abonnent entfernt', 'en-us': 'Subscriber removed' },
+	Abonnenten: { 'de-ch': 'Abonnenten', 'en-us': 'Subscribers' },
+	'Als CSV exportieren': { 'de-ch': 'Als CSV exportieren', 'en-us': 'Export as CSV' },
+	'Anmeldungen über das Formular „Newsletter abonnieren“ (bestätigt per E-Mail). Das Bestätigungsdatum ist der Nachweis der Einwilligung.':
+		{
+			'de-ch':
+				'Anmeldungen über das Formular „Newsletter abonnieren“ (bestätigt per E-Mail). Das Bestätigungsdatum ist der Nachweis der Einwilligung.',
+			'en-us':
+				'Sign-ups via the “Subscribe to newsletter” form (confirmed by email). The confirmation date is the proof of consent.'
+		},
+	'Noch keine Abonnenten.': { 'de-ch': 'Noch keine Abonnenten.', 'en-us': 'No subscribers yet.' },
+	'Abonnenten suchen …': { 'de-ch': 'Abonnenten suchen …', 'en-us': 'Search subscribers …' },
+	'Bestätigt am': { 'de-ch': 'Bestätigt am', 'en-us': 'Confirmed on' },
+	abgemeldet: { 'de-ch': 'abgemeldet', 'en-us': 'unsubscribed' },
+	aktiv: { 'de-ch': 'aktiv', 'en-us': 'active' },
+	'Keine Abonnenten gefunden': {
+		'de-ch': 'Keine Abonnenten gefunden',
+		'en-us': 'No subscribers found'
+	},
+	'Abonnent nicht gefunden': {
+		'de-ch': 'Abonnent nicht gefunden',
+		'en-us': 'Subscriber not found'
+	},
+	'Anmeldung bestätigt': { 'de-ch': 'Anmeldung bestätigt', 'en-us': 'Sign-up confirmed' },
+	// Admin-Login
+	Admin: { 'de-ch': 'Admin', 'en-us': 'Admin' },
+	'Falsches Passwort.': { 'de-ch': 'Falsches Passwort.', 'en-us': 'Wrong password.' },
+	// KlapStudio Design Panel
+	Kurvenhöhe: { 'de-ch': 'Kurvenhöhe', 'en-us': 'Curve height' },
+	Kurvenamplitude: { 'de-ch': 'Kurvenamplitude', 'en-us': 'Curve amplitude' },
+	'Anzahl Kurven': { 'de-ch': 'Anzahl Kurven', 'en-us': 'Number of curves' },
+	'Startfarbe Deckkraft': { 'de-ch': 'Startfarbe Deckkraft', 'en-us': 'Start colour opacity' },
+	'Startfarbe Position': { 'de-ch': 'Startfarbe Position', 'en-us': 'Start colour position' },
+	'Endfarbe Deckkraft': { 'de-ch': 'Endfarbe Deckkraft', 'en-us': 'End colour opacity' },
+	'Endfarbe Position': { 'de-ch': 'Endfarbe Position', 'en-us': 'End colour position' },
+	Desktop: { 'de-ch': 'Desktop', 'en-us': 'Desktop' },
+	Mobile: { 'de-ch': 'Mobile', 'en-us': 'Mobile' },
+	'Design Panel': { 'de-ch': 'Design Panel', 'en-us': 'Design panel' },
+	Dunkel: { 'de-ch': 'Dunkel', 'en-us': 'Dark' },
+	Hell: { 'de-ch': 'Hell', 'en-us': 'Light' },
+	'Maus X = Hintergrund · Maus Y = Schrift': {
+		'de-ch': 'Maus X = Hintergrund · Maus Y = Schrift',
+		'en-us': 'Mouse X = background · Mouse Y = text'
+	},
+	'Standard-Schriftart': { 'de-ch': 'Standard-Schriftart', 'en-us': 'Default font' },
+	Schriftwechsel: { 'de-ch': 'Schriftwechsel', 'en-us': 'Font switch' },
+	'Hintergrundfarbe (Page)': {
+		'de-ch': 'Hintergrundfarbe (Page)',
+		'en-us': 'Background colour (page)'
+	},
+	Schriftfarbe: { 'de-ch': 'Schriftfarbe', 'en-us': 'Text colour' },
+	'Hintergrundfarbe (Slices+)': {
+		'de-ch': 'Hintergrundfarbe (Slices+)',
+		'en-us': 'Background colour (slices+)'
+	},
+	Kopfzeile: { 'de-ch': 'Kopfzeile', 'en-us': 'Header' },
+	'Keine Kopfzeile gefunden': { 'de-ch': 'Keine Kopfzeile gefunden', 'en-us': 'No header found' },
+	'Untere Kante kurvig': { 'de-ch': 'Untere Kante kurvig', 'en-us': 'Curved bottom edge' },
+	Kurvenfarbe: { 'de-ch': 'Kurvenfarbe', 'en-us': 'Curve colour' },
+	'Kurvenstart links': { 'de-ch': 'Kurvenstart links', 'en-us': 'Curve start (left)' },
+	'Maximale Höhe': { 'de-ch': 'Maximale Höhe', 'en-us': 'Maximum height' },
+	'Slice-Farben': { 'de-ch': 'Slice-Farben', 'en-us': 'Slice colours' },
+	'Keine Slices gefunden': { 'de-ch': 'Keine Slices gefunden', 'en-us': 'No slices found' },
+	'Blob-Parameter': { 'de-ch': 'Blob-Parameter', 'en-us': 'Blob parameters' },
+	'Blob-Grösse (%)': { 'de-ch': 'Blob-Grösse (%)', 'en-us': 'Blob size (%)' },
+	'Position horizontal (%)': {
+		'de-ch': 'Position horizontal (%)',
+		'en-us': 'Horizontal position (%)'
+	},
+	'Position vertikal (%)': { 'de-ch': 'Position vertikal (%)', 'en-us': 'Vertical position (%)' },
+	'Drehung (Grad)': { 'de-ch': 'Drehung (Grad)', 'en-us': 'Rotation (degrees)' },
+	Hintergrundfarbe: { 'de-ch': 'Hintergrundfarbe', 'en-us': 'Background colour' },
+	'Schaltfläche Farbe': { 'de-ch': 'Schaltfläche Farbe', 'en-us': 'Button colour' },
+	'Schaltfläche Hintergrund': { 'de-ch': 'Schaltfläche Hintergrund', 'en-us': 'Button background' },
+	'Schaltfläche Hover Farbe': {
+		'de-ch': 'Schaltfläche Hover Farbe',
+		'en-us': 'Button hover colour'
+	},
+	'Schaltfläche Hover Hintergrund': {
+		'de-ch': 'Schaltfläche Hover Hintergrund',
+		'en-us': 'Button hover background'
+	},
+	Schriftart: { 'de-ch': 'Schriftart', 'en-us': 'Font' },
+	Form: { 'de-ch': 'Form', 'en-us': 'Shape' },
+	Linear: { 'de-ch': 'Linear', 'en-us': 'Linear' },
+	Radial: { 'de-ch': 'Radial', 'en-us': 'Radial' },
+	Richtung: { 'de-ch': 'Richtung', 'en-us': 'Direction' },
+	Startfarbe: { 'de-ch': 'Startfarbe', 'en-us': 'Start colour' },
+	Endfarbe: { 'de-ch': 'Endfarbe', 'en-us': 'End colour' },
+	Schriftgrösse: { 'de-ch': 'Schriftgrösse', 'en-us': 'Font size' },
+	'Farbsketch ein/aus': { 'de-ch': 'Farbsketch ein/aus', 'en-us': 'Colour sketch on/off' },
+	'Schliessen (Ctrl+Shift+K)': {
+		'de-ch': 'Schliessen (Ctrl+Shift+K)',
+		'en-us': 'Close (Ctrl+Shift+K)'
+	},
+	'Nächste Schriftart wählen': {
+		'de-ch': 'Nächste Schriftart wählen',
+		'en-us': 'Choose next font'
+	},
+	'Fontnamen kopieren': { 'de-ch': 'Fontnamen kopieren', 'en-us': 'Copy font name' },
+	Kopieren: { 'de-ch': 'Kopieren', 'en-us': 'Copy' },
+	'Speichert …': { 'de-ch': 'Speichert …', 'en-us': 'Saving …' },
+	'In Prismic gespeichert': { 'de-ch': 'In Prismic gespeichert', 'en-us': 'Saved in Prismic' },
+	'Bitte zuerst unter /admin anmelden': {
+		'de-ch': 'Bitte zuerst unter /admin anmelden',
+		'en-us': 'Please log in at /admin first'
+	},
+	'Speichern fehlgeschlagen': { 'de-ch': 'Speichern fehlgeschlagen', 'en-us': 'Saving failed' },
+	'In Prismic speichern': { 'de-ch': 'In Prismic speichern', 'en-us': 'Save in Prismic' },
+	AUS: { 'de-ch': 'AUS', 'en-us': 'OFF' },
+	AN: { 'de-ch': 'AN', 'en-us': 'ON' }
 };
 
 /**

@@ -1,5 +1,12 @@
 import type { PageServerLoad, Actions } from './$types';
-import { error, redirect } from '@sveltejs/kit';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
+import { plainTextMail } from '$lib/server/mailText';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import {
 	listAlleRessourceBuchungen,
@@ -12,12 +19,15 @@ import {
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import * as prismic from '@prismicio/client';
-import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
+import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
+import { adminActionToken } from '$lib/server/adminAuth';
+import {
+	bestaetigungFallbackText,
+	bestaetigungTokens,
+	fallbackSubject,
+	getRessourceDocForBooking
+} from '$lib/server/ressourceMail';
 
 export const prerender = false;
 
@@ -29,15 +39,7 @@ function fmtD(iso: string) {
 	return `${d}.${m}.${y}`;
 }
 
-function checkAuth(url: URL) {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-}
-
-export const load: PageServerLoad = async ({ url }) => {
-	checkAuth(url);
-
+export const load: PageServerLoad = async () => {
 	let buchungen: RessourceBuchung[] = [];
 	let blobError: string | null = null;
 	try {
@@ -64,52 +66,44 @@ export const load: PageServerLoad = async ({ url }) => {
 
 async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalThis.fetch) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
-	const naechte = Math.round(
-		(new Date(buchung.bis).getTime() - new Date(buchung.von).getTime()) / 86400000
-	);
-
-	const vonFormatted = formatDateWithWeekday(buchung.von, null, 'de-CH', 'long');
-	const bisFormatted = formatDateWithWeekday(buchung.bis, null, 'de-CH', 'long');
-
-	const zimmerauswahl = buchung.zimmerauswahl ?? [];
-	const zimmerHtml = zimmerauswahl.length
-		? `<ul>${zimmerauswahl.map((z) => `<li>${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})</li>`).join('')}</ul>`
-		: 'Ganze Wohnung';
-
-	const tokenMap: Record<string, string> = {
-		Name: buchung.name ?? '',
-		Ressource: buchung.ressourceName ?? buchung.ressourceUid,
-		RessourceUid: buchung.ressourceUid,
-		Anreise: vonFormatted,
-		Abreise: bisFormatted,
-		Nächte: String(naechte),
-		Personen: String(buchung.personen),
-		Zimmer: zimmerHtml,
-		Total: fmt(buchung.preisCHF),
-		Buchungsreferenz: buchung.referenz ?? buchung.id
-	};
-
-	let betreff = `Buchungsbestätigung: ${buchung.ressourceName ?? buchung.ressourceUid}`;
-	let mailHtml: string | null = null;
-
+	// CMS template in the booking language (fallback: main language)
+	let ressourceName: string | undefined;
+	let cmsBetreff = '';
+	// Page colours (active theme) for the mail layout
+	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
+	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
+	let vars: ReturnType<typeof mailVariables> = {};
+	let cmsTextField: prismic.RichTextField | undefined;
 	try {
 		const client = createClient({ fetch });
-		const doc = await client.getByUID('ressource', buchung.ressourceUid);
+		const [doc, variablesData, theme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
+		]);
+		mailTheme = theme;
+		vars = mailVariables(variablesData, buchung.lang);
 		const d = doc.data as any;
-
-		const cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim();
-		if (cmsBetreff) betreff = replaceTokens(cmsBetreff, tokenMap);
-
-		const cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
-		if (cmsTextField?.length) {
-			mailHtml = replaceTokens(prismic.asHTML(cmsTextField) ?? '', tokenMap);
-		}
+		ressourceName = d.name;
+		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
+		cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
 	} catch {
 		// Prismic unavailable — use fallback
 	}
+
+	const tokenMap = bestaetigungTokens(buchung, ressourceName);
+	const betreff = cmsBetreff
+		? renderMailText(cmsBetreff, tokenMap, vars)
+		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
+	const mailHtml = cmsTextField?.length
+		? wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
+				lang: buchung.lang,
+				subject: betreff
+			})
+		: null;
 
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);
@@ -123,33 +117,11 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 		});
 		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
 	} else {
-		const zimmerZeilen = zimmerauswahl.map(
-			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
-		);
 		const { error: e } = await resend.emails.send({
 			from: emailFrom,
 			to: buchung.email,
 			subject: betreff,
-			text: [
-				`Guten Tag ${buchung.name}`,
-				``,
-				`Ihre Buchungsanfrage wurde bestätigt.`,
-				``,
-				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				`Anreise:   ${vonFormatted}`,
-				`Abreise:   ${bisFormatted}`,
-				`Nächte:    ${naechte}`,
-				`Personen:  ${buchung.personen}`,
-				...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
-				`Total:     ${fmt(buchung.preisCHF)}`,
-				``,
-				`Ihre Buchungsreferenz: ${buchung.referenz ?? buchung.id}`,
-				`(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)`,
-				``,
-				`Wir melden uns in Kürze zur Zahlungsabwicklung.`,
-				``,
-				`Freundliche Grüsse`
-			].join('\n')
+			text: bestaetigungFallbackText(buchung, tokenMap)
 		});
 		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
 	}
@@ -157,7 +129,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 
 async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const { Resend } = await import('resend');
@@ -178,7 +150,7 @@ async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 
 async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freigabeUrl: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.INVOICE_FROM_EMAIL;
+	const emailFrom = env.EMAIL_FROM_ADDRESS;
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const annahmen = await listAnnahmenFuerBuchung(buchung.id).catch(() => []);
@@ -197,43 +169,43 @@ async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freiga
 		from: emailFrom,
 		to: toEmail,
 		subject: `Abrechnung freigeben: ${buchung.ressourceName ?? buchung.ressourceUid} – ${buchung.name ?? '–'}`,
-		text: [
-			`${buchung.name ?? '–'} hat ausgecheckt.`,
-			``,
-			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-			`Anreise:   ${fmtD(buchung.von)}`,
-			`Abreise:   ${fmtD(buchung.bis)}`,
-			`Personen:  ${buchung.personen}`,
-			``,
-			`─────────────────────────────────────`,
-			`ABRECHNUNG`,
-			`─────────────────────────────────────`,
-			`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-			`Credits (Aufgaben): ${fmt(creditsCHF)}`,
-			`─────────────────────────────────────`,
-			`Total:              ${fmt(abrechnungBetrag)}`,
-			``,
-			`Erledigte Aufgaben:`,
-			...aufgabenZeilen,
-			``,
-			`Abrechnung prüfen, korrigieren und freigeben:`,
-			freigabeUrl
-		].join('\n')
+		...plainTextMail(
+			[
+				`${buchung.name ?? '–'} hat ausgecheckt.`,
+				``,
+				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
+				`Anreise:   ${fmtD(buchung.von)}`,
+				`Abreise:   ${fmtD(buchung.bis)}`,
+				`Personen:  ${buchung.personen}`,
+				``,
+				`─────────────────────────────────────`,
+				`ABRECHNUNG`,
+				`─────────────────────────────────────`,
+				`Mietpreis:          ${fmt(buchung.preisCHF)}`,
+				`Credits (Aufgaben): ${fmt(creditsCHF)}`,
+				`─────────────────────────────────────`,
+				`Total:              ${fmt(abrechnungBetrag)}`,
+				``,
+				`Erledigte Aufgaben:`,
+				...aufgabenZeilen,
+				``,
+				`Abrechnung prüfen, korrigieren und freigeben:`,
+				freigabeUrl
+			].join('\n')
+		)
 	});
 }
 
 // ── Actions ────────────────────────────────────────────────────────────────────
 
 export const actions: Actions = {
-	delete: async ({ request, url }) => {
-		checkAuth(url);
+	delete: async ({ request }) => {
 		const id = (await request.formData()).get('id');
 		if (typeof id === 'string' && id) await deleteRessourceBuchung(id);
 	},
 
 	// ── Vorwärts: pending → confirmed ─────────────────────────────────────────
-	bestaetigen: async ({ request, url, fetch }) => {
-		checkAuth(url);
+	bestaetigen: async ({ request, fetch }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchungStatus(id, 'confirmed');
@@ -242,8 +214,7 @@ export const actions: Actions = {
 	},
 
 	// ── Vorwärts: confirmed → checked_in ──────────────────────────────────────
-	checkin: async ({ request, url }) => {
-		checkAuth(url);
+	checkin: async ({ request }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchung(id, {
@@ -256,7 +227,6 @@ export const actions: Actions = {
 
 	// ── Vorwärts: checked_in → checked_out ────────────────────────────────────
 	checkout: async ({ request, url }) => {
-		checkAuth(url);
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await updateRessourceBuchung(id, {
@@ -264,15 +234,13 @@ export const actions: Actions = {
 			checkOutAt: new Date().toISOString()
 		});
 		const toEmail = env.INVOICE_TO_EMAIL || '';
-		const adminSecret = env.ADMIN_SECRET ?? '';
 		const origin = url.origin;
-		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&secret=${adminSecret}`;
+		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&token=${adminActionToken('freigabe-abrechnung', id)}`;
 		await mailAbrechnung(buchung, toEmail, freigabeUrl).catch(console.error);
 	},
 
 	// ── Rückwärts: einen Schritt zurück (kein Mail) ───────────────────────────
-	zurueck: async ({ request, url }) => {
-		checkAuth(url);
+	zurueck: async ({ request }) => {
 		const id = (await request.formData()).get('id') as string;
 		if (!id) return;
 		const buchung = await getRessourceBuchung(id);
@@ -290,19 +258,94 @@ export const actions: Actions = {
 			await updateRessourceBuchung(id, {
 				status: 'pending',
 				reminderSent: false,
-				nachAnkunftReminderSent: false
+				nachAnkunftReminderSent: false,
+				abreiseReminderSent: false
 			});
 		} else {
 			await updateRessourceBuchungStatus(id, target);
 		}
 	},
 
-	deleteAll: async ({ url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+	// ── Vorwärts ohne Mail: einen Schritt weiter (kein Mail) ────────────────────
+	voraus: async ({ request }) => {
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		const next: Record<string, RessourceBuchung['status']> = {
+			pending: 'confirmed',
+			confirmed: 'checked_in',
+			checked_in: 'checked_out',
+			checked_out: 'abgerechnet'
+		};
+		const target = next[buchung.status];
+		if (!target) return;
+		await updateRessourceBuchungStatus(id, target);
+	},
+
+	// ── Ankunfts-Reminder manuell senden (Admin) ────────────────────────────
+	sendReminder: async ({ request, fetch }) => {
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await maybeSendAnkunftsErinnerung(buchung, fetch, true);
+	},
+
+	// ── Abreise-Reminder manuell senden (Admin) ─────────────────────────────
+	sendAbreiseReminder: async ({ request, fetch }) => {
+		const id = (await request.formData()).get('id') as string;
+		if (!id) return;
+		const buchung = await getRessourceBuchung(id);
+		if (!buchung) return;
+		await sendAbreiseErinnerung(buchung, fetch, true);
+	},
+
+	deleteAll: async () => {
 		const all = await listAlleRessourceBuchungen();
 		await Promise.all(all.map((b) => deleteRessourceBuchung(b.id)));
 		return { ok: true };
+	},
+
+	create: async ({ request, fetch }) => {
+		const fd = await request.formData();
+		const ressourceUid = (fd.get('ressourceUid') as string)?.trim();
+		const von = fd.get('von') as string;
+		const bis = fd.get('bis') as string;
+		const personen = Number(fd.get('personen') ?? 1);
+		const name = (fd.get('name') as string)?.trim();
+		const email = (fd.get('email') as string)?.trim();
+		const telefon = (fd.get('telefon') as string)?.trim();
+		const nachricht = (fd.get('nachricht') as string)?.trim();
+		const preisCHF = Number(fd.get('preisCHF') ?? 0);
+		const status = (fd.get('status') as RessourceBuchung['status']) ?? 'confirmed';
+
+		if (!ressourceUid || !von || !bis || !name || !email) return { error: 'Pflichtfelder fehlen' };
+
+		let ressourceName = ressourceUid;
+		try {
+			const client = createClient({ fetch });
+			const doc = await client.getByUID('ressource', ressourceUid);
+			ressourceName = (doc.data as any).name ?? ressourceUid;
+		} catch {
+			/* Prismic nicht erreichbar – UID als Name nutzen */
+		}
+
+		const { bucheRessource } = await import('$lib/server/ressourceBuchungen');
+		await bucheRessource({
+			ressourceUid,
+			ressourceName,
+			von,
+			bis,
+			personen,
+			zimmerauswahl: [],
+			preisCHF,
+			bookedAt: new Date().toISOString(),
+			status,
+			name,
+			email,
+			telefon,
+			nachricht
+		});
 	}
 };
