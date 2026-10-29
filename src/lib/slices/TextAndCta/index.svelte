@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled } from '@prismicio/client';
 	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { theme } from '$lib/stores/theme';
@@ -96,7 +97,7 @@
 							style:--hover-bg-color={buttonHoverBgColor}
 							style:--focus-ring-color={buttonColor}
 						>
-							{p.button_text || 'Mehr erfahren'}
+							{p.button_text || $_('Mehr erfahren')}
 						</a>
 					{:else}
 						<PrismicLink
@@ -106,7 +107,7 @@
 								: 'inline-block'}"
 							style="--btn-bg: {buttonBgColor}; --btn-color: {buttonColor}; --hover-text-color: {buttonHoverColor}; --hover-bg-color: {buttonHoverBgColor}; --focus-ring-color: {buttonColor};"
 						>
-							{p.button_text || 'Mehr erfahren'}
+							{p.button_text || $_('Mehr erfahren')}
 						</PrismicLink>
 					{/if}
 				</div>

@@ -75,7 +75,7 @@
 
 	$: termineByWorkday = termine.reduce<Record<string, Record<string, AvailableTermin[]>>>(
 		(groups, termin) => {
-			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || 'Termin';
+			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || $_('Termin');
 			const time = termin.uhrzeit || $_('Ganztägig');
 			(groups[workday] ??= {})[time] ??= [];
 			groups[workday][time].push(termin);
@@ -612,7 +612,11 @@
 			{:else if termine.length === 0}
 				<p class="text-sm opacity-60">{$_('Keine verfügbaren Termine.')}</p>
 			{:else}
-				<div class="termin-selection" role="radiogroup" aria-label={field.field_name ?? 'Termin'}>
+				<div
+					class="termin-selection"
+					role="radiogroup"
+					aria-label={field.field_name ?? $_('Termin')}
+				>
 					{#if !selectedWorkday}
 						<section class="termin-step">
 							<h4>{$_('Tag wählen')}</h4>

@@ -799,6 +799,20 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Jetzt beauftragen': { 'de-ch': 'Jetzt beauftragen', 'en-us': 'Order now' },
+	Gesamtpreis: { 'de-ch': 'Gesamtpreis', 'en-us': 'Total price' },
+	Rabatt: { 'de-ch': 'Rabatt', 'en-us': 'Discount' },
+	'Anzahlung nach Auftragserteilung': {
+		'de-ch': 'Anzahlung nach Auftragserteilung',
+		'en-us': 'Deposit after placing the order'
+	},
+	'Inhalte filtern nach Plan:': {
+		'de-ch': 'Inhalte filtern nach Plan:',
+		'en-us': 'Filter content by plan:'
+	},
+	'Suchen …': { 'de-ch': 'Suchen …', 'en-us': 'Search …' },
+	Startseite: { 'de-ch': 'Startseite', 'en-us': 'Home page' },
+	Termin: { 'de-ch': 'Termin', 'en-us': 'Appointment' },
 	'Unbekannter Token': { 'de-ch': 'Unbekannter Token', 'en-us': 'Unknown token' },
 	'Meintest du': { 'de-ch': 'Meintest du', 'en-us': 'Did you mean' },
 	'Token-Namen prüfen oder im Dokument Variablen anlegen': {

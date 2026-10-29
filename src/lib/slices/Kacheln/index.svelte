@@ -388,7 +388,7 @@
 							rel="noopener noreferrer"
 							class="text-xs underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity !text-inherit"
 						>
-							{memberLink.url?.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] ?? 'Link'}
+							{memberLink.url?.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] ?? $_('Link')}
 						</a>
 					{/if}
 				</li>

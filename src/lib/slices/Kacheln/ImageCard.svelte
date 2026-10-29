@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
 	import PrismicLink from '$lib/components/PrismicLink.svelte';
@@ -78,7 +79,7 @@
 		<div class="pl-6 pr-6">
 			<Button
 				href={anchor}
-				text={card.buttonText || 'Mehr erfahren'}
+				text={card.buttonText || $_('Mehr erfahren')}
 				color={buttonColor || $theme.pageButtonColor}
 				bgColor={buttonBgColor || $theme.pageButtonBgColor}
 				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
@@ -89,7 +90,7 @@
 		<div class="pl-6 pr-6">
 			<Button
 				link={card.buttonLink}
-				text={card.buttonText || 'Mehr erfahren'}
+				text={card.buttonText || $_('Mehr erfahren')}
 				color={buttonColor || $theme.pageButtonColor}
 				bgColor={buttonBgColor || $theme.pageButtonBgColor}
 				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}

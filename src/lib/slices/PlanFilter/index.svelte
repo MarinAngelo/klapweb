@@ -14,7 +14,7 @@
 		([id, p]) => ({ id, label: p.label })
 	);
 
-	const heading = slice.primary?.heading || 'Inhalte filtern nach Plan:';
+	$: heading = slice.primary?.heading || $_('Inhalte filtern nach Plan:');
 
 	onDestroy(() => planFilter.set(null));
 </script>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled } from '@prismicio/client';
 	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { theme } from '$lib/stores/theme';
@@ -125,7 +126,7 @@
 				style:--hover-bg-color={buttonHoverBgColor}
 				style:--focus-ring-color={buttonColor}
 			>
-				{p.button_text || 'Jetzt beauftragen'}{#if btnIcon}&nbsp;<SvgIcons
+				{p.button_text || $_('Jetzt beauftragen')}{#if btnIcon}&nbsp;<SvgIcons
 						name={btnIcon}
 						size="1em"
 						color={btnStyleEntry?.color || 'currentColor'}
@@ -147,7 +148,7 @@
 					style:--hover-bg-color={buttonHoverBgColor}
 					style:--focus-ring-color={buttonColor}
 				>
-					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
+					{p.button_text || $_('Mehr erfahren')}{#if btnIcon}&nbsp;<SvgIcons
 							name={btnIcon}
 							size="1em"
 							color={btnStyleEntry?.color || 'currentColor'}
@@ -161,7 +162,7 @@
 						: 'inline-flex items-center gap-2'}"
 					style="--btn-bg: {buttonBgColor}; --btn-color: {buttonColor}; --hover-text-color: {buttonHoverColor}; --hover-bg-color: {buttonHoverBgColor}; --focus-ring-color: {buttonColor};"
 				>
-					{p.button_text || 'Mehr erfahren'}{#if btnIcon}&nbsp;<SvgIcons
+					{p.button_text || $_('Mehr erfahren')}{#if btnIcon}&nbsp;<SvgIcons
 							name={btnIcon}
 							size="1em"
 							color={btnStyleEntry?.color || 'currentColor'}

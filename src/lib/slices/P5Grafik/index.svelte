@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
@@ -216,7 +217,7 @@
 							<div class="mt-10">
 								<Button
 									link={p.button_link}
-									text={p.button_text || 'Mehr erfahren'}
+									text={p.button_text || $_('Mehr erfahren')}
 									color={buttonColor || get(theme).pageButtonColor}
 									bgColor={buttonBgColor || get(theme).pageButtonBgColor}
 									hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}

@@ -61,11 +61,7 @@
 	>
 		{#each images as image, index}
 			<div class="carousel-item flex-shrink-0 w-full">
-				<img
-					src={image.url}
-					alt={image.alt || 'Carousel Image'}
-					class="w-full h-auto object-cover"
-				/>
+				<img src={image.url} alt={image.alt || $_('Bild')} class="w-full h-auto object-cover" />
 			</div>
 		{/each}
 	</div>

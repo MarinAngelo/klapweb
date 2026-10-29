@@ -29,17 +29,17 @@
 	// Rows: only shown when their token is present in the store.
 	$: mainRows = [
 		{
-			label: withBillingType(p.label_preis || 'Gesamtpreis', $variables['Abrechnungsart']),
+			label: withBillingType(p.label_preis || $_('Gesamtpreis'), $variables['Abrechnungsart']),
 			value: $variables['Preis'],
 			suffix: ''
 		},
 		{
-			label: p.label_rabatt || 'Rabatt',
+			label: p.label_rabatt || $_('Rabatt'),
 			value: $variables['Rabatt'],
 			suffix: ' %'
 		},
 		{
-			label: p.label_anzahlung || 'Anzahlung nach Auftragserteilung',
+			label: p.label_anzahlung || $_('Anzahlung nach Auftragserteilung'),
 			value: $variables['AnzahlungBetrag'],
 			suffix: ''
 		},
@@ -82,7 +82,7 @@
 				{/each}
 				{#if $variables['Total'] && addonRowsFormatted.length > 0}
 					<tr>
-						<td class="pt-3 pr-8 font-bold">{p.label_total || 'Total'}</td>
+						<td class="pt-3 pr-8 font-bold">{p.label_total || $_('Total')}</td>
 						<td class="pt-3 text-right tabular-nums font-bold">{$variables['Total']}</td>
 					</tr>
 				{/if}
