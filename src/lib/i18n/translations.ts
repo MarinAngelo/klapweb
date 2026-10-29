@@ -799,6 +799,12 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	Hilfe: { 'de-ch': 'Hilfe', 'en-us': 'Help' },
+	'Prismic-Feldreferenz': { 'de-ch': 'Prismic-Feldreferenz', 'en-us': 'Prismic field reference' },
+	'Alle Felder der Inhaltstypen und Bausteine mit Erklärung': {
+		'de-ch': 'Alle Felder der Inhaltstypen und Bausteine mit Erklärung',
+		'en-us': 'All fields of the content types and building blocks, explained'
+	},
 	'Feldreferenz – Beschreibungen': {
 		'de-ch': 'Feldreferenz – Beschreibungen',
 		'en-us': 'Field reference – descriptions'

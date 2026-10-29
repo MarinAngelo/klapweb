@@ -78,6 +78,16 @@
 	];
 
 	$: sections = allSections.filter((s) => !data.disabledSections.includes(s.id));
+
+	// Help for website operators (always available, opens in a new tab)
+	const helpSections = [
+		{
+			title: 'Prismic-Feldreferenz',
+			description: 'Alle Felder der Inhaltstypen und Bausteine mit Erklärung',
+			href: '/prismic-feldreferenz',
+			icon: '📖'
+		}
+	];
 </script>
 
 <svelte:head><title>{$_('Admin Dashboard')}</title></svelte:head>
@@ -105,6 +115,25 @@
 					<div class="admin-muted mt-0.5 text-sm">{$_(section.description)}</div>
 				</div>
 				<SvgIcons name="right" size="1.25rem" color="#9ca3af" />
+			</a>
+		{/each}
+	</div>
+
+	<h2 class="mb-3 mt-8">{$_('Hilfe')}</h2>
+	<div class="grid gap-3">
+		{#each helpSections as section}
+			<a
+				href={section.href}
+				target="_blank"
+				rel="noopener"
+				class="admin-card mb-0 flex items-center gap-4 text-inherit no-underline transition-shadow hover:shadow-md"
+			>
+				<span class="text-3xl leading-none">{section.icon}</span>
+				<div class="flex-1">
+					<div class="font-semibold">{$_(section.title)}</div>
+					<div class="admin-muted mt-0.5 text-sm">{$_(section.description)}</div>
+				</div>
+				<span class="admin-muted" aria-hidden="true">↗</span>
 			</a>
 		{/each}
 	</div>
