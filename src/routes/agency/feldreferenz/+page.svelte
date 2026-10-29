@@ -51,8 +51,7 @@
 	<!-- Editor: neutral admin UI, like /agency/gating -->
 	<div class="admin">
 		<div class="admin-container">
-			<AdminHeader title={$_('Feldreferenz – Beschreibungen')} back={false}>
-				<a href="/agency/gating" class="admin-btn">{$_('Gating-Editor')}</a>
+			<AdminHeader title={$_('Feldreferenz – Beschreibungen')} backHref="/agency">
 				<a href="/prismic-feldreferenz" target="_blank" rel="noopener" class="admin-btn"
 					>{$_('Referenz ansehen')} ↗</a
 				>
@@ -98,7 +97,7 @@
 					};
 				}}
 			>
-				{#each data.groups as group (group.name)}
+				{#each data.groups as group (group.id)}
 					{@const visible = group.fields.filter((f) => matches(f, group.name))}
 					<section class="admin-card" class:hidden={visible.length === 0}>
 						<h2 class="admin-card-title">

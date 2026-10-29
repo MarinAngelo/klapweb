@@ -7,6 +7,7 @@
   Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Main).
   Übernehmen: Datei im Browser öffnen → alles markieren (Ctrl+A) → kopieren → in das Feld einfügen → veröffentlichen.
   Überschriften und Listen bleiben erhalten. Der Bot liest die Änderung nach spätestens 5 Minuten.
+ Stand der Anleitungen: 2026-10-29 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
 -->
 <style>
 	body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
@@ -177,11 +178,13 @@
 <ol>
 	<li>Auf der Prismic-Startseite das Dokument «Navigation» öffnen.</li>
 	<li>Ganz unten bei «Links» auf «Add item» klicken.</li>
-	<li>«Label» eingeben (der angezeigte Menütext) und bei «Link» die Seite auswählen. Externe Adressen (Web-Links) sind ebenfalls möglich.</li>
+	<li>«Label» eingeben (der angezeigte Menütext) und bei «Link» das Ziel wählen: «Link to Prismic Page» für eigene Seiten. Je nach Paket lassen sich dort auch Ressourcen (Ferienwohnungen) und Leistungen direkt auswählen – die Adresse musst du nicht kennen.</li>
+	<li>Externe Adressen (Web-Links) sind ebenfalls möglich. Eigene Adressen als Web-Link immer mit «/» beginnen, z. B. «/kontakt» – ohne «/» führt der Link je nach Seite ins Leere.</li>
 	<li>Optional: «Sub-Link von» wählen, damit der Eintrag als Unterpunkt in einem Ausklapp-Menü erscheint. Mit «Ausklappbare Schaltfläche» wird ein Eintrag zum Ausklapp-Menü.</li>
 	<li>Festlegen, ob der Link in der Hauptnavigation und/oder in der sekundären Navigation der Fusszeile erscheint.</li>
 	<li>Reihenfolge per Sechs-Punkte-Symbol anpassen und veröffentlichen.</li>
 </ol>
+<p>Mehrsprachige Websites: In der Navigation einer weiteren Sprache (z. B. Englisch) wählst du möglichst die übersetzte Seite. Gibt es noch keine Übersetzung, darfst du die deutsche Seite verlinken: Besucher bleiben in ihrer Sprache und sehen einen Hinweis, dass die Seite noch nicht übersetzt ist.</p>
 
 <h2>Anleitung: Bilder und Dateien</h2>
 <ul>
@@ -223,9 +226,13 @@
 	<li>Tab «Generell»: Schrift- und Hintergrundfarbe, Hauptschrift, Schriftgrössen für Mobile und Desktop, Container-Breite, Link- und Schaltflächen-Farben, Highlight-Farben und Titel-Animation.</li>
 	<li>Tab «Kopfzeile»: Logo, Logo-Grösse, Farben, Schriften, fixierte Kopfzeile (Sticky) und optional eine kurvige untere Kante (Welle).</li>
 	<li>Tab «Fusszeile»: Farben, Textgrössen und optional eine kurvige obere Kante.</li>
-	<li>Veröffentlichen. Die Änderungen gelten sofort auf der ganzen Website.</li>
+	<li>Veröffentlichen. Die Änderungen gelten sofort auf der ganzen Website. Auch die E-Mails an Gäste und Kunden (z. B. Buchungsbestätigung, Erinnerungen) erscheinen in den Farben der Website.</li>
 </ol>
-<p>Eigene Schriften: Unter dem Typ «Schrift» kannst du Google-Schriften (Name und Varianten), Adobe-Schriften oder lokale Schriften erfassen und dann in der Design-Vorlage auswählen. Alternativ eine «Vorinstallierte Hauptschrift» wählen.</p>
+<p>Schriften: Alle Schriften werden von deiner eigenen Website ausgeliefert, Besucher laden nichts von Google. Unter dem Typ «Schrift» erfasst du eine Schrift und wählst sie dann in der Design-Vorlage aus. Alternativ eine «Vorinstallierte Hauptschrift» wählen.</p>
+<ul>
+	<li>Anbieter «Google»: Name genau wie bei Google Fonts (z. B. «Jura») und optional «Varianten». Die Schrift wird beim nächsten Veröffentlichen der Website automatisch heruntergeladen.</li>
+	<li>Anbieter «Lokal» (eigene, z. B. gekaufte Schrift): Pro Schnitt eine Zeile in «Schriftdateien»: Datei hochladen (am besten .woff2, auch .woff, .ttf, .otf), Gewicht (400 = normal, 700 = fett) und Stil (normal/kursiv). Die Lizenz muss die Verwendung als Webfont erlauben.</li>
+</ul>
 <p>Farben pro Seite: Im Tab «Erscheinungsbild» einer Seite kannst du Hintergrund-, Schrift- und Linkfarbe nur für diese Seite überschreiben. Viele Inhalts-Elemente haben ebenfalls eigene Farbfelder; leer bedeutet: es gilt die globale Farbe.</p>
 
 <h2>Inhalts-Elemente (Slices) im Überblick</h2>
@@ -280,22 +287,40 @@
 <h2>Anleitung: Mehrsprachigkeit</h2>
 <ol>
 	<li>Die zusätzliche Sprache richtet Angelo in Prismic ein. Eine Zusatzsprache ist im kostenlosen Prismic-Plan enthalten; für mehr Sprachen musst du den Prismic-Plan auf deine Rechnung erweitern.</li>
-	<li>In den Einstellungen «Mehrere Sprachen verwenden» einschalten. Dann erscheint auf der Website ein Sprachumschalter.</li>
+	<li>In den Einstellungen «Mehrere Sprachen verwenden» einschalten. Dann erscheint auf der Website ein Sprachumschalter (auf dem Handy im Menü).</li>
 	<li>Auf der Prismic-Startseite die zu übersetzenden Dokumente markieren und «Copy to another locale» wählen, Zielsprache auswählen.</li>
 	<li>Oben links die Sprache wechseln, die kopierten Dokumente öffnen, Texte übersetzen und veröffentlichen.</li>
-	<li>Auch Navigation, Einstellungen und Design-Vorlage brauchen eine Version in der neuen Sprache.</li>
+	<li>Auch Navigation, Einstellungen, Design-Vorlage und das Dokument «Variablen» brauchen eine Version in der neuen Sprache.</li>
 </ol>
+<p>So verhält sich die Website:</p>
+<ul>
+	<li>Die gewählte Sprache wird gemerkt. Besuchende sehen beim nächsten Besuch automatisch wieder ihre Sprache.</li>
+	<li>Hat eine Seite noch keine Übersetzung, ist die Sprache im Umschalter durchgestrichen. Führt ein Link trotzdem dorthin, erscheint der Hinweis «Leider gibt es für diese Seite noch keine Übersetzung» und danach die deutsche Version – Menü und Fusszeile bleiben in der gewählten Sprache.</li>
+	<li>Platzhalter (z. B. {{Name}}, {{Anreise}}, eigene Variablen) werden nie übersetzt: Im englischen Text heisst der Platzhalter genau gleich wie im deutschen. Übersetzt wird nur, was er einsetzt.</li>
+	<li>Ressourcen mit Schlafzimmern: Die Reihenfolge der Schlafzimmer muss in allen Sprachen gleich sein, sonst stimmt der Belegungsplan nicht.</li>
+	<li>Was noch fehlt, zeigt der Admin-Bereich unter «Inhalte prüfen».</li>
+</ul>
 
 <h2>Der Admin-Bereich deiner Website</h2>
-<p>Für Buchungen, Kunden, Rechnungen und Newsletter gibt es einen geschützten Verwaltungsbereich direkt auf deiner Website (nicht in Prismic).</p>
+<p>Für Buchungen, Kunden, Rechnungen, Newsletter und Kontrollen gibt es einen geschützten Verwaltungsbereich direkt auf deiner Website (nicht in Prismic).</p>
 <ol>
 	<li>Im Browser deine-website.ch/admin aufrufen.</li>
-	<li>Das Admin-Passwort eingeben (du erhältst es von Angelo). Du bleibst 8 Stunden angemeldet.</li>
-	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind: Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter.</li>
-	<li>Zum Abmelden im Dashboard auf «Abmelden» klicken.</li>
+	<li>Das Admin-Passwort eingeben (du erhältst es von Angelo). Du bleibst 8 Stunden angemeldet, mit «Angemeldet bleiben» 14 Tage.</li>
+	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B. Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter, Chat-Bot, «Inhalte prüfen» und «Passwortgeschützte Seiten».</li>
+	<li>Unter «Hilfe» findest du die Prismic-Feldreferenz: alle Felder der Inhaltstypen und Inhalts-Elemente mit Erklärung.</li>
+	<li>Mit «Zur Website» kommst du zurück auf die Website, mit «Abmelden» meldest du dich ab.</li>
 </ol>
 <p>Ältere Anleitungen nennen Adressen mit «?secret=…». Das ist nicht mehr nötig: Melde dich einfach unter /admin an.</p>
 <p>E-Mail-Versand (Bestätigungen, Rechnungen, Newsletter) funktioniert nur, wenn er auf dem Hosting eingerichtet ist. Das erledigt Angelo. Kommen keine E-Mails an, bitte Angelo informieren.</p>
+
+<h2>Anleitung: Inhalte prüfen</h2>
+<p>Im Admin-Bereich unter «Inhalte prüfen» kontrolliert die Website deine Prismic-Inhalte und zeigt pro Problem, was zu tun ist, mit dem Knopf «In Prismic öffnen»:</p>
+<ul>
+	<li>Fehlende Übersetzungen: Seiten, die es in einer Sprache noch nicht gibt.</li>
+	<li>Web-Links ohne «/» am Anfang, die ins Leere führen.</li>
+	<li>Links in einer Übersetzung auf die deutsche Seite, obwohl es die Seite übersetzt gibt.</li>
+	<li>Unbekannte Platzhalter, z. B. ein Tippfehler wie {{Resource}} statt {{Ressource}} – mit Vorschlag «meintest du …?».</li>
+</ul>
 
 <h2>Anleitung: Terminbuchung einrichten</h2>
 <p>Besucher buchen freie Zeitfenster direkt auf der Website. Du legst fest, an welchen Tagen welche Angebote buchbar sind; das System berechnet die freien Termine automatisch.</p>
@@ -389,14 +414,16 @@
 <h2>Anleitung: Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)</h2>
 <ol>
 	<li>«Create a new page» → «Ressource». Tab «Main»: UID, Bezeichnung, Beschreibung, Hauptbild. Bei einem Haus mit mehreren Wohnungen die untergeordneten Ressourcen verknüpfen; «Zimmer einzeln buchbar» bei Bedarf einschalten.</li>
-	<li>Tab «Kapazität»: maximale Personenzahl (0 = unbegrenzt) und optional Schlafzimmer mit Betttyp, Anzahl Betten und Bild. Sind Schlafzimmer erfasst, können Gäste einzelne Zimmer buchen.</li>
+	<li>Tab «Kapazität»: maximale Personenzahl (0 = unbegrenzt) und optional Schlafzimmer mit Betttyp, Anzahl Betten und Bild. Sind Schlafzimmer erfasst, können Gäste einzelne Zimmer buchen. Bei mehreren Sprachen: Reihenfolge der Schlafzimmer überall gleich lassen und Zimmernamen in der Hauptsprache nicht mehr umbenennen, sobald es Buchungen gibt.</li>
 	<li>Tab «Preise &amp; Regeln»: Preis pro Nacht, Mindestaufenthalt, Check-in-Tage und Saisonpreise (Bezeichnung, von, bis, Preis pro Nacht). Es gilt die erste passende Saison, sonst der Basispreis.</li>
-	<li>Tab «Buchungsbestätigung» und «Erinnerungen»: E-Mail-Texte für Bestätigung, vor Ankunft, nach Ankunft und vor Abreise.</li>
+	<li>Tab «Buchungsbestätigung» und «Erinnerungen»: E-Mail-Texte für Bestätigung, vor Ankunft, nach Ankunft und vor Abreise. Titel (Überschrift 1–3), Listen und Links sind möglich.</li>
 	<li>Veröffentlichen.</li>
-	<li>Auf einer Seite (oder im Tab «Inhalt» der Ressource) das Element «RessourceBuchung» einfügen und die Ressource verknüpfen. Optional Überschrift, Einleitung, Button-Text und Erfolgsmeldung.</li>
+	<li>Auf einer Seite (oder im Tab «Inhalt» der Ressource) das Element «RessourceBuchung» einfügen und die Ressource verknüpfen. Optional Überschrift, Einleitung (erscheint im Kalender), Button-Text und Erfolgsmeldung (erscheint nach dem Absenden als Fenster).</li>
 	<li>Für Check-in und Check-out vor Ort gibt es die Formular-Varianten «Check-in» und «Check-out» mit Buchungsreferenz.</li>
 </ol>
-<p>Gäste wählen An- und Abreise im Kalender, sehen den Gesamtpreis und senden die Anfrage. Gast und Anbieter erhalten automatisch eine E-Mail. Doppelbuchungen werden verhindert. Alle Buchungen siehst du im Admin-Bereich unter «Ressource-Buchungen».</p>
+<p>Platzhalter in den E-Mail-Texten (Betreff und Text): {{Name}}, {{Ressource}}, {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}, {{Türcode}} und {{Messenger-Apps}}. {{Messenger-Apps}} fügt Knöpfe für Signal, Telegram und WhatsApp mit der Messenger-Nummer aus den Einstellungen ein. Den Türcode richtet Angelo auf dem Hosting ein.</p>
+<p>Gleiche Texte für mehrere Ressourcen: Textblöcke, die in mehreren Ressourcen vorkommen (z. B. Anfahrt, Schlüsseltresor, WLAN), einmal im Dokument «Variablen» als mehrzeiligen Text erfassen und in den E-Mail-Texten nur den Platzhalter in einen eigenen Absatz schreiben, z. B. {{Anfahrt}}. Im Variablentext dürfen auch {{Name}} oder {{Anreise}} stehen.</p>
+<p>Gäste wählen An- und Abreise im Kalender, sehen den Gesamtpreis und senden die Anfrage. Gast und Anbieter erhalten automatisch eine E-Mail, der Gast in der Sprache, in der er gebucht hat. Die Anbieter-Mail enthält einen Knopf zum Bestätigen. Doppelbuchungen werden verhindert. Alle Buchungen siehst du im Admin-Bereich unter «Ressource-Buchungen».</p>
 
 <h2>Anleitung: Progressive Web App (PWA)</h2>
 <ol>
@@ -414,14 +441,895 @@
 	<li>Bei mehrsprachigen Websites kann jede Sprache eine eigene Wissensbasis haben. Ist sie leer, verwendet der Bot die Wissensbasis der Hauptsprache.</li>
 </ol>
 <p>Der Bot erscheint als runder Button unten rechts auf jeder Seite. Er beantwortet Fragen nur anhand der Wissensbasis und verweist bei Unklarheiten auf die Kontaktseite. Die Nachrichten werden zur Beantwortung an den KI-Anbieter Anthropic übertragen; das steht im Cookie-Banner und in der Datenschutzerklärung. Pro Besucher sind 20 Nachrichten in 10 Minuten möglich.</p>
+<p>Im Admin-Bereich unter «Chat-Bot» siehst du die geschätzten Kosten pro Tag und Monat sowie alle Gespräche mit Fragen und Antworten. Gespräche werden ohne IP-Adresse gespeichert und nach 90 Tagen automatisch gelöscht; einzelne Gespräche kannst du sofort löschen. So erkennst du, welche Fragen der Bot noch nicht gut beantwortet, und kannst die Wissensbasis ergänzen.</p>
 
 <h2>Anleitung: Design Panel und erweiterte Gestaltung</h2>
 <ul>
 	<li>Design Panel: Auf der Website die Tastenkombination Ctrl+Shift+K drücken. Es öffnet sich ein Panel, in dem du Gestaltungsoptionen (z. B. die Welle der Kopfzeile) live ausprobieren kannst. Speichern ist nur möglich, wenn du im Admin-Bereich angemeldet bist. Mit Esc schliessen.</li>
 	<li>Schaltflächen-Stile: In der Design-Vorlage unter «Button-Stile» eigene Stile mit Schrift- und Hintergrundfarbe (auch für Hover) und Symbol festlegen. Diese Stile stehen dann in den Inhalts-Elementen bei «Button-Stil» zur Auswahl.</li>
 	<li>Icons: unter dem Typ «Icon» eigene SVG-Icons erfassen.</li>
-	<li>Variablen: im Dokument «Variablen» Platzhalter definieren (Token-Name und Wert), z. B. «Telefon». Im Text {{Telefon}} schreiben; auf der Website erscheint der Wert. Ändert sich der Wert, ändert er sich überall.</li>
+	<li>Variablen: im Dokument «Variablen» Platzhalter definieren, z. B. Token-Name «Telefon» und Wert. Im Text {{Telefon}} schreiben; auf der Website und in den E-Mails erscheint der Wert. Ändert sich der Wert, ändert er sich überall. Für längere Texte mit Absätzen, Titeln und Links im selben Eintrag statt «Wert» das Feld «Text (mehrzeilig)» ausfüllen (es hat Vorrang vor «Wert») und den Platzhalter im Text allein in einen eigenen Absatz schreiben. Für andere Sprachen das Dokument «Variablen» in Prismic übersetzen; Token-Namen bleiben gleich.</li>
 </ul>
+
+<!-- AUTO:FELDREFERENZ:START -->
+<h2>Prismic-Feldreferenz (alle Felder)</h2>
+<p>Alle Felder der Inhaltstypen und Inhalts-Elemente in Prismic, mit Feldtyp und Erklärung. Die vollständige Referenz steht auf der Website unter /prismic-feldreferenz (im Admin-Bereich unter «Hilfe»).</p>
+<h3>AdresseUndMap (Inhalts-Element)</h3>
+<ul>
+	<li>Adresse / Text (formatierter Text)</li>
+	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenhöhe (px) (Zahl)</li>
+	<li>Transparenz (Zahl)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Schrift horizontal zentrieren (Ein/Aus)</li>
+	<li>Schriftgrösse Desktop (%) (Zahl)</li>
+	<li>Schriftgrösse Mobile (%) (Zahl)</li>
+	<li>Karte links (Ein/Aus)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Akkordeon (Inhalts-Element)</h3>
+<ul>
+	<li>Überschrift (formatierter Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Erstes Item ausgeklappt (Ein/Aus)</li>
+	<li>Suche aktivieren (Ein/Aus)</li>
+	<li>Suchfeld-Platzhalter (Text)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Kontrast-Offset Balken-Text (-255 bis +255, leer = Seitenfarbe) (Zahl)</li>
+	<li>Link-Farbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Rahmen-Farbe (leer = Schriftfarbe) (Farbe)</li>
+	<li>Rahmen um die Sektion (Ein/Aus)</li>
+	<li>Akkordeon Elemente (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Titel-Ebene (Auswahl): Optionen: H2, H3, H4, H5, H6</li>
+</ul>
+<h3>Anleitung (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Video (YouTube, Vimeo …) (Einbettung)</li>
+	<li>Video Einbettungs-Code (alternativ) (Text)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Schritte (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Aufgaben (Inhalts-Element)</h3>
+<ul>
+	<li>Überschrift (formatierter Text)</li>
+	<li>Einleitung (formatierter Text)</li>
+	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+</ul>
+<h3>Bild (Inhalts-Element)</h3>
+<ul>
+	<li>Bild (Bild)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Bild als Lightbox öffnen (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Bild Links (Vorher) (Bild)</li>
+	<li>Beschriftung Links (Text)</li>
+	<li>Bild Rechts (Nachher) (Bild)</li>
+	<li>Beschriftung Rechts (Text)</li>
+</ul>
+<h3>Event (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Untertitel (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Start Datum und Zeit (Datum und Zeit)</li>
+	<li>End Datum Zeit (Datum und Zeit)</li>
+	<li>Ort (formatierter Text)</li>
+	<li>Google Maps URL (Ort)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Weitere Daten (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Formulare (Inhalts-Element)</h3>
+<ul>
+	<li>Formular Titel (Text)</li>
+	<li>Formular Instruktionen (formatierter Text)</li>
+	<li>Senden-Schaltflächen-Text (Text)</li>
+	<li>Button-Stil (Link)</li>
+	<li>2 Spalten (Ein/Aus)</li>
+	<li>Gesendet Titel (Text)</li>
+	<li>Gesendet Text (formatierter Text)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Formular Felder (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Überschrift (Text)</li>
+	<li>Einleitungstext (formatierter Text)</li>
+	<li>Buchungsreferenz Label (Text)</li>
+	<li>Senden-Button Text (Text)</li>
+	<li>Bestätigungstext (formatierter Text)</li>
+	<li>Fehler: Referenz nicht gefunden (Text)</li>
+	<li>Fehler: bereits erledigt (Text)</li>
+	<li>Weiterleitung nach Check-in (URL) (Text)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Checklisten-Eintrag (Text)</li>
+	<li>Namensfelder anzeigen (Ein/Aus)</li>
+	<li>Einwilligungstext (Checkbox) (formatierter Text)</li>
+</ul>
+<h3>Galerie (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (optional) (formatierter Text)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Spalten (Desktop) (Auswahl): Optionen: 2, 3, 4</li>
+	<li>Raster-Typ (Auswahl): Optionen: Uniform, Masonry</li>
+	<li>Abstände zwischen Bildern (Ein/Aus)</li>
+	<li>Abgerundete Ecken (Ein/Aus)</li>
+	<li>Überlappend mit Kopfzeile (Ein/Aus)</li>
+	<li>Transparenz der Kopfzeile (Zahl)</li>
+	<li>Vollbild-Raster (Randlos) (Ein/Aus)</li>
+	<li>Einblend-Animation (Ein/Aus)</li>
+	<li>Bild (Bild)</li>
+	<li>Bildunterschrift (optional) (Text)</li>
+</ul>
+<h3>Globale Events (Inhalts-Element)</h3>
+<ul>
+	<li>Serie / Eltern-Event (Link)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>HtmlCode (Inhalts-Element)</h3>
+<ul>
+	<li>HTML Code (formatierter Text)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Inhaltsverzeichnis (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Tiefe (Auswahl): Optionen: Nur H2, H2 und H3</li>
+	<li>Ausrichtung (Auswahl): Optionen: Oben, Links</li>
+	<li>Fixiert (sticky) (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Linkfarbe (Farbe)</li>
+	<li>Linkfarbe wenn Maus darüber (Farbe)</li>
+</ul>
+<h3>Kacheln (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (formatierter Text)</li>
+	<li>Spalten je Reihe (Auswahl): Optionen: 2, 3</li>
+	<li>Schriftfarbe Bereich (Farbe)</li>
+	<li>Hintergrundfarbe Bereich (Farbe)</li>
+	<li>Schriftfarbe Kacheln (Farbe)</li>
+	<li>Hintergrundfarbe Kacheln (Farbe)</li>
+	<li>Schaltflächen Schriftfarbe (Farbe)</li>
+	<li>Schaltfl. Schriftfarbe Maus drüber (Farbe)</li>
+	<li>Schaltflächen Hintergrundfarbe (Farbe)</li>
+	<li>Schaltfl. Hintergrundf. Maus drüber (Farbe)</li>
+	<li>Farbe der Umrandung (Farbe)</li>
+	<li>Runde Ecken (Ein/Aus)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Kacheln (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Hervorgehobener Plan (Auswahl): Optionen: Keiner, Plan 1, Plan 2, Plan 3, Plan 4</li>
+	<li>CTA-Beschriftung (Text)</li>
+	<li>Button-Stil (Link)</li>
+	<li>Plan (Seite) (Link)</li>
+</ul>
+<h3>Kontakt (Inhalts-Element)</h3>
+<ul>
+	<li>Überschrift (Text)</li>
+	<li>Ausrichtung (Auswahl): Optionen: Horizontal, Vertikal</li>
+	<li>Grösse (Auswahl): Optionen: Klein, Mittel, Gross</li>
+	<li>Ausrichtung (horizontal) (Auswahl): Optionen: Links, Mitte, Rechts</li>
+	<li>Nummer/Adresse anzeigen (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>App (Auswahl): Optionen: WhatsApp, Telegram, Signal, Telefon, E-Mail, Facebook Messenger, Instagram</li>
+	<li>Beschriftung (optional, überschreibt App-Name) (Text)</li>
+	<li>Nummer / Adresse / Benutzername (Text)</li>
+</ul>
+<h3>LinkListe (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (formatierter Text)</li>
+	<li>Layout (Auswahl): Optionen: Liste, Kacheln, Kompakt</li>
+	<li>Spalten bei Kacheln (Desktop) (Auswahl): Optionen: 2, 3, 4</li>
+	<li>Nach Gruppe gruppieren (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>URL (Link)</li>
+	<li>Titel (optional, sonst Domain) (Text)</li>
+	<li>Beschreibung (Text)</li>
+	<li>Gruppe / Kategorie (Text)</li>
+	<li>Vorschaubild (überschreibt Social Image) (Bild)</li>
+</ul>
+<h3>MapEinbetten (Inhalts-Element)</h3>
+<ul>
+	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenhöhe (px) (Zahl)</li>
+	<li>Transparenz (Zahl)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>P5Grafik (Inhalts-Element)</h3>
+<ul>
+	<li>Sketch (Auswahl): Optionen: Orbital Circles, Particle Flow, My Sketch, Generative Gestaltung P_1_0_01, Generative Gestaltung P_1_1_1_01, Generative Gestaltung P_1_2_1_01, Generative Gestaltung P_1_2_2_01, Generative Gestaltung P_2_2_2_01</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Akzentfarbe (Farbe)</li>
+	<li>Bild (für bildbasierte Sketches) (Bild)</li>
+	<li>Einblendanimation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Überlappend mit Kopfzeile (Ein/Aus)</li>
+	<li>Transparenz der Kopfzeile (Zahl)</li>
+	<li>Kopfzeile beim Laden ausblenden (Ein/Aus)</li>
+	<li>Titelbild Höhe (Auswahl): Optionen: 100 %, 50 %, 33 %</li>
+	<li>Canvas Überlagerungsfarbe (Farbe)</li>
+	<li>Transparenz Canvas-Überlagerung (Zahl)</li>
+	<li>Text (formatierter Text)</li>
+	<li>Schriftart (Auswahl): Optionen: Inter, Roboto, Open Sans, Montserrat, Poppins, Lato, Raleway, Oswald, Nunito, DM Sans, Outfit, Plus Jakarta Sans, Josefin Sans, Quicksand, Cabin, Playfair Display, Merriweather, Lora, Cormorant Garamond, Crimson Pro, Nunito Sans</li>
+	<li>Eigene Schriftart (Link)</li>
+	<li>Schaltflächenlink (Link)</li>
+	<li>Schaltflächentext (Text)</li>
+	<li>Schaltfläche Text- und Rahmenfarbe (Farbe)</li>
+	<li>Text &amp; Rahmen wenn Maus drüber (Farbe)</li>
+	<li>Schaltfläche Hintergrundfarbe (Farbe)</li>
+	<li>Hintergrund wenn Maus drüber (Farbe)</li>
+	<li>Text Überlagerungsfarbe (Farbe)</li>
+	<li>Transparenz Text Überlagerungsfarbe (Zahl)</li>
+	<li>Text Hintergrund in Mobile aus (Ein/Aus)</li>
+	<li>Text Überlagerungsfeld Grösse (Auswahl): Optionen: klein, mittel, gross</li>
+	<li>Text Überlagerungsfeld Grösse Mobile (Auswahl): Optionen: klein, mittel, gross, Ganzer Bildschirm</li>
+	<li>Textgrösse Mobile (Auswahl): Optionen: Normal, Klein, Kleiner, Sehr klein</li>
+</ul>
+<h3>PlanFilter (Inhalts-Element)</h3>
+<ul>
+	<li>Beschriftung (Text)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Sticky Header (Ein/Aus)</li>
+</ul>
+<h3>Preisaufstellung (Inhalts-Element)</h3>
+<ul>
+	<li>Label Gesamtpreis (Text)</li>
+	<li>Label Rabatt (Text)</li>
+	<li>Label Anzahlung (Text)</li>
+	<li>Label Restbetrag (Text)</li>
+	<li>Label Abrechnungsart (Text)</li>
+	<li>Label Total (Text)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Preisvergleich (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (formatierter Text)</li>
+	<li>Plan 1 (Link)</li>
+	<li>Plan 2 (Link)</li>
+	<li>Plan 3 (Link)</li>
+	<li>Hervorgehobener Plan (Auswahl): Optionen: Keiner, Plan 1, Plan 2, Plan 3</li>
+	<li>CTA-Beschriftung (Text)</li>
+	<li>Button-Stil (Link)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Leistung (Link)</li>
+	<li>Plan 1 Wert (Text)</li>
+	<li>Plan 2 Wert (Text)</li>
+	<li>Plan 3 Wert (Text)</li>
+</ul>
+<h3>RessourceBuchung (Inhalts-Element)</h3>
+<ul>
+	<li>Überschrift (formatierter Text)</li>
+	<li>Einleitung (formatierter Text)</li>
+	<li>Senden-Schaltflächen-Text (Text)</li>
+	<li>Erfolgsmeldung Titel (Text)</li>
+	<li>Erfolgsmeldung Text (formatierter Text)</li>
+	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Schaltfläche (Inhalts-Element)</h3>
+<ul>
+	<li>Link (Link)</li>
+	<li>Beschriftung (Text)</li>
+	<li>Grösse (Auswahl): Optionen: Klein, Mittel, Gross</li>
+	<li>Ausrichtung (Auswahl): Optionen: Links, Mitte, Rechts</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Button-Stil (Link)</li>
+	<li>Schaltfläche Text- und Rahmenfarbe (Farbe)</li>
+	<li>Text &amp; Rahmen wenn Maus drüber (Farbe)</li>
+	<li>Schaltfläche Hintergrundfarbe (Farbe)</li>
+	<li>Hintergrund wenn Maus drüber (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Stimmen (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (formatierter Text)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Karten Hintergrundfarbe (Farbe)</li>
+	<li>Zitat (formatierter Text)</li>
+	<li>Name (Text)</li>
+	<li>Rolle / Unternehmen (Text)</li>
+	<li>Foto (optional) (Bild)</li>
+</ul>
+<h3>Text (Inhalts-Element)</h3>
+<ul>
+	<li>Text (formatierter Text)</li>
+	<li>Zentrieren (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Globale Events</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Text&amp;Aktion (Inhalts-Element)</h3>
+<ul>
+	<li>Label (Text)</li>
+	<li>Textausrichtung (Auswahl): Optionen: Links, Mitte, Rechts</li>
+	<li>Text (formatierter Text)</li>
+	<li>Bildschirmhoch (Ein/Aus)</li>
+	<li>Scrollen einrasten (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Schriftgrösse Desktop (%) (Zahl)</li>
+	<li>Schriftgrösse Mobile (%) (Zahl)</li>
+	<li>Schaltfläche Link (Link)</li>
+	<li>Schaltfläche Beschriftung (Text)</li>
+	<li>Schaltfläche Grösse (Auswahl): Optionen: Klein, Mittel, Gross</li>
+	<li>Schaltfläche Ausrichtung (Auswahl): Optionen: Links, Mitte, Rechts</li>
+	<li>Mobile: Volle Breite (Ein/Aus)</li>
+	<li>Schaltfläche Text- und Rahmenfarbe (Farbe)</li>
+	<li>Text &amp; Rahmen wenn Maus drüber (Farbe)</li>
+	<li>Schaltfläche Hintergrundfarbe (Farbe)</li>
+	<li>Hintergrund wenn Maus drüber (Farbe)</li>
+</ul>
+<h3>TextMitBild (Inhalts-Element)</h3>
+<ul>
+	<li>Text (formatierter Text)</li>
+	<li>Bild (Bild)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
+	<li>Vertikaler Abstand Desktop (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Vertikaler Abstand Mobile (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Bild als Kreis (Ein/Aus)</li>
+	<li>Bild links (Ein/Aus)</li>
+	<li>Bild als Lightbox öffnen (Ein/Aus)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Bild zuerst auf Mobile (Ein/Aus)</li>
+	<li>Schrift vertikal zentrieren (Ein/Aus)</li>
+	<li>Schrift horizontal zentrieren (Ein/Aus)</li>
+	<li>Vollbild (100vh) (Ein/Aus)</li>
+	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Globale Events</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Button Link (Link)</li>
+	<li>Button Text (Text)</li>
+	<li>Button-Stil (Link)</li>
+	<li>Sektions-Titel (Text)</li>
+	<li>Abstand zwischen Zeilen (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Abstand Bild / Text (Auswahl): Optionen: kein, klein, mittel, gross</li>
+	<li>Volle Breite (kein Seitenrand) (Ein/Aus)</li>
+	<li>Text-Bereich Innenabstand (Auswahl): Optionen: kein, klein, mittel, gross</li>
+	<li>Bild 2 (Slider) (Bild)</li>
+	<li>Bild 3 (Slider) (Bild)</li>
+	<li>Bild 4 (Slider) (Bild)</li>
+	<li>Bild links (Ein/Aus)</li>
+	<li>Button Text (Text)</li>
+	<li>Button Link (Link)</li>
+</ul>
+<h3>Timeline (Inhalts-Element)</h3>
+<ul>
+	<li>Titel (formatierter Text)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Linienfarbe (Farbe)</li>
+	<li>Einblend-Animation (Ein/Aus)</li>
+	<li>Datum / Jahr (Text)</li>
+	<li>Untertitel (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+</ul>
+<h3>Titelbereich (Inhalts-Element)</h3>
+<ul>
+	<li>Überlappend mit Kopfzeile (Ein/Aus)</li>
+	<li>Transparenz der Kopfzeile (Zahl)</li>
+	<li>Kopfzeile beim Laden ausblenden (Ein/Aus)</li>
+	<li>Text (formatierter Text)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Schriftart (Auswahl): Optionen: Inter, Roboto, Open Sans, Montserrat, Poppins, Lato, Raleway, Oswald, Nunito, DM Sans, Outfit, Plus Jakarta Sans, Josefin Sans, Quicksand, Cabin, Playfair Display, Merriweather, Lora, Cormorant Garamond, Crimson Pro, Nunito Sans</li>
+	<li>Eigene Schriftart (Link)</li>
+	<li>Schaltflächenlink (Link)</li>
+	<li>Schaltflächentext (Text)</li>
+	<li>Button-Stil (Link)</li>
+	<li>Schaltfläche Text- und Rahmenfarbe (Farbe)</li>
+	<li>Text &amp; Rahmen wenn Maus drüber (Farbe)</li>
+	<li>Schaltfläche Hintergrundfarbe (Farbe)</li>
+	<li>Hintergrund wenn Maus drüber (Farbe)</li>
+	<li>Hintergrundbild (Bild)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Bild Überlagerungsfarbe (Farbe)</li>
+	<li>Transparenz der Überlagerungsfarbe (Zahl)</li>
+	<li>Titelbild Höhe (Auswahl): Optionen: 100 %, 50 %, 33 %</li>
+	<li>Text Überlagerungsfarbe (Farbe)</li>
+	<li>Transparenz Text Überlagerungsfarbe (Zahl)</li>
+	<li>Text Hintergrund in Mobile aus (Ein/Aus)</li>
+	<li>Text Überlagerungsfeld Grösse (Auswahl): Optionen: klein, mittel, gross</li>
+	<li>Text Überlagerungsfeld Grösse Mobile (Auswahl): Optionen: klein, mittel, gross, Ganzer Bildschirm</li>
+	<li>Textgrösse Mobile (Auswahl): Optionen: Normal, Klein, Kleiner, Sehr klein</li>
+	<li>Verlauf Startfarbe (Farbe)</li>
+	<li>Startfarbe Position (%) (Zahl)</li>
+	<li>Startfarbe Transparenz (0–1) (Zahl)</li>
+	<li>Verlauf Endfarbe (Farbe)</li>
+	<li>Endfarbe Position (%) (Zahl)</li>
+	<li>Endfarbe Transparenz (0–1) (Zahl)</li>
+	<li>Verlauf Form (Auswahl): Optionen: Linear, Radial</li>
+	<li>Verlauf Richtung (nur Linear) (Auswahl): Optionen: 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°</li>
+	<li>Seitenzahl anzeigen (Ein/Aus)</li>
+	<li>Bildwechsel-Modus (Auswahl): Optionen: Crossfade, Slide, Ken Burns</li>
+	<li>Überblendungsdauer (ms) (Zahl)</li>
+	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
+	<li>Bilder Karusell (Liste)</li>
+	<li>Blob-Form (Ein/Aus)</li>
+	<li>Blob-Farbe (Farbe)</li>
+	<li>Blob SVG-Code (Text)</li>
+	<li>Blob-Grösse (%) (Zahl)</li>
+	<li>Blob-Position horizontal (%) (Zahl)</li>
+	<li>Blob-Position vertikal (%) (Zahl)</li>
+	<li>Blob-Drehung (Grad) (Zahl)</li>
+	<li>Untere Kante wellenförmig (Ein/Aus)</li>
+	<li>Wellenhöhe (px) (Zahl)</li>
+	<li>Wellenamplitude (px) (Zahl)</li>
+	<li>Anzahl Wellen (Zahl)</li>
+</ul>
+<h3>Zitat (Inhalts-Element)</h3>
+<ul>
+	<li>Zitat (formatierter Text)</li>
+	<li>Name (Text)</li>
+	<li>Stil (Auswahl): Optionen: Klassisch, Karte, Modern, Gross, Minimal</li>
+	<li>Ausrichtung (Auswahl): Optionen: Links, Mitte, Rechts</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Textfarbe (Farbe)</li>
+	<li>Akzentfarbe (Anführungszeichen, Sterne, Rahmen) (Farbe)</li>
+	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
+	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Titel (formatierter Text)</li>
+	<li>Spalten (Desktop) (Auswahl): Optionen: 2, 3, 4</li>
+	<li>Karten-Hintergrundfarbe (Farbe)</li>
+</ul>
+<h3>Arbeitstag (Inhaltstyp)</h3>
+<ul>
+	<li>Bezeichnung (Text)</li>
+	<li>Datum (Datum)</li>
+	<li>Startzeit (HH:MM) (Text)</li>
+	<li>Endzeit (HH:MM) (Text)</li>
+	<li>Zeitzone (Auswahl): Optionen: Europe/Zurich, Europe/Berlin, Europe/Vienna, Europe/London</li>
+	<li>Pause von (optional) (Text)</li>
+	<li>Pause bis (optional) (Text)</li>
+	<li>Buchungsintervall (Auswahl): Optionen: 15, 30, 60</li>
+	<li>Buchbare Angebote (Liste)</li>
+	<li>Wiederholung (Auswahl): Optionen: Keine, Täglich, Wöchentlich, Zweiwöchentlich, Monatlich</li>
+	<li>Wiederholen bis (Datum) (Datum)</li>
+	<li>Anzahl Wiederholungen (Zahl)</li>
+</ul>
+<h3>Aufgabe (Inhaltstyp)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Bild (Bild)</li>
+	<li>Aktiv (Ein/Aus)</li>
+	<li>Priorität (Teilaufgaben übernehmen die Priorität der Hauptaufgabe) (Auswahl): Optionen: Hoch, Mittel, Gering</li>
+	<li>Max. Annahmen (0 = unbegrenzt) (Zahl)</li>
+	<li>Credit-Typ (Auswahl): Optionen: Offen (Zeitbasiert), Fest</li>
+	<li>Credits (nur bei Fest) (Zahl)</li>
+	<li>Hauptaufgabe (nur bei Teilaufgaben ausfüllen) (Link)</li>
+	<li>Position innerhalb der Hauptaufgabe (nur bei Teilaufgaben) (Zahl)</li>
+	<li>Teilaufgaben in Reihenfolge erzwingen (nur bei Hauptaufgabe) (Ein/Aus)</li>
+	<li>Bonus-Credits, wenn alle Teilaufgaben erledigt sind (nur bei Hauptaufgabe) (Zahl)</li>
+	<li>Werkzeuge (Liste)</li>
+</ul>
+<h3>Buchbares Angebot (Inhaltstyp)</h3>
+<ul>
+	<li>Bezeichnung (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Dauer (Minuten) (Zahl)</li>
+	<li>Puffer danach (Minuten) (Zahl)</li>
+	<li>Vorlaufzeit (Minuten) (Zahl)</li>
+	<li>Preis (optional) (Zahl)</li>
+	<li>Ort (Link)</li>
+	<li>Aktiv (Ein/Aus)</li>
+</ul>
+<h3>Design Vorlage (Inhaltstyp)</h3>
+<ul>
+	<li>Aktiv (Ein/Aus)</li>
+	<li>Design Vorlage Bezeichnung (Text)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Hauptschrift (Link)</li>
+	<li>Vorinstallierte Hauptschrift (Auswahl): Optionen: Inter, Roboto, Open Sans, Montserrat, Poppins, Lato, Raleway, Oswald, Nunito, DM Sans, Outfit, Plus Jakarta Sans, Josefin Sans, Quicksand, Cabin, Playfair Display, Merriweather, Lora, Cormorant Garamond, Crimson Pro, Nunito Sans</li>
+	<li>Mobile Basis-Schriftgrösse (Auswahl): Optionen: Sehr Klein, Klein, Standard, Gross, Sehr Gross</li>
+	<li> Desktop Basis-Schriftgrösse (Auswahl): Optionen: Sehr Klein, Klein, Standard, Gross, Sehr Gross</li>
+	<li>p Schriftgrösse Offset Mobile (px) (Zahl)</li>
+	<li>p Schriftgrösse Offset Desktop (px) (Zahl)</li>
+	<li>Container-Breite (Auswahl): Optionen: Schmal, Normal, Standard, Weit, Sehr weit</li>
+	<li>Linkfarbe (Farbe)</li>
+	<li>Linkfarbe wenn Maus darüber (Farbe)</li>
+	<li>Schaltflächen-Schriftfarbe (Farbe)</li>
+	<li>Schaltflächen-Hintergrundfarbe (Farbe)</li>
+	<li>Schaltfl. SF wenn Maus drüber (Farbe)</li>
+	<li>Schaltfl. HF wenn Maus drüber (Farbe)</li>
+	<li>SVG-Icons (Liste)</li>
+	<li>Button-Stile (Liste)</li>
+	<li>Highlight Schriftfarbe (Farbe)</li>
+	<li>Highlight Hintergrundfarbe (Farbe)</li>
+	<li>Titel Deckkraft (%) (Zahl)</li>
+	<li>Titel Einblend-Animation (Ein/Aus)</li>
+	<li>Volle Bildschirmbreite nutzen (Ein/Aus)</li>
+	<li>Website-Titel Schriftgrösse (Zahl)</li>
+	<li>Website-Untertitel Schriftgrösse (Zahl)</li>
+	<li>Website-Titel Schriftart (Link)</li>
+	<li>Logo (Bild)</li>
+	<li>Logo Grösse (Zahl)</li>
+	<li>Logo Farbe (nur SVG) (Farbe)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Linkfarbe (Farbe)</li>
+	<li>Linkfarbe, wenn Maus darüber (Farbe)</li>
+	<li>Link Schriftgrösse (Zahl)</li>
+	<li>Link Schriftart (Link)</li>
+	<li>Untere Kante Kurvig (Ein/Aus)</li>
+	<li>Kurvenfarbe (Farbe)</li>
+	<li>Kurvenhöhe (px) (Zahl)</li>
+	<li>Kurvenamplitude (px) (Zahl)</li>
+	<li>Anzahl Kurven (Zahl)</li>
+	<li>Kurvenstart am linken Rand (Auswahl): Optionen: 0, Maximale Höhe</li>
+	<li>Kopfzeile fixiert (Sticky) (Ein/Aus)</li>
+	<li>Obere Kante Kurvig (Ein/Aus)</li>
+	<li>Kurvenfarbe (Farbe)</li>
+	<li>Kurvenhöhe (px) (Zahl)</li>
+	<li>Kurvenamplitude (px) (Zahl)</li>
+	<li>Anzahl Kurven (Zahl)</li>
+	<li>Kurvenstart am linken Rand (Auswahl): Optionen: 0, Maximale Höhe</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
+	<li>Textgrösse Obere Fusszeile (Zahl)</li>
+	<li>Textgrösse Untere Fusszeile (Zahl)</li>
+	<li>Link Farbe (Farbe)</li>
+	<li>Linkfarbe wenn Maus darüber (Farbe)</li>
+</ul>
+<h3>Einstellungen (Inhaltstyp)</h3>
+<ul>
+	<li>Website Titel (formatierter Text)</li>
+	<li>Website Untertitel (formatierter Text)</li>
+	<li>Verantwortlich (Person/Unternehmen) (Text)</li>
+	<li>Unternehmenskennnummer (Text)</li>
+	<li>Verantwortliche Adresse (formatierter Text)</li>
+	<li>Verantwortliche E-Mail (Text)</li>
+	<li>Korrespondenz E-Mail (Text)</li>
+	<li>Datenschutzerkärung (formatierter Text)</li>
+	<li>Haftungsausschluss (formatierter Text)</li>
+	<li>Impressum (formatierter Text)</li>
+	<li>Kontakte (Liste)</li>
+	<li>Cookies Text (formatierter Text)</li>
+	<li>AGB (formatierter Text)</li>
+	<li>Seiten-Passwort (Text)</li>
+	<li>User-Backend aktivieren (Ein/Aus)</li>
+	<li>Chat-Bot aktivieren (Ein/Aus)</li>
+	<li>Chat-Bot Name (Text)</li>
+	<li>Chat-Bot Begrüssung (Text)</li>
+	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
+	<li>Mehrere Sprachen verwenden (Ein/Aus)</li>
+	<li>Startseite umleiten (Ein/Aus)</li>
+	<li>Umleitungs-Seite (Link)</li>
+	<li>Website Domain (Text)</li>
+	<li>Website Name (SEO) (Text)</li>
+	<li>Globaler SEO Titel (Text)</li>
+	<li>Globale Beschreibung (formatierter Text)</li>
+	<li>Social Image (1200 × 630 px, 16:9) (Bild)</li>
+	<li>Adobe Project ID (Text)</li>
+	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
+	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
+	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
+	<li>Absender-E-Mail (Text)</li>
+	<li>Kunden-E-Mail: Betreff (Text)</li>
+	<li>Kunden-E-Mail: Text (formatierter Text)</li>
+	<li>Buchungsbestätigung: Titel (Text)</li>
+	<li>Erinnerung: Stunden vor Termin (Zahl)</li>
+	<li>Grundwährung (Auswahl): Optionen: AED - Dirham der Vereinigten Arabischen Emirate, AFN - Afghani, ALL - Albanischer Lek, AMD - Armenischer Dram, ANG - Niederländisch-Antillianischer Gulden, AOA - Angolanischer Kwanza, ARS - Argentinischer Peso, AUD - Australischer Dollar, AWG - Arubischer Florin, AZN - Aserbaidschanischer Manat, BAM - Bosnisch-Herzegowinische Konvertible Mark, BBD - Barbadischer Dollar, BDT - Bangladeschischer Taka, BGN - Bulgarischer Lew, BHD - Bahrainischer Dinar, BIF - Burundischer Franc, BMD - Bermudischer Dollar, BND - Bruneischer Dollar, BOB - Bolivianischer Boliviano, BRL - Brasilianischer Real, BSD - Bahamaischer Dollar, BTN - Bhutanischer Ngultrum, BWP - Botswanischer Pula, BYN - Belarussischer Rubel, BZD - Belizischer Dollar, CAD - Kanadischer Dollar, CDF - Kongoläsischer Franc, CHF - Schweizer Franken, CLP - Chilenischer Peso, CNY - Chinesischer Renminbi, COP - Kolumbianischer Peso, CRC - Costa-Ricanischer Colon, CUP - Kubanischer Peso, CVE - Kap-Verdischer Escudo, CZK - Tschechische Krone, DJF - Djiboutischer Franc, DKK - Dänische Krone, DOP - Dominikanischer Peso, DZD - Algerischer Dinar, EGP - Ägyptisches Pfund, ERN - Eritreischer Nakfa, ETB - Äthiopischer Birr, EUR - Euro, FJD - Fidschi-Dollar, FKP - Falkländisches Pfund, GBP - Britisches Pfund, GEL - Georgischer Lari, GHS - Ghanaischer Cedi, GIP - Gibraltarisches Pfund, GMD - Gambischer Dalasi, GNF - Guineischer Franc, GTQ - Guatemaltekischer Quetzal, GYD - Guyanischer Dollar, HKD - Hongkonger Dollar, HNL - Honduranischer Lempira, HTG - Haitianische Gourde, HUF - Ungarischer Forint, IDR - Indonesische Rupiah, ILS - Neuer Israelischer Schekel, INR - Indische Rupie, IQD - Irakischer Dinar, IRR - Iranischer Rial, ISK - Isländische Krone, JMD - Jamaikanischer Dollar, JOD - Jordanischer Dinar, JPY - Japanischer Yen, KES - Kenianischer Schilling, KGS - Kirgisischer Som, KHR - Kambodschanischer Riel, KMF - Komorischer Franc, KPW - Nordkoreanischer Won, KRW - Südkoreanischer Won, KWD - Kuwaitischer Dinar, KYD - Kaiman-Dollar, KZT - Kasachischer Tenge, LAK - Laotischer Kip, LBP - Libanesisches Pfund, LKR - Sri-Lankische Rupie, LRD - Liberianischer Dollar, LSL - Lesothischer Loti, LYD - Libyscher Dinar, MAD - Marokkanischer Dirham, MDL - Moldauischer Leu, MGA - Madagassischer Ariary, MKD - Nordmazedonischer Denar, MMK - Myanmarischer Kyat, MNT - Mongolischer Tögrög, MOP - Macao-Pataca, MRU - Mauretanischer Ouguiya, MUR - Mauritische Rupie, MVR - Maledivischer Rufiyaa, MWK - Malawischer Kwacha, MXN - Mexikanischer Peso, MYR - Malaysischer Ringgit, MZN - Mosambikanischer Metical, NAD - Namibischer Dollar, NGN - Nigerianische Naira, NIO - Nicaraguanischer Córdoba, NOK - Norwegische Krone, NPR - Nepalesische Rupie, NZD - Neuseeländischer Dollar, OMR - Omanischer Rial, PAB - Panamaischer Balboa, PEN - Peruanischer Sol, PGK - Papua-Neuguineischer Kina, PHP - Philippinischer Peso, PKR - Pakistanische Rupie, PLN - Polnischer Zloty, PYG - Paraguayischer Guaraní, QAR - Katarischer Riyal, RON - Rumänischer Leu, RSD - Serbischer Dinar, RUB - Russischer Rubel, RWF - Ruandischer Franc, SAR - Saudi-Arabischer Riyal, SBD - Salomonen-Dollar, SCR - Seychellische Rupie, SDG - Sudanesisches Pfund, SEK - Schwedische Krone, SGD - Singapurischer Dollar, SHP - St.-Helenisches Pfund, SLL - Sierraleonischer Leone, SOS - Somalischer Schilling, SRD - Surinamischer Dollar, STN - São-toménsische Dobra, SVC - El-Salvadorianischer Colón, SYP - Syrisches Pfund, SZL - Swasiland-Lilangeni, THB - Thailändischer Baht, TJS - Tadschikischer Somoni, TMT - Turkmenischer Manat, TND - Tunesischer Dinar, TOP - Tongaischer Paʻanga, TRY - Türkische Lira, TTD - Trinidad-und-Tobago-Dollar, TWD - Neuer Taiwanischer Dollar, TZS - Tansanischer Schilling, UAH - Ukrainische Hrywnja, UGX - Ugandischer Schilling, USD - US-Dollar, UYU - Uruguayischer Peso, UZS - Usbekischer Sum, VES - Venezolanischer Bolívar, VND - Vietnamesischer Dong, VUV - Vanuatuischer Vatu, WST - Samoanischer Tala, XAF - CFA-Franc BEAC, XCD - Ostkaribischer Dollar, XOF - CFA-Franc BCEAO, XPF - CFP-Franc, YER - Jemenitischer Rial, ZAR - Südafrikanischer Rand, ZMW - Sambischer Kwacha, ZWL - Simbabwischer Dollar</li>
+	<li>Weitere Währungen (Käufer-Auswahl) (Liste)</li>
+	<li>IBAN (Text)</li>
+	<li>Bank (Text)</li>
+	<li>BIC / SWIFT (Text)</li>
+	<li>Zahlungsfrist (Tage) (Zahl)</li>
+	<li>MWST-Satz (%) (Zahl)</li>
+	<li>Globale Anzahlung (%) (Zahl)</li>
+	<li>Rabatt-Codes (Liste)</li>
+	<li>Zahlung: Kreditkarte / TWINT (Stripe) (Ein/Aus)</li>
+	<li>Zahlung: Gegen Rechnung (Ein/Aus)</li>
+	<li>Zahlung: Gegen Bar (Ein/Aus)</li>
+	<li>Rechnung E-Mail: Betreff (Text)</li>
+	<li>Rechnung E-Mail: Text (formatierter Text)</li>
+	<li>Bar E-Mail: Betreff (Text)</li>
+	<li>Bar E-Mail: Text (formatierter Text)</li>
+	<li>Bestätigungstext: Kreditkarte / TWINT (formatierter Text)</li>
+	<li>Bestätigungstext: Gegen Rechnung (formatierter Text)</li>
+	<li>Bestätigungstext: Gegen Bar (formatierter Text)</li>
+	<li>Beauftragungsseite Titel (Text)</li>
+	<li>Bestellübersicht Titel (Text)</li>
+	<li>Bestell-Button Text (Text)</li>
+	<li>Messenger-Nummer (Signal, Telegram, WhatsApp) (Text)</li>
+</ul>
+<h3>Event (Inhaltstyp)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Untertitel (Text)</li>
+	<li>Kurzbeschreibung (formatierter Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Hauptbild (Bild)</li>
+	<li>Hervorgehoben (Ein/Aus)</li>
+	<li>Beginn (Datum &amp; Uhrzeit) (Datum und Zeit)</li>
+	<li>Ende (Datum &amp; Uhrzeit) (Datum und Zeit)</li>
+	<li>Einlass ab (Text)</li>
+	<li>Zeitzone (Auswahl): Optionen: Europe/Zurich, Europe/Berlin, Europe/Vienna, UTC</li>
+	<li>Status (Auswahl): Optionen: Kein, Geplant, Bestätigt, Abgesagt, Verschoben, Ausgebucht, Anmeldefrist abgelaufen</li>
+	<li>Veranstaltungsart (Auswahl): Optionen: Ausstellung, Festival, Führung, Jubiläum, Konzert, Kurs, Lesung, Messe, Party / Fest, Seminar, Sportveranstaltung, Tag der offenen Tür, Vortrag, Workshop, Sonstiges</li>
+	<li>Sprache der Veranstaltung (Auswahl): Optionen: Deutsch, Englisch, Französisch, Italienisch, Mehrsprachig, Keine Sprache</li>
+	<li>Zielgruppe (Text)</li>
+	<li>Mindestalter (Zahl)</li>
+	<li>Veranstalter (Text)</li>
+	<li>Veranstalter-Website (Link)</li>
+	<li>Kontakt E-Mail (Text)</li>
+	<li>E-Mail Eventverantwortliche/r (Text)</li>
+	<li>Kontakt Telefon (Text)</li>
+	<li>Barrierefreiheit (Text)</li>
+	<li>Weitere Hinweise (formatierter Text)</li>
+	<li>Max. Teilnehmerzahl (Zahl)</li>
+	<li>Mindest-Teilnehmerzahl (Zahl)</li>
+	<li>Online-Veranstaltung (Ein/Aus)</li>
+	<li>Online-Link / Stream (Link)</li>
+	<li>Veranstaltungsort / Bezeichnung (Text)</li>
+	<li>Raum / Saal (Text)</li>
+	<li>Strasse &amp; Hausnummer (Text)</li>
+	<li>PLZ (Text)</li>
+	<li>Ort (Text)</li>
+	<li>Land (Auswahl): Optionen: Schweiz, Deutschland, Österreich, Liechtenstein, Sonstiges</li>
+	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenhöhe (px) (Zahl)</li>
+	<li>Transparenz (Zahl)</li>
+	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Website (Link)</li>
+	<li>Wegbeschreibung (formatierter Text)</li>
+	<li>Wegbeschreibung als PDF-Button anzeigen (Ein/Aus)</li>
+	<li>Kostenlos (Ein/Aus)</li>
+	<li>Preis (Freitext) (formatierter Text)</li>
+	<li>Tickets kaufen / Anmeldung (Link)</li>
+	<li>Anmeldung erforderlich (Ein/Aus)</li>
+	<li>Anmeldeschluss (Datum)</li>
+	<li>Anmeldung per E-Mail (Text)</li>
+	<li>Anmeldung per WhatsApp (Nummer) (Text)</li>
+	<li>Anmeldetext (alle Termine) (Text)</li>
+	<li>Anmeldetext (Einzeltermin) (Text)</li>
+	<li>Anmeldung per Telegram (Username oder Nummer) (Text)</li>
+	<li>Checkout-Flow verwenden (Ticketkauf über Website) (Ein/Aus)</li>
+	<li>Ticketpreis (CHF) (Zahl)</li>
+	<li>Ticketpreis (CHF) bis (Zahl)</li>
+	<li>Preis-Label (Text)</li>
+	<li>EUR-Umrechnung anbieten (Ein/Aus)</li>
+	<li>EUR-Dropdown Label (Text)</li>
+	<li>Zusätzliche Kosten (CHF) (Zahl)</li>
+	<li>Label Zusatzkosten (Text)</li>
+	<li>Button-Beschriftung (Text)</li>
+	<li>Titel der Bestellseite (Text)</li>
+	<li>Feld "Firma" anzeigen (Ein/Aus)</li>
+	<li>Felder Adresse / PLZ / Ort / Land anzeigen (Ein/Aus)</li>
+	<li>Feld "Kommentare" anzeigen (Ein/Aus)</li>
+	<li>Titel der Übersichtsseite (Text)</li>
+	<li>Label "Ihre Bestellung" (Text)</li>
+	<li>Label "Preis" (Text)</li>
+	<li>Button-Text (Abschluss) (Text)</li>
+	<li>Zahlung per Rechnung (Ein/Aus)</li>
+	<li>Rechnung: Label (Text)</li>
+	<li>Rechnung: Beschreibungstext (Text)</li>
+	<li>Barzahlung (Ein/Aus)</li>
+	<li>Bar: Label (Text)</li>
+	<li>Barzahlung Beschreibungstext (Text)</li>
+	<li>Bestätigung: Überschrift (Text)</li>
+	<li>Bestätigung: Intro-Text (Text)</li>
+	<li>Bestätigung: Text (Rechnung) (formatierter Text)</li>
+	<li>Bestätigung: Text (Bar) (formatierter Text)</li>
+	<li>Veranstaltungsserie (Ein/Aus)</li>
+	<li>Serienname (Text)</li>
+	<li>Wiederholungsrhythmus (Auswahl): Optionen: Einmalig, Täglich, Wöchentlich, Zweiwöchentlich, Monatlich, Jährlich, Unregelmässig</li>
+	<li>Wochentag(e) (Text)</li>
+	<li>Serienende (Datum) (Datum)</li>
+	<li>Anzahl Termine (Serie) (Zahl)</li>
+	<li>Ausnahmen / Ausfälle (Text)</li>
+	<li>Übergeordnetes Event / Serie (Link)</li>
+	<li>Einzeln buchbar (Ein/Aus)</li>
+	<li>Einzeltermin kostenlos (Ein/Aus)</li>
+	<li>Einzeltermin Preis (Freitext) (formatierter Text)</li>
+	<li>Einzeltermin Anmeldung per E-Mail (Text)</li>
+	<li>Einzeltermin Anmeldung per WhatsApp (Text)</li>
+	<li>Einzeltermin Ticket-Link (Link)</li>
+	<li>Einzeltermin Anmeldung per Telegram (Text)</li>
+	<li>SEO-Titel (Text)</li>
+	<li>SEO-Beschreibung (Text)</li>
+	<li>SEO-Bild (Open Graph) (Bild)</li>
+</ul>
+<h3>Icon (Inhaltstyp)</h3>
+<ul>
+	<li>Label (Text)</li>
+	<li>SVG Code (Text)</li>
+</ul>
+<h3>Leistung (Inhaltstyp)</h3>
+<ul>
+	<li>Bezeichnung (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Detailbeschreibung (formatierter Text)</li>
+	<li>Preis exkl. MwSt. (CHF) (Zahl)</li>
+</ul>
+<h3>Navigation (Inhaltstyp)</h3>
+<ul>
+	<li>Links (Liste)</li>
+</ul>
+<h3>Newsletter (Inhaltstyp)</h3>
+<ul>
+	<li>Betreff (Text)</li>
+	<li>Vorschautext im Posteingang (Text)</li>
+	<li>Inhalt (formatierter Text)</li>
+	<li>Button-Text (optional) (Text)</li>
+	<li>Button-Link (optional) (Link)</li>
+</ul>
+<h3>Ort / Standort (Inhaltstyp)</h3>
+<ul>
+	<li>Name (Text)</li>
+	<li>Adresse (formatierter Text)</li>
+	<li>Geo-Koordinaten (Text)</li>
+	<li>Wegbeschreibung (formatierter Text)</li>
+	<li>Telefon (Text)</li>
+	<li>E-Mail (Text)</li>
+	<li>Öffnungszeiten (formatierter Text)</li>
+	<li>Bild (Bild)</li>
+	<li>Aktiv (Ein/Aus)</li>
+</ul>
+<h3>Ressource (Inhaltstyp)</h3>
+<ul>
+	<li>Bezeichnung (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Hauptbild (Bild)</li>
+	<li>Zimmer einzeln buchbar (Ein/Aus)</li>
+	<li>Untergeordnete Ressourcen (z.B. Wohnungen in einem Haus) (Liste)</li>
+	<li>Maximale Personenanzahl (Zahl)</li>
+	<li>Schlafzimmer (Liste)</li>
+	<li>Preis pro Nacht (CHF) (Zahl)</li>
+	<li>Mindestaufenthalt (Nächte) (Zahl)</li>
+	<li>Check-in Tage (Auswahl): Optionen: Täglich, Nur Freitag, Nur Samstag, Freitag &amp; Samstag</li>
+	<li>Saisonpreise (Liste)</li>
+	<li>Bestätigung – E-Mail Betreff (Text)</li>
+	<li>Bestätigung – E-Mail Text (formatierter Text)</li>
+	<li>Vor Ankunft – E-Mail Betreff (Text)</li>
+	<li>Vor Ankunft – E-Mail Text (formatierter Text)</li>
+	<li>Nach Ankunft – E-Mail Betreff (Text)</li>
+	<li>Nach Ankunft – E-Mail Text (formatierter Text)</li>
+	<li>Vor Abreise – E-Mail Betreff (Text)</li>
+	<li>Vor Abreise – E-Mail Text (formatierter Text)</li>
+</ul>
+<h3>Schaltflächen-Stil (Inhaltstyp)</h3>
+<ul>
+	<li>Label (Text)</li>
+	<li>Farbe (Farbe)</li>
+</ul>
+<h3>Schrift (Inhaltstyp)</h3>
+<ul>
+	<li>Name (Text)</li>
+	<li>Anbieter (Auswahl): Optionen: Google, Lokal</li>
+	<li>Varianten (Google) (Text)</li>
+	<li>Schriftdateien (Lokal) (Liste)</li>
+</ul>
+<h3>Seiten (Inhaltstyp)</h3>
+<ul>
+	<li>Seitentitel (formatierter Text)</li>
+	<li>Hintergrundfarbe (überschreibt globale Farbe) (Farbe)</li>
+	<li>Schriftfarbe (überschreibt globale Farbe) (Farbe)</li>
+	<li>Linkfarbe (überschreibt globale Farbe) (Farbe)</li>
+	<li>E-Commerce aktiv (Ein/Aus)</li>
+	<li>Preis exkl. MwSt. (CHF) (Zahl)</li>
+	<li>Anzahlung % (Zahl)</li>
+	<li>Rabatt % (Zahl)</li>
+	<li>Abrechnungsart (Auswahl): Optionen: Einmalig, Jährlich, Monatlich</li>
+	<li>Stripe Payment Link (Link)</li>
+	<li>Zusatzleistungen (Liste)</li>
+	<li>Leistungen (Liste)</li>
+	<li>Meta Titel (Text)</li>
+	<li>Meta Description (Text)</li>
+	<li>Meta Image (Bild)</li>
+	<li>Keine Indexierung (Ein/Aus)</li>
+	<li>Landing Page (Ein/Aus)</li>
+	<li>Passwortgeschützt (Ein/Aus)</li>
+</ul>
+<h3>Variablen (Inhaltstyp)</h3>
+<ul>
+	<li>Einträge (Token → Wert) (Liste)</li>
+</ul>
+<h3>Werkzeug (Inhaltstyp)</h3>
+<ul>
+	<li>Titel (Text)</li>
+	<li>Beschreibung (formatierter Text)</li>
+	<li>Bild (Bild)</li>
+</ul>
+<!-- AUTO:FELDREFERENZ:END -->
 
 <h2>Häufige Fragen</h2>
 <h3>Meine Änderung ist auf der Website nicht sichtbar.</h3>
@@ -436,6 +1344,9 @@
 <p>Auf der Prismic-Startseite links auf «Invite» klicken. Je nach Prismic-Plan kosten zusätzliche Benutzer etwas.</p>
 <h3>Was kostet die Website pro Jahr?</h3>
 <p>Neben dem einmaligen Paketpreis fällt «Hosting &amp; Wartung» an: CHF 20 (Basis), CHF 40 (Professionell) oder CHF 80 (Individuell) jährlich. Prismic ist im kostenlosen Plan gratis. Zu Domain und E-Mail-Postfach berät dich Angelo gerne.</p>
+<h3>In meiner E-Mail fehlt ein Text oder es steht {{…}} darin.</h3>
+<p>Meist ist der Platzhalter falsch geschrieben (z. B. übersetzt: {{Resource}} statt {{Ressource}}) oder die Variable fehlt im Dokument «Variablen». Im Admin-Bereich unter «Inhalte prüfen» stehen alle unbekannten Platzhalter mit Vorschlag. Platzhalter heissen in allen Sprachen gleich.</p>
+
 <h3>Wie erreiche ich Angelo?</h3>
 <p>Per E-Mail an angelo@klap-web.ch oder über das Kontaktformular auf der Seite «Kontakt». Ein Erstgespräch ist kostenlos.</p>
 

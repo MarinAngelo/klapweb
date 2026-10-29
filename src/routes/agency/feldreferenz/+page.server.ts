@@ -28,7 +28,7 @@ export const load = ({ cookies }) => {
 	// One row per field (a slice field shared by several variations appears once)
 	const groups = new Map<
 		string,
-		{ name: string; elementType: string; fields: Record<string, unknown>[] }
+		{ id: string; name: string; elementType: string; fields: Record<string, unknown>[] }
 	>();
 	const seen = new Set<string>();
 	for (const item of generatedFieldReference as Item[]) {
@@ -36,6 +36,8 @@ export const load = ({ cookies }) => {
 		if (seen.has(key)) continue;
 		seen.add(key);
 		const group = groups.get(item.customType) ?? {
+			// Technical id is unique (the name is not: custom type «event» and slice «Event»)
+			id: item.customType,
 			name: item.name,
 			elementType: item.elementType,
 			fields: []
