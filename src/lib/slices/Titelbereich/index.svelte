@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled, type Content } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
@@ -411,7 +412,7 @@
 						<div class="mt-8">
 							<Button
 								link={slice.primary.button_link}
-								text={slice.primary.button_text || 'Mehr erfahren'}
+								text={slice.primary.button_text || $_('Mehr erfahren')}
 								styleName={btnStyleName}
 								color={buttonColor || undefined}
 								bgColor={buttonBgColor || undefined}

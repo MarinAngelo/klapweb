@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { theme } from '$lib/stores/theme';
@@ -144,7 +145,7 @@
 					<input
 						type="search"
 						bind:value={searchQuery}
-						placeholder={p.suchfeld_platzhalter || 'Suchen...'}
+						placeholder={p.suchfeld_platzhalter || $_('Suchen …')}
 						class="search-input acc-border acc-bg w-full px-4 py-2 rounded border text-inherit"
 					/>
 				{/if}
