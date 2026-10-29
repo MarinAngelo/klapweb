@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PrismicRichText } from '@prismicio/svelte';
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import { _ } from '$lib/stores/i18n';
 

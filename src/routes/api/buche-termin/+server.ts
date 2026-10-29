@@ -12,7 +12,7 @@ function fmtDate(datum: string, uhrzeit: string): string {
 }
 
 function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
 }
 
 function richTextToPlain(

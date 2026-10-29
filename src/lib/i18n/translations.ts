@@ -296,6 +296,15 @@ export const translations: Record<string, Record<string, string>> = {
 	Unten: { 'de-ch': 'Unten', 'en-us': 'Bottom' },
 	'kein Abstand': { 'de-ch': 'kein Abstand', 'en-us': 'No spacing' },
 	wenig: { 'de-ch': 'wenig', 'en-us': 'Little' },
+	'Leider gibt es für diese Seite noch keine Übersetzung.': {
+		'de-ch': 'Leider gibt es für diese Seite noch keine Übersetzung.',
+		'en-us': 'Unfortunately, there is no translation for this page yet.'
+	},
+	'Weiterleitung zur Version auf {sprache} in {n} Sekunden …': {
+		'de-ch': 'Weiterleitung zur Version auf {sprache} in {n} Sekunden …',
+		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
+	},
+	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
@@ -788,6 +797,254 @@ export const translations: Record<string, Record<string, string>> = {
 	'E-Mail und Passwort erforderlich': {
 		'de-ch': 'E-Mail und Passwort erforderlich',
 		'en-us': 'Email and password required'
+	},
+	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Jetzt beauftragen': { 'de-ch': 'Jetzt beauftragen', 'en-us': 'Order now' },
+	Gesamtpreis: { 'de-ch': 'Gesamtpreis', 'en-us': 'Total price' },
+	Rabatt: { 'de-ch': 'Rabatt', 'en-us': 'Discount' },
+	'Anzahlung nach Auftragserteilung': {
+		'de-ch': 'Anzahlung nach Auftragserteilung',
+		'en-us': 'Deposit after placing the order'
+	},
+	'Inhalte filtern nach Plan:': {
+		'de-ch': 'Inhalte filtern nach Plan:',
+		'en-us': 'Filter content by plan:'
+	},
+	'Suchen …': { 'de-ch': 'Suchen …', 'en-us': 'Search …' },
+	Startseite: { 'de-ch': 'Startseite', 'en-us': 'Home page' },
+	Termin: { 'de-ch': 'Termin', 'en-us': 'Appointment' },
+	'Unbekannter Token': { 'de-ch': 'Unbekannter Token', 'en-us': 'Unknown token' },
+	'Meintest du': { 'de-ch': 'Meintest du', 'en-us': 'Did you mean' },
+	'Token-Namen prüfen oder im Dokument Variablen anlegen': {
+		'de-ch': 'Token-Namen prüfen oder im Dokument Variablen anlegen',
+		'en-us': 'Check the token name or create it in the Variables document'
+	},
+	'Link- und Token-Probleme': {
+		'de-ch': 'Link- und Token-Probleme',
+		'en-us': 'Link and token problems'
+	},
+	'Inhalte prüfen': { 'de-ch': 'Inhalte prüfen', 'en-us': 'Check content' },
+	'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden': {
+		'de-ch': 'Fehlende Übersetzungen und fehlerhafte Links in Prismic finden',
+		'en-us': 'Find missing translations and broken links in Prismic'
+	},
+	'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.': {
+		'de-ch': 'Prismic ist nicht erreichbar, die Prüfung konnte nicht laufen.',
+		'en-us': 'Prismic is unreachable, the check could not run.'
+	},
+	'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.': {
+		'de-ch': 'Alles in Ordnung: keine fehlenden Übersetzungen und keine Link-Probleme.',
+		'en-us': 'All good: no missing translations and no link problems.'
+	},
+	'Link-Probleme': { 'de-ch': 'Link-Probleme', 'en-us': 'Link problems' },
+	Dokument: { 'de-ch': 'Dokument', 'en-us': 'Document' },
+	Problem: { 'de-ch': 'Problem', 'en-us': 'Problem' },
+	Lösung: { 'de-ch': 'Lösung', 'en-us': 'Solution' },
+	'Web-Link ohne «/» am Anfang': {
+		'de-ch': 'Web-Link ohne «/» am Anfang',
+		'en-us': 'Web link without leading «/»'
+	},
+	'«/» voranstellen oder als Link auf ein Prismic-Dokument setzen': {
+		'de-ch': '«/» voranstellen oder als Link auf ein Prismic-Dokument setzen',
+		'en-us': 'Add a leading «/» or link to a Prismic document instead'
+	},
+	'Verlinkt die Version in der Hauptsprache': {
+		'de-ch': 'Verlinkt die Version in der Hauptsprache',
+		'en-us': 'Links to the main language version'
+	},
+	'Übersetzung verlinken': { 'de-ch': 'Übersetzung verlinken', 'en-us': 'Link the translation' },
+	'In Prismic öffnen': { 'de-ch': 'In Prismic öffnen', 'en-us': 'Open in Prismic' },
+	'Fehlende Übersetzungen': { 'de-ch': 'Fehlende Übersetzungen', 'en-us': 'Missing translations' },
+	'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.':
+		{
+			'de-ch':
+				'Besucher sehen dafür einen Hinweis und die Version in der Hauptsprache. In Prismic: Dokument öffnen → Sprache wählen → «Create translation» → veröffentlichen.',
+			'en-us':
+				'Visitors see a notice and the main language version instead. In Prismic: open the document → choose the language → «Create translation» → publish.'
+		},
+	'Fehlt in': { 'de-ch': 'Fehlt in', 'en-us': 'Missing in' },
+	'Diese Seite ist noch nicht übersetzt.': {
+		'de-ch': 'Diese Seite ist noch nicht übersetzt.',
+		'en-us': 'This page has not been translated yet.'
+	},
+	'Die Seite wird auf {sprache} angezeigt ({n} s) …': {
+		'de-ch': 'Die Seite wird auf {sprache} angezeigt ({n} s) …',
+		'en-us': 'This page is shown in {sprache} ({n} s) …'
+	},
+	OK: { 'de-ch': 'OK', 'en-us': 'OK' },
+	'Tag wählen': { 'de-ch': 'Tag wählen', 'en-us': 'Select day' },
+	'Tag ändern': { 'de-ch': 'Tag ändern', 'en-us': 'Change day' },
+	'Zeit wählen': { 'de-ch': 'Zeit wählen', 'en-us': 'Select time' },
+	Angebote: { 'de-ch': 'Angebote', 'en-us': 'Offers' },
+	'Zeit ändern': { 'de-ch': 'Zeit ändern', 'en-us': 'Change time' },
+	UID: { 'de-ch': 'UID', 'en-us': 'Company ID (UID)' },
+	Wegbeschreibung: { 'de-ch': 'Wegbeschreibung', 'en-us': 'Directions' },
+	Verfügbarkeit: { 'de-ch': 'Verfügbarkeit', 'en-us': 'Availability' },
+	'Ihre Auswahl': { 'de-ch': 'Ihre Auswahl', 'en-us': 'Your selection' },
+	'Auswahl ändern': { 'de-ch': 'Auswahl ändern', 'en-us': 'Change selection' },
+	'Bitte wählen': { 'de-ch': 'Bitte wählen', 'en-us': 'Please select' },
+	Zusatzkosten: { 'de-ch': 'Zusatzkosten', 'en-us': 'Additional costs' },
+	'Keine weiteren Inhalte verfügbar': {
+		'de-ch': 'Keine weiteren Inhalte verfügbar',
+		'en-us': 'No further content available'
+	},
+	'Alle Leistungen anzeigen': { 'de-ch': 'Alle Leistungen anzeigen', 'en-us': 'Show all services' },
+	'Übersicht unserer Leistungen und Services': {
+		'de-ch': 'Übersicht unserer Leistungen und Services',
+		'en-us': 'Overview of our services'
+	},
+	'Entdecken Sie unser Leistungsportfolio': {
+		'de-ch': 'Entdecken Sie unser Leistungsportfolio',
+		'en-us': 'Discover our range of services'
+	},
+	'Keine Leistungen verfügbar': {
+		'de-ch': 'Keine Leistungen verfügbar',
+		'en-us': 'No services available'
+	},
+	'Buchungsbestätigung: {ressource}': {
+		'de-ch': 'Buchungsbestätigung: {ressource}',
+		'en-us': 'Booking confirmation: {ressource}'
+	},
+	'Ihre Anreise: {ressource}': {
+		'de-ch': 'Ihre Anreise: {ressource}',
+		'en-us': 'Your arrival: {ressource}'
+	},
+	'Ihre Abreise morgen: {ressource}': {
+		'de-ch': 'Ihre Abreise morgen: {ressource}',
+		'en-us': 'Your departure tomorrow: {ressource}'
+	},
+	'Guten Tag {name}': { 'de-ch': 'Guten Tag {name}', 'en-us': 'Hello {name}' },
+	'Hallo {name},': { 'de-ch': 'Hallo {name},', 'en-us': 'Hello {name},' },
+	'Ihre Buchungsanfrage wurde bestätigt.': {
+		'de-ch': 'Ihre Buchungsanfrage wurde bestätigt.',
+		'en-us': 'Your booking request has been confirmed.'
+	},
+	'Ihre Buchungsreferenz': { 'de-ch': 'Ihre Buchungsreferenz', 'en-us': 'Your booking reference' },
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)': {
+		'de-ch': '(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)',
+		'en-us': '(You will need it for check-in and check-out on our website.)'
+	},
+	'Wir melden uns in Kürze zur Zahlungsabwicklung.': {
+		'de-ch': 'Wir melden uns in Kürze zur Zahlungsabwicklung.',
+		'en-us': 'We will contact you shortly regarding payment.'
+	},
+	'Freundliche Grüsse': { 'de-ch': 'Freundliche Grüsse', 'en-us': 'Kind regards' },
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).': {
+		'de-ch': 'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).',
+		'en-us': 'we look forward to your arrival on {anreise} (departure: {abreise}).'
+	},
+	Türcode: { 'de-ch': 'Türcode', 'en-us': 'Door code' },
+	'Bei Fragen': { 'de-ch': 'Bei Fragen', 'en-us': 'Questions' },
+	Referenz: { 'de-ch': 'Referenz', 'en-us': 'Reference' },
+	Ressource: { 'de-ch': 'Ressource', 'en-us': 'Accommodation' },
+	Zimmer: { 'de-ch': 'Zimmer', 'en-us': 'Rooms' },
+	Doppelbett: { 'de-ch': 'Doppelbett', 'en-us': 'Double bed' },
+	'Doppelbett (140 cm)': { 'de-ch': 'Doppelbett (140 cm)', 'en-us': 'Double bed (140 cm)' },
+	Einzelbett: { 'de-ch': 'Einzelbett', 'en-us': 'Single bed' },
+	Stockbett: { 'de-ch': 'Stockbett', 'en-us': 'Bunk bed' },
+	Schlafsofa: { 'de-ch': 'Schlafsofa', 'en-us': 'Sofa bed' },
+	'Merkt sich die gewählte Sprache der Website.': {
+		'de-ch': 'Merkt sich die gewählte Sprache der Website.',
+		'en-us': 'Remembers the language you selected for this website.'
+	},
+	'Termin gebucht': { 'de-ch': 'Termin gebucht', 'en-us': 'Appointment booked' },
+	Angebot: { 'de-ch': 'Angebot', 'en-us': 'Offer' },
+	Zeit: { 'de-ch': 'Zeit', 'en-us': 'Time' },
+	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
+	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
+	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
+	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
+	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
+	'Weitere Termine buchen': {
+		'de-ch': 'Weitere Termine buchen',
+		'en-us': 'Book more appointments'
+	},
+	'Buchung stornieren': { 'de-ch': 'Buchung stornieren', 'en-us': 'Cancel booking' },
+	'Bestellung bestätigt': { 'de-ch': 'Bestellung bestätigt', 'en-us': 'Order confirmed' },
+	'Ihre Bestellung ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung ist bei uns eingegangen.',
+		'en-us': 'We have received your order.'
+	},
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.': {
+		'de-ch': 'Ihre Bestellung {leistung} ist bei uns eingegangen.',
+		'en-us': 'We have received your order {leistung}.'
+	},
+	Währung: { 'de-ch': 'Währung', 'en-us': 'Currency' },
+	'Zum Inhalt springen': { 'de-ch': 'Zum Inhalt springen', 'en-us': 'Skip to content' },
+	'Zum Kalender hinzufügen (.ics)': {
+		'de-ch': 'Zum Kalender hinzufügen (.ics)',
+		'en-us': 'Add to calendar (.ics)'
+	},
+	'In Google Calendar öffnen': {
+		'de-ch': 'In Google Calendar öffnen',
+		'en-us': 'Open in Google Calendar'
+	},
+	'Standort auf Google Maps anzeigen': {
+		'de-ch': 'Standort auf Google Maps anzeigen',
+		'en-us': 'Show location on Google Maps'
+	},
+	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
+	'Zurzeit sind keine Durchführungen geplant': {
+		'de-ch': 'Zurzeit sind keine Durchführungen geplant',
+		'en-us': 'No dates are currently scheduled'
+	},
+	'Jetzt bestellen': { 'de-ch': 'Jetzt bestellen', 'en-us': 'Order now' },
+	'Alles von {plan} und:': {
+		'de-ch': 'Alles von {plan} und:',
+		'en-us': 'Everything in {plan}, plus:'
+	},
+	'Alle Pläne': { 'de-ch': 'Alle Pläne', 'en-us': 'All plans' },
+	'Restpreis nach Veröffentlichung': {
+		'de-ch': 'Restpreis nach Veröffentlichung',
+		'en-us': 'Remaining price after launch'
+	},
+	Abgegeben: { 'de-ch': 'Abgegeben', 'en-us': 'Submitted' },
+	'Vorheriges Bild': { 'de-ch': 'Vorheriges Bild', 'en-us': 'Previous image' },
+	'Nächstes Bild': { 'de-ch': 'Nächstes Bild', 'en-us': 'Next image' },
+	'Vorheriges Zitat': { 'de-ch': 'Vorheriges Zitat', 'en-us': 'Previous quote' },
+	'Nächstes Zitat': { 'de-ch': 'Nächstes Zitat', 'en-us': 'Next quote' },
+	'Lightbox schliessen': { 'de-ch': 'Lightbox schliessen', 'en-us': 'Close lightbox' },
+	Bildvorschau: { 'de-ch': 'Bildvorschau', 'en-us': 'Image preview' },
+	Bildkarussell: { 'de-ch': 'Bildkarussell', 'en-us': 'Image carousel' },
+	Kundenstimmen: { 'de-ch': 'Kundenstimmen', 'en-us': 'Testimonials' },
+	'Code kopieren': { 'de-ch': 'Code kopieren', 'en-us': 'Copy code' },
+	'Vorher/Nachher-Vergleich': {
+		'de-ch': 'Vorher/Nachher-Vergleich',
+		'en-us': 'Before/after comparison'
+	},
+	'Bitte auswählen': { 'de-ch': 'Bitte auswählen', 'en-us': 'Please select' },
+	'Termine werden geladen…': {
+		'de-ch': 'Termine werden geladen…',
+		'en-us': 'Loading appointments…'
+	},
+	'Termine konnten nicht geladen werden.': {
+		'de-ch': 'Termine konnten nicht geladen werden.',
+		'en-us': 'Appointments could not be loaded.'
+	},
+	'Keine verfügbaren Termine.': {
+		'de-ch': 'Keine verfügbaren Termine.',
+		'en-us': 'No available appointments.'
+	},
+	'Zeitzone wählen': { 'de-ch': 'Zeitzone wählen', 'en-us': 'Select time zone' },
+	Ganztägig: { 'de-ch': 'Ganztägig', 'en-us': 'All day' },
+	Menü: { 'de-ch': 'Menü', 'en-us': 'Menu' },
+	Hauptnavigation: { 'de-ch': 'Hauptnavigation', 'en-us': 'Main navigation' },
+	'Keine Bilder vorhanden': { 'de-ch': 'Keine Bilder vorhanden', 'en-us': 'No images available' },
+	'Mehr Informationen': { 'de-ch': 'Mehr Informationen', 'en-us': 'More information' },
+	'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.': {
+		'de-ch': 'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.',
+		'en-us': 'Our terms and conditions are currently being updated.'
+	},
+	'Der Haftungsausschluss wird derzeit aktualisiert.': {
+		'de-ch': 'Der Haftungsausschluss wird derzeit aktualisiert.',
+		'en-us': 'The disclaimer is currently being updated.'
+	},
+	Absenden: { 'de-ch': 'Absenden', 'en-us': 'Send' },
+	'Vielen Dank!': { 'de-ch': 'Vielen Dank!', 'en-us': 'Thank you!' },
+	'Ihre Nachricht wurde erfolgreich gesendet.': {
+		'de-ch': 'Ihre Nachricht wurde erfolgreich gesendet.',
+		'en-us': 'Your message has been sent successfully.'
 	},
 	'Zur Website': { 'de-ch': 'Zur Website', 'en-us': 'To website' },
 	'Passwortgeschützte Seite': {

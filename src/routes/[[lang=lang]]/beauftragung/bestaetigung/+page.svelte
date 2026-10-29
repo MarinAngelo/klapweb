@@ -29,7 +29,7 @@
 </script>
 
 <svelte:head>
-	<title>Bestellung bestätigt</title>
+	<title>{t('Bestellung bestätigt', lang)}</title>
 </svelte:head>
 
 <Bounded class="bg-page-bg text-page" as="section">
@@ -56,9 +56,10 @@
 	<p class="text-lg mb-6">
 		{#if data.confirmationIntro}
 			{data.confirmationIntro}
-		{:else}
-			Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
-		{/if}
+		{:else if serviceLabel}{t('Ihre Bestellung {leistung} ist bei uns eingegangen.', lang).replace(
+				'{leistung}',
+				serviceLabel
+			)}{:else}{t('Ihre Bestellung ist bei uns eingegangen.', lang)}{/if}
 	</p>
 
 	<div class="border-page mb-8 p-6 border">

@@ -20,7 +20,13 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { bucheRessource, getRelatedRessourceUids } from '$lib/server/ressourceBuchungen';
+import { plainTextMail } from '$lib/server/mailText';
+import { parseBookingLang } from '$lib/server/ressourceMail';
+import {
+	bucheRessource,
+	getRelatedRessourceUids,
+	loadRoomNames
+} from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
@@ -63,11 +69,16 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		von?: string;
 		bis?: string;
 		personen?: number;
-		zimmerauswahl?: Array<{ zimmer_name: string; bett_typ: string; anzahl_betten: number }>;
+		zimmerauswahl?: Array<{
+			zimmer_name: string;
+			bett_typ: string;
+			anzahl_betten: number;
+		}>;
 		name?: string;
 		email?: string;
 		telefon?: string;
 		nachricht?: string;
+		lang?: string;
 	};
 
 	try {
@@ -141,6 +152,17 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		});
 	}
 
+	// Rooms are stored with their main language name (identity), the booking language name as label
+	const rooms = (zimmerauswahl ?? []).length ? await loadRoomNames(ressourceUid) : null;
+	const zimmerHauptsprache = (zimmerauswahl ?? []).map((z) => {
+		const label = z.zimmer_name || z.bett_typ;
+		const main = rooms?.toMain.get(label);
+		return main && main !== label ? { ...z, zimmer_name: main, zimmer_label: label } : z;
+	});
+	if (rooms && zimmerHauptsprache.some((z) => !rooms.toMain.has(z.zimmer_name || z.bett_typ))) {
+		return new Response(JSON.stringify({ error: 'Unbekanntes Zimmer' }), { status: 400 });
+	}
+
 	const preisCHF = berechneTotalpreis(von, bis, saisonpreise, basispreis);
 
 	// Save booking (includes overlap check across parent/child resources)
@@ -154,14 +176,15 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 				von,
 				bis,
 				personen,
-				zimmerauswahl: zimmerauswahl ?? [],
+				zimmerauswahl: zimmerHauptsprache,
 				preisCHF,
 				bookedAt: new Date().toISOString(),
 				status: 'pending',
 				name,
 				email,
 				telefon,
-				nachricht
+				nachricht,
+				...(parseBookingLang(body.lang) ? { lang: parseBookingLang(body.lang)! } : {})
 			},
 			conflictUids
 		);
@@ -215,21 +238,23 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 				from: emailFrom,
 				to: toEmail,
 				subject: `Neue Buchungsanfrage: ${ressourceName}`,
-				text: [
-					`Neue Buchungsanfrage eingegangen.`,
-					``,
-					buchungsDetails,
-					``,
-					`Kontakt:`,
-					`Name:     ${name}`,
-					`E-Mail:   ${email}`,
-					...(telefon ? [`Telefon:  ${telefon}`] : []),
-					...(nachricht ? [``, `Nachricht:`, nachricht] : []),
-					``,
-					`─────────────────────────────────────`,
-					`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
-					bestaetigungsLink
-				].join('\n')
+				...plainTextMail(
+					[
+						`Neue Buchungsanfrage eingegangen.`,
+						``,
+						buchungsDetails,
+						``,
+						`Kontakt:`,
+						`Name:     ${name}`,
+						`E-Mail:   ${email}`,
+						...(telefon ? [`Telefon:  ${telefon}`] : []),
+						...(nachricht ? [``, `Nachricht:`, nachricht] : []),
+						``,
+						`─────────────────────────────────────`,
+						`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
+						bestaetigungsLink
+					].join('\n')
+				)
 			});
 			if (mailError) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', mailError);
 		} catch (e) {

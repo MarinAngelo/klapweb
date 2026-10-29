@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onDestroy, onMount } from 'svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -114,7 +115,7 @@
 		bind:clientWidth={containerWidth}
 		class="overflow-hidden md:-mx-10 md:px-10"
 		role="region"
-		aria-label="Testimonials"
+		aria-label={$_('Kundenstimmen')}
 		on:mouseenter={() => (isPaused = true)}
 		on:mouseleave={() => (isPaused = false)}
 		on:touchstart={onTouchStart}
@@ -181,7 +182,7 @@
 					prev();
 					stopAutoplay();
 				}}
-				aria-label="Vorheriges Zitat"
+				aria-label={$_('Vorheriges Zitat')}
 				class="scope-border-strong scope-text w-10 h-10 rounded-full flex items-center justify-center border transition-opacity hover:opacity-100 opacity-60"
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
@@ -211,7 +212,7 @@
 					next();
 					stopAutoplay();
 				}}
-				aria-label="Nächstes Zitat"
+				aria-label={$_('Nächstes Zitat')}
 				class="scope-border-strong scope-text w-10 h-10 rounded-full flex items-center justify-center border transition-opacity hover:opacity-100 opacity-60"
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">

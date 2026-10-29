@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { swipe } from '$lib/actions/swipe';
 
@@ -71,7 +72,7 @@
 		<button
 			type="button"
 			on:click|stopPropagation={prev}
-			aria-label="Vorheriges Bild"
+			aria-label={$_('Vorheriges Bild')}
 			class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full [background:rgba(0,0,0,0.35)] [color:#fff]"
 			>‹</button
 		>
@@ -79,7 +80,7 @@
 		<button
 			type="button"
 			on:click|stopPropagation={next}
-			aria-label="Nächstes Bild"
+			aria-label={$_('Nächstes Bild')}
 			class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full [background:rgba(0,0,0,0.35)] [color:#fff]"
 			>›</button
 		>
@@ -107,7 +108,7 @@
 		<div class="lb-content" on:click|stopPropagation>
 			<img src={currentImage.url ?? ''} alt={currentImage.alt ?? ''} class="lb-img" />
 		</div>
-		<button type="button" class="lb-close" on:click={closeLightbox} aria-label="Schliessen"
+		<button type="button" class="lb-close" on:click={closeLightbox} aria-label={$_('Schliessen')}
 			>×</button
 		>
 	</dialog>

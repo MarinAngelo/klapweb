@@ -1,4 +1,5 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error, redirect, isRedirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
@@ -244,14 +245,17 @@ export async function load({ params, parent, fetch, cookies }) {
 /** @type {import('./$types').EntryGenerator} */
 export async function entries() {
 	const client = createClient();
-	const pages = await client.getAllByType('page', { lang: '*' });
+	const [pages, mainLang] = await Promise.all([
+		client.getAllByType('page', { lang: '*' }),
+		getMainLang(client)
+	]);
 
 	return pages
 		.map((page) => {
 			if (page.uid === 'home') return null;
 			if (page.uid === 'beauftragung') return null; // static route
 			return {
-				lang: page.lang,
+				...langParam(page.lang, mainLang),
 				uid: page.uid
 			};
 		})

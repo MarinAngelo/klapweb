@@ -1,6 +1,7 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { SliceZone } from '@prismicio/svelte';
-	import { PrismicRichText } from '@prismicio/svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { components } from '$lib/slices';
@@ -31,7 +32,8 @@
 </script>
 
 {#if beschreibung?.length}
-	<Bounded yPadding="sm">
+	<!-- No bottom padding: the booking slice below brings its own top spacing -->
+	<Bounded yPadding="sm-top">
 		<PrismicRichText field={beschreibung} components={{ embed: RichTextEmbed }} />
 	</Bounded>
 {/if}

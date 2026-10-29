@@ -1,4 +1,5 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error } from '@sveltejs/kit';
 
 export const prerender = true;
@@ -31,10 +32,11 @@ export async function load({ params, parent, fetch, cookies }) {
 
 export async function entries() {
 	const client = createClient();
-	const leistungen = await client.getAllByType('leistung', { lang: '*' });
+	const [leistungen, mainLang] = await Promise.all([
+		client.getAllByType('leistung', { lang: '*' }),
+		getMainLang(client)
+	]);
 	const uniqueLangs = [...new Set(leistungen.map((d) => d.lang))];
 
-	return uniqueLangs.map((lang) => ({
-		lang: lang === 'de' ? 'de-de' : lang
-	}));
+	return uniqueLangs.map((lang) => langParam(lang === 'de' ? 'de-de' : lang, mainLang));
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PrismicRichText } from '@prismicio/svelte';
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RememberMe from '$lib/components/auth/RememberMe.svelte';
@@ -426,7 +427,9 @@
 								<span class="flex flex-col gap-0.5 min-w-0">
 									<span>{annahmeTitel(a)}</span>
 									<span class="text-sm font-normal text-muted">
-										{statusLabels[a.status] ?? a.status}{#if a.credits != null}
+										{statusLabels[a.status]
+											? $_(statusLabels[a.status])
+											: a.status}{#if a.credits != null}
 											· {a.credits} {$_('Credits')}{/if}{#if a.minuten != null}
 											· {a.minuten} min{/if}
 									</span>

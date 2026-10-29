@@ -1,6 +1,8 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { page } from '$app/stores';
 	import type { Content } from '@prismicio/client';
-	import { PrismicRichText } from '@prismicio/svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
@@ -9,6 +11,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: Content.RessourceBuchungSlice;
@@ -124,7 +127,9 @@
 
 		async function refreshVerfuegbarkeit() {
 			try {
-				const res = await fetch(`/api/ressource-verfuegbarkeit?uid=${uid}`);
+				const res = await fetch(
+					`/api/ressource-verfuegbarkeit?uid=${uid}&lang=${context?.lang ?? $page.data?.lang ?? ''}`
+				);
 				if (res.ok) bookedRanges = await res.json();
 			} catch {
 				/* non-critical */
@@ -229,6 +234,15 @@
 	function goToStep2() {
 		if (step1Valid) step = 2;
 	}
+	// After the success modal: back to a fresh step 1 (calendar shows the new booking)
+	function closeSuccess() {
+		success = false;
+		step = 1;
+		von = '';
+		bis = '';
+		nachricht = '';
+		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => false);
+	}
 	function backToStep1() {
 		step = 1;
 		errorMsg = '';
@@ -255,7 +269,8 @@
 					name,
 					email,
 					telefon,
-					nachricht
+					nachricht,
+					lang: context?.lang ?? $page.data?.lang
 				})
 			});
 			const data = await res.json();
@@ -338,12 +353,6 @@
 			<PrismicRichText field={slice.primary.heading} components={{ embed: RichTextEmbed }} />
 		{/if}
 
-		{#if slice.primary.intro?.length}
-			<div class="mb-0 max-w-2xl">
-				<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
-			</div>
-		{/if}
-
 		{#if calendarLoading}
 			<div class="flex items-center justify-center py-20 gap-3 text-sm text-muted">
 				<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
@@ -359,26 +368,12 @@
 				</svg>
 				{$_('Verfügbarkeit wird geladen…')}
 			</div>
-		{:else if success}
-			<div class="scope-border-strong max-w-xl rounded border p-6">
-				<p class="text-lg font-semibold mb-2">
-					{slice.primary.success_heading || $_('Anfrage erhalten!')}
-				</p>
-				{#if slice.primary.success_text?.length}
-					<PrismicRichText
-						field={slice.primary.success_text}
-						components={{ embed: RichTextEmbed }}
-					/>
-				{:else}
-					<p>{$_('Wir melden uns in Kürze bei Ihnen.')}</p>
-				{/if}
-			</div>
 		{:else if ressource}
 			<!-- Step indicator -->
-			<div class="flex items-center gap-3 text-sm">
+			<div class="flex items-center gap-3 text-base md:text-lg">
 				<div class="flex items-center gap-2">
 					<span
-						class="scope-btn-solid w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+						class="scope-btn-solid w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
 						>1</span
 					>
 					<span class="font-medium">{$_('Verfügbarkeit')}</span>
@@ -386,7 +381,7 @@
 				<div class="scope-fill flex-1 h-px opacity-30"></div>
 				<div class="flex items-center gap-2">
 					<span
-						class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
+						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
 						2
 							? 'scope-btn-solid'
 							: 'scope-text opacity-40'}">2</span
@@ -441,6 +436,12 @@
 
 				<!-- Calendar -->
 				<div class="scope-border scope-tint relative rounded border p-5">
+					<!-- Intro (e.g. "Please refer to the legend") belongs to the calendar → only in step 1 -->
+					{#if slice.primary.intro?.length}
+						<div class="mb-4 max-w-2xl">
+							<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
+						</div>
+					{/if}
 					<RessourceKalender
 						bookedRanges={calendarBookedRanges}
 						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
@@ -516,7 +517,7 @@
 									>
 										<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
 										<span class="flex-1" class:line-through={belegt}>{zimmerName}</span>
-										<span class="text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
+										<span class="text-muted">{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
 										{#if belegt && (von || bis)}
 											<span class="text-xs text-red-800">{$_('Belegt')}</span>
 										{/if}
@@ -533,7 +534,7 @@
 							type="button"
 							on:click={goToStep2}
 							disabled={!step1Valid}
-							class="scope-btn-solid mt-2 px-6 py-3 font-medium transition-opacity"
+							class="scope-btn-solid mt-2 inline-flex items-center gap-2 self-start px-6 py-3 font-medium transition-opacity"
 						>
 							{$_('Weiter')}
 							<SvgIcons name="right" size="1em" />
@@ -570,7 +571,7 @@
 											>
 												<span>{zimmerName}</span>
 												<span class="flex items-center gap-2 text-muted shrink-0 ml-2">
-													<span>{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
+													<span>{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
 													<span class="text-xs">▾</span>
 												</span>
 											</summary>
@@ -582,7 +583,9 @@
 														class="w-full max-h-[200px] rounded object-cover"
 													/>
 												{/if}
-												<p class="text-xs text-muted">{zimmer.anzahl_betten}× {zimmer.bett_typ}</p>
+												<p class="text-xs text-muted">
+													{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}
+												</p>
 											</div>
 										</details>
 									{/each}
@@ -641,7 +644,7 @@
 					<button
 						type="button"
 						on:click={backToStep1}
-						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit"
+						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit inline-flex items-center gap-1"
 					>
 						<SvgIcons name="left" size="1em" />
 						{$_('Auswahl ändern')}
@@ -681,21 +684,35 @@
 						<label for="referenz-email" class="block text-base font-bold"
 							>{$_('Freundes-Referenz-E-Mail Adresse')}</label
 						>
-						<input
-							id="referenz-email"
-							type="email"
-							bind:value={referenzEmail}
-							class="form-input form-input-lg"
-						/>
-						{#if referenzEmailChecking}
-							<p class="text-xs text-muted -mt-3">{$_('Wird geprüft…')}</p>
-						{:else if referenzEmail && referenzEmail.includes('@')}
-							{#if referenzEmailFound === true}
-								<p class="text-xs -mt-3 text-green-700">✓ {$_('E-Mail gefunden')}</p>
-							{:else if referenzEmailFound === false}
-								<p class="text-xs -mt-3 text-red-600">✗ {$_('E-Mail nicht gefunden')}</p>
-							{/if}
-						{/if}
+						<!-- Check result behind the input (right edge), not below it -->
+						<div class="relative">
+							<input
+								id="referenz-email"
+								type="email"
+								bind:value={referenzEmail}
+								aria-describedby="referenz-email-status"
+								class="form-input form-input-lg pr-44"
+							/>
+							<span
+								id="referenz-email-status"
+								class="absolute right-2 top-[calc(50%+2px)] flex -translate-y-1/2 items-center gap-1.5 text-xs pointer-events-none"
+								aria-live="polite"
+							>
+								{#if referenzEmailChecking}
+									<span
+										class="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent text-muted"
+										aria-hidden="true"
+									></span>
+									<span class="text-muted">{$_('Wird geprüft…')}</span>
+								{:else if referenzEmail && referenzEmail.includes('@')}
+									{#if referenzEmailFound === true}
+										<span class="text-green-700">✓ {$_('E-Mail gefunden')}</span>
+									{:else if referenzEmailFound === false}
+										<span class="text-red-600">✗ {$_('E-Mail nicht gefunden')}</span>
+									{/if}
+								{/if}
+							</span>
+						</div>
 					</div>
 
 					<div>
@@ -718,7 +735,7 @@
 						<button
 							type="button"
 							on:click={backToStep1}
-							class="scope-btn-outline px-6 py-3 font-medium transition-opacity"
+							class="scope-btn-outline inline-flex items-center gap-2 px-6 py-3 font-medium transition-opacity"
 						>
 							<SvgIcons name="left" size="1em" />
 							{$_('Zurück')}
@@ -737,4 +754,12 @@
 			<p class="text-muted text-sm">{$_('Keine Ressource verknüpft')}</p>
 		{/if}
 	</div>
+	{#if success}
+		<Modal
+			title={slice.primary.success_heading || $_('Anfrage erhalten!')}
+			message={slice.primary.success_text}
+			text={$_('Wir melden uns in Kürze bei Ihnen.')}
+			onClose={closeSuccess}
+		/>
+	{/if}
 </Bounded>

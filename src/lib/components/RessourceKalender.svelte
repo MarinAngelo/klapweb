@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { _ } from '$lib/stores/i18n';
+	import { page } from '$app/stores';
+	import { uiLang } from '$lib/stores/preferredLang';
 
 	export let bookedRanges: Array<{ von: string; bis: string; zimmer: string[] }> = [];
 	export let allZimmerNamen: string[] = [];
@@ -162,21 +164,19 @@
 	// Force cell re-render when statusMap or selection changes
 	$: allCells = { cells1, cells2, statusMap, von, bis, hoverDate };
 
-	const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-	const monthNames = [
-		'Januar',
-		'Februar',
-		'März',
-		'April',
-		'Mai',
-		'Juni',
-		'Juli',
-		'August',
-		'September',
-		'Oktober',
-		'November',
-		'Dezember'
-	];
+	// Weekday / month names in the visitor's language (remembered language has priority)
+	$: locale = $uiLang || $page.data.lang || 'de-ch';
+	$: weekdays = Array.from({ length: 7 }, (_, i) =>
+		// 2024-01-01 is a Monday
+		new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(
+			new Date(Date.UTC(2024, 0, 1 + i))
+		)
+	);
+	$: monthNames = Array.from({ length: 12 }, (_, i) =>
+		new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' }).format(
+			new Date(Date.UTC(2024, i, 1))
+		)
+	);
 </script>
 
 <div class="scope-text select-none">

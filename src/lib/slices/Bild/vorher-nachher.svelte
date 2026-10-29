@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled, type ImageField } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { reveal } from '$lib/actions/reveal';
@@ -25,7 +26,7 @@
 
 <div
 	role="img"
-	aria-label="Vorher/Nachher Vergleich"
+	aria-label={$_('Vorher/Nachher-Vergleich')}
 	class="relative select-none overflow-hidden rounded [touch-action:pan-y]"
 	use:reveal={animate ? animationOptions : { direction: 'none' }}
 	on:mousemove={onMouseMove}
@@ -77,7 +78,7 @@
 		max="100"
 		bind:value={position}
 		class="absolute inset-0 h-full w-full cursor-ew-resize opacity-0 [z-index:20]"
-		aria-label="Vorher/Nachher Vergleich"
+		aria-label={$_('Vorher/Nachher-Vergleich')}
 	/>
 </div>
 

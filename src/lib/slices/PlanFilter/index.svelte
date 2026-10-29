@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onDestroy } from 'svelte';
 	import { planFilter } from '$lib/stores/planFilter';
 	import gating from '../../../../gating.json';
@@ -13,7 +14,7 @@
 		([id, p]) => ({ id, label: p.label })
 	);
 
-	const heading = slice.primary?.heading || 'Inhalte filtern nach Plan:';
+	$: heading = slice.primary?.heading || $_('Inhalte filtern nach Plan:');
 
 	onDestroy(() => planFilter.set(null));
 </script>
@@ -38,7 +39,7 @@
 				value={$planFilter ?? ''}
 				on:change={(e) => planFilter.set(e.currentTarget.value || null)}
 			>
-				<option value="">Alle Pläne</option>
+				<option value="">{$_('Alle Pläne')}</option>
 				{#each plans as plan}
 					<option value={plan.id}>{plan.label}</option>
 				{/each}

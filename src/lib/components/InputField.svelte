@@ -75,8 +75,8 @@
 
 	$: termineByWorkday = termine.reduce<Record<string, Record<string, AvailableTermin[]>>>(
 		(groups, termin) => {
-			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || 'Termin';
-			const time = termin.uhrzeit || 'Ganztägig';
+			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || $_('Termin');
+			const time = termin.uhrzeit || $_('Ganztägig');
 			(groups[workday] ??= {})[time] ??= [];
 			groups[workday][time].push(termin);
 			return groups;
@@ -555,7 +555,7 @@
 				on:blur
 				on:change
 			>
-				<option value="" disabled selected>Bitte auswählen</option>
+				<option value="" disabled selected>{$_('Bitte auswählen')}</option>
 				{#each field.options?.split(',') || [] as option}
 					<option
 						value={option?.trim() ?? ''}
@@ -588,7 +588,7 @@
 				on:blur
 				on:change
 			>
-				<option value="" disabled selected>Bitte auswählen</option>
+				<option value="" disabled selected>{$_('Bitte auswählen')}</option>
 				{#each countries as country}
 					<option value={country} class="text-page" style:background-color={selectOptionBg}
 						>{country}</option
@@ -606,13 +606,17 @@
 			</div>
 		{:else if htmlType === 'select-termin'}
 			{#if termineLoading}
-				<p class="text-sm opacity-60">Termine werden geladen…</p>
+				<p class="text-sm opacity-60">{$_('Termine werden geladen…')}</p>
 			{:else if termineError}
-				<p class="text-sm text-red-500">Termine konnten nicht geladen werden.</p>
+				<p class="text-sm text-red-500">{$_('Termine konnten nicht geladen werden.')}</p>
 			{:else if termine.length === 0}
-				<p class="text-sm opacity-60">Keine verfügbaren Termine.</p>
+				<p class="text-sm opacity-60">{$_('Keine verfügbaren Termine.')}</p>
 			{:else}
-				<div class="termin-selection" role="radiogroup" aria-label={field.field_name ?? 'Termin'}>
+				<div
+					class="termin-selection"
+					role="radiogroup"
+					aria-label={field.field_name ?? $_('Termin')}
+				>
 					{#if !selectedWorkday}
 						<section class="termin-step">
 							<h4>{$_('Tag wählen')}</h4>
@@ -698,7 +702,7 @@
 				on:blur
 				on:change
 			>
-				<option value="">Zeitzone wählen</option>
+				<option value="">{$_('Zeitzone wählen')}</option>
 				{#each TIMEZONES as tz}
 					<option value={tz.value} class="text-page" style:background-color={selectOptionBg}
 						>{tz.label}</option

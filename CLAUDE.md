@@ -92,6 +92,14 @@ Regeln:
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
 
+## Schriften (selbst gehostet, kein Google)
+
+- Google-Schriften werden beim `npm run dev` / `build` von `scripts/self-host-fonts.js` nach `static/fonts/` geladen (gitignored): eine CSS pro Schrift (`/fonts/<slug>.css`) + woff2. Besucher laden nie von Google
+- Quellen: vordefinierte Schriften `PRESET_FONTS` (`src/lib/fontSources.js`) + Prismic-Font-Dokumente mit Anbieter «Google» (Feld «Varianten»)
+- Anbieter «Lokal»: Gruppe «Schriftdateien» (Datei aus der Mediathek, Gewicht, Stil) → Script lädt die Dateien ebenfalls nach `static/fonts/` und erzeugt `@font-face` (eigene Domain, keine CORS-Probleme)
+- **Nie** `fonts.googleapis.com` / `fonts.gstatic.com` einbinden — Schrift-URL immer über `localFontCss(name)`
+- Neues Font-Dokument in Prismic → wird beim nächsten Build/Dev-Start geladen (`npm run fonts` manuell)
+
 ## i18n
 
 - **Niemals UI-Text hardcodieren** — jeden sichtbaren String über den `$_`-Store ausgeben
@@ -101,6 +109,20 @@ Regeln:
 - **Gilt auch für Fallback-Strings im Code** — z.B. `|| 'Beauftragung'` → `|| t('Beauftragung', lang)` im Template, nicht im Server-Code
 - **Gilt für alle hardcodierten Labels in Arrays**, z.B. `invoiceFields`-Labels in `beauftragung/+page.svelte` → `{t(f.label, lang)}` statt `{f.label}`
 - **Jede neu erstellte oder bearbeitete Seite/Komponente**: alle sichtbaren Strings auf fehlende `t()`-Wraps prüfen, bevor die Aufgabe als erledigt gilt
+- `scripts/check-i18n-keys.js` findet Schlüssel in `$_('…')`/`t('…')` ohne Eintrag in `translations.ts` (Warnung bei `npm run dev`/`build`; `npm run check:i18n` endet mit Fehler)
+
+### Mehrsprachige Inhalte (Prismic)
+
+- Hat das Prismic-Repo mehr als eine Sprache, braucht **jede statisch generierte Seite** eine Übersetzung in allen Sprachen (sonst 404 unter `/en-us/…`)
+- `scripts/check-translations.js` prüft die Typen in `TRANSLATED_TYPES` (`page`, `leistung`, `ressource`) bei `npm run dev` und `npm run build` (nur Warnung); `npm run check:translations` endet mit Fehler bei Lücken
+- Neuer Custom Type mit eigener (prerender-)Route → in `TRANSLATED_TYPES` (`src/lib/contentCheck.js`) ergänzen
+- **Links immer über `$lib/components/PrismicLink.svelte`** (nicht `@prismicio/svelte`) bzw. `$linkHref(field)` (`$lib/stores/linkContext`): setzt URLs für Ressource/Leistung und hält Besucher in ihrer Sprache (`/en-us/…`). Neue Route ausserhalb `[[lang=lang]]` → in `UNLOCALIZED_ROUTES` (`src/lib/utils/documentLinks.ts`) eintragen
+- Hreflang nur für echte Übersetzungen (`verified` in `allAlternates`, `+layout.svelte`), nie für geratene URLs; Sprach-Umschalter zeigt nicht übersetzte Sprachen durchgestrichen statt als Link
+- Gemerkte Sprache (`klap_lang`): Inline-Script im `<head>` leitet vor dem ersten Rendern auf die Übersetzung um (Ziel aus den Hreflang-Tags)
+- **Rechtliche Seiten:** eine Route `src/routes/[[lang=lang]]/[legal=legal]` für alle Slugs (`staticRoutes` in `src/lib/i18n/i18n.ts`, Matcher `src/params/legal.ts`). Neue rechtliche Seite → Eintrag in `staticRoutes` + Komponente in `[legal=legal]/+page.svelte`
+- `check-translations.js` meldet auch Link-Probleme: Web-Links ohne führenden `/`, Links in Übersetzungen auf die Hauptsprache trotz vorhandener Übersetzung
+- **Für Redakteure:** dieselbe Prüfung live unter `/admin/inhalte` (Dashboard «Inhalte prüfen»), mit Link zum Dokument in Prismic. Prüflogik nur in `src/lib/contentCheck.js` (Script + Admin), `TRANSLATED_TYPES` steht dort
+- Prüfung meldet auch **unbekannte Tokens** `{{…}}` (mit Vorschlag bei Tippfehlern). Bekannt = `CODE_TOKENS` in `contentCheck.js` + Variablen aus Prismic. **Neuer Token im Code → in `CODE_TOKENS` eintragen**
 
 ## Cookie-Banner (Schweizer Recht, Opt-out)
 
@@ -122,6 +144,7 @@ Regeln:
 - `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
 - **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
 - **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+- **Links auf gated Typen (Ressource, Leistung) in der Navigation:** `gating.json` → `features.<feature>.linkTargets` (z.B. `ressourcenbuchung` → `["ressource"]`); `build-customtypes.js` ergänzt die Typen bei aktivem Feature im Link-Feld der Navigation (Quelle `customtypes/navigation/base.json`, `index.json` generiert). Die URL setzt `src/lib/utils/documentLinks.ts` (Route-Präfix pro Typ) — **nie in den Route Resolver** (Repos ohne den Typ lehnen jede Abfrage ab). Neuer Typ mit eigener Route → `ROUTE_PREFIX` + `linkTargets` ergänzen
 
 ## Git-Strategie (Kern + Kunden-Branches)
 
@@ -215,6 +238,12 @@ Details: `docs/git-strategie.md`
 	}
 }
 ```
+
+### Lokale Feature-Schalter (`gating.overrides.json`)
+
+- Agency-Editor (`/agency/gating`) speichert zusätzliche/abgeschaltete Features in `gating.overrides.json` (gitignored)
+- **Pro Prismic-Repository** (`repositoryName` aus `slicemachine.config.json`): `{ "repos": { "<repo>": { enabled, disabled, admin_sections_disabled } } }` — die Datei bleibt beim Branch-Wechsel liegen, Schalter eines Branches dürfen nie für ein anderes Repo gelten (sonst löscht `slicemachine push` Custom Types)
+- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`
 
 ### Plan-Hierarchie & Features
 

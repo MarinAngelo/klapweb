@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	import ConsentGate from '$lib/components/ConsentGate.svelte';
 	import { resolveMapUrl, type MapProvider } from '$lib/utils/mapUrl';
@@ -19,6 +19,52 @@
 
 	$: mapTitle = provider === 'openstreetmap' ? 'OpenStreetMap' : 'Google Maps';
 
+	// The map inside the iframe (OSM: Leaflet) sets up its tiles once while loading:
+	// - Chrome throttles cross-origin iframes while they are invisible (reveal animation starts
+	//   at opacity 0) → tile fade-in stalls, most tiles stay invisible
+	// - its size is measured only once
+	// → load only when in view and no ancestor is transparent; reload OSM on a width change.
+	let shown = false;
+	let boxWidth = 0;
+	let loadedWidth = 0;
+	let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+
+	function ancestorsOpaque(node: HTMLElement): boolean {
+		for (let el: HTMLElement | null = node; el; el = el.parentElement) {
+			if (Number(getComputedStyle(el).opacity) < 0.99) return false;
+		}
+		return true;
+	}
+
+	/** Sets `shown` once the element is in view and fully visible (reveal animation done) */
+	function whenShown(node: HTMLElement) {
+		let poll: ReturnType<typeof setInterval> | undefined;
+		const observer = new IntersectionObserver((entries) => {
+			if (!entries.some((e) => e.isIntersecting) || poll) return;
+			poll = setInterval(() => {
+				if (!ancestorsOpaque(node)) return;
+				clearInterval(poll);
+				observer.disconnect();
+				shown = true;
+			}, 100);
+		});
+		observer.observe(node);
+		return {
+			destroy() {
+				observer.disconnect();
+				clearInterval(poll);
+			}
+		};
+	}
+
+	$: if (shown && boxWidth && Math.abs(boxWidth - loadedWidth) > 40) {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(() => (loadedWidth = boxWidth), loadedWidth ? 300 : 50);
+	}
+	$: reloadKey = provider === 'openstreetmap' ? loadedWidth : 0;
+
+	onDestroy(() => clearTimeout(resizeTimer));
+
 	onMount(async () => {
 		const raw = mapUrl?.trim();
 		if (!raw) return;
@@ -30,23 +76,30 @@
 	<div class="flex flex-col gap-3">
 		<ConsentGate service={provider} minHeight={mapHeight}>
 			<div
+				bind:clientWidth={boxWidth}
+				use:whenShown
+				style:min-height="{mapHeight}px"
 				class="relative overflow-hidden {!roundCorners
 					? ''
 					: mobileVollbreite
 						? '-mx-6 md:mx-0 md:rounded-3xl'
 						: 'rounded-3xl'}"
 			>
-				<iframe
-					class="border-0 block"
-					src={embedUrl}
-					width="100%"
-					height={mapHeight}
-					style:min-height="{mapHeight}px"
-					allowfullscreen={true}
-					loading="lazy"
-					referrerpolicy="no-referrer-when-downgrade"
-					title={mapTitle}
-				></iframe>
+				{#if loadedWidth}
+					{#key reloadKey}
+						<iframe
+							class="border-0 block"
+							src={embedUrl}
+							width="100%"
+							height={mapHeight}
+							style:min-height="{mapHeight}px"
+							allowfullscreen={true}
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade"
+							title={mapTitle}
+						></iframe>
+					{/key}
+				{/if}
 				{#if mapOpacity > 0}
 					<div
 						class="absolute inset-0 bg-page-bg pointer-events-none"

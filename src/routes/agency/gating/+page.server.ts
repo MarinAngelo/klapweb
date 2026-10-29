@@ -6,13 +6,13 @@ import { execSync } from 'child_process';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { join } from 'path';
 import { REMEMBER_SECONDS, wantsRemember } from '$lib/auth/remember';
+import { readOverrides, writeOverrides } from '$lib/gatingOverrides.js';
 
 export const prerender = false;
 
 const ROOT = process.cwd();
 const GATING_PATH = join(ROOT, 'gating.json');
 const SM_CONFIG_PATH = join(ROOT, 'slicemachine.config.json');
-const OVERRIDES_PATH = join(ROOT, 'gating.overrides.json');
 const AUTH_COOKIE = 'agency_auth';
 
 function read(path: string) {
@@ -54,7 +54,7 @@ export const load = ({ cookies }) => {
 	// Nur wenn authentifiziert: Daten laden
 	const gating = read(GATING_PATH);
 	const smConfig = read(SM_CONFIG_PATH);
-	const overrides = existsSync(OVERRIDES_PATH) ? read(OVERRIDES_PATH) : { features: [] };
+	const overrides = readOverrides(ROOT);
 
 	const currentPlan = smConfig.plan || 'basis';
 	const activePlanChain = getActivePlanChain(currentPlan, gating.plans);
@@ -252,9 +252,7 @@ export const actions = {
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
 		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
 
-		const existingOverrides = existsSync(OVERRIDES_PATH)
-			? read(OVERRIDES_PATH)
-			: { enabled: [], disabled: [], admin_sections_disabled: [] };
+		const existingOverrides = readOverrides(ROOT);
 		const overridesChanged =
 			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !==
 				JSON.stringify([...enabled].sort()) ||
@@ -263,7 +261,8 @@ export const actions = {
 			JSON.stringify([...(existingOverrides.admin_sections_disabled ?? [])].sort()) !==
 				JSON.stringify([...sectionsDisabled].sort());
 
-		write(OVERRIDES_PATH, { enabled, disabled, admin_sections_disabled: sectionsDisabled });
+		// Stored for the repository in slicemachine.config.json only (not for other branches/repos)
+		writeOverrides({ enabled, disabled, admin_sections_disabled: sectionsDisabled }, ROOT);
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
 		if (!planChanged && !overridesChanged) {

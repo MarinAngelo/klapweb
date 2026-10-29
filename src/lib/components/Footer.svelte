@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { PrismicText } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { theme } from '$lib/stores/theme';
 	import type { Content } from '@prismicio/client';
 	import { page } from '$app/stores';

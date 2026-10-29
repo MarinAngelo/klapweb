@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -74,7 +75,7 @@
 	const wertKeys = ['plan_1_wert', 'plan_2_wert', 'plan_3_wert'] as const;
 	$: planCount = rawPlans.length;
 
-	const ctaLabel = p.cta_label || 'Jetzt bestellen';
+	$: ctaLabel = p.cta_label || $_('Jetzt bestellen');
 	const titel = p.titel?.[0]?.text ?? null;
 
 	$: btnStyleName = (p.button_style as any)?.uid || undefined;

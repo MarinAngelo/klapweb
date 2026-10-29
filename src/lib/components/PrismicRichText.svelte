@@ -14,13 +14,15 @@
 	import Hyperlink from './PrismicRichText/Hyperlink.svelte';
 	import Label from './PrismicRichText/Label.svelte';
 	import Embed from './PrismicRichText/Embed.svelte';
-	import { variables } from '$lib/stores/variables';
+	import { variables, richVariables } from '$lib/stores/variables';
 	import { replaceTokens } from '$lib/utils/replaceTokens';
 
 	export let field: ComponentProps<PrismicRichText>['field'];
 	export let components: ComponentProps<PrismicRichText>['components'] = {};
 
-	$: processedField = field ? (replaceTokens(field as any, $variables) as typeof field) : field;
+	$: processedField = field
+		? (replaceTokens(field as any, $variables, $richVariables) as typeof field)
+		: field;
 </script>
 
 {#if field && field.length > 0}

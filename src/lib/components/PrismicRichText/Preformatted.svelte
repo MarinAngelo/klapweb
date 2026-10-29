@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { theme } from '$lib/stores/theme';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
 
@@ -21,7 +22,7 @@
 <div class="relative mb-7 last:mb-0 group">
 	<button
 		on:click={copy}
-		aria-label="Code kopieren"
+		aria-label={$_('Code kopieren')}
 		class="absolute top-2 right-2 z-10 rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700 text-white"
 	>
 		{#if copied}✓{:else}

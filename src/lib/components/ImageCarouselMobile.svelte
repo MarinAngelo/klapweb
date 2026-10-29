@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -181,7 +182,7 @@
 		<div
 			class="carousel-inner relative w-full h-full overflow-hidden select-none [touch-action:pan-y]"
 			role="region"
-			aria-label="Image carousel"
+			aria-label={$_('Bildkarussell')}
 		>
 			{#key currentKey}
 				<div
@@ -221,7 +222,7 @@
 		</div>
 	</div>
 {:else}
-	<p class="sr-only">Keine Bilder vorhanden</p>
+	<p class="sr-only">{$_('Keine Bilder vorhanden')}</p>
 {/if}
 
 <style>

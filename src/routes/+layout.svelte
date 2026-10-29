@@ -1,13 +1,18 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { building } from '$app/environment';
+	import { browser, building } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
-	import { repositoryName } from '$lib/prismicio';
+	import { repositoryName, createClient } from '$lib/prismicio';
+	import { preferredLang, uiLang, translationNoticeShown } from '$lib/stores/preferredLang';
+	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
+	import { localFontCss } from '$lib/fontSources.js';
+	import { linkContext } from '$lib/stores/linkContext';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
@@ -17,13 +22,14 @@
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
 	import CookieBanner from '$lib/components/CookieBanner.svelte';
+	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
 	import CrosshairDevTool from '$lib/components/CrosshairDevTool.svelte';
 
 	import { updateTheme, updateContrastColors } from '$lib/utils/themeUpdater';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
-	import { variables } from '$lib/stores/variables';
+	import { variables, richVariables } from '$lib/stores/variables';
 	import { currencySelection } from '$lib/stores/currency';
 	import { addonRows } from '$lib/stores/addonRows';
 	import { getFontSize } from '$lib/utils/fontMapper';
@@ -89,16 +95,26 @@
 		if ($page.status !== 200) {
 			return (locales || []).map((l: string) => ({
 				lang: l,
-				href: l === dynamicDefaultLang ? '/' : `/${l}`
+				href: l === dynamicDefaultLang ? '/' : `/${l}`,
+				verified: false
 			}));
 		}
 
-		const p = $page.data.page;
+		// Prismic document of the current page (pages: data.page, ressource: data.doc, leistung: data.leistung)
+		const p = $page.data.page ?? $page.data.doc ?? $page.data.leistung;
 		const segments = $page.url.pathname.split('/').filter(Boolean);
 		// Prismic-Vorschau (/preview/…): Präfix ignorieren
 		if (segments[0] === 'preview') segments.shift();
 		const isLangSegment = locales?.includes(segments[0]);
 		const currentSlug = isLangSegment ? segments[1] : segments[0];
+		// Route prefix before the UID, e.g. "/ressource" or "/leistung" (empty for normal pages)
+		const pathSegments = isLangSegment ? segments.slice(1) : segments;
+		const routePrefix = $page.params.uid
+			? pathSegments
+					.slice(0, -1)
+					.map((seg) => `/${seg}`)
+					.join('')
+			: '';
 
 		// A. Statische Routen Mapping (Fix für /undefined)
 		for (const key in staticRoutes) {
@@ -111,7 +127,8 @@
 					const prefix = l === dynamicDefaultLang ? '' : `/${l}`;
 					return {
 						lang: l,
-						href: `${prefix}/${targetSlug}`
+						href: `${prefix}/${targetSlug}`,
+						verified: true // static route exists in every language
 					};
 				});
 			}
@@ -119,12 +136,14 @@
 
 		// B. Prismic Dokumente mit Übersetzungen
 		if (p?.alternate_languages?.length > 0) {
-			return p.alternate_languages.map((alt: any) => ({
+			// Current language included as well, otherwise the switcher builds it without routePrefix
+			return [{ lang: p.lang ?? lang, uid: p.uid }, ...p.alternate_languages].map((alt: any) => ({
 				lang: alt.lang,
 				href:
-					alt.lang === dynamicDefaultLang
-						? `/${alt.uid === 'home' ? '' : alt.uid}`
-						: `/${alt.lang}/${alt.uid === 'home' ? '' : alt.uid}`
+					(alt.lang === dynamicDefaultLang ? '' : `/${alt.lang}`) +
+					routePrefix +
+					`/${alt.uid === 'home' ? '' : alt.uid}`,
+				verified: true // real translation in Prismic
 			}));
 		}
 
@@ -135,7 +154,10 @@
 			const slug = currentUid === 'home' ? '' : `/${currentUid}`;
 			return {
 				lang: l,
-				href: `${prefix}${slug}`
+				href: `${prefix}${routePrefix}${slug}`,
+				// Own language exists; routes under [[lang=lang]] without Prismic document (warenkorb,
+				// beauftragung …) exist in every language; otherwise a guessed URL (not for SEO/switcher)
+				verified: l === lang || (!p && !!$page.route.id?.startsWith('/[[lang=lang]]'))
 			};
 		});
 	})().map((item) => ({
@@ -144,10 +166,92 @@
 	}));
 
 	// --- SEO HREFLANG ---
-	$: seoAlternates = allAlternates.map((alt) => ({
-		lang: alt.lang,
-		href: `${cleanBaseUrl}${alt.href}`
-	}));
+	// --- REMEMBERED LANGUAGE ---
+	// Pages under /<locale>/… and the language switcher set the preference. On a page without
+	// translation (main language URL) header, footer and UI texts stay in that language.
+	$: if (browser && showSwitcher && lang !== mainLang && $page.status === 200 && !isAdminPage)
+		preferredLang.set(lang);
+	$: wantedChromeLang =
+		browser &&
+		showSwitcher &&
+		!isAdminPage &&
+		lang === mainLang &&
+		$preferredLang &&
+		$preferredLang !== mainLang &&
+		locales?.includes($preferredLang)
+			? $preferredLang
+			: lang;
+
+	// Settings + navigation of the remembered language, loaded once per language in the browser
+	let chromeData: Record<string, { settings: any; navigation: any }> = {};
+	const chromeLoading = new Set<string>();
+	async function loadChrome(l: string) {
+		chromeLoading.add(l);
+		const client = createClient();
+		try {
+			const [s, n] = await Promise.all([
+				client.getSingle('settings', { lang: l }),
+				client.getSingle('navigation', { lang: l })
+			]);
+			chromeData = { ...chromeData, [l]: { settings: s, navigation: n } };
+		} catch {
+			// no settings/navigation in that language → stay in the page language
+		}
+	}
+	$: if (
+		wantedChromeLang !== lang &&
+		!chromeData[wantedChromeLang] &&
+		!chromeLoading.has(wantedChromeLang)
+	)
+		loadChrome(wantedChromeLang);
+	$: chrome = wantedChromeLang !== lang ? chromeData[wantedChromeLang] : undefined;
+	$: chromeLang = chrome ? wantedChromeLang : lang;
+	$: chromeSettings = chrome?.settings ?? settings;
+	// Document links to ressource/leistung get their url here (not in the Route Resolver)
+	// Internal links of a secondary language navigation keep the /<lang> prefix
+	$: chromeNavigation = withDocumentLinkUrls(
+		chrome?.navigation ?? navigation,
+		dynamicDefaultLang,
+		chromeLang,
+		locales ?? []
+	);
+	$: uiLang.set(chromeLang !== lang ? chromeLang : null);
+	$: linkContext.set({ lang: chromeLang, mainLang: dynamicDefaultLang, locales: locales ?? [] });
+
+	// Page exists in the remembered language (e.g. link from German content) → open the translation
+	$: if (browser && wantedChromeLang !== lang && $page.status === 200) {
+		const doc = $page.data.page ?? $page.data.doc ?? $page.data.leistung;
+		const target = doc?.alternate_languages?.some((a: any) => a.lang === wantedChromeLang)
+			? allAlternates.find((a: any) => a.lang === wantedChromeLang)?.href
+			: null;
+		if (target && target !== $page.url.pathname)
+			goto(target + $page.url.search + $page.url.hash, { replaceState: true });
+		// Prismic page without translation (e.g. link in the English navigation to the German
+		// page) → notice in the remembered language, the page stays in the main language
+		else if (!target && doc && !translationNoticeShown.has($page.url.pathname)) {
+			translationNoticeShown.add($page.url.pathname);
+			missingTranslationNotice = { lang: wantedChromeLang, path: $page.url.pathname };
+		}
+	}
+	// Inline <head> script (runs before the first paint on full page loads); client-side
+	// navigations are handled by the reactive redirect above
+	const rememberedLangScript = `<script>(function(){try{var pref=localStorage.getItem('klap_lang');if(!pref)return;var links=[].slice.call(document.querySelectorAll('link[rel=alternate][hreflang]'));var first=location.pathname.split('/')[1];if(links.some(function(l){return l.hreflang===first}))return;var t=links.filter(function(l){return l.hreflang===pref})[0];if(!t)return;var path=new URL(t.href).pathname;if(path!==location.pathname)location.replace(path+location.search+location.hash)}catch(e){}})()<\/script>`;
+
+	// Shown once per page and visit (translationNoticeShown)
+	let missingTranslationNotice: { lang: string; path: string } | null = null;
+
+	// Hreflang only for pages that really exist in the language (no guessed URLs → no 404s for search engines)
+	$: verifiedAlternates = allAlternates.filter((alt) => alt.verified);
+	$: seoAlternates =
+		verifiedAlternates.length > 1
+			? verifiedAlternates.map((alt) => ({
+					lang: alt.lang,
+					href: `${cleanBaseUrl}${alt.href}`
+				}))
+			: [];
+	$: xDefaultAlternate = seoAlternates.length
+		? verifiedAlternates.find((a) => a.lang === dynamicDefaultLang)
+		: undefined;
 
 	// --- VARIABLES / TOKEN MAP ---
 	// Nur updaten wenn sich der Inhalt wirklich geändert hat (verhindert Re-Render-Kaskade).
@@ -159,6 +263,7 @@
 	//   {{PreisRabatt}}      – Preis × (1 − Rabatt/100)
 	//   {{AnzahlungBetrag}}  – PreisRabatt × Anzahlung/100
 	//   {{Restbetrag}}       – PreisRabatt − AnzahlungBetrag
+	$: richVariables.set(data.richVariables ?? {});
 	let _prevVarsStr = '{}';
 	$: {
 		const base = data.variables ?? {};
@@ -305,22 +410,13 @@
 		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
 	}
 
-	$: googleFontsUrl = (() => {
-		if (!Array.isArray(fonts)) return null;
-		const families = fonts
-			.filter((f) => f?.data?.provider === 'Google')
-			.map(
-				(f) =>
-					`family=${f.data.name.replace(/\s+/g, '+')}${f.data.variants ? ':' + f.data.variants : ''}`
-			);
-		return families.length
-			? `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`
-			: null;
-	})();
+	// Self-hosted (scripts/self-host-fonts.js) — visitors never contact Google
+	$: localFontUrls = Array.isArray(fonts)
+		? fonts
+				.filter((f: any) => ['Google', 'Lokal'].includes(f?.data?.provider) && f?.data?.name)
+				.map((f: any) => localFontCss(f.data.name))
+		: [];
 
-	$: adobeFontUrl = settings?.data?.adobe_font_id
-		? `https://use.typekit.net/${settings.data.adobe_font_id}.css`
-		: null;
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
@@ -400,13 +496,13 @@
 		{#each seoAlternates as alt}
 			<link rel="alternate" hreflang={alt.lang} href={alt.href} />
 		{/each}
-		{#if seoAlternates.length > 0}
-			<link
-				rel="alternate"
-				hreflang="x-default"
-				href={cleanBaseUrl +
-					(allAlternates.find((a) => a.lang === dynamicDefaultLang)?.href || '/')}
-			/>
+		{#if xDefaultAlternate}
+			<link rel="alternate" hreflang="x-default" href={cleanBaseUrl + xDefaultAlternate.href} />
+		{/if}
+		{#if seoAlternates.length}
+			<!-- Remembered language: redirect before the first paint (no flash of the main language).
+			     Only on main language URLs, target from the hreflang tags above (real translations). -->
+			{@html rememberedLangScript}
 		{/if}
 	{/if}
 
@@ -422,33 +518,18 @@
 	<meta name="twitter:description" content={finalDesc} />
 	<meta name="twitter:image" content={finalImage} />
 
-	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
-	{#if adobeFontUrl}
-		<link rel="preconnect" href="https://p.typekit.net" crossorigin />
-		<link rel="dns-prefetch" href="https://p.typekit.net" />
-	{/if}
+	{#each localFontUrls as href}<link rel="stylesheet" {href} />{/each}
 </svelte:head>
 
-{#if adobeFontUrl}
-	<script>
-		const link = document.createElement('link');
-		link.rel = 'stylesheet';
-		link.href = `${adobeFontUrl}`;
-		link.crossOrigin = 'anonymous';
-		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
-		document.head.appendChild(link);
-	</script>
-{/if}
-
-<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+<a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
 <div class="bg-page-bg [min-height:100vh]">
 	{#if !hideChrome}
 		<Header
-			{navigation}
-			{settings}
+			navigation={chromeNavigation}
+			settings={chromeSettings}
 			{prismicTheme}
-			{lang}
+			lang={chromeLang}
 			{locales}
 			{allAlternates}
 			{showSwitcher}
@@ -478,19 +559,32 @@
 	</main>
 
 	{#if !hideChrome}
-		<Footer {navigation} {settings} {lang} mainLang={data.mainLang} />
+		<Footer
+			navigation={chromeNavigation}
+			settings={chromeSettings}
+			lang={chromeLang}
+			mainLang={data.mainLang}
+		/>
 	{/if}
 </div>
 
+{#if missingTranslationNotice?.path === $page.url.pathname}
+	<MissingTranslationModal
+		lang={missingTranslationNotice.lang}
+		mainLang={dynamicDefaultLang}
+		on:close={() => (missingTranslationNotice = null)}
+	/>
+{/if}
+
 <PageUpButton />
-<CookieBanner {lang} mainLang={data.mainLang} />
+<CookieBanner lang={chromeLang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
 {#if klapstudioActive}
 	<KlapStudio bind:open={studioOpen} />
 {/if}
 {#if chatActive && !isAdminPage}
-	<ChatWidget botName={chatBotName} greeting={chatGreeting} {lang} />
+	<ChatWidget botName={chatBotName} greeting={chatGreeting} lang={chromeLang} />
 {/if}
 
 <!-- Dev-Overlay: Fadenkreuz für Bildschirmmitte -->
