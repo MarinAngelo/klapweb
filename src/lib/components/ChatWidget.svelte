@@ -19,6 +19,8 @@
 	let input = '';
 	let loading = false;
 	let messages: Message[] = [];
+	// Random id per chat window: groups the questions in the admin chat log (no personal data)
+	const conversationId = crypto.randomUUID();
 	let messagesEl: HTMLElement;
 
 	$: displayName = botName || $_('Assistent');
@@ -54,7 +56,12 @@
 			const res = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ messages: history(), lang })
+				body: JSON.stringify({
+					messages: history(),
+					lang,
+					conversationId,
+					page: location.pathname
+				})
 			});
 			const data = await res.json().catch(() => ({}));
 			messages = data.reply

@@ -4,6 +4,7 @@ import { createClient } from '$lib/prismicio';
 import { asText } from '@prismicio/client';
 import { FEATURE_CHATBOT } from '$lib/server/features';
 import { recordChatUsage, usageToTotals, type AnthropicUsage } from '$lib/server/chatUsage';
+import { isValidConversationId, recordChatExchange } from '$lib/server/chatLog';
 
 /**
  * Chat-Bot (Feature `chatbot`): answers visitor questions with Claude Haiku,
@@ -190,5 +191,19 @@ export async function POST({ request, fetch, getClientAddress }) {
 		);
 	}
 	const reply = data.content?.[0]?.text ?? '';
+
+	// Chat log for the admin (question + answer, no IP; deleted after 90 days)
+	if (reply && isValidConversationId(body?.conversationId)) {
+		const page = typeof body?.page === 'string' && body.page.startsWith('/') ? body.page : '';
+		await recordChatExchange({
+			conversation: body.conversationId,
+			lang,
+			page: page.slice(0, 200),
+			question: messages[messages.length - 1].content,
+			answer: reply,
+			usd: data.usage ? usageToTotals(data.usage).usd : 0
+		}).catch((e) => console.error('[chat] Log konnte nicht gespeichert werden:', e));
+	}
+
 	return reply ? json({ reply }) : json({ error: 'failed' }, { status: 502 });
 }

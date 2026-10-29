@@ -799,6 +799,27 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	Gespräche: { 'de-ch': 'Gespräche', 'en-us': 'Conversations' },
+	Frage: { 'de-ch': 'Frage', 'en-us': 'Question' },
+	'Fragen und Antworten werden ohne IP-Adresse gespeichert und nach {tage} Tagen automatisch gelöscht.':
+		{
+			'de-ch':
+				'Fragen und Antworten werden ohne IP-Adresse gespeichert und nach {tage} Tagen automatisch gelöscht.',
+			'en-us':
+				'Questions and answers are stored without IP address and deleted automatically after {tage} days.'
+		},
+	'Dieses Gespräch endgültig löschen?': {
+		'de-ch': 'Dieses Gespräch endgültig löschen?',
+		'en-us': 'Permanently delete this conversation?'
+	},
+	'Gespräch löschen': { 'de-ch': 'Gespräch löschen', 'en-us': 'Delete conversation' },
+	'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen':
+		{
+			'de-ch':
+				'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen',
+			'en-us':
+				'Question and answer are stored by the website operator without IP address and deleted after 90 days'
+		},
 	'Jetzt beauftragen': { 'de-ch': 'Jetzt beauftragen', 'en-us': 'Order now' },
 	Gesamtpreis: { 'de-ch': 'Gesamtpreis', 'en-us': 'Total price' },
 	Rabatt: { 'de-ch': 'Rabatt', 'en-us': 'Discount' },
