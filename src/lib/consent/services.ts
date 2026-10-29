@@ -181,7 +181,8 @@ export const consentServices: Record<string, ConsentService> = {
 		purpose: 'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.',
 		storage: [
 			'Keine Cookies',
-			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)'
+			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)',
+			'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen'
 		],
 		privacyUrl: 'https://www.anthropic.com/legal/privacy'
 	}
