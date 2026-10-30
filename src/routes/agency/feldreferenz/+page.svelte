@@ -13,7 +13,8 @@
 	let query = '';
 	let saving = false;
 	$: q = query.trim().toLowerCase();
-	const matches = (f: any, groupName: string) =>
+	// Reactive: recreated when q changes → the template filters again
+	$: matches = (f: any, groupName: string) =>
 		!q ||
 		[groupName, f.label, f.field, f.de, f.en].some((v) =>
 			String(v ?? '')
