@@ -16,7 +16,6 @@
 	$: name = q.get('name') ?? '';
 	$: email = q.get('email') ?? '';
 	$: stornoLink = q.get('storno') ?? '';
-	$: gcalLink = q.get('gcal') ?? '';
 	$: icsLink = q.get('ics') ?? '';
 	$: returnTo = q.get('returnTo') ?? '/';
 	$: ort = q.get('ort') ?? '';
@@ -59,11 +58,8 @@
 		</div>
 
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			{#if gcalLink}
-				<Button href={gcalLink} text={$_('Zum Kalender hinzufügen')} />
-			{/if}
 			{#if icsLink}
-				<Button href={icsLink} text={$_('.ics herunterladen')} />
+				<Button href={icsLink} text={$_('Zum Kalender hinzufügen')} />
 			{/if}
 		</div>
 

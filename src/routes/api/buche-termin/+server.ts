@@ -83,25 +83,6 @@ function generateICS(
 	].join('\r\n');
 }
 
-function googleCalendarUrl(
-	titel: string,
-	datum: string,
-	uhrzeit: string,
-	sessionLaenge: number | null
-): string {
-	if (!datum) return '';
-	let dates: string;
-	if (uhrzeit) {
-		const start = buildDatetimeStr(datum, uhrzeit);
-		const end = addMinutes(datum, uhrzeit, sessionLaenge ?? 60);
-		dates = `${start}/${end}`;
-	} else {
-		const d = datum.replace(/-/g, '');
-		dates = `${d}/${d}`;
-	}
-	return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dates}`;
-}
-
 function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz: string): string {
 	if (!datum || !uhrzeit || fromTz === toTz) return '';
 	const [y, mo, d] = datum.split('-').map(Number);
@@ -326,7 +307,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
 	const toEmail = companyEmail;
 
-	const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
@@ -352,7 +332,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
-		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
+		// .ics download works with every calendar app (no Google Calendar link)
+		const calendarLine = datum ? `\nZum Kalender hinzufügen: ${icsDownloadLink}` : '';
 
 		const convertedTime = customerTimezone
 			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
@@ -387,7 +368,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const stornoLine = `\n\nStornieren: ${stornoLink}`;
 		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
-		const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
@@ -395,10 +375,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		// Provider ICS includes customer name in title
 		const providerTitel = name ? `${titel} – ${name}` : titel;
-		const providerGcalUrl = googleCalendarUrl(providerTitel, datum, uhrzeit, sessionLaenge);
-		const providerCalendarLine = providerGcalUrl
-			? `\nZum Kalender hinzufügen: ${providerGcalUrl}`
-			: '';
 		const providerIcsContent = generateICS(terminId, providerTitel, datum, uhrzeit, sessionLaenge);
 		const providerIcsAttachment = providerIcsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(providerIcsContent).toString('base64') }]
@@ -457,21 +433,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						from: fromEmail,
 						to: toEmail,
 						subject: `Neue Buchung: ${titel}`,
-						text:
-							[
-								`Neue Buchung eingegangen.`,
-								``,
-								`Angebot: ${titel}`,
-								`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
-								`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
-								`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
-								...(ortName ? [`Ort: ${ortName}`] : []),
-								...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
-								``,
-								`Name: ${customerName}`,
-								...(email ? [`E-Mail: ${email}`] : []),
-								...(extraLines.length ? [``, ...extraLines] : [])
-							].join('\n') + providerCalendarLine,
+						text: [
+							`Neue Buchung eingegangen.`,
+							``,
+							`Angebot: ${titel}`,
+							`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
+							`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
+							`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+							...(ortName ? [`Ort: ${ortName}`] : []),
+							...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
+							``,
+							`Name: ${customerName}`,
+							...(email ? [`E-Mail: ${email}`] : []),
+							...(extraLines.length ? [``, ...extraLines] : [])
+						].join('\n'),
 						attachments: providerIcsAttachment
 					})
 					.then(({ error: e }) => {
@@ -498,7 +473,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			name: name || '',
 			email: email || '',
 			storno: stornoLink,
-			gcal: gcalUrl,
 			ics: icsDownloadLink,
 			ort: ortAdresse || ortName,
 			karte: ortKarte

@@ -70,31 +70,6 @@ END:VEVENT
 END:VCALENDAR`;
 	};
 
-	// Google Calendar Link generieren
-	const getGoogleCalendarLink = ({
-		title,
-		start,
-		end,
-		description,
-		location
-	}: {
-		title: string;
-		start: string;
-		end: string;
-		description?: string;
-		location?: string;
-	}) => {
-		const format = (d: string) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, '');
-		const params = new URLSearchParams({
-			action: 'TEMPLATE',
-			text: title,
-			details: description || '',
-			location: location || '',
-			dates: `${format(start)}/${format(end)}`
-		});
-		return `https://calendar.google.com/calendar/render?${params.toString()}`;
-	};
-
 	// reactive .ics Blob URL
 	let icsUrl: string | null = null;
 
@@ -181,23 +156,6 @@ END:VCALENDAR`;
 						data-type="prismic-link"
 					>
 						{$_('Zum Kalender hinzufügen (.ics)')}
-					</PrismicLink><br />
-
-					<PrismicLink
-						field={{
-							link_type: 'Web',
-							url: getGoogleCalendarLink({
-								title: primary.title,
-								start: primary.start_date_time,
-								end: primary.end_date_time,
-								description: asText(primary.description),
-								location: asText(primary.location_text)
-							})
-						}}
-						target="_blank"
-						data-type="prismic-link"
-					>
-						{$_('In Google Calendar öffnen')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.location_text}

@@ -1040,7 +1040,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
-	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {
 		'de-ch': 'Weitere Termine buchen',
@@ -1061,14 +1060,6 @@ export const translations: Record<string, Record<string, string>> = {
 	'Zum Kalender hinzufügen (.ics)': {
 		'de-ch': 'Zum Kalender hinzufügen (.ics)',
 		'en-us': 'Add to calendar (.ics)'
-	},
-	'In Google Calendar öffnen': {
-		'de-ch': 'In Google Calendar öffnen',
-		'en-us': 'Open in Google Calendar'
-	},
-	'Standort auf Google Maps anzeigen': {
-		'de-ch': 'Standort auf Google Maps anzeigen',
-		'en-us': 'Show location on Google Maps'
 	},
 	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
 	'Zurzeit sind keine Durchführungen geplant': {

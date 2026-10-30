@@ -343,7 +343,6 @@
 							name: result.name ?? '',
 							email: result.email ?? '',
 							storno: result.storno ?? '',
-							gcal: result.gcal ?? '',
 							ics: result.ics ?? '',
 							ort: result.ort ?? '',
 							karte: result.karte ?? '',
