@@ -41,6 +41,13 @@
 	const perQuestion = (t: Totals) => (t.questions ? t.usd / t.questions : 0);
 
 	$: selected = data.months.find((m) => m.period === data.month)?.totals ?? null;
+	// Visitor ratings of the answers in this month (chat widget 👍/👎)
+	const countRatings = (entries: { rating?: string }[], rating: string) =>
+		entries.filter((e) => e.rating === rating).length;
+	$: allEntries = data.conversations.flatMap((c) => c.entries);
+	$: ratedUp = countRatings(allEntries, 'up');
+	$: ratedDown = countRatings(allEntries, 'down');
+	$: ratedTotal = ratedUp + ratedDown;
 	// Column headers are i18n keys
 	const cols = [
 		'Zeitraum',
@@ -68,7 +75,7 @@
 	{/if}
 
 	<h2 class="mb-3">{fmtMonth(data.month)}</h2>
-	<div class="admin-stats md:grid-cols-3">
+	<div class="admin-stats md:grid-cols-4">
 		<div class="admin-stat">
 			<span class="admin-stat-value">{fmtNumber(selected?.questions ?? 0)}</span>
 			<span class="admin-stat-label">{$_('Fragen')}</span>
@@ -80,6 +87,12 @@
 		<div class="admin-stat">
 			<span class="admin-stat-value">{fmtUsd(selected ? perQuestion(selected) : 0)}</span>
 			<span class="admin-stat-label">{$_('Durchschnitt pro Frage')}</span>
+		</div>
+		<div class="admin-stat">
+			<span class="admin-stat-value"
+				>{ratedTotal ? `${Math.round((ratedUp / ratedTotal) * 100)} %` : '–'}</span
+			>
+			<span class="admin-stat-label">{$_('Hilfreich')} ({ratedUp} 👍 / {ratedDown} 👎)</span>
 		</div>
 	</div>
 
@@ -103,6 +116,12 @@
 								{c.entries.length === 1 ? $_('Frage') : $_('Fragen')}</span
 							>
 							<span class="admin-badge admin-badge-blue">{c.lang || '–'}</span>
+							{#if countRatings(c.entries, 'up')}<span class="admin-badge admin-badge-green"
+									>👍 {countRatings(c.entries, 'up')}</span
+								>{/if}
+							{#if countRatings(c.entries, 'down')}<span class="admin-badge admin-badge-red"
+									>👎 {countRatings(c.entries, 'down')}</span
+								>{/if}
 							{#if c.page}<span class="admin-mono admin-muted">{c.page}</span>{/if}
 							<span class="admin-muted ml-auto">{fmtUsd(c.usd)}</span>
 						</summary>
@@ -118,6 +137,21 @@
 										<span class="font-semibold">{$_('Antwort')}:</span>
 										{e.answer}
 									</p>
+									{#if e.rating}
+										<p class="m-0 text-sm">
+											<span
+												class="admin-badge {e.rating === 'up'
+													? 'admin-badge-green'
+													: 'admin-badge-red'}"
+												>{e.rating === 'up'
+													? `👍 ${$_('Hilfreich')}`
+													: `👎 ${$_('Nicht hilfreich')}`}</span
+											>
+											{#if e.ratingComment}<span class="ml-2 whitespace-pre-wrap"
+													>«{e.ratingComment}»</span
+												>{/if}
+										</p>
+									{/if}
 								</div>
 							{/each}
 							<form

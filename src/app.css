@@ -1065,6 +1065,21 @@ p {
 	.chat-note {
 		@apply m-0 px-3 pb-2.5 text-[0.6875rem] text-gray-600;
 	}
+	.chat-link {
+		@apply break-words text-inherit underline underline-offset-2 hover:no-underline;
+	}
+	.chat-rating {
+		@apply -mt-1 flex items-center gap-1 text-xs text-gray-600;
+	}
+	.chat-rating-form {
+		@apply -mt-1 flex flex-col gap-1.5;
+	}
+	.chat-rate-btn {
+		@apply cursor-pointer rounded border-0 bg-transparent p-1 leading-none text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+	}
+	.chat-rate-skip {
+		@apply cursor-pointer border-0 bg-transparent px-2 py-1 text-xs text-gray-600 underline hover:text-gray-900;
+	}
 	.chat-toggle {
 		@apply flex h-[3.25rem] w-[3.25rem] cursor-pointer items-center justify-center rounded-full border-0 bg-gray-900 text-white shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform;
 	}
