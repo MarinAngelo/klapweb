@@ -799,6 +799,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	Seite: { 'de-ch': 'Seite', 'en-us': 'Page' },
+	'Inhalts-Typ': { 'de-ch': 'Inhalts-Typ', 'en-us': 'Content type' },
+	'Inhalts-Element': { 'de-ch': 'Inhalts-Element', 'en-us': 'Content element' },
+	Element: { 'de-ch': 'Element', 'en-us': 'Element' },
 	'Agency Dashboard': { 'de-ch': 'Agency Dashboard', 'en-us': 'Agency dashboard' },
 	'Plan und Feature-Schalter dieser Website': {
 		'de-ch': 'Plan und Feature-Schalter dieser Website',
