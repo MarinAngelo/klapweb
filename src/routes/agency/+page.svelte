@@ -33,6 +33,12 @@
 			icon: '📖'
 		},
 		{
+			title: 'Chat-Bot Wissensbasis',
+			description: 'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)',
+			href: '/agency/wissensbasis',
+			icon: '🤖'
+		},
+		{
 			title: 'Admin-Bereich',
 			description: 'Verwaltung der Website (eigene Anmeldung)',
 			href: '/admin',

@@ -829,6 +829,11 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'So sehen die Website-Betreiber die Referenz',
 		'en-us': 'How website operators see the reference'
 	},
+	'Chat-Bot Wissensbasis': { 'de-ch': 'Chat-Bot Wissensbasis', 'en-us': 'Chat bot knowledge base' },
+	'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)': {
+		'de-ch': 'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)',
+		'en-us': 'Generated knowledge base to copy into Prismic (Settings → Chat-Bot)'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
