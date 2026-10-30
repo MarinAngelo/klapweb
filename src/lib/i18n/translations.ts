@@ -799,6 +799,19 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Kartenpunkt nicht erkannt': {
+		'de-ch': 'Kartenpunkt nicht erkannt',
+		'en-us': 'Map point not recognised'
+	},
+	'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417': {
+		'de-ch': 'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417',
+		'en-us': 'Enter an OSM link or coordinates, e.g. 47.3769, 8.5417'
+	},
+	'Standort auf der Karte anzeigen': {
+		'de-ch': 'Standort auf der Karte anzeigen',
+		'en-us': 'Show location on the map'
+	},
+	'Auf der Karte anzeigen': { 'de-ch': 'Auf der Karte anzeigen', 'en-us': 'Show on map' },
 	Seite: { 'de-ch': 'Seite', 'en-us': 'Page' },
 	'Inhalts-Typ': { 'de-ch': 'Inhalts-Typ', 'en-us': 'Content type' },
 	'Inhalts-Element': { 'de-ch': 'Inhalts-Element', 'en-us': 'Content element' },

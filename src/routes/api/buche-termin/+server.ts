@@ -3,6 +3,7 @@ import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/ser
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
+import { osmMarkerUrl, osmSearchUrl, parseMapPoint } from '$lib/mapPoint.js';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 
@@ -190,6 +191,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let ortAdresse = '';
 	let ortWegbeschreibung = '';
 	let ortTelefon = '';
+	let ortKarte = '';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -246,6 +248,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					ortAdresse = lines(o.adresse).join(', ');
 					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
 					ortTelefon = (o.telefon ?? '').trim();
+					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
+					const punkt = parseMapPoint(o.geo_koordinaten);
+					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
+					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
 				}
 			} catch {
 				/* Ort nicht erreichbar */
@@ -338,7 +344,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Firma: companyName,
 			Ort: ortAdresse || ortName,
 			Wegbeschreibung: ortWegbeschreibung,
-			'Ort-Telefon': ortTelefon
+			'Ort-Telefon': ortTelefon,
+			'Ort-Karte': ortKarte
 		};
 
 		const subject = custEmailSubject
@@ -368,6 +375,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					: []),
 				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
 				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
+				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
 				``,
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,
@@ -492,7 +500,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			storno: stornoLink,
 			gcal: gcalUrl,
 			ics: icsDownloadLink,
-			ort: ortAdresse || ortName
+			ort: ortAdresse || ortName,
+			karte: ortKarte
 		}),
 		{ status: 200 }
 	);

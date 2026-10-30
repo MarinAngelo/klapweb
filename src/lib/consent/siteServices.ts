@@ -1,5 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import { consentServices, serviceIdFor, servicesInHtml } from '$lib/consent/services';
+import { parseMapPoint } from '$lib/mapPoint.js';
 
 /**
  * Detects which registered services the website's CMS content actually uses
@@ -13,9 +14,13 @@ export function detectServicesInContent(documents: unknown[]): string[] {
 		if (typeof value === 'string') {
 			if (/<(iframe|script|embed|object)\b/i.test(value)) {
 				servicesInHtml(value).forEach((id) => found.add(id));
+			} else if (/map|geo_koordinaten/i.test(path) && parseMapPoint(value)) {
+				// «Kartenpunkt» (link of any provider or coordinates) is always shown as OpenStreetMap
+				found.add('openstreetmap');
 			} else if (/map/i.test(path) && /^https?:\/\//i.test(value)) {
 				const id = serviceIdFor(value);
-				if (id === 'google_maps' || id === 'openstreetmap') found.add(id);
+				// Google short links etc. → also rendered as OpenStreetMap
+				if (id === 'google_maps' || id === 'openstreetmap') found.add('openstreetmap');
 			} else if (/embed_code/i.test(path) && /^https?:\/\//i.test(value.trim())) {
 				// Video URL pasted into an embed code field (e.g. Anleitung video_embed_code)
 				found.add(serviceIdFor(value));

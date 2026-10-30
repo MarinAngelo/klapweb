@@ -1,162 +1,48 @@
 /**
- * Map URL helpers for the map_url fields (Google Maps or OpenStreetMap).
- * Google URLs are resolved via /api/maps-embed (short links need a server redirect),
- * OpenStreetMap URLs are converted directly in the browser.
+ * «Kartenpunkt» fields → embeddable OpenStreetMap + directions link.
+ * Parsing lives in $lib/mapPoint.js (coordinates, OSM, Google, Apple, swisstopo).
+ * Every input is shown as OpenStreetMap — Google links are only read for their coordinates
+ * (short links are resolved server-side via /api/maps-embed), visitors never load Google.
  */
+import {
+	isGoogleShortLink,
+	osmDirectionsUrl,
+	osmEmbedUrl,
+	parseMapPoint,
+	pointFromGoogleUrl
+} from '$lib/mapPoint.js';
 
-export type MapProvider = 'google_maps' | 'openstreetmap';
+/** Map provider for the consent banner — always OpenStreetMap now */
+export type MapProvider = 'openstreetmap';
 
-const OSM_HOSTS = new Set(['openstreetmap.org', 'www.openstreetmap.org', 'osm.org', 'www.osm.org']);
-
-export function getMapProvider(url: string | null | undefined): MapProvider {
-	try {
-		return OSM_HOSTS.has(new URL(url ?? '').hostname) ? 'openstreetmap' : 'google_maps';
-	} catch {
-		return 'google_maps';
-	}
-}
-
-type OsmLocation = { lat: number; lon: number; zoom: number; embedUrl?: string };
-
-/**
- * Decodes an OSM short link code (osm.org/go/<code>, "Share → Short link"), same algorithm
- * as openstreetmap.org: 6 bits per character interleave x/y, trailing "-" adjust the zoom.
- */
-function decodeOsmShortLink(code: string): OsmLocation | null {
-	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_~';
-	const sc = code.replace(/@/g, '~'); // legacy character
-	let x = 0;
-	let y = 0;
-	let z = -8;
-	let i = 0;
-	for (; i < sc.length; i++) {
-		const digit = chars.indexOf(sc[i]);
-		if (digit === -1) break;
-		x *= 8;
-		y *= 8;
-		for (let j = 2; j >= 0; j--) {
-			if (digit & (1 << (2 * j + 1))) x += 1 << j;
-			if (digit & (1 << (2 * j))) y += 1 << j;
-		}
-		z += 3;
-	}
-	if (i === 0) return null;
-	const lon = x * 2 ** (2 - 3 * i) * 90 - 180;
-	const lat = y * 2 ** (2 - 3 * i) * 45 - 90;
-	if (sc[i] === '-') {
-		z -= 2;
-		if (sc[i + 1] === '-') z += 1;
-	}
-	return { lat, lon, zoom: Math.max(1, Math.min(19, z)) };
-}
-
-/** Reads position from OSM URLs: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html?bbox=…&marker=…, osm.org/go/<code> */
-function parseOsmUrl(raw: string): OsmLocation | null {
-	let url: URL;
-	try {
-		url = new URL(raw);
-	} catch {
-		return null;
-	}
-	const params = url.searchParams;
-
-	// Short link osm.org/go/<code>
-	const shortMatch = url.pathname.match(/^\/go\/([A-Za-z0-9_~@-]+)/);
-	if (shortMatch) return decodeOsmShortLink(shortMatch[1]);
-
-	const hashMatch = url.hash.match(/map=(\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)/);
-	const zoom = hashMatch ? Math.round(Number(hashMatch[1])) : Number(params.get('zoom')) || 16;
-
-	// Already an embed URL → keep it, position from marker or bbox centre
-	if (url.pathname.includes('/export/embed.html')) {
-		const marker = params.get('marker')?.split(',').map(Number);
-		const bbox = params.get('bbox')?.split(',').map(Number);
-		const lat = marker?.[0] ?? (bbox ? (bbox[1] + bbox[3]) / 2 : NaN);
-		const lon = marker?.[1] ?? (bbox ? (bbox[0] + bbox[2]) / 2 : NaN);
-		if (Number.isNaN(lat) || Number.isNaN(lon)) return null;
-		return { lat, lon, zoom, embedUrl: url.toString() };
-	}
-
-	// Marker (?mlat/mlon) is more precise than the visible map centre (#map=)
-	const mlat = params.get('mlat');
-	const mlon = params.get('mlon');
-	if (mlat && mlon) return { lat: Number(mlat), lon: Number(mlon), zoom };
-	if (hashMatch) return { lat: Number(hashMatch[2]), lon: Number(hashMatch[3]), zoom };
-	return null;
-}
-
-function osmEmbedUrl({ lat, lon, zoom }: OsmLocation): string {
-	// Visible area for a ~800px wide map at the given zoom level
-	const lonSpan = (360 / 2 ** zoom) * 3;
-	const latSpan = lonSpan * Math.cos((lat * Math.PI) / 180) * 0.6;
-	const bbox = [lon - lonSpan / 2, lat - latSpan / 2, lon + lonSpan / 2, lat + latSpan / 2]
-		.map((value) => value.toFixed(6))
-		.join(',');
-	return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
-}
-
-/** OSM URL → { embedUrl, directionsUrl }, or null if the URL has no position */
-export function resolveOsmUrl(raw: string): { embedUrl: string; directionsUrl: string } | null {
-	const location = parseOsmUrl(raw);
-	if (!location) return null;
-	return {
-		embedUrl: location.embedUrl ?? osmEmbedUrl(location),
-		directionsUrl: `https://www.openstreetmap.org/directions?route=%3B${location.lat}%2C${location.lon}`
-	};
-}
-
-/** Google Maps URL (resolved) → directions link */
-export function googleDirectionsUrl(resolved: string): string {
-	if (!resolved) return '';
-	// Place name from URL path (more precise than coordinates)
-	const placeMatch = resolved.match(/\/maps\/place\/([^/@?]+)/);
-	if (placeMatch) {
-		const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-		return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place)}`;
-	}
-	const coordMatch = resolved.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-	if (coordMatch) {
-		return `https://www.google.com/maps/dir/?api=1&destination=${coordMatch[1]},${coordMatch[2]}`;
-	}
-	try {
-		const q = new URL(resolved).searchParams.get('q');
-		if (q) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
-	} catch {
-		// not a URL
-	}
-	return '';
+export function getMapProvider(_url?: string | null): MapProvider {
+	return 'openstreetmap';
 }
 
 /**
- * Resolves a map_url field value to an embeddable URL + directions link.
- * Google: short links are resolved server-side via /api/maps-embed.
+ * Resolves a «Kartenpunkt» value to an OpenStreetMap embed + directions link.
+ * Not understood (e.g. Google place link without coordinates) → empty strings → no map.
  */
 export async function resolveMapUrl(
 	raw: string
 ): Promise<{ provider: MapProvider; embedUrl: string; directionsUrl: string }> {
-	const provider = getMapProvider(raw);
-	if (provider === 'openstreetmap') {
-		const osm = resolveOsmUrl(raw);
-		return { provider, embedUrl: osm?.embedUrl ?? '', directionsUrl: osm?.directionsUrl ?? '' };
-	}
-
-	if (raw.includes('google.com/maps/embed') || raw.includes('output=embed')) {
-		return { provider, embedUrl: raw, directionsUrl: googleDirectionsUrl(raw) };
-	}
-	try {
-		const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(raw)}`);
-		if (res.ok) {
-			const data = await res.json();
-			return {
-				provider,
-				embedUrl: data.embedUrl,
-				directionsUrl: googleDirectionsUrl(data.resolvedUrl || data.embedUrl)
-			};
+	let point = parseMapPoint(raw);
+	if (!point && isGoogleShortLink(raw)) {
+		try {
+			const res = await fetch(`/api/maps-embed?url=${encodeURIComponent(raw.trim())}`);
+			if (res.ok) {
+				const data = await res.json();
+				point = pointFromGoogleUrl(data.resolvedUrl ?? '');
+			}
+		} catch {
+			// network error → no map
 		}
-		// URL rejected / not resolvable → show no map instead of a broken iframe
-		return { provider, embedUrl: '', directionsUrl: '' };
-	} catch {
-		// Network error → try the raw URL
-		return { provider, embedUrl: raw, directionsUrl: '' };
 	}
+	return point
+		? {
+				provider: 'openstreetmap',
+				embedUrl: osmEmbedUrl(point),
+				directionsUrl: osmDirectionsUrl(point)
+			}
+		: { provider: 'openstreetmap', embedUrl: '', directionsUrl: '' };
 }

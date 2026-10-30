@@ -217,9 +217,10 @@ Unterstützte Platzhalter:
 {{Ort}}
 {{Wegbeschreibung}}
 {{Ort-Telefon}}
+{{Ort-Karte}}
 ```
 
-`{{Ort}}`, `{{Wegbeschreibung}}` und `{{Ort-Telefon}}` werden nur ersetzt, wenn das gebuchte Angebot einen aktiven Ort verknüpft hat. Ohne eigenen Mailtext erscheinen Ort, Wegbeschreibung und Telefon automatisch in der Bestätigung.
+`{{Ort}}`, `{{Wegbeschreibung}}`, `{{Ort-Telefon}}` und `{{Ort-Karte}}` (Link zu OpenStreetMap: genauer «Kartenpunkt» des Orts, sonst Suche nach der Adresse) werden nur ersetzt, wenn das gebuchte Angebot einen aktiven Ort verknüpft hat. Ohne eigenen Mailtext erscheinen Ort, Wegbeschreibung, Telefon und Kartenlink automatisch in der Bestätigung.
 
 Beispiel Betreff:
 

@@ -1,4 +1,8 @@
 {
+	"AdresseUndMap.map_url": {
+		"de-ch": "Der Punkt, den die Karte neben der Adresse zeigt, inkl. Link «Route planen»; leer = nur die Adresse ohne Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
+		"en-us": "The point the map next to the address shows, incl. a «Route planen» (directions) link; empty = address only, no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
+	},
 	"angebot.ort": {
 		"de-ch": "Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.",
 		"en-us": "Where the offer takes place. Link a document of the content type «Ort» (location) here (create it first under «Ort», e.g. «Praxis Zürich City» with address). Name, address, directions and phone of the location appear in the appointment confirmation (in a custom e-mail text via the placeholders {{Ort}}, {{Wegbeschreibung}} and {{Ort-Telefon}}); name and address also in your notification and on the confirmation page. If «Aktiv» is switched off for the location or the field is empty, no location details are shown – booking still works."
@@ -83,6 +87,18 @@
 		"de-ch": "Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.",
 		"en-us": "Date and time. Prismic uses your computer’s time zone – in Switzerland, Swiss time (daylight saving time is handled automatically). On the website the time is always shown in Swiss time, wherever visitors are."
 	},
+	"Event.geopoint": {
+		"de-ch": "Altes Kartenfeld, wird nur noch verwendet, wenn «Kartenpunkt» leer ist. Bitte den Ort neu im Feld «Kartenpunkt» erfassen und dieses Feld leeren.",
+		"en-us": "Old map field, only used when «Kartenpunkt» is empty. Please enter the location in «Kartenpunkt» instead and clear this field."
+	},
+	"event.location_map_url": {
+		"de-ch": "Der Veranstaltungsort als Karte in der Event-Ansicht; leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
+		"en-us": "The venue shown as a map in the event view; empty = no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
+	},
+	"Event.map_point": {
+		"de-ch": "Der Veranstaltungsort: unter dem Event erscheint der Link «Standort auf der Karte anzeigen»; leer = kein Link. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
+		"en-us": "The venue: the event shows a «Standort auf der Karte anzeigen» (show location on map) link; empty = no link. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
+	},
 	"event.registration_deadline": {
 		"de-ch": "Letzter Tag für Anmeldungen: bis und mit diesem Tag (Schweizer Zeit) ist die Anmeldung möglich, danach ist sie geschlossen. Datum ohne Uhrzeit.",
 		"en-us": "Last day for registrations: registration is open up to and including this day (Swiss time), then it closes. Date without time."
@@ -115,9 +131,17 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"MapEinbetten.map_url": {
+		"de-ch": "Der Punkt, den die Karte zeigt (mit Markierung); leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
+		"en-us": "The point the map shows (with a marker); empty = no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
+	},
 	"newsletter.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
+	},
+	"ort.geo_koordinaten": {
+		"de-ch": "Der genaue Standort dieses Orts: Buchungsbestätigungen erhalten damit den Link «Auf der Karte anzeigen» (Platzhalter {{Ort-Karte}}); leer = der Link sucht stattdessen nach Name und Adresse. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
+		"en-us": "The exact location of this place: booking confirmations get an «Auf der Karte anzeigen» (show on map) link (placeholder {{Ort-Karte}}); empty = the link searches for name and address instead. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
 	},
 	"ort.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",

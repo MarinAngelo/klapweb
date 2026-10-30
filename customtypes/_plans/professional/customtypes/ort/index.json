@@ -31,8 +31,8 @@
 			"geo_koordinaten": {
 				"type": "Text",
 				"config": {
-					"label": "Geo-Koordinaten",
-					"placeholder": "z.B. 47.3769, 8.5417 (OpenStreetMap: Rechtsklick auf den Ort → «Adresse anzeigen»)"
+					"label": "Kartenpunkt",
+					"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
 				}
 			},
 			"wegbeschreibung": {

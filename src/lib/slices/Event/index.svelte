@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { osmMarkerUrl, parseMapPoint } from '$lib/mapPoint.js';
 	// Own wrapper: replaces {{Variables}}, theme headings/links
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { _ } from '$lib/stores/i18n';
@@ -12,6 +13,13 @@
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
+	// «Kartenpunkt» (link or coordinates), fallback: old Prismic map point (geopoint)
+	const anyPrimary = primary as any;
+	const mapPoint =
+		parseMapPoint(anyPrimary.map_point) ??
+		(anyPrimary.geopoint?.latitude && anyPrimary.geopoint?.longitude
+			? { lat: anyPrimary.geopoint.latitude, lon: anyPrimary.geopoint.longitude, zoom: 16 }
+			: null);
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
@@ -198,16 +206,13 @@ END:VCALENDAR`;
 						<PrismicRichText field={primary.location_text} components={{ embed: RichTextEmbed }} />
 					</div>
 				{/if}
-				{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
+				{#if mapPoint}
 					<PrismicLink
-						field={{
-							link_type: 'Web',
-							url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
-						}}
+						field={{ link_type: 'Web', url: osmMarkerUrl(mapPoint) }}
 						target="_blank"
 						data-type="prismic-link"
 					>
-						{$_('Standort auf Google Maps anzeigen')}
+						{$_('Standort auf der Karte anzeigen')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.additional_dates.length > 0}

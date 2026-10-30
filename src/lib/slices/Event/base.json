@@ -142,10 +142,17 @@
 						]
 					}
 				},
+				"map_point": {
+					"type": "Text",
+					"config": {
+						"label": "Kartenpunkt",
+						"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
+					}
+				},
 				"geopoint": {
 					"type": "GeoPoint",
 					"config": {
-						"label": "Google Maps URL"
+						"label": "Kartenpunkt (alt) – bitte «Kartenpunkt» verwenden"
 					}
 				},
 				"mobile_full_width": {

@@ -133,6 +133,12 @@ Regeln:
 - Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen
 - Wird die Bedeutung gespeicherter Auswahlen geändert: `CONSENT_VERSION` in `src/lib/stores/consent.ts` erhöhen → Banner erscheint erneut
 
+## Kartenpunkt (Karten-Felder)
+
+- Alle Felder für einen Punkt auf der Karte heissen «Kartenpunkt» (Text-Feld, Platzhalter «OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417»): `map_url`, `location_map_url`, `geo_koordinaten`, `Event.map_point`
+- Parser `src/lib/mapPoint.js` (`parseMapPoint`): Koordinaten, OSM (inkl. Kurzlink), Google (Shortlinks via `/api/maps-embed`), Apple, swisstopo → Anzeige **immer OpenStreetMap** (`osmEmbedUrl`, `osmMarkerUrl`, `osmDirectionsUrl`)
+- Neues Karten-Feld → Label/Platzhalter wie oben + API-ID in `MAP_POINT_FIELDS` (`contentCheck.js`), Karte mit `GoogleMap.svelte` bzw. `use:whenShown` erst laden, wenn sichtbar
+
 ## Netlify Blobs
 
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
