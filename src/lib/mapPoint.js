@@ -4,6 +4,7 @@
  *
  * Accepted:
  *   - Coordinates: "47.3769, 8.5417", "47.3769 8.5417", "47.3769° N, 8.5417° E"
+ *   - Geo URI: geo:47.3769,8.5417?z=17 (OSM «Teilen» → «Geo-URI»)
  *   - OpenStreetMap: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html, short link osm.org/go/…
  *   - Google Maps: links with coordinates (@lat,lon / !3d…!4d… / ?q=lat,lon); short links
  *     (maps.app.goo.gl) are resolved server-side: resolveGoogleShortLink (browser: /api/maps-embed)
@@ -137,6 +138,15 @@ export function parseMapPoint(raw) {
 	if (!value) return null;
 	const coords = parseCoordinates(value);
 	if (coords) return coords;
+
+	// Geo URI (RFC 5870, OSM «Teilen» → «Geo-URI»): geo:47.3769,8.5417?z=17 / geo:47.3769,8.5417;u=10
+	const geo = value.match(
+		/^geo:(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)(?:,[-\d.]+)?(?:;[^?]*)?(?:\?(.*))?$/i
+	);
+	if (geo) {
+		const zoom = Number(new URLSearchParams(geo[3] ?? '').get('z')) || DEFAULT_ZOOM;
+		return point(Number(geo[1]), Number(geo[2]), zoom);
+	}
 
 	let url;
 	try {
