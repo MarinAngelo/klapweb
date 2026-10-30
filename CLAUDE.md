@@ -131,6 +131,7 @@ Regeln:
 - Nicht-funktionale Inhalte (iframes, externe Scripts) immer mit `<ConsentGate service="…" minHeight={…}>` umschliessen — nur dann erscheint der Banner auf der Seite und nur dann kann der Besucher ablehnen
 - Banner erscheint nur auf Seiten, die einen nicht-funktionalen Dienst nutzen; Auswahl in `localStorage` (`klap_consent`); Footer-Link „Cookie-Einstellungen“ öffnet den Dialog
 - Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen
+- **Eigene Videos** (MP4 aus der Prismic-Mediathek, Link-to-Media-Feld `video_file`) über `$lib/components/VideoFile.svelte` — kein Drittanbieter, kein ConsentGate; hat Vorrang vor YouTube/Vimeo (`EmbedFieldHandler` mit ConsentGate)
 - Wird die Bedeutung gespeicherter Auswahlen geändert: `CONSENT_VERSION` in `src/lib/stores/consent.ts` erhöhen → Banner erscheint erneut
 
 ## Kartenpunkt (Karten-Felder)

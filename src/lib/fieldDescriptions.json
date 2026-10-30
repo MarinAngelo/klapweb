@@ -19,6 +19,14 @@
 		"de-ch": "Wie kurzfristig dieses Angebot spätestens gebucht werden kann, in Minuten vor Terminbeginn. Beispiel: Vorlaufzeit 120 → ein Termin um 14:00 kann bis 12:00 gebucht werden, danach verschwindet er aus der Auswahl. Für einen Tag Vorlauf 1440 eintragen (24 × 60). Leer oder 0 = bis Terminbeginn buchbar. Es gilt die Zeitzone des Arbeitstags.",
 		"en-us": "How short-notice this offer can be booked at the latest, in minutes before the appointment starts. Example: lead time 120 → an appointment at 14:00 can be booked until 12:00, after that it disappears from the selection. For one day of lead time enter 1440 (24 × 60). Empty or 0 = bookable until the appointment starts. The time zone of the working day applies."
 	},
+	"Anleitung.video_file": {
+		"de-ch": "Eigenes Video, das direkt auf der Website abgespielt wird — ohne YouTube und ohne Cookie-Hinweis. Lade eine MP4-Datei (max. 100 MB) in die Mediathek und wähle sie hier aus. Tipp: kurze Videos in 1080p oder 720p halten die Ladezeit tief. Ist eine Datei gewählt, wird «Video von YouTube / Vimeo» ignoriert.",
+		"en-us": "Your own video, played directly on the website — no YouTube and no cookie notice. Upload an MP4 file (max. 100 MB) to the media library and select it here. Tip: short videos in 1080p or 720p keep loading times low. If a file is selected, «Video von YouTube / Vimeo» is ignored."
+	},
+	"Anleitung.youtube_video": {
+		"de-ch": "Video von YouTube oder Vimeo: Link einfügen (z.B. https://youtu.be/…). Besucher sehen das Video erst, wenn sie es im Cookie-Hinweis erlauben, weil dabei Daten an YouTube bzw. Vimeo gehen. Besser: eigenes Video im Feld «Video-Datei (MP4)» — es hat Vorrang.",
+		"en-us": "Video from YouTube or Vimeo: paste the link (e.g. https://youtu.be/…). Visitors only see the video after allowing it in the cookie notice, because data is sent to YouTube or Vimeo. Better: your own video in «Video-Datei (MP4)» — it takes precedence."
+	},
 	"arbeitstag.angebote": {
 		"de-ch": "Welche Angebote an diesem Arbeitstag gebucht werden können. Pro Zeile ein «Buchbares Angebot» verknüpfen. Für jedes Angebot entstehen eigene Anfangszeiten mit seiner Dauer und seinem Puffer. Sobald ein Termin gebucht ist, sind überschneidende Zeiten auch für die anderen Angebote gesperrt. Angebote, bei denen «Aktiv» ausgeschaltet ist, erscheinen nicht. Ohne Angebot ist der Arbeitstag nicht buchbar.",
 		"en-us": "Defines which services are bookable on this working day. Link one \"Bookable Service\" per item. Each service calculates its own available time slots based on its duration and buffer. Booked slots automatically block overlapping times across all services. Inactive services are hidden. At least one active service is required to make this working day bookable."

@@ -226,7 +226,16 @@
 				<tbody>
 					<tr><td><code>title</code></td><td>Text</td><td>Titel der Anleitung</td></tr>
 					<tr><td><code>description</code></td><td>Rich Text</td><td>Einleitungstext</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Gesamt-Video</td></tr>
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Gesamt-Video (MP4 aus der Mediathek, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Gesamt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
+					>
 					<tr
 						><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td
 						></tr
@@ -244,7 +253,15 @@
 				<tbody>
 					<tr><td><code>step_title</code></td><td>Text</td><td>Schritt-Titel</td></tr>
 					<tr><td><code>step_description</code></td><td>Rich Text</td><td>Schritt-Inhalt</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Schritt-Video</td></tr
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Schritt-Video (MP4, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Schritt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
 					>
 				</tbody>
 			</table>

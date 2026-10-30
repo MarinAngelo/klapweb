@@ -1749,6 +1749,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Transmission of your IP address to Spotify'
 	},
 	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Ungültige Video-Datei (MP4 erwartet)': {
+		'de-ch': 'Ungültige Video-Datei (MP4 erwartet)',
+		'en-us': 'Invalid video file (MP4 expected)'
+	},
 	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
 	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
 	'OpenStreetMap Foundation': {

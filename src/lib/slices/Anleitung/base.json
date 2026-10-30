@@ -70,10 +70,19 @@
 						]
 					}
 				},
+				"video_file": {
+					"type": "Link",
+					"config": {
+						"label": "Video-Datei (MP4)",
+						"placeholder": "MP4 aus der Mediathek, max. 100 MB",
+						"select": "media",
+						"allowTargetBlank": false
+					}
+				},
 				"youtube_video": {
 					"type": "Embed",
 					"config": {
-						"label": "Video (YouTube, Vimeo …)",
+						"label": "Video von YouTube / Vimeo (alternativ)",
 						"placeholder": "https://youtu.be/… oder https://vimeo.com/…"
 					}
 				},
@@ -157,10 +166,19 @@
 									]
 								}
 							},
+							"video_file": {
+								"type": "Link",
+								"config": {
+									"label": "Video-Datei (MP4)",
+									"placeholder": "MP4 aus der Mediathek, max. 100 MB",
+									"select": "media",
+									"allowTargetBlank": false
+								}
+							},
 							"youtube_video": {
 								"type": "Embed",
 								"config": {
-									"label": "Video (YouTube, Vimeo …)",
+									"label": "Video von YouTube / Vimeo (alternativ)",
 									"placeholder": "https://youtu.be/… oder https://vimeo.com/…"
 								}
 							},
