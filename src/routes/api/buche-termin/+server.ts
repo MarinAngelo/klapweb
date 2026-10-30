@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
-import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 
@@ -179,6 +179,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let datum = '';
 	let uhrzeit = '';
 	let endzeit = '';
+	let blockedUntil = '';
+	let vorlaufzeit = 0;
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
 	let zeitzone = 'Europe/Zurich';
@@ -186,6 +188,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let angebotId: string | undefined;
 	let ortName = '';
 	let ortAdresse = '';
+	let ortWegbeschreibung = '';
+	let ortTelefon = '';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -219,6 +223,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		datum = slot.datum;
 		uhrzeit = slot.uhrzeit;
 		endzeit = slot.endzeit ?? '';
+		blockedUntil = slot.blockedUntil ?? endzeit;
+		vorlaufzeit = slot.vorlaufzeit ?? 0;
 		titel = slot.titel;
 		sessionLaenge = slot.sessionLaenge;
 		zeitzone = slot.zeitzone;
@@ -231,14 +237,16 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		if (ortLink?.uid) {
 			try {
 				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
-				ortName = (ortDoc.data as any).name ?? '';
-				const adresseBlocks = (ortDoc.data as any).adresse;
-				ortAdresse = Array.isArray(adresseBlocks)
-					? adresseBlocks
-							.map((b: any) => b?.text ?? '')
-							.filter(Boolean)
-							.join(', ')
-					: '';
+				const o = ortDoc.data as any;
+				// Inactive location («Aktiv» off) → no location details
+				if (o.aktiv !== false) {
+					const lines = (blocks: unknown) =>
+						Array.isArray(blocks) ? blocks.map((b: any) => b?.text ?? '').filter(Boolean) : [];
+					ortName = o.name ?? '';
+					ortAdresse = lines(o.adresse).join(', ');
+					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
+					ortTelefon = (o.telefon ?? '').trim();
+				}
 			} catch {
 				/* Ort nicht erreichbar */
 			}
@@ -247,7 +255,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
 
-	if (endzeit && (await hasOverlappingBooking(datum, uhrzeit, endzeit, terminId))) {
+	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier
+	if (
+		datum &&
+		uhrzeit &&
+		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) - vorlaufzeit * 60000 < Date.now()
+	) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	// Incl. buffer on both sides (Puffer danach)
+	if (blockedUntil && (await hasOverlappingBooking(datum, uhrzeit, blockedUntil, terminId))) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
 			{ status: 409 }
@@ -259,6 +280,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		datum,
 		uhrzeit,
 		endzeit,
+		blockedUntil,
 		titel,
 		bookedAt: new Date().toISOString(),
 		name,
@@ -314,7 +336,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
 			Firma: companyName,
-			Ort: ortAdresse || ortName
+			Ort: ortAdresse || ortName,
+			Wegbeschreibung: ortWegbeschreibung,
+			'Ort-Telefon': ortTelefon
 		};
 
 		const subject = custEmailSubject
@@ -338,6 +362,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				`Ihr Termin wurde erfolgreich gebucht.`,
 				``,
 				`Termin: ${terminLine}`,
+				// Location of the offer (if linked and active)
+				...(ortName || ortAdresse
+					? [``, `Ort: ${[ortName, ortAdresse].filter(Boolean).join(', ')}`]
+					: []),
+				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
+				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
 				``,
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,

@@ -10,6 +10,8 @@ export interface TerminSlot {
 	datum: string;
 	uhrzeit: string;
 	endzeit?: string;
+	/** End incl. «Puffer danach» — occupied until then (HH:MM) */
+	blockedUntil?: string;
 	sessionLaenge: number | null;
 	zeitzone: string;
 	label: string;
@@ -123,6 +125,7 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 						datum: dateStr,
 						uhrzeit: time,
 						endzeit: endTime,
+						blockedUntil: timeLabel(slotEnd),
 						sessionLaenge: duration,
 						zeitzone: d.zeitzone ?? 'Europe/Zurich',
 						label: makeLabel(dateStr, time, title, duration, endTime),

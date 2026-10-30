@@ -215,9 +215,11 @@ Unterstützte Platzhalter:
 {{Name}}
 {{Firma}}
 {{Ort}}
+{{Wegbeschreibung}}
+{{Ort-Telefon}}
 ```
 
-Der Token `{{Ort}}` wird nur ersetzt, wenn das gebuchte Angebot einen Ort verknüpft hat.
+`{{Ort}}`, `{{Wegbeschreibung}}` und `{{Ort-Telefon}}` werden nur ersetzt, wenn das gebuchte Angebot einen aktiven Ort verknüpft hat. Ohne eigenen Mailtext erscheinen Ort, Wegbeschreibung und Telefon automatisch in der Bestätigung.
 
 Beispiel Betreff:
 

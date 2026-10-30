@@ -144,6 +144,7 @@ Regeln:
 - `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
 - **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
 - **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+- **Ausnahme:** Reine Verknüpfungen auf genau einen Inhalts-Typ, bei denen eine Web-Adresse keinen Sinn ergibt (z.B. Angebot → «Ort», Arbeitstag → «Buchbares Angebot»), dürfen `"select": "document"` behalten — die Regel gilt für Navigations- und Inhaltslinks
 - **Links auf gated Typen (Ressource, Leistung) in der Navigation:** `gating.json` → `features.<feature>.linkTargets` (z.B. `ressourcenbuchung` → `["ressource"]`); `build-customtypes.js` ergänzt die Typen bei aktivem Feature im Link-Feld der Navigation (Quelle `customtypes/navigation/base.json`, `index.json` generiert). Die URL setzt `src/lib/utils/documentLinks.ts` (Route-Präfix pro Typ) — **nie in den Route Resolver** (Repos ohne den Typ lehnen jede Abfrage ab). Neuer Typ mit eigener Route → `ROUTE_PREFIX` + `linkTargets` ergänzen
 
 ## Git-Strategie (Kern + Kunden-Branches)
