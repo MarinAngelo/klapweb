@@ -166,6 +166,9 @@
 				"chat_knowledge_base": {
 					"feature": "chatbot"
 				},
+				"chat_knowledge_extra": {
+					"feature": "chatbot"
+				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
 				}

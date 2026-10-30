@@ -41,7 +41,7 @@ function richTextToMarkdown(field: unknown): string {
 }
 
 // Settings cache per language — 5 minutes TTL
-type ChatSettings = { active: boolean; knowledgeBase: string };
+type ChatSettings = { active: boolean; knowledgeBase: string; knowledgeExtra: string };
 const settingsCache = new Map<string, { value: ChatSettings; at: number }>();
 const SETTINGS_TTL_MS = 5 * 60 * 1000;
 
@@ -58,10 +58,15 @@ async function getChatSettings(fetchFn: typeof fetch, lang: string): Promise<Cha
 			: null;
 
 	const masterData = (master?.data ?? {}) as any;
-	const localizedText = richTextToMarkdown((localized?.data as any)?.chat_knowledge_base);
+	const localizedData = (localized?.data ?? {}) as any;
+	// Each field falls back to the main language on its own (e.g. extras only maintained in German)
+	const text = (field: string) =>
+		richTextToMarkdown(localizedData[field]) || richTextToMarkdown(masterData[field]);
 	const value: ChatSettings = {
 		active: masterData.chat_active === true,
-		knowledgeBase: localizedText || richTextToMarkdown(masterData.chat_knowledge_base)
+		knowledgeBase: text('chat_knowledge_base'),
+		// «Ergänzungen»: manual additions/corrections, take precedence over the knowledge base
+		knowledgeExtra: text('chat_knowledge_extra')
 	};
 	settingsCache.set(lang, { value, at: Date.now() });
 	return value;
@@ -154,10 +159,17 @@ export async function POST({ request, fetch, getClientAddress }) {
 		// The knowledge base is long and German → the language rule must be explicit and first
 		'1. LANGUAGE (most important rule): Detect the language of the visitor’s LAST message and write your ENTIRE reply in that language (English question → English answer, French → French, never German unless the visitor writes German). Translate the knowledge base content. Keep names of fields, buttons and documents exactly as written in the knowledge base (they appear like that in the backend), optionally with a translation in parentheses.',
 		'2. Reiner Text, kein Markdown, keine Emojis.',
-		'3. Steht etwas nicht in der Wissensbasis, behaupte weder, dass es angeboten wird, noch dass es nicht angeboten wird. Sag, dass du dazu keine Information hast, und verweise auf die Kontaktseite.'
+		'3. Steht etwas nicht in der Wissensbasis, behaupte weder, dass es angeboten wird, noch dass es nicht angeboten wird. Sag, dass du dazu keine Information hast, und verweise auf die Kontaktseite.',
+		'4. Widersprechen sich WISSENSBASIS und ERGÄNZUNGEN UND KORREKTUREN, gilt immer der Abschnitt ERGÄNZUNGEN UND KORREKTUREN (auch für Begriffe).'
 	].join('\n');
-	const systemPrompt = settings.knowledgeBase
-		? `${basePrompt}\n\nWISSENSBASIS:\n${settings.knowledgeBase}\n\n${closingRules}`
+	const knowledge = [
+		settings.knowledgeBase && `WISSENSBASIS:\n${settings.knowledgeBase}`,
+		// After the knowledge base: closer to the end of the prompt = weighted more
+		settings.knowledgeExtra &&
+			`ERGÄNZUNGEN UND KORREKTUREN (haben Vorrang vor der Wissensbasis):\n${settings.knowledgeExtra}`
+	].filter(Boolean);
+	const systemPrompt = knowledge.length
+		? `${basePrompt}\n\n${knowledge.join('\n\n')}\n\n${closingRules}`
 		: basePrompt;
 
 	// globalThis.fetch: SvelteKit's event fetch adds an Origin header → Anthropic rejects it as a browser (CORS) request

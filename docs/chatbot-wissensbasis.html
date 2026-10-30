@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <title>Chat-Bot Wissensbasis – KLAP WEB</title>
 <!--
-  Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Main).
+  Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Tab «Chat-Bot»).
   Übernehmen: Datei im Browser öffnen → alles markieren (Ctrl+A) → kopieren → in das Feld einfügen → veröffentlichen.
   Überschriften und Listen bleiben erhalten. Der Bot liest die Änderung nach spätestens 5 Minuten.
  Stand der Anleitungen: 2026-10-30 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
@@ -115,8 +115,8 @@
 <h2>Prismic: Grundbegriffe</h2>
 <ul>
 	<li>Prismic ist das CMS (Backend), in dem du deine Website pflegst. Anmeldung unter prismic.io mit deinem Benutzerkonto.</li>
-	<li>Inhalts-Typen (Custom Types): das Grundgerüst, z. B. Page (Seite), Navigation, Einstellungen, Design-Vorlage, Event. Mehrfache Typen (z. B. Page, Event) kannst du beliebig oft anlegen. Einmalige Typen (z. B. Navigation, Einstellungen) gibt es nur einmal; ist er schon angelegt, erscheint er in der Auswahlliste blass.</li>
-	<li>Inhalts-Elemente (Slices): Bausteine, aus denen eine Seite zusammengesetzt wird, z. B. Titelbereich, Text, Bild, Akkordeon, Kacheln, Formulare. Viele Slices haben Varianten (Variations), z. B. Text «Standard», «Zwei Spalten» oder «Überschrift».</li>
+	<li>Inhalts-Typen (in Prismic «Type»): das Grundgerüst, z. B. Page (Seite), Navigation, Einstellungen, Design-Vorlage, Event. Mehrfache Typen (z. B. Page, Event) kannst du beliebig oft anlegen. Einmalige Typen (z. B. Navigation, Einstellungen) gibt es nur einmal; ist er schon angelegt, erscheint er in der Auswahlliste blass.</li>
+	<li>Inhalts-Elemente (in Prismic «Slice»): Bausteine, aus denen eine Seite zusammengesetzt wird, z. B. Titelbereich, Text, Bild, Akkordeon, Kacheln, Formulare. Viele Inhalts-Elemente haben Varianten (Variations), z. B. Text «Standard», «Zwei Spalten» oder «Überschrift».</li>
 	<li>Dokument: ein einzelner Eintrag, z. B. die Seite «Über mich».</li>
 	<li>Veröffentlichen (Publish): Erst veröffentlichte Änderungen sind auf der Website sichtbar. Gespeichert wird automatisch.</li>
 </ul>
@@ -255,7 +255,7 @@
 </ul>
 <p>Farben pro Seite: Im Tab «Erscheinungsbild» einer Seite kannst du Hintergrund-, Schrift- und Linkfarbe nur für diese Seite überschreiben. Viele Inhalts-Elemente haben ebenfalls eigene Farbfelder; leer bedeutet: es gilt die globale Farbe.</p>
 
-<h2>Inhalts-Elemente (Slices) im Überblick</h2>
+<h2>Inhalts-Elemente im Überblick</h2>
 <ul>
 	<li>Titelbereich: auffälliger Kopfbereich, z. B. mit Bild, Farbverlauf oder Bild-Karussell.</li>
 	<li>Text: Fliesstext, auch zweispaltig oder als reine Überschrift.</li>
@@ -329,7 +329,7 @@
 	<li>Im Browser deine-website.ch/admin aufrufen.</li>
 	<li>Das Admin-Passwort eingeben (du erhältst es von Angelo). Du bleibst 8 Stunden angemeldet, mit «Angemeldet bleiben» 14 Tage.</li>
 	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B. Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter, Chat-Bot, «Inhalte prüfen» und «Passwortgeschützte Seiten».</li>
-	<li>Unter «Hilfe» findest du die Prismic-Feldreferenz: alle Felder der Inhaltstypen und Inhalts-Elemente mit Erklärung.</li>
+	<li>Unter «Hilfe» findest du die Prismic-Feldreferenz: alle Felder der Inhalts-Typen und Inhalts-Elemente mit Erklärung.</li>
 	<li>Mit «Zur Website» kommst du zurück auf die Website, mit «Abmelden» meldest du dich ab.</li>
 </ol>
 <p>Ältere Anleitungen nennen Adressen mit «?secret=…». Das ist nicht mehr nötig: Melde dich einfach unter /admin an.</p>
@@ -457,9 +457,10 @@
 
 <h2>Anleitung: Chat-Bot</h2>
 <ol>
-	<li>Einstellungen → Tab «Main»: «Chat-Bot aktivieren» einschalten.</li>
+	<li>Einstellungen → Tab «Chat-Bot»: «Chat-Bot aktivieren» einschalten.</li>
 	<li>Optional «Chat-Bot Name» (Standard «Assistent») und «Chat-Bot Begrüssung» festlegen.</li>
 	<li>In «Chat-Bot Wissensbasis» alles eintragen, was der Bot wissen soll: Angebote, Preise, Abläufe, Öffnungszeiten, Kontakt, häufige Fragen. Überschriften und Listen helfen dem Bot, die Informationen richtig zuzuordnen.</li>
+	<li>Optional «Chat-Bot Wissensbasis – Ergänzungen»: eigene Ergänzungen und Korrekturen, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise. Widerspricht etwas der Wissensbasis, gilt die Ergänzung. So kannst du die Wissensbasis austauschen, ohne deine Ergänzungen zu verlieren.</li>
 	<li>Veröffentlichen. Der Bot verwendet die Änderungen nach spätestens 5 Minuten.</li>
 	<li>Bei mehrsprachigen Websites kann jede Sprache eine eigene Wissensbasis haben. Ist sie leer, verwendet der Bot die Wissensbasis der Hauptsprache.</li>
 </ol>
@@ -476,7 +477,7 @@
 
 <!-- AUTO:FELDREFERENZ:START -->
 <h2>Prismic-Feldreferenz (alle Felder)</h2>
-<p>Alle Felder der Inhaltstypen und Inhalts-Elemente in Prismic, mit Feldtyp und Erklärung. Die vollständige Referenz steht auf der Website unter /prismic-feldreferenz (im Admin-Bereich unter «Hilfe»).</p>
+<p>Alle Felder der Inhalts-Typen und Inhalts-Elemente in Prismic, mit Feldtyp und Erklärung. Die vollständige Referenz steht auf der Website unter /prismic-feldreferenz (im Admin-Bereich unter «Hilfe»).</p>
 <h3>AdresseUndMap (Inhalts-Element)</h3>
 <ul>
 	<li>Adresse / Text (formatierter Text)</li>
@@ -960,6 +961,17 @@
 	<li>Überblendungsdauer (ms) (Zahl)</li>
 	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
 	<li>Bilder Karusell (Liste)</li>
+	<li>Blob-Form (Ein/Aus)</li>
+	<li>Blob-Farbe (Farbe)</li>
+	<li>Blob SVG-Code (Text)</li>
+	<li>Blob-Grösse (%) (Zahl)</li>
+	<li>Blob-Position horizontal (%) (Zahl)</li>
+	<li>Blob-Position vertikal (%) (Zahl)</li>
+	<li>Blob-Drehung (Grad) (Zahl)</li>
+	<li>Untere Kante wellenförmig (Ein/Aus)</li>
+	<li>Wellenhöhe (px) (Zahl)</li>
+	<li>Wellenamplitude (px) (Zahl)</li>
+	<li>Anzahl Wellen (Zahl)</li>
 </ul>
 <h3>Zitat (Inhalts-Element)</h3>
 <ul>
@@ -982,7 +994,7 @@
 	<li>Spalten (Desktop) (Auswahl): Optionen: 2, 3, 4</li>
 	<li>Karten-Hintergrundfarbe (Farbe)</li>
 </ul>
-<h3>Arbeitstag (Inhaltstyp)</h3>
+<h3>Arbeitstag (Inhalts-Typ)</h3>
 <ul>
 	<li>Bezeichnung (Text): Eine kurze Bezeichnung für den Arbeitstag (Z.B. Montag, oder Montag Morgen)</li>
 	<li>Datum (Datum): Datum ohne Uhrzeit (Kalendertag). Es gilt keine Zeitzone: Der Tag wird genau so angezeigt, wie du ihn wählst.</li>
@@ -997,7 +1009,7 @@
 	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.</li>
 	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Leer = kein Ende über die Anzahl (dann gilt «Wiederholen bis (Datum)»).</li>
 </ul>
-<h3>Aufgabe (Inhaltstyp)</h3>
+<h3>Aufgabe (Inhalts-Typ)</h3>
 <ul>
 	<li>Titel (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
@@ -1013,7 +1025,7 @@
 	<li>Bonus-Credits, wenn alle Teilaufgaben erledigt sind (nur bei Hauptaufgabe) (Zahl)</li>
 	<li>Werkzeuge (Liste)</li>
 </ul>
-<h3>Buchbares Angebot (Inhaltstyp)</h3>
+<h3>Buchbares Angebot (Inhalts-Typ)</h3>
 <ul>
 	<li>Bezeichnung (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
@@ -1024,7 +1036,7 @@
 	<li>Ort (Link): Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.</li>
 	<li>Aktiv (Ein/Aus)</li>
 </ul>
-<h3>Design Vorlage (Inhaltstyp)</h3>
+<h3>Design Vorlage (Inhalts-Typ)</h3>
 <ul>
 	<li>Aktiv (Ein/Aus)</li>
 	<li>Design Vorlage Bezeichnung (Text)</li>
@@ -1082,7 +1094,7 @@
 	<li>Link Farbe (Farbe)</li>
 	<li>Linkfarbe wenn Maus darüber (Farbe)</li>
 </ul>
-<h3>Einstellungen (Inhaltstyp)</h3>
+<h3>Einstellungen (Inhalts-Typ)</h3>
 <ul>
 	<li>Website Titel (formatierter Text)</li>
 	<li>Website Untertitel (formatierter Text)</li>
@@ -1111,6 +1123,11 @@
 	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
+	<li>Chat-Bot aktivieren (Ein/Aus)</li>
+	<li>Chat-Bot Name (Text)</li>
+	<li>Chat-Bot Begrüssung (Text)</li>
+	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
+	<li>Chat-Bot Wissensbasis – Ergänzungen (formatierter Text): Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.</li>
 	<li>Absender-E-Mail (Text)</li>
 	<li>Kunden-E-Mail: Betreff (Text)</li>
 	<li>Kunden-E-Mail: Text (formatierter Text)</li>
@@ -1140,7 +1157,7 @@
 	<li>Bestell-Button Text (Text)</li>
 	<li>Messenger-Nummer (Signal, Telegram, WhatsApp) (Text)</li>
 </ul>
-<h3>Event (Inhaltstyp)</h3>
+<h3>Event (Inhalts-Typ)</h3>
 <ul>
 	<li>Titel (Text)</li>
 	<li>Untertitel (Text)</li>
@@ -1237,23 +1254,23 @@
 	<li>SEO-Beschreibung (Text)</li>
 	<li>SEO-Bild (Open Graph) (Bild)</li>
 </ul>
-<h3>Icon (Inhaltstyp)</h3>
+<h3>Icon (Inhalts-Typ)</h3>
 <ul>
 	<li>Label (Text)</li>
 	<li>SVG Code (Text)</li>
 </ul>
-<h3>Leistung (Inhaltstyp)</h3>
+<h3>Leistung (Inhalts-Typ)</h3>
 <ul>
 	<li>Bezeichnung (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
 	<li>Detailbeschreibung (formatierter Text)</li>
 	<li>Preis exkl. MwSt. (CHF) (Zahl)</li>
 </ul>
-<h3>Navigation (Inhaltstyp)</h3>
+<h3>Navigation (Inhalts-Typ)</h3>
 <ul>
 	<li>Links (Liste)</li>
 </ul>
-<h3>Newsletter (Inhaltstyp)</h3>
+<h3>Newsletter (Inhalts-Typ)</h3>
 <ul>
 	<li>Betreff (Text)</li>
 	<li>Vorschautext im Posteingang (Text)</li>
@@ -1261,7 +1278,7 @@
 	<li>Button-Text (optional) (Text)</li>
 	<li>Button-Link (optional) (Link)</li>
 </ul>
-<h3>Ort / Standort (Inhaltstyp)</h3>
+<h3>Ort / Standort (Inhalts-Typ)</h3>
 <ul>
 	<li>Name (Text)</li>
 	<li>Adresse (formatierter Text)</li>
@@ -1273,7 +1290,7 @@
 	<li>Bild (Bild)</li>
 	<li>Aktiv (Ein/Aus)</li>
 </ul>
-<h3>Ressource (Inhaltstyp)</h3>
+<h3>Ressource (Inhalts-Typ)</h3>
 <ul>
 	<li>Bezeichnung (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
@@ -1295,19 +1312,19 @@
 	<li>Vor Abreise – E-Mail Betreff (Text)</li>
 	<li>Vor Abreise – E-Mail Text (formatierter Text)</li>
 </ul>
-<h3>Schaltflächen-Stil (Inhaltstyp)</h3>
+<h3>Schaltflächen-Stil (Inhalts-Typ)</h3>
 <ul>
 	<li>Label (Text)</li>
 	<li>Farbe (Farbe)</li>
 </ul>
-<h3>Schrift (Inhaltstyp)</h3>
+<h3>Schrift (Inhalts-Typ)</h3>
 <ul>
 	<li>Name (Text)</li>
 	<li>Anbieter (Auswahl): Optionen: Google, Lokal</li>
 	<li>Varianten (Google) (Text)</li>
 	<li>Schriftdateien (Lokal) (Liste)</li>
 </ul>
-<h3>Seiten (Inhaltstyp)</h3>
+<h3>Seiten (Inhalts-Typ)</h3>
 <ul>
 	<li>Seitentitel (formatierter Text)</li>
 	<li>Hintergrundfarbe (überschreibt globale Farbe) (Farbe)</li>
@@ -1328,11 +1345,11 @@
 	<li>Landing Page (Ein/Aus)</li>
 	<li>Passwortgeschützt (Ein/Aus)</li>
 </ul>
-<h3>Variablen (Inhaltstyp)</h3>
+<h3>Variablen (Inhalts-Typ)</h3>
 <ul>
 	<li>Einträge (Token → Wert) (Liste)</li>
 </ul>
-<h3>Werkzeug (Inhaltstyp)</h3>
+<h3>Werkzeug (Inhalts-Typ)</h3>
 <ul>
 	<li>Titel (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
