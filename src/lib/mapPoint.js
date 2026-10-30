@@ -6,6 +6,7 @@
  *   - Coordinates: "47.3769, 8.5417", "47.3769 8.5417", "47.3769° N, 8.5417° E"
  *   - Geo URI: geo:47.3769,8.5417?z=17 (OSM «Teilen» → «Geo-URI»)
  *   - OpenStreetMap: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html, short link osm.org/go/…
+ *   - Embed code <iframe src="…"> of any of these (e.g. Google «Karte einbetten»)
  *   - Google Maps: links with coordinates (@lat,lon / !3d…!4d… / ?q=lat,lon); short links
  *     (maps.app.goo.gl) are resolved server-side: resolveGoogleShortLink (browser: /api/maps-embed)
  *   - Apple Maps: maps.apple.com/?ll=lat,lon (or sll / q=lat,lon)
@@ -86,6 +87,16 @@ function decodeOsmShortLink(/** @type {string} */ code) {
 export function pointFromGoogleUrl(/** @type {string} */ href) {
 	const bang = href.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/); // exact place marker
 	if (bang) return point(Number(bang[1]), Number(bang[2]));
+	// Embed URL (maps/embed?pb=…): !2d = longitude, !3d = latitude, !1d = visible distance in m
+	const embed = href.match(/!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)/);
+	if (embed) {
+		const lat = Number(embed[2]);
+		const meters = Number(href.match(/!1d(\d+(?:\.\d+)?)/)?.[1]);
+		const zoom = meters
+			? Math.log2((40075016 * Math.cos((lat * Math.PI) / 180)) / meters)
+			: DEFAULT_ZOOM;
+		return point(lat, Number(embed[1]), zoom);
+	}
 	const at = href.match(/@(-?\d+\.\d+),(-?\d+\.\d+)(?:,(\d+(?:\.\d+)?)z)?/);
 	if (at) return point(Number(at[1]), Number(at[2]), at[3] ? Number(at[3]) : DEFAULT_ZOOM);
 	try {
@@ -134,8 +145,11 @@ export async function resolveGoogleShortLink(raw, fetchFn = fetch) {
  * @returns {MapPoint | null}  null = empty or not understood (Google short links: see isGoogleShortLink)
  */
 export function parseMapPoint(raw) {
-	const value = (raw ?? '').trim();
+	let value = (raw ?? '').trim();
 	if (!value) return null;
+	// Pasted embed code (<iframe src="…">): only the src is read
+	const iframeSrc = value.match(/^<iframe\b[^>]*\bsrc=["']([^"']+)["']/i)?.[1];
+	if (iframeSrc) value = iframeSrc.replace(/&amp;/g, '&');
 	const coords = parseCoordinates(value);
 	if (coords) return coords;
 
