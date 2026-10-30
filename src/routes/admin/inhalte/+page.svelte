@@ -56,6 +56,11 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'map_point'}
+									<td>
+										{$_('Kartenpunkt nicht erkannt')}: <span class="admin-mono">{p.url}</span>
+									</td>
+									<td>{$_('OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417')}</td>
 								{:else if p.kind === 'unknown_token'}
 									<td>
 										{$_('Unbekannter Token')}: <span class="admin-mono">{p.token}</span>

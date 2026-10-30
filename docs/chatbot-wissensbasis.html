@@ -7,7 +7,7 @@
   Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Main).
   Übernehmen: Datei im Browser öffnen → alles markieren (Ctrl+A) → kopieren → in das Feld einfügen → veröffentlichen.
   Überschriften und Listen bleiben erhalten. Der Bot liest die Änderung nach spätestens 5 Minuten.
- Stand der Anleitungen: 2026-10-29 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
+ Stand der Anleitungen: 2026-10-30 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
 -->
 <style>
 	body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
@@ -194,6 +194,26 @@
 	<li>Mit dem Zuschneide-Werkzeug im Bildfeld legst du den Bildausschnitt fest.</li>
 </ul>
 
+<h2>Anleitung: Karten und Kartenpunkt</h2>
+<p>Alle Felder, die einen Ort auf der Karte festlegen, heissen «Kartenpunkt»: in «Karte einbetten», «Adresse und Karte», im Element «Event», im Inhalts-Typ «Event» (Tab «Ort») und im Inhalts-Typ «Ort / Standort». Die Karte wird immer mit OpenStreetMap angezeigt, egal welchen Link du einträgst. Besucher laden dabei nichts von Google.</p>
+<p>Das kannst du ins Feld «Kartenpunkt» eintragen:</p>
+<ul>
+	<li>Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink (beginnt mit https://osm.org/go/) oder die «Geo-URI» (beginnt mit geo:) kopieren.</li>
+	<li>Koordinaten: Breite, Länge, z. B. 47.3769, 8.5417.</li>
+	<li>Google Maps: der Link aus «Teilen» → «Link kopieren» (https://maps.app.goo.gl/…) oder der Code aus «Karte einbetten» (&lt;iframe …&gt;). Beim Einbettungscode zählt die Kartenmitte; hast du den Ausschnitt verschoben, sitzt der Punkt leicht daneben.</li>
+	<li>Apple Karten oder map.geo.admin.ch (swisstopo): den Link zum Ort.</li>
+</ul>
+<p>Leer = keine Karte. Ein Google-Link auf einen Ort ohne Koordinaten (z. B. https://www.google.com/maps/place/Name) wird nicht erkannt; im Admin-Bereich unter «Inhalte prüfen» erscheint er als «Kartenpunkt nicht erkannt».</p>
+
+<h2>Anleitung: Eigene Videos</h2>
+<p>Im Element «Anleitung» kannst du eigene Videos zeigen, ohne YouTube und ohne Cookie-Banner:</p>
+<ol>
+	<li>Video als MP4-Datei exportieren (max. 100 MB; 1080p oder 720p, kurz halten).</li>
+	<li>Im Element «Anleitung» (beim Gesamt-Video oder bei einem Schritt) im Feld «Video-Datei (MP4)» die Datei hochladen bzw. aus der Mediathek wählen.</li>
+	<li>Veröffentlichen. Das Video spielt direkt auf der Website ab.</li>
+</ol>
+<p>Ist eine Video-Datei gewählt, wird «Video von YouTube / Vimeo (alternativ)» ignoriert. YouTube- und Vimeo-Videos erscheinen erst, wenn Besucher sie im Cookie-Banner erlauben.</p>
+
 <h2>Anleitung: Vorschau vor dem Veröffentlichen</h2>
 <ol>
 	<li>Im Editor oben rechts auf das Augen-Symbol (Vorschau) klicken.</li>
@@ -250,9 +270,10 @@
 	<li>Zitat: Einzelzitat oder Testimonials (Kundenstimmen).</li>
 	<li>Timeline: zeitlicher Ablauf.</li>
 	<li>Formulare: Kontaktformular und Spezialformulare (siehe unten).</li>
-	<li>Kontakt, Adresse und Karte, Karte einbetten: Kontaktangaben und Karten. Bei der Karten-URL funktionieren OpenStreetMap- und Google-Maps-Links.</li>
+	<li>Kontakt, Adresse und Karte, Karte einbetten: Kontaktangaben und Karten. Den Ort trägst du im Feld «Kartenpunkt» ein (siehe «Anleitung: Karten und Kartenpunkt»).</li>
 	<li>Link-Liste: Sammlung von Links.</li>
-	<li>Anleitung: Schritt-für-Schritt-Anleitung mit Bildern oder Video (YouTube, Vimeo oder eingefügter Einbettungscode).</li>
+	<li>Anleitung: Schritt-für-Schritt-Anleitung mit Bildern oder Video. Am besten ein eigenes Video im Feld «Video-Datei (MP4)» (siehe «Anleitung: Eigene Videos»); alternativ «Video von YouTube / Vimeo (alternativ)» oder ein eingefügter Einbettungscode.</li>
+	<li>Event: einzelne Veranstaltung direkt auf einer Seite, mit Kalenderdatei und optional «Kartenpunkt» für den Link «Standort auf der Karte anzeigen».</li>
 	<li>HTML-Code: eigener Einbettungscode. Nur verwenden, wenn du weisst, was der Code tut.</li>
 </ul>
 <p>Animationen: Viele Elemente haben am Ende die Felder «Animation aktivieren», «Animations-Richtung», «Verzögerung (ms)» und «Animationsdauer (ms)». Damit blendet das Element beim Scrollen ein.</p>
@@ -270,7 +291,8 @@
 <h2>Cookie-Banner und Datenschutz</h2>
 <ul>
 	<li>Die Website hat einen Cookie-Banner nach Schweizer Recht (Opt-out-Modell gemäss FMG und DSG): Besucher werden informiert und können externe Dienste ablehnen.</li>
-	<li>Der Banner erscheint automatisch nur auf Seiten, die externe Dienste nutzen (z. B. Karten, YouTube-Videos, Vimeo, Chat-Bot). Abgelehnte Inhalte werden durch einen Platzhalter mit «Einmal laden» ersetzt.</li>
+	<li>Der Banner erscheint automatisch nur auf Seiten, die externe Dienste nutzen (z. B. Karten von OpenStreetMap, YouTube-Videos, Vimeo, Chat-Bot). Abgelehnte Inhalte werden durch einen Platzhalter mit «Einmal laden» ersetzt.</li>
+	<li>Ohne Banner kommen aus: Schriften (werden von deiner Website ausgeliefert), Icons in der Link-Liste und eigene Videos aus der Mediathek.</li>
 	<li>Die Datenschutzerklärung listet die verwendeten Dienste automatisch auf. Du musst dafür nichts tun.</li>
 	<li>Über den Link «Cookie-Einstellungen» in der Fusszeile können Besucher ihre Auswahl jederzeit ändern.</li>
 	<li>Rechtliche Texte (Impressum, Datenschutz, AGB) pflegst du in den Einstellungen. Für die rechtliche Richtigkeit deiner Texte bist du verantwortlich.</li>
@@ -320,18 +342,19 @@
 	<li>Web-Links ohne «/» am Anfang, die ins Leere führen.</li>
 	<li>Links in einer Übersetzung auf die deutsche Seite, obwohl es die Seite übersetzt gibt.</li>
 	<li>Unbekannte Platzhalter, z. B. ein Tippfehler wie {{Resource}} statt {{Ressource}} – mit Vorschlag «meintest du …?».</li>
+	<li>«Kartenpunkt nicht erkannt»: Im Feld «Kartenpunkt» steht etwas, woraus kein Ort bestimmt werden kann, z. B. eine Adresse oder ein Google-Link ohne Koordinaten.</li>
 </ul>
 
 <h2>Anleitung: Terminbuchung einrichten</h2>
 <p>Besucher buchen freie Zeitfenster direkt auf der Website. Du legst fest, an welchen Tagen welche Angebote buchbar sind; das System berechnet die freien Termine automatisch.</p>
 <ol>
-	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, Geo-Koordinaten (z. B. 47.3769, 8.5417, aus Google Maps kopiert), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
+	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
 	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional Preis und Ort. «Aktiv» einschalten. Veröffentlichen.</li>
 	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben. Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
 	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
 	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
 	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Absender-E-Mail, Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}}.</li>
+	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Absender-E-Mail, Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
 	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
 </ol>
 <p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
@@ -351,14 +374,14 @@
 	<li>Tab «Allgemein»: UID, Titel, Untertitel, Kurzbeschreibung, Beschreibung, Hauptbild, optional «Hervorgehoben».</li>
 	<li>Tab «Datum &amp; Zeit»: Beginn, Ende, optional «Einlass ab», Zeitzone.</li>
 	<li>Tab «Details»: Status (z. B. Bestätigt, Verschoben, Abgesagt, Ausgebucht), Veranstaltungsart, Sprache, Zielgruppe, Veranstalter, Kontakt, Barrierefreiheit, Teilnehmerzahl.</li>
-	<li>Tab «Ort»: Veranstaltungsort und Adresse, Karten-URL (OpenStreetMap oder Google Maps), Wegbeschreibung. Für Online-Veranstaltungen «Online-Veranstaltung» einschalten und den Stream-Link eintragen.</li>
+	<li>Tab «Ort»: Veranstaltungsort und Adresse, «Kartenpunkt» (zeigt eine Karte in der Event-Ansicht), Wegbeschreibung. Für Online-Veranstaltungen «Online-Veranstaltung» einschalten und den Stream-Link eintragen.</li>
 	<li>Tab «Tickets &amp; Anmeldung»: kostenlos oder Preis, Anmeldung per E-Mail, WhatsApp, Telegram oder externem Ticket-Link. Für Ticketkauf über die Website «Checkout-Flow verwenden» einschalten, Ticketpreis und Zahlungsarten (Rechnung, bar) festlegen sowie die Texte der Bestell- und Bestätigungsseite ausfüllen.</li>
 	<li>Tab «Serie &amp; Wiederholung» für Kurse oder Reihen: «Veranstaltungsserie» einschalten, Rhythmus, Wochentage, Serienende oder Anzahl Termine sowie Ausnahmen angeben. Mit «Einzeln buchbar» können einzelne Termine separat gebucht werden.</li>
 	<li>Tab «SEO»: eigener SEO-Titel, Beschreibung und Vorschaubild.</li>
 	<li>Veröffentlichen.</li>
 	<li>Auf der gewünschten Seite das Element «Globale Events» einfügen. Es zeigt die Events an; über «Serie / Eltern-Event» lässt sich die Anzeige auf eine Serie beschränken.</li>
 </ol>
-<p>Besucher können Termine mit einem Klick in ihren Kalender übernehmen. Anmeldungen über die Website findest du im Admin-Bereich unter «Event-Anmeldungen».</p>
+<p>Besucher können Termine mit einem Klick als Kalenderdatei (.ics) in ihren Kalender übernehmen; das funktioniert mit allen Kalender-Apps. Anmeldungen über die Website findest du im Admin-Bereich unter «Event-Anmeldungen».</p>
 
 <h2>Anleitung: Newsletter / Info-Mails</h2>
 <p>Info-Mails an deine Kunden und Abonnenten senden, nach Schweizer Recht (UWG): jede Mail enthält deine Absenderangaben und einen Abmelde-Link.</p>
@@ -457,7 +480,7 @@
 <h3>AdresseUndMap (Inhalts-Element)</h3>
 <ul>
 	<li>Adresse / Text (formatierter Text)</li>
-	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenpunkt (Text): Der Punkt, den die Karte neben der Adresse zeigt, inkl. Link «Route planen»; leer = nur die Adresse ohne Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Kartenhöhe (px) (Zahl)</li>
 	<li>Transparenz (Zahl)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
@@ -497,7 +520,8 @@
 <ul>
 	<li>Titel (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
-	<li>Video (YouTube, Vimeo …) (Einbettung)</li>
+	<li>Video-Datei (MP4) (Link): Eigenes Video, das direkt auf der Website abgespielt wird — ohne YouTube und ohne Cookie-Hinweis. Lade eine MP4-Datei (max. 100 MB) in die Mediathek und wähle sie hier aus. Tipp: kurze Videos in 1080p oder 720p halten die Ladezeit tief. Ist eine Datei gewählt, wird «Video von YouTube / Vimeo» ignoriert.</li>
+	<li>Video von YouTube / Vimeo (alternativ) (Einbettung): Video von YouTube oder Vimeo: Link einfügen (z.B. https://youtu.be/…). Besucher sehen das Video erst, wenn sie es im Cookie-Hinweis erlauben, weil dabei Daten an YouTube bzw. Vimeo gehen. Besser: eigenes Video im Feld «Video-Datei (MP4)» — es hat Vorrang.</li>
 	<li>Video Einbettungs-Code (alternativ) (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Schritte (Liste)</li>
@@ -532,10 +556,10 @@
 	<li>Titel (Text)</li>
 	<li>Untertitel (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
-	<li>Start Datum und Zeit (Datum und Zeit)</li>
-	<li>End Datum Zeit (Datum und Zeit)</li>
+	<li>Start Datum und Zeit (Datum und Zeit): Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.</li>
+	<li>End Datum Zeit (Datum und Zeit): Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.</li>
 	<li>Ort (formatierter Text)</li>
-	<li>Google Maps URL (Ort)</li>
+	<li>Kartenpunkt (Text): Der Veranstaltungsort: unter dem Event erscheint der Link «Standort auf der Karte anzeigen»; leer = kein Link. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Weitere Daten (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
@@ -684,7 +708,7 @@
 </ul>
 <h3>MapEinbetten (Inhalts-Element)</h3>
 <ul>
-	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenpunkt (Text): Der Punkt, den die Karte zeigt (mit Markierung); leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Kartenhöhe (px) (Zahl)</li>
 	<li>Transparenz (Zahl)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
@@ -936,17 +960,6 @@
 	<li>Überblendungsdauer (ms) (Zahl)</li>
 	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
 	<li>Bilder Karusell (Liste)</li>
-	<li>Blob-Form (Ein/Aus)</li>
-	<li>Blob-Farbe (Farbe)</li>
-	<li>Blob SVG-Code (Text)</li>
-	<li>Blob-Grösse (%) (Zahl)</li>
-	<li>Blob-Position horizontal (%) (Zahl)</li>
-	<li>Blob-Position vertikal (%) (Zahl)</li>
-	<li>Blob-Drehung (Grad) (Zahl)</li>
-	<li>Untere Kante wellenförmig (Ein/Aus)</li>
-	<li>Wellenhöhe (px) (Zahl)</li>
-	<li>Wellenamplitude (px) (Zahl)</li>
-	<li>Anzahl Wellen (Zahl)</li>
 </ul>
 <h3>Zitat (Inhalts-Element)</h3>
 <ul>
@@ -971,18 +984,18 @@
 </ul>
 <h3>Arbeitstag (Inhaltstyp)</h3>
 <ul>
-	<li>Bezeichnung (Text)</li>
-	<li>Datum (Datum)</li>
-	<li>Startzeit (HH:MM) (Text)</li>
-	<li>Endzeit (HH:MM) (Text)</li>
-	<li>Zeitzone (Auswahl): Optionen: Europe/Zurich, Europe/Berlin, Europe/Vienna, Europe/London</li>
-	<li>Pause von (optional) (Text)</li>
-	<li>Pause bis (optional) (Text)</li>
-	<li>Buchungsintervall (Auswahl): Optionen: 15, 30, 60</li>
-	<li>Buchbare Angebote (Liste)</li>
-	<li>Wiederholung (Auswahl): Optionen: Keine, Täglich, Wöchentlich, Zweiwöchentlich, Monatlich</li>
-	<li>Wiederholen bis (Datum) (Datum)</li>
-	<li>Anzahl Wiederholungen (Zahl)</li>
+	<li>Bezeichnung (Text): Eine kurze Bezeichnung für den Arbeitstag (Z.B. Montag, oder Montag Morgen)</li>
+	<li>Datum (Datum): Datum ohne Uhrzeit (Kalendertag). Es gilt keine Zeitzone: Der Tag wird genau so angezeigt, wie du ihn wählst.</li>
+	<li>Startzeit (HH:MM) (Text): Beginn des Arbeitstags im Format HH:MM (24 Stunden), z. B. 09:00. Ab dieser Uhrzeit werden die buchbaren Termine im gewählten Intervall erzeugt. Die Zeit gilt in der Zeitzone, die du bei «Zeitzone» wählst (Standard: Schweizer Zeit, Sommerzeit automatisch) – egal, wo du oder deine Kundschaft sich gerade befinden.</li>
+	<li>Endzeit (HH:MM) (Text): Ende des Arbeitstags im Format HH:MM (24 Stunden), z. B. 18:00. Der letzte Termin wird so gelegt, dass er inklusive Puffer bis zu dieser Uhrzeit fertig ist. Es gilt dieselbe Zeitzone wie bei der Startzeit.</li>
+	<li>Zeitzone (Auswahl): Zeitzone, in der Start- und Endzeit gelten (Standard: Europe/Zurich = Schweizer Zeit). Wählt die Kundschaft im Buchungsformular eine andere Zeitzone, erhält sie den Termin in der Bestätigung zusätzlich in ihrer Zeit.</li>
+	<li>Pause von (optional) (Text): Entsprechend Startzeit</li>
+	<li>Pause bis (optional) (Text): Entsprechend Endzeit</li>
+	<li>Buchungsintervall (Auswahl): Abstand zwischen den möglichen Anfangszeiten in Minuten (15, 30 oder 60), gezählt ab der Startzeit. Beispiel: Start 09:00, Intervall 30, Termin 60 Minuten → buchbar um 09:00, 09:30, 10:00 usw. Ist ein Termin gebucht, verschwinden die Anfangszeiten, die sich damit überschneiden, automatisch. Kleineres Intervall = mehr Auswahl für die Kundschaft.</li>
+	<li>Buchbare Angebote (Liste): Welche Angebote an diesem Arbeitstag gebucht werden können. Pro Zeile ein «Buchbares Angebot» verknüpfen. Für jedes Angebot entstehen eigene Anfangszeiten mit seiner Dauer und seinem Puffer. Sobald ein Termin gebucht ist, sind überschneidende Zeiten auch für die anderen Angebote gesperrt. Angebote, bei denen «Aktiv» ausgeschaltet ist, erscheinen nicht. Ohne Angebot ist der Arbeitstag nicht buchbar.</li>
+	<li>Wiederholung (Auswahl): Wiederholt den Arbeitstag ab dem «Datum» mit gleichen Zeiten und Angeboten: «Täglich», «Wöchentlich» (gleicher Wochentag), «Zweiwöchentlich» oder «Monatlich» (gleicher Kalendertag; fehlt er in einem Monat, z. B. der 31., gilt der letzte Tag des Monats). «Keine» = nur dieser eine Tag. Die Serie endet bei «Wiederholen bis (Datum)» oder nach der «Anzahl Wiederholungen» – was zuerst eintritt. Ohne Ende läuft sie weiter (höchstens 500 Arbeitstage).</li>
+	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.</li>
+	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Leer = kein Ende über die Anzahl (dann gilt «Wiederholen bis (Datum)»).</li>
 </ul>
 <h3>Aufgabe (Inhaltstyp)</h3>
 <ul>
@@ -1005,10 +1018,10 @@
 	<li>Bezeichnung (Text)</li>
 	<li>Beschreibung (formatierter Text)</li>
 	<li>Dauer (Minuten) (Zahl)</li>
-	<li>Puffer danach (Minuten) (Zahl)</li>
-	<li>Vorlaufzeit (Minuten) (Zahl)</li>
+	<li>Puffer danach (Minuten) (Zahl): Pause nach jedem Termin dieses Angebots in Minuten, z. B. für Notizen, Lüften oder den Weg. Während des Puffers kann nichts anderes gebucht werden, auch kein anderes Angebot. Beispiel: Termin 60 Minuten, Puffer 15, gebucht um 09:00 → belegt bis 10:15; bei Buchungsintervall 30 ist die nächste freie Anfangszeit 10:30. Auch der letzte Termin des Tages muss inklusive Puffer vor der Endzeit fertig sein. Leer oder 0 = kein Puffer.</li>
+	<li>Vorlaufzeit (Minuten) (Zahl): Wie kurzfristig dieses Angebot spätestens gebucht werden kann, in Minuten vor Terminbeginn. Beispiel: Vorlaufzeit 120 → ein Termin um 14:00 kann bis 12:00 gebucht werden, danach verschwindet er aus der Auswahl. Für einen Tag Vorlauf 1440 eintragen (24 × 60). Leer oder 0 = bis Terminbeginn buchbar. Es gilt die Zeitzone des Arbeitstags.</li>
 	<li>Preis (optional) (Zahl)</li>
-	<li>Ort (Link)</li>
+	<li>Ort (Link): Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.</li>
 	<li>Aktiv (Ein/Aus)</li>
 </ul>
 <h3>Design Vorlage (Inhaltstyp)</h3>
@@ -1086,10 +1099,6 @@
 	<li>AGB (formatierter Text)</li>
 	<li>Seiten-Passwort (Text)</li>
 	<li>User-Backend aktivieren (Ein/Aus)</li>
-	<li>Chat-Bot aktivieren (Ein/Aus)</li>
-	<li>Chat-Bot Name (Text)</li>
-	<li>Chat-Bot Begrüssung (Text)</li>
-	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
 	<li>Mehrere Sprachen verwenden (Ein/Aus)</li>
 	<li>Startseite umleiten (Ein/Aus)</li>
 	<li>Umleitungs-Seite (Link)</li>
@@ -1139,8 +1148,8 @@
 	<li>Beschreibung (formatierter Text)</li>
 	<li>Hauptbild (Bild)</li>
 	<li>Hervorgehoben (Ein/Aus)</li>
-	<li>Beginn (Datum &amp; Uhrzeit) (Datum und Zeit)</li>
-	<li>Ende (Datum &amp; Uhrzeit) (Datum und Zeit)</li>
+	<li>Beginn (Datum &amp; Uhrzeit) (Datum und Zeit): Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.</li>
+	<li>Ende (Datum &amp; Uhrzeit) (Datum und Zeit): Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.</li>
 	<li>Einlass ab (Text)</li>
 	<li>Zeitzone (Auswahl): Optionen: Europe/Zurich, Europe/Berlin, Europe/Vienna, UTC</li>
 	<li>Status (Auswahl): Optionen: Kein, Geplant, Bestätigt, Abgesagt, Verschoben, Ausgebucht, Anmeldefrist abgelaufen</li>
@@ -1165,7 +1174,7 @@
 	<li>PLZ (Text)</li>
 	<li>Ort (Text)</li>
 	<li>Land (Auswahl): Optionen: Schweiz, Deutschland, Österreich, Liechtenstein, Sonstiges</li>
-	<li>Karten-URL (OpenStreetMap oder Google Maps) (Text)</li>
+	<li>Kartenpunkt (Text): Der Veranstaltungsort als Karte in der Event-Ansicht; leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Kartenhöhe (px) (Zahl)</li>
 	<li>Transparenz (Zahl)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
@@ -1176,7 +1185,7 @@
 	<li>Preis (Freitext) (formatierter Text)</li>
 	<li>Tickets kaufen / Anmeldung (Link)</li>
 	<li>Anmeldung erforderlich (Ein/Aus)</li>
-	<li>Anmeldeschluss (Datum)</li>
+	<li>Anmeldeschluss (Datum): Letzter Tag für Anmeldungen: bis und mit diesem Tag (Schweizer Zeit) ist die Anmeldung möglich, danach ist sie geschlossen. Datum ohne Uhrzeit.</li>
 	<li>Anmeldung per E-Mail (Text)</li>
 	<li>Anmeldung per WhatsApp (Nummer) (Text)</li>
 	<li>Anmeldetext (alle Termine) (Text)</li>
@@ -1213,7 +1222,7 @@
 	<li>Serienname (Text)</li>
 	<li>Wiederholungsrhythmus (Auswahl): Optionen: Einmalig, Täglich, Wöchentlich, Zweiwöchentlich, Monatlich, Jährlich, Unregelmässig</li>
 	<li>Wochentag(e) (Text)</li>
-	<li>Serienende (Datum) (Datum)</li>
+	<li>Serienende (Datum) (Datum): Letzter Tag der Serie (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.</li>
 	<li>Anzahl Termine (Serie) (Zahl)</li>
 	<li>Ausnahmen / Ausfälle (Text)</li>
 	<li>Übergeordnetes Event / Serie (Link)</li>
@@ -1256,7 +1265,7 @@
 <ul>
 	<li>Name (Text)</li>
 	<li>Adresse (formatierter Text)</li>
-	<li>Geo-Koordinaten (Text)</li>
+	<li>Kartenpunkt (Text): Der genaue Standort dieses Orts: Buchungsbestätigungen erhalten damit den Link «Auf der Karte anzeigen» (Platzhalter {{Ort-Karte}}); leer = der Link sucht stattdessen nach Name und Adresse. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Wegbeschreibung (formatierter Text)</li>
 	<li>Telefon (Text)</li>
 	<li>E-Mail (Text)</li>
@@ -1347,6 +1356,8 @@
 <h3>In meiner E-Mail fehlt ein Text oder es steht {{…}} darin.</h3>
 <p>Meist ist der Platzhalter falsch geschrieben (z. B. übersetzt: {{Resource}} statt {{Ressource}}) oder die Variable fehlt im Dokument «Variablen». Im Admin-Bereich unter «Inhalte prüfen» stehen alle unbekannten Platzhalter mit Vorschlag. Platzhalter heissen in allen Sprachen gleich.</p>
 
+<h3>Meine Karte erscheint nicht oder zeigt den falschen Ort.</h3>
+<p>Prüfe das Feld «Kartenpunkt»: Eine Adresse oder ein Google-Link ohne Koordinaten (…/maps/place/Name) wird nicht erkannt. Trage stattdessen einen OpenStreetMap-Link (openstreetmap.org → «Teilen»), den Google-Link aus «Teilen» → «Link kopieren» oder Koordinaten wie 47.3769, 8.5417 ein. «Inhalte prüfen» im Admin-Bereich zeigt alle nicht erkannten Kartenpunkte. Lehnt ein Besucher Karten im Cookie-Banner ab, sieht er statt der Karte einen Platzhalter mit «Einmal laden».</p>
 <h3>Wie erreiche ich Angelo?</h3>
 <p>Per E-Mail an angelo@klap-web.ch oder über das Kontaktformular auf der Seite «Kontakt». Ein Erstgespräch ist kostenlos.</p>
 

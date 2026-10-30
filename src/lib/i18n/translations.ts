@@ -799,6 +799,19 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Kartenpunkt nicht erkannt': {
+		'de-ch': 'Kartenpunkt nicht erkannt',
+		'en-us': 'Map point not recognised'
+	},
+	'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417': {
+		'de-ch': 'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417',
+		'en-us': 'Enter an OSM link or coordinates, e.g. 47.3769, 8.5417'
+	},
+	'Standort auf der Karte anzeigen': {
+		'de-ch': 'Standort auf der Karte anzeigen',
+		'en-us': 'Show location on the map'
+	},
+	'Auf der Karte anzeigen': { 'de-ch': 'Auf der Karte anzeigen', 'en-us': 'Show on map' },
 	Seite: { 'de-ch': 'Seite', 'en-us': 'Page' },
 	'Inhalts-Typ': { 'de-ch': 'Inhalts-Typ', 'en-us': 'Content type' },
 	'Inhalts-Element': { 'de-ch': 'Inhalts-Element', 'en-us': 'Content element' },
@@ -1027,7 +1040,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
-	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {
 		'de-ch': 'Weitere Termine buchen',
@@ -1048,14 +1060,6 @@ export const translations: Record<string, Record<string, string>> = {
 	'Zum Kalender hinzufügen (.ics)': {
 		'de-ch': 'Zum Kalender hinzufügen (.ics)',
 		'en-us': 'Add to calendar (.ics)'
-	},
-	'In Google Calendar öffnen': {
-		'de-ch': 'In Google Calendar öffnen',
-		'en-us': 'Open in Google Calendar'
-	},
-	'Standort auf Google Maps anzeigen': {
-		'de-ch': 'Standort auf Google Maps anzeigen',
-		'en-us': 'Show location on Google Maps'
 	},
 	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
 	'Zurzeit sind keine Durchführungen geplant': {
@@ -1745,6 +1749,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Transmission of your IP address to Spotify'
 	},
 	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Ungültige Video-Datei (MP4 erwartet)': {
+		'de-ch': 'Ungültige Video-Datei (MP4 erwartet)',
+		'en-us': 'Invalid video file (MP4 expected)'
+	},
 	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
 	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
 	'OpenStreetMap Foundation': {

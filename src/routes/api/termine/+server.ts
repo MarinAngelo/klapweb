@@ -58,13 +58,16 @@ export const GET: RequestHandler = async () => {
 				if (startMs - vorlaufMs < now) return false;
 			}
 			if (slot.endzeit) {
+				// Both sides incl. buffer (Puffer danach); older bookings without blockedUntil → endzeit
 				const start = toMinutes(slot.uhrzeit);
-				const end = toMinutes(slot.endzeit);
+				const end = toMinutes(slot.blockedUntil ?? slot.endzeit);
 				if (start !== null && end !== null) {
 					const overlap = bookings.some((booking) => {
 						if (booking.terminId === slot.id || booking.datum !== slot.datum) return false;
 						const existingStart = toMinutes(booking.uhrzeit);
-						const existingEnd = toMinutes(booking.endzeit ?? booking.uhrzeit);
+						const existingEnd = toMinutes(
+							booking.blockedUntil ?? booking.endzeit ?? booking.uhrzeit
+						);
 						if (existingStart === null || existingEnd === null) return false;
 						return start < existingEnd && end > existingStart;
 					});
