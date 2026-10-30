@@ -834,6 +834,42 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)',
 		'en-us': 'Generated knowledge base to copy into Prismic (Settings → Chat-Bot)'
 	},
+	'War die Antwort hilfreich?': {
+		'de-ch': 'War die Antwort hilfreich?',
+		'en-us': 'Was this answer helpful?'
+	},
+	Hilfreich: { 'de-ch': 'Hilfreich', 'en-us': 'Helpful' },
+	'Nicht hilfreich': { 'de-ch': 'Nicht hilfreich', 'en-us': 'Not helpful' },
+	'Was hat gefehlt? (optional)': {
+		'de-ch': 'Was hat gefehlt? (optional)',
+		'en-us': 'What was missing? (optional)'
+	},
+	Überspringen: { 'de-ch': 'Überspringen', 'en-us': 'Skip' },
+	'Danke für Ihre Bewertung!': {
+		'de-ch': 'Danke für Ihre Bewertung!',
+		'en-us': 'Thank you for your feedback!'
+	},
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.': {
+		'de-ch': 'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.',
+		'en-us':
+			'Sorry about that! Tell us what was missing – leave your e-mail and we will get back to you.'
+	},
+	'Name (optional)': {
+		'de-ch': 'Name (optional)',
+		'en-us': 'Name (optional)'
+	},
+	'E-Mail (optional)': {
+		'de-ch': 'E-Mail (optional)',
+		'en-us': 'E-mail (optional)'
+	},
+	'Vielen Dank für das Feedback, ich melde mich so bald wie möglich bei dir.': {
+		'de-ch': 'Vielen Dank für das Feedback, ich melde mich so bald wie möglich bei dir.',
+		'en-us': 'Thank you for your feedback, I will get back to you as soon as possible.'
+	},
+	'Antworten der KI sind unverbindlich.': {
+		'de-ch': 'Antworten der KI sind unverbindlich.',
+		'en-us': 'AI answers are not binding.'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',

@@ -3,7 +3,7 @@
  *
  * Key: `<YYYY-MM-DD>/<conversation>/<timestamp>` (Swiss date) → list a month via prefix.
  * Stored: time, conversation id (random, per chat window), language, page, question, answer,
- * estimated cost. No IP address, no name. Entries older than RETENTION_DAYS are deleted
+ * estimated cost, optional visitor rating (👍/👎 + comment). No IP address, no name. Entries older than RETENTION_DAYS are deleted
  * (whenever the admin page loads). Mentioned in the cookie banner / privacy page (ai_chat).
  */
 import { getStore } from '@netlify/blobs';
@@ -19,7 +19,18 @@ export type ChatLogEntry = {
 	question: string;
 	answer: string;
 	usd: number;
+	/** Visitor rating of this answer (chat widget) */
+	rating?: ChatRating;
+	ratingComment?: string;
+	ratedAt?: string;
+	/** Feedback form (👎 with name/e-mail/comment) was mailed to the site owner — only once */
+	feedbackMailedAt?: string;
 };
+
+export type ChatRating = 'up' | 'down';
+export const RATING_COMMENT_MAX = 500;
+/** Ratings are accepted for this long after the answer */
+const RATING_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export type ChatConversation = {
 	id: string;
@@ -48,10 +59,79 @@ const swissDay = (date = new Date()) =>
 export const isValidConversationId = (value: unknown): value is string =>
 	typeof value === 'string' && /^[a-zA-Z0-9-]{8,64}$/.test(value);
 
-export async function recordChatExchange(entry: Omit<ChatLogEntry, 'at'>): Promise<void> {
+/** Stores question + answer; returns the entry id (blob key) for a later rating */
+export async function recordChatExchange(entry: Omit<ChatLogEntry, 'at'>): Promise<string> {
 	const now = new Date();
 	const key = `${swissDay(now)}/${entry.conversation}/${now.getTime()}`;
 	await getLogStore().setJSON(key, { ...entry, at: now.toISOString() } satisfies ChatLogEntry);
+	return key;
+}
+
+export const isValidEntryId = (value: unknown): value is string =>
+	typeof value === 'string' && /^\d{4}-\d{2}-\d{2}\/[a-zA-Z0-9-]{8,64}\/\d{10,16}$/.test(value);
+
+/**
+ * Visitor rating of one answer. Only the own conversation (the random id is known only to the
+ * chat window) and only within RATING_WINDOW_MS; a new rating replaces the previous one.
+ */
+export async function rateChatExchange(
+	entryId: string,
+	conversation: string,
+	rating: ChatRating,
+	comment: string
+): Promise<ChatLogEntry | null> {
+	if (entryId.split('/')[1] !== conversation) return null;
+	const store = getLogStore();
+	const entry = (await store.get(entryId, { type: 'json' })) as ChatLogEntry | null;
+	if (!entry || Date.now() - new Date(entry.at).getTime() > RATING_WINDOW_MS) return null;
+	const updated: ChatLogEntry = {
+		...entry,
+		rating,
+		ratingComment: comment.trim().slice(0, RATING_COMMENT_MAX) || undefined,
+		ratedAt: new Date().toISOString()
+	};
+	await store.setJSON(entryId, updated);
+	return updated;
+}
+
+/** Marks the feedback mail as sent (prevents a second mail for the same answer) */
+export async function markFeedbackMailed(entryId: string, entry: ChatLogEntry): Promise<void> {
+	await getLogStore().setJSON(entryId, {
+		...entry,
+		feedbackMailedAt: new Date().toISOString()
+	} satisfies ChatLogEntry);
+}
+
+/**
+ * Earlier questions + answers of a conversation (today and yesterday, oldest first).
+ * The chat API builds the model history from this instead of trusting the browser,
+ * so visitors cannot invent earlier «bot answers».
+ */
+export async function loadConversationHistory(
+	conversation: string,
+	maxExchanges: number
+): Promise<{ question: string; answer: string }[]> {
+	const store = getLogStore();
+	const now = new Date();
+	const days = [swissDay(new Date(now.getTime() - 86_400_000)), swissDay(now)];
+	const keys = (
+		await Promise.all(
+			days.map(async (day) => {
+				const { blobs } = await store.list({ prefix: `${day}/${conversation}/` });
+				return blobs.map((b) => b.key);
+			})
+		)
+	)
+		.flat()
+		// Key ends with the timestamp → chronological order
+		.sort((a, b) => Number(a.split('/')[2]) - Number(b.split('/')[2]))
+		.slice(-maxExchanges);
+	const entries = await Promise.all(
+		keys.map((key) => store.get(key, { type: 'json' }) as Promise<ChatLogEntry | null>)
+	);
+	return entries
+		.filter((e): e is ChatLogEntry => !!e)
+		.map((e) => ({ question: e.question, answer: e.answer }));
 }
 
 /** All keys of a month (prefix YYYY-MM) */
