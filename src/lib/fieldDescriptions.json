@@ -95,10 +95,6 @@
 		"de-ch": "Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.",
 		"en-us": "Date and time. Prismic uses your computer’s time zone – in Switzerland, Swiss time (daylight saving time is handled automatically). On the website the time is always shown in Swiss time, wherever visitors are."
 	},
-	"Event.geopoint": {
-		"de-ch": "Altes Kartenfeld, wird nur noch verwendet, wenn «Kartenpunkt» leer ist. Bitte den Ort neu im Feld «Kartenpunkt» erfassen und dieses Feld leeren.",
-		"en-us": "Old map field, only used when «Kartenpunkt» is empty. Please enter the location in «Kartenpunkt» instead and clear this field."
-	},
 	"event.location_map_url": {
 		"de-ch": "Der Veranstaltungsort als Karte in der Event-Ansicht; leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
 		"en-us": "The venue shown as a map in the event view; empty = no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."

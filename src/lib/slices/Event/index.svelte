@@ -15,18 +15,11 @@
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
-	// «Kartenpunkt» (link or coordinates), fallback: old Prismic map point (geopoint)
+	// «Kartenpunkt» (link or coordinates); Google short links are resolved after mount (via our server)
 	const anyPrimary = primary as any;
-	// Google short links are resolved after mount (via our server)
-	let mapPoint: MapPoint | null =
-		parseMapPoint(anyPrimary.map_point) ??
-		(anyPrimary.geopoint?.latitude && anyPrimary.geopoint?.longitude
-			? { lat: anyPrimary.geopoint.latitude, lon: anyPrimary.geopoint.longitude, zoom: 16 }
-			: null);
+	let mapPoint: MapPoint | null = parseMapPoint(anyPrimary.map_point);
 	onMount(async () => {
-		if (!parseMapPoint(anyPrimary.map_point) && anyPrimary.map_point) {
-			mapPoint = (await resolveMapPoint(anyPrimary.map_point)) ?? mapPoint;
-		}
+		if (!mapPoint && anyPrimary.map_point) mapPoint = await resolveMapPoint(anyPrimary.map_point);
 	});
 
 	// Animation aus CMS-Feldern mappen

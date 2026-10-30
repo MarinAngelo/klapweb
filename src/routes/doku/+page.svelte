@@ -402,11 +402,6 @@
 						></tr
 					>
 					<tr
-						><td><code>geopoint</code></td><td>Geo-Punkt</td><td
-							>Alt, nur Fallback wenn <code>map_point</code> leer</td
-						></tr
-					>
-					<tr
 						><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td
 						></tr
 					>
