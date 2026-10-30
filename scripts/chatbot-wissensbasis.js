@@ -55,7 +55,7 @@ for (const item of reference) {
 	const key = `${item.customType}.${item.field}`;
 	const group = groups.get(item.customType) ?? {
 		name: item.customTypeLabel || item.name,
-		kind: item.elementType === 'Slice' ? 'Inhalts-Element' : 'Inhaltstyp',
+		kind: item.elementType === 'Slice' ? 'Inhalts-Element' : 'Inhalts-Typ',
 		fields: new Map()
 	};
 	if (!group.fields.has(key)) {
@@ -77,7 +77,7 @@ const sorted = [...groups.values()].sort(
 const html = [
 	START,
 	'<h2>Prismic-Feldreferenz (alle Felder)</h2>',
-	'<p>Alle Felder der Inhaltstypen und Inhalts-Elemente in Prismic, mit Feldtyp und Erklärung. Die vollständige Referenz steht auf der Website unter /prismic-feldreferenz (im Admin-Bereich unter «Hilfe»).</p>',
+	'<p>Alle Felder der Inhalts-Typen und Inhalts-Elemente in Prismic, mit Feldtyp und Erklärung. Die vollständige Referenz steht auf der Website unter /prismic-feldreferenz (im Admin-Bereich unter «Hilfe»).</p>',
 	...sorted.map((group) =>
 		[
 			`<h3>${escapeHtml(group.name)} (${group.kind})</h3>`,
