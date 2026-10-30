@@ -3,7 +3,12 @@ import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/ser
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
-import { osmMarkerUrl, osmSearchUrl, parseMapPoint } from '$lib/mapPoint.js';
+import {
+	osmMarkerUrl,
+	osmSearchUrl,
+	parseMapPoint,
+	resolveGoogleShortLink
+} from '$lib/mapPoint.js';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 
@@ -230,7 +235,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
 					ortTelefon = (o.telefon ?? '').trim();
 					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
-					const punkt = parseMapPoint(o.geo_koordinaten);
+					const punkt =
+						parseMapPoint(o.geo_koordinaten) ??
+						(await resolveGoogleShortLink(o.geo_koordinaten ?? '', fetch)).point;
 					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
 					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
 				}

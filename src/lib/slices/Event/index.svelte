@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { osmMarkerUrl, parseMapPoint } from '$lib/mapPoint.js';
+	import { osmMarkerUrl, parseMapPoint, type MapPoint } from '$lib/mapPoint.js';
+	import { resolveMapPoint } from '$lib/utils/mapUrl';
+	import { onMount } from 'svelte';
 	// Own wrapper: replaces {{Variables}}, theme headings/links
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { _ } from '$lib/stores/i18n';
@@ -15,11 +17,17 @@
 	const primary = slice.primary;
 	// «Kartenpunkt» (link or coordinates), fallback: old Prismic map point (geopoint)
 	const anyPrimary = primary as any;
-	const mapPoint =
+	// Google short links are resolved after mount (via our server)
+	let mapPoint: MapPoint | null =
 		parseMapPoint(anyPrimary.map_point) ??
 		(anyPrimary.geopoint?.latitude && anyPrimary.geopoint?.longitude
 			? { lat: anyPrimary.geopoint.latitude, lon: anyPrimary.geopoint.longitude, zoom: 16 }
 			: null);
+	onMount(async () => {
+		if (!parseMapPoint(anyPrimary.map_point) && anyPrimary.map_point) {
+			mapPoint = (await resolveMapPoint(anyPrimary.map_point)) ?? mapPoint;
+		}
+	});
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);

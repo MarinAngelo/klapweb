@@ -138,6 +138,7 @@ Regeln:
 
 - Alle Felder für einen Punkt auf der Karte heissen «Kartenpunkt» (Text-Feld, Platzhalter «OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417»): `map_url`, `location_map_url`, `geo_koordinaten`, `Event.map_point`
 - Parser `src/lib/mapPoint.js` (`parseMapPoint`): Koordinaten, OSM (inkl. Kurzlink), Google (Shortlinks via `/api/maps-embed`), Apple, swisstopo → Anzeige **immer OpenStreetMap** (`osmEmbedUrl`, `osmMarkerUrl`, `osmDirectionsUrl`)
+- Google-Kurzlinks (`maps.app.goo.gl`) bleiben erlaubt: Server `resolveGoogleShortLink()`, Browser `resolveMapPoint()` (`mapUrl.ts`) via `/api/maps-embed` — Karten-Felder deshalb immer über diese Funktionen auswerten, nicht nur `parseMapPoint`
 - Neues Karten-Feld → Label/Platzhalter wie oben + API-ID in `MAP_POINT_FIELDS` (`contentCheck.js`), Karte mit `GoogleMap.svelte` bzw. `use:whenShown` erst laden, wenn sichtbar
 
 ## Netlify Blobs

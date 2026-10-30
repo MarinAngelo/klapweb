@@ -6,7 +6,7 @@
  *   - Coordinates: "47.3769, 8.5417", "47.3769 8.5417", "47.3769° N, 8.5417° E"
  *   - OpenStreetMap: #map=zoom/lat/lon, ?mlat=&mlon=, export/embed.html, short link osm.org/go/…
  *   - Google Maps: links with coordinates (@lat,lon / !3d…!4d… / ?q=lat,lon); short links
- *     (maps.app.goo.gl) are resolved server-side (/api/maps-embed) → needsResolve
+ *     (maps.app.goo.gl) are resolved server-side: resolveGoogleShortLink (browser: /api/maps-embed)
  *   - Apple Maps: maps.apple.com/?ll=lat,lon (or sll / q=lat,lon)
  *   - swisstopo: map.geo.admin.ch (Swiss coordinates LV95 / LV03 → WGS84)
  *
@@ -103,6 +103,29 @@ export function pointFromGoogleUrl(/** @type {string} */ href) {
 /** Google short link that must be resolved via /api/maps-embed */
 export const isGoogleShortLink = (/** @type {string} */ raw) =>
 	/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl)\//i.test(raw.trim());
+
+/**
+ * Server only (browsers block the request): follows a Google short link and reads the
+ * coordinates from the long URL it redirects to.
+ * @param {string} raw
+ * @param {typeof fetch} [fetchFn]
+ * @returns {Promise<{ point: MapPoint | null; resolvedUrl: string }>}
+ */
+export async function resolveGoogleShortLink(raw, fetchFn = fetch) {
+	const value = raw.trim();
+	if (!isGoogleShortLink(value)) return { point: null, resolvedUrl: value };
+	try {
+		const res = await fetchFn(value, {
+			redirect: 'follow',
+			headers: { 'User-Agent': 'Mozilla/5.0' },
+			signal: AbortSignal.timeout(8000)
+		});
+		const resolvedUrl = res.url || value;
+		return { point: pointFromGoogleUrl(resolvedUrl), resolvedUrl };
+	} catch {
+		return { point: null, resolvedUrl: value };
+	}
+}
 
 /**
  * Parses a «Kartenpunkt» value.
