@@ -76,6 +76,10 @@
 			"label": "KlapStudio Design Panel",
 			"plans": ["individuell"]
 		},
+		"suche": {
+			"label": "Website-Suche",
+			"plans": ["professional"]
+		},
 		"chatbot": {
 			"label": "Chat-Bot",
 			"plans": ["klap-web-ch"],
@@ -166,6 +170,9 @@
 				"chat_knowledge_base": {
 					"feature": "chatbot"
 				},
+				"chat_knowledge_extra": {
+					"feature": "chatbot"
+				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
 				}
@@ -200,6 +207,9 @@
 			"variations": {
 				"kauf": {
 					"feature": "ecommerce"
+				},
+				"suche": {
+					"feature": "suche"
 				}
 			}
 		},

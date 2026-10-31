@@ -3,6 +3,7 @@ import { createClient } from '$lib/prismicio';
 import { listBookings, listCancelled } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { getCachedTermine, setCachedTermine } from '$lib/server/termineCache';
+import { SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 export type { TerminSlot as AvailableTermin } from '$lib/server/terminSlots';
 
@@ -52,16 +53,21 @@ export const GET: RequestHandler = async () => {
 			// Vergangen inkl. Vorlaufzeit: ab Startzeit minus Vorlaufzeit nicht mehr buchbar
 			if (slot.datum && slot.uhrzeit) {
 				const vorlaufMs = (slot.vorlaufzeit ?? 0) * 60000;
-				if (new Date(`${slot.datum}T${slot.uhrzeit}:00`).getTime() - vorlaufMs < now) return false;
+				// Slot time is local in the time zone of the working day (not the server's, UTC on Netlify)
+				const startMs = zonedTimeToUtc(slot.datum, slot.uhrzeit, slot.zeitzone || SITE_TIME_ZONE);
+				if (startMs - vorlaufMs < now) return false;
 			}
 			if (slot.endzeit) {
+				// Both sides incl. buffer (Puffer danach); older bookings without blockedUntil → endzeit
 				const start = toMinutes(slot.uhrzeit);
-				const end = toMinutes(slot.endzeit);
+				const end = toMinutes(slot.blockedUntil ?? slot.endzeit);
 				if (start !== null && end !== null) {
 					const overlap = bookings.some((booking) => {
 						if (booking.terminId === slot.id || booking.datum !== slot.datum) return false;
 						const existingStart = toMinutes(booking.uhrzeit);
-						const existingEnd = toMinutes(booking.endzeit ?? booking.uhrzeit);
+						const existingEnd = toMinutes(
+							booking.blockedUntil ?? booking.endzeit ?? booking.uhrzeit
+						);
 						if (existingStart === null || existingEnd === null) return false;
 						return start < existingEnd && end > existingStart;
 					});

@@ -799,6 +799,144 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Email and password required'
 	},
 	Inhalt: { 'de-ch': 'Inhalt', 'en-us': 'Contents' },
+	'Kartenpunkt nicht erkannt': {
+		'de-ch': 'Kartenpunkt nicht erkannt',
+		'en-us': 'Map point not recognised'
+	},
+	'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417': {
+		'de-ch': 'OSM-Link oder Koordinaten eintragen, z.B. 47.3769, 8.5417',
+		'en-us': 'Enter an OSM link or coordinates, e.g. 47.3769, 8.5417'
+	},
+	'Standort auf der Karte anzeigen': {
+		'de-ch': 'Standort auf der Karte anzeigen',
+		'en-us': 'Show location on the map'
+	},
+	'Auf der Karte anzeigen': { 'de-ch': 'Auf der Karte anzeigen', 'en-us': 'Show on map' },
+	Seite: { 'de-ch': 'Seite', 'en-us': 'Page' },
+	'Inhalts-Typ': { 'de-ch': 'Inhalts-Typ', 'en-us': 'Content type' },
+	'Inhalts-Element': { 'de-ch': 'Inhalts-Element', 'en-us': 'Content element' },
+	Element: { 'de-ch': 'Element', 'en-us': 'Element' },
+	'Agency Dashboard': { 'de-ch': 'Agency Dashboard', 'en-us': 'Agency dashboard' },
+	'Plan und Feature-Schalter dieser Website': {
+		'de-ch': 'Plan und Feature-Schalter dieser Website',
+		'en-us': 'Plan and feature switches of this website'
+	},
+	'Erklärungen zu den Prismic-Feldern für die Website-Betreiber pflegen': {
+		'de-ch': 'Erklärungen zu den Prismic-Feldern für die Website-Betreiber pflegen',
+		'en-us': 'Maintain explanations of the Prismic fields for website operators'
+	},
+	'So sehen die Website-Betreiber die Referenz': {
+		'de-ch': 'So sehen die Website-Betreiber die Referenz',
+		'en-us': 'How website operators see the reference'
+	},
+	'Chat-Bot Wissensbasis': { 'de-ch': 'Chat-Bot Wissensbasis', 'en-us': 'Chat bot knowledge base' },
+	'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)': {
+		'de-ch': 'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)',
+		'en-us': 'Generated knowledge base to copy into Prismic (Settings → Chat-Bot)'
+	},
+	'War die Antwort hilfreich?': {
+		'de-ch': 'War die Antwort hilfreich?',
+		'en-us': 'Was this answer helpful?'
+	},
+	Hilfreich: { 'de-ch': 'Hilfreich', 'en-us': 'Helpful' },
+	'Nicht hilfreich': { 'de-ch': 'Nicht hilfreich', 'en-us': 'Not helpful' },
+	'Was hat gefehlt? (optional)': {
+		'de-ch': 'Was hat gefehlt? (optional)',
+		'en-us': 'What was missing? (optional)'
+	},
+	Überspringen: { 'de-ch': 'Überspringen', 'en-us': 'Skip' },
+	'Danke für Ihre Bewertung!': {
+		'de-ch': 'Danke für Ihre Bewertung!',
+		'en-us': 'Thank you for your feedback!'
+	},
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.': {
+		'de-ch': 'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.',
+		'en-us':
+			'Sorry about that! Tell us what was missing – leave your e-mail and we will get back to you.'
+	},
+	'Name (optional)': {
+		'de-ch': 'Name (optional)',
+		'en-us': 'Name (optional)'
+	},
+	'E-Mail (optional)': {
+		'de-ch': 'E-Mail (optional)',
+		'en-us': 'E-mail (optional)'
+	},
+	'Vielen Dank für das Feedback, ich melde mich so bald wie möglich bei dir.': {
+		'de-ch': 'Vielen Dank für das Feedback, ich melde mich so bald wie möglich bei dir.',
+		'en-us': 'Thank you for your feedback, I will get back to you as soon as possible.'
+	},
+	'Antworten der KI sind unverbindlich.': {
+		'de-ch': 'Antworten der KI sind unverbindlich.',
+		'en-us': 'AI answers are not binding.'
+	},
+	Suchen: { 'de-ch': 'Suchen', 'en-us': 'Search' },
+	'Website durchsuchen': { 'de-ch': 'Website durchsuchen', 'en-us': 'Search website' },
+	'Die Suche ist erst auf der veröffentlichten Website verfügbar.': {
+		'de-ch': 'Die Suche ist erst auf der veröffentlichten Website verfügbar.',
+		'en-us': 'Search is only available on the published website.'
+	},
+	'Keine Treffer für «{suche}».': {
+		'de-ch': 'Keine Treffer für «{suche}».',
+		'en-us': 'No results for «{suche}».'
+	},
+	'Diese Seite durchsuchen': { 'de-ch': 'Diese Seite durchsuchen', 'en-us': 'Search this page' },
+	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
+	'Verwaltung der Website (eigene Anmeldung)': {
+		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
+		'en-us': 'Website administration (separate login)'
+	},
+	Hilfe: { 'de-ch': 'Hilfe', 'en-us': 'Help' },
+	'Prismic-Feldreferenz': { 'de-ch': 'Prismic-Feldreferenz', 'en-us': 'Prismic field reference' },
+	'Alle Felder der Inhaltstypen und Bausteine mit Erklärung': {
+		'de-ch': 'Alle Felder der Inhaltstypen und Bausteine mit Erklärung',
+		'en-us': 'All fields of the content types and building blocks, explained'
+	},
+	'Feldreferenz – Beschreibungen': {
+		'de-ch': 'Feldreferenz – Beschreibungen',
+		'en-us': 'Field reference – descriptions'
+	},
+	'Gating-Editor': { 'de-ch': 'Gating-Editor', 'en-us': 'Gating editor' },
+	'Referenz ansehen': { 'de-ch': 'Referenz ansehen', 'en-us': 'View reference' },
+	'Beschreibungen für die Prismic-Feldreferenz der Website-Betreiber. Leer = automatische Beschreibung (grau). Gilt für alle Kunden-Branches: auf main pflegen und committen.':
+		{
+			'de-ch':
+				'Beschreibungen für die Prismic-Feldreferenz der Website-Betreiber. Leer = automatische Beschreibung (grau). Gilt für alle Kunden-Branches: auf main pflegen und committen.',
+			'en-us':
+				'Descriptions for the Prismic field reference of the website operators. Empty = automatic description (grey). Applies to all customer branches: maintain and commit on main.'
+		},
+	'Felder beschrieben': { 'de-ch': 'Felder beschrieben', 'en-us': 'fields described' },
+	'Bearbeiten nur auf dem lokalen Dev-Server möglich (die Datei wird committet).': {
+		'de-ch': 'Bearbeiten nur auf dem lokalen Dev-Server möglich (die Datei wird committet).',
+		'en-us': 'Editing is only possible on the local dev server (the file is committed).'
+	},
+	'Gespeichert.': { 'de-ch': 'Gespeichert.', 'en-us': 'Saved.' },
+	'Leer = deutsche Beschreibung': {
+		'de-ch': 'Leer = deutsche Beschreibung',
+		'en-us': 'Empty = German description'
+	},
+	'Wird gespeichert…': { 'de-ch': 'Wird gespeichert…', 'en-us': 'Saving…' },
+	Gespräche: { 'de-ch': 'Gespräche', 'en-us': 'Conversations' },
+	Frage: { 'de-ch': 'Frage', 'en-us': 'Question' },
+	'Fragen und Antworten werden ohne IP-Adresse gespeichert und nach {tage} Tagen automatisch gelöscht.':
+		{
+			'de-ch':
+				'Fragen und Antworten werden ohne IP-Adresse gespeichert und nach {tage} Tagen automatisch gelöscht.',
+			'en-us':
+				'Questions and answers are stored without IP address and deleted automatically after {tage} days.'
+		},
+	'Dieses Gespräch endgültig löschen?': {
+		'de-ch': 'Dieses Gespräch endgültig löschen?',
+		'en-us': 'Permanently delete this conversation?'
+	},
+	'Gespräch löschen': { 'de-ch': 'Gespräch löschen', 'en-us': 'Delete conversation' },
+	'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen':
+		{
+			'de-ch':
+				'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen',
+			'en-us':
+				'Question and answer are stored by the website operator without IP address and deleted after 90 days'
+		},
 	'Jetzt beauftragen': { 'de-ch': 'Jetzt beauftragen', 'en-us': 'Order now' },
 	Gesamtpreis: { 'de-ch': 'Gesamtpreis', 'en-us': 'Total price' },
 	Rabatt: { 'de-ch': 'Rabatt', 'en-us': 'Discount' },
@@ -954,7 +1092,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
-	'.ics herunterladen': { 'de-ch': '.ics herunterladen', 'en-us': 'Download .ics' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {
 		'de-ch': 'Weitere Termine buchen',
@@ -975,14 +1112,6 @@ export const translations: Record<string, Record<string, string>> = {
 	'Zum Kalender hinzufügen (.ics)': {
 		'de-ch': 'Zum Kalender hinzufügen (.ics)',
 		'en-us': 'Add to calendar (.ics)'
-	},
-	'In Google Calendar öffnen': {
-		'de-ch': 'In Google Calendar öffnen',
-		'en-us': 'Open in Google Calendar'
-	},
-	'Standort auf Google Maps anzeigen': {
-		'de-ch': 'Standort auf Google Maps anzeigen',
-		'en-us': 'Show location on Google Maps'
 	},
 	Daten: { 'de-ch': 'Daten', 'en-us': 'Dates' },
 	'Zurzeit sind keine Durchführungen geplant': {
@@ -1672,6 +1801,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Transmission of your IP address to Spotify'
 	},
 	'Ungültige Video-URL': { 'de-ch': 'Ungültige Video-URL', 'en-us': 'Invalid video URL' },
+	'Ungültige Video-Datei (MP4 erwartet)': {
+		'de-ch': 'Ungültige Video-Datei (MP4 erwartet)',
+		'en-us': 'Invalid video file (MP4 expected)'
+	},
 	'Medienlink öffnen': { 'de-ch': 'Medienlink öffnen', 'en-us': 'Open media link' },
 	Video: { 'de-ch': 'Video', 'en-us': 'Video' },
 	'OpenStreetMap Foundation': {

@@ -2,7 +2,13 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
-import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
+import {
+	osmMarkerUrl,
+	osmSearchUrl,
+	parseMapPoint,
+	resolveGoogleShortLink
+} from '$lib/mapPoint.js';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 
@@ -80,25 +86,6 @@ function generateICS(
 		'END:VEVENT',
 		'END:VCALENDAR'
 	].join('\r\n');
-}
-
-function googleCalendarUrl(
-	titel: string,
-	datum: string,
-	uhrzeit: string,
-	sessionLaenge: number | null
-): string {
-	if (!datum) return '';
-	let dates: string;
-	if (uhrzeit) {
-		const start = buildDatetimeStr(datum, uhrzeit);
-		const end = addMinutes(datum, uhrzeit, sessionLaenge ?? 60);
-		dates = `${start}/${end}`;
-	} else {
-		const d = datum.replace(/-/g, '');
-		dates = `${d}/${d}`;
-	}
-	return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dates}`;
 }
 
 function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz: string): string {
@@ -179,6 +166,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let datum = '';
 	let uhrzeit = '';
 	let endzeit = '';
+	let blockedUntil = '';
+	let vorlaufzeit = 0;
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
 	let zeitzone = 'Europe/Zurich';
@@ -186,6 +175,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let angebotId: string | undefined;
 	let ortName = '';
 	let ortAdresse = '';
+	let ortWegbeschreibung = '';
+	let ortTelefon = '';
+	let ortKarte = '';
 	let companyName = '';
 	let companyEmail = '';
 	let bookingFromEmail = '';
@@ -219,6 +211,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		datum = slot.datum;
 		uhrzeit = slot.uhrzeit;
 		endzeit = slot.endzeit ?? '';
+		blockedUntil = slot.blockedUntil ?? endzeit;
+		vorlaufzeit = slot.vorlaufzeit ?? 0;
 		titel = slot.titel;
 		sessionLaenge = slot.sessionLaenge;
 		zeitzone = slot.zeitzone;
@@ -231,14 +225,22 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		if (ortLink?.uid) {
 			try {
 				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
-				ortName = (ortDoc.data as any).name ?? '';
-				const adresseBlocks = (ortDoc.data as any).adresse;
-				ortAdresse = Array.isArray(adresseBlocks)
-					? adresseBlocks
-							.map((b: any) => b?.text ?? '')
-							.filter(Boolean)
-							.join(', ')
-					: '';
+				const o = ortDoc.data as any;
+				// Inactive location («Aktiv» off) → no location details
+				if (o.aktiv !== false) {
+					const lines = (blocks: unknown) =>
+						Array.isArray(blocks) ? blocks.map((b: any) => b?.text ?? '').filter(Boolean) : [];
+					ortName = o.name ?? '';
+					ortAdresse = lines(o.adresse).join(', ');
+					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
+					ortTelefon = (o.telefon ?? '').trim();
+					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
+					const punkt =
+						parseMapPoint(o.geo_koordinaten) ??
+						(await resolveGoogleShortLink(o.geo_koordinaten ?? '', fetch)).point;
+					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
+					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
+				}
 			} catch {
 				/* Ort nicht erreichbar */
 			}
@@ -247,7 +249,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
 
-	if (endzeit && (await hasOverlappingBooking(datum, uhrzeit, endzeit, terminId))) {
+	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier
+	if (
+		datum &&
+		uhrzeit &&
+		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) - vorlaufzeit * 60000 < Date.now()
+	) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	// Incl. buffer on both sides (Puffer danach)
+	if (blockedUntil && (await hasOverlappingBooking(datum, uhrzeit, blockedUntil, terminId))) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
 			{ status: 409 }
@@ -259,6 +274,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		datum,
 		uhrzeit,
 		endzeit,
+		blockedUntil,
 		titel,
 		bookedAt: new Date().toISOString(),
 		name,
@@ -298,7 +314,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
 	const toEmail = companyEmail;
 
-	const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
@@ -314,14 +329,18 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
 			Firma: companyName,
-			Ort: ortAdresse || ortName
+			Ort: ortAdresse || ortName,
+			Wegbeschreibung: ortWegbeschreibung,
+			'Ort-Telefon': ortTelefon,
+			'Ort-Karte': ortKarte
 		};
 
 		const subject = custEmailSubject
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
-		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
+		// .ics download works with every calendar app (no Google Calendar link)
+		const calendarLine = datum ? `\nZum Kalender hinzufügen: ${icsDownloadLink}` : '';
 
 		const convertedTime = customerTimezone
 			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
@@ -338,6 +357,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				`Ihr Termin wurde erfolgreich gebucht.`,
 				``,
 				`Termin: ${terminLine}`,
+				// Location of the offer (if linked and active)
+				...(ortName || ortAdresse
+					? [``, `Ort: ${[ortName, ortAdresse].filter(Boolean).join(', ')}`]
+					: []),
+				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
+				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
+				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
 				``,
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,
@@ -349,7 +375,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const stornoLine = `\n\nStornieren: ${stornoLink}`;
 		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
-		const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(icsContent).toString('base64') }]
@@ -357,10 +382,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		// Provider ICS includes customer name in title
 		const providerTitel = name ? `${titel} – ${name}` : titel;
-		const providerGcalUrl = googleCalendarUrl(providerTitel, datum, uhrzeit, sessionLaenge);
-		const providerCalendarLine = providerGcalUrl
-			? `\nZum Kalender hinzufügen: ${providerGcalUrl}`
-			: '';
 		const providerIcsContent = generateICS(terminId, providerTitel, datum, uhrzeit, sessionLaenge);
 		const providerIcsAttachment = providerIcsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(providerIcsContent).toString('base64') }]
@@ -419,21 +440,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						from: fromEmail,
 						to: toEmail,
 						subject: `Neue Buchung: ${titel}`,
-						text:
-							[
-								`Neue Buchung eingegangen.`,
-								``,
-								`Angebot: ${titel}`,
-								`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
-								`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
-								`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
-								...(ortName ? [`Ort: ${ortName}`] : []),
-								...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
-								``,
-								`Name: ${customerName}`,
-								...(email ? [`E-Mail: ${email}`] : []),
-								...(extraLines.length ? [``, ...extraLines] : [])
-							].join('\n') + providerCalendarLine,
+						text: [
+							`Neue Buchung eingegangen.`,
+							``,
+							`Angebot: ${titel}`,
+							`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
+							`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
+							`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+							...(ortName ? [`Ort: ${ortName}`] : []),
+							...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
+							``,
+							`Name: ${customerName}`,
+							...(email ? [`E-Mail: ${email}`] : []),
+							...(extraLines.length ? [``, ...extraLines] : [])
+						].join('\n'),
 						attachments: providerIcsAttachment
 					})
 					.then(({ error: e }) => {
@@ -460,9 +480,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			name: name || '',
 			email: email || '',
 			storno: stornoLink,
-			gcal: gcalUrl,
 			ics: icsDownloadLink,
-			ort: ortAdresse || ortName
+			ort: ortAdresse || ortName,
+			karte: ortKarte
 		}),
 		{ status: 200 }
 	);

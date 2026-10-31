@@ -343,9 +343,9 @@
 							name: result.name ?? '',
 							email: result.email ?? '',
 							storno: result.storno ?? '',
-							gcal: result.gcal ?? '',
 							ics: result.ics ?? '',
 							ort: result.ort ?? '',
+							karte: result.karte ?? '',
 							returnTo: window.location.pathname + window.location.search
 						});
 						goto(`/termin-gebucht?${params.toString()}`);

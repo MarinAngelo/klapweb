@@ -10,6 +10,8 @@ export interface TerminSlot {
 	datum: string;
 	uhrzeit: string;
 	endzeit?: string;
+	/** End incl. «Puffer danach» — occupied until then (HH:MM) */
+	blockedUntil?: string;
 	sessionLaenge: number | null;
 	zeitzone: string;
 	label: string;
@@ -56,8 +58,17 @@ function advanceDate(date: Date, wiederholung: string): Date {
 	if (wiederholung === 'Täglich') next.setUTCDate(next.getUTCDate() + 1);
 	else if (wiederholung === 'Wöchentlich') next.setUTCDate(next.getUTCDate() + 7);
 	else if (wiederholung === 'Zweiwöchentlich') next.setUTCDate(next.getUTCDate() + 14);
-	else if (wiederholung === 'Monatlich') next.setUTCMonth(next.getUTCMonth() + 1);
 	return next;
+}
+
+/**
+ * Monthly occurrence n of a start date, always from the original day of the month and
+ * clamped to the last day: 31.01. → 28./29.02. → 31.03. (no drift via setUTCMonth overflow)
+ */
+function monthlyOccurrence(startDatum: string, n: number): Date {
+	const [y, m, d] = startDatum.split('-').map(Number);
+	const lastDay = new Date(Date.UTC(y, m - 1 + n + 1, 0)).getUTCDate();
+	return new Date(Date.UTC(y, m - 1 + n, Math.min(d, lastDay), 12));
 }
 
 export function expandArbeitstag(doc: any, offers: any[], fromDate: string): TerminSlot[] {
@@ -114,6 +125,7 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 						datum: dateStr,
 						uhrzeit: time,
 						endzeit: endTime,
+						blockedUntil: timeLabel(slotEnd),
 						sessionLaenge: duration,
 						zeitzone: d.zeitzone ?? 'Europe/Zurich',
 						label: makeLabel(dateStr, time, title, duration, endTime),
@@ -130,7 +142,10 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 
 		occurrence++;
 		if (repeat === 'Keine') break;
-		current = advanceDate(current, repeat);
+		current =
+			repeat === 'Monatlich'
+				? monthlyOccurrence(startDatum, occurrence)
+				: advanceDate(current, repeat);
 	}
 
 	return slots;

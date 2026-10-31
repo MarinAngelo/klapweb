@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
+	import { linkify } from '$lib/utils/linkify';
 	import { consentServices } from '$lib/consent/services';
 	import { allowCategory, isServiceAllowed, registerServiceUsage } from '$lib/stores/consent';
 
@@ -13,12 +14,28 @@
 	const SERVICE_ID = 'ai_chat';
 
 	// `errorKey` messages are shown but never sent back to the model
-	type Message = { role: 'user' | 'bot'; text?: string; errorKey?: string };
+	type Message = {
+		role: 'user' | 'bot';
+		text?: string;
+		errorKey?: string;
+		/** Chat log entry of a bot answer → can be rated */
+		entryId?: string;
+		rating?: 'up' | 'down';
+		/** Rating finished (👍, or 👎 with/without comment) */
+		rated?: boolean;
+		comment?: string;
+		/** 👎 feedback form: mailed to the site owner («Verantwortliche E-Mail») */
+		name?: string;
+		email?: string;
+		replyPromised?: boolean;
+	};
 
 	let isOpen = false;
 	let input = '';
 	let loading = false;
 	let messages: Message[] = [];
+	// Random id per chat window: groups the questions in the admin chat log (no personal data)
+	const conversationId = crypto.randomUUID();
 	let messagesEl: HTMLElement;
 
 	$: displayName = botName || $_('Assistent');
@@ -34,13 +51,6 @@
 		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.'
 	};
 
-	/** Conversation for the API: greeting and error messages excluded */
-	function history() {
-		return messages
-			.filter((m, i) => m.text && !m.errorKey && !(i === 0 && m.role === 'bot'))
-			.map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }));
-	}
-
 	async function send() {
 		const text = input.trim();
 		if (!text || loading || !chatAllowed) return;
@@ -54,11 +64,17 @@
 			const res = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ messages: history(), lang })
+				body: JSON.stringify({
+					// Only the new question: the server takes the history from its own chat log
+					messages: [{ role: 'user', content: text }],
+					lang,
+					conversationId,
+					page: location.pathname
+				})
 			});
 			const data = await res.json().catch(() => ({}));
 			messages = data.reply
-				? [...messages, { role: 'bot', text: data.reply }]
+				? [...messages, { role: 'bot', text: data.reply, entryId: data.entryId ?? undefined }]
 				: [...messages, { role: 'bot', errorKey: errorKeys[data.error] ?? errorKeys.failed }];
 		} catch {
 			messages = [...messages, { role: 'bot', errorKey: 'Verbindungsfehler.' }];
@@ -67,6 +83,28 @@
 			tick().then(scrollToBottom);
 		}
 	}
+
+	/**
+	 * 👍 → done; 👎 → feedback form first (name, e-mail, comment — all optional).
+	 * skip = rate without sending the form.
+	 */
+	async function rate(index: number, rating: 'up' | 'down', done: boolean, skip = false) {
+		const msg = messages[index];
+		if (!msg?.entryId) return;
+		// 👎 form sent with an e-mail address → the owner will reply (extra thank-you line)
+		const replyPromised = rating === 'down' && !skip && !!msg.email?.trim();
+		messages[index] = { ...msg, rating, rated: done, replyPromised };
+		if (!done) return tick().then(scrollToBottom);
+		const form = skip ? {} : { comment: msg.comment, name: msg.name, email: msg.email };
+		await fetch('/api/chat/rating', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ entryId: msg.entryId, conversationId, rating, ...form })
+		}).catch(() => {});
+	}
+
+	const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	const invalidEmail = (msg: Message) => !!msg.email?.trim() && !EMAIL_RE.test(msg.email.trim());
 
 	function scrollToBottom() {
 		messagesEl?.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
@@ -108,12 +146,115 @@
 
 			<!-- Messages -->
 			<div bind:this={messagesEl} class="chat-messages">
-				{#each messages as msg}
+				{#each messages as msg, i}
 					<div class="flex" class:justify-end={msg.role === 'user'}>
-						<div class="chat-bubble {msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}">
-							{msg.errorKey ? $_(msg.errorKey) : msg.text}
-						</div>
+						<!-- Bot answers: e-mail and web addresses become links. One line: the bubble keeps whitespace (pre-wrap) -->
+						<!-- prettier-ignore -->
+						<div class="chat-bubble {msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}">{#if msg.errorKey}{$_(msg.errorKey)}{:else if msg.role === 'bot'}{#each linkify(msg.text ?? '', location.hostname) as part}{#if part.href}<a href={part.href} target={part.external ? '_blank' : undefined} rel={part.external ? 'noopener noreferrer' : undefined} class="chat-link">{part.text}</a>{:else}{part.text}{/if}{/each}{:else}{msg.text}{/if}</div>
 					</div>
+					{#if msg.entryId}
+						<!-- Rating of this answer (stored with the question in the admin chat log) -->
+						{#if msg.rated}
+							<p class="chat-rating">{$_('Danke für Ihre Bewertung!')}</p>
+							{#if msg.replyPromised}
+								<p class="chat-rating">
+									{$_('Vielen Dank für das Feedback, ich melde mich so bald wie möglich bei dir.')}
+								</p>
+							{/if}
+						{:else if msg.rating === 'down'}
+							<div class="chat-rating-form">
+								<p class="m-0 text-xs text-gray-700">
+									{$_(
+										'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.'
+									)}
+								</p>
+								<input
+									type="text"
+									bind:value={messages[i].name}
+									placeholder={$_('Name (optional)')}
+									maxlength="100"
+									autocomplete="name"
+									class="chat-input"
+								/>
+								<input
+									type="email"
+									bind:value={messages[i].email}
+									placeholder={$_('E-Mail (optional)')}
+									maxlength="200"
+									autocomplete="email"
+									class="chat-input"
+									class:border-red-600={invalidEmail(msg)}
+								/>
+								<textarea
+									bind:value={messages[i].comment}
+									placeholder={$_('Was hat gefehlt? (optional)')}
+									maxlength="500"
+									rows="2"
+									class="chat-input"
+								></textarea>
+								<div class="flex justify-end gap-2">
+									<button
+										type="button"
+										class="chat-rate-skip"
+										on:click={() => rate(i, 'down', true, true)}>{$_('Überspringen')}</button
+									>
+									<button
+										type="button"
+										class="chat-btn py-1 text-xs"
+										disabled={invalidEmail(msg)}
+										on:click={() => rate(i, 'down', true)}>{$_('Senden')}</button
+									>
+								</div>
+							</div>
+						{:else}
+							<div class="chat-rating">
+								<span>{$_('War die Antwort hilfreich?')}</span>
+								<button
+									type="button"
+									class="chat-rate-btn"
+									aria-label={$_('Hilfreich')}
+									title={$_('Hilfreich')}
+									on:click={() => rate(i, 'up', true)}
+								>
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										><path
+											d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+										/></svg
+									>
+								</button>
+								<button
+									type="button"
+									class="chat-rate-btn"
+									aria-label={$_('Nicht hilfreich')}
+									title={$_('Nicht hilfreich')}
+									on:click={() => rate(i, 'down', false)}
+								>
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="rotate-180"
+										><path
+											d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
+										/></svg
+									>
+								</button>
+							</div>
+						{/if}
+					{/if}
 				{/each}
 
 				{#if loading}
@@ -164,6 +305,7 @@
 			{#if chatAllowed}
 				<p class="chat-note">
 					{$_('Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.')}
+					{$_('Antworten der KI sind unverbindlich.')}
 				</p>
 			{/if}
 		</div>

@@ -232,7 +232,7 @@
 	<!-- Editor: neutral admin UI (app.css › Admin-UI), like /admin -->
 	<div class="admin">
 		<div class="admin-container">
-			<AdminHeader title={$_('Agency Gating Editor')} back={false}>
+			<AdminHeader title={$_('Agency Gating Editor')} backHref="/agency">
 				<form method="POST" action="?/logout">
 					<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
 				</form>

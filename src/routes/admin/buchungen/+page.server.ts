@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
+import { SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 import {
 	listBookings,
 	deleteBooking,
@@ -65,11 +66,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const freeSlotChecks = await Promise.all(
 		candidateFreeSlots.map(async (s) => {
 			const vorlaufMs = (s.vorlaufzeit ?? 0) * 60000;
+			// Local time of the working day (not the server's, UTC on Netlify)
 			const startTime =
-				s.datum && s.uhrzeit ? new Date(`${s.datum}T${s.uhrzeit}:00`).getTime() : null;
+				s.datum && s.uhrzeit
+					? zonedTimeToUtc(s.datum, s.uhrzeit, s.zeitzone || SITE_TIME_ZONE)
+					: null;
 			return {
 				slot: s,
-				blocked: !!s.endzeit && (await hasOverlappingBooking(s.datum, s.uhrzeit, s.endzeit, s.id)),
+				blocked:
+					!!s.endzeit &&
+					(await hasOverlappingBooking(s.datum, s.uhrzeit, s.blockedUntil ?? s.endzeit, s.id)),
 				past: startTime !== null ? startTime - vorlaufMs < now : s.datum < today
 			};
 		})

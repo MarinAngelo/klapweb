@@ -57,6 +57,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		if (segments[0] === 'preview') segments.shift();
 		const firstSegment = segments[0];
 		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
+		// Correct <html lang> already in the server/prerendered HTML (screen readers, SEO, search index)
+		locals.htmlLang = lang;
 
 		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
 		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.

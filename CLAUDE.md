@@ -131,7 +131,23 @@ Regeln:
 - Nicht-funktionale Inhalte (iframes, externe Scripts) immer mit `<ConsentGate service="…" minHeight={…}>` umschliessen — nur dann erscheint der Banner auf der Seite und nur dann kann der Besucher ablehnen
 - Banner erscheint nur auf Seiten, die einen nicht-funktionalen Dienst nutzen; Auswahl in `localStorage` (`klap_consent`); Footer-Link „Cookie-Einstellungen“ öffnet den Dialog
 - Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen
+- **Eigene Videos** (MP4 aus der Prismic-Mediathek, Link-to-Media-Feld `video_file`) über `$lib/components/VideoFile.svelte` — kein Drittanbieter, kein ConsentGate; hat Vorrang vor YouTube/Vimeo (`EmbedFieldHandler` mit ConsentGate)
 - Wird die Bedeutung gespeicherter Auswahlen geändert: `CONSENT_VERSION` in `src/lib/stores/consent.ts` erhöhen → Banner erscheint erneut
+
+## Website-Suche (Feature `suche`, ab Professionell)
+
+- Schaltfläche-Variante «Suche» = **Suche auf dieser Seite**: `SearchDialog.svelte` mit `scope="page"` → `$lib/utils/pageSearch.ts` durchsucht den gerenderten Hauptinhalt (auch zugeklappte Akkordeons), Klick öffnet das Akkordeon und scrollt zur Stelle; kein Index, funktioniert überall. Elemente ausschliessen: `data-page-search-ignore`
+- **Website-Suche** (`scope="site"`, vorgesehen für eine Lupe in der Navigation, noch nicht eingebaut): **Pagefind** komplett im Browser (Open Source, kein Dienst, kein Consent)
+- Index: `scripts/build-search-index.js` nach `vite build` → `build/pagefind/` (nur wenn die Variante im generierten Button-Modell aktiv ist). Lokal: `vite.config.js` liefert in `npm run dev` und `vite preview` den Index des letzten `npm run build` unter `/pagefind/` aus; ohne Build → Hinweis im Dialog
+- Indexiert wird nur `<main data-pagefind-body>` auf Routen unter `[[lang=lang]]`, nie passwortgeschützte Seiten; ein Index pro `<html lang>` (wird serverseitig via `locals.htmlLang` → `hooks.server.ts` gesetzt)
+- Inhalte, die erst im Browser laden (Globale Events, Termine …), sind nicht durchsuchbar; Teile ausschliessen mit `data-pagefind-ignore`
+
+## Kartenpunkt (Karten-Felder)
+
+- Alle Felder für einen Punkt auf der Karte heissen «Kartenpunkt» (Text-Feld, Platzhalter «OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417»): `map_url`, `location_map_url`, `geo_koordinaten`, `Event.map_point`
+- Parser `src/lib/mapPoint.js` (`parseMapPoint`): Koordinaten, OSM (inkl. Kurzlink), Google (Shortlinks via `/api/maps-embed`), Apple, swisstopo → Anzeige **immer OpenStreetMap** (`osmEmbedUrl`, `osmMarkerUrl`, `osmDirectionsUrl`)
+- Google-Kurzlinks (`maps.app.goo.gl`) bleiben erlaubt: Server `resolveGoogleShortLink()`, Browser `resolveMapPoint()` (`mapUrl.ts`) via `/api/maps-embed` — Karten-Felder deshalb immer über diese Funktionen auswerten, nicht nur `parseMapPoint`
+- Neues Karten-Feld → Label/Platzhalter wie oben + API-ID in `MAP_POINT_FIELDS` (`contentCheck.js`), Karte mit `GoogleMap.svelte` bzw. `use:whenShown` erst laden, wenn sichtbar
 
 ## Netlify Blobs
 
@@ -144,6 +160,7 @@ Regeln:
 - `"select": "document"` + `"customtypes": ["page"]` = nur interne Seiten, keine Web URLs möglich
 - **Richtig:** `"customtypes": ["page"]` OHNE `select` property → erlaubt Web URLs UND Prismic-Links auf Pages
 - **Grund:** Ein fehlerhaft konfiguriertes Link-Feld blockiert externe Links in ALLEN Projekten
+- **Ausnahme:** Reine Verknüpfungen auf genau einen Inhalts-Typ, bei denen eine Web-Adresse keinen Sinn ergibt (z.B. Angebot → «Ort», Arbeitstag → «Buchbares Angebot»), dürfen `"select": "document"` behalten — die Regel gilt für Navigations- und Inhaltslinks
 - **Links auf gated Typen (Ressource, Leistung) in der Navigation:** `gating.json` → `features.<feature>.linkTargets` (z.B. `ressourcenbuchung` → `["ressource"]`); `build-customtypes.js` ergänzt die Typen bei aktivem Feature im Link-Feld der Navigation (Quelle `customtypes/navigation/base.json`, `index.json` generiert). Die URL setzt `src/lib/utils/documentLinks.ts` (Route-Präfix pro Typ) — **nie in den Route Resolver** (Repos ohne den Typ lehnen jede Abfrage ab). Neuer Typ mit eigener Route → `ROUTE_PREFIX` + `linkTargets` ergänzen
 
 ## Git-Strategie (Kern + Kunden-Branches)
@@ -299,6 +316,13 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ⚠ page/base.json fehlen Slice-Choices, die in index.json vorhanden sind: → mein_neuer_slice
 ```
 
+## Agency-Bereich (`/agency/*`)
+
+- Anmeldung mit `AGENCY_SECRET` (gemeinsam: `src/lib/server/agencyAuth.ts`), Login im Website-Stil (`LoginCard`), Editor im neutralen Admin-UI
+- `/agency/gating`: Plan + Feature-Schalter
+- `/agency/feldreferenz`: Beschreibungen (DE/EN) für die Prismic-Feldreferenz der Website-Betreiber (`/prismic-feldreferenz`) → `src/lib/fieldDescriptions.json` (committet, auf `main` pflegen, gilt für alle Branches; Schlüssel `<Custom Type oder Slice>.<Feld-API-ID>`). Ohne Eintrag: automatischer Text aus `build-customtypes.js`
+- Dateien, die committet werden, sind nur im lokalen Dev-Server bearbeitbar
+
 ## Admin-Anmeldung
 
 - Login unter `/admin` mit `ADMIN_SECRET` → signiertes Session-Cookie `admin_session` (HttpOnly, 8 h; mit „Angemeldet bleiben“ 14 Tage), Logout im Dashboard
@@ -412,9 +436,11 @@ Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → S
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 
-- Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings (`chat_active`, Name, Begrüssung, Wissensbasis pro Sprache, Fallback Hauptsprache)
+- Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings, Tab «Chat-Bot» (`chat_active`, Name, Begrüssung, Wissensbasis + «Ergänzungen» (`chat_knowledge_extra`, Vorrang bei Widersprüchen) pro Sprache, je Feld Fallback Hauptsprache)
 - Wissensbasis-Vorlage für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich)
 - Anthropic-Aufruf mit `globalThis.fetch` — der SvelteKit-Event-`fetch` setzt einen Origin-Header → 401 (CORS)
+- **Sicherheit:** Kostendeckel `CHAT_DAILY_BUDGET_USD` / `CHAT_MONTHLY_BUDGET_USD` (Standard 2 / 20 USD, `isOverBudget()` in `chatUsage.ts`); Verlauf für das Modell kommt aus dem Chat-Log (`loadConversationHistory`), vom Browser wird nur die neue Frage übernommen — nie wieder Verlauf aus dem Request vertrauen; Regel 5 im Prompt: keine Zusagen ausserhalb der Wissensbasis
+- **Bewertung:** pro Antwort 👍/👎; bei 👎 Mini-Formular (Name, E-Mail, Kommentar, alles optional) → einmalige Mail an «Verantwortliche E-Mail» (Reply-To = Besucher), Name/E-Mail nicht im Log → `/api/chat/rating`, gespeichert im Chat-Log-Eintrag (`rateChatExchange`, nur eigene Gesprächs-ID, 24 h), Auswertung in `/admin/chatbot`
 - Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
 

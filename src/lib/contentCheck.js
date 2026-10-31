@@ -6,6 +6,8 @@
  */
 
 /** Custom types rendered as their own (static) pages — keep in sync with the routes */
+import { isGoogleShortLink, parseMapPoint } from './mapPoint.js';
+
 export const TRANSLATED_TYPES = ['page', 'leistung', 'ressource'];
 
 /**
@@ -56,7 +58,10 @@ export const CODE_TOKENS = [
 	'Uhrzeit',
 	'Dauer',
 	'Ort',
-	'Event-Name'
+	'Event-Name',
+	'Wegbeschreibung',
+	'Ort-Telefon',
+	'Ort-Karte'
 ];
 
 const TOKEN = /\{\{([^{}]+)\}\}/g;
@@ -98,12 +103,15 @@ function* textValues(node) {
 	}
 }
 
+/** «Kartenpunkt» fields (link or coordinates, see $lib/mapPoint.js) */
+const MAP_POINT_FIELDS = ['map_url', 'location_map_url', 'geo_koordinaten', 'map_point'];
+
 const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
  */
 
 /**
@@ -194,7 +202,21 @@ export async function checkContent(client) {
 		}
 	}
 
-	// 3. Unknown tokens ({{…}} that neither the code nor a variable fills in)
+	// 3. «Kartenpunkt» fields that are not understood (address text, Google place without coordinates …)
+	/** @param {any} node @param {any} doc */
+	const scanMapFields = (node, doc) => {
+		if (!node || typeof node !== 'object') return;
+		for (const [key, value] of Object.entries(node)) {
+			if (MAP_POINT_FIELDS.includes(key) && typeof value === 'string' && value.trim()) {
+				if (!parseMapPoint(value) && !isGoogleShortLink(value)) {
+					links.push({ doc: ref(doc), kind: 'map_point', url: value.trim() });
+				}
+			} else scanMapFields(value, doc);
+		}
+	};
+	for (const doc of docs) scanMapFields(doc.data, doc);
+
+	// 4. Unknown tokens ({{…}} that neither the code nor a variable fills in)
 	const known = new Set(CODE_TOKENS);
 	for (const doc of docs) {
 		if (doc.type !== 'variablen') continue;

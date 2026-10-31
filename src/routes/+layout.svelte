@@ -61,6 +61,9 @@
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: searchIndexed =
+		($page.route.id ?? '').startsWith('/[[lang=lang]]') &&
+		($page.data?.page?.data as any)?.password_protected !== true;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
@@ -442,7 +445,7 @@
 	$: isAdminPage =
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
-		($page.url.pathname.startsWith('/agency/') && $page.data?.authenticated === true);
+		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
 	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
@@ -538,8 +541,10 @@
 		/>
 	{/if}
 
+	<!-- Search index (Pagefind, feature «suche»): only public content pages, never password-protected ones -->
 	<main
 		id="main-content"
+		data-pagefind-body={searchIndexed ? '' : undefined}
 		style:padding-top={stickyHeader && !hasBannerOverlap ? `${$headerHeight}px` : undefined}
 		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
