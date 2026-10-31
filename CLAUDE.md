@@ -128,6 +128,7 @@ Regeln:
 
 - Rechtsgrundlage: Art. 45c FMG + DSG → informieren + Ablehnung ermöglichen (keine vorgängige Einwilligung wie in der EU)
 - **Jeder Dienst, der Cookies setzt, im Browser speichert oder Daten (z.B. IP) an Dritte überträgt, muss in `src/lib/consent/services.ts` registriert werden** (Kategorie, Anbieter, Zweck, Speicher, Datenschutz-URL; Texte als i18n-Keys)
+- Dienst gehört zu einer Funktion, die nicht jede Website nutzt (Konto, Warenkorb, Chat …) → `requires` im Dienst + Bedingung in `consentInUse` (`+layout.server.ts`); Dialog und Datenschutzerklärung zeigen nur Dienste aktiver Funktionen
 - Nicht-funktionale Inhalte (iframes, externe Scripts) immer mit `<ConsentGate service="…" minHeight={…}>` umschliessen — nur dann erscheint der Banner auf der Seite und nur dann kann der Besucher ablehnen
 - Banner erscheint nur auf Seiten, die einen nicht-funktionalen Dienst nutzen; Auswahl in `localStorage` (`klap_consent`); Footer-Link „Cookie-Einstellungen“ öffnet den Dialog
 - Datenschutzseite listet die Dienste automatisch: funktionale immer, nicht-funktionale nur wenn im CMS-Inhalt gefunden (`src/lib/consent/siteServices.ts` scannt Embeds, `*map*`-URLs, externe iframes/Scripts). Neue Erkennungsmuster dort ergänzen

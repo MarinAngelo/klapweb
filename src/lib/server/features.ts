@@ -22,6 +22,7 @@ export const FEATURE_ECOMMERCE = _check('ecommerce');
 export const FEATURE_NEWSLETTER = _check('newsletter');
 export const FEATURE_KUNDENKONTO = _check('kundenkonto');
 export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
+export const FEATURE_RESSOURCENBUCHUNG = _check('ressourcenbuchung');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };
 type FeatureOverrides = { enabled?: string[]; disabled?: string[] };

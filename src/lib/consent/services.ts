@@ -17,6 +17,18 @@ export type ConsentCategory =
 	| 'statistics'
 	| 'marketing';
 
+/**
+ * Condition for listing a service: only when this function is in use on the website
+ * (layout data `consentInUse`, +layout.server.ts). Without `requires` the service is always listed.
+ */
+export type ConsentRequirement =
+	| 'user_backend'
+	| 'page_password'
+	| 'cart'
+	| 'multilang'
+	| 'aufgaben'
+	| 'ai_chat';
+
 export type ConsentService = {
 	label: string;
 	provider: string;
@@ -25,7 +37,12 @@ export type ConsentService = {
 	/** Cookie-/Speicher-Namen bzw. Art der Datenübertragung */
 	storage: string[];
 	privacyUrl?: string;
+	requires?: ConsentRequirement;
 };
+
+/** false = the function behind the service is not used on this website → not listed */
+export const isServiceInUse = (service: ConsentService, inUse: readonly string[] | undefined) =>
+	!service.requires || (inUse ?? []).includes(service.requires);
 
 /** Order = display order in the settings dialog. Labels/descriptions are i18n keys. */
 export const consentCategories: Record<ConsentCategory, { label: string; description: string }> = {
@@ -61,35 +78,40 @@ export const consentServices: Record<string, ConsentService> = {
 		provider: 'Website-Betreiber',
 		category: 'functional',
 		purpose: 'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.',
-		storage: ['klap_user_session (Cookie)']
+		storage: ['klap_user_session (Cookie)'],
+		requires: 'user_backend'
 	},
 	page_password: {
 		label: 'Passwortgeschützte Seiten',
 		provider: 'Website-Betreiber',
 		category: 'functional',
 		purpose: 'Merkt sich die Freigabe passwortgeschützter Seiten.',
-		storage: ['klap_auth (Cookie)']
+		storage: ['klap_auth (Cookie)'],
+		requires: 'page_password'
 	},
 	cart: {
 		label: 'Warenkorb',
 		provider: 'Website-Betreiber',
 		category: 'functional',
 		purpose: 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
-		storage: ['klap_cart (Local Storage)']
+		storage: ['klap_cart (Local Storage)'],
+		requires: 'cart'
 	},
 	language: {
 		label: 'Sprache',
 		provider: 'Website-Betreiber',
 		category: 'functional',
 		purpose: 'Merkt sich die gewählte Sprache der Website.',
-		storage: ['klap_lang (Local Storage)']
+		storage: ['klap_lang (Local Storage)'],
+		requires: 'multilang'
 	},
 	aufgaben_login: {
 		label: 'Aufgabenliste',
 		provider: 'Website-Betreiber',
 		category: 'functional',
 		purpose: 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
-		storage: ['klap_aufgaben_login (Local Storage)']
+		storage: ['klap_aufgaben_login (Local Storage)'],
+		requires: 'aufgaben'
 	},
 	consent_choice: {
 		label: 'Cookie-Auswahl',
@@ -184,7 +206,8 @@ export const consentServices: Record<string, ConsentService> = {
 			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)',
 			'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen'
 		],
-		privacyUrl: 'https://www.anthropic.com/legal/privacy'
+		privacyUrl: 'https://www.anthropic.com/legal/privacy',
+		requires: 'ai_chat'
 	}
 };
 
