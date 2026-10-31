@@ -2,7 +2,14 @@ import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 import { loadVariablesData } from '$lib/variables.js';
-import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO, FEATURE_KUNDENKONTO } from '$lib/server/features';
+import {
+	FEATURE_CHATBOT,
+	FEATURE_ECOMMERCE,
+	FEATURE_KLAPSTUDIO,
+	FEATURE_KUNDENKONTO,
+	FEATURE_RESSOURCENBUCHUNG
+} from '$lib/server/features';
+import type { ConsentRequirement } from '$lib/consent/services';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -124,6 +131,18 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const chatBotName = (baseSettings.data as any)?.chat_bot_name || '';
 		const chatGreeting = (baseSettings.data as any)?.chat_greeting || '';
 		const klapstudioActive = FEATURE_KLAPSTUDIO;
+		// Cookie dialog / privacy page list only services of functions this website uses
+		const consentInUse = (
+			[
+				userBackendActive && 'user_backend',
+				!!(baseSettings.data as any)?.page_password && 'page_password',
+				FEATURE_ECOMMERCE && 'cart',
+				isMultilangActive && 'multilang',
+				// Aufgabenliste belongs to the resource booking (gating.json slices.Aufgaben)
+				FEATURE_RESSOURCENBUCHUNG && 'aufgaben',
+				chatActive && 'ai_chat'
+			] as (ConsentRequirement | false)[]
+		).filter((r): r is ConsentRequirement => !!r);
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
@@ -235,6 +254,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatActive,
 			chatBotName,
 			chatGreeting,
+			consentInUse,
 			locales: allLocales,
 			variables,
 			richVariables,
