@@ -12,7 +12,10 @@ import { env } from '$env/dynamic/private';
 import { createClient } from '$lib/prismicio';
 
 export interface ZimmerAuswahl {
+	/** Room name in the main language — the room's identity (availability, conflicts) */
 	zimmer_name: string;
+	/** Room name in the booking language (mails); empty = same as zimmer_name */
+	zimmer_label?: string;
 	bett_typ: string;
 	anzahl_betten: number;
 }
@@ -33,6 +36,7 @@ export interface RessourceBuchung {
 	email?: string;
 	telefon?: string;
 	nachricht?: string;
+	lang?: string; // Prismic locale of the booking page → language of the guest mails
 	checkedInAt?: string;
 	checkOutAt?: string;
 	checkInItems?: string[];
@@ -86,20 +90,87 @@ export async function listAlleRessourceBuchungen(): Promise<RessourceBuchung[]> 
 	return records.filter(Boolean).sort((a, b) => b.bookedAt.localeCompare(a.bookedAt));
 }
 
+// ── Room identity ─────────────────────────────────────────────────────────────
+// A room is identified by its name in the main language document. Names in other
+// languages are mapped to it (translation of the same group entry). Old bookings made
+// in another language are mapped the same way.
+
+type RoomNames = {
+	/** room name in the main language (reference) */
+	main: string[];
+	/** name in any language → main language name */
+	toMain: Map<string, string>;
+	/** main language name → name per language */
+	byLang: Map<string, Map<string, string>>;
+};
+
+const roomLabel = (z: { zimmer_name?: string | null; bett_typ?: string | null }) =>
+	z.zimmer_name || z.bett_typ || '';
+
+export async function loadRoomNames(uid: string): Promise<RoomNames> {
+	const result: RoomNames = { main: [], toMain: new Map(), byLang: new Map() };
+	try {
+		const client = createClient();
+		const [mainDoc, all] = await Promise.all([
+			client.getByUID('ressource' as any, uid),
+			client.getAllByType('ressource' as any, { lang: '*' })
+		]);
+		result.main = (((mainDoc.data as any)?.schlafzimmer ?? []) as any[]).map(roomLabel);
+		result.main.forEach((name) => result.toMain.set(name, name));
+		const translations = (all as any[]).filter((d) => d.uid === uid && d.lang !== mainDoc.lang);
+		for (const doc of translations) {
+			const names = ((doc.data?.schlafzimmer ?? []) as any[]).map(roomLabel);
+			const map = new Map<string, string>();
+			result.main.forEach((mainName, i) => {
+				const name = names[i];
+				if (!name) return;
+				map.set(mainName, name);
+				if (!result.toMain.has(name)) result.toMain.set(name, mainName);
+			});
+			result.byLang.set(doc.lang, map);
+		}
+	} catch (err) {
+		console.error(`[ressourceBuchungen] loadRoomNames(${uid}) Fehler:`, err);
+	}
+	return result;
+}
+
+/** Main language room names of a booking; null = whole resource or a room that cannot be identified */
+function bookedRooms(
+	b: Pick<RessourceBuchung, 'zimmerauswahl'>,
+	rooms: RoomNames
+): string[] | null {
+	const auswahl = b.zimmerauswahl ?? [];
+	if (auswahl.length === 0) return null;
+	const names = auswahl.map((z) => rooms.toMain.get(roomLabel(z)));
+	// Unknown room (e.g. renamed since) → block the whole resource rather than risk a double booking
+	return names.every(Boolean) ? (names as string[]) : null;
+}
+
 /**
  * Returns all booked periods for one or more resource UIDs combined.
- * zimmer: [] means the whole resource was booked (no room selection).
+ * The first UID is the resource being viewed; its room names are returned in `lang`.
+ * zimmer: [] means the whole resource is blocked (no room selection, or a related resource).
  */
 export async function getBelegtePerioden(
-	ressourceUids: string | string[]
+	ressourceUids: string | string[],
+	lang?: string
 ): Promise<Array<{ von: string; bis: string; zimmer: string[] }>> {
 	const uids = Array.isArray(ressourceUids) ? ressourceUids : [ressourceUids];
-	const all = await Promise.all(uids.map(listRessourceBuchungen));
-	return all.flat().map((b) => ({
-		von: b.von,
-		bis: b.bis,
-		zimmer: (b.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ)
-	}));
+	const ownUid = uids[0];
+	const [all, rooms] = await Promise.all([
+		Promise.all(uids.map(listRessourceBuchungen)),
+		loadRoomNames(ownUid)
+	]);
+	const display = (lang && rooms.byLang.get(lang)) || null;
+	return all.flat().map((b) => {
+		const names = b.ressourceUid === ownUid ? bookedRooms(b, rooms) : null;
+		return {
+			von: b.von,
+			bis: b.bis,
+			zimmer: names ? names.map((n) => display?.get(n) ?? n) : []
+		};
+	});
 }
 
 /**
@@ -196,19 +267,22 @@ export async function bucheRessource(
 		datesOverlap(buchung.von, buchung.bis, b.von, b.bis)
 	);
 
-	const requestedNames = (buchung.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ);
+	// Rooms are compared by their main language name, see bookedRooms()
+	const rooms = await loadRoomNames(buchung.ressourceUid);
+	const requested = bookedRooms(buchung, rooms);
 
-	if (requestedNames.length === 0) {
-		// Ganze Ressource: jede Überschneidung = Konflikt
+	if (!requested) {
+		// Ganze Ressource (oder Zimmer nicht zuordenbar): jede Überschneidung = Konflikt
 		if (overlapping.length > 0) throw new Error('CONFLICT');
 	} else {
-		// Einzelne Zimmer: Konflikt wenn ganze Ressource belegt ODER selbes Zimmer gebucht
-		const ganzeRessourceBelegt = overlapping.some((b) => (b.zimmerauswahl ?? []).length === 0);
-		if (ganzeRessourceBelegt) throw new Error('CONFLICT');
-		const belegteNamen = new Set(
-			overlapping.flatMap((b) => (b.zimmerauswahl ?? []).map((z) => z.zimmer_name || z.bett_typ))
-		);
-		if (requestedNames.some((name) => belegteNamen.has(name))) throw new Error('CONFLICT');
+		// Einzelne Zimmer: Konflikt wenn ganze/verwandte Ressource belegt ODER selbes Zimmer gebucht
+		const belegt = new Set<string>();
+		for (const b of overlapping) {
+			const names = b.ressourceUid === buchung.ressourceUid ? bookedRooms(b, rooms) : null;
+			if (!names) throw new Error('CONFLICT');
+			names.forEach((n) => belegt.add(n));
+		}
+		if (requested.some((n) => belegt.has(n))) throw new Error('CONFLICT');
 	}
 
 	const id = `${buchung.ressourceUid}/${Date.now()}_${crypto.randomUUID()}`;

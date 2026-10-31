@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled, type Content } from '@prismicio/client';
-	import { PrismicImage, PrismicLink } from '@prismicio/svelte';
+	import { PrismicImage } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { convertNumber } from '../../utils/convertNumber';
@@ -34,11 +36,9 @@
 	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners
 		? 'rounded-2xl'
 		: ''}"
-	style="
-		background-color: {bodyBgColor || $theme.pageBgColor};
-		--custom-card-color: {bodyColor || $theme.pageColor};
-		{hasBorderColor ? `border-color: ${actualBorderColor};` : ''}
-	"
+	style:background-color={bodyBgColor || $theme.pageBgColor}
+	style:--custom-card-color={bodyColor || $theme.pageColor}
+	style:border-color={actualBorderColor || undefined}
 >
 	{#if isFilled.image(card.image)}
 		<div class="relative">
@@ -79,7 +79,7 @@
 		<div class="pl-6 pr-6">
 			<Button
 				href={anchor}
-				text={card.buttonText || 'Mehr erfahren'}
+				text={card.buttonText || $_('Mehr erfahren')}
 				color={buttonColor || $theme.pageButtonColor}
 				bgColor={buttonBgColor || $theme.pageButtonBgColor}
 				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}
@@ -90,7 +90,7 @@
 		<div class="pl-6 pr-6">
 			<Button
 				link={card.buttonLink}
-				text={card.buttonText || 'Mehr erfahren'}
+				text={card.buttonText || $_('Mehr erfahren')}
 				color={buttonColor || $theme.pageButtonColor}
 				bgColor={buttonBgColor || $theme.pageButtonBgColor}
 				hoverColor={buttonHoverColor || $theme.pageButtonHoverColor}

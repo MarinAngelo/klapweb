@@ -1,17 +1,27 @@
 /**
- * GET /api/test-reminder?secret=XXX&type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
+ * GET /api/test-reminder?type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
  *
  * Runs the same logic as the send-reminders Netlify function.
  *
  * Parameters:
- *   secret  – must match ADMIN_SECRET env var
+ *   Zugriff – nur mit Admin-Session (vorher unter /admin anmelden)
  *   type    – "ankunft" (default), "nach_ankunft", or "abreise"
  *   date    – target date (default: today+2 / today-1 / today+1)
  *   dryRun  – if "true", shows what would be sent without actually sending (default: false)
  */
 
 import { json } from '@sveltejs/kit';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
+import { getRessourceDocForBooking } from '$lib/server/ressourceMail';
 import { env } from '$env/dynamic/private';
+import { isAdmin } from '$lib/server/adminAuth';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
 import { Resend } from 'resend';
@@ -21,18 +31,14 @@ import { formatDateShort } from '$lib/utils/formatDate';
 
 const formatDate = formatDateShort;
 
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
-
 function dateInDays(days: number): string {
 	const d = new Date();
 	d.setUTCDate(d.getUTCDate() + days);
 	return d.toISOString().slice(0, 10);
 }
 
-export const GET: RequestHandler = async ({ url }) => {
-	if (url.searchParams.get('secret') !== env.ADMIN_SECRET) {
+export const GET: RequestHandler = async ({ url, cookies }) => {
+	if (!isAdmin(cookies)) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
@@ -93,12 +99,25 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	const results: any[] = [];
 	const client = prismic.createClient(repoName);
+	// {{Messenger-Apps}} (Signal, Telegram, WhatsApp) with the number from the settings
+	const settings = await client.getSingle('settings').catch(() => null);
+	const messengerHtml = messengerButtonsHtml((settings?.data as any)?.whatsapp_tel);
+	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, Promise<Awaited<ReturnType<typeof loadMailTheme>>>>();
+	const themeFor = (lang?: string) => {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, loadMailTheme(client, lang));
+		return themes.get(key)!;
+	};
 	const resend = dryRun ? null : new Resend(resendKey);
 
 	for (const buchung of upcoming) {
 		try {
-			const doc = await client.getByUID('ressource', buchung.ressourceUid);
+			const doc = await getRessourceDocForBooking(client, buchung);
 			const d = doc.data as any;
+			// Variablen (incl. multi-line text) in the booking language
+			const vars = mailVariables(variablesData, buchung.lang);
 
 			const textField =
 				type === 'abreise'
@@ -118,7 +137,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				continue;
 			}
 
-			const betreff =
+			const betreffRaw =
 				type === 'abreise'
 					? (d.abreise_betreff as string)?.trim() ||
 						`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`
@@ -131,13 +150,22 @@ export const GET: RequestHandler = async ({ url }) => {
 			const uidKey = buchung.ressourceUid.toUpperCase().replace(/-/g, '_');
 			const doorCode = env[`DOOR_CODE_${uidKey}`] || env.DOOR_CODE || '';
 
-			const html = replaceTokens(prismic.asHTML(textField) ?? '', {
+			const tokens: Record<string, string> = {
 				Türcode: doorCode,
 				Name: buchung.name || '',
 				Anreise: formatDate(buchung.von),
 				Abreise: formatDate(buchung.bis),
-				Buchungsreferenz: buchung.id || ''
-			});
+				Buchungsreferenz: buchung.id || '',
+				'Messenger-Apps': messengerHtml,
+				WhatsApp: messengerHtml
+			};
+			const betreff = renderMailText(betreffRaw, tokens, vars);
+			const mailTheme = await themeFor(buchung.lang);
+			const html = wrapMail(
+				renderMailHtml((textField as any) ?? [], tokens, vars, mailTheme),
+				mailTheme,
+				{ lang: buchung.lang, subject: betreff }
+			);
 
 			if (dryRun) {
 				results.push({

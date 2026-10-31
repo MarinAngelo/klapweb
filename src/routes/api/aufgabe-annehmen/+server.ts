@@ -1,14 +1,16 @@
 /**
  * POST /api/aufgabe-annehmen
  *
- * Body: { buchungId, email, name, aufgabeUid, aufgabeTitel,
- *         creditTyp, creditBetrag?, ressourceUid, preisProNacht? }
+ * Body: { buchungId, aufgabeUid } — title and credits are read from Prismic
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { createAnnahme } from '$lib/server/aufgaben';
+import { plainTextMail } from '$lib/server/mailText';
+import { createAnnahme, listAlleAnnahmen } from '$lib/server/aufgaben';
+import { annahmeFehler, loadKatalog } from '$lib/server/aufgabenKatalog';
 import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: any;
@@ -18,9 +20,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { buchungId, aufgabeUid, aufgabeTitel, creditTyp, creditBetrag } = body;
+	const { buchungId, aufgabeUid } = body;
 
-	if (!buchungId || !aufgabeUid || !creditTyp) {
+	if (!buchungId || !aufgabeUid) {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 
@@ -58,6 +60,27 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		});
 	}
 
+	// Task data from Prismic (not from the browser) + rules: main task, max. acceptances, order
+	let katalog;
+	try {
+		katalog = await loadKatalog(fetch);
+		const fehler = annahmeFehler(aufgabeUid, buchungId, katalog, await listAlleAnnahmen());
+		if (fehler) return new Response(JSON.stringify({ error: fehler }), { status: 409 });
+	} catch {
+		return new Response(JSON.stringify({ error: 'Aufgabe konnte nicht geprüft werden' }), {
+			status: 500
+		});
+	}
+	const aufgabe = katalog.find((a) => a.uid === aufgabeUid)!;
+	const hauptaufgabe = aufgabe.parentUid
+		? katalog.find((a) => a.uid === aufgabe.parentUid)
+		: undefined;
+	const aufgabeTitel = aufgabe.titel;
+	const creditTyp: 'fest' | 'offen' =
+		aufgabe.creditTyp === 'Offen (Zeitbasiert)' ? 'offen' : 'fest';
+	const creditBetrag = aufgabe.creditBetrag ?? undefined;
+	const anzeigeTitel = hauptaufgabe ? `${hauptaufgabe.titel} › ${aufgabeTitel}` : aufgabeTitel;
+
 	// Preis aus Prismic laden (nur für zeitbasierte Credits)
 	if (creditTyp === 'offen' && ressourceUid) {
 		try {
@@ -81,6 +104,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			creditTyp,
 			creditBetrag: creditTyp === 'fest' ? (creditBetrag ?? 0) : undefined,
 			preisProNacht: creditTyp === 'offen' ? preisProNacht : undefined,
+			hauptaufgabeUid: hauptaufgabe?.uid,
+			hauptaufgabeTitel: hauptaufgabe?.titel,
 			angenommenAt: new Date().toISOString()
 		});
 		// Operator-Benachrichtigung mit Freigabe-Link
@@ -102,26 +127,29 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		}
 
 		if (resendKey && emailFrom && adminEmail && adminSecret) {
-			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&secret=${encodeURIComponent(adminSecret)}`;
+			// Token only authorises this approval — the admin password is never sent by mail
+			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&token=${adminActionToken('freigabe-aufgabe', annahme.id)}`;
 			try {
 				const { Resend } = await import('resend');
 				const resend = new Resend(resendKey);
 				const { error: e } = await resend.emails.send({
 					from: emailFrom,
 					to: adminEmail,
-					subject: `Aufgabe angenommen: ${aufgabeTitel}`,
-					text: [
-						`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
-						``,
-						`Aufgabe: ${aufgabeTitel}`,
-						`Name:    ${guestName}`,
-						`E-Mail:  ${guestEmail}`,
-						`Buchung: ${buchungId}`,
-						``,
-						`─────────────────────────────────────`,
-						`Annahme freigeben (Nutzer erhält dann die Bestätigungsmail):`,
-						freigabeLink
-					].join('\n')
+					subject: `Aufgabe angenommen: ${anzeigeTitel}`,
+					...plainTextMail(
+						[
+							`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
+							``,
+							`Aufgabe: ${anzeigeTitel}`,
+							`Name:    ${guestName}`,
+							`E-Mail:  ${guestEmail}`,
+							`Buchung: ${buchungId}`,
+							``,
+							`─────────────────────────────────────`,
+							`Annahme freigeben (Nutzer erhält dann die Bestätigungsmail):`,
+							freigabeLink
+						].join('\n')
+					)
 				});
 				if (e) console.error('Aufgabe Operator-Mail fehlgeschlagen:', e);
 			} catch (e) {

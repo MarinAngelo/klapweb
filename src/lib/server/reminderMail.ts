@@ -6,13 +6,19 @@
  * wird die Ankunftserinnerung sofort geschickt statt auf den Scheduler zu warten.
  */
 import { createClient } from '$lib/prismicio';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
 import * as prismic from '@prismicio/client';
 import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchungen';
 import { env } from '$env/dynamic/private';
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
+import { t } from '$lib/i18n/translations';
+import { fallbackSubject, getRessourceDocForBooking, mailLang } from './ressourceMail';
 
 function fmtDate(dateStr: string): string {
 	const [y, m, d] = dateStr.split('-');
@@ -21,12 +27,14 @@ function fmtDate(dateStr: string): string {
 
 function doorCode(uid: string): string {
 	const key = uid.toUpperCase().replace(/-/g, '_');
-	return process.env[`DOOR_CODE_${key}`] || process.env.DOOR_CODE || '';
+	// $env (not process.env): in dev only $env contains the values from .env
+	return env[`DOOR_CODE_${key}`] || env.DOOR_CODE || '';
 }
 
-function whatsAppLink(tel: string): string {
-	const number = tel.replace(/[^\d]/g, '');
-	return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+/** {{Messenger-Apps}} (Signal, Telegram, WhatsApp); {{WhatsApp}} = old name, same buttons */
+function messengerTokens(tel: string | undefined): Record<string, string> {
+	const html = messengerButtonsHtml(tel);
+	return { 'Messenger-Apps': html, WhatsApp: html };
 }
 
 function dateInDays(n: number): string {
@@ -68,11 +76,15 @@ export async function maybeSendAnkunftsErinnerung(
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings] = await Promise.all([
-			client.getByUID('ressource', buchung.ressourceUid),
-			client.getSingle('settings').catch(() => null)
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			client.getSingle('settings').catch(() => null),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
 		const d = doc.data as any;
+		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
+		const vars = mailVariables(variablesData, buchung.lang);
 		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 
 		const textField = d.reminder_text as prismic.RichTextField | undefined;
@@ -82,26 +94,33 @@ export async function maybeSendAnkunftsErinnerung(
 			Anreise: fmtDate(buchung.von),
 			Abreise: fmtDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			WhatsApp: waTel ? whatsAppLink(waTel) : ''
+			...messengerTokens(waTel)
 		};
 
 		const betreff =
-			(d.reminder_betreff as string)?.trim() || `Ihre Anreise: ${d.name ?? buchung.ressourceUid}`;
+			renderMailText((d.reminder_betreff as string)?.trim() ?? '', tokens, vars) ||
+			fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name);
 
 		let html: string;
 		if (textField?.length) {
-			html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
+			html = renderMailHtml(textField ?? [], tokens, vars, mailTheme);
 		} else {
 			// Fallback wenn reminder_text in Prismic nicht gesetzt
 			console.log(
 				`[reminderMail] reminder_text leer für ${buchung.ressourceUid} — sende Fallback-Mail`
 			);
-			html = `<p>Hallo ${tokens.Name},</p>
-<p>wir freuen uns auf Ihre Anreise am <strong>${tokens.Anreise}</strong> (Abreise: ${tokens.Abreise}).</p>
-${tokens.Türcode ? `<p><strong>Türcode:</strong> ${tokens.Türcode}</p>` : ''}
-${tokens.WhatsApp ? `<p>Bei Fragen: ${tokens.WhatsApp}</p>` : ''}
-<p>Referenz: ${tokens.Buchungsreferenz}</p>`;
+			const lang = mailLang(buchung);
+			const intro = t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).', lang)
+				.replace('{anreise}', `<strong>${tokens.Anreise}</strong>`)
+				.replace('{abreise}', tokens.Abreise);
+			html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
+<p>${intro}</p>
+${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
+${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
+<p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
 		}
+		// Layout in the page colours
+		html = wrapMail(html, mailTheme, { lang: buchung.lang, subject: betreff });
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({
@@ -139,11 +158,15 @@ export async function sendAbreiseErinnerung(
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings] = await Promise.all([
-			client.getByUID('ressource', buchung.ressourceUid),
-			client.getSingle('settings').catch(() => null)
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			client.getSingle('settings').catch(() => null),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
 		]);
 		const d = doc.data as any;
+		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
+		const vars = mailVariables(variablesData, buchung.lang);
 		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 
 		const textField = d.abreise_text as prismic.RichTextField | undefined;
@@ -155,13 +178,16 @@ export async function sendAbreiseErinnerung(
 			Anreise: fmtDate(buchung.von),
 			Abreise: fmtDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			WhatsApp: waTel ? whatsAppLink(waTel) : ''
+			...messengerTokens(waTel)
 		};
 
 		const betreff =
-			(d.abreise_betreff as string)?.trim() ||
-			`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
-		const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens);
+			renderMailText((d.abreise_betreff as string)?.trim() ?? '', tokens, vars) ||
+			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
+		const html = wrapMail(renderMailHtml(textField ?? [], tokens, vars, mailTheme), mailTheme, {
+			lang: buchung.lang,
+			subject: betreff
+		});
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({

@@ -1,6 +1,13 @@
 <script lang="ts">
+	import { osmMarkerUrl, parseMapPoint, type MapPoint } from '$lib/mapPoint.js';
+	import { resolveMapPoint } from '$lib/utils/mapUrl';
+	import { onMount } from 'svelte';
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import { asText } from '@prismicio/helpers';
-	import { PrismicRichText, PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 
@@ -8,11 +15,17 @@
 
 	export let slice: Content.EventSlice;
 	const primary = slice.primary;
+	// «Kartenpunkt» (link or coordinates); Google short links are resolved after mount (via our server)
+	const anyPrimary = primary as any;
+	let mapPoint: MapPoint | null = parseMapPoint(anyPrimary.map_point);
+	onMount(async () => {
+		if (!mapPoint && anyPrimary.map_point) mapPoint = await resolveMapPoint(anyPrimary.map_point);
+	});
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
 
-	import { formatEventDateTime } from '$lib/utils/formatDate';
+	import { formatEventDateTime, SITE_TIME_ZONE } from '$lib/utils/formatDate';
 
 	// Datum formatieren
 	const formatDateTime = (date: string | null) => formatEventDateTime(date, false);
@@ -21,6 +34,7 @@
 	const formatTime = (date: string | null) => {
 		if (!date) return '';
 		return new Intl.DateTimeFormat('de-CH', {
+			timeZone: SITE_TIME_ZONE,
 			hour: '2-digit',
 			minute: '2-digit'
 		}).format(new Date(date));
@@ -55,31 +69,6 @@ DESCRIPTION:${description || ''}
 LOCATION:${location || ''}
 END:VEVENT
 END:VCALENDAR`;
-	};
-
-	// Google Calendar Link generieren
-	const getGoogleCalendarLink = ({
-		title,
-		start,
-		end,
-		description,
-		location
-	}: {
-		title: string;
-		start: string;
-		end: string;
-		description?: string;
-		location?: string;
-	}) => {
-		const format = (d: string) => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, '');
-		const params = new URLSearchParams({
-			action: 'TEMPLATE',
-			text: title,
-			details: description || '',
-			location: location || '',
-			dates: `${format(start)}/${format(end)}`
-		});
-		return `https://calendar.google.com/calendar/render?${params.toString()}`;
 	};
 
 	// reactive .ics Blob URL
@@ -124,8 +113,7 @@ END:VCALENDAR`;
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
 	animationOptions={anim.options}
-	style="color: var(--page-color)"
-	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+	class="text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
 >
 	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 		{#if primary.title}
@@ -137,7 +125,7 @@ END:VCALENDAR`;
 
 		{#if primary.description}
 			<div>
-				<PrismicRichText field={primary.description} />
+				<PrismicRichText field={primary.description} components={{ embed: RichTextEmbed }} />
 			</div>
 		{/if}
 
@@ -168,48 +156,28 @@ END:VCALENDAR`;
 						target="_blank"
 						data-type="prismic-link"
 					>
-						Zum Kalender hinzufügen (.ics)
-					</PrismicLink><br />
-
-					<PrismicLink
-						field={{
-							link_type: 'Web',
-							url: getGoogleCalendarLink({
-								title: primary.title,
-								start: primary.start_date_time,
-								end: primary.end_date_time,
-								description: asText(primary.description),
-								location: asText(primary.location_text)
-							})
-						}}
-						target="_blank"
-						data-type="prismic-link"
-					>
-						In Google Calendar öffnen
+						{$_('Zum Kalender hinzufügen (.ics)')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.location_text}
 					<div class="mt-4">
-						<strong>Ort:</strong>
-						<PrismicRichText field={primary.location_text} />
+						<strong>{$_('Ort')}:</strong>
+						<PrismicRichText field={primary.location_text} components={{ embed: RichTextEmbed }} />
 					</div>
 				{/if}
-				{#if primary.geopoint?.latitude && primary.geopoint?.longitude}
+				{#if mapPoint}
 					<PrismicLink
-						field={{
-							link_type: 'Web',
-							url: `https://www.google.com/maps?q=${primary.geopoint.latitude},${primary.geopoint.longitude}`
-						}}
+						field={{ link_type: 'Web', url: osmMarkerUrl(mapPoint) }}
 						target="_blank"
 						data-type="prismic-link"
 					>
-						Standort auf Google Maps anzeigen
+						{$_('Standort auf der Karte anzeigen')}
 					</PrismicLink><br />
 				{/if}
 				{#if primary.additional_dates.length > 0}
 					{#if allDates.length > 0 && primary.additional_dates.length > 0}
 						<div class="mt-4">
-							<strong>Daten:</strong>
+							<strong>{$_('Daten')}:</strong>
 							{#each allDates as date}
 								<p>
 									- {date
@@ -219,7 +187,7 @@ END:VCALENDAR`;
 							{/each}
 						</div>
 					{:else}
-						<div class="mt-4 text-red-500">Zurzeit sind keine Durchführungen geplant</div>
+						<div class="mt-4 text-red-500">{$_('Zurzeit sind keine Durchführungen geplant')}</div>
 					{/if}
 				{/if}
 			</div>

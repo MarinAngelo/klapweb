@@ -16,17 +16,28 @@
 	$: anim = mapAnimationFromPrimary(slice.primary);
 	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
 	$: textColor = (slice.primary as any).color || $theme.pageColor;
+	$: innerApply = ((slice.primary as any).inner_apply as boolean | undefined) ?? false;
 	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
 	$: centered =
 		(slice.variation === 'default' || slice.variation === 'ueberschrift') &&
 		!!(slice.primary as any).centered;
+
+	$: yPaddingSame = ((slice.primary as any).y_padding_same as boolean | undefined) ?? false;
+	$: yPaddingSize = (slice.primary as any).y_padding as string | undefined;
+	$: marginTopSize = (slice.primary as any).margin_top as string | undefined;
 </script>
 
 {#if visible}
 	<Bounded
 		as="section"
-		class="leading-relaxed"
-		style="font-family: var(--page-font); --page-color: {textColor}; --page-bg-color: {bgColor}; background-color: {bgColor}; color: {textColor};"
+		class="color-scope leading-relaxed font-[var(--page-font)]"
+		{yPaddingSame}
+		{yPaddingSize}
+		{marginTopSize}
+		innerBackgroundColor={innerApply ? bgColor : undefined}
+		style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-color: {textColor}; --scope-bg: {innerApply
+			? $theme.pageBgColor
+			: bgColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}

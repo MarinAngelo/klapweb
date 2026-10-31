@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { theme } from '$lib/stores/theme';
+	import { _ } from '$lib/stores/i18n';
 	import { variables } from '$lib/stores/variables';
 	import { addonRows } from '$lib/stores/addonRows';
-	import { get } from 'svelte/store';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 
@@ -12,14 +11,7 @@
 	export let index: any;
 	const p = slice.primary ?? ({} as any);
 
-	const { pageColor, pageBgColor } = get(theme);
-
-	$: anim = mapAnimation(
-		p.animate,
-		p.anim_direction,
-		p.anim_delay,
-		p.anim_duration
-	);
+	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 
 	const billingTypeSuffix: Record<string, string> = {
@@ -37,25 +29,22 @@
 	// Rows: only shown when their token is present in the store.
 	$: mainRows = [
 		{
-			label: withBillingType(
-				p.label_preis || 'Gesamtpreis',
-				$variables['Abrechnungsart']
-			),
+			label: withBillingType(p.label_preis || $_('Gesamtpreis'), $variables['Abrechnungsart']),
 			value: $variables['Preis'],
 			suffix: ''
 		},
 		{
-			label: p.label_rabatt || 'Rabatt',
+			label: p.label_rabatt || $_('Rabatt'),
 			value: $variables['Rabatt'],
 			suffix: ' %'
 		},
 		{
-			label: p.label_anzahlung || 'Anzahlung nach Auftragserteilung',
+			label: p.label_anzahlung || $_('Anzahlung nach Auftragserteilung'),
 			value: $variables['AnzahlungBetrag'],
 			suffix: ''
 		},
 		{
-			label: p.label_restbetrag || 'Restpreis nach Veröffentlichung',
+			label: p.label_restbetrag || $_('Restpreis nach Veröffentlichung'),
 			value: $variables['Restbetrag'],
 			suffix: ''
 		}
@@ -71,34 +60,33 @@
 {#if mainRows.length > 0 || addonRowsFormatted.length > 0}
 	<Bounded
 		as="section"
-		style="color: {pageColor}; background-color: {pageBgColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class="{mobileVollbreite ? 'overflow-x-clip' : ''}"
+		class="bg-page-bg text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
 	>
-		<div class="{mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}">
-		<table class="w-full border-collapse">
-			{#each mainRows as row}
-				<tr class="border-b" style="border-color: {pageColor}22;">
-					<td class="py-2 pr-8">{row.label}</td>
-					<td class="py-2 text-right tabular-nums">{row.value}{row.suffix}</td>
-				</tr>
-			{/each}
-			{#each addonRowsFormatted as row}
-				<tr class="border-b" style="border-color: {pageColor}22;">
-					<td class="py-2 pr-8">{row.label}</td>
-					<td class="py-2 text-right tabular-nums">{row.value}</td>
-				</tr>
-			{/each}
-			{#if $variables['Total'] && addonRowsFormatted.length > 0}
-				<tr>
-					<td class="pt-3 pr-8 font-bold">{p.label_total || 'Total'}</td>
-					<td class="pt-3 text-right tabular-nums font-bold">{$variables['Total']}</td>
-				</tr>
-			{/if}
-		</table>
+		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+			<table class="w-full border-collapse">
+				{#each mainRows as row}
+					<tr class="border-b border-page-13">
+						<td class="py-2 pr-8">{row.label}</td>
+						<td class="py-2 text-right tabular-nums">{row.value}{row.suffix}</td>
+					</tr>
+				{/each}
+				{#each addonRowsFormatted as row}
+					<tr class="border-b border-page-13">
+						<td class="py-2 pr-8">{row.label}</td>
+						<td class="py-2 text-right tabular-nums">{row.value}</td>
+					</tr>
+				{/each}
+				{#if $variables['Total'] && addonRowsFormatted.length > 0}
+					<tr>
+						<td class="pt-3 pr-8 font-bold">{p.label_total || $_('Total')}</td>
+						<td class="pt-3 text-right tabular-nums font-bold">{$variables['Total']}</td>
+					</tr>
+				{/if}
+			</table>
 		</div>
 	</Bounded>
 {/if}

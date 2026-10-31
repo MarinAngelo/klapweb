@@ -1,20 +1,10 @@
 import type { PageServerLoad } from './$types';
-import { error } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 import { asText } from '@prismicio/client';
-import { env } from '$env/dynamic/private';
 
 export const prerender = false;
 
-function checkAuth(url: URL) {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-}
-
-export const load: PageServerLoad = async ({ url, fetch }) => {
-	checkAuth(url);
-
+export const load: PageServerLoad = async ({ fetch }) => {
 	const client = createClient({ fetch });
 
 	// Alle Seiten mit password_protected = true laden
@@ -29,5 +19,5 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 			id: p.id
 		}));
 
-	return { secret: url.searchParams.get('secret')!, pages: protected_ };
+	return { pages: protected_ };
 };

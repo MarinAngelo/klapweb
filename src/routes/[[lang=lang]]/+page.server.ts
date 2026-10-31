@@ -16,7 +16,7 @@ function localRedirectDisabled(): boolean {
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ params, parent }) {
+export async function load({ params, parent, fetch, cookies }) {
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
 	const { lang, settings } = await parent();
 
@@ -31,7 +31,8 @@ export async function load({ params, parent }) {
 	if (redirectActive && redirectUrl && !localRedirectDisabled()) {
 		throw redirect(302, redirectUrl);
 	}
-	const client = createClient();
+	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
+	const client = createClient({ fetch, cookies });
 
 	try {
 		const page = await client.getByUID('page', 'home', { lang });

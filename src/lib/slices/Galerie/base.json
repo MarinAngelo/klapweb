@@ -65,15 +65,6 @@
 						"default_value": true
 					}
 				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Einblend-Animation",
-						"placeholder_false": "Aus",
-						"placeholder_true": "Ein",
-						"default_value": true
-					}
-				},
 				"banner_overlap": {
 					"type": "Boolean",
 					"config": {
@@ -97,6 +88,15 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Einblend-Animation",
+						"placeholder_false": "Aus",
+						"placeholder_true": "Ein",
+						"default_value": true
 					}
 				}
 			},

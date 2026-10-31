@@ -1,7 +1,15 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
-import { FEATURE_CHATBOT, FEATURE_KLAPSTUDIO } from '$lib/server/features';
+import { loadVariablesData } from '$lib/variables.js';
+import {
+	FEATURE_CHATBOT,
+	FEATURE_ECOMMERCE,
+	FEATURE_KLAPSTUDIO,
+	FEATURE_KUNDENKONTO,
+	FEATURE_RESSOURCENBUCHUNG
+} from '$lib/server/features';
+import type { ConsentRequirement } from '$lib/consent/services';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -38,8 +46,9 @@ async function getRepoInfo(client: ReturnType<typeof createClient>) {
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url, locals }) {
-	// Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
-	if (url.pathname.startsWith('/preview/')) {
+	// Slice-Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
+	// (/preview/… ist dagegen die Prismic-Vorschau und braucht alle Daten)
+	if (url.pathname.startsWith('/slice-preview/')) {
 		return {};
 	}
 
@@ -50,9 +59,13 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const { mainLang, allLocales } = await getRepoInfo(client);
 
 		// 2. Sprach-Ermittlung der aktuellen Route
+		// Prismic-Vorschau (/preview/…): Präfix für die Sprach-Ermittlung ignorieren
 		const segments = url.pathname.split('/').filter(Boolean);
+		if (segments[0] === 'preview') segments.shift();
 		const firstSegment = segments[0];
 		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
+		// Correct <html lang> already in the server/prerendered HTML (screen readers, SEO, search index)
+		locals.htmlLang = lang;
 
 		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
 		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.
@@ -82,7 +95,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			client.getAllByType('font').catch(() => []),
 			client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
 			client.getAllByType('icon', { lang: '*' }).catch(() => []),
-			(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
+			// All language versions (translation of the Variablen document, fallback main language)
+			loadVariablesData(client, mainLang),
 			// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
 			lang !== mainLang
 				? client.getSingle('settings', { lang: mainLang }).catch(() => null)
@@ -110,16 +124,31 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
-		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
+		const userBackendActive =
+			FEATURE_KUNDENKONTO && ((baseSettings.data as any)?.user_backend_active ?? false);
 		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
-		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
-		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
+		// Empty → translated default in ChatWidget
+		const chatBotName = (baseSettings.data as any)?.chat_bot_name || '';
+		const chatGreeting = (baseSettings.data as any)?.chat_greeting || '';
 		const klapstudioActive = FEATURE_KLAPSTUDIO;
+		// Cookie dialog / privacy page list only services of functions this website uses
+		const consentInUse = (
+			[
+				userBackendActive && 'user_backend',
+				!!(baseSettings.data as any)?.page_password && 'page_password',
+				FEATURE_ECOMMERCE && 'cart',
+				isMultilangActive && 'multilang',
+				// Aufgabenliste belongs to the resource booking (gating.json slices.Aufgaben)
+				FEATURE_RESSOURCENBUCHUNG && 'aufgaben',
+				chatActive && 'ai_chat'
+			] as (ConsentRequirement | false)[]
+		).filter((r): r is ConsentRequirement => !!r);
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
 
-		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
+		// Token values in the page language (Prismic translation of Variablen, fallback main language)
+		const { plain: variables, rich: richVariables } = buildTokenMap(variablenDoc, lang);
 
 		// Aktives Theme bestimmen (Feld activ == true)
 		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;
@@ -225,8 +254,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatActive,
 			chatBotName,
 			chatGreeting,
+			consentInUse,
 			locales: allLocales,
 			variables,
+			richVariables,
 			user: locals.user ?? null
 		};
 	} catch (e: any) {

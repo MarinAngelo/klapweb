@@ -20,10 +20,18 @@
  *   DOOR_CODE_<UID>                  – Per-resource code (UID uppercased, hyphens → underscores)
  *
  * Tokens supported in email text:
- *   {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}
+ *   {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{Messenger-Apps}}
  */
 
 import type { Config } from '@netlify/functions';
+import { loadMailTheme, wrapMail, type MailTheme } from '../../src/lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '../../src/lib/variables.js';
+import { messengerButtonsHtml } from '../../src/lib/messengerLinks.js';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
 import { Resend } from 'resend';
@@ -38,8 +46,20 @@ function formatDate(dateStr: string): string {
 	return `${d}.${m}.${y}`;
 }
 
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
+// Fallback subjects only (translations.ts needs SvelteKit and is not available here)
+function isEnglish(buchung: any): boolean {
+	return typeof buchung.lang === 'string' && buchung.lang.startsWith('en');
+}
+
+// Variablen (incl. multi-line text) first, then booking tokens — see src/lib/variables.js
+function replaceTokens(
+	field: any[],
+	tokens: Record<string, string>,
+	vars: ReturnType<typeof mailVariables>,
+	theme: MailTheme | null = null
+): string {
+	// Layout in the page colours (header with site name, page background/text)
+	return wrapMail(renderMailHtml(field, tokens, vars, theme), theme);
 }
 
 function dateInDays(days: number): string {
@@ -129,10 +149,15 @@ export default async function handler() {
 
 	const settings = await client.getSingle('settings').catch(() => null);
 	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
-	function whatsAppLink(): string {
-		if (!waTel) return '';
-		const number = waTel.replace(/[^\d]/g, '');
-		return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+	// {{Messenger-Apps}}: Signal, Telegram, WhatsApp; {{WhatsApp}} = old name, same buttons
+	const messengerHtml = messengerButtonsHtml(waTel);
+	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, MailTheme>();
+	async function themeFor(lang?: string): Promise<MailTheme> {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, await loadMailTheme(client, lang));
+		return themes.get(key)!;
 	}
 
 	function tokens(buchung: any, doorCode: string) {
@@ -142,8 +167,21 @@ export default async function handler() {
 			Anreise: formatDate(buchung.von),
 			Abreise: formatDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz || buchung.id || '',
-			WhatsApp: whatsAppLink()
+			'Messenger-Apps': messengerHtml,
+			WhatsApp: messengerHtml
 		};
+	}
+
+	// Resource document in the booking language (buchung.lang), otherwise main language
+	async function getDoc(buchung: any) {
+		if (buchung.lang) {
+			try {
+				return await client.getByUID('ressource', buchung.ressourceUid, { lang: buchung.lang });
+			} catch {
+				// no translation
+			}
+		}
+		return client.getByUID('ressource', buchung.ressourceUid);
 	}
 
 	function doorCode(uid: string) {
@@ -161,7 +199,7 @@ export default async function handler() {
 
 		for (const buchung of upcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.abreise_text as any[] | undefined;
@@ -173,12 +211,19 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.abreise_betreff as string)?.trim() ||
-					`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
+					renderMailText(
+						(d.abreise_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
+					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(
@@ -217,7 +262,7 @@ export default async function handler() {
 
 		for (const buchung of ankunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.reminder_text as any[] | undefined;
@@ -229,12 +274,19 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.reminder_betreff as string)?.trim() ||
-					`Ihre Anreise morgen: ${d.name ?? buchung.ressourceUid}`;
+					renderMailText(
+						(d.reminder_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
+					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(
@@ -273,7 +325,7 @@ export default async function handler() {
 
 		for (const buchung of nachAnkunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.nach_ankunft_text as any[] | undefined;
@@ -285,12 +337,18 @@ export default async function handler() {
 				}
 
 				const betreff =
-					(d.nach_ankunft_betreff as string)?.trim() ||
-					`Willkommen: ${d.name ?? buchung.ressourceUid}`;
+					renderMailText(
+						(d.nach_ankunft_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) || `Willkommen: ${d.name ?? buchung.ressourceUid}`;
 
+				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
-					prismic.asHTML(textField) ?? '',
-					tokens(buchung, doorCode(buchung.ressourceUid))
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
 				);
 
 				const error = await sendMail(

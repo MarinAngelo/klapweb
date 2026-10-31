@@ -67,10 +67,7 @@
 					"config": {
 						"label": "Spalten je Reihe",
 						"placeholder": "2",
-						"options": [
-							"2",
-							"3"
-						],
+						"options": ["2", "3"],
 						"default_value": "2"
 					}
 				},
@@ -153,41 +150,6 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": true
-					}
-				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
 					}
 				},
 				"cards": {
@@ -285,9 +247,7 @@
 									"placeholder": "",
 									"select": null,
 									"allowTargetBlank": true,
-									"customtypes": [
-										"page"
-									]
+									"customtypes": ["page"]
 								}
 							},
 							"buttonText": {
@@ -305,6 +265,35 @@
 								}
 							}
 						}
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				}
 			},
@@ -331,13 +320,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Hervorgehobener Plan",
-						"options": [
-							"Keiner",
-							"Plan 1",
-							"Plan 2",
-							"Plan 3",
-							"Plan 4"
-						],
+						"options": ["Keiner", "Plan 1", "Plan 2", "Plan 3", "Plan 4"],
 						"default_value": "Keiner"
 					}
 				},
@@ -385,9 +368,7 @@
 						"customtypes": [
 							{
 								"id": "button_stil",
-								"fields": [
-									"name"
-								]
+								"fields": ["name"]
 							}
 						]
 					}
@@ -419,13 +400,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},
@@ -450,9 +425,7 @@
 					"config": {
 						"label": "Plan (Seite)",
 						"select": "document",
-						"customtypes": [
-							"page"
-						]
+						"customtypes": ["page"]
 					}
 				}
 			}
@@ -505,11 +478,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Spalten je Reihe",
-						"options": [
-							"2",
-							"3",
-							"4"
-						],
+						"options": ["2", "3", "4"],
 						"default_value": "3"
 					}
 				},
@@ -517,10 +486,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Bild-Form",
-						"options": [
-							"Quadratisch",
-							"Kreis"
-						],
+						"options": ["Quadratisch", "Kreis"],
 						"default_value": "Quadratisch"
 					}
 				},
@@ -544,13 +510,7 @@
 					"type": "Select",
 					"config": {
 						"label": "Animations-Richtung",
-						"options": [
-							"Oben",
-							"Unten",
-							"Links",
-							"Rechts",
-							"Keine"
-						],
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
 						"default_value": "Oben"
 					}
 				},

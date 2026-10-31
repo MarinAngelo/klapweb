@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { isFilled, asLink } from '@prismicio/client';
+	import { isFilled } from '@prismicio/client';
+	import { linkHref } from '$lib/stores/linkContext';
 	import { PrismicImage } from '@prismicio/svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import OgBild from './OgBild.svelte';
+	import Favicon from './Favicon.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: any;
@@ -17,20 +19,7 @@
 	$: anim = mapAnimationFromPrimary(p);
 	$: layout = p.layout ?? 'Liste';
 	$: spalten = p.spalten ?? '3';
-
-	$: yPadding = (() => {
-		const same = p.y_padding_same ?? false;
-		switch (p.y_padding) {
-			case 'kein Abstand':
-				return 'none';
-			case 'wenig':
-				return same ? 'sm' : 'sm-top';
-			case 'gross':
-				return same ? 'lg' : 'lg-top';
-			default:
-				return same ? 'base' : 'base-top';
-		}
-	})() as 'none' | 'sm' | 'sm-top' | 'base' | 'base-top' | 'lg' | 'lg-top';
+	$: innerApply = p.inner_apply ?? false;
 
 	type Group = { name: string; items: any[] };
 	$: grouped = (() => {
@@ -44,7 +33,7 @@
 	})();
 
 	function href(item: any): string {
-		return asLink(item.url) ?? '#';
+		return $linkHref(item.url) ?? '#';
 	}
 
 	function domain(item: any): string {
@@ -82,10 +71,15 @@
 </script>
 
 <Bounded
+	class="color-scope"
 	as="section"
-	{yPadding}
-	style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-		'var(--page-color)'};"
+	yPaddingSame={p.y_padding_same ?? false}
+	yPaddingSize={p.y_padding}
+	marginTopSize={p.margin_top}
+	innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+	style="--scope-bg: {innerApply
+		? 'var(--page-bg-color)'
+		: p.bg_color || 'var(--page-bg-color)'}; --scope-color: {p.color || 'var(--page-color)'};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -119,8 +113,7 @@
 						href={h}
 						target={ext ? '_blank' : undefined}
 						rel={ext ? 'noopener noreferrer' : undefined}
-						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl no-underline"
-						style="box-shadow: 0 2px 12px rgba(0,0,0,0.08); background: color-mix(in srgb, currentColor 5%, transparent);"
+						class="group flex flex-col rounded-2xl overflow-hidden transition-shadow hover:shadow-xl no-underline [box-shadow:0_2px_12px_rgba(0,0,0,0.08)] [background:color-mix(in_srgb,_currentColor_5%,_transparent)]"
 					>
 						<div class="aspect-video w-full overflow-hidden bg-current/5 relative">
 							{#if isFilled.image(item.bild)}
@@ -152,8 +145,7 @@
 		{:else if layout === 'Kompakt'}
 			<!-- ── Kompakt ── -->
 			<ul
-				class="flex flex-col divide-y"
-				style="border-color: color-mix(in srgb, currentColor 10%, transparent);"
+				class="flex flex-col divide-y [border-color:color-mix(in_srgb,_currentColor_10%,_transparent)]"
 			>
 				{#each group.items as item}
 					{@const gi = allItems.indexOf(item)}
@@ -166,11 +158,7 @@
 							rel={ext ? 'noopener noreferrer' : undefined}
 							class="flex items-center gap-3 py-2.5 hover:opacity-70 transition-opacity no-underline"
 						>
-							<img
-								src="https://www.google.com/s2/favicons?domain={domain(item)}&sz=32"
-								alt=""
-								class="w-4 h-4 flex-shrink-0 opacity-70"
-							/>
+							<Favicon domain={domain(item)} class="w-4 h-4 flex-shrink-0 opacity-70" />
 							<span class="font-semibold">{item.titel || ogData[gi]?.title || domain(item)}</span>
 							{#if item.beschreibung}
 								<span class="hidden md:inline">— {item.beschreibung}</span>
@@ -192,12 +180,10 @@
 							href={h}
 							target={ext ? '_blank' : undefined}
 							rel={ext ? 'noopener noreferrer' : undefined}
-							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md no-underline"
-							style="background: color-mix(in srgb, currentColor 4%, transparent);"
+							class="group flex items-center gap-4 rounded-xl p-3 transition-all hover:shadow-md no-underline [background:color-mix(in_srgb,_currentColor_4%,_transparent)]"
 						>
 							<div
-								class="w-28 md:w-36 flex-shrink-0 aspect-video rounded-lg overflow-hidden relative"
-								style="background: color-mix(in srgb, currentColor 8%, transparent);"
+								class="w-28 md:w-36 flex-shrink-0 aspect-video rounded-lg overflow-hidden relative [background:color-mix(in_srgb,_currentColor_8%,_transparent)]"
 							>
 								{#if isFilled.image(item.bild)}
 									<PrismicImage field={item.bild} class="w-full h-full object-cover" />

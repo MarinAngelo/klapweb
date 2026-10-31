@@ -142,10 +142,11 @@
 						]
 					}
 				},
-				"geopoint": {
-					"type": "GeoPoint",
+				"map_point": {
+					"type": "Text",
 					"config": {
-						"label": "Google Maps URL"
+						"label": "Kartenpunkt",
+						"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
 					}
 				},
 				"mobile_full_width": {
@@ -155,6 +156,22 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"additional_dates": {
+					"type": "Group",
+					"config": {
+						"label": "Weitere Daten",
+						"repeat": true,
+						"fields": {
+							"date": {
+								"type": "Date",
+								"config": {
+									"label": "Datum",
+									"placeholder": ""
+								}
+							}
+						}
 					}
 				},
 				"animate": {
@@ -184,22 +201,6 @@
 					"config": {
 						"label": "Animationsdauer (ms)",
 						"placeholder": "2000"
-					}
-				},
-				"additional_dates": {
-					"type": "Group",
-					"config": {
-						"label": "Weitere Daten",
-						"repeat": true,
-						"fields": {
-							"date": {
-								"type": "Date",
-								"config": {
-									"label": "Datum",
-									"placeholder": ""
-								}
-							}
-						}
 					}
 				}
 			},

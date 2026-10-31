@@ -25,8 +25,8 @@
 				"map_url": {
 					"type": "Text",
 					"config": {
-						"label": "Google Maps URL",
-						"placeholder": "Google Maps Link oder Embed-URL (maps.app.goo.gl/... oder google.com/maps/embed?pb=...)"
+						"label": "Kartenpunkt",
+						"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
 					}
 				},
 				"map_height": {

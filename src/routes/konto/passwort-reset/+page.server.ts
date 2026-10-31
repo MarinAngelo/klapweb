@@ -2,12 +2,12 @@ import { fail, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { setResetToken, resetPassword } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
-import { FEATURE_TERMINBUCHUNG } from '$lib/server/features';
+import { FEATURE_KUNDENKONTO } from '$lib/server/features';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ url }) => {
-	if (!FEATURE_TERMINBUCHUNG) throw error(404, 'Funktion nicht verfügbar');
+	if (!FEATURE_KUNDENKONTO) throw error(404, 'Funktion nicht verfügbar');
 	return { token: url.searchParams.get('token') ?? '' };
 };
 

@@ -21,7 +21,8 @@ body {
 }
 html {
 	scroll-behavior: smooth;
-	scroll-padding-top: calc(var(--header-height, 80px) + 1rem);
+	/* --scroll-offset is set by the TOC slice (sticky header + pinned TOC bar) */
+	scroll-padding-top: calc(var(--scroll-offset, var(--header-height, 80px)) + 1rem);
 }
 @tailwind base;
 @tailwind components;
@@ -64,14 +65,22 @@ input[type='number'] {
 
 /* TailwindCSS-Overrides */
 /* Globale Heading-Styles: Font-Familie immer von --page-font */
+/* Admin-UI uses its own neutral font (see Admin-UI section) */
+:is(h1, h2, h3, h4, h5, h6):not(.admin *) {
+	font-family: var(--page-font), sans-serif !important;
+	opacity: var(--heading-opacity, 1);
+}
+/* Long German compounds (e.g. "Ressourcenbuchungssystem") must not overflow on mobile:
+   hyphenate where the browser can (html lang), otherwise break inside the word.
+   Only takes effect when a word does not fit on a line. */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-	font-family: var(--page-font), sans-serif !important;
-	opacity: var(--heading-opacity, 1);
+	overflow-wrap: break-word;
+	hyphens: auto;
 }
 h1 {
 	@apply text-4xl tracking-tight md:text-5xl font-bold leading-tight mb-6;
@@ -319,7 +328,7 @@ a[data-type='prismic-link'] {
 
 a:not(.footer-nav-link):not(.footer-link):not(.button-prismic-link):not(.nav-link):not(
 		.dropdown-link
-	):not(.site-title-link):not(.no-underline) {
+	):not(.site-title-link):not(.no-underline):not(.admin *) {
 	@apply underline;
 	color: var(--page-link-color);
 }
@@ -338,7 +347,7 @@ a[data-type='prismic-link']:not(.dropdown-link):not(.nav-link):not(.button-prism
 	):not(.footer-link):hover,
 a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link):not(
 		.button-prismic-link
-	):not(.footer-nav-link):not(.footer-link):hover {
+	):not(.footer-nav-link):not(.footer-link):not(.admin *):hover {
 	color: var(--page-link-hover-color) !important;
 }
 
@@ -495,6 +504,38 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	font-size: 0.75rem;
 	opacity: 0.8;
+}
+
+/* Footer (colors/sizes from theme variables, set in themeUpdater) */
+.footer-body {
+	background-color: var(--footer-bg-color);
+	color: var(--footer-color) !important;
+	font-family: var(--page-font);
+	margin-top: 0;
+	padding-top: 3rem;
+	padding-bottom: 1rem;
+	overflow: visible;
+}
+/* Landing pages: only the legal links of the footer (+layout.svelte) */
+.footer-legal-bar {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+.footer-legal-bar .footer-buttonbar-p {
+	margin: 0;
+}
+.footer-text-top {
+	color: var(--footer-color);
+	font-size: var(--footer-font-size-top-bar-rem);
+}
+.footer-buttonbar-p {
+	color: var(--footer-color);
+	font-size: var(--footer-font-size-button-bar-rem);
+}
+/* after .footer-text-top: links inside keep the link color */
+.footer-nav-link,
+.footer-link {
+	color: var(--footer-link-color);
 }
 
 /* Footer-Link Hover */
@@ -743,4 +784,621 @@ p {
 }
 .skip-link:focus {
 	top: 0;
+}
+
+@layer components {
+	/* ── Shared UI building blocks (forms, panels, modals) ─────────────────────────
+	   Colors follow the page theme (--page-color / --page-bg-color). */
+
+	/* Text input / textarea with bottom border */
+	.form-input {
+		@apply mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm;
+		background-color: var(--page-bg-color);
+		color: var(--page-color);
+		border-bottom-color: var(--page-color);
+	}
+
+	/* Compact variant: full thin border (invoice/checkout fields) */
+	.form-input-compact {
+		@apply w-full border px-3 py-2 focus:outline-none;
+		border-color: color-mix(in srgb, var(--page-color) 27%, transparent);
+		background-color: transparent;
+		color: var(--page-color);
+	}
+	/* Wrapper drawing the bottom border for composite fields (prefix + input, textarea) */
+	.form-input-underline {
+		border-bottom: 1px solid var(--page-color);
+	}
+	.form-input-underline:focus-within {
+		border-bottom-width: 2px;
+	}
+
+	/* Larger variant (booking forms) — declared after .form-input so it beats its sm:text-sm */
+	.form-input-lg {
+		font-size: 1.125rem;
+		line-height: 1.5;
+	}
+
+	/* Filled button in page colors (inverted); --btn-solid-color is contrast-adjusted (themeUpdater) */
+	.btn-solid {
+		border: 1px solid var(--page-color);
+		background-color: var(--page-color);
+		color: var(--btn-solid-color, var(--page-bg-color));
+	}
+	/* Standard theme button colors (Theme › Buttons) for plain <button> elements */
+	.btn-page {
+		border-color: var(--page-button-color);
+		background-color: var(--page-button-bg-color);
+		color: var(--page-button-color);
+	}
+	/* Button with CMS colors: the element sets --btn-bg / --btn-color (+ --hover-* for hover) */
+	.btn-dynamic {
+		border-color: var(--btn-color);
+		background-color: var(--btn-bg);
+		color: var(--btn-color);
+	}
+	/* Disabled: outline instead of transparency — stays readable, clearly inactive */
+	.btn-solid:disabled,
+	.btn-solid.is-disabled {
+		background-color: transparent;
+		border-style: dashed;
+		color: inherit;
+		cursor: not-allowed;
+	}
+
+	/* Lightly tinted card with bottom border (accordion items, lists) */
+	.panel-tinted {
+		/* --panel-bg / --panel-color are computed in themeUpdater (contrast-safe text color) */
+		border-color: var(--panel-color, var(--page-color));
+		background-color: var(--panel-bg, color-mix(in srgb, var(--page-color) 7%, transparent));
+		color: var(--panel-color, inherit);
+	}
+
+	/* Secondary text (labels, hints): toned down but still readable — instead of opacity-50/60 */
+	.text-muted {
+		color: color-mix(in srgb, currentColor 85%, transparent);
+	}
+
+	/* Color scope for slices with CMS colors (bg_color / text_color):
+	   the slice sets only --scope-color / --scope-bg via style: directives (fallback: page colors),
+	   all tints/borders/buttons below derive from them. */
+	.color-scope {
+		color: var(--scope-color, var(--page-color));
+		background-color: var(--scope-bg, transparent);
+	}
+	.scope-text {
+		color: var(--scope-color, var(--page-color));
+	}
+	.scope-border {
+		border-color: color-mix(in srgb, var(--scope-color, var(--page-color)) 15%, transparent);
+	}
+	.scope-border-strong {
+		border-color: color-mix(in srgb, var(--scope-color, var(--page-color)) 30%, transparent);
+	}
+	.scope-border-solid {
+		border-color: var(--scope-color, var(--page-color));
+	}
+	.scope-tint {
+		background-color: color-mix(in srgb, var(--scope-color, var(--page-color)) 4%, transparent);
+	}
+	.scope-fill {
+		background-color: var(--scope-color, var(--page-color));
+	}
+	/* Filled / outline buttons in scope colors */
+	.scope-btn-solid {
+		border: 1px solid var(--scope-color, var(--page-color));
+		background-color: var(--scope-color, var(--page-color));
+		color: var(--scope-bg, var(--page-bg-color));
+	}
+	.scope-btn-outline {
+		border: 1px solid color-mix(in srgb, var(--scope-color, var(--page-color)) 30%, transparent);
+		background-color: transparent;
+		color: var(--scope-color, var(--page-color));
+	}
+	.scope-btn-solid:disabled,
+	.scope-btn-outline:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Faint dividers / borders derived from theme colors */
+	.divider-page {
+		border-color: color-mix(in srgb, var(--page-color) 10%, transparent);
+	}
+	.border-page-soft {
+		border-color: color-mix(in srgb, var(--page-color) 15%, transparent);
+	}
+	.border-page-faint {
+		border-color: color-mix(in srgb, var(--page-color) 8%, transparent);
+	}
+	.border-link-faint {
+		border-color: color-mix(in srgb, var(--page-link-color) 12.5%, transparent);
+	}
+	.border-link-subtle {
+		border-color: color-mix(in srgb, var(--page-link-color) 6.25%, transparent);
+	}
+	.border-link-soft {
+		border-color: color-mix(in srgb, var(--page-link-color) 25%, transparent);
+	}
+
+	/* Accordion scope (Akkordeon): the slice sets --acc-border / --acc-bg / --acc-item-color */
+	.acc-row {
+		border-color: var(--acc-border, var(--page-color));
+		background-color: color-mix(in srgb, var(--acc-border, var(--page-color)) 7%, transparent);
+	}
+	.acc-border {
+		border-color: var(--acc-border, var(--page-color));
+	}
+	.acc-bg {
+		background-color: var(--acc-bg, var(--page-bg-color));
+	}
+	.acc-item-text {
+		color: var(--acc-item-color, inherit);
+	}
+
+	/* SVG logo tinted via mask: the element sets --logo-url (and background-color) */
+	.logo-mask {
+		-webkit-mask-image: var(--logo-url);
+		mask-image: var(--logo-url);
+		-webkit-mask-size: contain;
+		mask-size: contain;
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-position: center left;
+		mask-position: center left;
+	}
+
+	/* Card scope (Kacheln): the slice sets --card-color / --card-bg / --card-border / --card-accent */
+	.card-text {
+		color: var(--card-color, var(--page-color));
+	}
+	.card-bg {
+		background-color: var(--card-bg, transparent);
+	}
+	.card-fill {
+		background-color: var(--card-color, var(--page-color));
+	}
+	.plan-card {
+		color: var(--card-color, var(--page-color));
+		background-color: var(--card-bg, var(--page-bg-color));
+		border-color: color-mix(in srgb, var(--card-border, var(--page-color)) 27%, transparent);
+	}
+	.plan-card.is-highlight {
+		border-color: var(--card-accent, var(--page-button-color));
+		box-shadow: 0 4px 24px
+			color-mix(in srgb, var(--card-accent, var(--page-button-color)) 13%, transparent);
+	}
+
+	/* Highlighted column (Preisvergleich): the slice sets --card-accent */
+	.col-highlight {
+		border-color: var(--card-accent, var(--page-button-color));
+	}
+	.col-highlight-head {
+		border-color: var(--card-accent, var(--page-button-color));
+		background-color: color-mix(
+			in srgb,
+			var(--card-accent, var(--page-button-color)) 6.7%,
+			transparent
+		);
+	}
+	.border-page-13 {
+		border-color: color-mix(in srgb, var(--page-color) 13.3%, transparent);
+	}
+
+	/* Booking calendar day states (RessourceKalender) */
+	.cal-day-full {
+		background-color: #e29898;
+		color: #5c1f1f;
+		cursor: default;
+	}
+	.cal-day-partial {
+		background-color: #dcfce7;
+		color: #166534;
+	}
+	.cal-day-selected {
+		background-color: #2563eb;
+		color: #fff;
+		cursor: pointer;
+	}
+	.cal-day-past {
+		opacity: 0.3;
+		cursor: default;
+	}
+
+	/* Collapsible body: toggle .is-open (animated via grid rows) */
+	.collapse-body {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 300ms ease-out;
+	}
+	.collapse-body.is-open {
+		grid-template-rows: 1fr;
+	}
+
+	/* Modal: dimmed backdrop + card in page colors */
+	.modal-backdrop {
+		background-color: rgba(0, 0, 0, 0.45);
+	}
+	.modal-card {
+		background-color: var(--page-bg-color);
+		color: var(--page-color);
+	}
+	/* Website search (SearchDialog.svelte) */
+	.search-result {
+		@apply flex flex-col gap-0.5 rounded px-3 py-2 text-inherit no-underline;
+	}
+	.search-result:hover,
+	.search-result:focus-visible {
+		background-color: color-mix(in srgb, currentColor 8%, transparent);
+	}
+	/* Match chosen in the page search (pageSearch.ts → revealHit) */
+	.page-search-hit {
+		border-radius: 0.25rem;
+		animation: page-search-hit 2.6s ease-out;
+	}
+	@keyframes page-search-hit {
+		0%,
+		60% {
+			background-color: color-mix(in srgb, currentColor 15%, transparent);
+			box-shadow: 0 0 0 0.35rem color-mix(in srgb, currentColor 15%, transparent);
+		}
+		100% {
+			background-color: transparent;
+			box-shadow: 0 0 0 0.35rem transparent;
+		}
+	}
+	.search-results mark {
+		color: inherit;
+		background-color: color-mix(in srgb, currentColor 18%, transparent);
+	}
+
+	/* Photo upload slot (4:3) and busy overlay on top of it */
+	.photo-slot {
+		aspect-ratio: 4 / 3;
+		border-color: var(--page-color);
+		background-color: color-mix(in srgb, var(--page-color) 6%, transparent);
+	}
+	.busy-overlay {
+		background-color: color-mix(in srgb, var(--page-bg-color) 70%, transparent);
+	}
+}
+
+/* Chat widget: neutral, theme-independent overlay (ChatWidget.svelte) */
+@layer components {
+	.chat-root {
+		@apply fixed bottom-6 right-6 z-[9000] flex flex-col items-end gap-3;
+	}
+	.chat-panel {
+		@apply flex max-h-[480px] w-[340px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-xl bg-white text-gray-900 shadow-[0_8px_32px_rgba(0,0,0,0.18)];
+	}
+	.chat-header {
+		@apply flex items-center justify-between bg-gray-900 px-4 py-3.5 text-white;
+	}
+	.chat-icon-btn {
+		@apply cursor-pointer border-0 bg-transparent p-1 leading-none text-white opacity-80 hover:opacity-100;
+	}
+	.chat-messages {
+		@apply flex min-h-[200px] flex-1 flex-col gap-2.5 overflow-y-auto p-4;
+	}
+	.chat-bubble {
+		@apply max-w-[80%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm leading-normal;
+	}
+	.chat-bubble-user {
+		@apply rounded-br bg-gray-900 text-white;
+	}
+	.chat-bubble-bot {
+		@apply rounded-bl bg-gray-100 text-gray-900;
+	}
+	.chat-footer {
+		@apply border-t border-gray-100 p-3;
+	}
+	.chat-input {
+		@apply flex-1 rounded-md border border-gray-300 px-3 py-2 font-[inherit] text-sm outline-none;
+	}
+	.chat-btn {
+		@apply cursor-pointer rounded-md border-0 bg-gray-900 px-3 py-2 text-sm text-white transition-opacity disabled:opacity-50;
+	}
+	.chat-note {
+		@apply m-0 px-3 pb-2.5 text-[0.6875rem] text-gray-600;
+	}
+	.chat-link {
+		@apply break-words text-inherit underline underline-offset-2 hover:no-underline;
+	}
+	.chat-rating {
+		@apply -mt-1 flex items-center gap-1 text-xs text-gray-600;
+	}
+	.chat-rating-form {
+		@apply -mt-1 flex flex-col gap-1.5;
+	}
+	.chat-rate-btn {
+		@apply cursor-pointer rounded border-0 bg-transparent p-1 leading-none text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+	}
+	.chat-rate-skip {
+		@apply cursor-pointer border-0 bg-transparent px-2 py-1 text-xs text-gray-600 underline hover:text-gray-900;
+	}
+	.chat-toggle {
+		@apply flex h-[3.25rem] w-[3.25rem] cursor-pointer items-center justify-center rounded-full border-0 bg-gray-900 text-white shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform;
+	}
+}
+
+/* ══ Admin-UI ═══════════════════════════════════════════════════════════════════
+   Einheitliches, theme-unabhängiges Design für alle /admin-Seiten (neutral, auf jeder
+   Kunden-Website gleich lesbar). Wrapper: src/routes/admin/+layout.svelte (.admin).
+   In @layer components → Tailwind-Utilities können im Einzelfall überschreiben. */
+@layer components {
+	.admin {
+		@apply min-h-screen bg-gray-50 font-sans text-gray-900;
+	}
+	.admin-container {
+		@apply mx-auto w-full max-w-6xl px-4 py-8 md:px-6;
+	}
+	.admin-container-narrow {
+		@apply mx-auto w-full max-w-2xl px-4 py-8 md:px-6;
+	}
+
+	/* Element defaults via :where() → low specificity, utility/admin classes still win;
+	   still beats the global heading sizes/colors (h1 { … }) */
+	.admin :where(h1, h2, h3, h4) {
+		@apply m-0 font-sans leading-tight tracking-tight text-gray-900;
+	}
+	.admin :where(h1) {
+		@apply text-2xl font-bold;
+	}
+	.admin :where(h2) {
+		@apply text-lg font-semibold;
+	}
+	.admin :where(h3, h4) {
+		@apply text-base font-semibold;
+	}
+	.admin :where(p) {
+		@apply m-0 text-base leading-normal text-inherit;
+	}
+	.admin :where(li) {
+		@apply m-0 leading-normal text-inherit;
+		font-size: inherit;
+		word-break: normal;
+	}
+
+	/* Page header: title (+ count), actions on the right */
+	.admin-header {
+		@apply mb-6 flex flex-wrap items-center gap-3;
+	}
+	.admin-header-actions {
+		@apply ml-auto flex flex-wrap items-center gap-2;
+	}
+	.admin-count {
+		@apply text-sm font-normal text-gray-500;
+	}
+	.admin-intro {
+		@apply mb-6 text-sm text-gray-600;
+	}
+
+	/* Cards / sections */
+	.admin-card {
+		@apply mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm md:p-6;
+	}
+	.admin-card-title {
+		@apply mb-4 flex flex-wrap items-center gap-2;
+	}
+	.admin-section-title {
+		@apply mb-3 mt-8 flex flex-wrap items-center gap-2 border-b-2 border-gray-200 pb-2;
+	}
+
+	/* Buttons */
+	.admin-btn {
+		@apply inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
+		text-decoration-line: none;
+	}
+	.admin-btn:disabled {
+		@apply cursor-not-allowed opacity-50;
+	}
+	.admin-btn-primary {
+		@apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700;
+	}
+	.admin-btn-success {
+		@apply border-green-600 bg-green-600 text-white hover:bg-green-700;
+	}
+	.admin-btn-danger {
+		@apply border-red-600 bg-red-600 text-white hover:bg-red-700;
+	}
+	.admin-btn-danger-outline {
+		@apply border-red-300 bg-white text-red-700 hover:bg-red-50;
+	}
+	.admin-btn-warn {
+		@apply border-amber-600 bg-amber-600 text-white hover:bg-amber-700;
+	}
+	.admin-btn-toggle-on {
+		@apply border-sky-700 bg-sky-700 text-white hover:bg-sky-800;
+	}
+	/* Action still pending (e.g. reminder not yet sent) */
+	.admin-btn-highlight {
+		@apply border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-100;
+	}
+	.admin-btn-dark {
+		@apply border-gray-900 bg-gray-900 text-white hover:bg-gray-700;
+	}
+	.admin-btn-sm {
+		@apply px-2 py-1 text-xs;
+	}
+	.admin-btn-block {
+		@apply w-full;
+	}
+
+	/* Links */
+	.admin-link {
+		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-blue-700 underline-offset-2 hover:text-blue-900 hover:underline;
+	}
+	.admin-link-danger {
+		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-red-700 underline-offset-2 hover:text-red-900 hover:underline;
+	}
+	.admin-link-warn {
+		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-amber-700 underline-offset-2 hover:text-amber-900 hover:underline;
+	}
+	.admin-link-success {
+		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-green-700 underline-offset-2 hover:text-green-900 hover:underline;
+	}
+	.admin-back {
+		@apply mb-4 inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900;
+		text-decoration-line: none;
+	}
+
+	/* Form fields */
+	.admin-label {
+		@apply mb-1 block text-sm font-medium text-gray-700;
+	}
+	.admin-hint {
+		@apply mt-1 text-xs text-gray-500;
+	}
+	.admin-input {
+		@apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
+	}
+	.admin-input-sm {
+		@apply px-2 py-1 text-xs;
+	}
+	.admin-checkbox {
+		@apply h-4 w-4 cursor-pointer accent-blue-600;
+	}
+	.admin-fieldset {
+		@apply mb-4 rounded-md border border-gray-200 bg-gray-50 p-4;
+	}
+	.admin-fieldset > legend {
+		@apply px-2 text-sm font-semibold text-gray-700;
+	}
+
+	/* Scrollable list of checkbox rows (e.g. recipients) */
+	.admin-checklist {
+		@apply max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-white px-3 py-1;
+	}
+	.admin-checklist-item {
+		@apply flex cursor-pointer items-center gap-3 border-b border-gray-100 py-2 last:border-b-0;
+	}
+
+	/* Tables */
+	.admin-table-wrap {
+		@apply overflow-x-auto;
+	}
+	.admin-table {
+		@apply w-full border-collapse text-left text-sm;
+	}
+	.admin-table th {
+		@apply whitespace-nowrap border-b-2 border-gray-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-600;
+	}
+	.admin-table td {
+		@apply border-b border-gray-100 px-3 py-2 align-top;
+	}
+	.admin-table tbody tr:hover {
+		@apply bg-gray-50;
+	}
+	.admin-table .nowrap {
+		@apply whitespace-nowrap;
+	}
+	/* Past / inactive rows: muted text, struck-through where cancelled */
+	.admin-table-muted td {
+		@apply text-gray-500;
+	}
+	.admin-row-muted td {
+		@apply text-gray-500;
+	}
+	/* Expandable detail row below a table row */
+	.admin-subrow-toggle {
+		@apply w-full cursor-pointer border-0 border-t border-green-100 bg-green-50 px-3 py-1.5 text-left text-xs text-green-800 hover:bg-green-100;
+	}
+	.admin-subtable {
+		@apply bg-gray-50 text-xs;
+	}
+	.admin-row-selected td {
+		@apply bg-sky-50;
+	}
+	.admin-empty {
+		@apply py-6 text-center text-sm text-gray-500;
+	}
+
+	/* Status badges */
+	.admin-badge {
+		@apply inline-block whitespace-nowrap rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700;
+	}
+	.admin-badge-yellow {
+		@apply bg-yellow-100 text-yellow-800;
+	}
+	.admin-badge-orange {
+		@apply bg-orange-100 text-orange-800;
+	}
+	.admin-badge-blue {
+		@apply bg-blue-100 text-blue-800;
+	}
+	.admin-badge-purple {
+		@apply bg-purple-100 text-purple-800;
+	}
+	.admin-badge-green {
+		@apply bg-green-100 text-green-800;
+	}
+	.admin-badge-red {
+		@apply bg-red-100 text-red-800;
+	}
+
+	/* Notices */
+	.admin-notice {
+		@apply mb-4 rounded-md border border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-800;
+	}
+	.admin-notice-error {
+		@apply border-red-200 bg-red-50 text-red-800;
+	}
+	.admin-notice-ok {
+		@apply border-green-200 bg-green-50 text-green-800;
+	}
+	.admin-notice-warn {
+		@apply border-yellow-200 bg-yellow-50 text-yellow-800;
+	}
+
+	/* Key figures */
+	.admin-stats {
+		@apply mb-6 grid grid-cols-2 gap-4 md:grid-cols-4;
+	}
+	.admin-stat {
+		@apply rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm;
+	}
+	.admin-stat-value {
+		@apply block text-2xl font-bold text-gray-900;
+	}
+	.admin-stat-label {
+		@apply text-xs text-gray-600;
+	}
+
+	/* Text helpers */
+	.admin-muted {
+		@apply text-gray-600;
+	}
+	.admin-mono {
+		@apply break-all font-mono text-xs;
+	}
+	.admin-error-text {
+		@apply text-sm text-red-700;
+	}
+
+	/* Full-screen loading overlay while a form action runs */
+	.admin-loading-overlay {
+		@apply fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm;
+	}
+	.admin-loading-spinner {
+		@apply h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900;
+	}
+
+	/* Tabs (e.g. in modals) */
+	.admin-tabs {
+		@apply mb-4 flex gap-2 border-b border-gray-200;
+	}
+	.admin-tab {
+		@apply -mb-px cursor-pointer border-0 border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50;
+	}
+	.admin-tab.is-active {
+		@apply border-blue-600 text-blue-700;
+	}
+
+	/* Modal */
+	.admin-modal-backdrop {
+		@apply fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4;
+	}
+	.admin-modal {
+		@apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-gray-900 shadow-xl;
+	}
 }

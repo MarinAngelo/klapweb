@@ -14,10 +14,8 @@
 	<span class="block text-sm font-medium">{label}{required ? ' *' : ''}</span>
 	<label
 		for={id}
-		class="px-4 py-1.5 text-sm rounded self-start cursor-pointer"
-		style="background-color: var(--page-color); color: var(--page-bg-color); opacity: {disabled
-			? 0.5
-			: 1};"
+		class="btn-solid px-4 py-1.5 text-sm rounded self-start cursor-pointer"
+		class:is-disabled={disabled}
 	>
 		{fileName || label}
 	</label>

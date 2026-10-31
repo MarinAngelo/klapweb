@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -187,7 +188,7 @@
 		<div
 			class="carousel-container relative w-full h-full overflow-hidden"
 			role="region"
-			aria-label="Image carousel"
+			aria-label={$_('Bildkarussell')}
 		>
 			{#key currentKey}
 				<div
@@ -198,9 +199,9 @@
 					{#if has(current)}
 						<div
 							class="absolute inset-0"
-							style={transitionMode === 'Ken Burns'
-								? `animation: kb${current % 4} ${intervalMs + transitionMs}ms linear forwards;`
-								: ''}
+							style:animation={transitionMode === 'Ken Burns'
+								? `kb${current % 4} ${intervalMs + transitionMs}ms linear forwards`
+								: undefined}
 						>
 							<PrismicImage
 								field={images[current].image}
@@ -218,7 +219,7 @@
 			<button
 				class="nav-arrow absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
 				on:click={prev}
-				aria-label="Vorheriges Bild"
+				aria-label={$_('Vorheriges Bild')}
 				type="button"
 			>
 				<span class="text-xl font-bold">&#10094;</span>
@@ -227,7 +228,7 @@
 			<button
 				class="nav-arrow absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 cursor-pointer backdrop-blur-sm"
 				on:click={next}
-				aria-label="Nächstes Bild"
+				aria-label={$_('Nächstes Bild')}
 				type="button"
 			>
 				<span class="text-xl font-bold">&#10095;</span>
@@ -242,8 +243,7 @@
 			{/if}
 
 			<div
-				class="swipe-overlay absolute inset-0 z-[60]"
-				style="touch-action: pan-y;"
+				class="swipe-overlay absolute inset-0 z-[60] [touch-action:pan-y]"
 				on:pointerdown={onPointerDown}
 				on:pointerup={onPointerUp}
 				on:pointercancel={() => {
@@ -253,7 +253,7 @@
 		</div>
 	</div>
 {:else}
-	<p class="sr-only">Keine Bilder vorhanden</p>
+	<p class="sr-only">{$_('Keine Bilder vorhanden')}</p>
 {/if}
 
 <style>

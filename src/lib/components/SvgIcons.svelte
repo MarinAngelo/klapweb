@@ -26,15 +26,19 @@
 	<!-- SVG-Code kommt aus Prismic-CMS (admin-only → vertrauenswürdig) -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	<span
-		class="svgicon-cms inline-flex items-center justify-center flex-shrink-0"
-		style="width: {size}; height: {size}; color: {color}; vertical-align: middle;"
+		class="svgicon-cms inline-flex items-center justify-center flex-shrink-0 [vertical-align:middle]"
+		style:width={size}
+		style:height={size}
+		style:color
 		aria-hidden="true">{@html svgCode}</span
 	>
 {:else if cmsIcon?.image_url}
 	<img
+		class="[object-fit:contain] [vertical-align:middle]"
 		src={cmsIcon.image_url}
 		alt={cmsIcon.image_alt || ''}
-		style="width: {size}; height: {size}; object-fit: contain; vertical-align: middle;"
+		style:width={size}
+		style:height={size}
 		aria-hidden="true"
 	/>
 {:else if resolvedName === 'menu'}
@@ -127,6 +131,25 @@
 			stroke-linejoin="round"
 		/>
 	</svg>
+{:else if resolvedName === 'cart'}
+	<svg
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
+		<path
+			d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.2a1.5 1.5 0 0 0 1.4-1l2-6.3H6.2"
+			stroke={color}
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<circle cx="9.5" cy="19.5" r="1.5" fill={color} />
+		<circle cx="17" cy="19.5" r="1.5" fill={color} />
+	</svg>
 {:else if resolvedName === 'user'}
 	<svg
 		width={size}
@@ -181,9 +204,9 @@
 		aria-hidden="true"
 	>
 		<path
-			d="M6 9l6 6 6-6"
+			d="M19 9L14 14.1599C13.7429 14.4323 13.4329 14.6493 13.089 14.7976C12.7451 14.9459 12.3745 15.0225 12 15.0225C11.6255 15.0225 11.2549 14.9459 10.9109 14.7976C10.567 14.6493 10.2571 14.4323 10 14.1599L5 9"
 			stroke={color}
-			stroke-width="2"
+			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
@@ -216,9 +239,9 @@
 		aria-hidden="true"
 	>
 		<path
-			d="M6 15l6-6 6 6"
+			d="M5 15L10 9.84985C10.2563 9.57616 10.566 9.35814 10.9101 9.20898C11.2541 9.05983 11.625 8.98291 12 8.98291C12.375 8.98291 12.7459 9.05983 13.0899 9.20898C13.434 9.35814 13.7437 9.57616 14 9.84985L19 15"
 			stroke={color}
-			stroke-width="2"
+			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
@@ -257,9 +280,9 @@
 		aria-hidden="true"
 	>
 		<path
-			d="M15 18l-6-6 6-6"
+			d="M14.9991 19L9.83911 14C9.56672 13.7429 9.34974 13.433 9.20142 13.0891C9.0531 12.7452 8.97656 12.3745 8.97656 12C8.97656 11.6255 9.0531 11.2548 9.20142 10.9109C9.34974 10.567 9.56672 10.2571 9.83911 10L14.9991 5"
 			stroke={color}
-			stroke-width="2"
+			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>
@@ -274,9 +297,9 @@
 		aria-hidden="true"
 	>
 		<path
-			d="M9 18l6-6-6-6"
+			d="M9 5L14.15 10C14.4237 10.2563 14.6419 10.5659 14.791 10.9099C14.9402 11.2539 15.0171 11.625 15.0171 12C15.0171 12.375 14.9402 12.7458 14.791 13.0898C14.6419 13.4339 14.4237 13.7437 14.15 14L9 19"
 			stroke={color}
-			stroke-width="2"
+			stroke-width="1.5"
 			stroke-linecap="round"
 			stroke-linejoin="round"
 		/>

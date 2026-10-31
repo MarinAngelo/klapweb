@@ -1,16 +1,17 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { dev } from '$app/environment';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
+import { agencyLogin, agencyLogout, isAgencyAuthenticated } from '$lib/server/agencyAuth';
+import { readOverrides, writeOverrides } from '$lib/gatingOverrides.js';
 
 export const prerender = false;
 
 const ROOT = process.cwd();
 const GATING_PATH = join(ROOT, 'gating.json');
 const SM_CONFIG_PATH = join(ROOT, 'slicemachine.config.json');
-const OVERRIDES_PATH = join(ROOT, 'gating.overrides.json');
-const AUTH_COOKIE = 'agency_auth';
 
 function read(path: string) {
 	return JSON.parse(readFileSync(path, 'utf-8'));
@@ -20,40 +21,15 @@ function write(path: string, data: unknown) {
 	writeFileSync(path, JSON.stringify(data, null, '\t') + '\n');
 }
 
-function isAuthenticated(cookies: Record<string, string>): boolean {
-	const cookie = cookies[AUTH_COOKIE];
-	if (!cookie) return false;
-	try {
-		const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
-		// Prüfe ob Cookie nicht älter als 1 Stunde
-		return parsed.exp > Date.now();
-	} catch {
-		return false;
-	}
-}
-
 export const load = ({ cookies }) => {
-	// Prüfe Authentication direkt
-	const cookie = cookies.get(AUTH_COOKIE);
-	let authenticated = false;
-
-	if (cookie) {
-		try {
-			const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
-			authenticated = parsed.exp > Date.now();
-		} catch {
-			authenticated = false;
-		}
-	}
-
-	if (!authenticated) {
+	if (!isAgencyAuthenticated(cookies)) {
 		return { authenticated: false };
 	}
 
 	// Nur wenn authentifiziert: Daten laden
 	const gating = read(GATING_PATH);
 	const smConfig = read(SM_CONFIG_PATH);
-	const overrides = existsSync(OVERRIDES_PATH) ? read(OVERRIDES_PATH) : { features: [] };
+	const overrides = readOverrides(ROOT);
 
 	const currentPlan = smConfig.plan || 'basis';
 	const activePlanChain = getActivePlanChain(currentPlan, gating.plans);
@@ -92,52 +68,110 @@ export const load = ({ cookies }) => {
 		overrideFeatures: enabledFeatures,
 		adminSections,
 		adminSectionsDisabled,
-		missingEnv
+		missingEnv,
+		// gating.json is committed → only editable on the local dev server
+		canEditDefinition: dev,
+		gatingItems: collectGatingItems(gating)
 	};
 };
 
-export const actions = {
-	async login({ request, cookies }) {
-		const data = await request.formData();
-		const secret = data.get('secret') as string;
+type Gate = { feature?: string; plan?: string };
+type GatingItem = {
+	kind:
+		| 'customType'
+		| 'customTypeField'
+		| 'slice'
+		| 'variation'
+		| 'field'
+		| 'overlay'
+		| 'adminSection';
+	target: string;
+	detail?: string;
+	gate: Gate;
+};
 
-		const expectedSecret = env.AGENCY_SECRET;
-		if (!expectedSecret || secret !== expectedSecret) {
-			return { error: 'Falsches Passwort' };
+// Flattens gating.json (+ implicit tab overlays in customtypes/_features) into a list for the overview
+function collectGatingItems(gating: any): GatingItem[] {
+	const items: GatingItem[] = [];
+	const gateOf = (def: any): Gate | null =>
+		def?.feature ? { feature: def.feature } : def?.plan ? { plan: def.plan } : null;
+
+	for (const [typeId, def] of Object.entries<any>(gating.customTypes ?? {})) {
+		const gate = gateOf(def);
+		if (gate) items.push({ kind: 'customType', target: typeId, gate });
+		for (const [field, fieldDef] of Object.entries<any>(def.fields ?? {})) {
+			const fieldGate = gateOf(fieldDef);
+			if (fieldGate)
+				items.push({ kind: 'customTypeField', target: typeId, detail: field, gate: fieldGate });
 		}
+	}
 
-		// Setze Auth-Cookie (gültig für 1 Stunde)
-		const exp = Date.now() + 60 * 60 * 1000;
-		const cookieValue = Buffer.from(JSON.stringify({ exp })).toString('base64');
-		cookies.set(AUTH_COOKIE, cookieValue, {
-			httpOnly: true,
-			secure: false, // Lokal http://localhost erlauben
-			sameSite: 'strict',
-			maxAge: 60 * 60 * 1000, // 1 Stunde
-			path: '/'
-		});
+	for (const [sliceName, def] of Object.entries<any>(gating.slices ?? {})) {
+		const gate = gateOf(def);
+		if (gate) items.push({ kind: 'slice', target: sliceName, gate });
+		for (const [variation, varDef] of Object.entries<any>(def.variations ?? {})) {
+			const varGate = gateOf(varDef);
+			if (varGate)
+				items.push({ kind: 'variation', target: sliceName, detail: variation, gate: varGate });
+		}
+		for (const [field, fieldDef] of Object.entries<any>(def.fields ?? {})) {
+			const fieldGate = gateOf(fieldDef);
+			if (fieldGate)
+				items.push({ kind: 'field', target: sliceName, detail: field, gate: fieldGate });
+		}
+	}
 
-		throw redirect(303, '/agency/gating');
-	},
+	for (const [sectionId, def] of Object.entries<any>(gating.admin_sections ?? {})) {
+		const target = def.label ?? sectionId;
+		const gate = gateOf(def);
+		if (gate) items.push({ kind: 'adminSection', target, gate });
+		// OR gate: listed under each feature, marked as alternative
+		const alternatives: string[] = def.features ?? [];
+		for (const feature of alternatives) {
+			const others = alternatives.filter((f) => f !== feature);
+			items.push({
+				kind: 'adminSection',
+				target,
+				detail: others.length ? `oder ${others.join(', ')}` : undefined,
+				gate: { feature }
+			});
+		}
+	}
 
-	async logout({ cookies }) {
-		cookies.delete(AUTH_COOKIE, { path: '/' });
-		throw redirect(303, '/agency/gating');
-	},
-
-	async save({ request, cookies }) {
-		// Prüfe Authentication direkt
-		const cookie = cookies.get(AUTH_COOKIE);
-		let authenticated = false;
-		if (cookie) {
-			try {
-				const parsed = JSON.parse(Buffer.from(cookie, 'base64').toString());
-				authenticated = parsed.exp > Date.now();
-			} catch {
-				authenticated = false;
+	// Tab overlays: customtypes/_features/{feature}/{page|settings}.json — active with the feature
+	const featuresDir = join(ROOT, 'customtypes/_features');
+	if (existsSync(featuresDir)) {
+		for (const feature of readdirSync(featuresDir)) {
+			for (const type of ['page', 'settings']) {
+				const overlayPath = join(featuresDir, feature, `${type}.json`);
+				if (!existsSync(overlayPath)) continue;
+				const overlay = read(overlayPath);
+				const tabs = Object.keys(overlay).filter((key) => key !== '_meta');
+				const sliceChoices: string[] = overlay._meta?.sliceChoices ?? [];
+				const parts = [
+					...tabs.map((tab) => `Tab ${tab}`),
+					...(sliceChoices.length ? [`Slices: ${sliceChoices.join(', ')}`] : [])
+				];
+				items.push({
+					kind: 'overlay',
+					target: type,
+					detail: parts.join(' · ') || undefined,
+					gate: { feature }
+				});
 			}
 		}
-		if (!authenticated) throw error(403, 'Nicht authentifiziert');
+	}
+
+	return items;
+}
+
+export const actions = {
+	login: ({ request, cookies }) => agencyLogin(request, cookies, '/agency/gating'),
+
+	logout: ({ cookies }) => agencyLogout(cookies, '/agency/gating'),
+
+	async save({ request, cookies }) {
+		if (!isAgencyAuthenticated(cookies)) throw error(403, 'Nicht authentifiziert');
 
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
@@ -161,9 +195,7 @@ export const actions = {
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
 		const disabled = planFeatures.filter((f: string) => !selectedOverrides.includes(f));
 
-		const existingOverrides = existsSync(OVERRIDES_PATH)
-			? read(OVERRIDES_PATH)
-			: { enabled: [], disabled: [], admin_sections_disabled: [] };
+		const existingOverrides = readOverrides(ROOT);
 		const overridesChanged =
 			JSON.stringify([...(existingOverrides.enabled ?? [])].sort()) !==
 				JSON.stringify([...enabled].sort()) ||
@@ -172,12 +204,49 @@ export const actions = {
 			JSON.stringify([...(existingOverrides.admin_sections_disabled ?? [])].sort()) !==
 				JSON.stringify([...sectionsDisabled].sort());
 
-		write(OVERRIDES_PATH, { enabled, disabled, admin_sections_disabled: sectionsDisabled });
+		// Stored for the repository in slicemachine.config.json only (not for other branches/repos)
+		writeOverrides({ enabled, disabled, admin_sections_disabled: sectionsDisabled }, ROOT);
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
 		if (!planChanged && !overridesChanged) {
 			throw redirect(303, '/agency/gating');
 		}
+		try {
+			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
+		} catch (e) {
+			console.error('build-customtypes.js failed:', e);
+			throw error(500, 'Fehler beim Generieren der Modelle');
+		}
+
+		throw redirect(303, '/agency/gating');
+	},
+
+	// Global plan definition: minimum plan per feature in gating.json (affects all branches)
+	async savePlanDefinition({ request, cookies }) {
+		if (!isAgencyAuthenticated(cookies)) {
+			throw error(403, 'Nicht authentifiziert');
+		}
+		if (!dev) throw error(403, 'Nur auf dem lokalen Dev-Server möglich');
+
+		const data = await request.formData();
+		const featurePlans: Record<string, string> = JSON.parse(
+			(data.get('feature_plans') as string) || '{}'
+		);
+
+		const gating = read(GATING_PATH);
+		let changed = false;
+		for (const [featureId, planKey] of Object.entries(featurePlans)) {
+			const feature = gating.features?.[featureId];
+			if (!feature || !gating.plans?.[planKey]) continue;
+			const current: string[] = feature.plans ?? [];
+			if (current.length === 1 && current[0] === planKey) continue;
+			feature.plans = [planKey];
+			changed = true;
+		}
+
+		if (!changed) throw redirect(303, '/agency/gating');
+
+		write(GATING_PATH, gating);
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
 		} catch (e) {

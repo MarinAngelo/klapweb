@@ -89,7 +89,7 @@
 		<section id="adresse-und-map">
 			<h2>AdresseUndMap <code class="slice-tag">adresse_und_map</code></h2>
 			<p>
-				Adresstext neben einer eingebetteten Google Maps Karte &mdash; mit automatischem
+				Adresstext neben einer eingebetteten OpenStreetMap-Karte &mdash; mit automatischem
 				Wegbeschreibungs-Link und optionalem Seiten-Toggle.
 			</p>
 			<div class="pills"><span class="pill">default</span></div>
@@ -99,7 +99,9 @@
 					<tr><td><code>text</code></td><td>Rich Text</td><td>Adresse / Text</td></tr>
 					<tr
 						><td><code>map_url</code></td><td>Text</td><td
-							>Google Maps URL (goo.gl-Shortlinks werden serverseitig aufgelöst)</td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
 						></tr
 					>
 					<tr><td><code>map_height</code></td><td>Zahl</td><td>Kartenhöhe in px</td></tr>
@@ -131,9 +133,9 @@
 				</tbody>
 			</table>
 			<div class="callout">
-				Generiert automatisch einen Wegbeschreibungs-Link (<code>google.com/maps/dir/</code>).
-				Shortlinks (<code>maps.app.goo.gl</code>) werden via Server-Redirect zu Embed-URLs
-				aufgelöst.
+				Generiert automatisch einen Wegbeschreibungs-Link (<code>openstreetmap.org/directions</code
+				>). Google-Shortlinks (<code>maps.app.goo.gl</code>) werden serverseitig aufgelöst und in
+				Koordinaten umgewandelt.
 			</div>
 		</section>
 
@@ -224,7 +226,16 @@
 				<tbody>
 					<tr><td><code>title</code></td><td>Text</td><td>Titel der Anleitung</td></tr>
 					<tr><td><code>description</code></td><td>Rich Text</td><td>Einleitungstext</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Gesamt-Video</td></tr>
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Gesamt-Video (MP4 aus der Mediathek, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Gesamt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
+					>
 					<tr
 						><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td
 						></tr
@@ -242,7 +253,15 @@
 				<tbody>
 					<tr><td><code>step_title</code></td><td>Text</td><td>Schritt-Titel</td></tr>
 					<tr><td><code>step_description</code></td><td>Rich Text</td><td>Schritt-Inhalt</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Schritt-Video</td></tr
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Schritt-Video (MP4, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Schritt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
 					>
 				</tbody>
 			</table>
@@ -376,7 +395,10 @@
 					>
 					<tr><td><code>location_text</code></td><td>Rich Text</td><td>Ortsangabe</td></tr>
 					<tr
-						><td><code>geopoint</code></td><td>Geo-Punkt</td><td>Koordinaten für Google Maps</td
+						><td><code>map_point</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
 						></tr
 					>
 					<tr
@@ -562,16 +584,22 @@
 		</section>
 
 		<section id="google-map-einbetten">
-			<h2>GoogleMapEinbetten <code class="slice-tag">code_einbetten</code></h2>
+			<h2>MapEinbetten <code class="slice-tag">code_einbetten</code></h2>
 			<p>
-				Google Maps Karte als iframe &mdash; ohne Adresstextblock, nur die Karte mit optionalem
+				OpenStreetMap-Karte als iframe &mdash; ohne Adresstextblock, nur die Karte mit optionalem
 				Wegbeschreibungs-Button.
 			</p>
 			<div class="pills"><span class="pill">default</span></div>
 			<table>
 				<thead><tr><th>API-ID</th><th>Typ</th><th>Beschreibung</th></tr></thead>
 				<tbody>
-					<tr><td><code>map_url</code></td><td>Text</td><td>Google Maps URL</td></tr>
+					<tr
+						><td><code>map_url</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
+						></tr
+					>
 					<tr><td><code>map_height</code></td><td>Zahl</td><td>Kartenhöhe in px</td></tr>
 					<tr><td><code>opacity</code></td><td>Zahl</td><td>Deckkraft (0–100)</td></tr>
 					<tr
@@ -1312,11 +1340,6 @@
 							>Standard Open Graph Bild</td
 						></tr
 					>
-					<tr
-						><td><code>adobe_font_id</code></td><td>Text</td><td
-							>Adobe Fonts Project-ID (lädt Typekit-Script)</td
-						></tr
-					>
 					<tr><td><code>favicon</code></td><td>Bild (32×32)</td><td>Favicon</td></tr>
 					<tr
 						><td><code>pwa_enabled</code> <span class="field-gate">Individuell</span></td><td
@@ -1554,7 +1577,9 @@
 					<tr><td><code>uid</code></td><td>UID</td><td>Slug</td></tr>
 					<tr><td><code>name</code></td><td>Text</td><td>Name der Schrift</td></tr>
 					<tr
-						><td><code>provider</code></td><td>Auswahl</td><td>Anbieter: Google / Adobe / Lokal</td
+						><td><code>provider</code></td><td>Auswahl</td><td
+							>Anbieter: Google (selbst gehostet) / Lokal (Schriftdateien in Prismic, selbst
+							gehostet)</td
 						></tr
 					>
 					<tr
@@ -1640,7 +1665,13 @@
 							>Land (CH / DE / AT / LI / Sonstiges)</td
 						></tr
 					>
-					<tr><td><code>location_map_url</code></td><td>Link</td><td>Google Maps URL</td></tr>
+					<tr
+						><td><code>location_map_url</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
+						></tr
+					>
 				</tbody>
 			</table>
 			<p class="table-label">Tab: Details</p>
@@ -1928,7 +1959,7 @@
 				</tbody>
 			</table>
 			<p class="table-label">
-				Tab: Online-Handel <span style="font-size:0.8em;opacity:0.6;"
+				Tab: Online-Handel <span class="[font-size:0.8em] [opacity:0.6]"
 					>(Feature: ecommerce · Plan: individuell)</span
 				>
 			</p>
@@ -1969,7 +2000,7 @@
 				</tbody>
 			</table>
 			<p class="table-label">
-				Tab: Leistungen <span style="font-size:0.8em;opacity:0.6;"
+				Tab: Leistungen <span class="[font-size:0.8em] [opacity:0.6]"
 					>(Feature: ecommerce · Plan: individuell)</span
 				>
 			</p>
@@ -2664,18 +2695,15 @@
 							>Login-Formular — schickt <code>ADMIN_SECRET</code> als Query-Param</td
 						></tr
 					>
+					<tr><td><code>/admin/dashboard</code></td><td>Links zu Kunden und Buchungen</td></tr>
 					<tr
-						><td><code>/admin/dashboard?secret=…</code></td><td>Links zu Kunden und Buchungen</td
-						></tr
-					>
-					<tr
-						><td><code>/admin/kunden?secret=…</code></td><td
+						><td><code>/admin/kunden</code></td><td
 							>Tabelle aller Kunden (Datum, Name, E-Mail, Betrag, Zahlungsart-Badge). Action:
 							löschen.</td
 						></tr
 					>
 					<tr
-						><td><code>/admin/buchungen?secret=…</code></td><td
+						><td><code>/admin/buchungen</code></td><td
 							>Drei Tabellen: gebuchte Termine / freie Termine / gesperrte Termine. Actions:
 							löschen, sperren, entsperren.</td
 						></tr
@@ -2684,9 +2712,10 @@
 			</table>
 
 			<div class="callout callout-warn">
-				<strong>Authentifizierung Admin:</strong> Nur via
-				<code>?secret=ADMIN_SECRET</code>-Query-Parameter — kein Session-Cookie. Das Secret muss bei
-				jedem Link mitgegeben werden.
+				<strong>Authentifizierung Admin:</strong> Login unter <code>/admin</code> mit
+				<code>ADMIN_SECRET</code> → signiertes Session-Cookie (8 h). Alle
+				<code>/admin/*</code>-Routen werden zentral in <code>hooks.server.ts</code> geschützt. Links in
+				E-Mails (Freigaben) tragen ein Token pro Aktion statt des Passworts.
 			</div>
 
 			<p class="table-label">Environment-Variablen</p>
@@ -3309,7 +3338,7 @@
 				<tbody>
 					<tr
 						><td><code>ADMIN_SECRET</code></td><td>Beliebig (z.B. UUID)</td><td
-							>Authentifizierung für /admin/* Routes → URL-Parameter: <code>?secret=...&</code></td
+							>Passwort für den Admin-Login unter <code>/admin</code> (Session-Cookie)</td
 						></tr
 					>
 					<tr
@@ -3450,7 +3479,7 @@
 							Ankunftserinnerung an Mieter (sofort, nicht via Scheduler)</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler, 08:00 UTC)</td><td
 							>Falls Anreise = übermorgen &amp; <code>reminderSent = false</code> → ✉ Ankunftserinnerung
 							an Mieter</td
@@ -3461,12 +3490,12 @@
 							>→ Check-in → ✉ Interne Benachrichtigung an Betreiber</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler)</td><td
 							>24h nach Ankunft → ✉ Nach-Ankunft-Mail an Mieter</td
 						></tr
 					>
-					<tr style="opacity:0.5; font-style:italic;"
+					<tr class="[opacity:0.5] [font-style:italic]"
 						><td colspan="2">automatisch (Scheduler)</td><td
 							>12h vor Abreise → ✉ Abreiseerinnerung an Mieter</td
 						></tr

@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { isAdmin } from '$lib/server/adminAuth';
 import * as prismic from '@prismicio/client';
 import { repositoryName } from '$lib/prismicio';
 
@@ -55,10 +56,9 @@ function validateValues(input: unknown): ThemeValues | null {
 
 export const prerender = false;
 
-export async function POST({ request, url }) {
-	const adminSecret = env.ADMIN_SECRET;
-	const providedSecret = url.searchParams.get('secret');
-	if (!adminSecret || providedSecret !== adminSecret) {
+export async function POST({ request, cookies }) {
+	// Only for a logged-in admin (session cookie from /admin)
+	if (!isAdmin(cookies)) {
 		return json({ error: 'Nicht autorisiert.' }, { status: 401 });
 	}
 	if (!env.PRISMIC_WRITE_TOKEN) {

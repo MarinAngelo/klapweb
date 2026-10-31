@@ -115,6 +115,8 @@
 	};
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: marginTopSize = p.margin_top as string | undefined;
+	$: innerApply = p.inner_apply ?? false;
 	$: computedPaddingTopClass = yPaddingMobileVal
 		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
 				.filter(Boolean)
@@ -127,6 +129,16 @@
 					.join(' ')
 			: ''
 		: undefined;
+
+	// CMS colors as CSS variables only (app.css › .color-scope)
+	$: sectionStyle = [
+		`--scope-bg: ${innerApply ? 'var(--page-bg-color)' : p.bg_color || 'var(--page-bg-color)'}`,
+		`--scope-color: ${p.color || 'var(--page-color)'}`,
+		p.color && `--page-color: ${p.color}`,
+		fullscreen && `--fullscreen-height: ${fullscreenHeight}`
+	]
+		.filter(Boolean)
+		.join('; ');
 </script>
 
 {#if visible}
@@ -134,19 +146,20 @@
 		<Bounded
 			as="section"
 			{yPadding}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
 			fullWidth={isFullWidth}
 			noPadding={isFullWidth}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
+			class="color-scope"
+			style={sectionStyle}
 		>
 			{#if p.section_title}
 				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 			{/if}
-			<div class="flex flex-col" style="gap: {rowGap};">
+			<div class="flex flex-col" style:gap={rowGap}>
 				{#each multiItemsWithImages as item, i}
 					<ImageTextGrid
 						image={isFilled.image(item.image) ? item.image : null}
@@ -188,15 +201,14 @@
 			noPadding={fullscreen || mobileVollbreite}
 			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
-				? ` --fullscreen-height: ${fullscreenHeight};`
-				: ''}"
+			{marginTopSize}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+			style={sectionStyle}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			class={`${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
+			class={`color-scope ${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
 		>
 			<div class={fullscreen ? 'h-full flex-1' : ''}>
 				<ImageTextGrid

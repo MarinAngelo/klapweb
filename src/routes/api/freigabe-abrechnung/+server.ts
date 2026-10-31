@@ -1,8 +1,8 @@
 /**
- * GET  /api/freigabe-abrechnung?id=…&secret=…
+ * GET  /api/freigabe-abrechnung?id=…&token=…  (token = adminActionToken('freigabe-abrechnung', id))
  *   → HTML-Seite: Abrechnungsdetails + editierbarer Betrag + Freigabe-Button
  *
- * POST /api/freigabe-abrechnung?id=…&secret=…
+ * POST /api/freigabe-abrechnung?id=…&token=…
  *   → Speichert freigegebenen Betrag, sendet definitive Abrechnung an Mieter
  */
 import type { RequestHandler } from '@sveltejs/kit';
@@ -10,6 +10,8 @@ import { getRessourceBuchung, updateRessourceBuchung } from '$lib/server/ressour
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
+import type { Cookies } from '@sveltejs/kit';
+import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
@@ -24,14 +26,23 @@ function fmtDatum(iso: string) {
 	return `${d}.${m}.${y}`;
 }
 
-function auth(url: URL): boolean {
-	const secret = url.searchParams.get('secret');
-	return !!env.ADMIN_SECRET && secret === env.ADMIN_SECRET;
+function auth(url: URL, cookies: Cookies): boolean {
+	return isAuthorizedAdminAction(
+		'freigabe-abrechnung',
+		url.searchParams.get('id') ?? '',
+		url,
+		cookies
+	);
+}
+
+/** Query string for links/forms on this page: id + action token (never the admin password) */
+function authQuery(id: string): string {
+	return `id=${encodeURIComponent(id)}&token=${adminActionToken('freigabe-abrechnung', id)}`;
 }
 
 // ── GET: Freigabe-Formular ─────────────────────────────────────────────────────
-export const GET: RequestHandler = async ({ url }) => {
-	if (!auth(url)) return html(403, '<p>Kein Zugriff.</p>');
+export const GET: RequestHandler = async ({ url, cookies }) => {
+	if (!auth(url, cookies)) return html(403, '<p>Kein Zugriff.</p>');
 
 	const id = url.searchParams.get('id');
 	if (!id) return html(400, '<p>Buchungs-ID fehlt.</p>');
@@ -46,7 +57,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			<p>✓ Diese Abrechnung wurde bereits freigegeben.</p>
 			<p><strong>Freigegebener Betrag:</strong> ${fmt(buchung.abrechnungBetrag ?? 0)}</p>
 			<p>Freigegeben am: ${buchung.abrechnungFreigegebenAt ? new Date(buchung.abrechnungFreigegebenAt).toLocaleString('de-CH') : '–'}</p>
-			<br><a href="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(url.searchParams.get('secret') ?? '')}&resend=true">Abrechnung erneut senden</a>
+			<br><a href="?${authQuery(id)}&resend=true">Abrechnung erneut senden</a>
 		`
 		);
 	}
@@ -97,7 +108,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			</tfoot>
 		</table>
 
-		<form method="POST" action="?id=${encodeURIComponent(id)}&secret=${encodeURIComponent(url.searchParams.get('secret') ?? '')}${resend ? '&resend=true' : ''}">
+		<form method="POST" action="?${authQuery(id)}${resend ? '&resend=true' : ''}">
 			<fieldset>
 				<legend>Manuelle Korrektur</legend>
 				<label>
@@ -121,8 +132,8 @@ export const GET: RequestHandler = async ({ url }) => {
 };
 
 // ── POST: Abrechnung freigeben ─────────────────────────────────────────────────
-export const POST: RequestHandler = async ({ url, request }) => {
-	if (!auth(url)) return html(403, '<p>Kein Zugriff.</p>');
+export const POST: RequestHandler = async ({ url, request, cookies }) => {
+	if (!auth(url, cookies)) return html(403, '<p>Kein Zugriff.</p>');
 
 	const id = url.searchParams.get('id');
 	if (!id) return html(400, '<p>Buchungs-ID fehlt.</p>');

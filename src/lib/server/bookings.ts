@@ -14,6 +14,8 @@ export interface BookingRecord {
 	datum: string;
 	uhrzeit: string;
 	endzeit?: string;
+	/** End incl. buffer (Puffer danach); missing in older bookings → endzeit */
+	blockedUntil?: string;
 	titel: string;
 	bookedAt: string;
 	name?: string;
@@ -68,6 +70,10 @@ export async function updateBooking(
 	await store.setJSON(terminId, { ...existing, ...patch });
 }
 
+/**
+ * Time range overlaps a booking on the same day. Both sides include their buffer:
+ * `endzeit` = end incl. buffer of the new appointment, existing bookings use blockedUntil.
+ */
 export async function hasOverlappingBooking(
 	datum: string,
 	startzeit: string,
@@ -82,7 +88,7 @@ export async function hasOverlappingBooking(
 	return bookings.some((booking) => {
 		if (booking.terminId === excludeId || booking.datum !== datum) return false;
 		const existingStart = toMinutes(booking.uhrzeit);
-		const existingEnd = toMinutes(booking.endzeit ?? booking.uhrzeit);
+		const existingEnd = toMinutes(booking.blockedUntil ?? booking.endzeit ?? booking.uhrzeit);
 		if (existingStart === null || existingEnd === null || existingEnd <= existingStart)
 			return false;
 		return start < existingEnd && end > existingStart;

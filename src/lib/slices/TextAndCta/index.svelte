@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled } from '@prismicio/client';
-	import { PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -42,8 +43,8 @@
 
 	$: bgColor = p.bg_color || null;
 	$: textColor = p.text_color || null;
-	$: textZoomDesktop = ((p.text_zoom_desktop ?? 100) / 100);
-	$: textZoomMobile = ((p.text_zoom_mobile ?? 100) / 100);
+	$: textZoomDesktop = (p.text_zoom_desktop ?? 100) / 100;
+	$: textZoomMobile = (p.text_zoom_mobile ?? 100) / 100;
 
 	$: buttonColor = p.button_color || textColor || get(theme).pageButtonColor;
 	$: buttonBgColor = p.button_bg_color || get(theme).pageButtonBgColor;
@@ -65,18 +66,18 @@
 <section
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
-	style="
-		{bgColor ? `background-color: ${bgColor};` : ''}
-		{textColor ? `color: ${textColor}; --page-color: ${textColor};` : ''}
-		{fullscreenHeight ? 'min-height: 100vh;' : ''}
-		{scrollSnap ? 'scroll-snap-align: start;' : ''}
-	"
+	style:background-color={bgColor || undefined}
+	style:color={textColor || undefined}
+	style:--page-color={textColor || undefined}
 	class="flex flex-col justify-center"
+	class:min-h-screen={fullscreenHeight}
+	class:snap-start={scrollSnap}
 >
 	<Bounded tag="div" yPadding="base" class="!pt-12 md:!pt-28">
 		<div
 			class="text-and-cta-content space-y-14 {textAlignClass}"
-			style="--text-zoom-desktop: {textZoomDesktop}; --text-zoom-mobile: {textZoomMobile};"
+			style:--text-zoom-desktop={textZoomDesktop}
+			style:--text-zoom-mobile={textZoomMobile}
 		>
 			{#if 'text' in p}
 				<PrismicRichText field={p.text} />
@@ -87,36 +88,26 @@
 					{#if beauftragungHref}
 						<a
 							href={beauftragungHref}
-							class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+							class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 								? 'block w-full text-center sm:inline-block sm:w-auto'
 								: 'inline-block'}"
-							style="
-								background-color: {buttonBgColor};
-								color: {buttonColor};
-								border-color: {buttonColor};
-								--hover-text-color: {buttonHoverColor};
-								--hover-bg-color: {buttonHoverBgColor};
-								--focus-ring-color: {buttonColor};
-							"
+							style:--btn-bg={buttonBgColor}
+							style:--btn-color={buttonColor}
+							style:--hover-text-color={buttonHoverColor}
+							style:--hover-bg-color={buttonHoverBgColor}
+							style:--focus-ring-color={buttonColor}
 						>
-							{p.button_text || 'Mehr erfahren'}
+							{p.button_text || $_('Mehr erfahren')}
 						</a>
 					{:else}
 						<PrismicLink
 							field={p.button_link}
-							class="button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
+							class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out {sizeClass} {mobileFullWidth
 								? 'block w-full text-center sm:inline-block sm:w-auto'
 								: 'inline-block'}"
-							style="
-								background-color: {buttonBgColor};
-								color: {buttonColor};
-								border-color: {buttonColor};
-								--hover-text-color: {buttonHoverColor};
-								--hover-bg-color: {buttonHoverBgColor};
-								--focus-ring-color: {buttonColor};
-							"
+							style="--btn-bg: {buttonBgColor}; --btn-color: {buttonColor}; --hover-text-color: {buttonHoverColor}; --hover-bg-color: {buttonHoverBgColor}; --focus-ring-color: {buttonColor};"
 						>
-							{p.button_text || 'Mehr erfahren'}
+							{p.button_text || $_('Mehr erfahren')}
 						</PrismicLink>
 					{/if}
 				</div>

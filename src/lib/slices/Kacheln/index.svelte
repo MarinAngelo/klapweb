@@ -89,21 +89,28 @@
 			const highlight = hervorhebung === `Plan ${i + 1}`;
 			const uid = planDoc?.uid as string | undefined;
 			const href = uid ? `/beauftragung?dienstleistung=${encodeURIComponent(uid)}` : null;
-			const pageHref = uid
-				? planDoc?.type === 'leistung'
-					? `/leistung/${uid}`
-					: `/${uid}`
-				: null;
+			const pageHref = uid ? (planDoc?.type === 'leistung' ? `/leistung/${uid}` : `/${uid}`) : null;
 			const features: Array<{ label: string; wert: string | null; beschreibung?: string }> =
 				plaeneData[i] ?? [];
 
 			// Extrahiere erste Leistung aus Plan-Page (falls vorhanden)
-			const leistungenRefs: Array<{ leistung?: any }> = (d.leistungen ?? []);
+			const leistungenRefs: Array<{ leistung?: any }> = d.leistungen ?? [];
 			const firstLeistung = leistungenRefs[0]?.leistung;
 			const leistungHref = firstLeistung?.uid ? `/leistung/${firstLeistung.uid}` : null;
 			const leistungName = firstLeistung?.data?.label || firstLeistung?.uid || null;
 
-			return { name, price: converted, suffix, billingType, highlight, href, pageHref, features, leistungHref, leistungName };
+			return {
+				name,
+				price: converted,
+				suffix,
+				billingType,
+				highlight,
+				href,
+				pageHref,
+				features,
+				leistungHref,
+				leistungName
+			};
 		});
 	})();
 
@@ -119,7 +126,7 @@
 		: 'var(--page-button-color)';
 	$: borderColor = (slice.primary as any)?.border_color || 'var(--page-color)';
 	$: roundCorners = (slice.primary as any)?.round_corners !== false;
-	$: ctaLabel = (slice.primary as any)?.cta_label || 'Jetzt bestellen';
+	$: ctaLabel = (slice.primary as any)?.cta_label || $_('Jetzt bestellen');
 	$: mobileVollbreite = (slice.primary as any)?.mobile_full_width ?? false;
 
 	// --- Team variation ---
@@ -135,17 +142,21 @@
 	$: teamCardColor = (slice.primary as any)?.body_color || 'var(--page-color)';
 	$: teamCardBg = (slice.primary as any)?.body_bg_color || 'transparent';
 	$: teamHeading = (slice.primary as any)?.heading ?? null;
+
+	// CMS colors as CSS variables (app.css › .color-scope / .card-* / .plan-card)
+	$: planScopeStyle = `--scope-color: ${componentBodyColor}; --scope-bg: ${componentBodyBgColor}; --card-color: ${cardColor}; --card-bg: ${cardBgColor}; --card-border: ${borderColor}; --card-accent: ${btnHighlightColor};`;
+	$: teamScopeStyle = `--scope-color: ${componentBodyColor}; --scope-bg: ${componentBodyBgColor}; --card-color: ${teamCardColor}; --card-bg: ${teamCardBg};`;
 </script>
 
 {#if slice.variation === 'plaene'}
 	<Bounded
 		as="section"
-		style="color: {componentBodyColor}; background-color: {componentBodyBgColor};"
+		class="color-scope {mobileVollbreite ? 'overflow-x-clip' : ''}"
+		style={planScopeStyle}
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class={mobileVollbreite ? 'overflow-x-clip' : ''}
 	>
 		<div class={mobileVollbreite ? '-mx-6 md:mx-0' : ''}>
 			{#if isFilled.richText(slice.primary?.heading)}
@@ -154,20 +165,16 @@
 				</h2>
 			{/if}
 
-			<div class="grid grid-cols-1 gap-6" style="--plan-cols: {planItems.length};">
+			<div
+				class="grid grid-cols-1 gap-6 md:grid-cols-[repeat(var(--plan-cols),minmax(0,1fr))]"
+				style:--plan-cols={planItems.length}
+			>
 				{#each planItems as plan, i}
 					<div
-						class="relative flex flex-col p-6 border"
+						class="plan-card relative flex flex-col p-6 border"
 						class:border-2={plan.highlight}
-						style="
-						color: {cardColor};
-						background-color: {plan.highlight ? `${cardBgColor}` : cardBgColor};
-					border-color: {plan.highlight ? btnHighlightColor : `${borderColor}44`};
-					border-radius: {roundCorners ? '0.5rem' : '0'};
-					{plan.highlight
-							? `box-shadow: 0 4px 24px color-mix(in srgb, ${btnHighlightColor} 13%, transparent);`
-							: ''}
-					"
+						class:is-highlight={plan.highlight}
+						class:rounded-lg={roundCorners}
 					>
 						<!-- Plan name + price -->
 						<div class="mb-4">
@@ -175,10 +182,9 @@
 								{#if plan.pageHref}
 									<a
 										href={plan.pageHref}
-										class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity"
-										style="color: {cardColor};"
+										class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity !text-inherit"
 										>{plan.name}
-										<span class="opacity-60" style="line-height: 0;"
+										<span class="opacity-60 leading-[0]"
 											><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
 										></a
 									>
@@ -193,7 +199,7 @@
 										class="inline-flex items-center gap-1 text-primary hover:opacity-70 transition-opacity"
 									>
 										{plan.leistungName}
-										<span style="line-height: 0;">
+										<span class="leading-[0]">
 											<SvgIcons name="external-link" size="0.7em" color="currentColor" />
 										</span>
 									</a>
@@ -228,36 +234,37 @@
 							<ul class="flex-1 mb-6 space-y-2 text-sm font-normal">
 								{#if i > 0}
 									<li class="text-sm opacity-60 italic pb-1">
-										Alles von {planItems[i - 1].name} und:
+										{$_('Alles von {plan} und:').replace('{plan}', planItems[i - 1].name)}
 									</li>
 								{/if}
 								{#each plan.features as feat}
 									<li class="flex items-start gap-2">
 										{#if feat.wert === '✓' || (!feat.wert && feat.label)}
-											<span style="color: {cardColor};">✓</span>
+											<span>✓</span>
 										{:else if feat.wert === '–' || feat.wert === null}
-											<span style="opacity: 0.3;">–</span>
+											<span class="opacity-30">–</span>
 										{:else}
-											<span style="color: {cardColor};">{feat.wert}</span>
+											<span>{feat.wert}</span>
 										{/if}
 										<span>
 											{#if feat.leistungUid}
 												<a
 													href="/leistung/{feat.leistungUid}"
-													class="hover:opacity-70 transition-opacity inline-flex items-center gap-1"
-													style="color: {cardColor};"
+													class="hover:opacity-70 transition-opacity inline-flex items-center gap-1 !text-inherit"
 												>
 													{feat.label}
-													<span style="line-height: 0;"
-														><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
+													<span class="leading-[0]"
+														><SvgIcons
+															name="external-link"
+															size="0.7em"
+															color="currentColor"
+														/></span
 													>
 												</a>
 											{:else}
 												{feat.label}
 											{/if}
-											{#if feat.beschreibung}&thinsp;<InfoTooltip
-													html={feat.beschreibung}
-												/>{/if}
+											{#if feat.beschreibung}&thinsp;<InfoTooltip html={feat.beschreibung} />{/if}
 										</span>
 									</li>
 								{/each}
@@ -291,7 +298,8 @@
 	<!-- ── Team-Variation ── -->
 	<Bounded
 		tag="section"
-		style="color: {componentBodyColor}; background-color: {componentBodyBgColor};"
+		class="color-scope"
+		style={teamScopeStyle}
 		data-slice-type="image_cards"
 		data-slice-variation="team"
 		animate={anim.animate}
@@ -318,17 +326,16 @@
 					use:reveal={anim.animate
 						? { ...anim.options, delay: (anim.options.delay ?? 0) + i * STAGGER_MS }
 						: { direction: 'none' }}
-					style="color: {teamCardColor};"
+					class="card-text"
 				>
 					<!-- Foto -->
 					{#if isFilled.image(photo)}
 						<div
-							class="w-full aspect-square overflow-hidden {isCircle
+							class="card-bg w-full aspect-square overflow-hidden {isCircle
 								? 'rounded-full'
 								: teamRound
 									? 'rounded-xl'
 									: ''}"
-							style="background-color: {teamCardBg};"
 						>
 							<img
 								src="{photo.url?.split('?')[0]}?auto=compress,format&w=600&fit=crop&ar=1:1"
@@ -346,8 +353,7 @@
 								? 'rounded-full'
 								: teamRound
 									? 'rounded-xl'
-									: ''} flex items-center justify-center opacity-20"
-							style="background-color: {teamCardColor};"
+									: ''} flex items-center justify-center opacity-20 card-fill"
 						>
 							<svg viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12">
 								<path
@@ -363,7 +369,7 @@
 							<p class="font-semibold leading-snug">{memberName}</p>
 						{/if}
 						{#if memberRole}
-							<p class="text-sm opacity-60 mt-0.5">{memberRole}</p>
+							<p class="text-sm text-muted mt-0.5">{memberRole}</p>
 						{/if}
 					</div>
 
@@ -380,10 +386,9 @@
 							href={memberLink.url}
 							target={'target' in memberLink ? (memberLink.target ?? '_blank') : '_blank'}
 							rel="noopener noreferrer"
-							class="text-xs underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity"
-							style="color: {teamCardColor};"
+							class="text-xs underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity !text-inherit"
 						>
-							{memberLink.url?.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] ?? 'Link'}
+							{memberLink.url?.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] ?? $_('Link')}
 						</a>
 					{/if}
 				</li>
@@ -393,8 +398,10 @@
 {:else}
 	<Bounded
 		tag="section"
-		class="{hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite ? 'overflow-x-clip' : ''}"
-		style="background-color: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
+		class="color-scope {hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite
+			? 'overflow-x-clip'
+			: ''}"
+		style="--scope-bg: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
@@ -431,11 +438,5 @@
 <style>
 	.custom-color {
 		color: var(--custom-component-color) !important;
-	}
-
-	@media (min-width: 768px) {
-		div[style*='--plan-cols'] {
-			grid-template-columns: repeat(var(--plan-cols), minmax(0, 1fr));
-		}
 	}
 </style>

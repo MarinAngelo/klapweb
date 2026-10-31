@@ -1,5 +1,5 @@
 /**
- * GET /api/freigabe-aufgabe?id=...&secret=...
+ * GET /api/freigabe-aufgabe?id=...&token=...  (token = adminActionToken('freigabe-aufgabe', id))
  *
  * Bestätigt eine Aufgaben-Annahme und sendet die Bestätigungsmail an den Nutzer.
  * Link wird dem Betreiber per E-Mail zugestellt.
@@ -7,13 +7,12 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { getAnnahme, updateAnnahme } from '$lib/server/aufgaben';
 import { env } from '$env/dynamic/private';
+import { isAuthorizedAdminAction } from '$lib/server/adminAuth';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, cookies }) => {
 	const id = url.searchParams.get('id');
-	const secret = url.searchParams.get('secret');
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (!adminSecret || secret !== adminSecret) return html(403, 'Kein Zugriff');
+	if (!isAuthorizedAdminAction('freigabe-aufgabe', id ?? '', url, cookies))
+		return html(403, 'Kein Zugriff');
 	if (!id) return html(400, 'Annahme-ID fehlt');
 
 	let annahme;

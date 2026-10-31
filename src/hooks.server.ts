@@ -1,4 +1,6 @@
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
+import { building } from '$app/environment';
+import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
 
@@ -32,6 +34,24 @@ function setCachedUser(token: string, user: CachedUser): void {
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// ── Admin-Panel: nur mit Session-Cookie (Login unter /admin) ─────────────────
+	// Never read event.url.searchParams/search outside this branch: SvelteKit throws on
+	// prerendered pages if the hook merely accesses them. /admin/* is never prerendered.
+	const { pathname } = event.url;
+	if (!building && pathname.startsWith('/admin/')) {
+		// Transition: old bookmarks with ?secret=… log in once, then the secret is removed from the URL
+		const legacySecret = event.url.searchParams.get('secret');
+		if (legacySecret !== null) {
+			if (isValidAdminPassword(legacySecret)) startAdminSession(event.cookies);
+			const clean = new URL(event.url);
+			clean.searchParams.delete('secret');
+			throw redirect(303, clean.pathname + clean.search);
+		}
+		if (!isAdmin(event.cookies)) {
+			throw redirect(303, `/admin?next=${encodeURIComponent(pathname + event.url.search)}`);
+		}
+	}
+
 	const sessionToken = event.cookies.get('klap_user_session');
 	if (sessionToken) {
 		const cached = getCachedUser(sessionToken);
@@ -64,6 +84,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	return resolve(event, {
 		transformPageChunk: ({ html }) => {
+			const htmlLang = event.locals.htmlLang;
+			if (htmlLang && /^[a-z]{2}(-[a-z]{2})?$/i.test(htmlLang)) {
+				html = html.replace('<html lang="de"', `<html lang="${htmlLang}"`);
+			}
 			const css = event.locals.themeColorsCss;
 			if (!css) return html;
 			// Inline-Style auf <html>: schlägt immer alle Stylesheets,

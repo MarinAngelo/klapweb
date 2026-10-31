@@ -1,0 +1,239 @@
+/**
+ * Cookie-/Dienste-Registry (Schweizer Recht: Art. 45c FMG + DSG, Opt-out-Modell)
+ *
+ * JEDER Dienst, der Cookies setzt, Daten im Browser speichert oder Besucherdaten
+ * (z.B. IP-Adresse) an Dritte überträgt, MUSS hier registriert sein.
+ * Nicht-funktionale Dienste werden im Code mit <ConsentGate service="…"> umschlossen:
+ * nur so erscheint der Cookie-Banner auf Seiten, die den Dienst nutzen, und nur so
+ * kann der Besucher den Dienst ablehnen.
+ *
+ * `purpose` ist ein i18n-Key (translations.ts).
+ */
+
+export type ConsentCategory =
+	| 'functional'
+	| 'external_media'
+	| 'ai_chat'
+	| 'statistics'
+	| 'marketing';
+
+/**
+ * Condition for listing a service: only when this function is in use on the website
+ * (layout data `consentInUse`, +layout.server.ts). Without `requires` the service is always listed.
+ */
+export type ConsentRequirement =
+	| 'user_backend'
+	| 'page_password'
+	| 'cart'
+	| 'multilang'
+	| 'aufgaben'
+	| 'ai_chat';
+
+export type ConsentService = {
+	label: string;
+	provider: string;
+	category: ConsentCategory;
+	purpose: string;
+	/** Cookie-/Speicher-Namen bzw. Art der Datenübertragung */
+	storage: string[];
+	privacyUrl?: string;
+	requires?: ConsentRequirement;
+};
+
+/** false = the function behind the service is not used on this website → not listed */
+export const isServiceInUse = (service: ConsentService, inUse: readonly string[] | undefined) =>
+	!service.requires || (inUse ?? []).includes(service.requires);
+
+/** Order = display order in the settings dialog. Labels/descriptions are i18n keys. */
+export const consentCategories: Record<ConsentCategory, { label: string; description: string }> = {
+	functional: {
+		label: 'Funktional',
+		description:
+			'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.'
+	},
+	external_media: {
+		label: 'Externe Inhalte',
+		description:
+			'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.'
+	},
+	ai_chat: {
+		label: 'KI-Chat',
+		description:
+			'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.'
+	},
+	statistics: {
+		label: 'Statistik',
+		description: 'Anonyme oder pseudonyme Auswertung der Nutzung dieser Website.'
+	},
+	marketing: {
+		label: 'Marketing',
+		description: 'Werbung und Wiedererkennung über verschiedene Websites hinweg.'
+	}
+};
+
+export const consentServices: Record<string, ConsentService> = {
+	// ── Funktional ───────────────────────────────────────────────────────────
+	user_session: {
+		label: 'Benutzerkonto',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.',
+		storage: ['klap_user_session (Cookie)'],
+		requires: 'user_backend'
+	},
+	page_password: {
+		label: 'Passwortgeschützte Seiten',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich die Freigabe passwortgeschützter Seiten.',
+		storage: ['klap_auth (Cookie)'],
+		requires: 'page_password'
+	},
+	cart: {
+		label: 'Warenkorb',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.',
+		storage: ['klap_cart (Local Storage)'],
+		requires: 'cart'
+	},
+	language: {
+		label: 'Sprache',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich die gewählte Sprache der Website.',
+		storage: ['klap_lang (Local Storage)'],
+		requires: 'multilang'
+	},
+	aufgaben_login: {
+		label: 'Aufgabenliste',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
+		storage: ['klap_aufgaben_login (Local Storage)'],
+		requires: 'aufgaben'
+	},
+	consent_choice: {
+		label: 'Cookie-Auswahl',
+		provider: 'Website-Betreiber',
+		category: 'functional',
+		purpose: 'Speichert Ihre Auswahl in diesem Cookie-Dialog.',
+		storage: ['klap_consent (Local Storage)']
+	},
+
+	// ── Externe Inhalte ──────────────────────────────────────────────────────
+	google_maps: {
+		label: 'Google Maps',
+		provider: 'Google Ireland Ltd. / Google LLC',
+		category: 'external_media',
+		purpose: 'Anzeige interaktiver Karten.',
+		storage: ['Google-Cookies (z.B. NID)', 'Übertragung der IP-Adresse an Google'],
+		privacyUrl: 'https://policies.google.com/privacy'
+	},
+	openstreetmap: {
+		label: 'OpenStreetMap',
+		provider: 'OpenStreetMap Foundation',
+		category: 'external_media',
+		purpose: 'Anzeige interaktiver Karten.',
+		storage: [
+			'Keine Tracking-Cookies',
+			'Übertragung der IP-Adresse an die OpenStreetMap Foundation'
+		],
+		privacyUrl: 'https://osmfoundation.org/wiki/Privacy_Policy'
+	},
+	youtube: {
+		label: 'YouTube',
+		provider: 'Google Ireland Ltd. / Google LLC',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Videos.',
+		storage: [
+			'YouTube-Cookies (z.B. VISITOR_INFO1_LIVE, YSC)',
+			'Übertragung der IP-Adresse an Google'
+		],
+		privacyUrl: 'https://policies.google.com/privacy'
+	},
+	vimeo: {
+		label: 'Vimeo',
+		provider: 'Vimeo.com Inc.',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Videos.',
+		storage: ['Vimeo-Cookies (z.B. vuid)', 'Übertragung der IP-Adresse an Vimeo'],
+		privacyUrl: 'https://vimeo.com/privacy'
+	},
+	dailymotion: {
+		label: 'Dailymotion',
+		provider: 'Dailymotion SA',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Videos.',
+		storage: ['Dailymotion-Cookies (z.B. dmvk, ts)', 'Übertragung der IP-Adresse an Dailymotion'],
+		privacyUrl: 'https://legal.dailymotion.com/en/privacy-policy/'
+	},
+	soundcloud: {
+		label: 'SoundCloud',
+		provider: 'SoundCloud Global Limited & Co. KG',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Audioinhalte.',
+		storage: [
+			'SoundCloud-Cookies (z.B. sc_anonymous_id)',
+			'Übertragung der IP-Adresse an SoundCloud'
+		],
+		privacyUrl: 'https://soundcloud.com/pages/privacy'
+	},
+	spotify: {
+		label: 'Spotify',
+		provider: 'Spotify AB',
+		category: 'external_media',
+		purpose: 'Wiedergabe eingebetteter Audioinhalte.',
+		storage: ['Spotify-Cookies (z.B. sp_t)', 'Übertragung der IP-Adresse an Spotify'],
+		privacyUrl: 'https://www.spotify.com/ch-de/legal/privacy-policy/'
+	},
+	external_embed: {
+		label: 'Eingebetteter Inhalt',
+		provider: 'Drittanbieter',
+		category: 'external_media',
+		purpose: 'Anzeige von Inhalten, die von einer externen Website geladen werden.',
+		storage: ['Cookies des Anbieters möglich', 'Übertragung der IP-Adresse an den Anbieter']
+	},
+
+	// ── KI-Chat ──────────────────────────────────────────────────────────────
+	ai_chat: {
+		label: 'Chat-Assistent (Claude)',
+		provider: 'Anthropic PBC (USA)',
+		category: 'ai_chat',
+		purpose: 'Beantwortet Fragen im Chat-Fenster mit künstlicher Intelligenz.',
+		storage: [
+			'Keine Cookies',
+			'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)',
+			'Speicherung von Frage und Antwort ohne IP-Adresse beim Website-Betreiber, Löschung nach 90 Tagen'
+		],
+		privacyUrl: 'https://www.anthropic.com/legal/privacy',
+		requires: 'ai_chat'
+	}
+};
+
+/** Maps an external URL / oEmbed provider name to a registered service id */
+export function serviceIdFor(urlOrProvider: string | undefined | null): string {
+	const value = (urlOrProvider ?? '').toLowerCase();
+	if (/youtube|youtu\.be/.test(value)) return 'youtube';
+	if (/vimeo/.test(value)) return 'vimeo';
+	if (/dailymotion|dai\.ly/.test(value)) return 'dailymotion';
+	if (/soundcloud/.test(value)) return 'soundcloud';
+	if (/spotify/.test(value)) return 'spotify';
+	if (/openstreetmap\.org|(^|\/\/|\.)osm\.org/.test(value)) return 'openstreetmap';
+	if (/google\.[a-z.]+\/maps|maps\.google|goo\.gl\/maps|maps\.app\.goo\.gl/.test(value))
+		return 'google_maps';
+	return 'external_embed';
+}
+
+/**
+ * Finds external iframe/script sources in HTML (e.g. HtmlCode slice).
+ * Returns the service ids needed, or [] if the HTML only contains local content.
+ */
+export function servicesInHtml(html: string): string[] {
+	const sources = [
+		...html.matchAll(/<(?:iframe|script|embed|object)\b[^>]*\b(?:src|data)=["']([^"']+)["']/gi)
+	]
+		.map((match) => match[1])
+		.filter((src) => /^(https?:)?\/\//i.test(src));
+	return [...new Set(sources.map(serviceIdFor))];
+}

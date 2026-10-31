@@ -152,35 +152,6 @@
 						"default_value": true
 					}
 				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
@@ -286,6 +257,35 @@
 								}
 							}
 						}
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				}
 			},
@@ -439,35 +439,6 @@
 						"default_value": true
 					}
 				},
-				"animate": {
-					"type": "Boolean",
-					"config": {
-						"label": "Animation aktivieren",
-						"default_value": false
-					}
-				},
-				"anim_direction": {
-					"type": "Select",
-					"config": {
-						"label": "Animations-Richtung",
-						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
-						"default_value": "Oben"
-					}
-				},
-				"anim_delay": {
-					"type": "Number",
-					"config": {
-						"label": "Verzögerung (ms)",
-						"placeholder": "500"
-					}
-				},
-				"anim_duration": {
-					"type": "Number",
-					"config": {
-						"label": "Animationsdauer (ms)",
-						"placeholder": "2000"
-					}
-				},
 				"bg_color": {
 					"type": "Color",
 					"config": {
@@ -506,6 +477,15 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"title_level": {
+					"type": "Select",
+					"config": {
+						"label": "Titel-Ebene",
+						"placeholder": "Überschriften-Ebene der Akkordeon-Titel (H2 = Hauptabschnitt, H3–H6 = Unterpunkte)",
+						"options": ["H2", "H3", "H4", "H5", "H6"],
+						"default_value": "H2"
 					}
 				},
 				"accordion_items": {
@@ -612,6 +592,35 @@
 								}
 							}
 						}
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
 					}
 				}
 			},

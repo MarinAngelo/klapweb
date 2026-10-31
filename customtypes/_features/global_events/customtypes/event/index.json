@@ -365,8 +365,8 @@
 			"location_map_url": {
 				"type": "Text",
 				"config": {
-					"label": "Karte / Google Maps",
-					"placeholder": "https://maps.google.com/..."
+					"label": "Kartenpunkt",
+					"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
 				}
 			},
 			"map_height": {

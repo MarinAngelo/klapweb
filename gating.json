@@ -24,7 +24,7 @@
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
-			"plans": ["professional"],
+			"plans": ["individuell"],
 			"env": [
 				"NETLIFY_SITE_ID",
 				"NETLIFY_TOKEN",
@@ -36,6 +36,7 @@
 		"ecommerce": {
 			"label": "E-Commerce",
 			"plans": ["individuell"],
+			"linkTargets": ["leistung"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
 		},
 		"p5js": {
@@ -49,6 +50,7 @@
 		"ressourcenbuchung": {
 			"label": "Ressourcen-Buchung",
 			"plans": ["individuell"],
+			"linkTargets": ["ressource"],
 			"env": [
 				"NETLIFY_SITE_ID",
 				"NETLIFY_TOKEN",
@@ -72,12 +74,37 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
+			"plans": ["individuell"]
+		},
+		"suche": {
+			"label": "Website-Suche",
 			"plans": ["professional"]
 		},
 		"chatbot": {
 			"label": "Chat-Bot",
 			"plans": ["klap-web-ch"],
 			"env": ["ANTHROPIC_API_KEY"]
+		},
+		"newsletter": {
+			"label": "Newsletter",
+			"plans": ["professional"],
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
+		},
+		"kundenkonto": {
+			"label": "Kundenkonto",
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+		},
+		"kundenverwaltung": {
+			"label": "Kundenverwaltung",
+			"plans": ["professional"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		}
 	},
 	"customTypes": {
@@ -142,8 +169,17 @@
 				},
 				"chat_knowledge_base": {
 					"feature": "chatbot"
+				},
+				"chat_knowledge_extra": {
+					"feature": "chatbot"
+				},
+				"user_backend_active": {
+					"feature": "kundenkonto"
 				}
 			}
+		},
+		"newsletter": {
+			"feature": "newsletter"
 		}
 	},
 	"slices": {
@@ -171,6 +207,9 @@
 			"variations": {
 				"kauf": {
 					"feature": "ecommerce"
+				},
+				"suche": {
+					"feature": "suche"
 				}
 			}
 		},
@@ -192,6 +231,9 @@
 				},
 				"ausChecken": {
 					"feature": "ressourcenbuchung"
+				},
+				"newsletterSignup": {
+					"feature": "newsletter"
 				}
 			}
 		},
@@ -209,6 +251,11 @@
 			"plan": "professional"
 		},
 		"Titelbereich": {
+			"variations": {
+				"blob": {
+					"plan": "klap-web-ch"
+				}
+			},
 			"fields": {
 				"button_style": {
 					"feature": "erweiterte_gestaltung"
@@ -244,22 +291,36 @@
 	},
 	"admin_sections": {
 		"rechnungen": {
-			"label": "Rechnungen"
+			"label": "Rechnungen",
+			"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 		},
 		"kunden": {
-			"label": "Kunden"
+			"label": "Kunden",
+			"feature": "kundenverwaltung"
 		},
 		"buchungen": {
-			"label": "Terminverwaltung"
+			"label": "Terminverwaltung",
+			"feature": "terminbuchung"
 		},
 		"ressource-buchungen": {
-			"label": "Ressource-Buchungen"
+			"label": "Ressource-Buchungen",
+			"feature": "ressourcenbuchung"
 		},
 		"aufgaben": {
-			"label": "Aufgaben"
+			"label": "Aufgaben",
+			"feature": "ressourcenbuchung"
 		},
 		"event-anmeldungen": {
-			"label": "Event Anmeldungen"
+			"label": "Event Anmeldungen",
+			"feature": "global_events"
+		},
+		"newsletter": {
+			"label": "Newsletter",
+			"feature": "newsletter"
+		},
+		"chatbot": {
+			"label": "Chat-Bot",
+			"feature": "chatbot"
 		}
 	}
 }
