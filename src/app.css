@@ -516,6 +516,14 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	padding-bottom: 1rem;
 	overflow: visible;
 }
+/* Landing pages: only the legal links of the footer (+layout.svelte) */
+.footer-legal-bar {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+.footer-legal-bar .footer-buttonbar-p {
+	margin: 0;
+}
 .footer-text-top {
 	color: var(--footer-color);
 	font-size: var(--footer-font-size-top-bar-rem);
