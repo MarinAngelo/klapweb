@@ -62,6 +62,9 @@
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: searchIndexed =
+		($page.route.id ?? '').startsWith('/[[lang=lang]]') &&
+		($page.data?.page?.data as any)?.password_protected !== true;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
@@ -539,8 +542,10 @@
 		/>
 	{/if}
 
+	<!-- Search index (Pagefind, feature «suche»): only public content pages, never password-protected ones -->
 	<main
 		id="main-content"
+		data-pagefind-body={searchIndexed ? '' : undefined}
 		style:padding-top={stickyHeader && !hasBannerOverlap ? `${$headerHeight}px` : undefined}
 		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>

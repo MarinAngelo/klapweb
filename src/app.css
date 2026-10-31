@@ -1015,6 +1015,34 @@ p {
 		background-color: var(--page-bg-color);
 		color: var(--page-color);
 	}
+	/* Website search (SearchDialog.svelte) */
+	.search-result {
+		@apply flex flex-col gap-0.5 rounded px-3 py-2 text-inherit no-underline;
+	}
+	.search-result:hover,
+	.search-result:focus-visible {
+		background-color: color-mix(in srgb, currentColor 8%, transparent);
+	}
+	/* Match chosen in the page search (pageSearch.ts → revealHit) */
+	.page-search-hit {
+		border-radius: 0.25rem;
+		animation: page-search-hit 2.6s ease-out;
+	}
+	@keyframes page-search-hit {
+		0%,
+		60% {
+			background-color: color-mix(in srgb, currentColor 15%, transparent);
+			box-shadow: 0 0 0 0.35rem color-mix(in srgb, currentColor 15%, transparent);
+		}
+		100% {
+			background-color: transparent;
+			box-shadow: 0 0 0 0.35rem transparent;
+		}
+	}
+	.search-results mark {
+		color: inherit;
+		background-color: color-mix(in srgb, currentColor 18%, transparent);
+	}
 
 	/* Photo upload slot (4:3) and busy overlay on top of it */
 	.photo-slot {
