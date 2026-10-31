@@ -87,6 +87,10 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"Button.search_placeholder": {
+		"de-ch": "Text, der im leeren Suchfeld steht, z. B. «Wonach suchst du auf dieser Seite?». Leer = «Suchen …». Gilt nur für die Variante «Suche», die den Inhalt dieser Seite durchsucht.",
+		"en-us": "Text shown in the empty search field, e.g. «What are you looking for on this page?». Empty = «Suchen …» (Search …). Only used by the «Suche» variation, which searches the content of this page."
+	},
 	"event.end_date": {
 		"de-ch": "Datum und Uhrzeit. Prismic übernimmt die Zeitzone deines Computers – in der Schweiz also Schweizer Zeit (Sommerzeit wird automatisch berücksichtigt). Auf der Website erscheint die Uhrzeit immer in Schweizer Zeit, unabhängig davon, wo sich Besucher befinden.",
 		"en-us": "Date and time. Prismic uses your computer’s time zone – in Switzerland, Swiss time (daylight saving time is handled automatically). On the website the time is always shown in Swiss time, wherever visitors are."

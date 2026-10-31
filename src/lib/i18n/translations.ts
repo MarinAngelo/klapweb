@@ -870,6 +870,17 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Antworten der KI sind unverbindlich.',
 		'en-us': 'AI answers are not binding.'
 	},
+	Suchen: { 'de-ch': 'Suchen', 'en-us': 'Search' },
+	'Website durchsuchen': { 'de-ch': 'Website durchsuchen', 'en-us': 'Search website' },
+	'Die Suche ist erst auf der veröffentlichten Website verfügbar.': {
+		'de-ch': 'Die Suche ist erst auf der veröffentlichten Website verfügbar.',
+		'en-us': 'Search is only available on the published website.'
+	},
+	'Keine Treffer für «{suche}».': {
+		'de-ch': 'Keine Treffer für «{suche}».',
+		'en-us': 'No results for «{suche}».'
+	},
+	'Diese Seite durchsuchen': { 'de-ch': 'Diese Seite durchsuchen', 'en-us': 'Search this page' },
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
