@@ -356,13 +356,15 @@
 	let prefix = '+41';
 	let localNumber = '';
 	export let value: string | number = '';
-	let textValue = '';
+	// Start value from the parent (e.g. currency switch «CHF»), then two-way via bind:value
+	let textValue = typeof value === 'string' ? value : '';
 	let numberValue: number | null = typeof value === 'number' ? value : null;
 	$: if (
 		htmlType === 'text' ||
 		htmlType === 'search' ||
 		htmlType === 'code' ||
-		htmlType === 'email'
+		htmlType === 'email' ||
+		htmlType === 'select'
 	)
 		value = textValue;
 	$: if (htmlType === 'number') value = numberValue ?? '';
@@ -551,11 +553,12 @@
 				id={inputId ?? key}
 				name={inputId ?? key}
 				required={field.required}
+				bind:value={textValue}
 				class={compact ? 'form-input-compact' : 'input form-input rounded-md'}
 				on:blur
 				on:change
 			>
-				<option value="" disabled selected>{$_('Bitte auswählen')}</option>
+				<option value="" disabled>{$_('Bitte auswählen')}</option>
 				{#each field.options?.split(',') || [] as option}
 					<option
 						value={option?.trim() ?? ''}
