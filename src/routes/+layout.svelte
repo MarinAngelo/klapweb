@@ -17,6 +17,7 @@
 
 	import Header from '$lib/components/Header.svelte';
 	import ChatWidget from '$lib/components/ChatWidget.svelte';
+	import FooterLegalLinks from '$lib/components/FooterLegalLinks.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
@@ -447,6 +448,9 @@
 		// Agency editor: login keeps the site look, the editor itself is neutral
 		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
 	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	// Landing pages hide header and footer — except the legal links
+	$: showLegalBarOnly =
+		isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome && !isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
@@ -569,6 +573,11 @@
 			lang={chromeLang}
 			mainLang={data.mainLang}
 		/>
+	{:else if showLegalBarOnly && chromeSettings}
+		<!-- Landing page: the legal links stay (privacy, legal notice, cookie settings) -->
+		<Bounded tag="footer" yPadding="none" class="footer-body footer-legal-bar text-center">
+			<FooterLegalLinks settings={chromeSettings} lang={chromeLang} mainLang={data.mainLang} />
+		</Bounded>
 	{/if}
 </div>
 
