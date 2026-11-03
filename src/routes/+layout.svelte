@@ -11,11 +11,13 @@
 	import { repositoryName, createClient } from '$lib/prismicio';
 	import { preferredLang, uiLang, translationNoticeShown } from '$lib/stores/preferredLang';
 	import { withDocumentLinkUrls } from '$lib/utils/documentLinks';
+	import { localFontCss } from '$lib/fontSources.js';
 	import { linkContext } from '$lib/stores/linkContext';
 	import { staticRoutes, getLangBase } from '$lib/i18n/i18n'; // getLangBase importiert
 
 	import Header from '$lib/components/Header.svelte';
 	import ChatWidget from '$lib/components/ChatWidget.svelte';
+	import FooterLegalLinks from '$lib/components/FooterLegalLinks.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
@@ -60,6 +62,9 @@
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
 	$: showSwitcher = !!settings?.data?.show_language_switcher;
+	$: searchIndexed =
+		($page.route.id ?? '').startsWith('/[[lang=lang]]') &&
+		($page.data?.page?.data as any)?.password_protected !== true;
 	$: if (typeof document !== 'undefined' && lang) document.documentElement.lang = lang;
 
 	// --- SEO & METADATEN ---
@@ -408,22 +413,13 @@
 		document.documentElement.style.setProperty('--p-font-offset-desktop', `${pOffsetDesktop}px`);
 	}
 
-	$: googleFontsUrl = (() => {
-		if (!Array.isArray(fonts)) return null;
-		const families = fonts
-			.filter((f) => f?.data?.provider === 'Google')
-			.map(
-				(f) =>
-					`family=${f.data.name.replace(/\s+/g, '+')}${f.data.variants ? ':' + f.data.variants : ''}`
-			);
-		return families.length
-			? `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`
-			: null;
-	})();
+	// Self-hosted (scripts/self-host-fonts.js) — visitors never contact Google
+	$: localFontUrls = Array.isArray(fonts)
+		? fonts
+				.filter((f: any) => ['Google', 'Lokal'].includes(f?.data?.provider) && f?.data?.name)
+				.map((f: any) => localFontCss(f.data.name))
+		: [];
 
-	$: adobeFontUrl = settings?.data?.adobe_font_id
-		? `https://use.typekit.net/${settings.data.adobe_font_id}.css`
-		: null;
 	$: hasBannerOverlap = $page.data?.page?.data?.slices?.some(
 		(s: any) =>
 			(s.slice_type === 'hero' ||
@@ -450,8 +446,11 @@
 	$: isAdminPage =
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
-		($page.url.pathname.startsWith('/agency/') && $page.data?.authenticated === true);
+		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
 	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	// Landing pages hide header and footer — except the legal links
+	$: showLegalBarOnly =
+		isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome && !isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
@@ -525,23 +524,8 @@
 	<meta name="twitter:description" content={finalDesc} />
 	<meta name="twitter:image" content={finalImage} />
 
-	{#if googleFontsUrl}<link rel="stylesheet" href={googleFontsUrl} />{/if}
-	{#if adobeFontUrl}
-		<link rel="preconnect" href="https://p.typekit.net" crossorigin />
-		<link rel="dns-prefetch" href="https://p.typekit.net" />
-	{/if}
+	{#each localFontUrls as href}<link rel="stylesheet" {href} />{/each}
 </svelte:head>
-
-{#if adobeFontUrl}
-	<script>
-		const link = document.createElement('link');
-		link.rel = 'stylesheet';
-		link.href = `${adobeFontUrl}`;
-		link.crossOrigin = 'anonymous';
-		link.onerror = () => console.warn('Typekit CSS failed to load, using fallback fonts');
-		document.head.appendChild(link);
-	</script>
-{/if}
 
 <a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
@@ -561,8 +545,10 @@
 		/>
 	{/if}
 
+	<!-- Search index (Pagefind, feature «suche»): only public content pages, never password-protected ones -->
 	<main
 		id="main-content"
+		data-pagefind-body={searchIndexed ? '' : undefined}
 		style:padding-top={stickyHeader && !hasBannerOverlap ? `${$headerHeight}px` : undefined}
 		class={`${isLandingPage && !isFullscreenP5LandingPage && !isFullscreenTextWithImageLandingPage ? 'pb-24' : ''} ${stickyHeader ? 'header-is-sticky' : ''}`}
 	>
@@ -587,6 +573,11 @@
 			lang={chromeLang}
 			mainLang={data.mainLang}
 		/>
+	{:else if showLegalBarOnly && chromeSettings}
+		<!-- Landing page: the legal links stay (privacy, legal notice, cookie settings) -->
+		<Bounded tag="footer" yPadding="none" class="footer-body footer-legal-bar text-center">
+			<FooterLegalLinks settings={chromeSettings} lang={chromeLang} mainLang={data.mainLang} />
+		</Bounded>
 	{/if}
 </div>
 

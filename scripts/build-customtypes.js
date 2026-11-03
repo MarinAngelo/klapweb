@@ -461,7 +461,13 @@ for (const type of managedTypes) {
 	const ctFieldGating = gating.customTypes?.[type]?.fields ?? {};
 	if (Object.keys(ctFieldGating).length > 0) {
 		for (const [tabName, tabContent] of Object.entries(doc.json)) {
-			doc.json[tabName] = filterTabFields(tabContent, ctFieldGating);
+			const filtered = filterTabFields(tabContent, ctFieldGating);
+			// Tab with only gated fields (e.g. «Chat-Bot» without the feature) → remove the whole tab
+			if (Object.keys(filtered).length === 0 && Object.keys(tabContent).length > 0) {
+				delete doc.json[tabName];
+			} else {
+				doc.json[tabName] = filtered;
+			}
 		}
 	}
 

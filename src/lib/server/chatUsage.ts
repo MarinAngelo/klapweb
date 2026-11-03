@@ -164,3 +164,56 @@ export async function loadChatUsage(month: string) {
 
 	return { months, days };
 }
+
+// ── Budget (cost cap) ─────────────────────────────────────────────────────────
+// Protects against cost abuse (e.g. many IP addresses bypassing the per-IP rate limit).
+// Defaults can be changed per site: CHAT_DAILY_BUDGET_USD / CHAT_MONTHLY_BUDGET_USD (0 = no cap).
+const DEFAULT_DAILY_BUDGET_USD = 2;
+const DEFAULT_MONTHLY_BUDGET_USD = 20;
+/** Spending is re-read from the store at most this often (per server instance) */
+const SPENT_CACHE_MS = 60 * 1000;
+let spentCache: { day: string; dayUsd: number; monthUsd: number; at: number } | null = null;
+
+function budget(value: string | undefined, fallback: number): number {
+	const n = Number(value);
+	return value !== undefined && value !== '' && Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
+export function chatBudgets() {
+	return {
+		daily: budget(env.CHAT_DAILY_BUDGET_USD, DEFAULT_DAILY_BUDGET_USD),
+		monthly: budget(env.CHAT_MONTHLY_BUDGET_USD, DEFAULT_MONTHLY_BUDGET_USD)
+	};
+}
+
+/** Estimated spending today and this month (Swiss time) */
+async function spentUsd(): Promise<{ dayUsd: number; monthUsd: number }> {
+	const day = today();
+	if (spentCache && spentCache.day === day && Date.now() - spentCache.at < SPENT_CACHE_MS) {
+		return spentCache;
+	}
+	const month = await summarizeMonth(getUsageStore(), day.slice(0, 7));
+	spentCache = {
+		day,
+		dayUsd: month.days[day]?.usd ?? 0,
+		monthUsd: month.totals.usd,
+		at: Date.now()
+	};
+	return spentCache;
+}
+
+/** Counts an answer immediately in the cached spending (until the next re-read) */
+export function addToSpent(usd: number) {
+	if (spentCache && spentCache.day === today()) {
+		spentCache.dayUsd += usd;
+		spentCache.monthUsd += usd;
+	}
+}
+
+/** true = daily or monthly budget used up → the chat answers «unavailable» */
+export async function isOverBudget(): Promise<boolean> {
+	const { daily, monthly } = chatBudgets();
+	if (!daily && !monthly) return false;
+	const { dayUsd, monthUsd } = await spentUsd();
+	return (daily > 0 && dayUsd >= daily) || (monthly > 0 && monthUsd >= monthly);
+}

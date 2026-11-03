@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { setResetToken, resetPassword } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
 import { FEATURE_KUNDENKONTO } from '$lib/server/features';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -21,7 +22,7 @@ export const actions: Actions = {
 
 		if (result) {
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.EMAIL_FROM_ADDRESS;
+			const fromEmail = await getMailFrom();
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');

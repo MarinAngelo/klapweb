@@ -7,12 +7,14 @@
 	export let count: number | undefined = undefined;
 	/** Show "← Dashboard" link above the title */
 	export let back = true;
+	/** Target of the back link (agency pages: /agency) */
+	export let backHref = '/admin/dashboard';
 	/** Show "Zur Website" button (admin pages have no site header) */
 	export let home = true;
 </script>
 
 {#if back}
-	<a href="/admin/dashboard" class="admin-back">← {$_('Dashboard')}</a>
+	<a href={backHref} class="admin-back">← {$_('Dashboard')}</a>
 {/if}
 <div class="admin-header">
 	<h1>

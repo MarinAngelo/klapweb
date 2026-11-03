@@ -1,5 +1,6 @@
 import { createClient } from '$lib/prismicio';
 import generatedFieldReference from '$lib/generated/prismic-field-reference.json';
+import { agencyDescription } from '$lib/fieldDescriptions';
 
 export interface PrismicFieldReferenceItem {
 	name: string;
@@ -17,7 +18,11 @@ export interface PrismicFieldReferenceItem {
 export async function load({ fetch, parent, params }) {
 	const { lang } = await parent();
 	const client = createClient({ fetch });
-	const fields = generatedFieldReference as PrismicFieldReferenceItem[];
+	// Descriptions maintained by the agency (/agency/feldreferenz) replace the automatic ones
+	const fields = (generatedFieldReference as PrismicFieldReferenceItem[]).map((item) => ({
+		...item,
+		description: agencyDescription(item, lang ?? '') ?? item.description
+	}));
 
 	let pageDocument = null;
 	try {

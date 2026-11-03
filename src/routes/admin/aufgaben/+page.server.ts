@@ -9,6 +9,7 @@ import {
 import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { bonusEntfernen, bonusPruefen, loadKatalog } from '$lib/server/aufgabenKatalog';
 import { env } from '$env/dynamic/private';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -48,7 +49,7 @@ export const actions: Actions = {
 		});
 
 		const resendKey = env.RESEND_API_KEY;
-		const emailFrom = env.EMAIL_FROM_ADDRESS;
+		const emailFrom = await getMailFrom();
 
 		if (resendKey && emailFrom && annahme.email) {
 			const { Resend } = await import('resend');
@@ -101,7 +102,7 @@ export const actions: Actions = {
 		await bonusPruefen(updated, fetch);
 
 		const resendKey = env.RESEND_API_KEY;
-		const emailFrom = env.EMAIL_FROM_ADDRESS;
+		const emailFrom = await getMailFrom();
 
 		if (resendKey && emailFrom && annahme.email) {
 			try {

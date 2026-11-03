@@ -12,6 +12,7 @@ import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
@@ -166,7 +167,7 @@ export const POST: RequestHandler = async ({ url, request, cookies }) => {
 
 	// ── Definitive Abrechnung an Mieter ───────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	let mailGesendet = false;
 	let mailFehler = '';
 

@@ -84,6 +84,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	return resolve(event, {
 		transformPageChunk: ({ html }) => {
+			const htmlLang = event.locals.htmlLang;
+			if (htmlLang && /^[a-z]{2}(-[a-z]{2})?$/i.test(htmlLang)) {
+				html = html.replace('<html lang="de"', `<html lang="${htmlLang}"`);
+			}
 			const css = event.locals.themeColorsCss;
 			if (!css) return html;
 			// Inline-Style auf <html>: schlägt immer alle Stylesheets,

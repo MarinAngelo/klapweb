@@ -5,10 +5,31 @@
 
 	let visible = false;
 	let threshold = 0;
+	let button: HTMLButtonElement | undefined;
+	let frame = 0;
+	const GAP_PX = 12;
 
 	function updateVisibility() {
 		threshold = window.innerHeight * 3;
 		visible = window.scrollY >= threshold;
+		cancelAnimationFrame(frame);
+		frame = requestAnimationFrame(keepAboveFooter);
+	}
+
+	/**
+	 * Footer (incl. top curve) or the legal bar of landing pages in view → the button moves up
+	 * so it never covers the footer links. Direct style update, no reactive state (scroll).
+	 */
+	function keepAboveFooter() {
+		if (!button) return;
+		const footer = document.querySelector<HTMLElement>('.footer-shell, footer.footer-legal-bar');
+		const curve = footer?.querySelector<SVGElement>('.footer-top-curve');
+		const top = Math.min(
+			footer?.getBoundingClientRect().top ?? Infinity,
+			curve?.getBoundingClientRect().top ?? Infinity
+		);
+		const overlap = window.innerHeight - top;
+		button.style.bottom = overlap > 0 ? `${overlap + GAP_PX}px` : '';
 	}
 
 	function scrollToTop() {
@@ -26,12 +47,14 @@
 		return () => {
 			window.removeEventListener('scroll', updateVisibility);
 			window.removeEventListener('resize', updateVisibility);
+			cancelAnimationFrame(frame);
 		};
 	});
 </script>
 
 {#if visible}
 	<button
+		bind:this={button}
 		type="button"
 		class="page-up-button"
 		on:click={scrollToTop}
@@ -63,6 +86,7 @@
 		font-size: 1.5rem;
 		line-height: 1;
 		transition:
+			bottom 120ms ease-out,
 			background-color 160ms ease,
 			color 160ms ease,
 			transform 160ms ease;

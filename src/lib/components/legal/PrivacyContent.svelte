@@ -3,13 +3,19 @@
 	import AddressBlock from '$lib/components/AddressBlock.svelte';
 	import { _ } from '$lib/stores/i18n'; // Unser neuer Store
 	import { page } from '$app/stores';
-	import { consentCategories, consentServices, type ConsentCategory } from '$lib/consent/services';
+	import {
+		consentCategories,
+		consentServices,
+		isServiceInUse,
+		type ConsentCategory
+	} from '$lib/consent/services';
 	import { consentSettingsOpen } from '$lib/stores/consent';
 
 	export let data: any;
 
-	// Functional services always; others only if detected in the CMS content (see +page.ts)
+	// Functional services of functions in use; others only if detected in the CMS content (see +page.ts)
 	$: siteServices = (data?.siteServices ?? []) as string[];
+	$: inUse = ($page.data?.consentInUse ?? []) as string[];
 	$: serviceGroups = (Object.keys(consentCategories) as ConsentCategory[])
 		.map((category) => ({
 			category,
@@ -17,6 +23,7 @@
 				.filter(
 					([id, service]) =>
 						service.category === category &&
+						isServiceInUse(service, inUse) &&
 						(category === 'functional' || siteServices.includes(id))
 				)
 				.map(([, service]) => service)

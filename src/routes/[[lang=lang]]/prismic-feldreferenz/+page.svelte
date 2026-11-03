@@ -30,6 +30,14 @@
 	$: fields = data.fields ?? [];
 	let searchTerm = '';
 	let elementTypeFilter = '';
+
+	// Prismic terms → editor-friendly names (i18n keys)
+	const ELEMENT_LABEL: Record<string, string> = {
+		'Page Type': 'Inhalts-Typ',
+		'Custom Type': 'Inhalts-Typ',
+		Slice: 'Inhalts-Element'
+	};
+	const elementLabel = (elementType: string) => $_(ELEMENT_LABEL[elementType] ?? elementType);
 	let sortField: SortField = 'name';
 	let sortDirection: SortDirection = 'asc';
 	let currentPage = 1;
@@ -45,6 +53,7 @@
 		const fieldTokens = [
 			field.name,
 			field.elementType,
+			elementLabel(field.elementType),
 			field.tab,
 			field.label,
 			field.description,
@@ -61,7 +70,14 @@
 	}
 
 	$: visibleFields = fields
-		.filter((field) => !elementTypeFilter || field.elementType === elementTypeFilter)
+		// Page types (page, settings) count as content types as well
+		.filter(
+			(field) =>
+				!elementTypeFilter ||
+				(elementTypeFilter === 'Custom Type'
+					? field.elementType !== 'Slice'
+					: field.elementType === elementTypeFilter)
+		)
 		.filter((field) => matchesSearch(field, searchTerm))
 		.sort((a, b) => {
 			const result = a[sortField].localeCompare(b[sortField], 'de');
@@ -120,15 +136,14 @@
 			</FieldGroup>
 		</div>
 		<div class="table-tool">
-			<FieldGroup label={$_('Element Typ')} forId="element-type-filter">
+			<FieldGroup label={$_('Element')} forId="element-type-filter">
 				<Dropdown
 					inputId="element-type-filter"
 					selectMode
 					options={[
 						{ value: '', label: $_('Alle') },
-						{ value: 'Page Type', label: $_('Page Type') },
-						{ value: 'Custom Type', label: $_('Custom Type') },
-						{ value: 'Slice', label: $_('Slice') }
+						{ value: 'Custom Type', label: elementLabel('Custom Type') },
+						{ value: 'Slice', label: elementLabel('Slice') }
 					]}
 					bind:value={elementTypeFilter}
 				/>
@@ -141,7 +156,7 @@
 					selectMode
 					options={[
 						{ value: 'name', label: $_('Name') },
-						{ value: 'elementType', label: $_('Element Typ') },
+						{ value: 'elementType', label: $_('Element') },
 						{ value: 'tab', label: $_('Tab / Variante') },
 						{ value: 'label', label: $_('Feld') },
 						{ value: 'type', label: $_('Typ') }
@@ -171,7 +186,7 @@
 			<thead class="table-header">
 				<tr>
 					<th>{$_('Name')}</th>
-					<th>{$_('Element Typ')}</th>
+					<th>{$_('Element')}</th>
 					<th>{$_('Tab / Variante')}</th>
 					<th>{$_('Feld')}</th>
 					<th>{$_('Beschreibung')}</th>
@@ -194,7 +209,7 @@
 					{#each paginatedFields as field}
 						<tr>
 							<td>{field.name || field.customTypeLabel || field.customType}</td>
-							<td>{field.elementType}</td>
+							<td>{elementLabel(field.elementType)}</td>
 							<td>{field.tab}</td>
 							<td>{field.label}</td>
 							<td>{field.description}</td>

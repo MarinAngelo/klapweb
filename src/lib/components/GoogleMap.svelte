@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { whenShown } from '$lib/actions/whenShown';
 	import { _ } from '$lib/stores/i18n';
 	import ConsentGate from '$lib/components/ConsentGate.svelte';
 	import { resolveMapUrl, type MapProvider } from '$lib/utils/mapUrl';
 
-	/** Google Maps or OpenStreetMap URL */
+	/** «Kartenpunkt»: link (OSM, Google, Apple, swisstopo) or coordinates — shown as OpenStreetMap */
 	export let mapUrl: string | null | undefined = undefined;
 	export let mapHeight: number = 400;
 	/** 0–1, CSS-Overlay-Opacity über der Karte */
@@ -15,9 +16,9 @@
 
 	let embedUrl = '';
 	let directionsUrl = '';
-	let provider: MapProvider = 'google_maps';
+	let provider: MapProvider = 'openstreetmap';
 
-	$: mapTitle = provider === 'openstreetmap' ? 'OpenStreetMap' : 'Google Maps';
+	const mapTitle = 'OpenStreetMap';
 
 	// The map inside the iframe (OSM: Leaflet) sets up its tiles once while loading:
 	// - Chrome throttles cross-origin iframes while they are invisible (reveal animation starts
@@ -28,34 +29,6 @@
 	let boxWidth = 0;
 	let loadedWidth = 0;
 	let resizeTimer: ReturnType<typeof setTimeout> | undefined;
-
-	function ancestorsOpaque(node: HTMLElement): boolean {
-		for (let el: HTMLElement | null = node; el; el = el.parentElement) {
-			if (Number(getComputedStyle(el).opacity) < 0.99) return false;
-		}
-		return true;
-	}
-
-	/** Sets `shown` once the element is in view and fully visible (reveal animation done) */
-	function whenShown(node: HTMLElement) {
-		let poll: ReturnType<typeof setInterval> | undefined;
-		const observer = new IntersectionObserver((entries) => {
-			if (!entries.some((e) => e.isIntersecting) || poll) return;
-			poll = setInterval(() => {
-				if (!ancestorsOpaque(node)) return;
-				clearInterval(poll);
-				observer.disconnect();
-				shown = true;
-			}, 100);
-		});
-		observer.observe(node);
-		return {
-			destroy() {
-				observer.disconnect();
-				clearInterval(poll);
-			}
-		};
-	}
 
 	$: if (shown && boxWidth && Math.abs(boxWidth - loadedWidth) > 40) {
 		clearTimeout(resizeTimer);
@@ -77,7 +50,7 @@
 		<ConsentGate service={provider} minHeight={mapHeight}>
 			<div
 				bind:clientWidth={boxWidth}
-				use:whenShown
+				use:whenShown={() => (shown = true)}
 				style:min-height="{mapHeight}px"
 				class="relative overflow-hidden {!roundCorners
 					? ''

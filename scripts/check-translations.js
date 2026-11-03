@@ -31,9 +31,13 @@ async function main() {
 			console.warn(
 				p.kind === 'relative'
 					? `  → ${where}: Web-Link ohne "/" am Anfang → "${p.url}"`
-					: p.kind === 'unknown_token'
-						? `  → ${where}: unbekannter Token ${p.token}${p.suggestion ? ` — meintest du ${p.suggestion}?` : ''}`
-						: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
+					: p.kind === 'mail_from'
+						? `  → ${where}: «Absender-E-Mail» fehlt oder ist ungültig — alle E-Mails der Website brauchen sie`
+						: p.kind === 'map_point'
+							? `  → ${where}: Kartenpunkt nicht erkannt → "${p.url}" (OSM-Link oder Koordinaten verwenden)`
+							: p.kind === 'unknown_token'
+								? `  → ${where}: unbekannter Token ${p.token}${p.suggestion ? ` — meintest du ${p.suggestion}?` : ''}`
+								: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
 			);
 		}
 	} else {

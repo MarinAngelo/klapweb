@@ -5,6 +5,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			themeColorsCss?: string;
+			/** Page language (Prismic locale, e.g. de-ch) → <html lang> in hooks.server.ts */
+			htmlLang?: string;
 			user?: {
 				id: string;
 				email: string;

@@ -16,10 +16,13 @@
 	$: name = q.get('name') ?? '';
 	$: email = q.get('email') ?? '';
 	$: stornoLink = q.get('storno') ?? '';
-	$: gcalLink = q.get('gcal') ?? '';
 	$: icsLink = q.get('ics') ?? '';
 	$: returnTo = q.get('returnTo') ?? '/';
 	$: ort = q.get('ort') ?? '';
+	// Map link from the booking API — only OpenStreetMap links are accepted (URL parameter)
+	$: karte = (q.get('karte') ?? '').startsWith('https://www.openstreetmap.org/')
+		? q.get('karte')
+		: '';
 </script>
 
 <svelte:head><title>{$_('Termin gebucht')}</title></svelte:head>
@@ -33,7 +36,15 @@
 				<p><strong>{$_('Angebot')}:</strong> {titel}</p>
 			{/if}
 			{#if ort}
-				<p><strong>{$_('Ort')}:</strong> {ort}</p>
+				<p>
+					<strong>{$_('Ort')}:</strong>
+					{ort}
+					{#if karte}
+						· <a href={karte} target="_blank" rel="noopener noreferrer"
+							>{$_('Auf der Karte anzeigen')}</a
+						>
+					{/if}
+				</p>
 			{/if}
 			{#if datum}
 				<p><strong>{$_('Datum')}:</strong> {datum}</p>
@@ -47,11 +58,8 @@
 		</div>
 
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			{#if gcalLink}
-				<Button href={gcalLink} text={$_('Zum Kalender hinzufügen')} />
-			{/if}
 			{#if icsLink}
-				<Button href={icsLink} text={$_('.ics herunterladen')} />
+				<Button href={icsLink} text={$_('Zum Kalender hinzufügen')} />
 			{/if}
 		</div>
 

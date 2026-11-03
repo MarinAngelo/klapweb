@@ -62,7 +62,8 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
 						]
 					}
 				},
@@ -119,7 +120,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"feature_gate": {
 					"type": "Select",
 					"config": {
@@ -225,7 +225,8 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
 						]
 					}
 				},
@@ -275,7 +276,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"feature_gate": {
 					"type": "Select",
 					"config": {

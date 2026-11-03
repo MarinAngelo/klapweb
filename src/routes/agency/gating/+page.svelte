@@ -232,7 +232,7 @@
 	<!-- Editor: neutral admin UI (app.css › Admin-UI), like /admin -->
 	<div class="admin">
 		<div class="admin-container">
-			<AdminHeader title={$_('Agency Gating Editor')} back={false}>
+			<AdminHeader title={$_('Agency Gating Editor')} backHref="/agency">
 				<form method="POST" action="?/logout">
 					<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
 				</form>
@@ -507,7 +507,7 @@
 				<strong>{$_('Setzen')}:</strong>
 				{$_('Lokal in der Datei')} <code class="admin-mono">.env</code>, {$_('auf Netlify unter')}
 				<strong>Site Settings → Environment variables</strong>. {$_(
-					'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.'
+					'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».'
 				)}
 			</p>
 

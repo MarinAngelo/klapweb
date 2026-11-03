@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import ConsentGate from '$lib/components/ConsentGate.svelte';
+	import { whenShown } from '$lib/actions/whenShown';
 	import { getMapProvider, resolveMapUrl, type MapProvider } from '$lib/utils/mapUrl';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
@@ -29,18 +30,16 @@
 
 	let embedUrl = '';
 	let directionsUrl = '';
-	let provider: MapProvider = 'google_maps';
-
-	$: mapTitle = provider === 'openstreetmap' ? 'OpenStreetMap' : 'Google Maps';
+	// Load the map only when visible (see whenShown: OSM tiles stall in invisible iframes)
+	let mapShown = false;
+	// «Kartenpunkt» (link or coordinates) → always OpenStreetMap
+	const provider: MapProvider = getMapProvider();
+	const mapTitle = 'OpenStreetMap';
 
 	onMount(async () => {
 		if (!p.map_url) return;
-		provider = getMapProvider(p.map_url);
-		// Google: sofort auf Client setzen, damit der iframe vor der Animation existiert
-		// (OSM-Links sind keine einbettbaren URLs → erst nach Umwandlung setzen)
-		if (provider === 'google_maps') embedUrl = p.map_url;
 		const resolved = await resolveMapUrl(p.map_url);
-		embedUrl = resolved.embedUrl || embedUrl;
+		embedUrl = resolved.embedUrl;
 		directionsUrl = resolved.directionsUrl;
 	});
 </script>
@@ -63,8 +62,12 @@
 		{#if mapLeft}
 			<!-- Karte links, Text rechts -->
 			<div class="flex flex-col gap-3">
-				<div class="relative md:h-full rounded-3xl overflow-hidden">
-					{#if embedUrl}
+				<div
+					class="relative md:h-full rounded-3xl overflow-hidden"
+					style:min-height="{mapHeight}px"
+					use:whenShown={() => (mapShown = true)}
+				>
+					{#if embedUrl && mapShown}
 						<ConsentGate service={provider} minHeight={mapHeight}>
 							<iframe
 								src={embedUrl}
@@ -126,8 +129,12 @@
 				<PrismicRichText field={p.text} />
 			</div>
 			<div class="flex flex-col gap-3">
-				<div class="relative md:h-full rounded-3xl overflow-hidden">
-					{#if embedUrl}
+				<div
+					class="relative md:h-full rounded-3xl overflow-hidden"
+					style:min-height="{mapHeight}px"
+					use:whenShown={() => (mapShown = true)}
+				>
+					{#if embedUrl && mapShown}
 						<ConsentGate service={provider} minHeight={mapHeight}>
 							<iframe
 								src={embedUrl}

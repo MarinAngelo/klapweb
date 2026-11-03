@@ -58,7 +58,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -236,7 +237,8 @@
 										"subtitle",
 										"subtitle-bold",
 										"kicker",
-										"overline"
+										"overline",
+										"copy"
 									]
 								}
 							},

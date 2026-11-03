@@ -3,9 +3,8 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
-import { createHmac, timingSafeEqual } from 'crypto';
 import { join } from 'path';
-import { REMEMBER_SECONDS, wantsRemember } from '$lib/auth/remember';
+import { agencyLogin, agencyLogout, isAgencyAuthenticated } from '$lib/server/agencyAuth';
 import { readOverrides, writeOverrides } from '$lib/gatingOverrides.js';
 
 export const prerender = false;
@@ -13,7 +12,6 @@ export const prerender = false;
 const ROOT = process.cwd();
 const GATING_PATH = join(ROOT, 'gating.json');
 const SM_CONFIG_PATH = join(ROOT, 'slicemachine.config.json');
-const AUTH_COOKIE = 'agency_auth';
 
 function read(path: string) {
 	return JSON.parse(readFileSync(path, 'utf-8'));
@@ -23,31 +21,8 @@ function write(path: string, data: unknown) {
 	writeFileSync(path, JSON.stringify(data, null, '\t') + '\n');
 }
 
-const AUTH_MAX_AGE_SECONDS = 60 * 60;
-
-// Cookie format: "<exp>.<hmac-sha256(exp, AGENCY_SECRET)>" — unforgeable without the secret
-function sign(value: string, secret: string): string {
-	return createHmac('sha256', secret).update(value).digest('base64url');
-}
-
-function createAuthCookie(secret: string, maxAgeSeconds: number): string {
-	const exp = String(Date.now() + maxAgeSeconds * 1000);
-	return `${exp}.${sign(exp, secret)}`;
-}
-
-function isAuthenticated(cookie: string | undefined): boolean {
-	const secret = env.AGENCY_SECRET;
-	if (!cookie || !secret) return false;
-	const [exp, signature] = cookie.split('.');
-	if (!exp || !signature) return false;
-	const expected = Buffer.from(sign(exp, secret));
-	const actual = Buffer.from(signature);
-	if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return false;
-	return Number(exp) > Date.now();
-}
-
 export const load = ({ cookies }) => {
-	if (!isAuthenticated(cookies.get(AUTH_COOKIE))) {
+	if (!isAgencyAuthenticated(cookies)) {
 		return { authenticated: false };
 	}
 
@@ -191,44 +166,12 @@ function collectGatingItems(gating: any): GatingItem[] {
 }
 
 export const actions = {
-	async login({ request, cookies }) {
-		const data = await request.formData();
-		const secret = data.get('secret') as string;
+	login: ({ request, cookies }) => agencyLogin(request, cookies, '/agency/gating'),
 
-		const expectedSecret = env.AGENCY_SECRET;
-		// Compare fixed-length hashes in constant time
-		const matches =
-			!!expectedSecret &&
-			timingSafeEqual(
-				createHmac('sha256', 'agency-login')
-					.update(secret ?? '')
-					.digest(),
-				createHmac('sha256', 'agency-login').update(expectedSecret).digest()
-			);
-		if (!matches) {
-			return fail(401, { error: 'Falsches Passwort' });
-		}
-
-		// Signiertes Auth-Cookie (1 Stunde, mit „Angemeldet bleiben“ REMEMBER_DAYS)
-		const maxAge = wantsRemember(data) ? REMEMBER_SECONDS : AUTH_MAX_AGE_SECONDS;
-		cookies.set(AUTH_COOKIE, createAuthCookie(expectedSecret, maxAge), {
-			httpOnly: true,
-			secure: !dev, // Lokal http://localhost erlauben
-			sameSite: 'strict',
-			maxAge,
-			path: '/'
-		});
-
-		throw redirect(303, '/agency/gating');
-	},
-
-	async logout({ cookies }) {
-		cookies.delete(AUTH_COOKIE, { path: '/' });
-		throw redirect(303, '/agency/gating');
-	},
+	logout: ({ cookies }) => agencyLogout(cookies, '/agency/gating'),
 
 	async save({ request, cookies }) {
-		if (!isAuthenticated(cookies.get(AUTH_COOKIE))) throw error(403, 'Nicht authentifiziert');
+		if (!isAgencyAuthenticated(cookies)) throw error(403, 'Nicht authentifiziert');
 
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
@@ -280,7 +223,7 @@ export const actions = {
 
 	// Global plan definition: minimum plan per feature in gating.json (affects all branches)
 	async savePlanDefinition({ request, cookies }) {
-		if (!isAuthenticated(cookies.get(AUTH_COOKIE))) {
+		if (!isAgencyAuthenticated(cookies)) {
 			throw error(403, 'Nicht authentifiziert');
 		}
 		if (!dev) throw error(403, 'Nur auf dem lokalen Dev-Server möglich');

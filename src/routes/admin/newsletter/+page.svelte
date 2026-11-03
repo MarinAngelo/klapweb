@@ -103,7 +103,9 @@
 	{/if}
 	{#if !data.mailConfigured}
 		<p class="admin-notice admin-notice-error" role="alert">
-			{$_('E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.')}
+			{$_(
+				'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY oder «Absender-E-Mail» in den Einstellungen fehlt.'
+			)}
 		</p>
 	{/if}
 	{#if formError}

@@ -89,7 +89,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -105,6 +106,13 @@
 				"config": {
 					"label": "Korrespondenz E-Mail",
 					"placeholder": ""
+				}
+			},
+			"email_from_address": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail (alle E-Mails der Website)",
+					"placeholder": "info@deine-domain.ch – Domain muss in Resend verifiziert sein"
 				}
 			},
 			"privacy_policy": {
@@ -158,7 +166,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -213,17 +222,9 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
-				}
-			},
-			"haftungsausschluss": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Haftungsausschluss",
-					"placeholder": "",
-					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
 				}
 			},
 			"legal_disclosure": {
@@ -277,7 +278,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -379,7 +381,8 @@
 									"subtitle-bold",
 									"kicker",
 									"overline",
-									"invisible"
+									"invisible",
+									"copy"
 								]
 							}
 						}
@@ -437,7 +440,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -492,7 +496,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -510,83 +515,6 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
-				}
-			},
-			"chat_active": {
-				"type": "Boolean",
-				"config": {
-					"label": "Chat-Bot aktivieren",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"chat_bot_name": {
-				"type": "Text",
-				"config": {
-					"label": "Chat-Bot Name",
-					"placeholder": "Assistent"
-				}
-			},
-			"chat_greeting": {
-				"type": "Text",
-				"config": {
-					"label": "Chat-Bot Begrüssung",
-					"placeholder": "Hallo! Wie kann ich helfen?"
-				}
-			},
-			"chat_knowledge_base": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Chat-Bot Wissensbasis",
-					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
-					"multi": "paragraph,preformatted,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
-					"labels": [
-						"highlight",
-						"note",
-						"quote",
-						"size-xs",
-						"size-sm",
-						"size-lg",
-						"size-xl",
-						"size-2xl",
-						"size-3xl",
-						"size-4xl",
-						"size-5xl",
-						"size-6xl",
-						"weight-thin",
-						"weight-light",
-						"weight-medium",
-						"weight-semibold",
-						"weight-black",
-						"tracking-tight",
-						"tracking-wide",
-						"tracking-wider",
-						"tracking-widest",
-						"leading-tight",
-						"leading-loose",
-						"uppercase",
-						"lowercase",
-						"capitalize",
-						"underline",
-						"block",
-						"muted",
-						"display-thin",
-						"display-light",
-						"display-bold",
-						"display-black",
-						"giant-thin",
-						"giant-light",
-						"giant-bold",
-						"hero-thin",
-						"hero-light",
-						"hero-bold",
-						"subtitle",
-						"subtitle-bold",
-						"kicker",
-						"overline",
-						"invisible"
-					]
 				}
 			},
 			"show_language_switcher": {
@@ -703,6 +631,141 @@
 				"config": {
 					"label": "App & Browser Statusleisten-Farbe",
 					"placeholder": "Standard: Hintergrundfarbe des aktiven Themes"
+				}
+			}
+		},
+		"Chat-Bot": {
+			"chat_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_bot_name": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Name",
+					"placeholder": "Assistent"
+				}
+			},
+			"chat_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Begrüssung",
+					"placeholder": "Hallo! Wie kann ich helfen?"
+				}
+			},
+			"chat_knowledge_base": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis",
+					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
+					"multi": "paragraph,preformatted,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
+				}
+			},
+			"chat_knowledge_extra": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis – Ergänzungen",
+					"placeholder": "Eigene Ergänzungen und Korrekturen; haben Vorrang vor der Wissensbasis (z. B. Begriffe, Sonderregeln, aktuelle Hinweise)",
+					"multi": "paragraph,preformatted,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			}
 		}

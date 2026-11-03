@@ -10,7 +10,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { convertNumber } from '$lib/utils/convertNumber';
-	import { formatEventDateTime, formatEventDateRange } from '$lib/utils/formatDate';
+	import { formatEventDateTime, formatEventDateRange, SITE_TIME_ZONE } from '$lib/utils/formatDate';
 	import { formatPrice, formatPriceChf } from '$lib/pricing';
 	import { reveal } from '$lib/actions/reveal';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -35,7 +35,9 @@
 	$: deadlineExpired =
 		!isFullyBooked &&
 		!!parentEvent?.registration_deadline &&
-		new Date(parentEvent.registration_deadline) < new Date();
+		// Date field (YYYY-MM-DD): registration open up to and including that day (Swiss time)
+		parentEvent.registration_deadline <
+			new Date().toLocaleDateString('sv-SE', { timeZone: SITE_TIME_ZONE });
 	$: isConfirmed =
 		!isFullyBooked &&
 		!deadlineExpired &&

@@ -20,24 +20,18 @@
 		"terminbuchung": {
 			"label": "Terminbuchung",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
 			"plans": ["individuell"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
 			"plans": ["individuell"],
 			"linkTargets": ["leistung"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY"]
 		},
 		"p5js": {
 			"label": "P5.js",
@@ -51,18 +45,12 @@
 			"label": "Ressourcen-Buchung",
 			"plans": ["individuell"],
 			"linkTargets": ["ressource"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"global_events": {
 			"label": "Globale Events",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",
@@ -76,6 +64,10 @@
 			"label": "KlapStudio Design Panel",
 			"plans": ["individuell"]
 		},
+		"suche": {
+			"label": "Website-Suche",
+			"plans": ["professional"]
+		},
 		"chatbot": {
 			"label": "Chat-Bot",
 			"plans": ["klap-web-ch"],
@@ -84,18 +76,12 @@
 		"newsletter": {
 			"label": "Newsletter",
 			"plans": ["professional"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"kundenkonto": {
 			"label": "Kundenkonto",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY"]
 		},
 		"kundenverwaltung": {
 			"label": "Kundenverwaltung",
@@ -166,6 +152,9 @@
 				"chat_knowledge_base": {
 					"feature": "chatbot"
 				},
+				"chat_knowledge_extra": {
+					"feature": "chatbot"
+				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
 				}
@@ -200,6 +189,9 @@
 			"variations": {
 				"kauf": {
 					"feature": "ecommerce"
+				},
+				"suche": {
+					"feature": "suche"
 				}
 			}
 		},

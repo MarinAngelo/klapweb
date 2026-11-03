@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { SliceZone } from '@prismicio/svelte';
 	import { components } from '$lib/slices';
@@ -50,7 +51,7 @@
 				}}
 				bind:value={selectedCurrency}
 				showLabel={false}
-				on:change={onCurrencyChange}
+				on:change={() => tick().then(onCurrencyChange)}
 			/>
 		</div>
 	</Bounded>

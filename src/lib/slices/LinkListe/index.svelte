@@ -5,6 +5,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import OgBild from './OgBild.svelte';
+	import Favicon from './Favicon.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: any;
@@ -157,11 +158,7 @@
 							rel={ext ? 'noopener noreferrer' : undefined}
 							class="flex items-center gap-3 py-2.5 hover:opacity-70 transition-opacity no-underline"
 						>
-							<img
-								src="https://www.google.com/s2/favicons?domain={domain(item)}&sz=32"
-								alt=""
-								class="w-4 h-4 flex-shrink-0 opacity-70"
-							/>
+							<Favicon domain={domain(item)} class="w-4 h-4 flex-shrink-0 opacity-70" />
 							<span class="font-semibold">{item.titel || ogData[gi]?.title || domain(item)}</span>
 							{#if item.beschreibung}
 								<span class="hidden md:inline">— {item.beschreibung}</span>

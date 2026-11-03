@@ -73,7 +73,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -138,14 +139,16 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
-				"geopoint": {
-					"type": "GeoPoint",
+				"map_point": {
+					"type": "Text",
 					"config": {
-						"label": "Google Maps URL"
+						"label": "Kartenpunkt",
+						"placeholder": "OSM-Link oder Koordinaten, z.B. 47.3769, 8.5417"
 					}
 				},
 				"mobile_full_width": {

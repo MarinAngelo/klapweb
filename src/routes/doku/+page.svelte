@@ -89,7 +89,7 @@
 		<section id="adresse-und-map">
 			<h2>AdresseUndMap <code class="slice-tag">adresse_und_map</code></h2>
 			<p>
-				Adresstext neben einer eingebetteten Google Maps Karte &mdash; mit automatischem
+				Adresstext neben einer eingebetteten OpenStreetMap-Karte &mdash; mit automatischem
 				Wegbeschreibungs-Link und optionalem Seiten-Toggle.
 			</p>
 			<div class="pills"><span class="pill">default</span></div>
@@ -99,7 +99,9 @@
 					<tr><td><code>text</code></td><td>Rich Text</td><td>Adresse / Text</td></tr>
 					<tr
 						><td><code>map_url</code></td><td>Text</td><td
-							>Google Maps URL (goo.gl-Shortlinks werden serverseitig aufgelöst)</td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
 						></tr
 					>
 					<tr><td><code>map_height</code></td><td>Zahl</td><td>Kartenhöhe in px</td></tr>
@@ -131,9 +133,9 @@
 				</tbody>
 			</table>
 			<div class="callout">
-				Generiert automatisch einen Wegbeschreibungs-Link (<code>google.com/maps/dir/</code>).
-				Shortlinks (<code>maps.app.goo.gl</code>) werden via Server-Redirect zu Embed-URLs
-				aufgelöst.
+				Generiert automatisch einen Wegbeschreibungs-Link (<code>openstreetmap.org/directions</code
+				>). Google-Shortlinks (<code>maps.app.goo.gl</code>) werden serverseitig aufgelöst und in
+				Koordinaten umgewandelt.
 			</div>
 		</section>
 
@@ -224,7 +226,16 @@
 				<tbody>
 					<tr><td><code>title</code></td><td>Text</td><td>Titel der Anleitung</td></tr>
 					<tr><td><code>description</code></td><td>Rich Text</td><td>Einleitungstext</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Gesamt-Video</td></tr>
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Gesamt-Video (MP4 aus der Mediathek, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Gesamt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
+					>
 					<tr
 						><td><code>mobile_full_width</code></td><td>Toggle</td><td>Vollbreite auf Mobile</td
 						></tr
@@ -242,7 +253,15 @@
 				<tbody>
 					<tr><td><code>step_title</code></td><td>Text</td><td>Schritt-Titel</td></tr>
 					<tr><td><code>step_description</code></td><td>Rich Text</td><td>Schritt-Inhalt</td></tr>
-					<tr><td><code>youtube_video</code></td><td>Embed</td><td>Optionales Schritt-Video</td></tr
+					<tr
+						><td><code>video_file</code></td><td>Link (Media)</td><td
+							>Eigenes Schritt-Video (MP4, Vorrang vor YouTube/Vimeo)</td
+						></tr
+					>
+					<tr
+						><td><code>youtube_video</code></td><td>Embed</td><td
+							>Optionales Schritt-Video (YouTube/Vimeo, mit Cookie-Hinweis)</td
+						></tr
 					>
 				</tbody>
 			</table>
@@ -376,7 +395,10 @@
 					>
 					<tr><td><code>location_text</code></td><td>Rich Text</td><td>Ortsangabe</td></tr>
 					<tr
-						><td><code>geopoint</code></td><td>Geo-Punkt</td><td>Koordinaten für Google Maps</td
+						><td><code>map_point</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
 						></tr
 					>
 					<tr
@@ -564,14 +586,20 @@
 		<section id="google-map-einbetten">
 			<h2>MapEinbetten <code class="slice-tag">code_einbetten</code></h2>
 			<p>
-				Google Maps Karte als iframe &mdash; ohne Adresstextblock, nur die Karte mit optionalem
+				OpenStreetMap-Karte als iframe &mdash; ohne Adresstextblock, nur die Karte mit optionalem
 				Wegbeschreibungs-Button.
 			</p>
 			<div class="pills"><span class="pill">default</span></div>
 			<table>
 				<thead><tr><th>API-ID</th><th>Typ</th><th>Beschreibung</th></tr></thead>
 				<tbody>
-					<tr><td><code>map_url</code></td><td>Text</td><td>Google Maps URL</td></tr>
+					<tr
+						><td><code>map_url</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
+						></tr
+					>
 					<tr><td><code>map_height</code></td><td>Zahl</td><td>Kartenhöhe in px</td></tr>
 					<tr><td><code>opacity</code></td><td>Zahl</td><td>Deckkraft (0–100)</td></tr>
 					<tr
@@ -911,7 +939,8 @@
 			<p>
 				Rich-Text-Block mit optionalem Zweispalten-Layout. Unterstützt spezielle Labels: <code
 					>highlight</code
-				>, <code>note</code>, <code>quote</code>, <code>invisible</code>.
+				>, <code>note</code>, <code>quote</code>, <code>invisible</code>, <code>copy</code> (Text mit
+				Kopier-Knopf dahinter).
 			</p>
 			<div class="pills">
 				<span class="pill">default</span>
@@ -1312,11 +1341,6 @@
 							>Standard Open Graph Bild</td
 						></tr
 					>
-					<tr
-						><td><code>adobe_font_id</code></td><td>Text</td><td
-							>Adobe Fonts Project-ID (lädt Typekit-Script)</td
-						></tr
-					>
 					<tr><td><code>favicon</code></td><td>Bild (32×32)</td><td>Favicon</td></tr>
 					<tr
 						><td><code>pwa_enabled</code> <span class="field-gate">Individuell</span></td><td
@@ -1554,7 +1578,9 @@
 					<tr><td><code>uid</code></td><td>UID</td><td>Slug</td></tr>
 					<tr><td><code>name</code></td><td>Text</td><td>Name der Schrift</td></tr>
 					<tr
-						><td><code>provider</code></td><td>Auswahl</td><td>Anbieter: Google / Adobe / Lokal</td
+						><td><code>provider</code></td><td>Auswahl</td><td
+							>Anbieter: Google (selbst gehostet) / Lokal (Schriftdateien in Prismic, selbst
+							gehostet)</td
 						></tr
 					>
 					<tr
@@ -1640,7 +1666,13 @@
 							>Land (CH / DE / AT / LI / Sonstiges)</td
 						></tr
 					>
-					<tr><td><code>location_map_url</code></td><td>Link</td><td>Google Maps URL</td></tr>
+					<tr
+						><td><code>location_map_url</code></td><td>Text</td><td
+							>Kartenpunkt: OSM-Link, Koordinaten oder Google/Apple/swisstopo-Link (<code
+								>src/lib/mapPoint.js</code
+							>), Anzeige immer OpenStreetMap</td
+						></tr
+					>
 				</tbody>
 			</table>
 			<p class="table-label">Tab: Details</p>
@@ -2711,8 +2743,9 @@
 						><td>resend.com Dashboard → API Keys</td></tr
 					>
 					<tr
-						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender aller transaktionalen Mails</td
-						><td>Ja</td><td>Muss verifizierte Domain bei Resend sein</td></tr
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td
+							>Veraltet – Absender jetzt in Prismic (Einstellungen → «Absender-E-Mail»)</td
+						><td>Nein</td><td>Nur Übergang, solange das Prismic-Feld leer ist</td></tr
 					>
 					<tr
 						><td><code>INVOICE_TO_EMAIL</code></td><td
@@ -3326,8 +3359,8 @@
 						></tr
 					>
 					<tr
-						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender-E-Mail</td><td
-							>Absender-E-Mail (muss in Resend verifiziert sein)</td
+						><td><code>email_from_address</code></td><td>Absender-E-Mail</td><td
+							>Absender aller E-Mails (Tab Main, Domain in Resend verifiziert)</td
 						></tr
 					>
 					<tr
@@ -3660,9 +3693,9 @@
 			</div>
 
 			<div class="callout">
-				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> +
-				<code>EMAIL_FROM_ADDRESS</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
-				E-Mail versendet nicht (kein Fehler-Abbruch).
+				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> + «Absender-E-Mail» aus den
+				Einstellungen. Wenn nicht konfiguriert: User wird trotzdem erstellt, E-Mail versendet nicht (kein
+				Fehler-Abbruch).
 			</div>
 		</section>
 
