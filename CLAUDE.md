@@ -433,7 +433,7 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
 - **Absender-Adresse:** Prismic Einstellungen → «Absender-E-Mail» (`email_from_address`, Hauptsprache), gilt für **alle** Mails. Im Code nur über `getMailFrom()` (`src/lib/server/mailFrom.ts`) lesen. Domain muss in Resend verifiziert sein («Inhalte prüfen» meldet leeres Feld und nicht verifizierte Domain). `EMAIL_FROM_ADDRESS` ist veraltet: nur noch Übergangs-Rückgriff, solange das Feld leer ist
-- `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
+- **Absender-Name** (`email_from_name`, leer = Website-Name, dann Verantwortliche Person/Firma) und **Benachrichtigungen an (intern)** (`notification_email`, leer = Verantwortliche E-Mail, dann Korrespondenz E-Mail): ebenfalls Einstellungen → Main. `getMailFrom()` liefert «Name <Adresse>», `getMailAddress()` nur die Adresse, `getNotifyTo()` den internen Empfänger. `EMAIL_FROM_NAME` und `INVOICE_TO_EMAIL` gibt es nicht mehr
 
 Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 

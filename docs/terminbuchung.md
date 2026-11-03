@@ -83,20 +83,20 @@ Speichere und veröffentliche den Ort.
 
 Fülle folgende Felder aus:
 
-| Feld                        | Bedeutung                                                           |
-| --------------------------- | ------------------------------------------------------------------- |
-| **UID**                     | Eindeutiger Name, z.B. `montag-praxistag`                           |
-| **Bezeichnung**             | Verständlicher Name, z.B. „Praxistag Montag“                        |
-| **Datum**                   | Erster Arbeitstag                                                   |
-| **Startzeit (HH:MM)**       | Beginn des Arbeitstags, z.B. `09:00`                                |
-| **Endzeit (HH:MM)**         | Ende des Arbeitstags, z.B. `18:00`                                  |
-| **Zeitzone**                | Normalerweise `Europe/Zurich`                                       |
-| **Pause von / Pause bis**   | Optionale Sperrzeit innerhalb des Tages                             |
-| **Buchungsintervall**       | Rastermass der Startzeiten: 15, 30 oder 60 Minuten                  |
-| **Buchbare Angebote**       | Verknüpfung auf die Angebote, die an diesem Tag buchbar sein sollen |
-| **Wiederholung**            | Keine, täglich, wöchentlich, zweiwöchentlich oder monatlich         |
-| **Wiederholen bis (Datum)** | Enddatum der Serie                                                  |
-| **Anzahl Wiederholungen**   | Alternative zum Enddatum                                            |
+| Feld                        | Bedeutung                                                               |
+| --------------------------- | ----------------------------------------------------------------------- |
+| **UID**                     | Eindeutiger Name, z.B. `montag-praxistag`                               |
+| **Bezeichnung**             | Verständlicher Name, z.B. „Praxistag Montag“                            |
+| **Datum**                   | Erster Arbeitstag                                                       |
+| **Startzeit (HH:MM)**       | Beginn des Arbeitstags, z.B. `09:00`                                    |
+| **Endzeit (HH:MM)**         | Ende des Arbeitstags, z.B. `18:00`                                      |
+| **Zeitzone**                | Normalerweise `Europe/Zurich`                                           |
+| **Pause von / Pause bis**   | Optionale Sperrzeit innerhalb des Tages                                 |
+| **Buchungsintervall**       | Rastermass der Startzeiten: 15, 30 oder 60 Minuten                      |
+| **Buchbare Angebote**       | Verknüpfung auf die Angebote, die an diesem Tag buchbar sein sollen     |
+| **Wiederholung**            | Keine, täglich, wöchentlich, zweiwöchentlich oder monatlich             |
+| **Wiederholen bis (Datum)** | Enddatum der Serie                                                      |
+| **Anzahl Wiederholungen**   | Alternative zum Enddatum; wird ignoriert, wenn ein Enddatum gesetzt ist |
 
 Speichere und veröffentliche den Arbeitstag.
 

@@ -129,14 +129,13 @@ Unterstützte Tokens:
 
 In den Einstellungen beziehungsweise den Netlify-Environment-Variablen werden die technischen Werte hinterlegt:
 
-| Wert                       | Verwendung                                                                                   |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| **E-Mail im CMS**          | Standard-Empfänger für Anbieter-Benachrichtigungen                                           |
-| **Absender-E-Mail im CMS** | Absenderadresse aller E-Mails (Einstellungen → Main); Domain muss in Resend verifiziert sein |
-| `EMAIL_FROM_NAME`          | Optionaler Fallback-Absendername                                                             |
-| `INVOICE_TO_EMAIL`         | Empfänger für Check-in- und Abrechnungsbenachrichtigungen                                    |
+| Wert                               | Verwendung                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Benachrichtigungen an (intern)** | Empfänger der Anbieter-, Check-in- und Abrechnungs-Mails (leer = Verantwortliche E-Mail) |
+| **Absender-E-Mail**                | Absenderadresse aller E-Mails; Domain muss in Resend verifiziert sein                    |
+| **Absender-Name**                  | Name, unter dem die E-Mails erscheinen (leer = Website-Name)                             |
 
-Der sichtbare Firmenname für Rechnungs- und Bar-Mails kommt primär aus dem CMS-Feld **Verantwortliche Person/Firma**. `EMAIL_FROM_NAME` dient nur als Rückfall.
+Alle drei Felder stehen in Prismic unter Einstellungen → Main; dafür gibt es keine Env-Vars mehr.
 
 ---
 

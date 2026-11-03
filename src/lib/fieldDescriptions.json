@@ -68,12 +68,12 @@
 		"en-us": "Repeats the working day from «Datum» with the same times and offers: «Täglich» (daily), «Wöchentlich» (weekly, same weekday), «Zweiwöchentlich» (every two weeks) or «Monatlich» (monthly, same day of the month; if a month lacks that day, e.g. the 31st, the last day of the month). «Keine» = this single day only. The series ends at «Wiederholen bis (Datum)» or after «Anzahl Wiederholungen» – whichever comes first. Without an end it continues (at most 500 working days)."
 	},
 	"arbeitstag.wiederholung_anzahl": {
-		"de-ch": "Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Leer = kein Ende über die Anzahl (dann gilt «Wiederholen bis (Datum)»).",
-		"en-us": "How many working days the series has in total, including the first day. Example: «Wöchentlich» (weekly) from Monday 4 January with 4 → 4, 11, 18 and 25 January. Empty = no end by count (then «Wiederholen bis (Datum)» applies)."
+		"de-ch": "Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Wird nur verwendet, wenn «Wiederholen bis (Datum)» leer ist. Sind beide leer, läuft die Serie ohne Ende.",
+		"en-us": "How many working days the series has in total, including the first day. Example: «Wöchentlich» (weekly) from Monday 4 January with 4 → 4, 11, 18 and 25 January. Only used if «Wiederholen bis (Datum)» is empty. If both are empty, the series has no end."
 	},
 	"arbeitstag.wiederholung_bis": {
-		"de-ch": "Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.",
-		"en-us": "Last day on which the working day repeats (up to and including this day). Date without time, no time zone."
+		"de-ch": "Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone. Hat Vorrang: Ist ein Datum eingetragen, wird «Anzahl Wiederholungen» ignoriert.",
+		"en-us": "Last day on which the working day repeats (up to and including this day). Date without time, no time zone. Takes precedence: if a date is set, «Anzahl Wiederholungen» is ignored."
 	},
 	"arbeitstag.zeitzone": {
 		"de-ch": "Zeitzone, in der Start- und Endzeit gelten (Standard: Europe/Zurich = Schweizer Zeit). Wählt die Kundschaft im Buchungsformular eine andere Zeitzone, erhält sie den Termin in der Bestätigung zusätzlich in ihrer Zeit.",
@@ -170,6 +170,14 @@
 	"settings.email_from_address": {
 		"de-ch": "Von dieser Adresse verschickt die Website alle E-Mails: Buchungsbestätigungen, Rechnungen, Newsletter, Formulare, Kundenkonto. Die Domain der Adresse (der Teil nach @) muss beim Mail-Dienst Resend eingerichtet und verifiziert sein, sonst kommen keine E-Mails an — das richtet die Agentur ein. Beispiel: info@deine-domain.ch. Ein Postfach braucht es dafür nicht. Leer = es werden keine E-Mails verschickt; «Inhalte prüfen» im Admin meldet das.",
 		"en-us": "The website sends all e-mails from this address: booking confirmations, invoices, newsletters, forms, customer accounts. The domain of the address (the part after @) must be set up and verified with the mail service Resend, otherwise no e-mails arrive — the agency sets this up. Example: info@your-domain.ch. No mailbox is needed. Empty = no e-mails are sent; «Inhalte prüfen» (check content) in the admin reports this."
+	},
+	"settings.email_from_name": {
+		"de-ch": "Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Casa Campelli» statt nur info@casa-campelli.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.",
+		"en-us": "Name your e-mails show in the inbox, e.g. «Casa Campelli» instead of just info@casa-campelli.ch. Empty = the website name from the settings, otherwise «Verantwortliche Person/Firma». Applies to all e-mails except the newsletter, which has its own sender name."
+	},
+	"settings.notification_email": {
+		"de-ch": "An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.",
+		"en-us": "The website sends internal notifications to this address: new bookings, form messages, orders, check-in and billing, chat bot feedback. Visitors never see it. Empty = «Verantwortliche E-Mail», otherwise «Korrespondenz E-Mail». Useful if notifications should go to a different mailbox, e.g. bookings@your-domain.ch."
 	},
 	"theme.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",

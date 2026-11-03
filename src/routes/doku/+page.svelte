@@ -2748,9 +2748,9 @@
 						><td>Nein</td><td>Nur Übergang, solange das Prismic-Feld leer ist</td></tr
 					>
 					<tr
-						><td><code>INVOICE_TO_EMAIL</code></td><td
-							>Empfänger der Geschäfts-Benachrichtigungen</td
-						><td>Ja</td><td>Beliebige E-Mail-Adresse</td></tr
+						><td><code>notification_email</code> (Prismic)</td><td
+							>Empfänger der Geschäfts-Benachrichtigungen (leer = Verantwortliche E-Mail)</td
+						><td>Nein</td><td>Keine Env-Var mehr</td></tr
 					>
 				</tbody>
 			</table>
@@ -3364,8 +3364,8 @@
 						></tr
 					>
 					<tr
-						><td><code>INVOICE_TO_EMAIL</code></td><td>Geschäfts-E-Mail (optional)</td><td
-							>Geschäfts-E-Mail für Benachrichtigungen (bei E-Commerce)</td
+						><td><code>notification_email</code></td><td>Benachrichtigungen an (intern)</td><td
+							>Empfänger interner Meldungen (leer = Verantwortliche E-Mail)</td
 						></tr
 					>
 				</tbody>
