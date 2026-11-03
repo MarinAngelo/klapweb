@@ -14,6 +14,8 @@ Die Wissensbasis ist die Vorlage für das Prismic-Feld «Chat-Bot Wissensbasis»
 - «Custom Type» und «Page Type» nie — kommen im Prismic-GUI nicht vor.
 - Knöpfe und Felder sonst genau wie im Prismic-GUI bzw. wie das Feld-Label.
 
+**Nicht Teil dieses Tasks:** die Entwickler-Wissensbasis für `@dev` (`src/lib/generated/chatbot-dev-wissensbasis.md`) entsteht automatisch bei `npm run dev`/`build` (`npm run wissensbasis:dev`) aus CLAUDE.md, `docs/` usw. — nichts von Hand pflegen, nichts davon in diese Kunden-Wissensbasis übernehmen (intern).
+
 ## Ablauf
 
 1. **Branch prüfen** (`git branch --show-current`). Die Datei liegt in `docs/` und ist Kern. Am vollständigsten ist die Feldliste auf `klap-web-ch` (alle Features aktiv). Branch nie selbst wechseln.

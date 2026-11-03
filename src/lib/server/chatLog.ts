@@ -19,6 +19,8 @@ export type ChatLogEntry = {
 	question: string;
 	answer: string;
 	usd: number;
+	/** Developer mode (`@dev`, agency only) */
+	dev?: boolean;
 	/** Visitor rating of this answer (chat widget) */
 	rating?: ChatRating;
 	ratingComment?: string;
@@ -110,7 +112,7 @@ export async function markFeedbackMailed(entryId: string, entry: ChatLogEntry): 
 export async function loadConversationHistory(
 	conversation: string,
 	maxExchanges: number
-): Promise<{ question: string; answer: string }[]> {
+): Promise<{ question: string; answer: string; dev?: boolean }[]> {
 	const store = getLogStore();
 	const now = new Date();
 	const days = [swissDay(new Date(now.getTime() - 86_400_000)), swissDay(now)];
@@ -131,7 +133,7 @@ export async function loadConversationHistory(
 	);
 	return entries
 		.filter((e): e is ChatLogEntry => !!e)
-		.map((e) => ({ question: e.question, answer: e.answer }));
+		.map((e) => ({ question: e.question, answer: e.answer, dev: e.dev }));
 }
 
 /** All keys of a month (prefix YYYY-MM) */

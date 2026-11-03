@@ -15,6 +15,18 @@ import {
 	loadConversationHistory,
 	recordChatExchange
 } from '$lib/server/chatLog';
+import { isAgencyAuthenticated } from '$lib/server/agencyAuth';
+
+// Developer knowledge base for `@dev` (scripts/chatbot-dev-wissensbasis.js, generated before
+// dev/build). Glob: a missing file must not break the build — dev mode then says so.
+const devKnowledgeFiles = import.meta.glob('../../../lib/generated/chatbot-dev-wissensbasis.md', {
+	query: '?raw',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
+const DEV_KNOWLEDGE = Object.values(devKnowledgeFiles)[0] ?? '';
+/** `@dev` at the start of a message → developer mode (agency login only) */
+const DEV_PREFIX = /^@dev\b[:\s]*/i;
 
 /**
  * Chat-Bot (Feature `chatbot`): answers visitor questions with Claude Haiku,
@@ -134,7 +146,23 @@ function parseMessages(raw: unknown): ChatMessage[] | null {
 	return messages;
 }
 
-export async function POST({ request, fetch, getClientAddress }) {
+/** System prompt of the developer mode (`@dev`) */
+function devSystemPrompt(): string {
+	const rules = [
+		'Du bist der Entwickler-Assistent der Agentur KLAP WEB für ihr Website-Projekt (SvelteKit, Prismic Slice Machine, Tailwind, Netlify; ein Repository mit Kern-Branch main und Kunden-Branches).',
+		'Beantworte Fragen von Entwicklern ausschliesslich anhand der ENTWICKLER-WISSENSBASIS unten (Projektregeln, Dokumentation, Env-Var-Referenz aus dem Code, Features und Pläne aus gating.json, Prismic-Feldreferenz).',
+		'Nenne Dateipfade, Env-Var-Namen, Feature-IDs, Plan-IDs und API-IDs exakt so, wie sie in der Wissensbasis stehen.',
+		'Fragen nach Env-Vars für eine Funktion: kombiniere die Env-Vars des Features aus gating.json mit der Env-Var-Referenz (wo im Code gelesen) und der Dokumentation; nenne pro Variable kurz, wofür sie gebraucht wird, und unterscheide Pflicht und optional. Weise darauf hin, dass sie in Netlify unter Site settings → Environment gesetzt werden.',
+		'Werte von Secrets kennst du nicht und erfindest du nie.',
+		'Steht etwas nicht in der Wissensbasis, sag das offen und nenne, wo im Code man nachsehen sollte, falls die Wissensbasis darauf hinweist. Erfinde keine Dateien, Funktionen oder Variablen.',
+		'Antworte in der Sprache der Frage, knapp und strukturiert. Reiner Text: keine Markdown-Überschriften, keine Tabellen, kein Fettdruck mit Sternchen; Listen mit «- » und Code, Pfade oder Variablen in `Backticks` sind erlaubt.'
+	].join(' ');
+	return DEV_KNOWLEDGE
+		? `${rules}\n\nENTWICKLER-WISSENSBASIS:\n${DEV_KNOWLEDGE}\n\nERINNERUNG: Nur Angaben aus der ENTWICKLER-WISSENSBASIS, exakte Namen, nichts erfinden.`
+		: `${rules}\n\nDie Entwickler-Wissensbasis fehlt (scripts/chatbot-dev-wissensbasis.js wurde nicht ausgeführt). Sag das bei jeder Frage.`;
+}
+
+export async function POST({ request, fetch, getClientAddress, cookies }) {
 	if (!FEATURE_CHATBOT) return json({ error: 'unavailable' }, { status: 404 });
 	if (isRateLimited(getClientAddress())) return json({ error: 'rate_limit' }, { status: 429 });
 
@@ -154,7 +182,16 @@ export async function POST({ request, fetch, getClientAddress }) {
 
 	// History from our own chat log, not from the browser: only the new question is taken from
 	// the request, so visitors cannot slip in invented «bot answers» (prompt injection)
-	const question = clientMessages[clientMessages.length - 1].content;
+	const rawQuestion = clientMessages[clientMessages.length - 1].content;
+	// Developer mode: `@dev` in the message or kept by the chat window (mode: 'dev').
+	// Internal docs (env vars, architecture) → only for logged-in agency members (/agency)
+	const devMode = body?.mode === 'dev' || DEV_PREFIX.test(rawQuestion);
+	if (devMode && !isAgencyAuthenticated(cookies)) {
+		return json({ error: 'dev_forbidden' }, { status: 403 });
+	}
+	const question = devMode
+		? rawQuestion.replace(DEV_PREFIX, '').trim() || rawQuestion
+		: rawQuestion;
 	const conversationId = isValidConversationId(body?.conversationId) ? body.conversationId : null;
 	const history = conversationId
 		? await loadConversationHistory(conversationId, MAX_HISTORY_MESSAGES / 2).catch((e) => {
@@ -163,10 +200,13 @@ export async function POST({ request, fetch, getClientAddress }) {
 			})
 		: [];
 	const messages: ChatMessage[] = [
-		...history.flatMap((h) => [
-			{ role: 'user' as const, content: h.question },
-			{ role: 'assistant' as const, content: h.answer }
-		]),
+		// Only the history of the same mode (customer questions and @dev questions stay separate)
+		...history
+			.filter((h) => !!h.dev === devMode)
+			.flatMap((h) => [
+				{ role: 'user' as const, content: h.question },
+				{ role: 'assistant' as const, content: h.answer }
+			]),
 		{ role: 'user', content: question }
 	];
 
@@ -207,9 +247,10 @@ export async function POST({ request, fetch, getClientAddress }) {
 		settings.knowledgeExtra &&
 			`ERGÄNZUNGEN UND KORREKTUREN (haben Vorrang vor der Wissensbasis):\n${settings.knowledgeExtra}`
 	].filter(Boolean);
-	const systemPrompt = knowledge.length
+	const customerPrompt = knowledge.length
 		? `${basePrompt}\n\n${knowledge.join('\n\n')}\n\n${closingRules}`
 		: basePrompt;
+	const systemPrompt = devMode ? devSystemPrompt() : customerPrompt;
 
 	// globalThis.fetch: SvelteKit's event fetch adds an Origin header → Anthropic rejects it as a browser (CORS) request
 	const response = await globalThis.fetch('https://api.anthropic.com/v1/messages', {
@@ -221,7 +262,7 @@ export async function POST({ request, fetch, getClientAddress }) {
 		},
 		body: JSON.stringify({
 			model: 'claude-haiku-4-5-20251001',
-			max_tokens: 1024,
+			max_tokens: devMode ? 2048 : 1024,
 			// Prompt caching: the knowledge base is identical for every request
 			system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
 			messages
@@ -243,7 +284,8 @@ export async function POST({ request, fetch, getClientAddress }) {
 			console.error('[chat] Kosten konnten nicht gespeichert werden:', e)
 		);
 	}
-	const reply = data.content?.[0]?.text ?? '';
+	// The widget shows plain text: remove **bold** / __bold__ the model sometimes adds anyway
+	const reply = String(data.content?.[0]?.text ?? '').replace(/(\*\*|__)(.+?)\1/g, '$2');
 
 	// Chat log for the admin (question + answer, no IP; deleted after 90 days)
 	let entryId: string | null = null;
@@ -255,7 +297,8 @@ export async function POST({ request, fetch, getClientAddress }) {
 			page: page.slice(0, 200),
 			question,
 			answer: reply,
-			usd: data.usage ? usageToTotals(data.usage).usd : 0
+			usd: data.usage ? usageToTotals(data.usage).usd : 0,
+			...(devMode ? { dev: true } : {})
 		}).catch((e) => {
 			console.error('[chat] Log konnte nicht gespeichert werden:', e);
 			return null;
@@ -263,5 +306,7 @@ export async function POST({ request, fetch, getClientAddress }) {
 	}
 
 	// entryId: lets the visitor rate this answer (/api/chat/rating)
-	return reply ? json({ reply, entryId }) : json({ error: 'failed' }, { status: 502 });
+	return reply
+		? json({ reply, entryId, ...(devMode ? { mode: 'dev' } : {}) })
+		: json({ error: 'failed' }, { status: 502 });
 }

@@ -881,6 +881,15 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'No results for «{suche}».'
 	},
 	'Diese Seite durchsuchen': { 'de-ch': 'Diese Seite durchsuchen', 'en-us': 'Search this page' },
+	'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.': {
+		'de-ch': 'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.',
+		'en-us': 'Developer mode is only available after logging in at /agency.'
+	},
+	'Entwickler-Modus beendet.': {
+		'de-ch': 'Entwickler-Modus beendet.',
+		'en-us': 'Developer mode ended.'
+	},
+	'Entwickler-Modus': { 'de-ch': 'Entwickler-Modus', 'en-us': 'Developer mode' },
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
