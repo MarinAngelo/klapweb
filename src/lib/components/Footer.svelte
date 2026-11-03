@@ -5,10 +5,9 @@
 	import type { Content } from '@prismicio/client';
 	import { page } from '$app/stores';
 	import { _ } from '$lib/stores/i18n';
-	import { getLegalHref } from '$lib/utils/legalHref';
-	import { consentSettingsOpen } from '$lib/stores/consent';
 
 	import Bounded from './Bounded.svelte';
+	import FooterLegalLinks from './FooterLegalLinks.svelte';
 
 	export let settings: Content.SettingsDocument;
 	export let navigation: Content.NavigationDocument;
@@ -23,11 +22,6 @@
 		const l = link as { link_type?: string; url?: string; target?: string };
 		return l?.link_type === 'Web' && l?.url ? { url: l.url, target: l.target } : null;
 	}
-
-	// REAKTIVE LINK-GENERIERUNG
-	// Diese Logik prüft jetzt: "Welche Sprache bin ich?" statt "Bin ich Master?"
-	$: getStaticHref = (deSlug: string, enSlug: string) =>
-		getLegalHref(lang, mainLang, deSlug, enSlug);
 
 	$: ({ footerColor } = $theme);
 	$: footerCurveEnabled = $theme.footerTopCurve;
@@ -119,51 +113,7 @@
 				<hr class="border-current opacity-20 mb-6" />
 
 				<div class="mt-4 text-center">
-					<p class="footer-buttonbar-p">
-						<a
-							href={getStaticHref('datenschutzerklaerung', 'privacy-policy')}
-							class="footer-link hover:underline"
-						>
-							{$_('Datenschutz')}
-						</a>
-
-						&nbsp;|&nbsp;
-
-						<a
-							href={getStaticHref('impressum', 'legal-notice')}
-							class="footer-link hover:underline"
-						>
-							{$_('Impressum')}
-						</a>
-
-						{#if settingsData.agb && settingsData.agb.length > 0}
-							&nbsp;|&nbsp;
-							<a
-								href={getStaticHref('agb', 'terms-and-conditions')}
-								class="footer-link hover:underline"
-							>
-								{$_('AGB')}
-							</a>
-						{/if}
-						{#if settingsData.haftungsausschluss && settingsData.haftungsausschluss.length > 0}
-							&nbsp;|&nbsp;
-							<a
-								href={getStaticHref('haftungsausschluss', 'disclaimer')}
-								class="footer-link hover:underline"
-							>
-								{$_('Haftungsausschluss')}
-							</a>
-						{/if}
-
-						&nbsp;|&nbsp;
-						<button
-							type="button"
-							class="footer-link footer-consent-link hover:underline"
-							on:click={() => consentSettingsOpen.set(true)}
-						>
-							{$_('Cookie-Einstellungen')}
-						</button>
-					</p>
+					<FooterLegalLinks {settings} {lang} {mainLang} />
 
 					<p class="footer-buttonbar-p">
 						{$_('Website erstellt mit')}
@@ -227,13 +177,5 @@
 		pointer-events: none;
 		z-index: 1;
 		display: block;
-	}
-
-	.footer-consent-link {
-		background: none;
-		border: none;
-		padding: 0;
-		font: inherit;
-		cursor: pointer;
 	}
 </style>

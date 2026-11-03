@@ -516,6 +516,14 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	padding-bottom: 1rem;
 	overflow: visible;
 }
+/* Landing pages: only the legal links of the footer (+layout.svelte) */
+.footer-legal-bar {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+.footer-legal-bar .footer-buttonbar-p {
+	margin: 0;
+}
 .footer-text-top {
 	color: var(--footer-color);
 	font-size: var(--footer-font-size-top-bar-rem);
@@ -1092,6 +1100,9 @@ p {
 	}
 	.chat-note {
 		@apply m-0 px-3 pb-2.5 text-[0.6875rem] text-gray-600;
+	}
+	.chat-dev-badge {
+		@apply ml-2 rounded bg-white/20 px-1.5 py-0.5 align-middle text-[0.6875rem] font-normal;
 	}
 	.chat-link {
 		@apply break-words text-inherit underline underline-offset-2 hover:no-underline;

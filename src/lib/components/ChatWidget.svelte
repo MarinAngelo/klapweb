@@ -48,8 +48,12 @@
 		rate_limit: 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',
 		invalid: 'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).',
 		unavailable: 'Der Chat ist zurzeit nicht verfügbar.',
-		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.'
+		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.',
+		dev_forbidden: 'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.'
 	};
+
+	// Developer mode (`@dev`, agency login): stays on for this chat window until `@exit`
+	let devMode = false;
 
 	async function send() {
 		const text = input.trim();
@@ -57,6 +61,12 @@
 
 		input = '';
 		messages = [...messages, { role: 'user', text }];
+		if (devMode && /^@exit\b/i.test(text)) {
+			devMode = false;
+			messages = [...messages, { role: 'bot', errorKey: 'Entwickler-Modus beendet.' }];
+			tick().then(scrollToBottom);
+			return;
+		}
 		loading = true;
 		tick().then(scrollToBottom);
 
@@ -69,12 +79,22 @@
 					messages: [{ role: 'user', content: text }],
 					lang,
 					conversationId,
-					page: location.pathname
+					page: location.pathname,
+					...(devMode ? { mode: 'dev' } : {})
 				})
 			});
 			const data = await res.json().catch(() => ({}));
+			if (data.mode === 'dev') devMode = true;
 			messages = data.reply
-				? [...messages, { role: 'bot', text: data.reply, entryId: data.entryId ?? undefined }]
+				? [
+						...messages,
+						// Developer answers are not rated
+						{
+							role: 'bot',
+							text: data.reply,
+							entryId: data.mode === 'dev' ? undefined : (data.entryId ?? undefined)
+						}
+					]
 				: [...messages, { role: 'bot', errorKey: errorKeys[data.error] ?? errorKeys.failed }];
 		} catch {
 			messages = [...messages, { role: 'bot', errorKey: 'Verbindungsfehler.' }];
@@ -127,7 +147,10 @@
 		<div class="chat-panel">
 			<!-- Header -->
 			<div class="chat-header">
-				<span class="text-[0.9375rem] font-semibold">{displayName}</span>
+				<span class="text-[0.9375rem] font-semibold"
+					>{displayName}{#if devMode}<span class="chat-dev-badge">{$_('Entwickler-Modus')}</span
+						>{/if}</span
+				>
 				<button
 					on:click={() => (isOpen = false)}
 					aria-label={$_('Chat schliessen')}

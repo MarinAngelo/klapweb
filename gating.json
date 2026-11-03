@@ -20,7 +20,13 @@
 		"terminbuchung": {
 			"label": "Terminbuchung",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": [
+				"NETLIFY_SITE_ID",
+				"NETLIFY_TOKEN",
+				"RESEND_API_KEY",
+				"EMAIL_FROM_ADDRESS",
+				"ADMIN_SECRET"
+			]
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
@@ -62,7 +68,7 @@
 		"global_events": {
 			"label": "Globale Events",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",

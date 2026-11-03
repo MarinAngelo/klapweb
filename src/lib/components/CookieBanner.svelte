@@ -3,7 +3,13 @@
 	import { _ } from '$lib/stores/i18n';
 	import Button from '$lib/components/Button.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
-	import { consentCategories, consentServices, type ConsentCategory } from '$lib/consent/services';
+	import {
+		consentCategories,
+		consentServices,
+		isServiceInUse,
+		type ConsentCategory
+	} from '$lib/consent/services';
+	import { page } from '$app/stores';
 	import {
 		consent,
 		usedServices,
@@ -31,9 +37,13 @@
 	);
 
 	const categoryOrder = Object.keys(consentCategories) as ConsentCategory[];
-	// Categories with at least one registered service (unused categories are not offered)
-	const availableCategories = categoryOrder.filter((category) =>
-		Object.values(consentServices).some((service) => service.category === category)
+	// Functions this website uses (e.g. no shop → no cart entry, chat off → no «KI-Chat»)
+	$: inUse = ($page.data?.consentInUse ?? []) as string[];
+	// Categories with at least one service in use on this website (others are not offered)
+	$: availableCategories = categoryOrder.filter((category) =>
+		Object.values(consentServices).some(
+			(service) => service.category === category && isServiceInUse(service, inUse)
+		)
 	);
 
 	// Functional: all (always in use). Others: only services actually used on this page,
@@ -45,6 +55,7 @@
 				.filter(
 					([id, service]) =>
 						service.category === category &&
+						isServiceInUse(service, inUse) &&
 						(category === 'functional' || $usedServices.includes(id))
 				)
 				.map(([id, service]) => ({ id, ...service, usedHere: $usedServices.includes(id) }))

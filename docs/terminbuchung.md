@@ -120,10 +120,10 @@ Wiederholen bis: 31.12.2025
 
 ### 4. Admin Panel
 
-Bevor du das Buchungsformular veröffentlichst, öffne die Terminverwaltung:
+Bevor du das Buchungsformular veröffentlichst, öffne die Terminverwaltung (Anmeldung unter `/admin` mit `ADMIN_SECRET`):
 
 ```text
-/admin/buchungen?secret=DEIN_ADMIN_SECRET
+/admin/buchungen
 ```
 
 Dort siehst du, welche konkreten Termine aus den Arbeitstagen und buchbaren Angeboten erzeugt wurden.
