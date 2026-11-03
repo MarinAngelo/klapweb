@@ -58,7 +58,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -120,7 +121,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"y_padding_mobile": {
 					"type": "Select",
 					"config": {
@@ -311,7 +311,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -514,7 +515,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"row_gap": {
 					"type": "Select",
 					"config": {
@@ -676,7 +676,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},

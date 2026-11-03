@@ -900,6 +900,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us':
 			'Agency workflows: Prismic account, Netlify, mail, catalogue, migration (password-protected)'
 	},
+	Kopiert: { 'de-ch': 'Kopiert', 'en-us': 'Copied' },
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
