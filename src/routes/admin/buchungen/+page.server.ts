@@ -6,7 +6,7 @@ import {
 	cancelSlot,
 	uncancelSlot,
 	listCancelled,
-	hasOverlappingBooking
+	overlapsBooking
 } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { diagnoseArbeitstag } from '$lib/terminDiagnose.js';
@@ -79,7 +79,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 				slot: s,
 				blocked:
 					!!s.endzeit &&
-					(await hasOverlappingBooking(s.datum, s.uhrzeit, s.blockedUntil ?? s.endzeit, s.id)),
+					// Bookings are loaded once above (one Blob request per slot overloaded Netlify)
+					overlapsBooking(bookings, s.datum, s.uhrzeit, s.blockedUntil ?? s.endzeit, s.id),
 				past: startTime !== null ? startTime - vorlaufMs < now : s.datum < today
 			};
 		})
