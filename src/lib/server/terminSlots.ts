@@ -88,8 +88,9 @@ export function expandArbeitstag(doc: any, offers: any[], fromDate: string): Ter
 	if (configuredOffers.length === 0) return [];
 
 	const repeat = d.wiederholung ?? 'Keine';
-	const until: string | null = d.wiederholung_bis ?? null;
-	const count: number | null = d.wiederholung_anzahl ?? null;
+	const until: string | null = d.wiederholung_bis || null;
+	// «Wiederholen bis (Datum)» has priority: if it is set, «Anzahl Wiederholungen» is ignored
+	const count: number | null = until ? null : (d.wiederholung_anzahl ?? null);
 	const slots: TerminSlot[] = [];
 	let current = new Date(startDatum + 'T12:00:00Z');
 	let occurrence = 0;

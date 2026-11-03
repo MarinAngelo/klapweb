@@ -28,7 +28,7 @@ import {
 	fallbackSubject,
 	getRessourceDocForBooking
 } from '$lib/server/ressourceMail';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -222,7 +222,7 @@ export const actions: Actions = {
 			status: 'checked_in',
 			checkedInAt: new Date().toISOString()
 		});
-		const toEmail = env.INVOICE_TO_EMAIL || '';
+		const toEmail = await getNotifyTo();
 		await mailCheckIn(buchung, toEmail).catch(console.error);
 	},
 
@@ -234,7 +234,7 @@ export const actions: Actions = {
 			status: 'checked_out',
 			checkOutAt: new Date().toISOString()
 		});
-		const toEmail = env.INVOICE_TO_EMAIL || '';
+		const toEmail = await getNotifyTo();
 		const origin = url.origin;
 		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&token=${adminActionToken('freigabe-abrechnung', id)}`;
 		await mailAbrechnung(buchung, toEmail, freigabeUrl).catch(console.error);

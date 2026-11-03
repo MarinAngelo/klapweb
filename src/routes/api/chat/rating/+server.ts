@@ -1,6 +1,5 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { createClient } from '$lib/prismicio';
 import { FEATURE_CHATBOT } from '$lib/server/features';
 import {
 	isValidConversationId,
@@ -10,7 +9,7 @@ import {
 	RATING_COMMENT_MAX,
 	type ChatLogEntry
 } from '$lib/server/chatLog';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 /**
  * Visitor rating of a chat bot answer (👍/👎) → stored with the answer in the chat log
@@ -37,16 +36,11 @@ async function sendFeedbackMail(
 ): Promise<boolean> {
 	const resendKey = env.RESEND_API_KEY;
 	const from = await getMailFrom();
-	let to = '';
-	try {
-		const settings = (await createClient({ fetch: fetchFn }).getSingle('settings')).data as any;
-		to = settings.responsible_email || settings.e_mail || '';
-	} catch {
-		// no settings → no mail
-	}
+	// «Benachrichtigungen an (intern)», else «Verantwortliche E-Mail» / «Korrespondenz E-Mail»
+	const to = await getNotifyTo(fetchFn);
 	if (!resendKey || !from || !to) {
 		console.warn(
-			'[chat] Feedback-Mail nicht gesendet: RESEND_API_KEY, Absender-E-Mail (Einstellungen) oder Verantwortliche E-Mail fehlt'
+			'[chat] Feedback-Mail nicht gesendet: RESEND_API_KEY, Absender-E-Mail oder Benachrichtigungs-E-Mail (Einstellungen) fehlt'
 		);
 		return false;
 	}

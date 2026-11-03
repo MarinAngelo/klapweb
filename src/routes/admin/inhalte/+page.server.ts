@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { createClient, repositoryName } from '$lib/prismicio';
 import { checkContent } from '$lib/contentCheck.js';
 import { env } from '$env/dynamic/private';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailAddress } from '$lib/server/mailFrom';
 
 /**
  * Is the domain of the sender address verified in Resend? null = unknown (no key, the key has
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		const result = await checkContent(createClient({ fetch }));
 		// Sender domain in Resend (only if the address itself is set)
 		const settingsProblem = result.links.find((p) => p.kind === 'mail_from');
-		const mailFrom = settingsProblem ? '' : await getMailFrom(fetch);
+		const mailFrom = settingsProblem ? '' : await getMailAddress(fetch);
 		if (mailFrom && (await senderDomainVerified(mailFrom)) === false) {
 			const settingsDoc = result.links.find((p) => p.doc.type === 'settings')?.doc;
 			const client = createClient({ fetch });

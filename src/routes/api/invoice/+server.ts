@@ -795,7 +795,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const { Resend } = await import('resend');
 		const resend = new Resend(resendKey);
-		const fromWithName = co.name ? `${co.name} <${fromEmail}>` : fromEmail;
+		// Sender incl. name from the settings («Absender-Name»)
+		const fromWithName = fromEmail;
 
 		// E-Mail an Kunden
 		if (customerEmail) {

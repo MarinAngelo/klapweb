@@ -7,7 +7,7 @@
  * Runs daily at 20:00 UTC:
  *   → Abreiseerinnerung   (12h vor Abreise,    bis = morgen)
  *
- * After each guest email, a confirmation is sent to the operator (sender address).
+ * After each guest email, a confirmation is sent to the operator («Benachrichtigungen an»).
  *
  * Sender address: Prismic Settings → «Absender-E-Mail» (email_from_address); transition:
  * EMAIL_FROM_ADDRESS if the field is empty.
@@ -71,6 +71,9 @@ function dateInDays(days: number): string {
 	return d.toISOString().slice(0, 10);
 }
 
+/** «Benachrichtigungen an (intern)», else «Verantwortliche E-Mail» / «Korrespondenz E-Mail» (set in handler) */
+let operatorEmail = '';
+
 async function sendMail(
 	resend: Resend,
 	fromEmail: string,
@@ -91,7 +94,7 @@ async function sendMail(
 
 	await resend.emails.send({
 		from: fromEmail,
-		to: fromEmail,
+		to: operatorEmail || fromEmail,
 		subject: `✓ ${typeLabel} gesendet an ${buchung.email}`,
 		html: `<p>${typeLabel} für <strong>${buchung.name || buchung.email}</strong>
 		         (${buchung.ressourceUid}, ${dateFieldLabel} ${dateLabel})
@@ -122,9 +125,23 @@ export default async function handler() {
 	const client = repoName ? prismic.createClient(repoName) : null;
 	const settings = client ? await client.getSingle('settings').catch(() => null) : null;
 	const settingsFrom = String((settings?.data as any)?.email_from_address ?? '').trim();
-	const fromEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settingsFrom)
+	const fromAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settingsFrom)
 		? settingsFrom
 		: (process.env.EMAIL_FROM_ADDRESS ?? '');
+	// «Absender-Name», else website name / company (same as src/lib/server/mailFrom.ts)
+	const sd = (settings?.data ?? {}) as any;
+	const isEmail = (v: unknown) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v ?? '').trim());
+	operatorEmail =
+		[sd.notification_email, sd.responsible_email, sd.e_mail]
+			.map((v) => String(v ?? '').trim())
+			.find(isEmail) ?? '';
+	const fromName = [sd.email_from_name, sd.site_name, sd.responsible_person_company]
+		.map((v) => String(v ?? '').trim())
+		.find(Boolean);
+	const fromEmail =
+		fromAddress && fromName
+			? `${/^[\p{L}\p{N} .'-]+$/u.test(fromName) ? fromName : `"${fromName.replace(/["\\<>\r\n]/g, '')}"`} <${fromAddress}>`
+			: fromAddress;
 
 	if (!siteID || !token || !resendKey || !fromEmail || !repoName || !client) {
 		console.error('[send-reminders] Fehlende Env-Variablen/Konfiguration:', {
