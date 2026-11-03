@@ -26,6 +26,7 @@ import {
 	fallbackSubject,
 	getRessourceDocForBooking
 } from '$lib/server/ressourceMail';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const id = url.searchParams.get('id');
@@ -108,7 +109,7 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 
 	// ── Mail senden ───────────────────────────────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	let mailGesendet = false;
 	let mailFehler = '';
 

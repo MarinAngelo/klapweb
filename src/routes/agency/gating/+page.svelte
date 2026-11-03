@@ -507,7 +507,7 @@
 				<strong>{$_('Setzen')}:</strong>
 				{$_('Lokal in der Datei')} <code class="admin-mono">.env</code>, {$_('auf Netlify unter')}
 				<strong>Site Settings → Environment variables</strong>. {$_(
-					'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.'
+					'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».'
 				)}
 			</p>
 

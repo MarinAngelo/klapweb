@@ -89,7 +89,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -105,6 +106,13 @@
 				"config": {
 					"label": "Korrespondenz E-Mail",
 					"placeholder": ""
+				}
+			},
+			"email_from_address": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail (alle E-Mails der Website)",
+					"placeholder": "info@deine-domain.ch – Domain muss in Resend verifiziert sein"
 				}
 			},
 			"privacy_policy": {
@@ -158,7 +166,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -213,7 +222,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -268,7 +278,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -370,7 +381,8 @@
 									"subtitle-bold",
 									"kicker",
 									"overline",
-									"invisible"
+									"invisible",
+									"copy"
 								]
 							}
 						}
@@ -428,7 +440,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -483,7 +496,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -694,7 +708,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			},
@@ -748,7 +763,8 @@
 						"subtitle-bold",
 						"kicker",
 						"overline",
-						"invisible"
+						"invisible",
+						"copy"
 					]
 				}
 			}

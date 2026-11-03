@@ -129,12 +129,12 @@ Unterstützte Tokens:
 
 In den Einstellungen beziehungsweise den Netlify-Environment-Variablen werden die technischen Werte hinterlegt:
 
-| Wert                 | Verwendung                                                  |
-| -------------------- | ----------------------------------------------------------- |
-| **E-Mail im CMS**    | Standard-Empfänger für Anbieter-Benachrichtigungen          |
-| `EMAIL_FROM_ADDRESS` | Technische Absenderadresse; muss in Resend verifiziert sein |
-| `EMAIL_FROM_NAME`    | Optionaler Fallback-Absendername                            |
-| `INVOICE_TO_EMAIL`   | Empfänger für Check-in- und Abrechnungsbenachrichtigungen   |
+| Wert                       | Verwendung                                                                                   |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
+| **E-Mail im CMS**          | Standard-Empfänger für Anbieter-Benachrichtigungen                                           |
+| **Absender-E-Mail im CMS** | Absenderadresse aller E-Mails (Einstellungen → Main); Domain muss in Resend verifiziert sein |
+| `EMAIL_FROM_NAME`          | Optionaler Fallback-Absendername                                                             |
+| `INVOICE_TO_EMAIL`         | Empfänger für Check-in- und Abrechnungsbenachrichtigungen                                    |
 
 Der sichtbare Firmenname für Rechnungs- und Bar-Mails kommt primär aus dem CMS-Feld **Verantwortliche Person/Firma**. `EMAIL_FROM_NAME` dient nur als Rückfall.
 
@@ -369,7 +369,7 @@ Häufigste Ursachen:
 
 - **Vor Abreise – E-Mail Text** fehlt im CMS
 - Die Buchung hat keine E-Mail-Adresse
-- `RESEND_API_KEY` oder `EMAIL_FROM_ADDRESS` ist nicht gesetzt
+- `RESEND_API_KEY` ist nicht gesetzt oder die **Absender-E-Mail** in den Einstellungen fehlt
 - Der Abreise-Reminder wurde bereits gesendet
 
 ---

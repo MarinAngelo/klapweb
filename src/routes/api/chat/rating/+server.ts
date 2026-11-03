@@ -10,6 +10,7 @@ import {
 	RATING_COMMENT_MAX,
 	type ChatLogEntry
 } from '$lib/server/chatLog';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 /**
  * Visitor rating of a chat bot answer (👍/👎) → stored with the answer in the chat log
@@ -35,7 +36,7 @@ async function sendFeedbackMail(
 	comment: string
 ): Promise<boolean> {
 	const resendKey = env.RESEND_API_KEY;
-	const from = env.EMAIL_FROM_ADDRESS;
+	const from = await getMailFrom();
 	let to = '';
 	try {
 		const settings = (await createClient({ fetch: fetchFn }).getSingle('settings')).data as any;
@@ -45,7 +46,7 @@ async function sendFeedbackMail(
 	}
 	if (!resendKey || !from || !to) {
 		console.warn(
-			'[chat] Feedback-Mail nicht gesendet: RESEND_API_KEY, EMAIL_FROM_ADDRESS oder Verantwortliche E-Mail fehlt'
+			'[chat] Feedback-Mail nicht gesendet: RESEND_API_KEY, Absender-E-Mail (Einstellungen) oder Verantwortliche E-Mail fehlt'
 		);
 		return false;
 	}

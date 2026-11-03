@@ -237,6 +237,7 @@
 	<li>Tab «Main»: Website-Titel und -Untertitel, verantwortliche Person bzw. Firma, Adresse, E-Mail-Adressen, Kontakte fürs Impressum und die rechtlichen Texte (Datenschutzerklärung, Haftungsausschluss, Impressum, Cookies-Text, AGB). Ausserdem Seiten-Passwort, Chat-Bot, Mehrsprachigkeit und Startseiten-Umleitung.</li>
 	<li>Tab «SEO»: globale SEO-Angaben, Favicon, App-Icon und Statusleisten-Farbe.</li>
 	<li>Je nach Paket weitere Tabs: «Terminbuchung», «Online-Handel», «Ressourcenbuchung».</li>
+	<li>«Absender-E-Mail (alle E-Mails der Website)» im Tab «Main»: Von dieser Adresse kommen alle E-Mails der Website (Buchungen, Rechnungen, Newsletter, Formulare). Die Domain muss beim Mail-Dienst (Resend) eingerichtet sein – das erledigt Angelo. Ist das Feld leer, werden keine E-Mails versendet; «Inhalte prüfen» im Admin-Bereich zeigt das an.</li>
 </ul>
 <p>«Startseite umleiten» mit «Umleitungs-Seite»: Besucher der Startseite werden automatisch auf eine andere Seite weitergeleitet, z. B. während einer Umbauphase.</p>
 
@@ -354,7 +355,7 @@
 	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
 	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
 	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Absender-E-Mail, Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
+	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
 	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
 </ol>
 <p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
@@ -963,17 +964,6 @@
 	<li>Überblendungsdauer (ms) (Zahl)</li>
 	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
 	<li>Bilder Karusell (Liste)</li>
-	<li>Blob-Form (Ein/Aus)</li>
-	<li>Blob-Farbe (Farbe)</li>
-	<li>Blob SVG-Code (Text)</li>
-	<li>Blob-Grösse (%) (Zahl)</li>
-	<li>Blob-Position horizontal (%) (Zahl)</li>
-	<li>Blob-Position vertikal (%) (Zahl)</li>
-	<li>Blob-Drehung (Grad) (Zahl)</li>
-	<li>Untere Kante wellenförmig (Ein/Aus)</li>
-	<li>Wellenhöhe (px) (Zahl)</li>
-	<li>Wellenamplitude (px) (Zahl)</li>
-	<li>Anzahl Wellen (Zahl)</li>
 </ul>
 <h3>Zitat (Inhalts-Element)</h3>
 <ul>
@@ -1105,6 +1095,7 @@
 	<li>Verantwortliche Adresse (formatierter Text)</li>
 	<li>Verantwortliche E-Mail (Text)</li>
 	<li>Korrespondenz E-Mail (Text)</li>
+	<li>Absender-E-Mail (alle E-Mails der Website) (Text): Von dieser Adresse verschickt die Website alle E-Mails: Buchungsbestätigungen, Rechnungen, Newsletter, Formulare, Kundenkonto. Die Domain der Adresse (der Teil nach @) muss beim Mail-Dienst Resend eingerichtet und verifiziert sein, sonst kommen keine E-Mails an — das richtet die Agentur ein. Beispiel: info@deine-domain.ch. Ein Postfach braucht es dafür nicht. Leer = es werden keine E-Mails verschickt; «Inhalte prüfen» im Admin meldet das.</li>
 	<li>Datenschutzerkärung (formatierter Text)</li>
 	<li>Haftungsausschluss (formatierter Text)</li>
 	<li>Impressum (formatierter Text)</li>
@@ -1125,12 +1116,6 @@
 	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
-	<li>Chat-Bot aktivieren (Ein/Aus)</li>
-	<li>Chat-Bot Name (Text)</li>
-	<li>Chat-Bot Begrüssung (Text)</li>
-	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
-	<li>Chat-Bot Wissensbasis – Ergänzungen (formatierter Text): Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.</li>
-	<li>Absender-E-Mail (Text)</li>
 	<li>Kunden-E-Mail: Betreff (Text)</li>
 	<li>Kunden-E-Mail: Text (formatierter Text)</li>
 	<li>Buchungsbestätigung: Titel (Text)</li>

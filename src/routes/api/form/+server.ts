@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 const SYSTEM_FIELDS = new Set(['form-name', 'bot-field', 'dienstleistung', 'subject']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,7 +22,7 @@ export async function POST({ request, fetch }) {
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	let toEmail = env.INVOICE_TO_EMAIL || '';
 
 	if (!toEmail) {

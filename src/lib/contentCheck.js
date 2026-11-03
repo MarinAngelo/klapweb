@@ -111,7 +111,7 @@ const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
  */
 
 /**
@@ -243,6 +243,13 @@ export async function checkContent(client) {
 				});
 			}
 		}
+	}
+
+	// 5. Sender address of all e-mails (Settings → «Absender-E-Mail», main language)
+	const mainSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
+	const mailFrom = String(/** @type {any} */ (mainSettings?.data)?.email_from_address ?? '').trim();
+	if (mainSettings && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailFrom)) {
+		links.push({ doc: ref(mainSettings), kind: 'mail_from', url: mailFrom || undefined });
 	}
 
 	return { langs, master, missing, links };

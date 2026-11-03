@@ -1,6 +1,7 @@
 import { createClient } from '$lib/prismicio';
 import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error, redirect, isRedirect } from '@sveltejs/kit';
+import { building } from '$app/environment';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
@@ -46,6 +47,11 @@ export async function load({ params, parent, fetch, cookies }) {
 
 		// Password protection – angemeldete Admins (Session-Cookie) sehen die Seite ohne Passwort
 		if ((page.data as any).password_protected === true) {
+			// Never prerender: the build has no login, a static file would be a fixed redirect to
+			// /login and the live page would loop forever. 404 during the build → no file is written
+			// (svelte.config.js handleHttpError ignores 404) → served by the server function instead.
+			if (building) throw error(404, 'Passwortgeschützte Seite wird nicht vorgerendert');
+
 			const isAdminBypass = isAdmin(cookies);
 
 			if (!isAdminBypass) {

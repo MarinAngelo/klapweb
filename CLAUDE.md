@@ -24,6 +24,8 @@ Konkrete Regeln:
 
 ## Environment Variables
 
+**Grundsatz: Env-Vars nur verwenden, wenn es unbedingt nötig ist.** Erlaubt sind nur Secrets (API-Keys, Tokens, Passwörter wie `ADMIN_SECRET`) und Werte, die vor dem Laden von Prismic gebraucht werden. Alles, was ein Website-Betreiber kennen oder ändern könnte (Adressen, Namen, Texte, Schalter), gehört in Prismic (Einstellungen) — gleiche Quelle für Website, Mails und Netlify-Functions, sichtbar und änderbar ohne Deploy. Neue Konfiguration → zuerst ein Prismic-Feld prüfen; eine neue Env-Var nur mit Begründung und Eintrag in `.env.example` + `gating.json` (`features.<id>.env`).
+
 ### Lokale Entwicklung (.env)
 
 - `.env` ist **gitignored** — nicht committed
@@ -332,7 +334,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
 - APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
 - `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
-- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. **Geschützte Seiten werden nie vorgerendert** (`[uid]/+page.server.ts`: `building` → 404, keine Datei → Server-Funktion); sonst liefert Netlify eine feste Login-Weiterleitung aus (Endlosschleife) Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
 
 ## Anmeldungen (alle Logins)
 
@@ -430,10 +432,10 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
-- `EMAIL_FROM_ADDRESS`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- **Absender-Adresse:** Prismic Einstellungen → «Absender-E-Mail» (`email_from_address`, Hauptsprache), gilt für **alle** Mails. Im Code nur über `getMailFrom()` (`src/lib/server/mailFrom.ts`) lesen. Domain muss in Resend verifiziert sein («Inhalte prüfen» meldet leeres Feld und nicht verifizierte Domain). `EMAIL_FROM_ADDRESS` ist veraltet: nur noch Übergangs-Rückgriff, solange das Feld leer ist
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
-Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 
@@ -441,6 +443,7 @@ Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → S
 - Wissensbasis-Vorlage für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich)
 - Anthropic-Aufruf mit `globalThis.fetch` — der SvelteKit-Event-`fetch` setzt einen Origin-Header → 401 (CORS)
 - **Sicherheit:** Kostendeckel `CHAT_DAILY_BUDGET_USD` / `CHAT_MONTHLY_BUDGET_USD` (Standard 2 / 20 USD, `isOverBudget()` in `chatUsage.ts`); Verlauf für das Modell kommt aus dem Chat-Log (`loadConversationHistory`), vom Browser wird nur die neue Frage übernommen — nie wieder Verlauf aus dem Request vertrauen; Regel 5 im Prompt: keine Zusagen ausserhalb der Wissensbasis
+- **Entwickler-Modus `@dev`:** Nachricht mit `@dev` → nur mit Agentur-Login (`isAgencyAuthenticated`), sonst 403 `dev_forbidden`; bleibt im Chat-Fenster aktiv bis `@exit`. Wissensbasis `src/lib/generated/chatbot-dev-wissensbasis.md` (gitignored) erzeugt `scripts/chatbot-dev-wissensbasis.js` bei `npm run dev`/`build` automatisch aus CLAUDE.md, `docs/*.md`, `.env.example`, `gating.json`, Env-Var-Scan des Codes, Netlify-Function-Kommentaren, der Prismic-Seite `how-to-guide` (Repo klap-web-ch, live geladen) und Feldreferenz → **Doku aktuell halten = Dev-Bot aktuell**. Env-Vars einer Funktion gehören in `gating.json` → `features.<id>.env`
 - **Bewertung:** pro Antwort 👍/👎; bei 👎 Mini-Formular (Name, E-Mail, Kommentar, alles optional) → einmalige Mail an «Verantwortliche E-Mail» (Reply-To = Besucher), Name/E-Mail nicht im Log → `/api/chat/rating`, gespeichert im Chat-Log-Eintrag (`rateChatExchange`, nur eigene Gesprächs-ID, 24 h), Auswertung in `/admin/chatbot`
 - Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)

@@ -4,6 +4,7 @@ import { listCustomers, saveCustomer } from '$lib/server/customers';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
@@ -113,7 +114,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			}
 
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.EMAIL_FROM_ADDRESS;
+			const fromEmail = await getMailFrom();
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');

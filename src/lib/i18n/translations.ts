@@ -881,6 +881,56 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'No results for «{suche}».'
 	},
 	'Diese Seite durchsuchen': { 'de-ch': 'Diese Seite durchsuchen', 'en-us': 'Search this page' },
+	'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.': {
+		'de-ch': 'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.',
+		'en-us': 'Developer mode is only available after logging in at /agency.'
+	},
+	'Entwickler-Modus beendet.': {
+		'de-ch': 'Entwickler-Modus beendet.',
+		'en-us': 'Developer mode ended.'
+	},
+	'Entwickler-Modus': { 'de-ch': 'Entwickler-Modus', 'en-us': 'Developer mode' },
+	'How-to-Guide (Entwickler-Dokumentation)': {
+		'de-ch': 'How-to-Guide (Entwickler-Dokumentation)',
+		'en-us': 'How-to guide (developer documentation)'
+	},
+	'Abläufe der Agentur: Prismic-Konto, Netlify, Mail, Katalog, Migration (passwortgeschützt)': {
+		'de-ch':
+			'Abläufe der Agentur: Prismic-Konto, Netlify, Mail, Katalog, Migration (passwortgeschützt)',
+		'en-us':
+			'Agency workflows: Prismic account, Netlify, mail, catalogue, migration (password-protected)'
+	},
+	Kopiert: { 'de-ch': 'Kopiert', 'en-us': 'Copied' },
+	'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».':
+		{
+			'de-ch':
+				'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».',
+			'en-us':
+				'Note: the sender e-mail is no longer a variable, it is set in Prismic under Settings → «Absender-E-Mail».'
+		},
+	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY oder «Absender-E-Mail» in den Einstellungen fehlt.':
+		{
+			'de-ch':
+				'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY oder «Absender-E-Mail» in den Einstellungen fehlt.',
+			'en-us':
+				'Email sending not configured: RESEND_API_KEY or «Absender-E-Mail» in the settings is missing.'
+		},
+	'Absender-E-Mail fehlt': {
+		'de-ch': 'Absender-E-Mail fehlt',
+		'en-us': 'Sender e-mail missing'
+	},
+	'In den Einstellungen «Absender-E-Mail» eintragen (Domain in Resend verifiziert)': {
+		'de-ch': 'In den Einstellungen «Absender-E-Mail» eintragen (Domain in Resend verifiziert)',
+		'en-us': 'Enter «Absender-E-Mail» in the settings (domain verified in Resend)'
+	},
+	'Absender-Domain in Resend nicht verifiziert': {
+		'de-ch': 'Absender-Domain in Resend nicht verifiziert',
+		'en-us': 'Sender domain not verified in Resend'
+	},
+	'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen': {
+		'de-ch': 'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen',
+		'en-us': 'Add the domain in Resend under «Domains» and set the DNS records'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
@@ -1548,13 +1598,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Setzen: { 'de-ch': 'Setzen', 'en-us': 'Set' },
 	'Lokal in der Datei': { 'de-ch': 'Lokal in der Datei', 'en-us': 'Locally in the file' },
 	'auf Netlify unter': { 'de-ch': 'auf Netlify unter', 'en-us': 'on Netlify under' },
-	'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.':
-		{
-			'de-ch':
-				'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.',
-			'en-us':
-				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
-		},
 	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
 	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
 	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
@@ -1833,10 +1876,6 @@ export const translations: Record<string, Record<string, string>> = {
 			'en-us':
 				'Send info mails to all customers. Write them in Prismic (type “Newsletter”) and publish them there – they will then appear here.'
 		},
-	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.': {
-		'de-ch': 'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.',
-		'en-us': 'Email sending not configured: RESEND_API_KEY and EMAIL_FROM_ADDRESS are missing.'
-	},
 	'Test-Mail gesendet an': { 'de-ch': 'Test-Mail gesendet an', 'en-us': 'Test mail sent to' },
 	'Info-Mail gesendet an': { 'de-ch': 'Info-Mail gesendet an', 'en-us': 'Info mail sent to' },
 	Empfänger: { 'de-ch': 'Empfänger', 'en-us': 'recipients' },
