@@ -11,6 +11,7 @@ import {
 } from '$lib/mapPoint.js';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -180,7 +181,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let ortKarte = '';
 	let companyName = '';
 	let companyEmail = '';
-	let bookingFromEmail = '';
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
 
@@ -192,7 +192,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const s = settings.data as any;
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			bookingFromEmail = (s.booking_from_email as string) ?? '';
 			custEmailSubject = (s.booking_customer_email_subject as string) || null;
 			custEmailBody = Array.isArray(s.booking_customer_email_body)
 				? s.booking_customer_email_body
@@ -311,7 +310,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
+	const fromEmail = await getMailFrom();
 	const toEmail = companyEmail;
 
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
@@ -463,7 +462,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
 		console.warn(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS / CMS-Anbieter-E-Mail) — keine Buchungs-E-Mails gesendet'
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail in den Einstellungen) — keine Buchungs-E-Mails gesendet'
 		);
 	}
 

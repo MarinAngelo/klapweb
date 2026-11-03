@@ -108,6 +108,13 @@
 					"placeholder": ""
 				}
 			},
+			"email_from_address": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail (alle E-Mails der Website)",
+					"placeholder": "info@deine-domain.ch – Domain muss in Resend verifiziert sein"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {

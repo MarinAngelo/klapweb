@@ -2743,8 +2743,9 @@
 						><td>resend.com Dashboard → API Keys</td></tr
 					>
 					<tr
-						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender aller transaktionalen Mails</td
-						><td>Ja</td><td>Muss verifizierte Domain bei Resend sein</td></tr
+						><td><code>EMAIL_FROM_ADDRESS</code></td><td
+							>Veraltet – Absender jetzt in Prismic (Einstellungen → «Absender-E-Mail»)</td
+						><td>Nein</td><td>Nur Übergang, solange das Prismic-Feld leer ist</td></tr
 					>
 					<tr
 						><td><code>INVOICE_TO_EMAIL</code></td><td
@@ -3358,8 +3359,8 @@
 						></tr
 					>
 					<tr
-						><td><code>EMAIL_FROM_ADDRESS</code></td><td>Absender-E-Mail</td><td
-							>Absender-E-Mail (muss in Resend verifiziert sein)</td
+						><td><code>email_from_address</code></td><td>Absender-E-Mail</td><td
+							>Absender aller E-Mails (Tab Main, Domain in Resend verifiziert)</td
 						></tr
 					>
 					<tr
@@ -3692,9 +3693,9 @@
 			</div>
 
 			<div class="callout">
-				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> +
-				<code>EMAIL_FROM_ADDRESS</code>. Wenn nicht konfiguriert: User wird trotzdem erstellt,
-				E-Mail versendet nicht (kein Fehler-Abbruch).
+				<strong>E-Mail-Versand:</strong> Nutzt <code>RESEND_API_KEY</code> + «Absender-E-Mail» aus den
+				Einstellungen. Wenn nicht konfiguriert: User wird trotzdem erstellt, E-Mail versendet nicht (kein
+				Fehler-Abbruch).
 			</div>
 		</section>
 

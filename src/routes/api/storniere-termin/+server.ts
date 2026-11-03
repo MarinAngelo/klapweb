@@ -4,6 +4,7 @@ import { createClient } from '$lib/prismicio';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { env } from '$env/dynamic/private';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const GET: RequestHandler = async ({ url, fetch }) => {
 	const id = url.searchParams.get('id');
@@ -25,7 +26,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	// CMS-Daten für E-Mails laden
 	let companyName = '';
 	let companyEmail = '';
-	let fromEmail = env.EMAIL_FROM_ADDRESS;
+	const fromEmail = await getMailFrom();
 	try {
 		const client = createClient({ fetch });
 		const settings = await client.getSingle('settings').catch(() => null);
@@ -33,7 +34,6 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 			const s = settings.data as any;
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			fromEmail = (s.booking_from_email as string) || fromEmail;
 		}
 	} catch {
 		/* CMS nicht erreichbar */

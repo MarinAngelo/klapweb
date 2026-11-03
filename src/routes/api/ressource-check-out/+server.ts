@@ -5,6 +5,7 @@ import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
@@ -35,7 +36,7 @@ export async function POST({ request, fetch, url }) {
 
 	// ── Betreiber-Mail mit Abrechnung + Freigabe-Link ──────────────────────
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	let toEmail = env.INVOICE_TO_EMAIL || '';
 	if (!toEmail) {
 		try {

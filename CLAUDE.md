@@ -24,6 +24,8 @@ Konkrete Regeln:
 
 ## Environment Variables
 
+**Grundsatz: Env-Vars nur verwenden, wenn es unbedingt nötig ist.** Erlaubt sind nur Secrets (API-Keys, Tokens, Passwörter wie `ADMIN_SECRET`) und Werte, die vor dem Laden von Prismic gebraucht werden. Alles, was ein Website-Betreiber kennen oder ändern könnte (Adressen, Namen, Texte, Schalter), gehört in Prismic (Einstellungen) — gleiche Quelle für Website, Mails und Netlify-Functions, sichtbar und änderbar ohne Deploy. Neue Konfiguration → zuerst ein Prismic-Feld prüfen; eine neue Env-Var nur mit Begründung und Eintrag in `.env.example` + `gating.json` (`features.<id>.env`).
+
 ### Lokale Entwicklung (.env)
 
 - `.env` ist **gitignored** — nicht committed
@@ -430,10 +432,10 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
-- `EMAIL_FROM_ADDRESS`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
+- **Absender-Adresse:** Prismic Einstellungen → «Absender-E-Mail» (`email_from_address`, Hauptsprache), gilt für **alle** Mails. Im Code nur über `getMailFrom()` (`src/lib/server/mailFrom.ts`) lesen. Domain muss in Resend verifiziert sein («Inhalte prüfen» meldet leeres Feld und nicht verifizierte Domain). `EMAIL_FROM_ADDRESS` ist veraltet: nur noch Übergangs-Rückgriff, solange das Feld leer ist
 - `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
 
-Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 

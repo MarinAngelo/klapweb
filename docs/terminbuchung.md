@@ -200,7 +200,6 @@ Pflege dort:
 
 | Feld                           | Bedeutung                                          |
 | ------------------------------ | -------------------------------------------------- |
-| **Absender-E-Mail**            | Absenderadresse für Buchungsbestätigungen          |
 | **Kunden-E-Mail: Betreff**     | Betreff der Bestätigungsmail                       |
 | **Kunden-E-Mail: Text**        | Inhalt der Bestätigungsmail                        |
 | **Buchungsbestätigung: Titel** | Titel der Bestätigungsseite, z.B. „Termin gebucht“ |
@@ -248,15 +247,15 @@ Freundliche Grüsse
 
 Die Adressen werden so bestimmt:
 
-| E-Mail                    | Quelle                                       |
-| ------------------------- | -------------------------------------------- |
-| Kundenbestätigung         | Feld `E-Mail` im Formular                    |
-| Anbieter-Benachrichtigung | **E-Mail** in den CMS-Settings               |
-| Technischer Absender      | **Absender-E-Mail** im Tab **Terminbuchung** |
+| E-Mail                    | Quelle                                                                  |
+| ------------------------- | ----------------------------------------------------------------------- |
+| Kundenbestätigung         | Feld `E-Mail` im Formular                                               |
+| Anbieter-Benachrichtigung | **E-Mail** in den CMS-Settings                                          |
+| Absender                  | **Absender-E-Mail** im Tab **Main** (gilt für alle E-Mails der Website) |
 
-Die CMS-Absender-E-Mail hat Vorrang. Falls sie leer ist, wird die technische Absenderadresse verwendet. Die Kundenadresse kommt nicht aus den Settings, sondern aus der Formulareingabe.
+Die Kundenadresse kommt nicht aus den Settings, sondern aus der Formulareingabe.
 
-**Hinweis für die Agentur:** Der E-Mail-Versand erfordert die Umgebungsvariablen `RESEND_API_KEY` und `EMAIL_FROM_ADDRESS` auf dem Hosting. Diese werden bei der Einrichtung konfiguriert und sind nicht Teil der Benutzeranleitung.
+**Hinweis für die Agentur:** Der E-Mail-Versand erfordert die Umgebungsvariable `RESEND_API_KEY` auf dem Hosting und eine in Resend verifizierte Domain der Absender-E-Mail.
 
 ---
 

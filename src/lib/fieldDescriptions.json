@@ -167,6 +167,10 @@
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",
 		"en-us": "Your own additions and corrections for the chat bot, e.g. terms, special rules or current notices («Closed this week»). If something contradicts «Chat-Bot Wissensbasis», this field wins. This lets you replace the knowledge base completely without losing your additions. Empty in a language = the additions of the main language apply."
 	},
+	"settings.email_from_address": {
+		"de-ch": "Von dieser Adresse verschickt die Website alle E-Mails: Buchungsbestätigungen, Rechnungen, Newsletter, Formulare, Kundenkonto. Die Domain der Adresse (der Teil nach @) muss beim Mail-Dienst Resend eingerichtet und verifiziert sein, sonst kommen keine E-Mails an — das richtet die Agentur ein. Beispiel: info@deine-domain.ch. Ein Postfach braucht es dafür nicht. Leer = es werden keine E-Mails verschickt; «Inhalte prüfen» im Admin meldet das.",
+		"en-us": "The website sends all e-mails from this address: booking confirmations, invoices, newsletters, forms, customer accounts. The domain of the address (the part after @) must be set up and verified with the mail service Resend, otherwise no e-mails arrive — the agency sets this up. Example: info@your-domain.ch. No mailbox is needed. Empty = no e-mails are sent; «Inhalte prüfen» (check content) in the admin reports this."
+	},
 	"theme.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."

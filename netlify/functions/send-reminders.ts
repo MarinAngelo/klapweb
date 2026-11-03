@@ -7,12 +7,14 @@
  * Runs daily at 20:00 UTC:
  *   → Abreiseerinnerung   (12h vor Abreise,    bis = morgen)
  *
- * After each guest email, a confirmation is sent to the operator (EMAIL_FROM_ADDRESS).
+ * After each guest email, a confirmation is sent to the operator (sender address).
+ *
+ * Sender address: Prismic Settings → «Absender-E-Mail» (email_from_address); transition:
+ * EMAIL_FROM_ADDRESS if the field is empty.
  *
  * Required env vars:
  *   NETLIFY_SITE_ID, NETLIFY_TOKEN   – Blobs access
  *   RESEND_API_KEY                   – Email sending
- *   EMAIL_FROM_ADDRESS               – Sender + operator notification recipient
  *   PRISMIC_REPOSITORY_NAME          – Prismic repo (default: from slicemachine.config.json)
  *
  * Optional:
@@ -103,7 +105,6 @@ export default async function handler() {
 	const siteID = process.env.NETLIFY_SITE_ID;
 	const token = process.env.NETLIFY_TOKEN;
 	const resendKey = process.env.RESEND_API_KEY;
-	const fromEmail = process.env.EMAIL_FROM_ADDRESS;
 
 	let repoName = process.env.PRISMIC_REPOSITORY_NAME;
 	if (!repoName) {
@@ -117,7 +118,15 @@ export default async function handler() {
 		}
 	}
 
-	if (!siteID || !token || !resendKey || !fromEmail || !repoName) {
+	// Sender: Settings → «Absender-E-Mail» (main language). Transition: old env var as fallback
+	const client = repoName ? prismic.createClient(repoName) : null;
+	const settings = client ? await client.getSingle('settings').catch(() => null) : null;
+	const settingsFrom = String((settings?.data as any)?.email_from_address ?? '').trim();
+	const fromEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settingsFrom)
+		? settingsFrom
+		: (process.env.EMAIL_FROM_ADDRESS ?? '');
+
+	if (!siteID || !token || !resendKey || !fromEmail || !repoName || !client) {
 		console.error('[send-reminders] Fehlende Env-Variablen/Konfiguration:', {
 			siteID: !!siteID,
 			token: !!token,
@@ -144,10 +153,8 @@ export default async function handler() {
 		)
 	).filter(Boolean) as any[];
 
-	const client = prismic.createClient(repoName);
 	const resend = new Resend(resendKey);
 
-	const settings = await client.getSingle('settings').catch(() => null);
 	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 	// {{Messenger-Apps}}: Signal, Telegram, WhatsApp; {{WhatsApp}} = old name, same buttons
 	const messengerHtml = messengerButtonsHtml(waTel);

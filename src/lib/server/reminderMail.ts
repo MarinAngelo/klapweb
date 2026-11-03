@@ -19,6 +19,7 @@ import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchun
 import { env } from '$env/dynamic/private';
 import { t } from '$lib/i18n/translations';
 import { fallbackSubject, getRessourceDocForBooking, mailLang } from './ressourceMail';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 function fmtDate(dateStr: string): string {
 	const [y, m, d] = dateStr.split('-');
@@ -66,7 +67,7 @@ export async function maybeSendAnkunftsErinnerung(
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	if (!resendKey || !emailFrom || !buchung.email) {
 		console.log(
 			`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`
@@ -151,7 +152,7 @@ export async function sendAbreiseErinnerung(
 	if (!force && buchung.abreiseReminderSent) return { sent: false, reason: 'already_sent' };
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	if (!resendKey || !emailFrom || !buchung.email) {
 		return { sent: false, reason: 'missing_config' };
 	}

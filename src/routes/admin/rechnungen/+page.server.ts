@@ -11,6 +11,7 @@ import {
 import { listCustomers } from '$lib/server/customers';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 // Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
 
@@ -149,7 +150,7 @@ export const actions: Actions = {
 		if (sendEmail && invoiceData.email) {
 			const { env: privEnv } = await import('$env/dynamic/private');
 			const resendKey = privEnv.RESEND_API_KEY;
-			const fromEmail = privEnv.EMAIL_FROM_ADDRESS;
+			const fromEmail = await getMailFrom();
 
 			if (resendKey && fromEmail) {
 				try {
@@ -364,7 +365,7 @@ export const actions: Actions = {
 
 		// Versende E-Mail
 		const resendKey = env.RESEND_API_KEY;
-		const fromEmail = env.EMAIL_FROM_ADDRESS;
+		const fromEmail = await getMailFrom();
 
 		if (!resendKey || !fromEmail) {
 			throw error(500, 'E-Mail-Konfiguration fehlt');

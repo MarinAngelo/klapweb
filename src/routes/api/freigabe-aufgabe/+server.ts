@@ -8,6 +8,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getAnnahme, updateAnnahme } from '$lib/server/aufgaben';
 import { env } from '$env/dynamic/private';
 import { isAuthorizedAdminAction } from '$lib/server/adminAuth';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const id = url.searchParams.get('id');
@@ -37,7 +38,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	}
 
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 
 	if (resendKey && emailFrom && annahme.email) {
 		import('resend')
