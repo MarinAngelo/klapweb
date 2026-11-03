@@ -890,6 +890,16 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Developer mode ended.'
 	},
 	'Entwickler-Modus': { 'de-ch': 'Entwickler-Modus', 'en-us': 'Developer mode' },
+	'How-to-Guide (Entwickler-Dokumentation)': {
+		'de-ch': 'How-to-Guide (Entwickler-Dokumentation)',
+		'en-us': 'How-to guide (developer documentation)'
+	},
+	'Abläufe der Agentur: Prismic-Konto, Netlify, Mail, Katalog, Migration (passwortgeschützt)': {
+		'de-ch':
+			'Abläufe der Agentur: Prismic-Konto, Netlify, Mail, Katalog, Migration (passwortgeschützt)',
+		'en-us':
+			'Agency workflows: Prismic account, Netlify, mail, catalogue, migration (password-protected)'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
