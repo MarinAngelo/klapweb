@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { page } from '$app/stores';
 	import { theme } from '$lib/stores/theme';
 	import { headerHeight } from '$lib/stores/headerHeight';
 	import type { Content, PrismicDocument } from '@prismicio/client';
 	import { asText } from '@prismicio/client';
-	import { onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 	import { isMenuOpen } from '$lib/stores/isMenuOpen';
 	import { isLightboxOpen } from '$lib/stores/isLightboxOpen';
 	import { PrismicImage, PrismicText } from '@prismicio/svelte';
@@ -25,6 +26,8 @@
 
 	// --- STATE ---
 	let headerEl: HTMLElement | undefined;
+	// With bottom curve: header surface + wave are painted in one backdrop layer (see markup)
+	let backdropEl: HTMLElement | undefined;
 	let observer: ResizeObserver;
 	let landscapeQuery: MediaQueryList; // Neu: Listener für Landscape
 	let revealRafId: number;
@@ -46,23 +49,32 @@
 			const heroEl = document.querySelector(
 				'[data-slice-type="hero"], [data-slice-type="p5_grafik"]'
 			) as HTMLElement | null;
-			const scrollY = window.scrollY;
-			const delay = window.innerHeight * 0.5;
-			let opacity: number;
-			if (scrollY < delay) {
-				opacity = headerBgOpacity;
-			} else {
-				const heroBottom = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
-				const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
-				opacity = headerBgOpacity + (1 - headerBgOpacity) * progress;
-			}
+			const opacity = getScrollOpacity(heroEl);
 			const bg = hexToRgba(headerBgColor, opacity);
 			headerEl.style.setProperty('--navbar-current-bg', bg);
-			if (stickyHeader) {
+			if (useBackdrop && backdropEl) {
+				backdropEl.style.opacity = String(opacity);
+			} else {
 				headerEl.style.backgroundColor = bg;
 			}
 		});
 	}
+
+	function getScrollOpacity(heroEl?: HTMLElement | null): number {
+		const scrollY = window.scrollY;
+		const delay = window.innerHeight * 0.5;
+		if (scrollY < delay) return headerBgOpacity;
+		const heroBottom = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
+		const progress = Math.max(0, Math.min(1, (scrollY - delay) / (heroBottom - delay)));
+		return headerBgOpacity + (1 - headerBgOpacity) * progress;
+	}
+
+	function syncCurveToHeader() {
+		if (!backdropEl) return;
+		backdropEl.style.opacity = $isMenuOpen ? '1' : String(getScrollOpacity());
+	}
+
+	afterUpdate(() => requestAnimationFrame(syncCurveToHeader));
 
 	// --- STANDARDWERTE ---
 	$: logoHeight = prismicTheme?.data?.logo_height || $theme.logoHeight;
@@ -70,7 +82,8 @@
 	$: isSvgLogo = !!prismicTheme?.data?.logo?.url?.toLowerCase().includes('.svg');
 	$: siteTitleFontSize = prismicTheme?.data?.site_title_font_size || $theme.siteTitleFontSize;
 	$: siteTitleFont = prismicTheme?.data?.site_title_font?.data?.name || $theme.siteTitleFont;
-	$: logoLabel = settings?.data?.site_name || asText(settings?.data?.site_title) || 'Startseite';
+	$: logoLabel =
+		settings?.data?.site_name || asText(settings?.data?.site_title) || $_('Startseite');
 	$: siteSubtitleFontSize =
 		prismicTheme?.data?.site_sub_title_font_size || $theme.siteSubtitleFontSize;
 	$: headerLinkFontSize = prismicTheme?.data?.header_link_font_size || $theme.headerLinkFontSize;
@@ -97,11 +110,35 @@
 	$: headerColor = $theme.headerColor;
 
 	$: headerBgColor = prismicTheme?.data?.header_bg_color || $theme.headerBgColor;
+	$: bottomCurveEnabled = prismicTheme?.data?.header_bottom_curve === true;
+	$: bottomCurveColor = prismicTheme?.data?.header_bottom_curve_color || headerBgColor;
+	$: bottomCurveHeight = prismicTheme?.data?.header_bottom_curve_height ?? 32;
+	$: bottomCurveAmplitude = prismicTheme?.data?.header_bottom_curve_amplitude ?? 16;
+	$: bottomCurveWaves = prismicTheme?.data?.header_bottom_curve_waves ?? 1;
+	$: bottomCurveStartAtMax = prismicTheme?.data?.header_bottom_curve_start === 'Maximale Höhe';
+	// Header surface and wave share one fully opaque layer whose opacity is faded as a whole:
+	// the wave can overlap the surface by 1px (no hairline on fractional device pixel ratios)
+	// without the overlap looking darker while the header is semi-transparent.
+	$: useBackdrop = bottomCurveEnabled && bottomCurveHeight > 0;
+	$: bottomCurvePath = (() => {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const curve =
+				(bottomCurveAmplitude / 2) *
+				(1 - Math.cos((index / points) * bottomCurveWaves * Math.PI * 2));
+			const y = bottomCurveStartAtMax ? bottomCurveHeight - curve : curve;
+			return `${x},${y}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	})();
 	// headerBgOpacity wird nur aus dem Titelbereich-Slice gesetzt, nicht aus prismicTheme
 	$: headerBgOpacity = $theme.headerBgOpacity;
 	// Wechsle zwischen transparent und fester Farbe basierend auf Menü-Status
 	$: computedBgColor = $isMenuOpen ? headerBgColor : hexToRgba(headerBgColor, headerBgOpacity);
-	$: if (headerEl) headerEl.style.setProperty('--navbar-current-bg', computedBgColor);
+	$: if (headerEl) {
+		headerEl.style.setProperty('--navbar-current-bg', computedBgColor);
+	}
 
 	function updateHeaderHeight() {
 		// 1. ZUERST PRÜFEN: Mobile Landscape?
@@ -128,6 +165,7 @@
 
 		// Initialer Aufruf
 		updateHeaderHeight();
+		requestAnimationFrame(syncCurveToHeader);
 
 		// Zusätzlicher Resize Listener für Desktop
 		window.addEventListener('resize', updateHeaderHeight);
@@ -171,6 +209,8 @@
 
 <header
 	bind:this={headerEl}
+	data-design-element="header"
+	data-design-label="Kopfzeile"
 	class="smart-header w-full transition-all duration-700 ease-in-out pointer-events-auto"
 	class:opacity-0={$isLightboxOpen}
 	class:pointer-events-none={$isLightboxOpen}
@@ -178,9 +218,27 @@
 	style:top="0"
 	style:left="0"
 	style:z-index="9999"
-	style:background-color={computedBgColor}
+	style:background-color={useBackdrop ? 'transparent' : computedBgColor}
 	style:color={headerColor}
 >
+	{#if useBackdrop}
+		<div
+			class="header-backdrop"
+			bind:this={backdropEl}
+			aria-hidden="true"
+			style:opacity={$isMenuOpen ? 1 : headerBgOpacity}
+		>
+			<div class="header-backdrop-fill" style:background-color={headerBgColor}></div>
+			<svg
+				class="header-bottom-curve"
+				viewBox={`0 0 100 ${bottomCurveHeight}`}
+				preserveAspectRatio="none"
+				style:height="{bottomCurveHeight}px"
+			>
+				<path d={bottomCurvePath} fill={bottomCurveColor || headerBgColor} />
+			</svg>
+		</div>
+	{/if}
 	<Bounded
 		tag="div"
 		yPadding="none"
@@ -190,20 +248,25 @@
 		<div class="flex items-stretch justify-between w-full">
 			<div class="logo m-0 flex items-center">
 				{#if prismicTheme?.data?.logo?.url}
-					<a href={lang === mainLang ? '/' : `/${lang}`} class="flex items-center mt-5 mb-5" aria-label={logoLabel}>
+					<a
+						href={lang === mainLang ? '/' : `/${lang}`}
+						class="flex items-center mt-5 mb-5"
+						aria-label={logoLabel}
+					>
 						{#if isSvgLogo && logoColor}
 							{@const dims = prismicTheme.data.logo.dimensions}
 							<div
-								style="height: {logoHeight}rem; {dims
-									? `aspect-ratio: ${dims.width} / ${dims.height};`
-									: 'width: auto;'} background-color: {logoColor}; -webkit-mask-image: url('{prismicTheme
-									.data.logo.url}'); mask-image: url('{prismicTheme.data.logo
-									.url}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center left; mask-position: center left;"
+								class="logo-mask"
+								class:w-auto={!dims}
+								style:height="{logoHeight}rem"
+								style:aspect-ratio={dims ? `${dims.width} / ${dims.height}` : undefined}
+								style:background-color={logoColor}
+								style:--logo-url="url('{prismicTheme.data.logo.url}')"
 							></div>
 						{:else}
 							<PrismicImage
 								field={prismicTheme.data.logo}
-								alt={prismicTheme.data.logo.alt}
+								alt={prismicTheme.data.logo.alt || ''}
 								class="w-auto"
 								style="height: {logoHeight}rem;"
 							/>
@@ -213,22 +276,20 @@
 					<a
 						href={lang === mainLang ? '/' : `/${lang}`}
 						class="site-title-link mt-6 mb-6 inline-block"
-						style="color: {headerLinkColor};"
+						style:color={headerLinkColor}
 						aria-label={logoLabel}
 					>
 						<span
 							class="text-xl font-semibold tracking-tight site-title-text"
-							style="font-size: {siteTitleFontSize}rem; font-family: {siteTitleFont
-								? siteTitleFont
-								: 'var(--page-font), sans-serif'};"
+							style:font-size="{siteTitleFontSize}rem"
+							style:font-family={siteTitleFont ? siteTitleFont : 'var(--page-font), sans-serif'}
 						>
 							<PrismicText field={settings.data.site_title} /><br />
 						</span>
 						<span
 							class="site-title-text"
-							style="font-size: {siteSubtitleFontSize}rem; font-family: {siteTitleFont
-								? siteTitleFont
-								: 'var(--page-font), sans-serif'};"
+							style:font-size="{siteSubtitleFontSize}rem"
+							style:font-family={siteTitleFont ? siteTitleFont : 'var(--page-font), sans-serif'}
 						>
 							<PrismicText field={settings.data.site_sub_title} class="text-sm" />
 						</span>
@@ -263,5 +324,25 @@
 		.smart-header {
 			display: none !important;
 		}
+	}
+	/* Below the header content (header has z-index → own stacking context) */
+	.header-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		transition: opacity 0.7s ease-in-out;
+	}
+	.header-backdrop-fill {
+		position: absolute;
+		inset: 0;
+	}
+	.header-bottom-curve {
+		position: absolute;
+		left: 0;
+		/* overlap the surface by 1px → no hairline between header and wave */
+		top: calc(100% - 1px);
+		width: 100%;
+		display: block;
 	}
 </style>

@@ -30,8 +30,9 @@
 </script>
 
 <Bounded
+	class="color-scope"
 	tag="section"
-	style="background-color: {bgColor}; color: {color}; --page-color: {color};"
+	style="--scope-bg: {bgColor}; --scope-color: {color}; --page-color: {color};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -42,8 +43,8 @@
 	<div class="relative">
 		<!-- Vertikale Linie: links auf Mobile, Mitte auf Desktop -->
 		<div
-			class="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px"
-			style="background-color: {lineColor}; opacity: 0.3;"
+			class="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px [opacity:0.3]"
+			style:background-color={lineColor}
 			aria-hidden="true"
 		></div>
 
@@ -56,15 +57,16 @@
 						<!-- Punkt auf der Linie (absolut) -->
 						<div
 							class="absolute left-[14px] top-10 w-3 h-3 rounded-full border-2 z-10"
-							style="background-color: {bgColor}; border-color: {lineColor};"
+							style:background-color={bgColor}
+							style:border-color={lineColor}
 						></div>
 
 						<!-- Datum: eigene Zeile -->
 						{#if item.date}
 							<span
-								class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-3"
-								style="background-color: {lineColor}; color: {bgColor}; opacity: 0.85;"
-								>{item.date}</span
+								class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-3 [opacity:0.85]"
+								style:background-color={lineColor}
+								style:color={bgColor}>{item.date}</span
 							>
 						{/if}
 
@@ -97,13 +99,14 @@
 						<div class="flex flex-col items-center gap-1 z-10">
 							<div
 								class="w-3 h-3 rounded-full border-2 shrink-0"
-								style="background-color: {bgColor}; border-color: {lineColor};"
+								style:background-color={bgColor}
+								style:border-color={lineColor}
 							></div>
 							{#if item.date}
 								<span
-									class="text-xs font-semibold whitespace-nowrap px-2 py-0.5 rounded-full"
-									style="background-color: {lineColor}; color: {bgColor}; opacity: 0.85;"
-									>{item.date}</span
+									class="text-xs font-semibold whitespace-nowrap px-2 py-0.5 rounded-full [opacity:0.85]"
+									style:background-color={lineColor}
+									style:color={bgColor}>{item.date}</span
 								>
 							{/if}
 						</div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { isFilled } from '@prismicio/client';
 	import { theme, THEME_DEFAULTS } from '$lib/stores/theme';
 	import { get } from 'svelte/store';
@@ -103,6 +104,14 @@
 			? paddingMap[p.text_overlay_padding]
 			: paddingMap['mittel'];
 
+	$: textOverlayPaddingMobileVal = p.text_overlay_padding_mobile as string | null | undefined;
+	$: isFullScreenMobile = $isMobile && textOverlayPaddingMobileVal === 'Ganzer Bildschirm';
+	$: effectiveContentPadding = $isMobile
+		? textOverlayPaddingMobileVal && textOverlayPaddingMobileVal !== 'Ganzer Bildschirm'
+			? (paddingMap[textOverlayPaddingMobileVal] ?? '0')
+			: '0'
+		: textOverlayPadding;
+
 	const mobileTextScaleMap: Record<string, number> = {
 		Klein: 0.8,
 		Kleiner: 0.65,
@@ -143,91 +152,91 @@
 		class="relative z-0 overflow-visible"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		style="
-			background-color: {canvasBg};
-			color: {color};
-			height: {$bannerHeight};
-			font-family: {presetFont
+		style:background-color={canvasBg}
+		style:color
+		style:height={$bannerHeight}
+		style:min-height={$bannerHeight === 'auto' ? '100vh' : 'unset'}
+		style:font-family={presetFont
 			? `'${presetFont}'`
 			: isFilled.contentRelationship(p.font) && p.font.data?.name
 				? p.font.data.name
-				: 'inherit'};
-		"
+				: 'inherit'}
 	>
-		<!-- p5 canvas als Hintergrund — overflow-hidden hier, nicht auf section -->
+		<!-- p5 canvas als Hintergrund -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none">
-			<P5Canvas {sketch} width="100%" height={$bannerHeight !== 'auto' ? $bannerHeight : '100vh'} />
+			<P5Canvas {sketch} width="100%" height="100%" />
 		</div>
 
 		<!-- Farb-Overlay über Canvas -->
 		{#if overlayOpacity > 0}
 			<div
 				class="absolute inset-0 pointer-events-none"
-				style="background-color: {overlayColor}; opacity: {$isMobile
-					? textOverlayOpacity
-					: overlayOpacity};"
+				style:background-color={overlayColor}
+				style:opacity={$isMobile ? textOverlayOpacity : overlayOpacity}
 			></div>
 		{/if}
 
-		<!-- Titelbereich-Inhalt -->
-		<Bounded tag="div" yPadding="none" class="relative z-10">
-			<div
-				class="relative flex flex-col items-center justify-center"
-				style="min-height: {$bannerHeight !== 'auto' ? $bannerHeight : '100vh'};{bannerTop
-					? ` margin-top: -${$headerHeight}px;`
-					: ''}"
-			>
+		<!-- Titelbereich-Inhalt — wie im Titelbereich: absolute inset-0 statt margin-top -->
+		<div class="absolute inset-0 z-10 flex items-center justify-center">
+			<!-- Ganzer Bildschirm Mobile: Overlay füllt den gesamten Bereich -->
+			{#if mounted && isFullScreenMobile && !switchOffTextOverlay}
+				<div
+					class="absolute inset-0 pointer-events-none"
+					style:background-color={textOverlayColor}
+					style:opacity={textOverlayOpacity}
+					aria-hidden="true"
+				></div>
+			{/if}
+			<Bounded tag="div" yPadding="none" class="w-full">
 				<div class="relative w-full flex items-center justify-center">
-					{#if mounted && (!$isMobile || ($isMobile && !switchOffTextOverlay))}
+					<!-- Box-Overlay (nicht Ganzer Bildschirm) -->
+					{#if mounted && !isFullScreenMobile && (!$isMobile || !switchOffTextOverlay)}
 						<div
-							class="absolute inset-0"
-							style="background-color: {textOverlayColor}; opacity: {textOverlayOpacity}; pointer-events: none; border-radius: 3rem;"
+							class="absolute inset-0 pointer-events-none [border-radius:3rem]"
+							style:background-color={textOverlayColor}
+							style:opacity={textOverlayOpacity}
 							aria-hidden="true"
 						></div>
 					{/if}
 					<div
 						use:reveal={fadeIn}
 						class="relative z-10 text-center"
-						style="padding: {textOverlayPadding};"
+						style:padding={effectiveContentPadding}
 					>
-						<style>
-							@media (max-width: 640px) {
-								.relative.z-10.text-center {
-									padding: 0 !important;
-								}
-							}
-						</style>
 						<div
 							class="leading-loose tracking-wider-all"
-							style={$isMobile && mobileFontScale !== 1.0 ? `zoom: ${mobileFontScale};` : ''}
+							style:zoom={$isMobile && mobileFontScale !== 1.0 ? mobileFontScale : undefined}
 						>
 							{#if p.text}
-								<div style="--page-color: {color}; color: {color};">
+								<div style:--page-color={color} style:color>
 									<PrismicRichText field={p.text} />
 								</div>
 							{/if}
 						</div>
 						{#if isFilled.link(p.button_link)}
-							<Button
-								link={p.button_link}
-								text={p.button_text || 'Mehr erfahren'}
-								color={buttonColor || get(theme).pageButtonColor}
-								bgColor={buttonBgColor || get(theme).pageButtonBgColor}
-								hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
-								hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
-							/>
+							<div class="mt-10">
+								<Button
+									link={p.button_link}
+									text={p.button_text || $_('Mehr erfahren')}
+									color={buttonColor || get(theme).pageButtonColor}
+									bgColor={buttonBgColor || get(theme).pageButtonBgColor}
+									hoverColor={buttonHoverColor || get(theme).pageButtonHoverColor}
+									hoverBgColor={buttonHoverBgColor || get(theme).pageButtonHoverBgColor}
+								/>
+							</div>
 						{/if}
 					</div>
 				</div>
-			</div>
-		</Bounded>
+			</Bounded>
+		</div>
 	</section>
 {:else}
 	<!-- ── Standard-Variation: Vollbild ── -->
 	<section
+		class="[width:100vw] [height:100vh] relative [left:50%] [right:50%] [margin-left:-50vw] [margin-right:-50vw] overflow-hidden"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
-		style="background-color: {canvasBg}; width: 100vw; height: 100vh; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; overflow: hidden;"
+		style:background-color={canvasBg}
 	>
 		<P5Canvas {sketch} width="100%" height="100%" />
 	</section>

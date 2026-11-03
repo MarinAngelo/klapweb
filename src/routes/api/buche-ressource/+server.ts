@@ -20,14 +20,19 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { bucheRessource } from '$lib/server/ressourceBuchungen';
+import { plainTextMail } from '$lib/server/mailText';
+import { parseBookingLang } from '$lib/server/ressourceMail';
+import {
+	bucheRessource,
+	getRelatedRessourceUids,
+	loadRoomNames
+} from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
 
 function naechte(von: string, bis: string): number {
-	return Math.round(
-		(new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24)
-	);
+	return Math.round((new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24));
 }
 
 /** Returns the seasonal price for a given date, or falls back to base price. */
@@ -64,11 +69,16 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		von?: string;
 		bis?: string;
 		personen?: number;
-		zimmerauswahl?: Array<{ zimmer_name: string; bett_typ: string; anzahl_betten: number }>;
+		zimmerauswahl?: Array<{
+			zimmer_name: string;
+			bett_typ: string;
+			anzahl_betten: number;
+		}>;
 		name?: string;
 		email?: string;
 		telefon?: string;
 		nachricht?: string;
+		lang?: string;
 	};
 
 	try {
@@ -84,7 +94,9 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
 	}
 	if (von >= bis) {
-		return new Response(JSON.stringify({ error: 'Abreise muss nach Anreise liegen' }), { status: 400 });
+		return new Response(JSON.stringify({ error: 'Abreise muss nach Anreise liegen' }), {
+			status: 400
+		});
 	}
 
 	// Load resource from Prismic for validation and price calculation
@@ -108,11 +120,13 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		maxPersonen = d.max_personen ?? 0;
 		minNaechte = d.min_naechte ?? 1;
 		basispreis = d.preis_pro_nacht ?? 0;
-		saisonpreise = (d.saisonpreise ?? []).map((s: any) => ({
-			von: s.von ?? '',
-			bis: s.bis ?? '',
-			preis_pro_nacht: s.preis_pro_nacht ?? basispreis
-		})).filter((s: { von: string; bis: string }) => s.von && s.bis);
+		saisonpreise = (d.saisonpreise ?? [])
+			.map((s: any) => ({
+				von: s.von ?? '',
+				bis: s.bis ?? '',
+				preis_pro_nacht: s.preis_pro_nacht ?? basispreis
+			}))
+			.filter((s: { von: string; bis: string }) => s.von && s.bis);
 
 		if (settings) {
 			const s = settings.data as any;
@@ -125,65 +139,84 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 
 	// Capacity check
 	if (maxPersonen > 0 && personen > maxPersonen) {
-		return new Response(
-			JSON.stringify({ error: `Maximale Personenanzahl: ${maxPersonen}` }),
-			{ status: 400 }
-		);
+		return new Response(JSON.stringify({ error: `Maximale Personenanzahl: ${maxPersonen}` }), {
+			status: 400
+		});
 	}
 
 	// Min nights check
 	const anzahlNaechte = naechte(von, bis);
 	if (anzahlNaechte < minNaechte) {
-		return new Response(
-			JSON.stringify({ error: `Mindestaufenthalt: ${minNaechte} Nächte` }),
-			{ status: 400 }
-		);
+		return new Response(JSON.stringify({ error: `Mindestaufenthalt: ${minNaechte} Nächte` }), {
+			status: 400
+		});
+	}
+
+	// Rooms are stored with their main language name (identity), the booking language name as label
+	const rooms = (zimmerauswahl ?? []).length ? await loadRoomNames(ressourceUid) : null;
+	const zimmerHauptsprache = (zimmerauswahl ?? []).map((z) => {
+		const label = z.zimmer_name || z.bett_typ;
+		const main = rooms?.toMain.get(label);
+		return main && main !== label ? { ...z, zimmer_name: main, zimmer_label: label } : z;
+	});
+	if (rooms && zimmerHauptsprache.some((z) => !rooms.toMain.has(z.zimmer_name || z.bett_typ))) {
+		return new Response(JSON.stringify({ error: 'Unbekanntes Zimmer' }), { status: 400 });
 	}
 
 	const preisCHF = berechneTotalpreis(von, bis, saisonpreise, basispreis);
 
-	// Save booking (includes overlap check)
+	// Save booking (includes overlap check across parent/child resources)
 	let buchung;
 	try {
-		buchung = await bucheRessource({
-			ressourceUid,
-			ressourceName,
-			von,
-			bis,
-			personen,
-			zimmerauswahl: zimmerauswahl ?? [],
-			preisCHF,
-			bookedAt: new Date().toISOString(),
-			status: 'pending',
-			name,
-			email,
-			telefon,
-			nachricht
-		});
+		const conflictUids = await getRelatedRessourceUids(ressourceUid, fetch);
+		buchung = await bucheRessource(
+			{
+				ressourceUid,
+				ressourceName,
+				von,
+				bis,
+				personen,
+				zimmerauswahl: zimmerHauptsprache,
+				preisCHF,
+				bookedAt: new Date().toISOString(),
+				status: 'pending',
+				name,
+				email,
+				telefon,
+				nachricht,
+				...(parseBookingLang(body.lang) ? { lang: parseBookingLang(body.lang)! } : {})
+			},
+			conflictUids
+		);
 	} catch (e: any) {
 		if (e?.message === 'CONFLICT') {
 			return new Response(JSON.stringify({ error: 'NICHT_VERFUEGBAR' }), { status: 409 });
 		}
 		const detail = e?.message ?? String(e);
 		console.error('Buchung speichern fehlgeschlagen:', detail);
-		return new Response(JSON.stringify({ error: 'Buchung konnte nicht gespeichert werden', detail }), { status: 500 });
+		return new Response(
+			JSON.stringify({ error: 'Buchung konnte nicht gespeichert werden', detail }),
+			{ status: 500 }
+		);
 	}
 
 	// Vermieter-Benachrichtigung mit Bestätigungslink
 	const resendKey = env.RESEND_API_KEY;
 	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
-	const emailFrom = fromEmail || env.INVOICE_FROM_EMAIL;
-	const adminSecret = env.ADMIN_SECRET;
-
-	if (resendKey && emailFrom && toEmail && adminSecret) {
+	const emailFrom = fromEmail || env.EMAIL_FROM_ADDRESS;
+	if (resendKey && emailFrom && toEmail && env.ADMIN_SECRET) {
 		const origin = url.origin;
-		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&secret=${adminSecret}`;
+		// Token only authorises this confirmation — the admin password is never sent by mail
+		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&token=${adminActionToken('bestaetige-buchung', buchung.id)}`;
 
 		const [vonY, vonM, vonD] = von.split('-');
 		const [bisY, bisM, bisD] = bis.split('-');
 		const vonFormatted = `${vonD}.${vonM}.${vonY}`;
 		const bisFormatted = `${bisD}.${bisM}.${bisY}`;
-		const preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisCHF);
+		const preisFormatted = new Intl.NumberFormat('de-CH', {
+			style: 'currency',
+			currency: 'CHF'
+		}).format(preisCHF);
 
 		const zimmerZeilen = (zimmerauswahl ?? []).map(
 			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
@@ -205,21 +238,23 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 				from: emailFrom,
 				to: toEmail,
 				subject: `Neue Buchungsanfrage: ${ressourceName}`,
-				text: [
-					`Neue Buchungsanfrage eingegangen.`,
-					``,
-					buchungsDetails,
-					``,
-					`Kontakt:`,
-					`Name:     ${name}`,
-					`E-Mail:   ${email}`,
-					...(telefon ? [`Telefon:  ${telefon}`] : []),
-					...(nachricht ? [``, `Nachricht:`, nachricht] : []),
-					``,
-					`─────────────────────────────────────`,
-					`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
-					bestaetigungsLink
-				].join('\n')
+				...plainTextMail(
+					[
+						`Neue Buchungsanfrage eingegangen.`,
+						``,
+						buchungsDetails,
+						``,
+						`Kontakt:`,
+						`Name:     ${name}`,
+						`E-Mail:   ${email}`,
+						...(telefon ? [`Telefon:  ${telefon}`] : []),
+						...(nachricht ? [``, `Nachricht:`, nachricht] : []),
+						``,
+						`─────────────────────────────────────`,
+						`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
+						bestaetigungsLink
+					].join('\n')
+				)
 			});
 			if (mailError) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', mailError);
 		} catch (e) {
@@ -227,8 +262,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		}
 	}
 
-	return new Response(
-		JSON.stringify({ ok: true, buchungId: buchung.id, preisCHF }),
-		{ status: 200 }
-	);
+	return new Response(JSON.stringify({ ok: true, buchungId: buchung.id, preisCHF }), {
+		status: 200
+	});
 };

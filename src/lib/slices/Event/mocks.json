@@ -29,12 +29,10 @@
 				"type": "Timestamp",
 				"value": "2012-02-15T18:16:50Z"
 			},
-			"geopoint": {
-				"position": {
-					"lat": 48.8841267,
-					"lng": 2.3300579
-				},
-				"__TYPE__": "GeoPointContent"
+			"map_point": {
+				"__TYPE__": "FieldContent",
+				"type": "Text",
+				"value": "48.8841267, 2.3300579"
 			},
 			"location_text": {
 				"__TYPE__": "StructuredTextContent",

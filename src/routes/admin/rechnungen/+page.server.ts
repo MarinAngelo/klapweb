@@ -1,23 +1,21 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { env } from '$env/dynamic/private';
-import { listManualInvoices, saveManualInvoice, deleteManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import {
+	listManualInvoices,
+	saveManualInvoice,
+	deleteManualInvoice,
+	getManualInvoice,
+	updateManualInvoice
+} from '$lib/server/invoices';
 import { listCustomers } from '$lib/server/customers';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
 
-const ADMIN_SECRET = env.ADMIN_SECRET;
+// Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
 
-export const load: PageServerLoad = async ({ url, fetch }) => {
-	const secret = url.searchParams.get('secret');
-	if (!secret || secret !== ADMIN_SECRET) {
-		throw error(403, 'Zugang verweigert');
-	}
-
-	const [invoices, customers] = await Promise.all([
-		listManualInvoices(),
-		listCustomers()
-	]);
+export const load: PageServerLoad = async ({ fetch }) => {
+	const [invoices, customers] = await Promise.all([listManualInvoices(), listCustomers()]);
 
 	// Firmendaten laden
 	const client = createClient({ fetch });
@@ -49,10 +47,6 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 export const actions: Actions = {
 	preview: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 		const itemsJson = formData.get('items-json') as string;
 		const items = JSON.parse(itemsJson);
 
@@ -105,10 +99,6 @@ export const actions: Actions = {
 
 	save: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 		const itemsJson = formData.get('items-json') as string;
 		const items = JSON.parse(itemsJson);
 		const invoiceNumber = formData.get('invoice-number') as string;
@@ -159,7 +149,7 @@ export const actions: Actions = {
 		if (sendEmail && invoiceData.email) {
 			const { env: privEnv } = await import('$env/dynamic/private');
 			const resendKey = privEnv.RESEND_API_KEY;
-			const fromEmail = privEnv.INVOICE_FROM_EMAIL;
+			const fromEmail = privEnv.EMAIL_FROM_ADDRESS;
 
 			if (resendKey && fromEmail) {
 				try {
@@ -209,10 +199,6 @@ export const actions: Actions = {
 
 	delete: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 
 		const invoiceId = formData.get('invoice-id') as string;
 		if (!invoiceId) {
@@ -228,12 +214,14 @@ export const actions: Actions = {
 		}
 	},
 
+	deleteAll: async () => {
+		const all = await listManualInvoices();
+		await Promise.all(all.map((inv) => deleteManualInvoice(inv.id)));
+		return { success: true };
+	},
+
 	edit: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 
 		const invoiceId = formData.get('invoice-id') as string;
 		if (!invoiceId) {
@@ -250,10 +238,6 @@ export const actions: Actions = {
 
 	updateInvoice: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 
 		const invoiceId = formData.get('invoice-id') as string;
 		const itemsJson = formData.get('items-json') as string;
@@ -287,10 +271,6 @@ export const actions: Actions = {
 
 	previewEditPdf: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 
 		const itemsJson = formData.get('items-json') as string;
 		const items = JSON.parse(itemsJson);
@@ -340,10 +320,6 @@ export const actions: Actions = {
 
 	sendInvoiceEmail: async ({ request, fetch }) => {
 		const formData = await request.formData();
-		const secret = formData.get('secret') as string;
-		if (!secret || secret !== ADMIN_SECRET) {
-			throw error(403, 'Zugang verweigert');
-		}
 
 		const invoiceId = formData.get('invoice-id') as string;
 		if (!invoiceId) {
@@ -388,7 +364,7 @@ export const actions: Actions = {
 
 		// Versende E-Mail
 		const resendKey = env.RESEND_API_KEY;
-		const fromEmail = env.INVOICE_FROM_EMAIL;
+		const fromEmail = env.EMAIL_FROM_ADDRESS;
 
 		if (!resendKey || !fromEmail) {
 			throw error(500, 'E-Mail-Konfiguration fehlt');
@@ -489,7 +465,13 @@ async function generateManualPdf(
 		y -= 14;
 	}
 	if (companyInfo.uid) {
-		page.drawText(`UID: ${companyInfo.uid}`, { x: marginL, y, size: 9, font: fontRegular, color: gray });
+		page.drawText(`UID: ${companyInfo.uid}`, {
+			x: marginL,
+			y,
+			size: 9,
+			font: fontRegular,
+			color: gray
+		});
 		y -= 14;
 	}
 	if (companyInfo.email) {
@@ -594,7 +576,13 @@ async function generateManualPdf(
 	// --- Line items ---
 	let subtotal = 0;
 	for (const item of data.items) {
-		page.drawText(item.description, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
+		page.drawText(item.description, {
+			x: marginL + 8,
+			y,
+			size: 10,
+			font: fontRegular,
+			color: black
+		});
 
 		const qtyStr = item.quantity.toString();
 		const qtyWidth = fontRegular.widthOfTextAtSize(qtyStr, 10);

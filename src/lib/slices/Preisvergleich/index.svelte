@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -74,7 +75,7 @@
 	const wertKeys = ['plan_1_wert', 'plan_2_wert', 'plan_3_wert'] as const;
 	$: planCount = rawPlans.length;
 
-	const ctaLabel = p.cta_label || 'Jetzt bestellen';
+	$: ctaLabel = p.cta_label || $_('Jetzt bestellen');
 	const titel = p.titel?.[0]?.text ?? null;
 
 	$: btnStyleName = (p.button_style as any)?.uid || undefined;
@@ -82,9 +83,9 @@
 		? `var(--btn-${btnStyleName}-color)`
 		: 'var(--page-button-color)';
 
-	function wertStyle(wert: string | null | undefined): string {
-		if (!wert || wert === '–') return 'opacity: 0.3;';
-		if (wert === '✓') return `color: var(--page-color);`;
+	function wertClass(wert: string | null | undefined): string {
+		if (!wert || wert === '–') return 'opacity-30';
+		if (wert === '✓') return 'text-page';
 		return '';
 	}
 </script>
@@ -92,12 +93,12 @@
 {#if plans.length > 0}
 	<Bounded
 		as="section"
-		style="color: var(--page-color); background-color: var(--page-bg-color);"
+		class="bg-page-bg text-page {mobileVollbreite ? 'overflow-x-clip' : ''}"
+		style="--card-accent: {btnHighlightColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 		animate={anim.animate}
 		animationOptions={anim.options}
-		class={mobileVollbreite ? 'overflow-x-clip' : ''}
 	>
 		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 			{#if titel}
@@ -105,7 +106,7 @@
 			{/if}
 
 			<div class="overflow-x-auto">
-				<table class="w-full border-collapse" style="min-width: {160 + planCount * 160}px;">
+				<table class="w-full border-collapse" style:min-width="{160 + planCount * 160}px">
 					<!-- Plan headers -->
 					<thead>
 						<tr>
@@ -114,17 +115,14 @@
 								<th
 									class="py-3 px-4 text-center align-top"
 									class:border-2={plan.highlight}
-									style={plan.highlight
-										? `border-color: ${btnHighlightColor}; background-color: color-mix(in srgb, ${btnHighlightColor} 6.7%, transparent);`
-										: ''}
+									class:col-highlight-head={plan.highlight}
 								>
 									<div class="font-bold text-lg">
 										<a
 											href={plan.pageHref}
-											class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity"
-											style="color: inherit;"
+											class="inline-flex items-center gap-1 hover:opacity-70 transition-opacity !text-inherit"
 											>{plan.name}
-											<span class="opacity-60" style="line-height: 0;"
+											<span class="opacity-60 leading-[0]"
 												><SvgIcons name="external-link" size="0.7em" color="currentColor" /></span
 											></a
 										>
@@ -134,7 +132,7 @@
 											{formatPrice(plan.price, activeCurrency)}
 										</div>
 										{#if plan.priceSuffix}
-											<div class="text-sm opacity-60">{plan.priceSuffix}</div>
+											<div class="text-sm text-muted">{plan.priceSuffix}</div>
 										{/if}
 									{/if}
 									<div
@@ -157,19 +155,16 @@
 					<tbody>
 						{#each slice.items as item, i}
 							{@const featureLabel = item.leistung?.data?.label ?? item.leistung?.uid ?? ''}
-							<tr
-								class="border-t"
-								style="border-color: color-mix(in srgb, var(--page-color) 13.3%, transparent);"
-							>
+							<tr class="border-page-13 border-t">
 								<td class="py-3 pr-6 text-sm">{featureLabel}</td>
 								{#each plans as plan, pi}
 									{@const wert = item[wertKeys[pi]] ?? null}
 									<td
 										class="py-3 px-4 text-center text-sm"
 										class:border-x-2={plan.highlight}
-										style={plan.highlight ? `border-color: ${btnHighlightColor};` : ''}
+										class:col-highlight={plan.highlight}
 									>
-										<span style={wertStyle(wert)}>{wert || '–'}</span>
+										<span class={wertClass(wert)}>{wert || '–'}</span>
 									</td>
 								{/each}
 							</tr>
@@ -184,7 +179,7 @@
 										class="pb-1"
 										class:border-b-2={plan.highlight}
 										class:border-x-2={plan.highlight}
-										style={plan.highlight ? `border-color: ${btnHighlightColor};` : ''}
+										class:col-highlight={plan.highlight}
 									></td>
 								{/each}
 							</tr>

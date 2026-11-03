@@ -7,12 +7,12 @@
  * Runs daily at 20:00 UTC:
  *   → Abreiseerinnerung   (12h vor Abreise,    bis = morgen)
  *
- * After each guest email, a confirmation is sent to the operator (INVOICE_FROM_EMAIL).
+ * After each guest email, a confirmation is sent to the operator (EMAIL_FROM_ADDRESS).
  *
  * Required env vars:
  *   NETLIFY_SITE_ID, NETLIFY_TOKEN   – Blobs access
  *   RESEND_API_KEY                   – Email sending
- *   INVOICE_FROM_EMAIL               – Sender + operator notification recipient
+ *   EMAIL_FROM_ADDRESS               – Sender + operator notification recipient
  *   PRISMIC_REPOSITORY_NAME          – Prismic repo (default: from slicemachine.config.json)
  *
  * Optional:
@@ -20,10 +20,18 @@
  *   DOOR_CODE_<UID>                  – Per-resource code (UID uppercased, hyphens → underscores)
  *
  * Tokens supported in email text:
- *   {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}
+ *   {{Türcode}}, {{Name}}, {{Anreise}}, {{Abreise}}, {{Buchungsreferenz}}, {{Messenger-Apps}}
  */
 
 import type { Config } from '@netlify/functions';
+import { loadMailTheme, wrapMail, type MailTheme } from '../../src/lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '../../src/lib/variables.js';
+import { messengerButtonsHtml } from '../../src/lib/messengerLinks.js';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
 import { Resend } from 'resend';
@@ -38,12 +46,25 @@ function formatDate(dateStr: string): string {
 	return `${d}.${m}.${y}`;
 }
 
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
+// Fallback subjects only (translations.ts needs SvelteKit and is not available here)
+function isEnglish(buchung: any): boolean {
+	return typeof buchung.lang === 'string' && buchung.lang.startsWith('en');
+}
+
+// Variablen (incl. multi-line text) first, then booking tokens — see src/lib/variables.js
+function replaceTokens(
+	field: any[],
+	tokens: Record<string, string>,
+	vars: ReturnType<typeof mailVariables>,
+	theme: MailTheme | null = null
+): string {
+	// Layout in the page colours (header with site name, page background/text)
+	return wrapMail(renderMailHtml(field, tokens, vars, theme), theme);
 }
 
 function dateInDays(days: number): string {
-	const d = new Date();
+	// DATE_OVERRIDE=YYYY-MM-DD erlaubt lokale Tests mit künstlichem Datum
+	const d = process.env.DATE_OVERRIDE ? new Date(process.env.DATE_OVERRIDE) : new Date();
 	d.setUTCDate(d.getUTCDate() + days);
 	return d.toISOString().slice(0, 10);
 }
@@ -59,15 +80,18 @@ async function sendMail(
 	dateFieldLabel: string
 ) {
 	const { error } = await resend.emails.send({
-		from: fromEmail, to: buchung.email, subject: betreff, html
+		from: fromEmail,
+		to: buchung.email,
+		subject: betreff,
+		html
 	});
 	if (error) return error;
 
 	await resend.emails.send({
-		from:    fromEmail,
-		to:      fromEmail,
+		from: fromEmail,
+		to: fromEmail,
 		subject: `✓ ${typeLabel} gesendet an ${buchung.email}`,
-		html:    `<p>${typeLabel} für <strong>${buchung.name || buchung.email}</strong>
+		html: `<p>${typeLabel} für <strong>${buchung.name || buchung.email}</strong>
 		         (${buchung.ressourceUid}, ${dateFieldLabel} ${dateLabel})
 		         wurde erfolgreich an <a href="mailto:${buchung.email}">${buchung.email}</a> gesendet.</p>
 		         <p><strong>Betreff:</strong> ${betreff}</p>`
@@ -76,16 +100,30 @@ async function sendMail(
 }
 
 export default async function handler() {
-	const siteID    = process.env.NETLIFY_SITE_ID;
-	const token     = process.env.NETLIFY_TOKEN;
+	const siteID = process.env.NETLIFY_SITE_ID;
+	const token = process.env.NETLIFY_TOKEN;
 	const resendKey = process.env.RESEND_API_KEY;
-	const fromEmail = process.env.INVOICE_FROM_EMAIL;
-	const smConfig  = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
-	const repoName  = process.env.PRISMIC_REPOSITORY_NAME || smConfig.repositoryName;
+	const fromEmail = process.env.EMAIL_FROM_ADDRESS;
 
-	if (!siteID || !token || !resendKey || !fromEmail) {
-		console.error('[send-reminders] Fehlende Env-Variablen:', {
-			siteID: !!siteID, token: !!token, resendKey: !!resendKey, fromEmail: !!fromEmail
+	let repoName = process.env.PRISMIC_REPOSITORY_NAME;
+	if (!repoName) {
+		try {
+			repoName = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8')).repositoryName;
+		} catch (e) {
+			console.error(
+				'[send-reminders] slicemachine.config.json nicht lesbar — PRISMIC_REPOSITORY_NAME setzen:',
+				e
+			);
+		}
+	}
+
+	if (!siteID || !token || !resendKey || !fromEmail || !repoName) {
+		console.error('[send-reminders] Fehlende Env-Variablen/Konfiguration:', {
+			siteID: !!siteID,
+			token: !!token,
+			resendKey: !!resendKey,
+			fromEmail: !!fromEmail,
+			repoName: !!repoName
 		});
 		return;
 	}
@@ -95,30 +133,55 @@ export default async function handler() {
 
 	const store = getStore({ name: 'ressource_buchungen', siteID, token });
 	const { blobs } = await store.list();
-	const allBookings = (await Promise.all(
-		blobs.map((b) => store.get(b.key, { type: 'json' }))
-	)).filter(Boolean) as any[];
+	const allBookings = (
+		await Promise.all(
+			blobs.map((b) =>
+				store.get(b.key, { type: 'json' }).catch((e) => {
+					console.error('[send-reminders] Blob-Ladefehler:', e);
+					return null;
+				})
+			)
+		)
+	).filter(Boolean) as any[];
 
 	const client = prismic.createClient(repoName);
 	const resend = new Resend(resendKey);
 
 	const settings = await client.getSingle('settings').catch(() => null);
 	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
-	function whatsAppLink(): string {
-		if (!waTel) return '';
-		const number = waTel.replace(/[^\d]/g, '');
-		return `<a href="https://wa.me/${number}" style="display:inline-block;background:#25d366;color:#fff;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">💬 WhatsApp</a>`;
+	// {{Messenger-Apps}}: Signal, Telegram, WhatsApp; {{WhatsApp}} = old name, same buttons
+	const messengerHtml = messengerButtonsHtml(waTel);
+	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, MailTheme>();
+	async function themeFor(lang?: string): Promise<MailTheme> {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, await loadMailTheme(client, lang));
+		return themes.get(key)!;
 	}
 
 	function tokens(buchung: any, doorCode: string) {
 		return {
-			Türcode:          doorCode,
-			Name:             buchung.name || '',
-			Anreise:          formatDate(buchung.von),
-			Abreise:          formatDate(buchung.bis),
+			Türcode: doorCode,
+			Name: buchung.name || '',
+			Anreise: formatDate(buchung.von),
+			Abreise: formatDate(buchung.bis),
 			Buchungsreferenz: buchung.referenz || buchung.id || '',
-			WhatsApp:         whatsAppLink()
+			'Messenger-Apps': messengerHtml,
+			WhatsApp: messengerHtml
 		};
+	}
+
+	// Resource document in the booking language (buchung.lang), otherwise main language
+	async function getDoc(buchung: any) {
+		if (buchung.lang) {
+			try {
+				return await client.getByUID('ressource', buchung.ressourceUid, { lang: buchung.lang });
+			} catch {
+				// no translation
+			}
+		}
+		return client.getByUID('ressource', buchung.ressourceUid);
 	}
 
 	function doorCode(uid: string) {
@@ -136,69 +199,116 @@ export default async function handler() {
 
 		for (const buchung of upcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.abreise_text as any[] | undefined;
 				if (!textField?.length) {
-					console.log(`[send-reminders] Kein abreise_text für ${buchung.ressourceUid} – übersprungen`);
+					console.log(
+						`[send-reminders] Kein abreise_text für ${buchung.ressourceUid} – übersprungen`
+					);
 					continue;
 				}
 
-				const betreff = (d.abreise_betreff as string)?.trim()
-					|| `Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`;
+				const betreff =
+					renderMailText(
+						(d.abreise_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
+					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
-				const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens(buchung, doorCode(buchung.ressourceUid)));
+				const mailTheme = await themeFor(buchung.lang);
+				const html = replaceTokens(
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
+				);
 
-				const error = await sendMail(resend, fromEmail, buchung, betreff, html,
-					'Abreise-Erinnerungsmail', formatDate(buchung.bis), 'Abreise');
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Abreise-Erinnerungsmail',
+					formatDate(buchung.bis),
+					'Abreise'
+				);
 				if (error) {
-					console.error(`[send-reminders] Abreise-Mail fehlgeschlagen für ${buchung.email}:`, error);
+					console.error(
+						`[send-reminders] Abreise-Mail fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
 					continue;
 				}
 
 				await store.setJSON(buchung.id, { ...buchung, abreiseReminderSent: true });
 				console.log(`[send-reminders] Abreise-Erinnerung gesendet an ${buchung.email}`);
-
 			} catch (err) {
 				console.error(`[send-reminders] Fehler bei Buchung ${buchung.id}:`, err);
 			}
 		}
-
 	} else {
 		// ── Ankunfts-Erinnerung: von = übermorgen ───────────────────────────────
 		const ankunftDate = dateInDays(2);
 		const ankunftUpcoming = allBookings.filter(
 			(b) => b.von === ankunftDate && b.email && !b.reminderSent
 		);
-		console.log(`[send-reminders] Ankunfts-Erinnerungen für ${ankunftDate}: ${ankunftUpcoming.length}`);
+		console.log(
+			`[send-reminders] Ankunfts-Erinnerungen für ${ankunftDate}: ${ankunftUpcoming.length}`
+		);
 
 		for (const buchung of ankunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.reminder_text as any[] | undefined;
 				if (!textField?.length) {
-					console.log(`[send-reminders] Kein reminder_text für ${buchung.ressourceUid} – übersprungen`);
+					console.log(
+						`[send-reminders] Kein reminder_text für ${buchung.ressourceUid} – übersprungen`
+					);
 					continue;
 				}
 
-				const betreff = (d.reminder_betreff as string)?.trim()
-					|| `Ihre Anreise morgen: ${d.name ?? buchung.ressourceUid}`;
+				const betreff =
+					renderMailText(
+						(d.reminder_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) ||
+					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
 
-				const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens(buchung, doorCode(buchung.ressourceUid)));
+				const mailTheme = await themeFor(buchung.lang);
+				const html = replaceTokens(
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
+				);
 
-				const error = await sendMail(resend, fromEmail, buchung, betreff, html,
-					'Ankunfts-Erinnerungsmail', formatDate(buchung.von), 'Anreise');
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Ankunfts-Erinnerungsmail',
+					formatDate(buchung.von),
+					'Anreise'
+				);
 				if (error) {
-					console.error(`[send-reminders] Ankunfts-Mail fehlgeschlagen für ${buchung.email}:`, error);
+					console.error(
+						`[send-reminders] Ankunfts-Mail fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
 					continue;
 				}
 
 				await store.setJSON(buchung.id, { ...buchung, reminderSent: true });
 				console.log(`[send-reminders] Ankunfts-Erinnerung gesendet an ${buchung.email}`);
-
 			} catch (err) {
 				console.error(`[send-reminders] Fehler bei Buchung ${buchung.id}:`, err);
 			}
@@ -209,36 +319,116 @@ export default async function handler() {
 		const nachAnkunftUpcoming = allBookings.filter(
 			(b) => b.von === nachAnkunftDate && b.email && !b.nachAnkunftReminderSent
 		);
-		console.log(`[send-reminders] Nach-Ankunft-Mails für ${nachAnkunftDate}: ${nachAnkunftUpcoming.length}`);
+		console.log(
+			`[send-reminders] Nach-Ankunft-Mails für ${nachAnkunftDate}: ${nachAnkunftUpcoming.length}`
+		);
 
 		for (const buchung of nachAnkunftUpcoming) {
 			try {
-				const doc = await client.getByUID('ressource', buchung.ressourceUid);
+				const doc = await getDoc(buchung);
 				const d = doc.data as any;
 
 				const textField = d.nach_ankunft_text as any[] | undefined;
 				if (!textField?.length) {
-					console.log(`[send-reminders] Kein nach_ankunft_text für ${buchung.ressourceUid} – übersprungen`);
+					console.log(
+						`[send-reminders] Kein nach_ankunft_text für ${buchung.ressourceUid} – übersprungen`
+					);
 					continue;
 				}
 
-				const betreff = (d.nach_ankunft_betreff as string)?.trim()
-					|| `Willkommen: ${d.name ?? buchung.ressourceUid}`;
+				const betreff =
+					renderMailText(
+						(d.nach_ankunft_betreff as string)?.trim() ?? '',
+						tokens(buchung, doorCode(buchung.ressourceUid)),
+						mailVariables(variablesData, buchung.lang)
+					) || `Willkommen: ${d.name ?? buchung.ressourceUid}`;
 
-				const html = replaceTokens(prismic.asHTML(textField) ?? '', tokens(buchung, doorCode(buchung.ressourceUid)));
+				const mailTheme = await themeFor(buchung.lang);
+				const html = replaceTokens(
+					textField,
+					tokens(buchung, doorCode(buchung.ressourceUid)),
+					mailVariables(variablesData, buchung.lang),
+					mailTheme
+				);
 
-				const error = await sendMail(resend, fromEmail, buchung, betreff, html,
-					'Nach-Ankunft-Mail', formatDate(buchung.von), 'Anreise');
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Nach-Ankunft-Mail',
+					formatDate(buchung.von),
+					'Anreise'
+				);
 				if (error) {
-					console.error(`[send-reminders] Nach-Ankunft-Mail fehlgeschlagen für ${buchung.email}:`, error);
+					console.error(
+						`[send-reminders] Nach-Ankunft-Mail fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
 					continue;
 				}
 
 				await store.setJSON(buchung.id, { ...buchung, nachAnkunftReminderSent: true });
 				console.log(`[send-reminders] Nach-Ankunft-Mail gesendet an ${buchung.email}`);
-
 			} catch (err) {
 				console.error(`[send-reminders] Fehler bei Buchung ${buchung.id}:`, err);
+			}
+		}
+	}
+
+	// ── Termin-Erinnerungen: X Stunden vor Termin (bei jedem Lauf) ──────────
+	const reminderHours = Number((settings?.data as any)?.booking_reminder_hours ?? 0);
+	if (reminderHours > 0) {
+		const terminStore = getStore({ name: 'buchungen', siteID, token });
+		const { blobs: terminBlobs } = await terminStore.list();
+		const termine = (
+			await Promise.all(
+				terminBlobs.map((b) => terminStore.get(b.key, { type: 'json' }).catch(() => null))
+			)
+		).filter(Boolean) as any[];
+
+		const now = Date.now();
+		const upcoming = termine.filter((b) => {
+			if (!b.email || b.reminderSent || !b.datum || !b.uhrzeit) return false;
+			const terminTime = new Date(`${b.datum}T${b.uhrzeit}:00`).getTime();
+			const diffHours = (terminTime - now) / 3600000;
+			return diffHours > 0 && diffHours <= reminderHours;
+		});
+		console.log(`[send-reminders] Termin-Erinnerungen (≤${reminderHours}h): ${upcoming.length}`);
+
+		for (const buchung of upcoming) {
+			try {
+				const betreff = `Erinnerung: ${buchung.titel}`;
+				const datumLabel = formatDate(buchung.datum);
+				const html = `<p>Guten Tag ${buchung.name || ''}</p>
+<p>Dies ist eine Erinnerung an Ihren Termin:</p>
+<p><strong>${buchung.titel}</strong><br>
+${datumLabel}, ${buchung.uhrzeit} Uhr</p>
+<p>Freundliche Grüsse</p>`;
+
+				const error = await sendMail(
+					resend,
+					fromEmail,
+					buchung,
+					betreff,
+					html,
+					'Termin-Erinnerungsmail',
+					datumLabel,
+					'Termin'
+				);
+				if (error) {
+					console.error(
+						`[send-reminders] Termin-Erinnerung fehlgeschlagen für ${buchung.email}:`,
+						error
+					);
+					continue;
+				}
+
+				await terminStore.setJSON(buchung.terminId, { ...buchung, reminderSent: true });
+				console.log(`[send-reminders] Termin-Erinnerung gesendet an ${buchung.email}`);
+			} catch (err) {
+				console.error(`[send-reminders] Fehler bei Termin ${buchung.terminId}:`, err);
 			}
 		}
 	}

@@ -3,6 +3,8 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import EmbedFieldHandler from '$lib/components/EmbedFieldHandler.svelte';
+	import VideoFile from '$lib/components/VideoFile.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.AnleitungSlice;
@@ -10,13 +12,21 @@
 
 	// Animation aus CMS-Feldern mappen
 	$: anim = mapAnimationFromPrimary(slice.primary);
+	// Own video file (Link to Media) — field may be missing from generated types until slicemachine push
+	const videoFileOf = (item: unknown) => (item as any)?.video_file;
 	$: mobileVollbreite = (slice.primary as any).mobile_full_width ?? false;
 </script>
 
-<Bounded yPadding="sm" animate={anim.animate} animationOptions={anim.options} tag="section" class="{mobileVollbreite ? 'overflow-x-clip' : ''}">
+<Bounded
+	yPadding="sm"
+	animate={anim.animate}
+	animationOptions={anim.options}
+	tag="section"
+	class={mobileVollbreite ? 'overflow-x-clip' : ''}
+>
 	<div
-		class="prose max-w-3xl mx-auto {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
-		data-slice-type="{slice.slice_type}EmbedFieldHandler"
+		class="prose max-w-3xl {mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}"
+		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}
 	>
 		{#if p.title}
@@ -27,20 +37,24 @@
 				<PrismicRichText field={p.description} />
 			</div>
 		{/if}
-		{#if p.youtube_video && p.youtube_video.embed_url}
+		{#if videoFileOf(p)?.url}
 			<div class="mb-8 flex justify-center">
-				{#if p.youtube_video.embed_url.startsWith('http')}
-					<EmbedFieldHandler embed={p.youtube_video} />
+				<VideoFile field={videoFileOf(p)} />
+			</div>
+		{:else if p.youtube_video?.embed_url || p.video_embed_code}
+			<div class="mb-8 flex justify-center">
+				{#if !p.youtube_video?.embed_url || p.youtube_video.embed_url.startsWith('http')}
+					<EmbedFieldHandler embed={p.youtube_video} code={p.video_embed_code} />
 				{:else}
 					<div class="text-red-600 text-sm">
-						Ungültige Video-URL: {p.youtube_video.embed_url}
+						{$_('Ungültige Video-URL')}: {p.youtube_video.embed_url}
 					</div>
 				{/if}
 			</div>
 		{/if}
 		{#if p.steps && p.steps.length > 0}
 			<ol class="list-decimal pl-6 space-y-4">
-				{#each (p.steps ?? []) as step, i}
+				{#each p.steps ?? [] as step, i}
 					<li>
 						{#if step.step_title}
 							<div class="font-semibold text-lg mb-1">{step.step_title}</div>
@@ -48,13 +62,17 @@
 						{#if step.step_description}
 							<PrismicRichText field={step.step_description} />
 						{/if}
-						{#if step.youtube_video && step.youtube_video.embed_url}
+						{#if videoFileOf(step)?.url}
 							<div class="my-4 flex justify-center">
-								{#if step.youtube_video.embed_url.startsWith('http')}
-									<EmbedFieldHandler embed={step.youtube_video} />
+								<VideoFile field={videoFileOf(step)} />
+							</div>
+						{:else if step.youtube_video?.embed_url || step.video_embed_code}
+							<div class="my-4 flex justify-center">
+								{#if !step.youtube_video?.embed_url || step.youtube_video.embed_url.startsWith('http')}
+									<EmbedFieldHandler embed={step.youtube_video} code={step.video_embed_code} />
 								{:else}
 									<div class="text-red-600 text-sm">
-										Ungültige Video-URL: {step.youtube_video.embed_url}
+										{$_('Ungültige Video-URL')}: {step.youtube_video.embed_url}
 									</div>
 								{/if}
 							</div>

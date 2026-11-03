@@ -6,7 +6,7 @@
 		"whatsapp_tel": {
 			"type": "Text",
 			"config": {
-				"label": "WhatsApp-Nummer",
+				"label": "Messenger-Nummer (Signal, Telegram, WhatsApp)",
 				"placeholder": "+41 79 123 45 67"
 			}
 		}

@@ -1,8 +1,11 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { saveManualInvoice } from '$lib/server/invoices';
 import { listCustomers, saveCustomer } from '$lib/server/customers';
+import { saveEventRegistration } from '$lib/server/eventRegistrations';
+import { createClient } from '$lib/prismicio';
+import { env } from '$env/dynamic/private';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const body = await request.json();
 
@@ -20,7 +23,12 @@ export const POST: RequestHandler = async ({ request }) => {
 			adresse,
 			plz,
 			ort,
-			land
+			land,
+			isEventCheckout,
+			eventUid,
+			eventLabel,
+			eventManagerEmail,
+			labels
 		} = body;
 
 		// Kundendaten speichern (mit Duplikat-Prüfung)
@@ -83,6 +91,83 @@ export const POST: RequestHandler = async ({ request }) => {
 			emailSentAt: null,
 			currency
 		});
+
+		// E-Mail für Event-Checkout
+		if (isEventCheckout) {
+			try {
+				await saveEventRegistration({
+					eventUid: eventUid ?? service ?? '',
+					eventLabel: eventLabel ?? service ?? '',
+					date: new Date().toISOString(),
+					vorname: vorname ?? '',
+					nachname: nachname ?? '',
+					email: email ?? null,
+					firma: firma ?? null,
+					paymentMethod: 'bar',
+					amount: amount ?? null,
+					currency: currency || 'CHF',
+					invoiceNumber
+				});
+			} catch (e) {
+				console.error('Event-Registrierung konnte nicht gespeichert werden:', e);
+			}
+
+			const resendKey = env.RESEND_API_KEY;
+			const fromEmail = env.EMAIL_FROM_ADDRESS;
+			if (resendKey && fromEmail) {
+				try {
+					const { Resend } = await import('resend');
+					const resend = new Resend(resendKey);
+					let fromName = env.EMAIL_FROM_NAME;
+					try {
+						const client = createClient({ fetch });
+						const settings = await client.getSingle('settings');
+						const cmsName = (settings.data as Record<string, unknown>).responsible_person_company;
+						if (typeof cmsName === 'string' && cmsName.trim()) fromName = cmsName.trim();
+					} catch (e) {
+						console.error('CMS-Firmenname konnte nicht geladen werden:', e);
+					}
+					const fromWithName = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
+					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
+					const fmt = (n: number) =>
+						new Intl.NumberFormat('de-CH', {
+							style: 'currency',
+							currency: currency || 'CHF',
+							currencyDisplay: 'code',
+							minimumFractionDigits: 2
+						}).format(n);
+
+					// Bestätigung an Teilnehmer/in
+					if (email) {
+						await resend.emails.send({
+							from: fromWithName,
+							to: email,
+							subject: `Anmeldebestätigung – ${service}`,
+							text: `Hallo ${customerName}\n\nVielen Dank für deine Anmeldung zu «${service}».\n\nBetrag: ${fmt(amount ?? 0)}\nZahlungsart: Barzahlung\n\nIch freue mich auf deine Teilnahme!`
+						});
+					}
+
+					// Benachrichtigung an Eventverantwortliche/n
+					const notifyEmail = eventManagerEmail || env.INVOICE_TO_EMAIL;
+					if (notifyEmail) {
+						const fieldLines = labels
+							? Object.entries(labels as Record<string, string>)
+									.filter(([k]) => body[k] !== undefined && body[k] !== '')
+									.map(([k, l]) => `${l}: ${body[k]}`)
+									.join('\n')
+							: `Name: ${customerName}\nE-Mail: ${email ?? '—'}`;
+						await resend.emails.send({
+							from: fromWithName,
+							to: notifyEmail,
+							subject: `Neue Anmeldung (Bar): ${service} – ${invoiceNumber}`,
+							text: `Neue Bar-Anmeldung eingegangen.\n\nVeranstaltung: ${service}\nRechnungsnummer: ${invoiceNumber}\nBetrag: ${fmt(amount ?? 0)}\n\n${fieldLines}`
+						});
+					}
+				} catch (e) {
+					console.error('Event-Bar-E-Mail fehlgeschlagen:', e);
+				}
+			}
+		}
 
 		return new Response(JSON.stringify({ ok: true, invoiceNumber }), { status: 200 });
 	} catch (e) {

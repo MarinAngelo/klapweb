@@ -3,6 +3,9 @@ import { readFileSync } from 'fs';
 import { createClient } from '$lib/prismicio';
 import { asText, asLink, isFilled } from '@prismicio/client'; // Importiere den Helper
 
+// Der CMS-Redirect muss als HTTP-Redirect ausgeliefert werden, damit Social-Crawler folgen.
+export const prerender = false;
+
 function localRedirectDisabled(): boolean {
 	try {
 		const cfg = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
@@ -13,19 +16,23 @@ function localRedirectDisabled(): boolean {
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ params, parent }) {
+export async function load({ params, parent, fetch, cookies }) {
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
 	const { lang, settings } = await parent();
 
 	// CMS-controlled home redirect (local override via slicemachine.config.json: home_redirect_disabled)
 	const sd = settings?.data as Record<string, unknown>;
 	const redirectActive = sd?.home_redirect_active === true;
-	const redirectLink = sd?.home_redirect_url as import('@prismicio/client').LinkField | null | undefined;
+	const redirectLink = sd?.home_redirect_url as
+		| import('@prismicio/client').LinkField
+		| null
+		| undefined;
 	const redirectUrl = isFilled.link(redirectLink) ? asLink(redirectLink) : null;
 	if (redirectActive && redirectUrl && !localRedirectDisabled()) {
 		throw redirect(302, redirectUrl);
 	}
-	const client = createClient();
+	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
+	const client = createClient({ fetch, cookies });
 
 	try {
 		const page = await client.getByUID('page', 'home', { lang });

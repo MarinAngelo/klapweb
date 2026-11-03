@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onMount, onDestroy } from 'svelte';
 	import P5Canvas from '$lib/components/P5Canvas.svelte';
 	import { textBgColorSketch } from '$lib/sketches/text-bg-color';
@@ -112,10 +113,28 @@
 		pageColorEls: Array<{ el: HTMLElement; origCss: string }>;
 		textColEl: HTMLElement | null;
 		origTextColStyle: string;
+		blobPathEl: SVGPathElement | null;
+		origBlobTransform: string;
 	};
 
 	let sliceList: SliceEntry[] = [];
 	let activeSlice: SliceEntry | null = null;
+	let headerElement: HTMLElement | null = null;
+	let activeHeader = false;
+	let headerCurveEnabled = false;
+	let headerCurveColor = '#000000';
+	let headerCurveHeight = 32;
+	let headerCurveAmplitude = 16;
+	let headerCurveWaves = 1;
+	let headerCurveStart = '0';
+	let headerSaveState: 'idle' | 'saving' | 'saved' | 'auth' | 'error' = 'idle';
+	let headerCurveOriginal: {
+		svgStyle: string;
+		pathD: string;
+		pathFill: string;
+		viewBox: string;
+		dataset: Record<string, string | undefined>;
+	} | null = null;
 	let sliceBgColor = '#000000';
 	let sliceTextColor = '#000000';
 	let btnColor = '#000000';
@@ -144,6 +163,10 @@
 	// Zoom-State (nur AdresseUndMap)
 	let zoomDesktop = 100;
 	let zoomMobile = 100;
+	let blobScale = 100;
+	let blobPositionX = 50;
+	let blobPositionY = 50;
+	let blobRotation = 0;
 
 	function parseRgba(str: string): { hex: string; opacity: number } | null {
 		const m = str.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
@@ -244,6 +267,7 @@
 	}
 
 	function buildSliceList() {
+		headerElement = document.querySelector<HTMLElement>('[data-design-element="header"]');
 		const els = Array.from(document.querySelectorAll<HTMLElement>('[data-slice-type]'));
 		const counts: Record<string, number> = {};
 		sliceList = els.map((el) => {
@@ -261,12 +285,17 @@
 				origBtnStyle: '',
 				pageColorEls: [],
 				textColEl: null,
-				origTextColStyle: ''
+				origTextColStyle: '',
+				blobPathEl: null,
+				origBlobTransform: ''
 			};
 		});
 		// If the previously active slice is no longer in DOM, reset
 		if (activeSlice && !sliceList.find((s) => s.el === activeSlice!.el)) {
 			activeSlice = null;
+		}
+		if (!headerElement) {
+			activeHeader = false;
 		}
 	}
 
@@ -278,6 +307,8 @@
 	}
 
 	function selectSlice(entry: SliceEntry) {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = entry;
 		sketchActive = false;
@@ -306,6 +337,17 @@
 			const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
 			entry.origGradientStyle = gEl?.style.cssText ?? '';
 			initGradientFromEl(entry.el);
+			entry.blobPathEl = entry.el.querySelector<SVGPathElement>('.titelbereich-blob-surface path');
+			entry.origBlobTransform = entry.blobPathEl?.getAttribute('transform') ?? '';
+			if (entry.blobPathEl) {
+				const transform = entry.origBlobTransform.match(
+					/translate\(([-\d.]+)\s+([-\d.]+)\).*rotate\(([-\d.]+)\).*scale\(([-\d.]+)\)/
+				);
+				blobPositionX = transform ? Number(transform[1]) / 2 : 50;
+				blobPositionY = transform ? Number(transform[2]) / 2 : 50;
+				blobRotation = transform ? Number(transform[3]) : 0;
+				blobScale = transform ? Number(transform[4]) * 100 : 100;
+			}
 		}
 
 		if (entry.el.dataset.sliceType === 'adresse_und_map') {
@@ -330,6 +372,146 @@
 		}
 	}
 
+	function curvePath(height: number, amplitude: number, waves: number, start: string): string {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const curve = (amplitude / 2) * (1 - Math.cos((index / points) * waves * Math.PI * 2));
+			const y = start === 'Maximale Höhe' ? height - curve : curve;
+			return `${x},${y}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	}
+
+	function updateHeaderCurve() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path) return;
+		headerCurveAmplitude = Math.min(headerCurveHeight, Math.max(0, headerCurveAmplitude));
+		headerCurveWaves = Math.min(8, Math.max(1, headerCurveWaves));
+		path.setAttribute(
+			'd',
+			curvePath(headerCurveHeight, headerCurveAmplitude, headerCurveWaves, headerCurveStart)
+		);
+		path.setAttribute('fill', headerCurveColor);
+		svg.setAttribute('viewBox', `0 0 100 ${headerCurveHeight}`);
+		svg.dataset.curveEnabled = String(headerCurveEnabled);
+		svg.dataset.curveColor = headerCurveColor;
+		svg.dataset.curveHeight = String(headerCurveHeight);
+		svg.dataset.curveAmplitude = String(headerCurveAmplitude);
+		svg.dataset.curveWaves = String(headerCurveWaves);
+		svg.dataset.curveStart = headerCurveStart;
+		svg.style.height = `${headerCurveHeight}px`;
+		svg.style.bottom = `-${headerCurveHeight}px`;
+		svg.style.display = headerCurveEnabled ? 'block' : 'none';
+	}
+
+	function selectHeader() {
+		if (!headerElement) return;
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+		activeHeader = true;
+		const svg = headerElement.querySelector<SVGSVGElement>('.header-bottom-curve');
+		if (!svg) return;
+		headerCurveOriginal = {
+			svgStyle: svg.style.cssText,
+			pathD: svg.querySelector('path')?.getAttribute('d') ?? '',
+			pathFill: svg.querySelector('path')?.getAttribute('fill') ?? '',
+			viewBox: svg.getAttribute('viewBox') ?? '',
+			dataset: {
+				curveEnabled: svg.dataset.curveEnabled,
+				curveColor: svg.dataset.curveColor,
+				curveHeight: svg.dataset.curveHeight,
+				curveAmplitude: svg.dataset.curveAmplitude,
+				curveWaves: svg.dataset.curveWaves,
+				curveStart: svg.dataset.curveStart
+			}
+		};
+		headerCurveEnabled = svg.dataset.curveEnabled === 'true';
+		headerCurveColor = svg.dataset.curveColor || getCssVar('--header-bg-color');
+		headerCurveHeight = Number(svg.dataset.curveHeight) || 32;
+		headerCurveAmplitude = Number(svg.dataset.curveAmplitude) || 16;
+		headerCurveWaves = Number(svg.dataset.curveWaves) || 1;
+		headerCurveStart = svg.dataset.curveStart || '0';
+	}
+
+	function restoreHeader() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path || !headerCurveOriginal) return;
+		svg.style.cssText = headerCurveOriginal.svgStyle;
+		path.setAttribute('d', headerCurveOriginal.pathD);
+		path.setAttribute('fill', headerCurveOriginal.pathFill);
+		svg.setAttribute('viewBox', headerCurveOriginal.viewBox);
+		for (const [key, value] of Object.entries(headerCurveOriginal.dataset)) {
+			if (value === undefined) delete svg.dataset[key as keyof DOMStringMap];
+			else svg.dataset[key as keyof DOMStringMap] = value;
+		}
+		headerCurveOriginal = null;
+	}
+
+	function deselectHeader() {
+		restoreHeader();
+		activeHeader = false;
+	}
+
+	function setHeaderCurveEnabled(event: Event) {
+		headerCurveEnabled = (event.target as HTMLInputElement).checked;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveColor(event: Event) {
+		headerCurveColor = (event.target as HTMLInputElement).value;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveHeight(event: Event) {
+		headerCurveHeight = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveAmplitude(event: Event) {
+		headerCurveAmplitude = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveWaves(event: Event) {
+		headerCurveWaves = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveStart(event: Event) {
+		headerCurveStart = (event.target as HTMLSelectElement).value;
+		updateHeaderCurve();
+	}
+
+	async function saveHeaderTheme() {
+		headerSaveState = 'saving';
+		try {
+			// Authorised by the admin session cookie (log in under /admin first)
+			const response = await fetch('/api/design-theme', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					header_bottom_curve: headerCurveEnabled,
+					header_bottom_curve_color: headerCurveColor,
+					header_bottom_curve_height: headerCurveHeight,
+					header_bottom_curve_amplitude: headerCurveAmplitude,
+					header_bottom_curve_waves: headerCurveWaves,
+					header_bottom_curve_start: headerCurveStart
+				})
+			});
+			if (response.status === 401) {
+				headerSaveState = 'auth';
+				return;
+			}
+			if (!response.ok) throw new Error('save failed');
+			headerSaveState = 'saved';
+		} catch {
+			headerSaveState = 'error';
+		}
+	}
+
 	function deselectSlice() {
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = null;
@@ -340,6 +522,7 @@
 		if (entry.innerEl) entry.innerEl.style.cssText = entry.origInnerStyle;
 		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
 		if (entry.textColEl) entry.textColEl.style.cssText = entry.origTextColStyle;
+		if (entry.blobPathEl) entry.blobPathEl.setAttribute('transform', entry.origBlobTransform);
 		for (const { el, origCss } of entry.pageColorEls) {
 			el.style.cssText = origCss;
 		}
@@ -347,6 +530,36 @@
 		if (gEl) gEl.style.cssText = entry.origGradientStyle;
 		gradientEl = null;
 		currentFontIndex = -1;
+	}
+
+	$: isBlobStudioSlice = activeSlice?.blobPathEl !== null && activeSlice?.blobPathEl !== undefined;
+
+	function updateBlobStudio() {
+		if (!activeSlice?.blobPathEl) return;
+		activeSlice.blobPathEl.setAttribute(
+			'transform',
+			`translate(${blobPositionX * 2} ${blobPositionY * 2}) rotate(${blobRotation}) scale(${2 * (blobScale / 100)})`
+		);
+	}
+
+	function setBlobScale(e: Event) {
+		blobScale = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionX(e: Event) {
+		blobPositionX = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionY(e: Event) {
+		blobPositionY = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobRotation(e: Event) {
+		blobRotation = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
 	}
 
 	function setSliceBg(e: Event) {
@@ -413,6 +626,8 @@
 	}
 
 	function clearSliceStyles() {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
 		if (activeSlice) restoreSlice(activeSlice);
 		activeSlice = null;
 	}
@@ -439,16 +654,18 @@
 {#if open}
 	<aside class="panel">
 		<div class="header">
-			<span class="title">Design Panel</span>
+			<span class="title">{$_('Design Panel')}</span>
 			<div class="header-actions">
 				<button
 					class="toggle"
 					class:on={sketchActive}
 					on:click={() => (sketchActive = !sketchActive)}
-					title="Farbsketch ein/aus">⬡</button
+					title={$_('Farbsketch ein/aus')}>⬡</button
 				>
-				<button class="close" on:click={() => (open = false)} title="Schliessen (Ctrl+Shift+K)"
-					>✕</button
+				<button
+					class="close"
+					on:click={() => (open = false)}
+					title={$_('Schliessen (Ctrl+Shift+K)')}>✕</button
 				>
 			</div>
 		</div>
@@ -458,34 +675,34 @@
 				<button
 					class="mode-btn"
 					class:on={sketchMode === 'dark'}
-					on:click={() => (sketchMode = 'dark')}>◼ Dunkel</button
+					on:click={() => (sketchMode = 'dark')}>◼ {$_('Dunkel')}</button
 				>
 				<button
 					class="mode-btn"
 					class:on={sketchMode === 'light'}
-					on:click={() => (sketchMode = 'light')}>◻ Hell</button
+					on:click={() => (sketchMode = 'light')}>◻ {$_('Hell')}</button
 				>
 			</div>
 			<div class="sketch-wrap">
 				<P5Canvas {sketch} width="100%" height="100%" />
 			</div>
-			<p class="hint-sketch">Maus X = Hintergrund · Maus Y = Schrift</p>
+			<p class="hint-sketch">{$_('Maus X = Hintergrund · Maus Y = Schrift')}</p>
 		{/if}
 
 		<!-- Page-level colors -->
 
 		<div class="divider"></div>
-		<div class="section-label">Standard-Schriftart</div>
+		<div class="section-label">{$_('Standard-Schriftart')}</div>
 		<label class="row">
-			<span>Schriftwechsel</span>
-			<div style="display: flex; align-items: center; gap: 0.5rem;">
+			<span>{$_('Schriftwechsel')}</span>
+			<div class="flex items-center [gap:0.5rem]">
 				<button
-					class="font-cycle-btn"
-					style="min-width: 8rem; font-family: {currentFontIndex >= 0
+					class="font-cycle-btn [min-width:8rem]"
+					style:font-family={currentFontIndex >= 0
 						? `'${presetFontNames[currentFontIndex]}', sans-serif`
-						: 'inherit'};"
+						: 'inherit'}
 					on:click={() => cycleFont(1)}
-					title="Nächste Schriftart wählen"
+					title={$_('Nächste Schriftart wählen')}
 				>
 					{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}
 				</button>
@@ -493,29 +710,29 @@
 					class="copy-btn"
 					on:click={() =>
 						copy(currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '', 'fontname')}
-					title="Fontnamen kopieren"
+					title={$_('Fontnamen kopieren')}
 				>
 					{copiedField === 'fontname' ? '✓' : '⧉'}
 				</button>
 			</div>
 		</label>
 		<label class="row">
-			<span>Hintergrundfarbe (Page)</span>
+			<span>{$_('Hintergrundfarbe (Page)')}</span>
 			<div class="color-wrap">
 				<input type="color" value={bgColor} on:input={setBg} />
 				<code>{bgColor}</code>
-				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title="Kopieren">
+				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title={$_('Kopieren')}>
 					{copiedField === 'bg' ? '✓' : '⧉'}
 				</button>
 			</div>
 		</label>
 
 		<label class="row">
-			<span>Schriftfarbe</span>
+			<span>{$_('Schriftfarbe')}</span>
 			<div class="color-wrap">
 				<input type="color" value={textColor} on:input={setText} />
 				<code>{textColor}</code>
-				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title="Kopieren">
+				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title={$_('Kopieren')}>
 					{copiedField === 'text' ? '✓' : '⧉'}
 				</button>
 			</div>
@@ -523,9 +740,9 @@
 
 		<div class="row">
 			<div class="row-header">
-				<span>Hintergrundfarbe (Slices+)</span>
+				<span>{$_('Hintergrundfarbe (Slices+)')}</span>
 				<button class="toggle" class:on={sectionBgActive} on:click={toggleSectionBg}>
-					{sectionBgActive ? 'AN' : 'AUS'}
+					{sectionBgActive ? $_('AN') : $_('AUS')}
 				</button>
 			</div>
 		</div>
@@ -533,8 +750,92 @@
 		<!-- Divider -->
 		<div class="divider"></div>
 
+		<div class="section-label">{$_('Kopfzeile')}</div>
+		<div class="slice-list">
+			{#if headerElement}
+				<button
+					class="slice-btn"
+					class:active={activeHeader}
+					on:click={() => (activeHeader ? deselectHeader() : selectHeader())}
+				>
+					{$_('Kopfzeile')}
+				</button>
+			{:else}
+				<span class="hint-sketch">{$_('Keine Kopfzeile gefunden')}</span>
+			{/if}
+		</div>
+
+		{#if activeHeader}
+			<label class="row">
+				<span>{$_('Untere Kante kurvig')}</span>
+				<input type="checkbox" checked={headerCurveEnabled} on:change={setHeaderCurveEnabled} />
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenfarbe')}</span>
+				<div class="color-wrap">
+					<input type="color" value={headerCurveColor} on:input={setHeaderCurveColor} />
+					<code>{headerCurveColor}</code>
+				</div>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenhöhe')} ({headerCurveHeight}px)</span>
+				<input
+					type="range"
+					min="8"
+					max="160"
+					step="1"
+					value={headerCurveHeight}
+					on:input={setHeaderCurveHeight}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenamplitude')} ({headerCurveAmplitude}px)</span>
+				<input
+					type="range"
+					min="0"
+					max={headerCurveHeight}
+					step="1"
+					value={headerCurveAmplitude}
+					on:input={setHeaderCurveAmplitude}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Anzahl Kurven')} ({headerCurveWaves})</span>
+				<input
+					type="range"
+					min="1"
+					max="8"
+					step="1"
+					value={headerCurveWaves}
+					on:input={setHeaderCurveWaves}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenstart links')}</span>
+				<select class="studio-select" value={headerCurveStart} on:change={setHeaderCurveStart}>
+					<option value="0">0</option>
+					<option value="Maximale Höhe">{$_('Maximale Höhe')}</option>
+				</select>
+			</label>
+			<button
+				class="save-theme-btn"
+				on:click={saveHeaderTheme}
+				disabled={headerSaveState === 'saving'}
+			>
+				{headerSaveState === 'saving'
+					? $_('Speichert …')
+					: headerSaveState === 'saved'
+						? $_('In Prismic gespeichert')
+						: headerSaveState === 'auth'
+							? $_('Bitte zuerst unter /admin anmelden')
+							: headerSaveState === 'error'
+								? $_('Speichern fehlgeschlagen')
+								: $_('In Prismic speichern')}
+			</button>
+		{/if}
+
 		<!-- Slice-level colors -->
-		<div class="section-label">Slice-Farben</div>
+		<div class="section-label">{$_('Slice-Farben')}</div>
 
 		<div class="slice-list">
 			{#each sliceList as entry}
@@ -547,31 +848,82 @@
 				</button>
 			{/each}
 			{#if sliceList.length === 0}
-				<span class="hint-sketch">Keine Slices gefunden</span>
+				<span class="hint-sketch">{$_('Keine Slices gefunden')}</span>
 			{/if}
 		</div>
 
 		{#if activeSlice}
+			{#if isBlobStudioSlice}
+				<div class="section-label">{$_('Blob-Parameter')}</div>
+				<label class="row">
+					<span>{$_('Blob-Grösse (%)')} <code>{blobScale}</code></span>
+					<input
+						type="range"
+						min="50"
+						max="150"
+						step="1"
+						value={blobScale}
+						on:input={setBlobScale}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Position horizontal (%)')} <code>{blobPositionX}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionX}
+						on:input={setBlobPositionX}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Position vertikal (%)')} <code>{blobPositionY}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionY}
+						on:input={setBlobPositionY}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Drehung (Grad)')} <code>{blobRotation}</code></span>
+					<input
+						type="range"
+						min="-180"
+						max="180"
+						step="1"
+						value={blobRotation}
+						on:input={setBlobRotation}
+					/>
+				</label>
+			{/if}
 			<label class="row">
-				<span>Hintergrundfarbe</span>
+				<span>{$_('Hintergrundfarbe')}</span>
 				<div class="color-wrap">
 					<input type="color" value={sliceBgColor} on:input={setSliceBg} />
 					<code>{sliceBgColor}</code>
-					<button class="copy-btn" on:click={() => copy(sliceBgColor, 'slice-bg')} title="Kopieren">
+					<button
+						class="copy-btn"
+						on:click={() => copy(sliceBgColor, 'slice-bg')}
+						title={$_('Kopieren')}
+					>
 						{copiedField === 'slice-bg' ? '✓' : '⧉'}
 					</button>
 				</div>
 			</label>
 
 			<label class="row">
-				<span>Schriftfarbe</span>
+				<span>{$_('Schriftfarbe')}</span>
 				<div class="color-wrap">
 					<input type="color" value={sliceTextColor} on:input={setSliceText} />
 					<code>{sliceTextColor}</code>
 					<button
 						class="copy-btn"
 						on:click={() => copy(sliceTextColor, 'slice-text')}
-						title="Kopieren"
+						title={$_('Kopieren')}
 					>
 						{copiedField === 'slice-text' ? '✓' : '⧉'}
 					</button>
@@ -580,36 +932,44 @@
 
 			{#if activeSlice.btnEl}
 				<label class="row">
-					<span>Schaltfläche Farbe</span>
+					<span>{$_('Schaltfläche Farbe')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnColor} on:input={setBtnColor} />
 						<code>{btnColor}</code>
-						<button class="copy-btn" on:click={() => copy(btnColor, 'btn-color')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnColor, 'btn-color')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'btn-color' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hintergrund</span>
+					<span>{$_('Schaltfläche Hintergrund')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnBgColor} on:input={setBtnBgColor} />
 						<code>{btnBgColor}</code>
-						<button class="copy-btn" on:click={() => copy(btnBgColor, 'btn-bg')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnBgColor, 'btn-bg')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'btn-bg' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hover Farbe</span>
+					<span>{$_('Schaltfläche Hover Farbe')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnHoverColor} on:input={setBtnHoverColor} />
 						<code>{btnHoverColor}</code>
 						<button
 							class="copy-btn"
 							on:click={() => copy(btnHoverColor, 'btn-hover-color')}
-							title="Kopieren"
+							title={$_('Kopieren')}
 						>
 							{copiedField === 'btn-hover-color' ? '✓' : '⧉'}
 						</button>
@@ -617,14 +977,14 @@
 				</label>
 
 				<label class="row">
-					<span>Schaltfläche Hover Hintergrund</span>
+					<span>{$_('Schaltfläche Hover Hintergrund')}</span>
 					<div class="color-wrap">
 						<input type="color" value={btnHoverBgColor} on:input={setBtnHoverBgColor} />
 						<code>{btnHoverBgColor}</code>
 						<button
 							class="copy-btn"
 							on:click={() => copy(btnHoverBgColor, 'btn-hover-bg')}
-							title="Kopieren"
+							title={$_('Kopieren')}
 						>
 							{copiedField === 'btn-hover-bg' ? '✓' : '⧉'}
 						</button>
@@ -634,7 +994,7 @@
 
 			{#if hasPresetFont}
 				<div class="divider"></div>
-				<div class="section-label">Schriftart</div>
+				<div class="section-label">{$_('Schriftart')}</div>
 				<div class="row font-cycle-row">
 					<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
 					<span class="font-cycle-name"
@@ -646,19 +1006,19 @@
 
 			{#if isHeroSlice}
 				<div class="divider"></div>
-				<div class="section-label">Verlauf</div>
+				<div class="section-label">{$_('Verlauf')}</div>
 
 				<label class="row">
-					<span>Form</span>
+					<span>{$_('Form')}</span>
 					<select class="studio-select" bind:value={gradType} on:change={reapplyGradient}>
-						<option>Linear</option>
-						<option>Radial</option>
+						<option value="Linear">{$_('Linear')}</option>
+						<option value="Radial">{$_('Radial')}</option>
 					</select>
 				</label>
 
 				{#if gradType === 'Linear'}
 					<label class="row">
-						<span>Richtung</span>
+						<span>{$_('Richtung')}</span>
 						<select class="studio-select" bind:value={gradAngle} on:change={reapplyGradient}>
 							{#each ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'] as a}
 								<option value={a}>{a.replace('deg', '°')}</option>
@@ -668,17 +1028,21 @@
 				{/if}
 
 				<label class="row">
-					<span>Startfarbe</span>
+					<span>{$_('Startfarbe')}</span>
 					<div class="color-wrap">
 						<input type="color" bind:value={gradColor1} on:input={reapplyGradient} />
 						<code>{gradColor1}</code>
-						<button class="copy-btn" on:click={() => copy(gradColor1, 'gc1')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor1, 'gc1')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'gc1' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 				<label class="row">
-					<span>Startfarbe Deckkraft ({gradOpacity1.toFixed(2)})</span>
+					<span>{$_('Startfarbe Deckkraft')} ({gradOpacity1.toFixed(2)})</span>
 					<input
 						type="range"
 						min="0"
@@ -689,7 +1053,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Startfarbe Position ({gradStop1}%)</span>
+					<span>{$_('Startfarbe Position')} ({gradStop1}%)</span>
 					<input
 						type="range"
 						min="0"
@@ -701,17 +1065,21 @@
 				</label>
 
 				<label class="row">
-					<span>Endfarbe</span>
+					<span>{$_('Endfarbe')}</span>
 					<div class="color-wrap">
 						<input type="color" bind:value={gradColor2} on:input={reapplyGradient} />
 						<code>{gradColor2}</code>
-						<button class="copy-btn" on:click={() => copy(gradColor2, 'gc2')} title="Kopieren">
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor2, 'gc2')}
+							title={$_('Kopieren')}
+						>
 							{copiedField === 'gc2' ? '✓' : '⧉'}
 						</button>
 					</div>
 				</label>
 				<label class="row">
-					<span>Endfarbe Deckkraft ({gradOpacity2.toFixed(2)})</span>
+					<span>{$_('Endfarbe Deckkraft')} ({gradOpacity2.toFixed(2)})</span>
 					<input
 						type="range"
 						min="0"
@@ -722,7 +1090,7 @@
 					/>
 				</label>
 				<label class="row">
-					<span>Endfarbe Position ({gradStop2}%)</span>
+					<span>{$_('Endfarbe Position')} ({gradStop2}%)</span>
 					<input
 						type="range"
 						min="0"
@@ -737,9 +1105,9 @@
 
 		{#if isAdresseUndMap}
 			<div class="divider"></div>
-			<div class="section-label">Schriftgrösse</div>
+			<div class="section-label">{$_('Schriftgrösse')}</div>
 			<label class="row">
-				<span>Desktop ({zoomDesktop}%)</span>
+				<span>{$_('Desktop')} ({zoomDesktop}%)</span>
 				<input
 					type="range"
 					min="50"
@@ -750,7 +1118,7 @@
 				/>
 			</label>
 			<label class="row">
-				<span>Mobile ({zoomMobile}%)</span>
+				<span>{$_('Mobile')} ({zoomMobile}%)</span>
 				<input
 					type="range"
 					min="50"

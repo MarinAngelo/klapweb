@@ -1,9 +1,20 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error } from '@sveltejs/kit';
 
-export async function load({ params, parent, fetch }: { params: { uid: string; lang?: string }; parent: () => Promise<{ lang: string }>; fetch: typeof globalThis.fetch }) {
+export async function load({
+	params,
+	parent,
+	fetch,
+	cookies
+}: {
+	params: { uid: string; lang?: string };
+	parent: () => Promise<{ lang: string }>;
+	fetch: typeof globalThis.fetch;
+	cookies: import('@sveltejs/kit').Cookies;
+}) {
 	const { lang } = await parent();
-	const client = createClient({ fetch });
+	const client = createClient({ fetch, cookies });
 
 	// Load the ressource page document
 	let doc: any;
@@ -66,6 +77,9 @@ export async function load({ params, parent, fetch }: { params: { uid: string; l
 
 export async function entries() {
 	const client = createClient();
-	const docs = await client.getAllByType('ressource', { lang: '*' });
-	return docs.map((d) => ({ lang: d.lang, uid: d.uid }));
+	const [docs, mainLang] = await Promise.all([
+		client.getAllByType('ressource', { lang: '*' }),
+		getMainLang(client)
+	]);
+	return docs.map((d) => ({ ...langParam(d.lang, mainLang), uid: d.uid }));
 }

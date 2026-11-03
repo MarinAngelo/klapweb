@@ -1,3 +1,5 @@
+import { expandTokensInField } from '$lib/variables.js';
+
 type RichTextBlock = {
 	type: string;
 	text: string;
@@ -6,20 +8,15 @@ type RichTextBlock = {
 };
 
 /**
- * Replaces {{TOKEN}} placeholders in all text nodes of a Prismic RichText field.
- * Tokens not found in the map are left as-is ({{TOKEN}}).
+ * Replaces {{TOKEN}} placeholders in a Prismic RichText field (see expandTokensInField):
+ * a token alone in a paragraph with a multi-line value is replaced by its paragraphs,
+ * formatting spans stay aligned. Tokens not found in the maps are left as-is.
  */
 export function replaceTokens(
 	field: RichTextBlock[] | null | undefined,
-	vars: Record<string, string>
+	vars: Record<string, string>,
+	rich: Record<string, RichTextBlock[]> = {}
 ): RichTextBlock[] | null | undefined {
-	if (!field || Object.keys(vars).length === 0) return field;
-
-	return field.map((block) => {
-		if (!block.text) return block;
-		return {
-			...block,
-			text: block.text.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? `{{${key}}}`)
-		};
-	});
+	if (!field || (Object.keys(vars).length === 0 && Object.keys(rich).length === 0)) return field;
+	return expandTokensInField(field, vars, rich);
 }

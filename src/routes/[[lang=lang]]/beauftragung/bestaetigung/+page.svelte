@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { theme } from '$lib/stores/theme';
 	import { t } from '$lib/i18n/translations';
 	import { get } from 'svelte/store';
 	import { isFilled } from '@prismicio/client';
@@ -11,6 +10,8 @@
 
 	export let data: {
 		confirmationTexts: { stripe: unknown; rechnung: unknown; bar: unknown };
+		confirmationHeading: string | null;
+		confirmationIntro: string | null;
 	};
 
 	$: isSimulated = $page.url.searchParams.get('simulated') === 'true';
@@ -22,23 +23,24 @@
 	$: variables.update((v) => ({ ...v, Dienstleistung: serviceLabel }));
 
 	$: lang = $page.data.lang || 'de-ch';
-	$: bgColor = get(theme).pageBgColor;
-	$: pageColor = get(theme).pageColor;
-	$: borderColor = get(theme).pageColor;
+
+	$: returnUrlRaw = $page.url.searchParams.get('return_url') ?? '';
+	$: backHref = returnUrlRaw.startsWith('/') ? returnUrlRaw : '/';
 </script>
 
 <svelte:head>
-	<title>Bestellung bestätigt</title>
+	<title>{t('Bestellung bestätigt', lang)}</title>
 </svelte:head>
 
-<Bounded as="section" style="background-color: {bgColor}; color: {pageColor};">
-
+<Bounded class="bg-page-bg text-page" as="section">
 	{#if isSimulated}
 		<div class="mb-8 px-4 py-3 border border-yellow-500 text-yellow-600 text-sm">
 			<strong>DEV-Simulation:</strong> Zahlungsart: <code>{method}</code>
 			{#if method === 'stripe'}
 				— In Production würde der User nach erfolgter Stripe-Zahlung hier landen.
-				<code class="block mt-1">/beauftragung/bestaetigung?session_id=&#123;CHECKOUT_SESSION_ID&#125;</code>
+				<code class="block mt-1"
+					>/beauftragung/bestaetigung?session_id=&#123;CHECKOUT_SESSION_ID&#125;</code
+				>
 			{:else if method === 'rechnung'}
 				— In Production wird die PDF-Rechnung per E-Mail verschickt (Resend).
 			{:else if method === 'bar'}
@@ -47,13 +49,20 @@
 		</div>
 	{/if}
 
-	<Heading tag="h1">{t('Vielen Dank für Ihre Bestellung!', lang)}</Heading>
+	<Heading tag="h1"
+		>{data.confirmationHeading ?? t('Vielen Dank für Ihre Bestellung!', lang)}</Heading
+	>
 
 	<p class="text-lg mb-6">
-		Ihre Bestellung{#if serviceLabel}&nbsp;<strong>{serviceLabel}</strong>{/if} ist bei uns eingegangen.
+		{#if data.confirmationIntro}
+			{data.confirmationIntro}
+		{:else if serviceLabel}{t('Ihre Bestellung {leistung} ist bei uns eingegangen.', lang).replace(
+				'{leistung}',
+				serviceLabel
+			)}{:else}{t('Ihre Bestellung ist bei uns eingegangen.', lang)}{/if}
 	</p>
 
-	<div class="mb-8 p-6 border" style="border-color: {borderColor};">
+	<div class="border-page mb-8 p-6 border">
 		{#if isFilled.richText(confirmationText)}
 			<PrismicRichText field={confirmationText} />
 		{:else if method === 'rechnung'}
@@ -64,14 +73,24 @@
 			</p>
 		{:else if method === 'bar'}
 			<p class="font-semibold mb-2">{t('Zahlung gegen Bar', lang)}</p>
-			<p>{t('Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.', lang)}</p>
-			<p class="mt-2 opacity-70 text-sm">{t('Die Zahlung erfolgt bei persönlicher Übergabe.', lang)}</p>
+			<p>
+				{t(
+					'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.',
+					lang
+				)}
+			</p>
+			<p class="mt-2 opacity-70 text-sm">
+				{t('Die Zahlung erfolgt bei persönlicher Übergabe.', lang)}
+			</p>
 		{:else}
 			<p>{t('Sie erhalten in Kürze eine Bestätigungs-E-Mail.', lang)}</p>
-			<p class="mt-2 opacity-70 text-sm">{t('Bei Fragen stehen wir Ihnen gerne zur Verfügung.', lang)}</p>
+			<p class="mt-2 opacity-70 text-sm">
+				{t('Bei Fragen stehen wir Ihnen gerne zur Verfügung.', lang)}
+			</p>
 		{/if}
 	</div>
 
-	<a href="/" class="underline text-sm opacity-70 hover:opacity-100">{t('Zurück zur Startseite', lang)}</a>
-
+	<a href={backHref} class="underline text-sm opacity-70 hover:opacity-100"
+		>{t('Zurück zur Startseite', lang)}</a
+	>
 </Bounded>

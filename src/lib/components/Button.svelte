@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PrismicLink } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { page } from '$app/stores';
 	import { t } from '$lib/i18n/translations';
 	import { getBeauftragunHref } from '$lib/utils/beauftragungHref';
@@ -27,6 +27,8 @@
 	export let rounded: boolean = true;
 	// Abstand unten (mb-6 Standard, false = kein Abstand)
 	export let mb: boolean = true;
+	// Optionales Standard-Icon vor dem Buttontext, z.B. left/right/up/down
+	export let leadingIcon: string | undefined = undefined;
 
 	$: sizeClass =
 		size === 'sm'
@@ -80,13 +82,17 @@
 				? `var(--btn-${variant}-hover-bg)`
 				: 'var(--page-button-hover-bg-color)');
 
-	$: baseClass = `button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
-	$: baseStyle = `background-color: ${resolvedBgColor}; color: ${resolvedColor}; border-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
+	$: baseClass = `btn-dynamic button-prismic-link inline-flex items-center gap-2 ${sizeClass} ${roundedClass} ${mbClass} font-semibold border transition duration-200 ease-in-out focus:outline-none focus:ring-0`;
+	// Only CSS variables (CMS/theme values); colors applied by .btn-dynamic (app.css)
+	$: baseStyle = `--btn-bg: ${resolvedBgColor}; --btn-color: ${resolvedColor}; --hover-text-color: ${resolvedHoverColor}; --hover-bg-color: ${resolvedHoverBgColor}; --focus-ring-color: ${resolvedColor};`;
 </script>
 
 {#if href}
 	<a {href} class={baseClass} style={baseStyle}>
-		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+		{#if leadingIcon}<SvgIcons
+				name={leadingIcon}
+				size="1em"
+			/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
 				color={stileEntry?.color || 'currentColor'}
@@ -95,7 +101,10 @@
 {:else if link}
 	{#if beauftragungHref}
 		<a href={beauftragungHref} class={baseClass} style={baseStyle}>
-			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+			{#if leadingIcon}<SvgIcons
+					name={leadingIcon}
+					size="1em"
+				/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 					name={resolvedIcon}
 					size="1em"
 					color="currentColor"
@@ -103,7 +112,10 @@
 		</a>
 	{:else}
 		<PrismicLink field={link} class={baseClass} style={baseStyle}>
-			{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+			{#if leadingIcon}<SvgIcons
+					name={leadingIcon}
+					size="1em"
+				/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 					name={resolvedIcon}
 					size="1em"
 					color="currentColor"
@@ -112,7 +124,10 @@
 	{/if}
 {:else}
 	<button type="submit" class={baseClass} style={baseStyle} disabled={$$props.disabled} on:click>
-		{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
+		{#if leadingIcon}<SvgIcons
+				name={leadingIcon}
+				size="1em"
+			/>&nbsp;{/if}{finalText}{#if resolvedIcon}&nbsp;<SvgIcons
 				name={resolvedIcon}
 				size="1em"
 				color={stileEntry?.color || 'currentColor'}

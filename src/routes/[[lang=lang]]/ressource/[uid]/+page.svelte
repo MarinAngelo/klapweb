@@ -1,6 +1,8 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { SliceZone } from '@prismicio/svelte';
-	import { PrismicRichText } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { components } from '$lib/slices';
 
@@ -16,7 +18,12 @@
 			preisProNacht: number;
 			zimmerEinzelbuchbar: boolean;
 			saisonpreise: Array<{ von: string; bis: string; preis_pro_nacht: number }>;
-			schlafzimmer: Array<{ zimmer_name: string; bett_typ: string; anzahl_betten: number; bild: { url: string; alt: string } | null }>;
+			schlafzimmer: Array<{
+				zimmer_name: string;
+				bett_typ: string;
+				anzahl_betten: number;
+				bild: { url: string; alt: string } | null;
+			}>;
 		};
 	};
 
@@ -25,8 +32,9 @@
 </script>
 
 {#if beschreibung?.length}
-	<Bounded yPadding="sm">
-		<PrismicRichText field={beschreibung} />
+	<!-- No bottom padding: the booking slice below brings its own top spacing -->
+	<Bounded yPadding="sm-top">
+		<PrismicRichText field={beschreibung} components={{ embed: RichTextEmbed }} />
 	</Bounded>
 {/if}
 

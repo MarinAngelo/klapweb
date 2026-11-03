@@ -1,31 +1,35 @@
 /**
- * GET /api/test-reminder?secret=XXX&type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
+ * GET /api/test-reminder?type=ankunft|nach_ankunft|abreise&date=YYYY-MM-DD&dryRun=true
  *
  * Runs the same logic as the send-reminders Netlify function.
  *
  * Parameters:
- *   secret  – must match ADMIN_SECRET env var
+ *   Zugriff – nur mit Admin-Session (vorher unter /admin anmelden)
  *   type    – "ankunft" (default), "nach_ankunft", or "abreise"
  *   date    – target date (default: today+2 / today-1 / today+1)
  *   dryRun  – if "true", shows what would be sent without actually sending (default: false)
  */
 
 import { json } from '@sveltejs/kit';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
+import { getRessourceDocForBooking } from '$lib/server/ressourceMail';
 import { env } from '$env/dynamic/private';
+import { isAdmin } from '$lib/server/adminAuth';
 import { getStore } from '@netlify/blobs';
 import * as prismic from '@prismicio/client';
 import { Resend } from 'resend';
 import { readFileSync } from 'fs';
 import type { RequestHandler } from './$types';
+import { formatDateShort } from '$lib/utils/formatDate';
 
-function formatDate(dateStr: string): string {
-	const [y, m, d] = dateStr.split('-');
-	return `${d}.${m}.${y}`;
-}
-
-function replaceTokens(html: string, tokens: Record<string, string>): string {
-	return html.replace(/\{\{([^}]+)\}\}/g, (_, key) => tokens[key] ?? '');
-}
+const formatDate = formatDateShort;
 
 function dateInDays(days: number): string {
 	const d = new Date();
@@ -33,50 +37,61 @@ function dateInDays(days: number): string {
 	return d.toISOString().slice(0, 10);
 }
 
-export const GET: RequestHandler = async ({ url }) => {
-	if (url.searchParams.get('secret') !== env.ADMIN_SECRET) {
+export const GET: RequestHandler = async ({ url, cookies }) => {
+	if (!isAdmin(cookies)) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
 	const siteID = env.NETLIFY_SITE_ID;
 	const token = env.NETLIFY_TOKEN;
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const fromEmail = env.EMAIL_FROM_ADDRESS;
 	const smConfig = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
 	const repoName = env.PRISMIC_REPOSITORY_NAME || smConfig.repositoryName;
 	const dryRun = url.searchParams.get('dryRun') === 'true';
 	const typeParam = url.searchParams.get('type');
-	const type = typeParam === 'abreise' ? 'abreise' : typeParam === 'nach_ankunft' ? 'nach_ankunft' : 'ankunft';
+	const type =
+		typeParam === 'abreise' ? 'abreise' : typeParam === 'nach_ankunft' ? 'nach_ankunft' : 'ankunft';
 
 	if (!siteID || !token || !resendKey || !fromEmail || !repoName) {
-		return json({
-			error: 'Fehlende Env-Variablen',
-			siteID: !!siteID,
-			token: !!token,
-			resendKey: !!resendKey,
-			fromEmail: !!fromEmail,
-			repoName: !!repoName
-		}, { status: 500 });
+		return json(
+			{
+				error: 'Fehlende Env-Variablen',
+				siteID: !!siteID,
+				token: !!token,
+				resendKey: !!resendKey,
+				fromEmail: !!fromEmail,
+				repoName: !!repoName
+			},
+			{ status: 500 }
+		);
 	}
 
-	const defaultDate = type === 'abreise' ? dateInDays(1) : type === 'nach_ankunft' ? dateInDays(-1) : dateInDays(2);
+	const defaultDate =
+		type === 'abreise' ? dateInDays(1) : type === 'nach_ankunft' ? dateInDays(-1) : dateInDays(2);
 	const targetDateStr = url.searchParams.get('date') ?? defaultDate;
 
 	const store = getStore({ name: 'ressource_buchungen', siteID, token });
 	const { blobs } = await store.list();
-	const allBookings = (await Promise.all(
-		blobs.map((b) => store.get(b.key, { type: 'json' }))
-	)).filter(Boolean) as any[];
+	const allBookings = (
+		await Promise.all(blobs.map((b) => store.get(b.key, { type: 'json' }).catch(() => null)))
+	).filter(Boolean) as any[];
 
-	const upcoming = type === 'abreise'
-		? allBookings.filter((b) => b.bis === targetDateStr && b.email && !b.abreiseReminderSent)
-		: type === 'nach_ankunft'
-			? allBookings.filter((b) => b.von === targetDateStr && b.email && !b.nachAnkunftReminderSent)
-			: allBookings.filter((b) => b.von === targetDateStr && b.email && !b.reminderSent);
+	const upcoming =
+		type === 'abreise'
+			? allBookings.filter((b) => b.bis === targetDateStr && b.email && !b.abreiseReminderSent)
+			: type === 'nach_ankunft'
+				? allBookings.filter(
+						(b) => b.von === targetDateStr && b.email && !b.nachAnkunftReminderSent
+					)
+				: allBookings.filter((b) => b.von === targetDateStr && b.email && !b.reminderSent);
 
-	const emptyMsg = type === 'abreise' ? 'Keine Abreisen gefunden'
-		: type === 'nach_ankunft' ? 'Keine gestrigen Ankünfte gefunden'
-		: 'Keine Ankünfte gefunden';
+	const emptyMsg =
+		type === 'abreise'
+			? 'Keine Abreisen gefunden'
+			: type === 'nach_ankunft'
+				? 'Keine gestrigen Ankünfte gefunden'
+				: 'Keine Ankünfte gefunden';
 
 	if (upcoming.length === 0) {
 		return json({ type, targetDate: targetDateStr, message: emptyMsg, dryRun });
@@ -84,44 +99,82 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	const results: any[] = [];
 	const client = prismic.createClient(repoName);
+	// {{Messenger-Apps}} (Signal, Telegram, WhatsApp) with the number from the settings
+	const settings = await client.getSingle('settings').catch(() => null);
+	const messengerHtml = messengerButtonsHtml((settings?.data as any)?.whatsapp_tel);
+	const variablesData = await loadVariablesData(client);
+	// Page colours per mail language (cached)
+	const themes = new Map<string, Promise<Awaited<ReturnType<typeof loadMailTheme>>>>();
+	const themeFor = (lang?: string) => {
+		const key = lang ?? '';
+		if (!themes.has(key)) themes.set(key, loadMailTheme(client, lang));
+		return themes.get(key)!;
+	};
 	const resend = dryRun ? null : new Resend(resendKey);
 
 	for (const buchung of upcoming) {
 		try {
-			const doc = await client.getByUID('ressource', buchung.ressourceUid);
+			const doc = await getRessourceDocForBooking(client, buchung);
 			const d = doc.data as any;
+			// Variablen (incl. multi-line text) in the booking language
+			const vars = mailVariables(variablesData, buchung.lang);
 
-			const textField = type === 'abreise'
-				? (d.abreise_text as any[] | undefined)
-				: type === 'nach_ankunft'
-					? (d.nach_ankunft_text as any[] | undefined)
-					: (d.reminder_text as any[] | undefined);
+			const textField =
+				type === 'abreise'
+					? (d.abreise_text as any[] | undefined)
+					: type === 'nach_ankunft'
+						? (d.nach_ankunft_text as any[] | undefined)
+						: (d.reminder_text as any[] | undefined);
 
-			const fieldName = type === 'abreise' ? 'abreise_text' : type === 'nach_ankunft' ? 'nach_ankunft_text' : 'reminder_text';
+			const fieldName =
+				type === 'abreise'
+					? 'abreise_text'
+					: type === 'nach_ankunft'
+						? 'nach_ankunft_text'
+						: 'reminder_text';
 			if (!textField?.length) {
 				results.push({ id: buchung.id, status: 'skip', reason: `Kein ${fieldName}` });
 				continue;
 			}
 
-			const betreff = type === 'abreise'
-				? ((d.abreise_betreff as string)?.trim() || `Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`)
-				: type === 'nach_ankunft'
-					? ((d.nach_ankunft_betreff as string)?.trim() || `Willkommen: ${d.name ?? buchung.ressourceUid}`)
-					: ((d.reminder_betreff as string)?.trim() || `Ihre Anreise morgen: ${d.name ?? buchung.ressourceUid}`);
+			const betreffRaw =
+				type === 'abreise'
+					? (d.abreise_betreff as string)?.trim() ||
+						`Ihre Abreise morgen: ${d.name ?? buchung.ressourceUid}`
+					: type === 'nach_ankunft'
+						? (d.nach_ankunft_betreff as string)?.trim() ||
+							`Willkommen: ${d.name ?? buchung.ressourceUid}`
+						: (d.reminder_betreff as string)?.trim() ||
+							`Ihre Anreise morgen: ${d.name ?? buchung.ressourceUid}`;
 
 			const uidKey = buchung.ressourceUid.toUpperCase().replace(/-/g, '_');
 			const doorCode = env[`DOOR_CODE_${uidKey}`] || env.DOOR_CODE || '';
 
-			const html = replaceTokens(prismic.asHTML(textField) ?? '', {
-				Türcode:          doorCode,
-				Name:             buchung.name || '',
-				Anreise:          formatDate(buchung.von),
-				Abreise:          formatDate(buchung.bis),
-				Buchungsreferenz: buchung.id   || ''
-			});
+			const tokens: Record<string, string> = {
+				Türcode: doorCode,
+				Name: buchung.name || '',
+				Anreise: formatDate(buchung.von),
+				Abreise: formatDate(buchung.bis),
+				Buchungsreferenz: buchung.id || '',
+				'Messenger-Apps': messengerHtml,
+				WhatsApp: messengerHtml
+			};
+			const betreff = renderMailText(betreffRaw, tokens, vars);
+			const mailTheme = await themeFor(buchung.lang);
+			const html = wrapMail(
+				renderMailHtml((textField as any) ?? [], tokens, vars, mailTheme),
+				mailTheme,
+				{ lang: buchung.lang, subject: betreff }
+			);
 
 			if (dryRun) {
-				results.push({ id: buchung.id, status: 'dryRun', to: buchung.email, subject: betreff, html });
+				results.push({
+					id: buchung.id,
+					status: 'dryRun',
+					to: buchung.email,
+					subject: betreff,
+					html
+				});
 				continue;
 			}
 
@@ -137,12 +190,18 @@ export const GET: RequestHandler = async ({ url }) => {
 				continue;
 			}
 
-			const flagKey = type === 'abreise' ? 'abreiseReminderSent' : type === 'nach_ankunft' ? 'nachAnkunftReminderSent' : 'reminderSent';
+			const flagKey =
+				type === 'abreise'
+					? 'abreiseReminderSent'
+					: type === 'nach_ankunft'
+						? 'nachAnkunftReminderSent'
+						: 'reminderSent';
 			await store.setJSON(buchung.id, { ...buchung, [flagKey]: true });
 			results.push({ id: buchung.id, status: 'sent', to: buchung.email, subject: betreff });
 
 			// Betreiber-Bestätigung
-			const typeLabel = type === 'abreise' ? 'Abreise' : type === 'nach_ankunft' ? 'Nach-Ankunft' : 'Ankunfts';
+			const typeLabel =
+				type === 'abreise' ? 'Abreise' : type === 'nach_ankunft' ? 'Nach-Ankunft' : 'Ankunfts';
 			const dateLabel = type === 'abreise' ? formatDate(buchung.bis) : formatDate(buchung.von);
 			const dateFieldLabel = type === 'abreise' ? 'Abreise' : 'Anreise';
 			await resend!.emails.send({
@@ -154,7 +213,6 @@ export const GET: RequestHandler = async ({ url }) => {
 				       wurde erfolgreich an <a href="mailto:${buchung.email}">${buchung.email}</a> gesendet.</p>
 				       <p><strong>Betreff:</strong> ${betreff}</p>`
 			});
-
 		} catch (err: any) {
 			results.push({ id: buchung.id, status: 'error', error: err?.message ?? String(err) });
 		}

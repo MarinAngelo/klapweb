@@ -1,6 +1,15 @@
 import { createClient } from '$lib/prismicio';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
+import { loadVariablesData } from '$lib/variables.js';
+import {
+	FEATURE_CHATBOT,
+	FEATURE_ECOMMERCE,
+	FEATURE_KLAPSTUDIO,
+	FEATURE_KUNDENKONTO,
+	FEATURE_RESSOURCENBUCHUNG
+} from '$lib/server/features';
+import type { ConsentRequirement } from '$lib/consent/services';
 
 // SVG-Inhalte aus Bild-URLs cachen (pro Prozess, Icons ändern sich selten)
 const _svgCache = new Map<string, string>();
@@ -10,7 +19,10 @@ async function fetchSvgFromUrl(url: string): Promise<string | null> {
 		const resp = await fetch(url);
 		if (!resp.ok) return null;
 		const text = await resp.text();
-		if (text.includes('<svg')) { _svgCache.set(url, text); return text; }
+		if (text.includes('<svg')) {
+			_svgCache.set(url, text);
+			return text;
+		}
 	} catch {}
 	return null;
 }
@@ -34,8 +46,9 @@ async function getRepoInfo(client: ReturnType<typeof createClient>) {
 export const prerender = 'auto';
 
 export async function load({ params, fetch, cookies, url, locals }) {
-	// Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
-	if (url.pathname.startsWith('/preview/')) {
+	// Slice-Preview-Route: nur Slice-Rendering, keine Prismic-Daten nötig
+	// (/preview/… ist dagegen die Prismic-Vorschau und braucht alle Daten)
+	if (url.pathname.startsWith('/slice-preview/')) {
 		return {};
 	}
 
@@ -46,36 +59,49 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		const { mainLang, allLocales } = await getRepoInfo(client);
 
 		// 2. Sprach-Ermittlung der aktuellen Route
+		// Prismic-Vorschau (/preview/…): Präfix für die Sprach-Ermittlung ignorieren
 		const segments = url.pathname.split('/').filter(Boolean);
+		if (segments[0] === 'preview') segments.shift();
 		const firstSegment = segments[0];
 		const lang = allLocales.includes(firstSegment) ? firstSegment : params.lang || mainLang;
+		// Correct <html lang> already in the server/prerendered HTML (screen readers, SEO, search index)
+		locals.htmlLang = lang;
 
 		// 3. Alle globalen Daten in einem einzigen parallelen Block laden.
 		//    Master-Settings werden nur als Extra-Call geladen wenn Sprache ≠ Master.
-		const [settings, navigation, themes, fonts, buttonStilDocs, iconDocs, variablenDoc, masterSettingsOrNull] =
-			await Promise.all([
-				client.getSingle('settings', { lang }).catch(() => {
-					throw error(
-						404,
-						`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
-					);
-				}),
-				client.getSingle('navigation', { lang }).catch(() => {
-					throw error(
-						404,
-						`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
-					);
-				}),
-				client.getAllByType('theme', { lang: '*' }).catch(() => []),
-				client.getAllByType('font').catch(() => []),
-				client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
-				client.getAllByType('icon', { lang: '*' }).catch(() => []),
-				(client as any).getSingle('variablen', { lang: '*' }).catch(() => null),
-				// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
-				lang !== mainLang
-					? client.getSingle('settings', { lang: mainLang }).catch(() => null)
-					: Promise.resolve(null)
-			]);
+		const [
+			settings,
+			navigation,
+			themes,
+			fonts,
+			buttonStilDocs,
+			iconDocs,
+			variablenDoc,
+			masterSettingsOrNull
+		] = await Promise.all([
+			client.getSingle('settings', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Settings' für die Sprache '${lang}'.`
+				);
+			}),
+			client.getSingle('navigation', { lang }).catch(() => {
+				throw error(
+					404,
+					`Übersetzung fehlt: Bitte erstelle das Dokument 'Navigation' für die Sprache '${lang}'.`
+				);
+			}),
+			client.getAllByType('theme', { lang: '*' }).catch(() => []),
+			client.getAllByType('font').catch(() => []),
+			client.getAllByType('button_stil', { lang: '*' }).catch(() => []),
+			client.getAllByType('icon', { lang: '*' }).catch(() => []),
+			// All language versions (translation of the Variablen document, fallback main language)
+			loadVariablesData(client, mainLang),
+			// Master-Settings nur laden wenn Route-Sprache vom Master abweicht
+			lang !== mainLang
+				? client.getSingle('settings', { lang: mainLang }).catch(() => null)
+				: Promise.resolve(null)
+		]);
 
 		// Bei gleicher Sprache sind Settings == baseSettings; sonst separater Call
 		// SVG-Inhalt aus Bild-Feld nachladen wenn svg_code leer ist
@@ -98,15 +124,31 @@ export async function load({ params, fetch, cookies, url, locals }) {
 		}
 
 		const isMultilangActive = baseSettings.data?.show_language_switcher ?? false;
-		const userBackendActive = (baseSettings.data as any)?.user_backend_active ?? false;
-		const chatActive = (baseSettings.data as any)?.chat_active ?? false;
-		const chatBotName = (baseSettings.data as any)?.chat_bot_name || 'Assistent';
-		const chatGreeting = (baseSettings.data as any)?.chat_greeting || 'Hallo! Wie kann ich helfen?';
+		const userBackendActive =
+			FEATURE_KUNDENKONTO && ((baseSettings.data as any)?.user_backend_active ?? false);
+		const chatActive = FEATURE_CHATBOT && ((baseSettings.data as any)?.chat_active ?? false);
+		// Empty → translated default in ChatWidget
+		const chatBotName = (baseSettings.data as any)?.chat_bot_name || '';
+		const chatGreeting = (baseSettings.data as any)?.chat_greeting || '';
+		const klapstudioActive = FEATURE_KLAPSTUDIO;
+		// Cookie dialog / privacy page list only services of functions this website uses
+		const consentInUse = (
+			[
+				userBackendActive && 'user_backend',
+				!!(baseSettings.data as any)?.page_password && 'page_password',
+				FEATURE_ECOMMERCE && 'cart',
+				isMultilangActive && 'multilang',
+				// Aufgabenliste belongs to the resource booking (gating.json slices.Aufgaben)
+				FEATURE_RESSOURCENBUCHUNG && 'aufgaben',
+				chatActive && 'ai_chat'
+			] as (ConsentRequirement | false)[]
+		).filter((r): r is ConsentRequirement => !!r);
 		if (!isMultilangActive && lang !== mainLang) {
 			throw error(404, `Sprache '${lang}' ist zurzeit deaktiviert.`);
 		}
 
-		const variables = buildTokenMap((variablenDoc as { data?: unknown })?.data);
+		// Token values in the page language (Prismic translation of Variablen, fallback main language)
+		const { plain: variables, rich: richVariables } = buildTokenMap(variablenDoc, lang);
 
 		// Aktives Theme bestimmen (Feld activ == true)
 		const activeTheme = Array.isArray(themes) ? themes.find((t) => t.data?.activ === true) : null;
@@ -212,8 +254,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatActive,
 			chatBotName,
 			chatGreeting,
+			consentInUse,
 			locales: allLocales,
 			variables,
+			richVariables,
 			user: locals.user ?? null
 		};
 	} catch (e: any) {

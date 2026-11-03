@@ -1,8 +1,12 @@
 import { createClient } from '$lib/prismicio';
+import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error, redirect, isRedirect } from '@sveltejs/kit';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
+import { FEATURE_ECOMMERCE } from '$lib/server/features';
+import { isAdmin } from '$lib/server/adminAuth';
+import { hasPageAccess } from '$lib/server/pageAuth';
 
 export interface AddonRow {
 	label: string;
@@ -19,35 +23,83 @@ export interface PlaeneFeature {
 
 export async function load({ params, parent, fetch, cookies }) {
 	const { lang, settings } = await parent();
-	const client = createClient({ fetch });
+	// cookies → Prismic-Vorschau (enableAutoPreviews liest das Vorschau-Cookie)
+	const client = createClient({ fetch, cookies });
 
 	try {
 		// 2. Dokument über UID und die ermittelte Sprache (de-de) suchen
 		const page = await client.getByUID('page', params.uid, {
 			lang,
-			fetchLinks: [
-				'page.title',
-				'page.ecommerce_price_chf',
-				'page.ecommerce_billing_type',
-				'page.ecommerce_discount_percent',
-				'page.ecommerce_deposit_percent',
-				'leistung.label',
-				'leistung.beschreibung'
-			]
+			// fetchLinks nur laden wenn E-Commerce-Feature aktiv ist
+			fetchLinks: FEATURE_ECOMMERCE
+				? [
+						'page.title',
+						'page.ecommerce_price_chf',
+						'page.ecommerce_billing_type',
+						'page.ecommerce_discount_percent',
+						'page.ecommerce_deposit_percent',
+						'leistung.label',
+						'leistung.beschreibung'
+					]
+				: []
 		});
 
-		// Password protection
+		// Password protection – angemeldete Admins (Session-Cookie) sehen die Seite ohne Passwort
 		if ((page.data as any).password_protected === true) {
-			const pagePassword = (settings.data as any).page_password as string | null;
-			const authCookie = cookies.get('klap_auth');
-			if (!pagePassword || authCookie !== pagePassword) {
-				const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
-				throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+			const isAdminBypass = isAdmin(cookies);
+
+			if (!isAdminBypass) {
+				const pagePassword = (settings.data as any).page_password as string | null;
+				if (!hasPageAccess(cookies, pagePassword)) {
+					const redirectPath = params.lang ? `/${params.lang}/${params.uid}` : `/${params.uid}`;
+					throw redirect(303, `/login?redirect=${encodeURIComponent(redirectPath)}`);
+				}
 			}
 		}
 
-		// Currency config (only relevant for ecommerce pages)
+		// Guard 1 (Plan-Level): E-Commerce-Feature im aktiven Plan nicht verfügbar
+		if (!FEATURE_ECOMMERCE) {
+			return {
+				page,
+				title: asText(page.data.title) || '',
+				meta_title: page.data.meta_title || '',
+				meta_description: page.data.meta_description,
+				baseCurrency: 'CHF',
+				additionalCodes: [] as string[],
+				rates: {} as Record<string, number>,
+				addonRows: [] as AddonRow[],
+				globalDepositPct: null,
+				plaeneData: {} as Record<string, Array<Array<PlaeneFeature>>>,
+				pageLeistungen: [] as Array<{ leistung: any; wert: string | null }>
+			};
+		}
+
+		// Guard 2 (Slice-Level): Seite hat keine E-Commerce-Slices oder -Felder
+		const slices: any[] = (page.data as any).slices ?? [];
+		const hasEcommerceSlices = slices.some(
+			(s) => s.slice_type === 'image_cards' && s.variation === 'plaene'
+		);
 		const hasPrice = (page.data as any).ecommerce_price_chf != null;
+		const hasLeistungen = ((page.data as any).leistungen ?? []).length > 0;
+		const hasAddons = ((page.data as any).ecommerce_addons ?? []).length > 0;
+
+		if (!hasEcommerceSlices && !hasPrice && !hasLeistungen && !hasAddons) {
+			return {
+				page,
+				title: asText(page.data.title) || '',
+				meta_title: page.data.meta_title || '',
+				meta_description: page.data.meta_description,
+				baseCurrency: 'CHF',
+				additionalCodes: [] as string[],
+				rates: {} as Record<string, number>,
+				addonRows: [] as AddonRow[],
+				globalDepositPct: null,
+				plaeneData: {} as Record<string, Array<Array<PlaeneFeature>>>,
+				pageLeistungen: [] as Array<{ leistung: any; wert: string | null }>
+			};
+		}
+
+		// Currency config (only relevant for ecommerce pages)
 		const baseCurrency: string =
 			parseCurrencyCode((settings.data as any).invoice_currency as string) || 'CHF';
 		const additionalEntries: Array<{ waehrung?: string }> =
@@ -63,7 +115,7 @@ export async function load({ params, parent, fetch, cookies }) {
 		// Resolve plan leistungen + Seiten-Leistungen (optimiert: Batch-Fetch statt N+1)
 		type PlaeneFeature = { label: string; wert: string | null; beschreibung?: string };
 		const plaeneData: Record<string, Array<Array<PlaeneFeature>>> = {};
-		const plaeneSlices = ((page.data as any).slices ?? []).filter(
+		const plaeneSlices = slices.filter(
 			(s: any) => s.slice_type === 'image_cards' && s.variation === 'plaene'
 		);
 		const leistungenRefs: Array<{ leistung?: any; wert?: string }> =
@@ -193,14 +245,17 @@ export async function load({ params, parent, fetch, cookies }) {
 /** @type {import('./$types').EntryGenerator} */
 export async function entries() {
 	const client = createClient();
-	const pages = await client.getAllByType('page', { lang: '*' });
+	const [pages, mainLang] = await Promise.all([
+		client.getAllByType('page', { lang: '*' }),
+		getMainLang(client)
+	]);
 
 	return pages
 		.map((page) => {
 			if (page.uid === 'home') return null;
 			if (page.uid === 'beauftragung') return null; // static route
 			return {
-				lang: page.lang,
+				...langParam(page.lang, mainLang),
 				uid: page.uid
 			};
 		})
