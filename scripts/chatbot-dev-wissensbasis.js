@@ -122,6 +122,84 @@ add(
 	].join('\n')
 );
 
+// ── How-to guide (Prismic page on klap-web.ch, password-protected developer docs) ──
+const GUIDE = { repo: 'klap-web-ch', uid: 'how-to-guide', url: 'https://klap-web.ch/how-to-guide' };
+
+/** Rich text → text with Markdown-like headings and lists */
+function richText(blocks) {
+	return blocks
+		.map((b) => {
+			const text = (b.text ?? '').trim();
+			if (!text) return '';
+			const level = /^heading([1-6])$/.exec(b.type ?? '');
+			if (level) return `\n${'#'.repeat(Math.min(6, Number(level[1]) + 1))} ${text}`;
+			if (b.type === 'list-item') return `- ${text}`;
+			if (b.type === 'o-list-item') return `1. ${text}`;
+			if (b.type === 'preformatted') return '```\n' + b.text + '\n```';
+			return text;
+		})
+		.filter(Boolean)
+		.join('\n');
+}
+
+const isRichText = (v) =>
+	Array.isArray(v) &&
+	v.length > 0 &&
+	v.every((b) => b && typeof b.type === 'string' && 'text' in b);
+/** Short text fields that carry content (titles, labels), not settings like colours or alignment */
+const CONTENT_KEY =
+	/(^|_)(title|titel|label|heading|ueberschrift|frage|question|name|step_title)$/i;
+
+/** All content of a slice (primary, items, groups) in field order */
+function sliceText(value, key = '') {
+	if (isRichText(value)) return richText(value);
+	if (typeof value === 'string')
+		return CONTENT_KEY.test(key) && value.trim() ? `\n### ${value.trim()}` : '';
+	if (Array.isArray(value))
+		return value
+			.map((v) => sliceText(v))
+			.filter(Boolean)
+			.join('\n');
+	if (value && typeof value === 'object') {
+		return Object.entries(value)
+			.filter(([k]) => !['slice_type', 'variation', 'version', 'id', 'slice_label'].includes(k))
+			.map(([k, v]) => sliceText(v, k))
+			.filter(Boolean)
+			.join('\n');
+	}
+	return '';
+}
+
+try {
+	const base = `https://${GUIDE.repo}.cdn.prismic.io/api/v2`;
+	const api = await (await fetch(base, { signal: AbortSignal.timeout(10000) })).json();
+	const ref = api.refs.find((r) => r.isMasterRef).ref;
+	const query = encodeURIComponent(`[[at(my.page.uid,"${GUIDE.uid}")]]`);
+	const { results } = await (
+		await fetch(`${base}/documents/search?ref=${ref}&lang=*&q=${query}`, {
+			signal: AbortSignal.timeout(10000)
+		})
+	).json();
+	const parts = (results ?? []).map((doc) =>
+		[
+			`Sprache ${doc.lang}, zuletzt veröffentlicht ${doc.last_publication_date?.slice(0, 10)}`,
+			...(doc.data.slices ?? []).map((slice) => sliceText(slice))
+		]
+			.filter(Boolean)
+			.join('\n\n')
+	);
+	if (parts.length) {
+		add(
+			`Entwickler-Dokumentation: How-to-Guide (${GUIDE.url}, passwortgeschützt)`,
+			parts.join('\n\n---\n\n')
+		);
+	} else {
+		console.warn(`⚠ How-to-Guide (${GUIDE.repo}/${GUIDE.uid}) nicht gefunden`);
+	}
+} catch (e) {
+	console.warn(`⚠ How-to-Guide konnte nicht geladen werden: ${e.message}`);
+}
+
 // ── Prismic field reference ────────────────────────────────────────────────────
 if (existsSync(REFERENCE)) {
 	const seen = new Set();
