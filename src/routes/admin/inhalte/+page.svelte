@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatProblem } from '$lib/terminDiagnose.js';
 	import type { PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { _ } from '$lib/stores/i18n';
@@ -56,6 +57,13 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'termin' && p.problem}
+									<td
+										>{$_('Terminbuchung')}: {formatProblem($_(p.problem.key), p.problem.params)}</td
+									>
+									<td
+										>{$_('Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen')}</td
+									>
 								{:else if p.kind === 'mail_from'}
 									<td>
 										{$_('Absender-E-Mail fehlt')}{#if p.url}: <span class="admin-mono">{p.url}</span
