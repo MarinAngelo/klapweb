@@ -939,7 +939,8 @@
 			<p>
 				Rich-Text-Block mit optionalem Zweispalten-Layout. Unterstützt spezielle Labels: <code
 					>highlight</code
-				>, <code>note</code>, <code>quote</code>, <code>invisible</code>.
+				>, <code>note</code>, <code>quote</code>, <code>invisible</code>, <code>copy</code> (Text mit
+				Kopier-Knopf dahinter).
 			</p>
 			<div class="pills">
 				<span class="pill">default</span>
