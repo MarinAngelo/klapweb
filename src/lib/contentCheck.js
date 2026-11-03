@@ -7,6 +7,7 @@
 
 /** Custom types rendered as their own (static) pages — keep in sync with the routes */
 import { isGoogleShortLink, parseMapPoint } from './mapPoint.js';
+import { diagnoseArbeitstag } from './terminDiagnose.js';
 
 export const TRANSLATED_TYPES = ['page', 'leistung', 'ressource'];
 
@@ -111,7 +112,7 @@ const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string }} LinkProblem
  */
 
 /**
@@ -245,7 +246,18 @@ export async function checkContent(client) {
 		}
 	}
 
-	// 5. Sender address of all e-mails (Settings → «Absender-E-Mail», main language)
+	// 5. Appointment booking: working days that cannot produce slots (offer without duration …).
+	//    An ended series is normal and not reported here (only in the admin «Terminverwaltung»).
+	const offers = docs.filter((d) => d.type === 'angebot' && d.lang === master);
+	const today = new Date().toISOString().slice(0, 10);
+	for (const workday of docs.filter((d) => d.type === 'arbeitstag' && d.lang === master)) {
+		for (const problem of diagnoseArbeitstag(workday, offers, today)) {
+			if (problem.key.startsWith('Die Serie ist abgelaufen')) continue;
+			links.push({ doc: ref(workday), kind: 'termin', problem });
+		}
+	}
+
+	// 6. Sender address of all e-mails (Settings → «Absender-E-Mail», main language)
 	const mainSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
 	const mailFrom = String(/** @type {any} */ (mainSettings?.data)?.email_from_address ?? '').trim();
 	if (mainSettings && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailFrom)) {

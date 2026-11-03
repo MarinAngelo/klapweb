@@ -931,6 +931,54 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen',
 		'en-us': 'Add the domain in Resend under «Domains» and set the DNS records'
 	},
+	'Mögliche Ursachen in Prismic': {
+		'de-ch': 'Mögliche Ursachen in Prismic',
+		'en-us': 'Possible causes in Prismic'
+	},
+	'Kein «Arbeitstag» veröffentlicht': {
+		'de-ch': 'Kein «Arbeitstag» veröffentlicht',
+		'en-us': 'No «Arbeitstag» (working day) published'
+	},
+	'Datum fehlt': {
+		'de-ch': 'Datum fehlt',
+		'en-us': 'Date missing'
+	},
+	'«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM': {
+		'de-ch': '«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM',
+		'en-us': '«Startzeit» or «Endzeit» missing or not in HH:MM format'
+	},
+	'«Endzeit» liegt nicht nach der «Startzeit»': {
+		'de-ch': '«Endzeit» liegt nicht nach der «Startzeit»',
+		'en-us': '«Endzeit» is not after «Startzeit»'
+	},
+	'Kein «Buchbares Angebot» verknüpft': {
+		'de-ch': 'Kein «Buchbares Angebot» verknüpft',
+		'en-us': 'No «Buchbares Angebot» (bookable offer) linked'
+	},
+	'Angebot «{titel}» ist nicht veröffentlicht': {
+		'de-ch': 'Angebot «{titel}» ist nicht veröffentlicht',
+		'en-us': 'Offer «{titel}» is not published'
+	},
+	'Angebot «{titel}» ist nicht aktiv': {
+		'de-ch': 'Angebot «{titel}» ist nicht aktiv',
+		'en-us': 'Offer «{titel}» is not active'
+	},
+	'Angebot «{titel}»: «Dauer (Minuten)» fehlt': {
+		'de-ch': 'Angebot «{titel}»: «Dauer (Minuten)» fehlt',
+		'en-us': 'Offer «{titel}»: «Dauer (Minuten)» (duration) missing'
+	},
+	'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster': {
+		'de-ch': 'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster',
+		'en-us': 'Offer «{titel}»: duration + buffer ({minuten} min) do not fit into the time window'
+	},
+	'Die Serie ist abgelaufen (letzter Tag {datum})': {
+		'de-ch': 'Die Serie ist abgelaufen (letzter Tag {datum})',
+		'en-us': 'The series has ended (last day {datum})'
+	},
+	'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen': {
+		'de-ch': 'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen',
+		'en-us': 'Complete it in the working day or bookable offer, then publish'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
