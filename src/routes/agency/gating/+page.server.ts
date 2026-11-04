@@ -172,6 +172,8 @@ export const actions = {
 
 	async save({ request, cookies }) {
 		if (!isAgencyAuthenticated(cookies)) throw error(403, 'Nicht authentifiziert');
+		// Writes the committed slicemachine.config.json → only on the local dev server
+		if (!dev) throw error(403, 'Nur auf dem lokalen Dev-Server möglich');
 
 		const data = await request.formData();
 		const plan = data.get('plan') as string;
@@ -189,7 +191,7 @@ export const actions = {
 			write(SM_CONFIG_PATH, smConfig);
 		}
 
-		// 2. Write gating.overrides.json mit enabled + disabled
+		// 2. Schalter des Branches in slicemachine.config.json (features / featuresDisabled / adminSectionsDisabled)
 		const planChain = getActivePlanChain(plan, gating.plans);
 		const planFeatures = getActiveFeatures(planChain, gating.features);
 		const enabled = selectedOverrides.filter((f: string) => !planFeatures.includes(f));
@@ -204,7 +206,7 @@ export const actions = {
 			JSON.stringify([...(existingOverrides.admin_sections_disabled ?? [])].sort()) !==
 				JSON.stringify([...sectionsDisabled].sort());
 
-		// Stored for the repository in slicemachine.config.json only (not for other branches/repos)
+		// Committed with the branch → also valid in production (src/lib/gatingOverrides.js)
 		writeOverrides({ enabled, disabled, admin_sections_disabled: sectionsDisabled }, ROOT);
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
