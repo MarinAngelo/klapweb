@@ -102,7 +102,7 @@ function copyCustomType(srcPath, typeId, label) {
 
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
-// Lokale Feature-Schalter des Agency-Editors, pro Prismic-Repository (src/lib/gatingOverrides.js)
+// Feature-Schalter des Agency-Editors für diesen Branch (slicemachine.config.json, src/lib/gatingOverrides.js)
 const overrides = readOverrides(ROOT);
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
@@ -113,7 +113,9 @@ function resolvePlanChain(planKey) {
 	return [planKey, ...(parent ? resolvePlanChain(parent) : [])];
 }
 
-const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
+// Ohne Plan gilt «basis» — gleich wie src/lib/server/features.ts (Website/API)
+if (!config.plan) console.warn('⚠ slicemachine.config.json: kein "plan" — es gilt «basis»');
+const activePlanChain = resolvePlanChain(config.plan || 'basis');
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
@@ -121,7 +123,7 @@ const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
 
-// Zusätzliche Features aus gating.overrides.json (pro Repository, siehe gatingOverrides.js)
+// Zusatz-Features / abgeschaltete Features dieses Branches (slicemachine.config.json)
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
 const disabledFeatures = overrides.disabled ?? [];
 const allFeatures = [
@@ -129,7 +131,7 @@ const allFeatures = [
 ];
 
 console.log(
-	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
+	`Plan: ${config.plan || 'basis'} (${gating.plans[config.plan || 'basis']?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
 );
 
 // ── Gating-Hilfsfunktionen ───────────────────────────────────────────────────────

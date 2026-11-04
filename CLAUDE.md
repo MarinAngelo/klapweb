@@ -259,11 +259,13 @@ Details: `docs/git-strategie.md`
 }
 ```
 
-### Lokale Feature-Schalter (`gating.overrides.json`)
+### Feature-Schalter pro Kunde (`slicemachine.config.json`)
 
-- Agency-Editor (`/agency/gating`) speichert zusätzliche/abgeschaltete Features in `gating.overrides.json` (gitignored)
-- **Pro Prismic-Repository** (`repositoryName` aus `slicemachine.config.json`): `{ "repos": { "<repo>": { enabled, disabled, admin_sections_disabled } } }` — die Datei bleibt beim Branch-Wechsel liegen, Schalter eines Branches dürfen nie für ein anderes Repo gelten (sonst löscht `slicemachine push` Custom Types)
-- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`
+- Zusatz-Features und Abschaltungen gehören in die **committete** `slicemachine.config.json` des Branches (branch-eigen, `merge=ours`): `"features": [...]` (über den Plan hinaus), `"featuresDisabled": [...]`, `"adminSectionsDisabled": [...]`
+- Wirkt überall gleich: `build-customtypes.js` (Modelle), `src/lib/server/features.ts` (`FEATURE_*`, statischer Import → Build-Zeit, gilt in Production), Admin-Dashboard
+- Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen
+- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
+- Ohne `"plan"` gilt überall «basis»
 
 ### Plan-Hierarchie & Features
 

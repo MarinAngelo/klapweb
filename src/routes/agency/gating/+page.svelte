@@ -327,7 +327,18 @@
 					</div>
 				</fieldset>
 
-				<button type="submit" class="admin-btn admin-btn-primary">{$_('Speichern')}</button>
+				<p class="admin-hint mb-2">
+					{$_(
+						'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.'
+					)}
+				</p>
+				<button
+					type="submit"
+					class="admin-btn admin-btn-primary"
+					disabled={!data.canEditDefinition}
+					title={data.canEditDefinition ? undefined : $_('Nur auf dem lokalen Dev-Server möglich')}
+					>{$_('Speichern')}</button
+				>
 			</form>
 
 			<div class="admin-notice">

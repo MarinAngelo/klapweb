@@ -1091,6 +1091,17 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Bitte deinen Namen eintragen.',
 		'en-us': 'Please enter your name.'
 	},
+	'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.':
+		{
+			'de-ch':
+				'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.',
+			'en-us':
+				'Plan and switches are saved in slicemachine.config.json of this branch. Commit and deploy afterwards so they also apply in production.'
+		},
+	'Nur auf dem lokalen Dev-Server möglich': {
+		'de-ch': 'Nur auf dem lokalen Dev-Server möglich',
+		'en-us': 'Only possible on the local dev server'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
