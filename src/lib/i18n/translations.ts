@@ -1102,6 +1102,14 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Nur auf dem lokalen Dev-Server möglich',
 		'en-us': 'Only possible on the local dev server'
 	},
+	'Inhalts-Element ohne Inhalt': {
+		'de-ch': 'Inhalts-Element ohne Inhalt',
+		'en-us': 'Content element without content'
+	},
+	'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen': {
+		'de-ch': 'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen',
+		'en-us': 'Variation no longer exists – remove the element in Prismic and add it again'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
