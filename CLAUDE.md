@@ -437,6 +437,13 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 
 Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
+## Stundenabrechnung (`/admin/stunden`)
+
+- Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
+- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Projekt/Kunde (optional; Auswahl aus Feld «Projekte / Kunden zur Auswahl» oder frei), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
+- **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
+- Admin: Tabelle mit Dauer (Std./Min.), Total Dauer + Spesen, Bearbeiten/Löschen, CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal)
+
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 
 - Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings, Tab «Chat-Bot» (`chat_active`, Name, Begrüssung, Wissensbasis + «Ergänzungen» (`chat_knowledge_extra`, Vorrang bei Widersprüchen) pro Sprache, je Feld Fallback Hauptsprache)

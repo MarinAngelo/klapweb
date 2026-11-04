@@ -57,6 +57,13 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'stunden_unprotected'}
+									<td>{$_('Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz')}</td>
+									<td
+										>{$_(
+											'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern'
+										)}</td
+									>
 								{:else if p.kind === 'termin' && p.problem}
 									<td
 										>{$_('Terminbuchung')}: {formatProblem($_(p.problem.key), p.problem.params)}</td

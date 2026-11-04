@@ -979,6 +979,118 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen',
 		'en-us': 'Complete it in the working day or bookable offer, then publish'
 	},
+	'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz': {
+		'de-ch': 'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz',
+		'en-us': '«Stundenabrechnung» form on a page without password protection'
+	},
+	'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern': {
+		'de-ch': 'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern',
+		'en-us': 'Turn on «Passwortgeschützt» for the page, otherwise nobody can save hours'
+	},
+	Stunden: {
+		'de-ch': 'Stunden',
+		'en-us': 'Hours'
+	},
+	'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export': {
+		'de-ch': 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',
+		'en-us': 'Recorded working hours and expenses, totals and CSV export'
+	},
+	'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Record them on the password-protected page with this form.'
+		},
+	Von: {
+		'de-ch': 'Von',
+		'en-us': 'From'
+	},
+	Bis: {
+		'de-ch': 'Bis',
+		'en-us': 'To'
+	},
+	'Projekt / Kunde': {
+		'de-ch': 'Projekt / Kunde',
+		'en-us': 'Project / client'
+	},
+	Tätigkeit: {
+		'de-ch': 'Tätigkeit',
+		'en-us': 'Activity'
+	},
+	'Spesen (CHF)': {
+		'de-ch': 'Spesen (CHF)',
+		'en-us': 'Expenses (CHF)'
+	},
+	'Std.': {
+		'de-ch': 'Std.',
+		'en-us': 'h'
+	},
+	'CSV-Export': {
+		'de-ch': 'CSV-Export',
+		'en-us': 'CSV export'
+	},
+	Bearbeiten: {
+		'de-ch': 'Bearbeiten',
+		'en-us': 'Edit'
+	},
+	'Diesen Eintrag endgültig löschen?': {
+		'de-ch': 'Diesen Eintrag endgültig löschen?',
+		'en-us': 'Delete this entry permanently?'
+	},
+	'Der Eintrag wurde gespeichert.': {
+		'de-ch': 'Der Eintrag wurde gespeichert.',
+		'en-us': 'The entry has been saved.'
+	},
+	'Weiteren Eintrag erfassen': {
+		'de-ch': 'Weiteren Eintrag erfassen',
+		'en-us': 'Record another entry'
+	},
+	'Eintrag speichern': {
+		'de-ch': 'Eintrag speichern',
+		'en-us': 'Save entry'
+	},
+	'Der Eintrag konnte nicht gespeichert werden.': {
+		'de-ch': 'Der Eintrag konnte nicht gespeichert werden.',
+		'en-us': 'The entry could not be saved.'
+	},
+	'Bitte melde dich zuerst mit dem Seiten-Passwort an.': {
+		'de-ch': 'Bitte melde dich zuerst mit dem Seiten-Passwort an.',
+		'en-us': 'Please log in with the page password first.'
+	},
+	'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.': {
+		'de-ch': 'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.',
+		'en-us': 'Please fill in «From» and «To» with date and time.'
+	},
+	'«Bis» muss nach «Von» liegen.': {
+		'de-ch': '«Bis» muss nach «Von» liegen.',
+		'en-us': '«To» must be after «From».'
+	},
+	'Ein Eintrag darf höchstens 24 Stunden dauern.': {
+		'de-ch': 'Ein Eintrag darf höchstens 24 Stunden dauern.',
+		'en-us': 'An entry may last at most 24 hours.'
+	},
+	'Spesen: bitte einen Betrag wie 12.50 eingeben.': {
+		'de-ch': 'Spesen: bitte einen Betrag wie 12.50 eingeben.',
+		'en-us': 'Expenses: please enter an amount like 12.50.'
+	},
+	'Ungültiger Eintrag': {
+		'de-ch': 'Ungültiger Eintrag',
+		'en-us': 'Invalid entry'
+	},
+	'Eintrag nicht gefunden': {
+		'de-ch': 'Eintrag nicht gefunden',
+		'en-us': 'Entry not found'
+	},
+	'Spesen-Beschreibung': { 'de-ch': 'Spesen-Beschreibung', 'en-us': 'Expense description' },
+	'z.B. Zugbillett, Parkgebühr': {
+		'de-ch': 'z.B. Zugbillett, Parkgebühr',
+		'en-us': 'e.g. train ticket, parking fee'
+	},
+	'Bitte deinen Namen eintragen.': {
+		'de-ch': 'Bitte deinen Namen eintragen.',
+		'en-us': 'Please enter your name.'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',

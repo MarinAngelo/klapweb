@@ -64,6 +64,11 @@
 			"label": "KlapStudio Design Panel",
 			"plans": ["individuell"]
 		},
+		"stundenabrechnung": {
+			"label": "Stundenabrechnung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
+		},
 		"suche": {
 			"label": "Website-Suche",
 			"plans": ["professional"]
@@ -216,6 +221,9 @@
 				},
 				"newsletterSignup": {
 					"feature": "newsletter"
+				},
+				"stunden": {
+					"feature": "stundenabrechnung"
 				}
 			}
 		},
@@ -303,6 +311,10 @@
 		"chatbot": {
 			"label": "Chat-Bot",
 			"feature": "chatbot"
+		},
+		"stunden": {
+			"label": "Stunden",
+			"feature": "stundenabrechnung"
 		}
 	}
 }

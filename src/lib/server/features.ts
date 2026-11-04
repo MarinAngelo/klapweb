@@ -23,6 +23,7 @@ export const FEATURE_NEWSLETTER = _check('newsletter');
 export const FEATURE_KUNDENKONTO = _check('kundenkonto');
 export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
 export const FEATURE_RESSOURCENBUCHUNG = _check('ressourcenbuchung');
+export const FEATURE_STUNDENABRECHNUNG = _check('stundenabrechnung');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };
 type FeatureOverrides = { enabled?: string[]; disabled?: string[] };
