@@ -131,6 +131,10 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"Formular.project_options": {
+		"de-ch": "Nur Variante «Stundenabrechnung»: Projekte oder Kunden, die im Formular zur Auswahl stehen, durch Kommas getrennt, z. B. «Casa Campelli, Praxis Muster, Intern». Leer = freies Textfeld. Die Auswahl erscheint später in der Tabelle unter Admin → «Stunden».",
+		"en-us": "Only «Stundenabrechnung» variation: projects or clients offered in the form, separated by commas, e.g. «Casa Campelli, Praxis Muster, Intern». Empty = free text field. The choice appears in the table under Admin → «Stunden»."
+	},
 	"icon.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
