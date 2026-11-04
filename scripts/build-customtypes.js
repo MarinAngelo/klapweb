@@ -47,7 +47,7 @@ import {
 	rmSync,
 	statSync
 } from 'fs';
-import { readOverrides } from '../src/lib/gatingOverrides.js';
+import { configUncommitted, readOverrides } from '../src/lib/gatingOverrides.js';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -111,6 +111,13 @@ function resolvePlanChain(planKey) {
 	if (!planKey || !gating.plans[planKey]) return planKey ? [planKey] : [];
 	const parent = gating.plans[planKey].extends;
 	return [planKey, ...(parent ? resolvePlanChain(parent) : [])];
+}
+
+// Plan/Feature-Schalter geändert, aber nicht committet → gelten nicht in Production
+if (configUncommitted(ROOT)) {
+	console.warn(
+		'⚠ slicemachine.config.json hat nicht committete Änderungen (Plan / features / featuresDisabled) — erst nach Commit und Deploy gelten sie in Production.'
+	);
 }
 
 // Ohne Plan gilt «basis» — gleich wie src/lib/server/features.ts (Website/API)

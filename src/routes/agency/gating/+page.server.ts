@@ -5,7 +5,12 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { agencyLogin, agencyLogout, isAgencyAuthenticated } from '$lib/server/agencyAuth';
-import { readOverrides, writeOverrides } from '$lib/gatingOverrides.js';
+import {
+	configUncommitted,
+	legacyOverridesMissing,
+	readOverrides,
+	writeOverrides
+} from '$lib/gatingOverrides.js';
 
 export const prerender = false;
 
@@ -21,7 +26,7 @@ function write(path: string, data: unknown) {
 	writeFileSync(path, JSON.stringify(data, null, '\t') + '\n');
 }
 
-export const load = ({ cookies }) => {
+export const load = ({ cookies, url }) => {
 	if (!isAgencyAuthenticated(cookies)) {
 		return { authenticated: false };
 	}
@@ -71,6 +76,10 @@ export const load = ({ cookies }) => {
 		missingEnv,
 		// gating.json is committed → only editable on the local dev server
 		canEditDefinition: dev,
+		// Reminders: switches only apply in production after commit + deploy
+		justSaved: url.searchParams.has('gespeichert'),
+		configUncommitted: dev && configUncommitted(ROOT),
+		legacyMissing: dev ? legacyOverridesMissing(ROOT) : [],
 		gatingItems: collectGatingItems(gating)
 	};
 };
@@ -211,7 +220,7 @@ export const actions = {
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
 		if (!planChanged && !overridesChanged) {
-			throw redirect(303, '/agency/gating');
+			throw redirect(303, '/agency/gating?gespeichert');
 		}
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
@@ -220,7 +229,7 @@ export const actions = {
 			throw error(500, 'Fehler beim Generieren der Modelle');
 		}
 
-		throw redirect(303, '/agency/gating');
+		throw redirect(303, '/agency/gating?gespeichert');
 	},
 
 	// Global plan definition: minimum plan per feature in gating.json (affects all branches)
