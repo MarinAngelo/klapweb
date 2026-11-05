@@ -132,7 +132,7 @@
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Datenschutzerkärung",
+					"label": "Datenschutzerklärung",
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
