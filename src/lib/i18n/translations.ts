@@ -1137,6 +1137,8 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Unten anwählen und speichern, dann committen.',
 		'en-us': 'Select them below and save, then commit.'
 	},
+	'Ohne Name': { 'de-ch': 'Ohne Name', 'en-us': 'Without name' },
+	Spesen: { 'de-ch': 'Spesen', 'en-us': 'Expenses' },
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',

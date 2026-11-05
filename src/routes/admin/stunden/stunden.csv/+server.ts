@@ -5,9 +5,14 @@ import { dauerMinuten, listStunden } from '$lib/server/stunden';
 export const prerender = false;
 
 /** CSV export of the time sheet (Excel: semicolon, UTF-8 with BOM). Admin session via hooks. */
-export async function GET() {
+export async function GET({ url }) {
 	if (!FEATURE_STUNDENABRECHNUNG) throw error(404, 'Nicht gefunden');
-	const entries = await listStunden();
+	// ?name=… → only this person (admin table per person); without → all
+	const nameFilter = url.searchParams.get('name');
+	const entries = (await listStunden()).filter(
+		(e) =>
+			nameFilter === null || (e.name ?? '').trim().toLowerCase() === nameFilter.trim().toLowerCase()
+	);
 	const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
 	const dt = (v: string) => v.replace('T', ' ');
 	const hours = (min: number) => (min / 60).toFixed(2);
@@ -42,10 +47,16 @@ export async function GET() {
 	const total = ['Total', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2)];
 	const csv = [header.map(esc).join(';'), ...rows, total.map(esc).join(';')].join('\r\n');
 
+	const slug = (nameFilter ?? '')
+		.toLowerCase()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-|-$/g, '');
 	return new Response('﻿' + csv, {
 		headers: {
 			'Content-Type': 'text/csv; charset=utf-8',
-			'Content-Disposition': `attachment; filename="stunden-${new Date().toISOString().slice(0, 10)}.csv"`,
+			'Content-Disposition': `attachment; filename="stunden${slug ? `-${slug}` : ''}-${new Date().toISOString().slice(0, 10)}.csv"`,
 			'Cache-Control': 'no-store'
 		}
 	});
