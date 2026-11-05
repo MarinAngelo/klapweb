@@ -263,7 +263,7 @@ Details: `docs/git-strategie.md`
 
 - Zusatz-Features und Abschaltungen gehören in die **committete** `slicemachine.config.json` des Branches (branch-eigen, `merge=ours`): `"features": [...]` (über den Plan hinaus), `"featuresDisabled": [...]`, `"adminSectionsDisabled": [...]`
 - Wirkt überall gleich: `build-customtypes.js` (Modelle), `src/lib/server/features.ts` (`FEATURE_*`, statischer Import → Build-Zeit, gilt in Production), Admin-Dashboard
-- Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen
+- Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen. Erinnerung: Editor zeigt nach dem Speichern bzw. bei nicht committeter Config einen Hinweis, `npm run dev` warnt ebenfalls (`configUncommitted()`)
 - Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
 - Ohne `"plan"` gilt überall «basis»
 

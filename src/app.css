@@ -516,6 +516,22 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	padding-bottom: 1rem;
 	overflow: visible;
 }
+/* Sticky footer (+layout.svelte): footer at the bottom of the screen on short pages.
+   dvh: height without the mobile address bar (vh as fallback for older browsers). */
+.site-shell {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	min-height: 100dvh;
+}
+.site-shell > main {
+	flex: 1 0 auto;
+}
+/* Legal page opened from a landing page (?landing): no navigation before hydration either */
+html.legal-landing .smart-header,
+html.legal-landing .footer-shell {
+	display: none;
+}
 /* Landing pages: only the legal links of the footer (+layout.svelte) */
 .footer-legal-bar {
 	padding-top: 1rem;

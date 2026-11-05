@@ -5,7 +5,17 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { agencyLogin, agencyLogout, isAgencyAuthenticated } from '$lib/server/agencyAuth';
-import { readOverrides, writeOverrides } from '$lib/gatingOverrides.js';
+import {
+	configUncommitted,
+	legacyOverridesMissing,
+	overridesFromConfig,
+	readOverrides,
+	writeOverrides
+} from '$lib/gatingOverrides.js';
+// Bundled at build time: on Netlify only slicemachine.config.json is on disk (netlify.toml
+// included_files), reading gating.json at runtime failed with status 500
+import bundledGating from '../../../../gating.json';
+import bundledConfig from '../../../../slicemachine.config.json';
 
 export const prerender = false;
 
@@ -21,15 +31,16 @@ function write(path: string, data: unknown) {
 	writeFileSync(path, JSON.stringify(data, null, '\t') + '\n');
 }
 
-export const load = ({ cookies }) => {
+export const load = ({ cookies, url }) => {
 	if (!isAgencyAuthenticated(cookies)) {
 		return { authenticated: false };
 	}
 
-	// Nur wenn authentifiziert: Daten laden
-	const gating = read(GATING_PATH);
-	const smConfig = read(SM_CONFIG_PATH);
-	const overrides = readOverrides(ROOT);
+	// Nur wenn authentifiziert: Daten laden — lokal frisch von der Festplatte (nach dem Speichern
+	// aktuell), in Production der beim Build eingebundene Stand
+	const gating: any = dev ? read(GATING_PATH) : bundledGating;
+	const smConfig: any = dev ? read(SM_CONFIG_PATH) : bundledConfig;
+	const overrides = dev ? readOverrides(ROOT) : overridesFromConfig(bundledConfig);
 
 	const currentPlan = smConfig.plan || 'basis';
 	const activePlanChain = getActivePlanChain(currentPlan, gating.plans);
@@ -71,6 +82,10 @@ export const load = ({ cookies }) => {
 		missingEnv,
 		// gating.json is committed → only editable on the local dev server
 		canEditDefinition: dev,
+		// Reminders: switches only apply in production after commit + deploy
+		justSaved: url.searchParams.has('gespeichert'),
+		configUncommitted: dev && configUncommitted(ROOT),
+		legacyMissing: dev ? legacyOverridesMissing(ROOT) : [],
 		gatingItems: collectGatingItems(gating)
 	};
 };
@@ -211,7 +226,7 @@ export const actions = {
 
 		// 3. Run build-customtypes.js nur wenn sich etwas verändert hat
 		if (!planChanged && !overridesChanged) {
-			throw redirect(303, '/agency/gating');
+			throw redirect(303, '/agency/gating?gespeichert');
 		}
 		try {
 			execSync('node scripts/build-customtypes.js', { stdio: 'inherit', cwd: ROOT });
@@ -220,7 +235,7 @@ export const actions = {
 			throw error(500, 'Fehler beim Generieren der Modelle');
 		}
 
-		throw redirect(303, '/agency/gating');
+		throw redirect(303, '/agency/gating?gespeichert');
 	},
 
 	// Global plan definition: minimum plan per feature in gating.json (affects all branches)

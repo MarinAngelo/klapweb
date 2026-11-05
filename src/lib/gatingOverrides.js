@@ -17,6 +17,7 @@
  * Plain JS: used by Node scripts and server routes.
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { join } from 'node:path';
 
 /** @typedef {{ enabled: string[]; disabled: string[]; admin_sections_disabled: string[] }} GatingOverrides */
@@ -72,17 +73,20 @@ export function writeOverrides(overrides, root = process.cwd()) {
 	writeFileSync(join(root, CONFIG), JSON.stringify(config, null, '\t') + '\n');
 }
 
-let warned = false;
-/** Entries of this repository still in the old local file → hint to move them */
-function warnLegacy(/** @type {string} */ root, /** @type {any} */ config) {
-	if (warned || !existsSync(join(root, LEGACY_FILE))) return;
-	warned = true;
+/**
+ * Switches of this repository still only in the old local file (not in slicemachine.config.json)
+ * @param {string} [root]
+ * @returns {string[]} e.g. ["+stundenabrechnung", "-newsletter"]
+ */
+export function legacyOverridesMissing(root = process.cwd()) {
+	if (!existsSync(join(root, LEGACY_FILE))) return [];
 	try {
+		const config = readConfig(root);
 		const legacy = JSON.parse(readFileSync(join(root, LEGACY_FILE), 'utf-8'))?.repos?.[
 			config.repositoryName
 		];
 		const current = overridesFromConfig(config);
-		const missing = [
+		return [
 			...list(legacy?.enabled)
 				.filter((f) => !current.enabled.includes(f))
 				.map((f) => `+${f}`),
@@ -90,12 +94,40 @@ function warnLegacy(/** @type {string} */ root, /** @type {any} */ config) {
 				.filter((f) => !current.disabled.includes(f))
 				.map((f) => `-${f}`)
 		];
-		if (missing.length) {
-			console.warn(
-				`⚠ ${LEGACY_FILE} (nur lokal, wirkt nicht in Production) enthält für ${config.repositoryName}: ${missing.join(', ')} — im Agency-Editor (/agency/gating) neu speichern oder in ${CONFIG} unter "features"/"featuresDisabled" eintragen.`
-			);
-		}
 	} catch {
-		// unreadable legacy file → ignore
+		return [];
+	}
+}
+
+/**
+ * slicemachine.config.json has changes that are not committed (local git) → they do not apply
+ * in production yet. false if git is not available (e.g. Netlify build).
+ * @param {string} [root]
+ */
+export function configUncommitted(root = process.cwd()) {
+	try {
+		return (
+			execSync(`git status --porcelain -- ${CONFIG}`, {
+				cwd: root,
+				stdio: ['ignore', 'pipe', 'ignore']
+			})
+				.toString()
+				.trim() !== ''
+		);
+	} catch {
+		return false;
+	}
+}
+
+let warned = false;
+/** Entries of this repository still in the old local file → hint to move them */
+function warnLegacy(/** @type {string} */ root, /** @type {any} */ config) {
+	if (warned) return;
+	warned = true;
+	const missing = legacyOverridesMissing(root);
+	if (missing.length) {
+		console.warn(
+			`⚠ ${LEGACY_FILE} (nur lokal, wirkt nicht in Production) enthält für ${config.repositoryName}: ${missing.join(', ')} — im Agency-Editor (/agency/gating) neu speichern oder in ${CONFIG} unter "features"/"featuresDisabled" eintragen.`
+		);
 	}
 }

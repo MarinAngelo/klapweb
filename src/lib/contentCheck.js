@@ -112,7 +112,7 @@ const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin' | 'stunden_unprotected'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin' | 'stunden_unprotected' | 'empty_slice'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string }} LinkProblem
  */
 
 /**
@@ -254,6 +254,15 @@ export async function checkContent(client) {
 		for (const problem of diagnoseArbeitstag(workday, offers, today)) {
 			if (problem.key.startsWith('Die Serie ist abgelaufen')) continue;
 			links.push({ doc: ref(workday), kind: 'termin', problem });
+		}
+	}
+
+	// 6a. Slices without content (variation no longer in the Prismic model) — skipped on the website
+	for (const doc of docs) {
+		for (const slice of /** @type {any[]} */ (/** @type {any} */ (doc.data)?.slices ?? [])) {
+			if (slice && (!slice.primary || !slice.variation)) {
+				links.push({ doc: ref(doc), kind: 'empty_slice', token: slice.slice_type });
+			}
 		}
 	}
 

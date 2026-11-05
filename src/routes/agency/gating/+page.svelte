@@ -238,6 +238,30 @@
 				</form>
 			</AdminHeader>
 
+			<!-- Reminders: plan and switches live in slicemachine.config.json of this branch -->
+			{#if data.justSaved && data.configUncommitted}
+				<p class="admin-notice admin-notice-ok">
+					✓ {$_('Gespeichert in slicemachine.config.json.')}
+					<strong>{$_('Jetzt committen und deployen')}</strong>
+					— {$_('sonst gelten Plan und Feature-Schalter nicht in Production.')}
+				</p>
+			{:else if data.configUncommitted}
+				<p class="admin-notice admin-notice-warn">
+					⚠ {$_('slicemachine.config.json hat nicht committete Änderungen')}
+					— {$_('sonst gelten Plan und Feature-Schalter nicht in Production.')}
+					<strong>{$_('Jetzt committen und deployen')}</strong>.
+				</p>
+			{/if}
+			{#if data.legacyMissing?.length}
+				<p class="admin-notice admin-notice-warn">
+					⚠ {$_(
+						'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production'
+					)}:
+					<span class="admin-mono">{data.legacyMissing.join(', ')}</span>.
+					{$_('Unten anwählen und speichern, dann committen.')}
+				</p>
+			{/if}
+
 			{#if (data.missingEnv?.length ?? 0) > 0}
 				<button
 					type="button"

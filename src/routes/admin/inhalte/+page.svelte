@@ -57,6 +57,15 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'empty_slice'}
+									<td>
+										{$_('Inhalts-Element ohne Inhalt')}: <span class="admin-mono">{p.token}</span>
+									</td>
+									<td
+										>{$_(
+											'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen'
+										)}</td
+									>
 								{:else if p.kind === 'stunden_unprotected'}
 									<td>{$_('Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz')}</td>
 									<td
