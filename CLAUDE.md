@@ -432,7 +432,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Store `src/lib/stores/cart.ts` (localStorage `klap_cart`, Consent-Dienst `cart`), Seite `/warenkorb`, Icon mit Anzahl in der Navbar
 - Transport nur als Referenzen `?warenkorb=leistung:<uid>,page:<uid>` (`src/lib/utils/cartSpec.ts`) → Beauftragung → Zusammenfassung → `/api/invoice` (`cart`). **Preise immer serverseitig** via `src/lib/server/cartLines.ts`, nie aus dem Browser
 - Pakete im Warenkorb bringen ihre Zusatzleistungen (Pflicht) mit; Rabatt-Code gilt für Hauptpositionen, nicht für Zusatzleistungen
-- Stripe (Payment Links pro Produkt) ist beim Warenkorb ausgeblendet; Rechnung + PDF mit allen Positionen
+- Zahlungsarten nur «gegen Rechnung» und «bar» — **keine Online-Zahlung, kein Stripe** (bewusst entfernt); Rechnung + PDF mit allen Positionen
 
 ### E-Commerce Checkout-Anpassungen
 

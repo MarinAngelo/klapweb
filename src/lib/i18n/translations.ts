@@ -573,14 +573,6 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Zahlungsart',
 		'en-us': 'Payment method'
 	},
-	'Kreditkarte / TWINT': {
-		'de-ch': 'Kreditkarte / TWINT',
-		'en-us': 'Credit card / TWINT'
-	},
-	'Sofortige, sichere Zahlung via Stripe.': {
-		'de-ch': 'Sofortige, sichere Zahlung via Stripe.',
-		'en-us': 'Immediate, secure payment via Stripe.'
-	},
 	'Gegen Rechnung': {
 		'de-ch': 'Gegen Rechnung',
 		'en-us': 'By invoice'

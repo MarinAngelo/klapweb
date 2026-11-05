@@ -428,7 +428,7 @@
 
 <h2>Anleitung: Online-Handel (Produkte und Dienstleistungen verkaufen)</h2>
 <ol>
-	<li>Grundeinstellungen: Einstellungen → Tab «Online-Handel»: Grundwährung und weitere Währungen, IBAN, Bank, BIC, Zahlungsfrist, MWST-Satz, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar, Kreditkarte/TWINT über Stripe). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
+	<li>Grundeinstellungen: Einstellungen → Tab «Online-Handel»: Grundwährung und weitere Währungen, IBAN, Bank, BIC, Zahlungsfrist, MWST-Satz, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar; keine Online-Zahlung). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
 	<li>Produktseite erstellen: neue «Page» anlegen. Im Tab «Online-Handel» «E-Commerce aktiv» einschalten, «Preis exkl. MwSt. (CHF)», optional «Anzahlung %», «Rabatt %» und «Abrechnungsart» (Einmalig, Jährlich, Monatlich) eintragen.</li>
 	<li>Leistungen beschreiben: «Create a new page» → «Leistung» mit Bezeichnung, Beschreibung und Detailbeschreibung. Im Tab «Leistungen» der Produktseite die Leistungen verknüpfen. Unter «Zusatzleistungen» andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
 	<li>Auf der Produktseite Elemente einfügen: «Preisaufstellung» (Preis, Rabatt, Anzahlung, Restbetrag), «Akkordeon» in der Variante «Leistungen» und «Schaltfläche» in der Variante «Kauf-Schaltfläche».</li>
@@ -681,6 +681,10 @@
 	<li>CTA-Beschriftung (Text)</li>
 	<li>Button-Stil (Link)</li>
 	<li>Plan (Seite) (Link)</li>
+	<li>Buchungsseite (Link): Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = keine Schaltfläche «Buchen».</li>
+	<li>Text Schaltfläche «Mehr erfahren» (Text)</li>
+	<li>Text Schaltfläche «Buchen» (Text)</li>
+	<li>Preis anzeigen (Ein/Aus): Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.</li>
 </ul>
 <h3>Kontakt (Inhalts-Element)</h3>
 <ul>
@@ -1039,6 +1043,9 @@
 	<li>Vorlaufzeit (Minuten) (Zahl): Wie kurzfristig dieses Angebot spätestens gebucht werden kann, in Minuten vor Terminbeginn. Beispiel: Vorlaufzeit 120 → ein Termin um 14:00 kann bis 12:00 gebucht werden, danach verschwindet er aus der Auswahl. Für einen Tag Vorlauf 1440 eintragen (24 × 60). Leer oder 0 = bis Terminbeginn buchbar. Es gilt die Zeitzone des Arbeitstags.</li>
 	<li>Preis (optional) (Zahl)</li>
 	<li>Ort (Link): Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.</li>
+	<li>Bild (für Kacheln) (Bild): Optionales Bild, das oben in der Kachel des Angebots erscheint (Inhalts-Element «Kacheln», Variante «Buchbare Angebote»). Querformat empfohlen, z.B. 2200 × 1200 Pixel.</li>
+	<li>Seite mit mehr Infos (Link): Seite mit ausführlichen Infos zu diesem Angebot. Im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote») führt «Mehr erfahren» auf diese Seite. Leer = «Mehr erfahren» öffnet ein Fenster mit Beschreibung, Dauer, Preis und Ort.</li>
+	<li>Reihenfolge (Kacheln) (Zahl): Bestimmt die Reihenfolge der Angebote im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote»): kleinere Zahl = weiter vorne, z.B. 1, 2, 3. Angebote ohne Zahl erscheinen am Schluss, alphabetisch nach «Bezeichnung».</li>
 	<li>Aktiv (Ein/Aus)</li>
 </ul>
 <h3>Design Vorlage (Inhalts-Typ)</h3>
@@ -1144,14 +1151,12 @@
 	<li>MWST-Satz (%) (Zahl)</li>
 	<li>Globale Anzahlung (%) (Zahl)</li>
 	<li>Rabatt-Codes (Liste)</li>
-	<li>Zahlung: Kreditkarte / TWINT (Stripe) (Ein/Aus)</li>
 	<li>Zahlung: Gegen Rechnung (Ein/Aus)</li>
 	<li>Zahlung: Gegen Bar (Ein/Aus)</li>
 	<li>Rechnung E-Mail: Betreff (Text)</li>
 	<li>Rechnung E-Mail: Text (formatierter Text)</li>
 	<li>Bar E-Mail: Betreff (Text)</li>
 	<li>Bar E-Mail: Text (formatierter Text)</li>
-	<li>Bestätigungstext: Kreditkarte / TWINT (formatierter Text)</li>
 	<li>Bestätigungstext: Gegen Rechnung (formatierter Text)</li>
 	<li>Bestätigungstext: Gegen Bar (formatierter Text)</li>
 	<li>Beauftragungsseite Titel (Text)</li>
@@ -1337,7 +1342,6 @@
 	<li>Anzahlung % (Zahl)</li>
 	<li>Rabatt % (Zahl)</li>
 	<li>Abrechnungsart (Auswahl): Optionen: Einmalig, Jährlich, Monatlich</li>
-	<li>Stripe Payment Link (Link)</li>
 	<li>Zusatzleistungen (Liste)</li>
 	<li>Leistungen (Liste)</li>
 	<li>Meta Titel (Text)</li>

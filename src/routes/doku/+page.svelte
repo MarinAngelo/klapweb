@@ -1993,11 +1993,6 @@
 							<code>Monatlich</code></td
 						></tr
 					>
-					<tr
-						><td><code>ecommerce_stripe_url</code></td><td>Link</td><td
-							>Stripe Hosted Checkout URL (<code>https://buy.stripe.com/…</code>)</td
-						></tr
-					>
 				</tbody>
 			</table>
 			<p class="table-label">
@@ -2439,7 +2434,7 @@
 			<p>
 				Drei-Schritt-Checkout (<code>/beauftragung</code> →
 				<code>/beauftragung/zusammenfassung</code>
-				→ <code>/beauftragung/bestaetigung</code>) mit drei Zahlungswegen (Stripe, Rechnung, Bar),
+				→ <code>/beauftragung/bestaetigung</code>) mit zwei Zahlungswegen (Rechnung, Bar),
 				PDF-Rechnungsgenerierung, E-Mail-Versand über Resend und Kundendatenspeicherung via Netlify
 				Blobs.
 			</p>
@@ -2561,12 +2556,6 @@
 							>POST <code>/api/save-customer</code> → Netlify Blobs <code>kunden</code> + POST zu
 							Netlify Forms (<code>beauftragung_bar</code>)</td
 						><td>Ja</td></tr
-					>
-					<tr
-						><td><strong>Stripe</strong></td><td
-							>Redirect zu Stripe Hosted Checkout (<code>ecommerce_stripe_url</code> aus Prismic +
-							<code>?prefilled_email=…</code>). Kein SDK, kein Webhook.</td
-						><td>Nein</td></tr
 					>
 				</tbody>
 			</table>
@@ -2754,12 +2743,6 @@
 					>
 				</tbody>
 			</table>
-
-			<div class="callout">
-				<strong>Stripe:</strong> Kein SDK installiert, kein Webhook. Nur externer Redirect zu Stripe
-				Hosted Checkout (<code>ecommerce_stripe_url</code> aus dem Prismic Page-Dokument der
-				Dienstleistung). Kein <code>STRIPE_SECRET_KEY</code> nötig.
-			</div>
 		</section>
 
 		<div class="section-divider">Klap Studio</div>

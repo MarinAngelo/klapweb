@@ -407,15 +407,6 @@
 				}
 			}
 		},
-		"payment_stripe_enabled": {
-			"type": "Boolean",
-			"config": {
-				"label": "Zahlung: Kreditkarte / TWINT (Stripe)",
-				"placeholder_false": "Deaktiviert",
-				"placeholder_true": "Aktiv",
-				"default_value": true
-			}
-		},
 		"payment_rechnung_enabled": {
 			"type": "Boolean",
 			"config": {
@@ -462,15 +453,6 @@
 			"config": {
 				"label": "Bar E-Mail: Text",
 				"placeholder": "Tokens: {{Firma}} {{Dienstleistung}} {{Kundenname}} {{Vorname}} {{Nachname}}",
-				"allowTargetBlank": false,
-				"multi": "paragraph,strong,em,list-item,o-list-item"
-			}
-		},
-		"payment_stripe_confirmation_text": {
-			"type": "StructuredText",
-			"config": {
-				"label": "Bestätigungstext: Kreditkarte / TWINT",
-				"placeholder": "Text auf der Bestätigungsseite nach Stripe-Zahlung",
 				"allowTargetBlank": false,
 				"multi": "paragraph,strong,em,list-item,o-list-item"
 			}
