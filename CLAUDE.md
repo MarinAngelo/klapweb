@@ -267,6 +267,26 @@ Details: `docs/git-strategie.md`
 - Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
 - Ohne `"plan"` gilt überall «basis»
 
+#### Agency-Editor: lokal vs. Production
+
+|                                    | Lokal (`npm run dev`)                                       | Production                                                                |
+| ---------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Plan + Feature-Schalter des Kunden | speichern in `slicemachine.config.json` **dieses Branches** | nur anzeigen («Speichern» gesperrt)                                       |
+| Plan-Definition (Feature → Paket)  | speichern in `gating.json`, gilt für **alle** Branches      | nur anzeigen                                                              |
+| Modelle (Custom Types, Slices)     | werden beim Speichern neu erzeugt (`build-customtypes.js`)  | —                                                                         |
+| Angezeigter Stand                  | Dateien auf dem Rechner                                     | Stand des letzten Deploys (`gating.json` + Config beim Build eingebunden) |
+
+Grund: Netlify-Functions können keine Dateien dauerhaft ändern; Plan/Schalter müssen über Git laufen, damit Modelle, Prismic und Website zusammenpassen.
+
+Ablauf Änderung bei einem Kunden:
+
+1. Lokal auf den Kunden-Branch, `npm run dev`, `/agency/gating` öffnen
+2. Plan/Schalter setzen, speichern (Editor erinnert ans Committen)
+3. Modelle geändert (neue Variante, neuer Custom Type) → `slicemachine push`
+4. Committen + pushen → Netlify-Deploy; erst dann gilt es live
+
+`gating.json` (Plan-Definition) ist Kern → Änderungen auf `main`, dann in die Kunden-Branches mergen. Plan/Schalter eines einzelnen Kunden → nur auf dessen Branch.
+
 ### Plan-Hierarchie & Features
 
 - Pläne sind hierarchisch via `extends`: `individuell → professional → starter`
