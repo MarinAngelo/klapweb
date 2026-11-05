@@ -8,9 +8,14 @@ import { agencyLogin, agencyLogout, isAgencyAuthenticated } from '$lib/server/ag
 import {
 	configUncommitted,
 	legacyOverridesMissing,
+	overridesFromConfig,
 	readOverrides,
 	writeOverrides
 } from '$lib/gatingOverrides.js';
+// Bundled at build time: on Netlify only slicemachine.config.json is on disk (netlify.toml
+// included_files), reading gating.json at runtime failed with status 500
+import bundledGating from '../../../../gating.json';
+import bundledConfig from '../../../../slicemachine.config.json';
 
 export const prerender = false;
 
@@ -31,10 +36,11 @@ export const load = ({ cookies, url }) => {
 		return { authenticated: false };
 	}
 
-	// Nur wenn authentifiziert: Daten laden
-	const gating = read(GATING_PATH);
-	const smConfig = read(SM_CONFIG_PATH);
-	const overrides = readOverrides(ROOT);
+	// Nur wenn authentifiziert: Daten laden — lokal frisch von der Festplatte (nach dem Speichern
+	// aktuell), in Production der beim Build eingebundene Stand
+	const gating: any = dev ? read(GATING_PATH) : bundledGating;
+	const smConfig: any = dev ? read(SM_CONFIG_PATH) : bundledConfig;
+	const overrides = dev ? readOverrides(ROOT) : overridesFromConfig(bundledConfig);
 
 	const currentPlan = smConfig.plan || 'basis';
 	const activePlanChain = getActivePlanChain(currentPlan, gating.plans);
