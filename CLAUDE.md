@@ -94,6 +94,12 @@ Regeln:
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
 
+## Service Worker
+
+- Nur **einer**: SvelteKits `src/service-worker.ts` (Feature `pwa`, Registrierung in `svelte.config.js`), cacht auch Prismic-Bilder. Nie einen zweiten Service Worker registrieren — zwei auf demselben Scope ersetzen sich bei jedem Seitenaufruf (hängende Tabs)
+- `static/sw.js` ist ein Selbstzerstörer für Besucher mit dem alten Worker — nicht wieder verwenden
+- Im Dev-Server nie aktiv (`svelte.config.js`); das Layout entfernt dort installierte Worker (alle Branches teilen `localhost:5173`)
+
 ## Schriften (selbst gehostet, kein Google)
 
 - Google-Schriften werden beim `npm run dev` / `build` von `scripts/self-host-fonts.js` nach `static/fonts/` geladen (gitignored): eine CSS pro Schrift (`/fonts/<slug>.css`) + woff2. Besucher laden nie von Google
@@ -266,6 +272,26 @@ Details: `docs/git-strategie.md`
 - Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen. Erinnerung: Editor zeigt nach dem Speichern bzw. bei nicht committeter Config einen Hinweis, `npm run dev` warnt ebenfalls (`configUncommitted()`)
 - Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
 - Ohne `"plan"` gilt überall «basis»
+
+#### Agency-Editor: lokal vs. Production
+
+|                                    | Lokal (`npm run dev`)                                       | Production                                                                |
+| ---------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Plan + Feature-Schalter des Kunden | speichern in `slicemachine.config.json` **dieses Branches** | nur anzeigen («Speichern» gesperrt)                                       |
+| Plan-Definition (Feature → Paket)  | speichern in `gating.json`, gilt für **alle** Branches      | nur anzeigen                                                              |
+| Modelle (Custom Types, Slices)     | werden beim Speichern neu erzeugt (`build-customtypes.js`)  | —                                                                         |
+| Angezeigter Stand                  | Dateien auf dem Rechner                                     | Stand des letzten Deploys (`gating.json` + Config beim Build eingebunden) |
+
+Grund: Netlify-Functions können keine Dateien dauerhaft ändern; Plan/Schalter müssen über Git laufen, damit Modelle, Prismic und Website zusammenpassen.
+
+Ablauf Änderung bei einem Kunden:
+
+1. Lokal auf den Kunden-Branch, `npm run dev`, `/agency/gating` öffnen
+2. Plan/Schalter setzen, speichern (Editor erinnert ans Committen)
+3. Modelle geändert (neue Variante, neuer Custom Type) → `slicemachine push`
+4. Committen + pushen → Netlify-Deploy; erst dann gilt es live
+
+`gating.json` (Plan-Definition) ist Kern → Änderungen auf `main`, dann in die Kunden-Branches mergen. Plan/Schalter eines einzelnen Kunden → nur auf dessen Branch.
 
 ### Plan-Hierarchie & Features
 
@@ -442,9 +468,10 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 ## Stundenabrechnung (`/admin/stunden`)
 
 - Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
-- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Projekt/Kunde (optional; Auswahl aus Feld «Projekte / Kunden zur Auswahl» oder frei), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
+- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
 - **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
-- Admin: Tabelle mit Dauer (Std./Min.), Total Dauer + Spesen, Bearbeiten/Löschen, CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal)
+- Admin: pro Person ein Abschnitt; **Offen** (Tabelle mit Dauer Std./Min., Total Dauer + Spesen, Bearbeiten/Löschen) und **Abgerechnet** (pro Abrechnung aufklappbar, nur lesen, «Zurücksetzen» → wieder offen). «Offene Stunden abrechnen» setzt `abgerechnetAm` + gemeinsame `abrechnung`-ID (`abrechnen()`); abgerechnete Einträge sind serverseitig gegen Ändern/Löschen gesperrt
+- CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal, Spalte Status), Filter `?name=`, `?status=offen|abgerechnet`, `?abrechnung=<id>`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 

@@ -10,7 +10,6 @@
 	export let primary: {
 		heading?: string | null;
 		intro_text?: RichTextField;
-		project_options?: string | null;
 		submit_label?: string | null;
 		success_text?: RichTextField;
 	};
@@ -20,7 +19,6 @@
 	let name = '';
 	let von = '';
 	let bis = '';
-	let projekt = '';
 	let taetigkeit = '';
 	let spesen = '';
 	let spesenText = '';
@@ -30,10 +28,6 @@
 	const EMPTY = [] as unknown as RichTextField;
 	$: introText = primary.intro_text ?? EMPTY;
 	$: successText = primary.success_text ?? EMPTY;
-	$: projectOptions = (primary.project_options ?? '')
-		.split(',')
-		.map((p) => p.trim())
-		.filter(Boolean);
 
 	/** Duration preview «2 Std. 30 Min.» while typing */
 	$: minutes =
@@ -54,7 +48,7 @@
 			const res = await fetch('/api/stunden', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name, von, bis, projekt, taetigkeit, spesen, spesenText })
+				body: JSON.stringify({ name, von, bis, taetigkeit, spesen, spesenText })
 			});
 			if (res.ok) {
 				state = 'done';
@@ -68,7 +62,7 @@
 		state = 'idle';
 	}
 
-	/** Next entry: keep name and project, clear the rest */
+	/** Next entry: keep the name, clear the rest */
 	function nextEntry() {
 		von = bis = taetigkeit = spesen = spesenText = '';
 		state = 'idle';
@@ -133,25 +127,6 @@
 			</div>
 			{#if durationLabel}
 				<p class="text-muted m-0 text-sm">{$_('Dauer')}: {durationLabel}</p>
-			{/if}
-
-			{#if projectOptions.length}
-				<InputField
-					field={{
-						field_name: $_('Projekt / Kunde'),
-						field_type: 'Auswahlliste',
-						required: false,
-						options: projectOptions.join(',')
-					}}
-					inputId="{idPrefix}-projekt"
-					bind:value={projekt}
-				/>
-			{:else}
-				<InputField
-					field={{ field_name: $_('Projekt / Kunde'), field_type: 'Textfeld', required: false }}
-					inputId="{idPrefix}-projekt"
-					bind:value={projekt}
-				/>
 			{/if}
 
 			<InputField

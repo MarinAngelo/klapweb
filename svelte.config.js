@@ -31,8 +31,12 @@ function isPwaActive() {
 	}
 }
 
-const registerServiceWorker = isPwaActive();
-console.log(`Service Worker: ${registerServiceWorker ? 'aktiv' : 'deaktiviert'} (pwa-Feature)`);
+// Never in the dev server: it would intercept and cache the Vite modules (stale code, hanging tabs)
+const isDevServer = process.argv.includes('dev');
+const registerServiceWorker = isPwaActive() && !isDevServer;
+console.log(
+	`Service Worker: ${registerServiceWorker ? 'aktiv' : 'deaktiviert'} (pwa-Feature${isDevServer ? ', Dev-Server' : ''})`
+);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

@@ -10,7 +10,7 @@ import { addStunden, parseStundenInput } from '$lib/server/stunden';
  * Only with access to the password-protected pages (cookie after the page login) or as admin —
  * the form must be on a password-protected page («Inhalte prüfen» checks that).
  *
- * Body: { name, von, bis, projekt?, taetigkeit?, spesen?, spesenText? } → { ok, id } | { error: i18n key }
+ * Body: { name, von, bis, taetigkeit?, spesen?, spesenText? } → { ok, id } | { error: i18n key }
  */
 
 export const prerender = false;

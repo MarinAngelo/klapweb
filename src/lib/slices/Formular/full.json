@@ -1014,13 +1014,6 @@
 						]
 					}
 				},
-				"project_options": {
-					"type": "Text",
-					"config": {
-						"label": "Projekte / Kunden zur Auswahl",
-						"placeholder": "Kommagetrennt, z.B. Casa Campelli, Praxis Muster – leer = freie Eingabe"
-					}
-				},
 				"submit_label": {
 					"type": "Text",
 					"config": {
