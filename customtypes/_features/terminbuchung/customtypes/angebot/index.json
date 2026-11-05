@@ -49,6 +49,30 @@
 					"customtypes": ["ort"]
 				}
 			},
+			"bild": {
+				"type": "Image",
+				"config": {
+					"label": "Bild (für Kacheln)",
+					"constraint": { "width": 2200, "height": 1200 },
+					"thumbnails": []
+				}
+			},
+			"info_page": {
+				"type": "Link",
+				"config": {
+					"label": "Seite mit mehr Infos",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"customtypes": ["page"]
+				}
+			},
+			"sort_order": {
+				"type": "Number",
+				"config": {
+					"label": "Reihenfolge (Kacheln)",
+					"placeholder": "1 = zuerst, leer = am Schluss"
+				}
+			},
 			"aktiv": {
 				"type": "Boolean",
 				"config": {

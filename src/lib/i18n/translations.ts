@@ -2509,7 +2509,30 @@ export const translations: Record<string, Record<string, string>> = {
 	'Speichern fehlgeschlagen': { 'de-ch': 'Speichern fehlgeschlagen', 'en-us': 'Saving failed' },
 	'In Prismic speichern': { 'de-ch': 'In Prismic speichern', 'en-us': 'Save in Prismic' },
 	AUS: { 'de-ch': 'AUS', 'en-us': 'OFF' },
-	AN: { 'de-ch': 'AN', 'en-us': 'ON' }
+	AN: { 'de-ch': 'AN', 'en-us': 'ON' },
+	// Kacheln «Buchbare Angebote» + offer preselection in the Termin field
+	Buchen: { 'de-ch': 'Buchen', 'en-us': 'Book' },
+	'Angebote werden geladen…': { 'de-ch': 'Angebote werden geladen…', 'en-us': 'Loading offers…' },
+	'Zurzeit sind keine Angebote buchbar.': {
+		'de-ch': 'Zurzeit sind keine Angebote buchbar.',
+		'en-us': 'No offers can be booked at the moment.'
+	},
+	'Termine für': { 'de-ch': 'Termine für', 'en-us': 'Appointments for' },
+	'Zurzeit keine freien Termine.': {
+		'de-ch': 'Zurzeit keine freien Termine.',
+		'en-us': 'No free appointments at the moment.'
+	},
+	'Für das gewählte Angebot sind zurzeit keine Termine frei.': {
+		'de-ch': 'Für das gewählte Angebot sind zurzeit keine Termine frei.',
+		'en-us': 'There are currently no free appointments for the selected offer.'
+	},
+	'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar': {
+		'de-ch':
+			'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar',
+		'en-us':
+			'Offer «{titel}» is not linked to any current working day – no appointments can be booked'
+	},
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
 };
 
 /**

@@ -3,6 +3,14 @@
 		"de-ch": "Der Punkt, den die Karte neben der Adresse zeigt, inkl. Link «Route planen»; leer = nur die Adresse ohne Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
 		"en-us": "The point the map next to the address shows, incl. a «Route planen» (directions) link; empty = address only, no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
 	},
+	"angebot.bild": {
+		"de-ch": "Optionales Bild, das oben in der Kachel des Angebots erscheint (Inhalts-Element «Kacheln», Variante «Buchbare Angebote»). Querformat empfohlen, z.B. 2200 × 1200 Pixel.",
+		"en-us": "Optional image shown at the top of the offer tile (element «Kacheln», variation «Buchbare Angebote»). Landscape recommended, e.g. 2200 × 1200 pixels."
+	},
+	"angebot.info_page": {
+		"de-ch": "Seite mit ausführlichen Infos zu diesem Angebot. Im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote») führt «Mehr erfahren» auf diese Seite. Leer = «Mehr erfahren» öffnet ein Fenster mit Beschreibung, Dauer, Preis und Ort.",
+		"en-us": "Page with detailed information about this offer. In the «Kacheln» element (variation «Buchbare Angebote») the «Mehr erfahren» (learn more) button links here. Empty = «Mehr erfahren» opens a window with description, duration, price and location."
+	},
 	"angebot.ort": {
 		"de-ch": "Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.",
 		"en-us": "Where the offer takes place. Link a document of the content type «Ort» (location) here (create it first under «Ort», e.g. «Praxis Zürich City» with address). Name, address, directions and phone of the location appear in the appointment confirmation (in a custom e-mail text via the placeholders {{Ort}}, {{Wegbeschreibung}} and {{Ort-Telefon}}); name and address also in your notification and on the confirmation page. If «Aktiv» is switched off for the location or the field is empty, no location details are shown – booking still works."
@@ -10,6 +18,10 @@
 	"angebot.puffer_danach": {
 		"de-ch": "Pause nach jedem Termin dieses Angebots in Minuten, z. B. für Notizen, Lüften oder den Weg. Während des Puffers kann nichts anderes gebucht werden, auch kein anderes Angebot. Beispiel: Termin 60 Minuten, Puffer 15, gebucht um 09:00 → belegt bis 10:15; bei Buchungsintervall 30 ist die nächste freie Anfangszeit 10:30. Auch der letzte Termin des Tages muss inklusive Puffer vor der Endzeit fertig sein. Leer oder 0 = kein Puffer.",
 		"en-us": "Break after each appointment of this offer, in minutes, e.g. for notes, airing the room or travel. Nothing else can be booked during the buffer, not even another offer. Example: appointment 60 minutes, buffer 15, booked at 09:00 → occupied until 10:15; with a booking interval of 30 the next free start time is 10:30. The last appointment of the day must also end, including the buffer, before the end time. Empty or 0 = no buffer."
+	},
+	"angebot.sort_order": {
+		"de-ch": "Bestimmt die Reihenfolge der Angebote im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote»): kleinere Zahl = weiter vorne, z.B. 1, 2, 3. Angebote ohne Zahl erscheinen am Schluss, alphabetisch nach «Bezeichnung».",
+		"en-us": "Sets the order of the offers in the «Kacheln» element (variation «Buchbare Angebote»): lower number = further forward, e.g. 1, 2, 3. Offers without a number appear last, sorted alphabetically by «Bezeichnung» (name)."
 	},
 	"angebot.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
@@ -134,6 +146,14 @@
 	"icon.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
+	},
+	"Kacheln.booking_page": {
+		"de-ch": "Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = keine Schaltfläche «Buchen».",
+		"en-us": "Page with the form containing a «Termin» field. «Buchen» (book) opens this page and shows only the appointments of the chosen offer (with a «Alle Angebote anzeigen» link to show all). Empty = no «Buchen» button."
+	},
+	"Kacheln.show_price": {
+		"de-ch": "Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.",
+		"en-us": "Shows the offer's «Preis» (price) in CHF on the tile. Offers without a price show none."
 	},
 	"leistung.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",

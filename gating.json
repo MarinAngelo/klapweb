@@ -231,6 +231,9 @@
 			"variations": {
 				"plaene": {
 					"feature": "ecommerce"
+				},
+				"angebote": {
+					"feature": "terminbuchung"
 				}
 			}
 		},

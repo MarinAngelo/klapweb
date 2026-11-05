@@ -5,6 +5,7 @@
 	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageCard from './ImageCard.svelte';
+	import AngebotKacheln from './AngebotKacheln.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { reveal } from '$lib/actions/reveal';
 	import { mapAnimation } from '$lib/utils/animationMapper';
@@ -26,7 +27,15 @@
 	// Prüfe ob Hintergrundfarbe vom CMS kommt (nicht Fallback)
 	const hasCustomBgColor = !!slice.primary?.component_body_bg_color;
 	// Grid-Spalten aus CMS (2 oder 3, Fallback: 2)
-	const gridColumns = String((slice.primary as any)?.grid_columns ?? '').includes('3') ? 3 : 2;
+	// Empty: «Buchbare Angebote» 3, other variations 2
+	const rawGridColumns = String((slice.primary as any)?.grid_columns ?? '');
+	const gridColumns = rawGridColumns
+		? rawGridColumns.includes('3')
+			? 3
+			: 2
+		: (slice as any).variation === 'angebote'
+			? 3
+			: 2;
 
 	$: anim = mapAnimation(
 		slice.primary?.animate,
@@ -131,6 +140,12 @@
 
 	// --- Team variation ---
 	$: isTeamVariation = (slice as any).variation === 'team';
+	$: isOfferVariation = (slice as any).variation === 'angebote';
+	$: offerPrimary = slice.primary as any;
+	const offerReveal = (i: number) =>
+		anim.animate
+			? { ...anim.options, delay: (anim.options.delay ?? 0) + i * STAGGER_MS }
+			: { direction: 'none' as const };
 	$: teamItems = ((slice as any).items ?? []) as Array<Record<string, any>>;
 	$: teamCols = String((slice.primary as any)?.grid_columns ?? '').includes('4')
 		? 4
@@ -394,6 +409,27 @@
 				</li>
 			{/each}
 		</ul>
+	</Bounded>
+{:else if isOfferVariation}
+	<Bounded
+		tag="section"
+		class="color-scope {hasCustomBgColor ? 'pb-16 md:pb-20' : ''} {mobileVollbreite
+			? 'overflow-x-clip'
+			: ''}"
+		style="--scope-bg: {componentBodyBgColor}; --custom-component-color: {componentBodyColor};"
+		data-slice-type={slice.slice_type}
+		data-slice-variation={slice.variation}
+		animate={anim.animate}
+		animationOptions={anim.options}
+	>
+		<div class="grid gap-12 {mobileVollbreite ? '-mx-6 md:mx-0' : ''}">
+			{#if isFilled.richText(offerPrimary?.heading)}
+				<h2 use:headingAnchor class="text-center custom-color">
+					<PrismicText field={offerPrimary.heading} />
+				</h2>
+			{/if}
+			<AngebotKacheln primary={offerPrimary} {gridColumns} revealFor={offerReveal} />
+		</div>
 	</Bounded>
 {:else}
 	<Bounded

@@ -102,3 +102,29 @@ export const formatProblem = (
 	/** @type {string} */ text,
 	/** @type {TerminProblem['params']} */ params
 ) => text.replace(/\{(\w+)\}/g, (_, k) => String(params?.[k] ?? `{${k}}`));
+
+/**
+ * Active offer that no current working day links → never any slots (Kacheln «Buchen» disabled).
+ * @param {any} offer Prismic document «angebot»
+ * @param {any[]} workdays all documents «arbeitstag»
+ * @param {string} today YYYY-MM-DD
+ * @returns {TerminProblem[]}
+ */
+export function diagnoseAngebot(offer, workdays, today) {
+	if (offer?.data?.aktiv === false) return [];
+	const linked = workdays.some((workday) => {
+		const d = workday?.data ?? {};
+		const last = lastDay(d);
+		if (d.datum && last && last < today) return false;
+		return (d.angebote ?? []).some((/** @type {any} */ e) =>
+			[offer.uid, offer.id].includes(uidOf(e.angebot))
+		);
+	});
+	if (linked) return [];
+	return [
+		{
+			key: 'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar',
+			params: { titel: offer?.data?.titel || offer?.uid || '' }
+		}
+	];
+}

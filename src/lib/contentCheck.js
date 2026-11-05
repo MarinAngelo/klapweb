@@ -7,7 +7,7 @@
 
 /** Custom types rendered as their own (static) pages — keep in sync with the routes */
 import { isGoogleShortLink, parseMapPoint } from './mapPoint.js';
-import { diagnoseArbeitstag } from './terminDiagnose.js';
+import { diagnoseAngebot, diagnoseArbeitstag } from './terminDiagnose.js';
 
 export const TRANSLATED_TYPES = ['page', 'leistung', 'ressource'];
 
@@ -302,10 +302,17 @@ export async function checkContent(client, fieldReference = /** @type {any[]} */
 	//    An ended series is normal and not reported here (only in the admin «Terminverwaltung»).
 	const offers = docs.filter((d) => d.type === 'angebot' && d.lang === master);
 	const today = new Date().toISOString().slice(0, 10);
-	for (const workday of docs.filter((d) => d.type === 'arbeitstag' && d.lang === master)) {
+	const workdays = docs.filter((d) => d.type === 'arbeitstag' && d.lang === master);
+	for (const workday of workdays) {
 		for (const problem of diagnoseArbeitstag(workday, offers, today)) {
 			if (problem.key.startsWith('Die Serie ist abgelaufen')) continue;
 			links.push({ doc: ref(workday), kind: 'termin', problem, field: terminField(problem.key) });
+		}
+	}
+	// Offer without a current working day: «Buchen» in the Kacheln stays disabled
+	for (const offer of offers) {
+		for (const problem of diagnoseAngebot(offer, workdays, today)) {
+			links.push({ doc: ref(offer), kind: 'termin', problem });
 		}
 	}
 

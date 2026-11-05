@@ -65,8 +65,13 @@
 		endzeit?: string;
 		sessionLaenge?: number | null;
 		arbeitstagLabel?: string;
+		angebotId?: string;
 	}
 	let termine: AvailableTermin[] = [];
+	// Offer preselected via ?angebot=<uid> (Kacheln «Buchbare Angebote»); cleared by «Alle Angebote anzeigen»
+	let allTermine: AvailableTermin[] = [];
+	let preselectedOffer = '';
+	let offerWithoutSlots = false;
 	let termineLoading = false;
 	let termineError = false;
 	let selectedTermin = '';
@@ -85,6 +90,15 @@
 	);
 	$: selectedWorkdaySlots = termineByWorkday[selectedWorkday] ?? {};
 	$: selectedTimeTermine = selectedWorkdaySlots[selectedTime] ?? [];
+
+	function showAllOffers() {
+		preselectedOffer = '';
+		offerWithoutSlots = false;
+		termine = allTermine;
+		selectedWorkday = '';
+		selectedTime = '';
+		selectedTermin = '';
+	}
 
 	function chooseWorkday(workday: string) {
 		selectedWorkday = workday;
@@ -311,7 +325,15 @@
 				termineError = true;
 				return;
 			}
-			termine = await r.json();
+			allTermine = await r.json();
+			const offerUid = new URL(window.location.href).searchParams.get('angebot') ?? '';
+			const offerTermine = offerUid
+				? allTermine.filter((termin) => termin.angebotId === offerUid)
+				: [];
+			// No free slots for the chosen offer → hint (other offers on request)
+			preselectedOffer = offerTermine.length ? offerTermine[0].titel || offerUid : '';
+			offerWithoutSlots = !!offerUid && !offerTermine.length;
+			termine = offerUid ? offerTermine : allTermine;
 		} catch {
 			termineError = true;
 		} finally {
@@ -616,9 +638,27 @@
 				<p class="text-sm opacity-60">{$_('Termine werden geladen…')}</p>
 			{:else if termineError}
 				<p class="text-sm text-red-500">{$_('Termine konnten nicht geladen werden.')}</p>
+			{:else if offerWithoutSlots}
+				<p class="termin-offer-hint text-sm">
+					{$_('Für das gewählte Angebot sind zurzeit keine Termine frei.')}
+					{#if allTermine.length}
+						·
+						<button type="button" class="underline" on:click={showAllOffers}>
+							{$_('Alle Angebote anzeigen')}
+						</button>
+					{/if}
+				</p>
 			{:else if termine.length === 0}
 				<p class="text-sm opacity-60">{$_('Keine verfügbaren Termine.')}</p>
 			{:else}
+				{#if preselectedOffer}
+					<p class="termin-offer-hint text-sm">
+						{$_('Termine für')} «{preselectedOffer}» ·
+						<button type="button" class="underline" on:click={showAllOffers}>
+							{$_('Alle Angebote anzeigen')}
+						</button>
+					</p>
+				{/if}
 				<div
 					class="termin-selection"
 					role="radiogroup"
