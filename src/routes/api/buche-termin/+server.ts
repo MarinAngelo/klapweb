@@ -12,6 +12,7 @@ import {
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
+import { isAdmin } from '$lib/server/adminAuth';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -125,7 +126,7 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 	);
 }
 
-export const POST: RequestHandler = async ({ request, fetch }) => {
+export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	let body: {
 		terminId?: string;
 		name?: string;
@@ -133,6 +134,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		customerTimezone?: string;
 		fields?: Record<string, string>;
 		fieldLabels?: Record<string, string>;
+		telefon?: string;
+		/** Operator books for a customer (admin «Terminverwaltung»), requires admin session */
+		byAdmin?: boolean;
+		/** Admin booking: send the confirmation to the customer (only with e-mail) */
+		sendConfirmation?: boolean;
 	};
 	try {
 		body = await request.json();
@@ -140,10 +146,15 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email, customerTimezone, fields, fieldLabels } = body;
+	const { terminId, name, email, customerTimezone, fields, fieldLabels, telefon } = body;
 	const origin = new URL(request.url).origin;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
+	}
+	// Source is decided by the server: «byAdmin» from the browser alone is not trusted
+	const byAdmin = !!body.byAdmin;
+	if (byAdmin && !isAdmin(cookies)) {
+		return new Response(JSON.stringify({ error: 'Nicht angemeldet' }), { status: 403 });
 	}
 
 	// Check if already booked or cancelled
@@ -248,11 +259,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
 
-	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier
+	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier.
+	// The operator may book at short notice (no lead time), but not in the past
 	if (
 		datum &&
 		uhrzeit &&
-		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) - vorlaufzeit * 60000 < Date.now()
+		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) -
+			(byAdmin ? 0 : vorlaufzeit) * 60000 <
+			Date.now()
 	) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
@@ -278,8 +292,10 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		bookedAt: new Date().toISOString(),
 		name,
 		email,
+		telefon: telefon?.trim() || undefined,
 		arbeitstagId,
-		angebotId
+		angebotId,
+		source: byAdmin ? 'admin' : 'online'
 	});
 	invalidateTermineCache();
 
@@ -390,8 +406,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.then(({ Resend }) => {
 				const resend = new Resend(resendKey);
 
-				// E-Mail an Kunden
-				if (email) {
+				// E-Mail an Kunden (admin booking: only if requested)
+				if (email && (!byAdmin || body.sendConfirmation)) {
 					const htmlBody =
 						bodyText
 							.split('\n')
@@ -417,7 +433,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						});
 				}
 
-				// Benachrichtigung an Anbieter
+				// Benachrichtigung an Anbieter — not when the operator booked it themselves
+				if (byAdmin) return;
 				const extraLines =
 					fields && fieldLabels
 						? Object.entries(fields)

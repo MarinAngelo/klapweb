@@ -23,6 +23,9 @@ export interface BookingRecord {
 	arbeitstagId?: string;
 	angebotId?: string;
 	reminderSent?: boolean;
+	telefon?: string;
+	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
+	source?: 'online' | 'admin';
 }
 
 function toMinutes(value: string): number | null {
