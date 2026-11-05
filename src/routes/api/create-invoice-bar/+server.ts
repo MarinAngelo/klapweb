@@ -4,6 +4,7 @@ import { listCustomers, saveCustomer } from '$lib/server/customers';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
@@ -113,21 +114,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			}
 
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.EMAIL_FROM_ADDRESS;
+			const fromEmail = await getMailFrom();
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');
 					const resend = new Resend(resendKey);
-					let fromName = env.EMAIL_FROM_NAME;
-					try {
-						const client = createClient({ fetch });
-						const settings = await client.getSingle('settings');
-						const cmsName = (settings.data as Record<string, unknown>).responsible_person_company;
-						if (typeof cmsName === 'string' && cmsName.trim()) fromName = cmsName.trim();
-					} catch (e) {
-						console.error('CMS-Firmenname konnte nicht geladen werden:', e);
-					}
-					const fromWithName = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
+					// Sender incl. name from the settings («Absender-Name»)
+					const fromWithName = fromEmail;
 					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
 					const fmt = (n: number) =>
 						new Intl.NumberFormat('de-CH', {
@@ -148,7 +141,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					}
 
 					// Benachrichtigung an Eventverantwortliche/n
-					const notifyEmail = eventManagerEmail || env.INVOICE_TO_EMAIL;
+					const notifyEmail = eventManagerEmail || (await getNotifyTo());
 					if (notifyEmail) {
 						const fieldLines = labels
 							? Object.entries(labels as Record<string, string>)

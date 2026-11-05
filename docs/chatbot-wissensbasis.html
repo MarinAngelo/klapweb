@@ -237,6 +237,9 @@
 	<li>Tab «Main»: Website-Titel und -Untertitel, verantwortliche Person bzw. Firma, Adresse, E-Mail-Adressen, Kontakte fürs Impressum und die rechtlichen Texte (Datenschutzerklärung, Haftungsausschluss, Impressum, Cookies-Text, AGB). Ausserdem Seiten-Passwort, Chat-Bot, Mehrsprachigkeit und Startseiten-Umleitung.</li>
 	<li>Tab «SEO»: globale SEO-Angaben, Favicon, App-Icon und Statusleisten-Farbe.</li>
 	<li>Je nach Paket weitere Tabs: «Terminbuchung», «Online-Handel», «Ressourcenbuchung».</li>
+	<li>«Absender-E-Mail (alle E-Mails der Website)» im Tab «Main»: Von dieser Adresse kommen alle E-Mails der Website (Buchungen, Rechnungen, Newsletter, Formulare). Die Domain muss beim Mail-Dienst (Resend) eingerichtet sein – das erledigt Angelo. Ist das Feld leer, werden keine E-Mails versendet; «Inhalte prüfen» im Admin-Bereich zeigt das an.</li>
+	<li>«Absender-Name» (Tab «Main»): Name, unter dem die E-Mails erscheinen, z. B. der Name deines Geschäfts. Leer = Website-Name.</li>
+	<li>«Benachrichtigungen an (intern)» (Tab «Main»): An diese Adresse gehen interne Meldungen wie neue Buchungen, Formular-Nachrichten und Bestellungen. Leer = «Verantwortliche E-Mail».</li>
 </ul>
 <p>«Startseite umleiten» mit «Umleitungs-Seite»: Besucher der Startseite werden automatisch auf eine andere Seite weitergeleitet, z. B. während einer Umbauphase.</p>
 
@@ -350,11 +353,11 @@
 <ol>
 	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
 	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional Preis und Ort. «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben. Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
+	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben (ist ein Datum gesetzt, gilt nur das Datum). Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
 	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
 	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
 	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Absender-E-Mail, Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
+	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
 	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
 </ol>
 <p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
@@ -396,6 +399,17 @@
 <p>Empfänger sind alle Kunden mit E-Mail-Adresse und alle bestätigten Abonnenten. Abgemeldete Adressen werden automatisch ausgeschlossen.</p>
 <p>Anmeldeformular auf der Website: Element «Formulare» in der Variante «Newsletter abonnieren» einfügen. Überschrift, Einleitungstext, «Namensfelder anzeigen», Einwilligungstext und Text nach dem Absenden festlegen. Neue Abonnenten erhalten eine Bestätigungsmail (Double-Opt-in) und werden erst nach dem Klick auf den Bestätigungslink gespeichert.</p>
 <p>Abonnenten verwalten: Im Newsletter-Admin unter «Abonnenten» siehst du Name, E-Mail, Sprache, «Bestätigt am» (Nachweis der Einwilligung) und Status. «Entfernen» trägt die Adresse als abgemeldet ein. «Als CSV exportieren» lädt die Liste herunter.</p>
+
+<h2>Anleitung: Stundenabrechnung</h2>
+<p>Arbeitszeiten und Spesen über ein Formular auf der Website erfassen und im Admin-Bereich auswerten (Paket Individuell).</p>
+<ol>
+	<li>Seite erstellen (z. B. «Stunden») und unter «Passwortgeschützt» einschalten. Das Passwort ist das «Seiten-Passwort» aus den Einstellungen.</li>
+	<li>Element «Formulare» in der Variante «Stundenabrechnung» einfügen. Optional Überschrift und Einleitungstext.</li>
+	<li>Veröffentlichen. Wer das Seiten-Passwort kennt, erfasst Name, Von, Bis, Tätigkeit sowie Spesen mit Beschreibung.</li>
+	<li>Auswertung: Admin-Bereich → «Stunden». Pro Person eine eigene Tabelle «Offen» mit der Dauer jedes Eintrags in Stunden und Minuten und dem Total der Stunden und Spesen. Offene Einträge lassen sich bearbeiten und löschen; «CSV-Export» lädt sie für Excel herunter.</li>
+	<li>Abrechnen: Mit «Offene Stunden abrechnen» werden alle offenen Einträge der Person als abgerechnet markiert. Sie erscheinen danach unter «Abgerechnet», gruppiert pro Abrechnung mit Datum, Total und eigenem CSV. Abgerechnete Einträge sind gesperrt; bei einem Fehler «Zurücksetzen» wählen, dann sind sie wieder offen.</li>
+</ol>
+<p>Ohne Passwortschutz der Seite werden Einträge abgelehnt; «Inhalte prüfen» weist darauf hin.</p>
 
 <h2>Anleitung: Kundenverwaltung</h2>
 <ul>
@@ -963,17 +977,6 @@
 	<li>Überblendungsdauer (ms) (Zahl)</li>
 	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
 	<li>Bilder Karusell (Liste)</li>
-	<li>Blob-Form (Ein/Aus)</li>
-	<li>Blob-Farbe (Farbe)</li>
-	<li>Blob SVG-Code (Text)</li>
-	<li>Blob-Grösse (%) (Zahl)</li>
-	<li>Blob-Position horizontal (%) (Zahl)</li>
-	<li>Blob-Position vertikal (%) (Zahl)</li>
-	<li>Blob-Drehung (Grad) (Zahl)</li>
-	<li>Untere Kante wellenförmig (Ein/Aus)</li>
-	<li>Wellenhöhe (px) (Zahl)</li>
-	<li>Wellenamplitude (px) (Zahl)</li>
-	<li>Anzahl Wellen (Zahl)</li>
 </ul>
 <h3>Zitat (Inhalts-Element)</h3>
 <ul>
@@ -1008,8 +1011,8 @@
 	<li>Buchungsintervall (Auswahl): Abstand zwischen den möglichen Anfangszeiten in Minuten (15, 30 oder 60), gezählt ab der Startzeit. Beispiel: Start 09:00, Intervall 30, Termin 60 Minuten → buchbar um 09:00, 09:30, 10:00 usw. Ist ein Termin gebucht, verschwinden die Anfangszeiten, die sich damit überschneiden, automatisch. Kleineres Intervall = mehr Auswahl für die Kundschaft.</li>
 	<li>Buchbare Angebote (Liste): Welche Angebote an diesem Arbeitstag gebucht werden können. Pro Zeile ein «Buchbares Angebot» verknüpfen. Für jedes Angebot entstehen eigene Anfangszeiten mit seiner Dauer und seinem Puffer. Sobald ein Termin gebucht ist, sind überschneidende Zeiten auch für die anderen Angebote gesperrt. Angebote, bei denen «Aktiv» ausgeschaltet ist, erscheinen nicht. Ohne Angebot ist der Arbeitstag nicht buchbar.</li>
 	<li>Wiederholung (Auswahl): Wiederholt den Arbeitstag ab dem «Datum» mit gleichen Zeiten und Angeboten: «Täglich», «Wöchentlich» (gleicher Wochentag), «Zweiwöchentlich» oder «Monatlich» (gleicher Kalendertag; fehlt er in einem Monat, z. B. der 31., gilt der letzte Tag des Monats). «Keine» = nur dieser eine Tag. Die Serie endet bei «Wiederholen bis (Datum)» oder nach der «Anzahl Wiederholungen» – was zuerst eintritt. Ohne Ende läuft sie weiter (höchstens 500 Arbeitstage).</li>
-	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.</li>
-	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Leer = kein Ende über die Anzahl (dann gilt «Wiederholen bis (Datum)»).</li>
+	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone. Hat Vorrang: Ist ein Datum eingetragen, wird «Anzahl Wiederholungen» ignoriert.</li>
+	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Wird nur verwendet, wenn «Wiederholen bis (Datum)» leer ist. Sind beide leer, läuft die Serie ohne Ende.</li>
 </ul>
 <h3>Aufgabe (Inhalts-Typ)</h3>
 <ul>
@@ -1105,6 +1108,9 @@
 	<li>Verantwortliche Adresse (formatierter Text)</li>
 	<li>Verantwortliche E-Mail (Text)</li>
 	<li>Korrespondenz E-Mail (Text)</li>
+	<li>Absender-E-Mail (alle E-Mails der Website) (Text): Von dieser Adresse verschickt die Website alle E-Mails: Buchungsbestätigungen, Rechnungen, Newsletter, Formulare, Kundenkonto. Die Domain der Adresse (der Teil nach @) muss beim Mail-Dienst Resend eingerichtet und verifiziert sein, sonst kommen keine E-Mails an — das richtet die Agentur ein. Beispiel: info@deine-domain.ch. Ein Postfach braucht es dafür nicht. Leer = es werden keine E-Mails verschickt; «Inhalte prüfen» im Admin meldet das.</li>
+	<li>Absender-Name (Text): Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Casa Campelli» statt nur info@casa-campelli.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.</li>
+	<li>Benachrichtigungen an (intern) (Text): An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.</li>
 	<li>Datenschutzerkärung (formatierter Text)</li>
 	<li>Haftungsausschluss (formatierter Text)</li>
 	<li>Impressum (formatierter Text)</li>
@@ -1125,12 +1131,6 @@
 	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
-	<li>Chat-Bot aktivieren (Ein/Aus)</li>
-	<li>Chat-Bot Name (Text)</li>
-	<li>Chat-Bot Begrüssung (Text)</li>
-	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
-	<li>Chat-Bot Wissensbasis – Ergänzungen (formatierter Text): Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.</li>
-	<li>Absender-E-Mail (Text)</li>
 	<li>Kunden-E-Mail: Betreff (Text)</li>
 	<li>Kunden-E-Mail: Text (formatierter Text)</li>
 	<li>Buchungsbestätigung: Titel (Text)</li>

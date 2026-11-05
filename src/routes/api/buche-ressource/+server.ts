@@ -30,6 +30,7 @@ import {
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 function naechte(von: string, bis: string): number {
 	return Math.round((new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24));
@@ -106,7 +107,6 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	let saisonpreise: Array<{ von: string; bis: string; preis_pro_nacht: number }> = [];
 	let ressourceName = ressourceUid;
 	let companyEmail = '';
-	let fromEmail = '';
 
 	try {
 		const client = createClient({ fetch });
@@ -131,7 +131,6 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		if (settings) {
 			const s = settings.data as any;
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			fromEmail = (s.booking_from_email as string) ?? '';
 		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Ressource nicht gefunden' }), { status: 404 });
@@ -202,8 +201,8 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 
 	// Vermieter-Benachrichtigung mit Bestätigungslink
 	const resendKey = env.RESEND_API_KEY;
-	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
-	const emailFrom = fromEmail || env.EMAIL_FROM_ADDRESS;
+	const toEmail = (await getNotifyTo(fetch)) || companyEmail;
+	const emailFrom = await getMailFrom();
 	if (resendKey && emailFrom && toEmail && env.ADMIN_SECRET) {
 		const origin = url.origin;
 		// Token only authorises this confirmation — the admin password is never sent by mail

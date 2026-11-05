@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { checkInBuchung } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 export async function POST({ request, fetch }) {
 	const { referenz, items, kommentar } = await request.json();
@@ -19,8 +20,8 @@ export async function POST({ request, fetch }) {
 
 	// E-Mail an Betreiber
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
-	let toEmail = env.INVOICE_TO_EMAIL || '';
+	const emailFrom = await getMailFrom();
+	let toEmail = await getNotifyTo(fetch);
 	if (!toEmail) {
 		try {
 			const client = createClient({ fetch });

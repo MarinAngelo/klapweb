@@ -9,11 +9,13 @@
 	export let settings: Content.SettingsDocument;
 	export let lang: string | undefined;
 	export let mainLang: string | undefined;
+	/** On landing pages: legal pages open in the landing style too (?landing → +layout.svelte) */
+	export let landing = false;
 
 	$: settingsData = (settings?.data || {}) as Content.SettingsDocument['data'];
 	// Legal pages in the current language
 	$: getStaticHref = (deSlug: string, enSlug: string) =>
-		getLegalHref(lang, mainLang, deSlug, enSlug);
+		getLegalHref(lang, mainLang, deSlug, enSlug) + (landing ? '?landing' : '');
 </script>
 
 <p class="footer-buttonbar-p">

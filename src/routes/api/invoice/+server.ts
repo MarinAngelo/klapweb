@@ -9,6 +9,7 @@ import { saveManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/s
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { parseCartSpec } from '$lib/utils/cartSpec';
 import { resolveCartLines, cartLabel } from '$lib/server/cartLines';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -749,11 +750,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.EMAIL_FROM_ADDRESS;
+	const fromEmail = await getMailFrom();
 	const businessEmail = isEventCheckout && eventManagerEmail ? eventManagerEmail : co.email;
 
 	if (!resendKey || !fromEmail) {
-		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS)');
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail (Einstellungen))');
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 
@@ -794,7 +795,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const { Resend } = await import('resend');
 		const resend = new Resend(resendKey);
-		const fromWithName = co.name ? `${co.name} <${fromEmail}>` : fromEmail;
+		// Sender incl. name from the settings («Absender-Name»)
+		const fromWithName = fromEmail;
 
 		// E-Mail an Kunden
 		if (customerEmail) {

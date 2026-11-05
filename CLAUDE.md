@@ -24,6 +24,8 @@ Konkrete Regeln:
 
 ## Environment Variables
 
+**Grundsatz: Env-Vars nur verwenden, wenn es unbedingt nötig ist.** Erlaubt sind nur Secrets (API-Keys, Tokens, Passwörter wie `ADMIN_SECRET`) und Werte, die vor dem Laden von Prismic gebraucht werden. Alles, was ein Website-Betreiber kennen oder ändern könnte (Adressen, Namen, Texte, Schalter), gehört in Prismic (Einstellungen) — gleiche Quelle für Website, Mails und Netlify-Functions, sichtbar und änderbar ohne Deploy. Neue Konfiguration → zuerst ein Prismic-Feld prüfen; eine neue Env-Var nur mit Begründung und Eintrag in `.env.example` + `gating.json` (`features.<id>.env`).
+
 ### Lokale Entwicklung (.env)
 
 - `.env` ist **gitignored** — nicht committed
@@ -91,6 +93,12 @@ Regeln:
 - **Text auf eigenem Hintergrund** (Panels, Buttons) braucht eine kontrastgeprüfte Farbe: neue Fälle in `updateContrastColors()` ergänzen, nicht per Hand abdunkeln
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
+
+## Service Worker
+
+- Nur **einer**: SvelteKits `src/service-worker.ts` (Feature `pwa`, Registrierung in `svelte.config.js`), cacht auch Prismic-Bilder. Nie einen zweiten Service Worker registrieren — zwei auf demselben Scope ersetzen sich bei jedem Seitenaufruf (hängende Tabs)
+- `static/sw.js` ist ein Selbstzerstörer für Besucher mit dem alten Worker — nicht wieder verwenden
+- Im Dev-Server nie aktiv (`svelte.config.js`); das Layout entfernt dort installierte Worker (alle Branches teilen `localhost:5173`)
 
 ## Schriften (selbst gehostet, kein Google)
 
@@ -257,11 +265,33 @@ Details: `docs/git-strategie.md`
 }
 ```
 
-### Lokale Feature-Schalter (`gating.overrides.json`)
+### Feature-Schalter pro Kunde (`slicemachine.config.json`)
 
-- Agency-Editor (`/agency/gating`) speichert zusätzliche/abgeschaltete Features in `gating.overrides.json` (gitignored)
-- **Pro Prismic-Repository** (`repositoryName` aus `slicemachine.config.json`): `{ "repos": { "<repo>": { enabled, disabled, admin_sections_disabled } } }` — die Datei bleibt beim Branch-Wechsel liegen, Schalter eines Branches dürfen nie für ein anderes Repo gelten (sonst löscht `slicemachine push` Custom Types)
-- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`
+- Zusatz-Features und Abschaltungen gehören in die **committete** `slicemachine.config.json` des Branches (branch-eigen, `merge=ours`): `"features": [...]` (über den Plan hinaus), `"featuresDisabled": [...]`, `"adminSectionsDisabled": [...]`
+- Wirkt überall gleich: `build-customtypes.js` (Modelle), `src/lib/server/features.ts` (`FEATURE_*`, statischer Import → Build-Zeit, gilt in Production), Admin-Dashboard
+- Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen. Erinnerung: Editor zeigt nach dem Speichern bzw. bei nicht committeter Config einen Hinweis, `npm run dev` warnt ebenfalls (`configUncommitted()`)
+- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
+- Ohne `"plan"` gilt überall «basis»
+
+#### Agency-Editor: lokal vs. Production
+
+|                                    | Lokal (`npm run dev`)                                       | Production                                                                |
+| ---------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Plan + Feature-Schalter des Kunden | speichern in `slicemachine.config.json` **dieses Branches** | nur anzeigen («Speichern» gesperrt)                                       |
+| Plan-Definition (Feature → Paket)  | speichern in `gating.json`, gilt für **alle** Branches      | nur anzeigen                                                              |
+| Modelle (Custom Types, Slices)     | werden beim Speichern neu erzeugt (`build-customtypes.js`)  | —                                                                         |
+| Angezeigter Stand                  | Dateien auf dem Rechner                                     | Stand des letzten Deploys (`gating.json` + Config beim Build eingebunden) |
+
+Grund: Netlify-Functions können keine Dateien dauerhaft ändern; Plan/Schalter müssen über Git laufen, damit Modelle, Prismic und Website zusammenpassen.
+
+Ablauf Änderung bei einem Kunden:
+
+1. Lokal auf den Kunden-Branch, `npm run dev`, `/agency/gating` öffnen
+2. Plan/Schalter setzen, speichern (Editor erinnert ans Committen)
+3. Modelle geändert (neue Variante, neuer Custom Type) → `slicemachine push`
+4. Committen + pushen → Netlify-Deploy; erst dann gilt es live
+
+`gating.json` (Plan-Definition) ist Kern → Änderungen auf `main`, dann in die Kunden-Branches mergen. Plan/Schalter eines einzelnen Kunden → nur auf dessen Branch.
 
 ### Plan-Hierarchie & Features
 
@@ -430,10 +460,18 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
-- `EMAIL_FROM_ADDRESS`: Absender-E-Mail (muss in Resend verifiziert sein)
-- `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
+- **Absender-Adresse:** Prismic Einstellungen → «Absender-E-Mail» (`email_from_address`, Hauptsprache), gilt für **alle** Mails. Im Code nur über `getMailFrom()` (`src/lib/server/mailFrom.ts`) lesen. Domain muss in Resend verifiziert sein («Inhalte prüfen» meldet leeres Feld und nicht verifizierte Domain). `EMAIL_FROM_ADDRESS` ist veraltet: nur noch Übergangs-Rückgriff, solange das Feld leer ist
+- **Absender-Name** (`email_from_name`, leer = Website-Name, dann Verantwortliche Person/Firma) und **Benachrichtigungen an (intern)** (`notification_email`, leer = Verantwortliche E-Mail, dann Korrespondenz E-Mail): ebenfalls Einstellungen → Main. `getMailFrom()` liefert «Name <Adresse>», `getMailAddress()` nur die Adresse, `getNotifyTo()` den internen Empfänger. `EMAIL_FROM_NAME` und `INVOICE_TO_EMAIL` gibt es nicht mehr
 
-Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+
+## Stundenabrechnung (`/admin/stunden`)
+
+- Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
+- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
+- **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
+- Admin: pro Person ein Abschnitt; **Offen** (Tabelle mit Dauer Std./Min., Total Dauer + Spesen, Bearbeiten/Löschen) und **Abgerechnet** (pro Abrechnung aufklappbar, nur lesen, «Zurücksetzen» → wieder offen). «Offene Stunden abrechnen» setzt `abgerechnetAm` + gemeinsame `abrechnung`-ID (`abrechnen()`); abgerechnete Einträge sind serverseitig gegen Ändern/Löschen gesperrt
+- CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal, Spalte Status), Filter `?name=`, `?status=offen|abgerechnet`, `?abrechnung=<id>`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 

@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { browser, building } from '$app/environment';
+	import { browser, building, dev } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
@@ -239,6 +239,8 @@
 	}
 	// Inline <head> script (runs before the first paint on full page loads); client-side
 	// navigations are handled by the reactive redirect above
+	// Legal page from a landing page: hide header/footer before hydration (no flash of navigation)
+	const legalLandingScript = `<script>if(/[?&]landing(=|&|$)/.test(location.search))document.documentElement.classList.add('legal-landing')<\/script>`;
 	const rememberedLangScript = `<script>(function(){try{var pref=localStorage.getItem('klap_lang');if(!pref)return;var links=[].slice.call(document.querySelectorAll('link[rel=alternate][hreflang]'));var first=location.pathname.split('/')[1];if(links.some(function(l){return l.hreflang===first}))return;var t=links.filter(function(l){return l.hreflang===pref})[0];if(!t)return;var path=new URL(t.href).pathname;if(path!==location.pathname)location.replace(path+location.search+location.hash)}catch(e){}})()<\/script>`;
 
 	// Shown once per page and visit (translationNoticeShown)
@@ -448,18 +450,40 @@
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
 		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
-	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	// Legal page opened from a landing page (legal bar links with ?landing): landing style too.
+	// Only in the browser — prerendered pages cannot read query parameters on the server;
+	// legalLandingScript (head) hides the navigation before hydration.
+	$: isLegalLanding =
+		browser &&
+		($page.route.id ?? '').includes('[legal=legal]') &&
+		$page.url.searchParams.has('landing');
+	$: if (browser) document.documentElement.classList.toggle('legal-landing', isLegalLanding);
+	$: hideChrome =
+		isLandingPage || isLegalLanding || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
 	// Landing pages hide header and footer — except the legal links
 	$: showLegalBarOnly =
-		isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome && !isAdminPage;
+		(isLandingPage || isLegalLanding) &&
+		!isSlicePreview &&
+		!isDokuPage &&
+		!isNoChrome &&
+		!isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
+	// Service worker: only SvelteKit's /service-worker.js (feature pwa, svelte.config.js).
+	// The old /sw.js is no longer registered (both replaced each other → hanging tabs).
+	// Dev server: no service worker at all — remove any installed one (e.g. from another branch,
+	// all branches share localhost:5173), otherwise it intercepts and caches the Vite modules.
 	onMount(() => {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/sw.js').catch(() => {});
-		}
+		if (!dev || !('serviceWorker' in navigator)) return;
+		navigator.serviceWorker.getRegistrations().then((registrations) => {
+			if (!registrations.length) return;
+			Promise.all(registrations.map((r) => r.unregister()))
+				.then(() => caches.keys())
+				.then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+				.then(() => console.info('[dev] Service Worker entfernt (im Dev-Server deaktiviert)'));
+		});
 	});
 
 	onMount(() => {
@@ -512,6 +536,7 @@
 			{@html rememberedLangScript}
 		{/if}
 	{/if}
+	{@html legalLandingScript}
 
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
@@ -530,7 +555,8 @@
 
 <a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
-<div class="bg-page-bg [min-height:100vh]">
+<!-- Sticky footer: column fills the screen, <main> grows → footer at the bottom on short pages -->
+<div class="site-shell bg-page-bg">
 	{#if !hideChrome}
 		<Header
 			navigation={chromeNavigation}
@@ -577,7 +603,12 @@
 	{:else if showLegalBarOnly && chromeSettings}
 		<!-- Landing page: the legal links stay (privacy, legal notice, cookie settings) -->
 		<Bounded tag="footer" yPadding="none" class="footer-body footer-legal-bar text-center">
-			<FooterLegalLinks settings={chromeSettings} lang={chromeLang} mainLang={data.mainLang} />
+			<FooterLegalLinks
+				settings={chromeSettings}
+				lang={chromeLang}
+				mainLang={data.mainLang}
+				landing
+			/>
 		</Bounded>
 	{/if}
 </div>

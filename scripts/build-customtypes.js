@@ -47,7 +47,7 @@ import {
 	rmSync,
 	statSync
 } from 'fs';
-import { readOverrides } from '../src/lib/gatingOverrides.js';
+import { configUncommitted, readOverrides } from '../src/lib/gatingOverrides.js';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -102,7 +102,7 @@ function copyCustomType(srcPath, typeId, label) {
 
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
-// Lokale Feature-Schalter des Agency-Editors, pro Prismic-Repository (src/lib/gatingOverrides.js)
+// Feature-Schalter des Agency-Editors für diesen Branch (slicemachine.config.json, src/lib/gatingOverrides.js)
 const overrides = readOverrides(ROOT);
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
@@ -113,7 +113,16 @@ function resolvePlanChain(planKey) {
 	return [planKey, ...(parent ? resolvePlanChain(parent) : [])];
 }
 
-const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
+// Plan/Feature-Schalter geändert, aber nicht committet → gelten nicht in Production
+if (configUncommitted(ROOT)) {
+	console.warn(
+		'⚠ slicemachine.config.json hat nicht committete Änderungen (Plan / features / featuresDisabled) — erst nach Commit und Deploy gelten sie in Production.'
+	);
+}
+
+// Ohne Plan gilt «basis» — gleich wie src/lib/server/features.ts (Website/API)
+if (!config.plan) console.warn('⚠ slicemachine.config.json: kein "plan" — es gilt «basis»');
+const activePlanChain = resolvePlanChain(config.plan || 'basis');
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
@@ -121,7 +130,7 @@ const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
 
-// Zusätzliche Features aus gating.overrides.json (pro Repository, siehe gatingOverrides.js)
+// Zusatz-Features / abgeschaltete Features dieses Branches (slicemachine.config.json)
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
 const disabledFeatures = overrides.disabled ?? [];
 const allFeatures = [
@@ -129,7 +138,7 @@ const allFeatures = [
 ];
 
 console.log(
-	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
+	`Plan: ${config.plan || 'basis'} (${gating.plans[config.plan || 'basis']?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
 );
 
 // ── Gating-Hilfsfunktionen ───────────────────────────────────────────────────────
@@ -199,6 +208,15 @@ const customTypeLabelOverrides = {
 	page: 'Seiten',
 	settings: 'Einstellungen'
 };
+
+/** Group field: labels of its sub-fields (key → label), e.g. for «Inhalte prüfen» */
+function subfieldLabels(fieldConfig) {
+	const fields = fieldConfig?.type === 'Group' ? fieldConfig.config?.fields : null;
+	if (!fields) return undefined;
+	return Object.fromEntries(
+		Object.entries(fields).map(([key, f]) => [key, f?.config?.label || key])
+	);
+}
 
 function describeField(fieldConfig, label, elementType) {
 	const config = fieldConfig?.config ?? {};
@@ -278,7 +296,8 @@ function collectFieldReference() {
 						fieldConfig?.config?.label || fieldName,
 						'Custom Type'
 					),
-					type: fieldConfig?.type || 'unknown'
+					type: fieldConfig?.type || 'unknown',
+					subfields: subfieldLabels(fieldConfig)
 				});
 			}
 		}
@@ -303,6 +322,8 @@ function collectFieldReference() {
 							name: model.name || entry.name,
 							elementType: 'Slice',
 							customType: entry.name,
+							// slice_type in the Prismic data (e.g. text_with_image) → «Inhalte prüfen» names the field
+							sliceType: model.id,
 							customTypeLabel: model.name || entry.name,
 							tab: variation.name || variation.id,
 							field: fieldName,
@@ -313,7 +334,8 @@ function collectFieldReference() {
 								fieldConfig?.config?.label || fieldName,
 								'Slice'
 							),
-							type: fieldConfig?.type || 'unknown'
+							type: fieldConfig?.type || 'unknown',
+							subfields: subfieldLabels(fieldConfig)
 						});
 					}
 				}

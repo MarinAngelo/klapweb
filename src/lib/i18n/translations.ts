@@ -901,6 +901,308 @@ export const translations: Record<string, Record<string, string>> = {
 			'Agency workflows: Prismic account, Netlify, mail, catalogue, migration (password-protected)'
 	},
 	Kopiert: { 'de-ch': 'Kopiert', 'en-us': 'Copied' },
+	'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».':
+		{
+			'de-ch':
+				'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».',
+			'en-us':
+				'Note: the sender e-mail is no longer a variable, it is set in Prismic under Settings → «Absender-E-Mail».'
+		},
+	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY oder «Absender-E-Mail» in den Einstellungen fehlt.':
+		{
+			'de-ch':
+				'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY oder «Absender-E-Mail» in den Einstellungen fehlt.',
+			'en-us':
+				'Email sending not configured: RESEND_API_KEY or «Absender-E-Mail» in the settings is missing.'
+		},
+	'Absender-E-Mail fehlt': {
+		'de-ch': 'Absender-E-Mail fehlt',
+		'en-us': 'Sender e-mail missing'
+	},
+	'In den Einstellungen «Absender-E-Mail» eintragen (Domain in Resend verifiziert)': {
+		'de-ch': 'In den Einstellungen «Absender-E-Mail» eintragen (Domain in Resend verifiziert)',
+		'en-us': 'Enter «Absender-E-Mail» in the settings (domain verified in Resend)'
+	},
+	'Absender-Domain in Resend nicht verifiziert': {
+		'de-ch': 'Absender-Domain in Resend nicht verifiziert',
+		'en-us': 'Sender domain not verified in Resend'
+	},
+	'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen': {
+		'de-ch': 'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen',
+		'en-us': 'Add the domain in Resend under «Domains» and set the DNS records'
+	},
+	'Mögliche Ursachen in Prismic': {
+		'de-ch': 'Mögliche Ursachen in Prismic',
+		'en-us': 'Possible causes in Prismic'
+	},
+	'Kein «Arbeitstag» veröffentlicht': {
+		'de-ch': 'Kein «Arbeitstag» veröffentlicht',
+		'en-us': 'No «Arbeitstag» (working day) published'
+	},
+	'Datum fehlt': {
+		'de-ch': 'Datum fehlt',
+		'en-us': 'Date missing'
+	},
+	'«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM': {
+		'de-ch': '«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM',
+		'en-us': '«Startzeit» or «Endzeit» missing or not in HH:MM format'
+	},
+	'«Endzeit» liegt nicht nach der «Startzeit»': {
+		'de-ch': '«Endzeit» liegt nicht nach der «Startzeit»',
+		'en-us': '«Endzeit» is not after «Startzeit»'
+	},
+	'Kein «Buchbares Angebot» verknüpft': {
+		'de-ch': 'Kein «Buchbares Angebot» verknüpft',
+		'en-us': 'No «Buchbares Angebot» (bookable offer) linked'
+	},
+	'Angebot «{titel}» ist nicht veröffentlicht': {
+		'de-ch': 'Angebot «{titel}» ist nicht veröffentlicht',
+		'en-us': 'Offer «{titel}» is not published'
+	},
+	'Angebot «{titel}» ist nicht aktiv': {
+		'de-ch': 'Angebot «{titel}» ist nicht aktiv',
+		'en-us': 'Offer «{titel}» is not active'
+	},
+	'Angebot «{titel}»: «Dauer (Minuten)» fehlt': {
+		'de-ch': 'Angebot «{titel}»: «Dauer (Minuten)» fehlt',
+		'en-us': 'Offer «{titel}»: «Dauer (Minuten)» (duration) missing'
+	},
+	'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster': {
+		'de-ch': 'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster',
+		'en-us': 'Offer «{titel}»: duration + buffer ({minuten} min) do not fit into the time window'
+	},
+	'Die Serie ist abgelaufen (letzter Tag {datum})': {
+		'de-ch': 'Die Serie ist abgelaufen (letzter Tag {datum})',
+		'en-us': 'The series has ended (last day {datum})'
+	},
+	'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen': {
+		'de-ch': 'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen',
+		'en-us': 'Complete it in the working day or bookable offer, then publish'
+	},
+	'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz': {
+		'de-ch': 'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz',
+		'en-us': '«Stundenabrechnung» form on a page without password protection'
+	},
+	'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern': {
+		'de-ch': 'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern',
+		'en-us': 'Turn on «Passwortgeschützt» for the page, otherwise nobody can save hours'
+	},
+	Stunden: {
+		'de-ch': 'Stunden',
+		'en-us': 'Hours'
+	},
+	'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export': {
+		'de-ch': 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',
+		'en-us': 'Recorded working hours and expenses, totals and CSV export'
+	},
+	'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Record them on the password-protected page with this form.'
+		},
+	Von: {
+		'de-ch': 'Von',
+		'en-us': 'From'
+	},
+	Bis: {
+		'de-ch': 'Bis',
+		'en-us': 'To'
+	},
+	'Projekt / Kunde': {
+		'de-ch': 'Projekt / Kunde',
+		'en-us': 'Project / client'
+	},
+	Tätigkeit: {
+		'de-ch': 'Tätigkeit',
+		'en-us': 'Activity'
+	},
+	'Spesen (CHF)': {
+		'de-ch': 'Spesen (CHF)',
+		'en-us': 'Expenses (CHF)'
+	},
+	'Std.': {
+		'de-ch': 'Std.',
+		'en-us': 'h'
+	},
+	'CSV-Export': {
+		'de-ch': 'CSV-Export',
+		'en-us': 'CSV export'
+	},
+	Bearbeiten: {
+		'de-ch': 'Bearbeiten',
+		'en-us': 'Edit'
+	},
+	'Diesen Eintrag endgültig löschen?': {
+		'de-ch': 'Diesen Eintrag endgültig löschen?',
+		'en-us': 'Delete this entry permanently?'
+	},
+	'Der Eintrag wurde gespeichert.': {
+		'de-ch': 'Der Eintrag wurde gespeichert.',
+		'en-us': 'The entry has been saved.'
+	},
+	'Weiteren Eintrag erfassen': {
+		'de-ch': 'Weiteren Eintrag erfassen',
+		'en-us': 'Record another entry'
+	},
+	'Eintrag speichern': {
+		'de-ch': 'Eintrag speichern',
+		'en-us': 'Save entry'
+	},
+	'Der Eintrag konnte nicht gespeichert werden.': {
+		'de-ch': 'Der Eintrag konnte nicht gespeichert werden.',
+		'en-us': 'The entry could not be saved.'
+	},
+	'Bitte melde dich zuerst mit dem Seiten-Passwort an.': {
+		'de-ch': 'Bitte melde dich zuerst mit dem Seiten-Passwort an.',
+		'en-us': 'Please log in with the page password first.'
+	},
+	'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.': {
+		'de-ch': 'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.',
+		'en-us': 'Please fill in «From» and «To» with date and time.'
+	},
+	'«Bis» muss nach «Von» liegen.': {
+		'de-ch': '«Bis» muss nach «Von» liegen.',
+		'en-us': '«To» must be after «From».'
+	},
+	'Ein Eintrag darf höchstens 24 Stunden dauern.': {
+		'de-ch': 'Ein Eintrag darf höchstens 24 Stunden dauern.',
+		'en-us': 'An entry may last at most 24 hours.'
+	},
+	'Spesen: bitte einen Betrag wie 12.50 eingeben.': {
+		'de-ch': 'Spesen: bitte einen Betrag wie 12.50 eingeben.',
+		'en-us': 'Expenses: please enter an amount like 12.50.'
+	},
+	'Ungültiger Eintrag': {
+		'de-ch': 'Ungültiger Eintrag',
+		'en-us': 'Invalid entry'
+	},
+	'Eintrag nicht gefunden': {
+		'de-ch': 'Eintrag nicht gefunden',
+		'en-us': 'Entry not found'
+	},
+	'Spesen-Beschreibung': { 'de-ch': 'Spesen-Beschreibung', 'en-us': 'Expense description' },
+	'z.B. Zugbillett, Parkgebühr': {
+		'de-ch': 'z.B. Zugbillett, Parkgebühr',
+		'en-us': 'e.g. train ticket, parking fee'
+	},
+	'Bitte deinen Namen eintragen.': {
+		'de-ch': 'Bitte deinen Namen eintragen.',
+		'en-us': 'Please enter your name.'
+	},
+	'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.':
+		{
+			'de-ch':
+				'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.',
+			'en-us':
+				'Plan and switches are saved in slicemachine.config.json of this branch. Commit and deploy afterwards so they also apply in production.'
+		},
+	'Nur auf dem lokalen Dev-Server möglich': {
+		'de-ch': 'Nur auf dem lokalen Dev-Server möglich',
+		'en-us': 'Only possible on the local dev server'
+	},
+	'Inhalts-Element ohne Inhalt': {
+		'de-ch': 'Inhalts-Element ohne Inhalt',
+		'en-us': 'Content element without content'
+	},
+	'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen': {
+		'de-ch': 'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen',
+		'en-us': 'Variation no longer exists – remove the element in Prismic and add it again'
+	},
+	'Gespeichert in slicemachine.config.json.': {
+		'de-ch': 'Gespeichert in slicemachine.config.json.',
+		'en-us': 'Saved in slicemachine.config.json.'
+	},
+	'Jetzt committen und deployen': {
+		'de-ch': 'Jetzt committen und deployen',
+		'en-us': 'Now commit and deploy'
+	},
+	'sonst gelten Plan und Feature-Schalter nicht in Production.': {
+		'de-ch': 'sonst gelten Plan und Feature-Schalter nicht in Production.',
+		'en-us': 'otherwise plan and feature switches do not apply in production.'
+	},
+	'slicemachine.config.json hat nicht committete Änderungen': {
+		'de-ch': 'slicemachine.config.json hat nicht committete Änderungen',
+		'en-us': 'slicemachine.config.json has uncommitted changes'
+	},
+	'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production':
+		{
+			'de-ch':
+				'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production',
+			'en-us':
+				'These switches are only in the old local file gating.overrides.json and do not apply in production'
+		},
+	'Unten anwählen und speichern, dann committen.': {
+		'de-ch': 'Unten anwählen und speichern, dann committen.',
+		'en-us': 'Select them below and save, then commit.'
+	},
+	'Ohne Name': { 'de-ch': 'Ohne Name', 'en-us': 'Without name' },
+	Spesen: { 'de-ch': 'Spesen', 'en-us': 'Expenses' },
+	'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Mark open hours per person as billed with «Abrechnen»; they then appear under «Abgerechnet» (billed).'
+		},
+	'{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?': {
+		'de-ch': '{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?',
+		'en-us': 'Bill {anzahl} open entries ({dauer}) of {name} now?'
+	},
+	'{anzahl} Einträge abgerechnet.': {
+		'de-ch': '{anzahl} Einträge abgerechnet.',
+		'en-us': '{anzahl} entries billed.'
+	},
+	Offen: {
+		'de-ch': 'Offen',
+		'en-us': 'Open'
+	},
+	Abgerechnet: {
+		'de-ch': 'Abgerechnet',
+		'en-us': 'Billed'
+	},
+	'Offene Stunden abrechnen': {
+		'de-ch': 'Offene Stunden abrechnen',
+		'en-us': 'Bill open hours'
+	},
+	'Keine offenen Einträge.': {
+		'de-ch': 'Keine offenen Einträge.',
+		'en-us': 'No open entries.'
+	},
+	'Abrechnung vom': {
+		'de-ch': 'Abrechnung vom',
+		'en-us': 'Billing of'
+	},
+	Eintrag: {
+		'de-ch': 'Eintrag',
+		'en-us': 'entry'
+	},
+	Einträge: {
+		'de-ch': 'Einträge',
+		'en-us': 'entries'
+	},
+	'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.': {
+		'de-ch': 'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.',
+		'en-us': 'Reset billing? The entries will be open again.'
+	},
+	'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.': {
+		'de-ch':
+			'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.',
+		'en-us': 'Billed entries cannot be changed — reset the billing first.'
+	},
+	'Ungültige Abrechnung': {
+		'de-ch': 'Ungültige Abrechnung',
+		'en-us': 'Invalid billing'
+	},
+	'Pflichtangaben für Impressum/Datenschutz fehlen': {
+		'de-ch': 'Pflichtangaben für Impressum/Datenschutz fehlen',
+		'en-us': 'Required details for legal notice/privacy policy missing'
+	},
+	'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen': {
+		'de-ch': 'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen',
+		'en-us': 'Fill in under Settings (tab «Main») and publish'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
@@ -1568,13 +1870,6 @@ export const translations: Record<string, Record<string, string>> = {
 	Setzen: { 'de-ch': 'Setzen', 'en-us': 'Set' },
 	'Lokal in der Datei': { 'de-ch': 'Lokal in der Datei', 'en-us': 'Locally in the file' },
 	'auf Netlify unter': { 'de-ch': 'auf Netlify unter', 'en-us': 'on Netlify under' },
-	'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.':
-		{
-			'de-ch':
-				'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.',
-			'en-us':
-				'Note: Some variables (e.g. EMAIL_FROM_ADDRESS) have CMS fallbacks – without them the fallbacks apply or sending is skipped.'
-		},
 	Verstanden: { 'de-ch': 'Verstanden', 'en-us': 'Got it' },
 	'Gating-Übersicht': { 'de-ch': 'Gating-Übersicht', 'en-us': 'Gating overview' },
 	'Falsches Passwort': { 'de-ch': 'Falsches Passwort', 'en-us': 'Wrong password' },
@@ -1853,10 +2148,6 @@ export const translations: Record<string, Record<string, string>> = {
 			'en-us':
 				'Send info mails to all customers. Write them in Prismic (type “Newsletter”) and publish them there – they will then appear here.'
 		},
-	'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.': {
-		'de-ch': 'E-Mail-Versand nicht konfiguriert: RESEND_API_KEY und EMAIL_FROM_ADDRESS fehlen.',
-		'en-us': 'Email sending not configured: RESEND_API_KEY and EMAIL_FROM_ADDRESS are missing.'
-	},
 	'Test-Mail gesendet an': { 'de-ch': 'Test-Mail gesendet an', 'en-us': 'Test mail sent to' },
 	'Info-Mail gesendet an': { 'de-ch': 'Info-Mail gesendet an', 'en-us': 'Info mail sent to' },
 	Empfänger: { 'de-ch': 'Empfänger', 'en-us': 'recipients' },

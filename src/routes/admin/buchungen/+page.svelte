@@ -2,6 +2,8 @@
 	import type { PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { formatDateWithWeekday } from '$lib/utils/formatDate';
+	import { _ } from '$lib/stores/i18n';
+	import { formatProblem } from '$lib/terminDiagnose.js';
 	export let data: PageData;
 
 	function confirmDelete(e: SubmitEvent, titel: string) {
@@ -188,6 +190,22 @@
 		</h2>
 		{#if data.freeSlots.length === 0}
 			<p class="admin-empty">Keine freien Termine.</p>
+			{#if data.freeSlotHints.length}
+				<!-- Why: missing or contradictory entries in Prismic (src/lib/terminDiagnose.js) -->
+				<div class="admin-notice admin-notice-warn mt-3">
+					<p class="m-0 mb-2 font-semibold">{$_('Mögliche Ursachen in Prismic')}:</p>
+					<ul class="m-0 pl-5">
+						{#each data.freeSlotHints as hint}
+							{#each hint.problems as problem}
+								<li>
+									{#if hint.label}<span class="font-semibold">{hint.label}</span>:
+									{/if}{formatProblem($_(problem.key), problem.params)}
+								</li>
+							{/each}
+						{/each}
+					</ul>
+				</div>
+			{/if}
 		{:else}
 			<form method="POST" action="?/cancelSelected" on:submit={confirmBulkCancel}>
 				<div class="mb-3 flex flex-wrap items-center gap-3">

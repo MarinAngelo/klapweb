@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatProblem } from '$lib/terminDiagnose.js';
 	import type { PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { _ } from '$lib/stores/i18n';
@@ -46,6 +47,9 @@
 								<td>
 									<span class="font-semibold">{p.doc.title}</span>
 									<span class="admin-mono admin-muted">{p.doc.type}</span>
+									{#if p.field}
+										<span class="block text-sm">{$_('Feld')}: {p.field}</span>
+									{/if}
 								</td>
 								<td class="admin-muted">{p.doc.lang}</td>
 								{#if p.kind === 'relative'}
@@ -56,6 +60,55 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'legal_missing'}
+									<td>
+										{$_('Pflichtangaben für Impressum/Datenschutz fehlen')}:
+										<span class="admin-mono">{p.token}</span>
+									</td>
+									<td>{$_('In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen')}</td>
+								{:else if p.kind === 'empty_slice'}
+									<td>
+										{$_('Inhalts-Element ohne Inhalt')}: <span class="admin-mono">{p.token}</span>
+									</td>
+									<td
+										>{$_(
+											'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen'
+										)}</td
+									>
+								{:else if p.kind === 'stunden_unprotected'}
+									<td>{$_('Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz')}</td>
+									<td
+										>{$_(
+											'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern'
+										)}</td
+									>
+								{:else if p.kind === 'termin' && p.problem}
+									<td
+										>{$_('Terminbuchung')}: {formatProblem($_(p.problem.key), p.problem.params)}</td
+									>
+									<td
+										>{$_('Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen')}</td
+									>
+								{:else if p.kind === 'mail_from'}
+									<td>
+										{$_('Absender-E-Mail fehlt')}{#if p.url}: <span class="admin-mono">{p.url}</span
+											>{/if}
+									</td>
+									<td
+										>{$_(
+											'In den Einstellungen «Absender-E-Mail» eintragen (Domain in Resend verifiziert)'
+										)}</td
+									>
+								{:else if p.kind === 'mail_domain'}
+									<td>
+										{$_('Absender-Domain in Resend nicht verifiziert')}:
+										<span class="admin-mono">{p.url}</span>
+									</td>
+									<td
+										>{$_(
+											'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen'
+										)}</td
+									>
 								{:else if p.kind === 'map_point'}
 									<td>
 										{$_('Kartenpunkt nicht erkannt')}: <span class="admin-mono">{p.url}</span>

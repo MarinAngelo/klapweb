@@ -364,7 +364,8 @@
 		htmlType === 'search' ||
 		htmlType === 'code' ||
 		htmlType === 'email' ||
-		htmlType === 'select'
+		htmlType === 'select' ||
+		htmlType === 'textarea'
 	)
 		value = textValue;
 	$: if (htmlType === 'number') value = numberValue ?? '';
@@ -390,7 +391,7 @@
 	<!-- Label -->
 	{#if htmlType !== 'checkbox' && showLabel}
 		<label
-			for={key}
+			for={inputId ?? key}
 			class={inline
 				? 'text-base font-bold flex-shrink-0'
 				: compact
@@ -484,7 +485,7 @@
 					</select>
 					<input
 						type="tel"
-						id={key}
+						id={inputId ?? key}
 						bind:value={localNumber}
 						required={field.required}
 						placeholder={field.placeholder ?? ''}
@@ -508,7 +509,7 @@
 					</select>
 					<input
 						type="tel"
-						id={key}
+						id={inputId ?? key}
 						bind:value={localNumber}
 						required={field.required}
 						placeholder={field.placeholder ?? ''}
@@ -525,11 +526,12 @@
 		{:else if htmlType === 'textarea'}
 			{#if compact}
 				<textarea
-					id={key}
+					id={inputId ?? key}
 					name={key}
 					required={field.required}
 					placeholder={field.placeholder ?? ''}
 					rows="4"
+					bind:value={textValue}
 					class="form-input-compact"
 					on:blur
 					on:change
@@ -537,11 +539,12 @@
 			{:else}
 				<div class="form-input-underline">
 					<textarea
-						id={key}
+						id={inputId ?? key}
 						name={key}
 						required={field.required}
 						placeholder={field.placeholder ?? ''}
 						rows="4"
+						bind:value={textValue}
 						class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 bg-page-bg text-page"
 						on:blur
 						on:change
@@ -558,7 +561,8 @@
 				on:blur
 				on:change
 			>
-				<option value="" disabled>{$_('Bitte auswählen')}</option>
+				<!-- Optional field: the empty choice can be selected again -->
+				<option value="" disabled={!!field.required}>{$_('Bitte auswählen')}</option>
 				{#each field.options?.split(',') || [] as option}
 					<option
 						value={option?.trim() ?? ''}
@@ -698,7 +702,7 @@
 			{/if}
 		{:else if htmlType === 'select-zeitzone'}
 			<select
-				id={key}
+				id={inputId ?? key}
 				name={key}
 				required={field.required}
 				class={compact ? 'form-input-compact' : 'input form-input rounded-md'}

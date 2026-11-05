@@ -108,10 +108,31 @@
 					"placeholder": ""
 				}
 			},
+			"email_from_address": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail (alle E-Mails der Website)",
+					"placeholder": "info@deine-domain.ch – Domain muss in Resend verifiziert sein"
+				}
+			},
+			"email_from_name": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-Name",
+					"placeholder": "Name, unter dem die E-Mails erscheinen – leer = Website-Name"
+				}
+			},
+			"notification_email": {
+				"type": "Text",
+				"config": {
+					"label": "Benachrichtigungen an (intern)",
+					"placeholder": "E-Mail für Meldungen zu Buchungen, Formularen, Bestellungen – leer = Verantwortliche E-Mail"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Datenschutzerkärung",
+					"label": "Datenschutzerklärung",
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
