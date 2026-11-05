@@ -1195,6 +1195,14 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Ungültige Abrechnung',
 		'en-us': 'Invalid billing'
 	},
+	'Pflichtangaben für Impressum/Datenschutz fehlen': {
+		'de-ch': 'Pflichtangaben für Impressum/Datenschutz fehlen',
+		'en-us': 'Required details for legal notice/privacy policy missing'
+	},
+	'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen': {
+		'de-ch': 'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen',
+		'en-us': 'Fill in under Settings (tab «Main») and publish'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',

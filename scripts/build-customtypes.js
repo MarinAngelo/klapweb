@@ -209,6 +209,15 @@ const customTypeLabelOverrides = {
 	settings: 'Einstellungen'
 };
 
+/** Group field: labels of its sub-fields (key → label), e.g. for «Inhalte prüfen» */
+function subfieldLabels(fieldConfig) {
+	const fields = fieldConfig?.type === 'Group' ? fieldConfig.config?.fields : null;
+	if (!fields) return undefined;
+	return Object.fromEntries(
+		Object.entries(fields).map(([key, f]) => [key, f?.config?.label || key])
+	);
+}
+
 function describeField(fieldConfig, label, elementType) {
 	const config = fieldConfig?.config ?? {};
 	if (config.description || fieldConfig?.description) {
@@ -287,7 +296,8 @@ function collectFieldReference() {
 						fieldConfig?.config?.label || fieldName,
 						'Custom Type'
 					),
-					type: fieldConfig?.type || 'unknown'
+					type: fieldConfig?.type || 'unknown',
+					subfields: subfieldLabels(fieldConfig)
 				});
 			}
 		}
@@ -312,6 +322,8 @@ function collectFieldReference() {
 							name: model.name || entry.name,
 							elementType: 'Slice',
 							customType: entry.name,
+							// slice_type in the Prismic data (e.g. text_with_image) → «Inhalte prüfen» names the field
+							sliceType: model.id,
 							customTypeLabel: model.name || entry.name,
 							tab: variation.name || variation.id,
 							field: fieldName,
@@ -322,7 +334,8 @@ function collectFieldReference() {
 								fieldConfig?.config?.label || fieldName,
 								'Slice'
 							),
-							type: fieldConfig?.type || 'unknown'
+							type: fieldConfig?.type || 'unknown',
+							subfields: subfieldLabels(fieldConfig)
 						});
 					}
 				}

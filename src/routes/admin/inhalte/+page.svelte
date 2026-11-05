@@ -47,6 +47,9 @@
 								<td>
 									<span class="font-semibold">{p.doc.title}</span>
 									<span class="admin-mono admin-muted">{p.doc.type}</span>
+									{#if p.field}
+										<span class="block text-sm">{$_('Feld')}: {p.field}</span>
+									{/if}
 								</td>
 								<td class="admin-muted">{p.doc.lang}</td>
 								{#if p.kind === 'relative'}
@@ -57,6 +60,12 @@
 										{$_('«/» voranstellen oder als Link auf ein Prismic-Dokument setzen')}:
 										<span class="admin-mono">/{p.url}</span>
 									</td>
+								{:else if p.kind === 'legal_missing'}
+									<td>
+										{$_('Pflichtangaben für Impressum/Datenschutz fehlen')}:
+										<span class="admin-mono">{p.token}</span>
+									</td>
+									<td>{$_('In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen')}</td>
 								{:else if p.kind === 'empty_slice'}
 									<td>
 										{$_('Inhalts-Element ohne Inhalt')}: <span class="admin-mono">{p.token}</span>
