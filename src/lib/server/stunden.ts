@@ -16,7 +16,8 @@ export type StundenEintrag = {
 	bis: string;
 	/** Who worked (missing in older entries) */
 	name?: string;
-	projekt: string;
+	/** Former field «Projekt / Kunde» (removed from the form, only in older entries) */
+	projekt?: string;
 	taetigkeit: string;
 	/** Expenses in the site currency (CHF), 0 = none */
 	spesen: number;
@@ -28,7 +29,7 @@ export type StundenEintrag = {
 
 export type StundenInput = Pick<
 	StundenEintrag,
-	'von' | 'bis' | 'name' | 'projekt' | 'taetigkeit' | 'spesen' | 'spesenText'
+	'von' | 'bis' | 'name' | 'taetigkeit' | 'spesen' | 'spesenText'
 >;
 
 const LOCAL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
@@ -85,7 +86,6 @@ export function parseStundenInput(raw: Record<string, unknown>): StundenInput | 
 		von,
 		bis,
 		name,
-		projekt: text(raw.projekt),
 		taetigkeit: text(raw.taetigkeit),
 		spesen: Math.round(spesen * 100) / 100,
 		spesenText: text(raw.spesenText)

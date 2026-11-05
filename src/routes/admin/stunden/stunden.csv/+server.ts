@@ -22,7 +22,6 @@ export async function GET() {
 			e.name ?? '',
 			dt(e.von),
 			dt(e.bis),
-			e.projekt,
 			e.taetigkeit,
 			hours(min),
 			e.spesenText ?? '',
@@ -35,13 +34,12 @@ export async function GET() {
 		'Name',
 		'Von',
 		'Bis',
-		'Projekt / Kunde',
 		'Tätigkeit',
 		'Stunden',
 		'Spesen-Beschreibung',
 		'Spesen (CHF)'
 	];
-	const total = ['Total', '', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2)];
+	const total = ['Total', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2)];
 	const csv = [header.map(esc).join(';'), ...rows, total.map(esc).join(';')].join('\r\n');
 
 	return new Response('﻿' + csv, {

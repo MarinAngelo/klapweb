@@ -32,6 +32,23 @@ self.addEventListener('fetch', (event) => {
 	// Nur GET-Requests behandeln
 	if (request.method !== 'GET') return;
 
+	// Prismic images (formerly /sw.js): cache-first, URLs incl. size parameters do not change
+	if (url.hostname === 'images.prismic.io') {
+		event.respondWith(
+			caches.open(CACHE_NAME).then((cache) =>
+				cache.match(request).then(
+					(cached) =>
+						cached ??
+						fetch(request).then((response) => {
+							if (response.ok) cache.put(request, response.clone());
+							return response;
+						})
+				)
+			)
+		);
+		return;
+	}
+
 	// Externe Domains nicht abfangen – Browser handhabt diese direkt
 	if (url.origin !== self.location.origin) return;
 

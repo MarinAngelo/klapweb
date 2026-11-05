@@ -94,6 +94,12 @@ Regeln:
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
 
+## Service Worker
+
+- Nur **einer**: SvelteKits `src/service-worker.ts` (Feature `pwa`, Registrierung in `svelte.config.js`), cacht auch Prismic-Bilder. Nie einen zweiten Service Worker registrieren — zwei auf demselben Scope ersetzen sich bei jedem Seitenaufruf (hängende Tabs)
+- `static/sw.js` ist ein Selbstzerstörer für Besucher mit dem alten Worker — nicht wieder verwenden
+- Im Dev-Server nie aktiv (`svelte.config.js`); das Layout entfernt dort installierte Worker (alle Branches teilen `localhost:5173`)
+
 ## Schriften (selbst gehostet, kein Google)
 
 - Google-Schriften werden beim `npm run dev` / `build` von `scripts/self-host-fonts.js` nach `static/fonts/` geladen (gitignored): eine CSS pro Schrift (`/fonts/<slug>.css`) + woff2. Besucher laden nie von Google
@@ -462,7 +468,7 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 ## Stundenabrechnung (`/admin/stunden`)
 
 - Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
-- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Projekt/Kunde (optional; Auswahl aus Feld «Projekte / Kunden zur Auswahl» oder frei), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
+- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
 - **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
 - Admin: Tabelle mit Dauer (Std./Min.), Total Dauer + Spesen, Bearbeiten/Löschen, CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal)
 

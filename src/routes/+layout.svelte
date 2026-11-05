@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { browser, building } from '$app/environment';
+	import { browser, building, dev } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
@@ -470,10 +470,19 @@
 
 	let studioOpen = false;
 
+	// Service worker: only SvelteKit's /service-worker.js (feature pwa, svelte.config.js).
+	// The old /sw.js is no longer registered (both replaced each other → hanging tabs).
+	// Dev server: no service worker at all — remove any installed one (e.g. from another branch,
+	// all branches share localhost:5173), otherwise it intercepts and caches the Vite modules.
 	onMount(() => {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/sw.js').catch(() => {});
-		}
+		if (!dev || !('serviceWorker' in navigator)) return;
+		navigator.serviceWorker.getRegistrations().then((registrations) => {
+			if (!registrations.length) return;
+			Promise.all(registrations.map((r) => r.unregister()))
+				.then(() => caches.keys())
+				.then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+				.then(() => console.info('[dev] Service Worker entfernt (im Dev-Server deaktiviert)'));
+		});
 	});
 
 	onMount(() => {

@@ -75,7 +75,6 @@
 							<th>{$_('Name')}</th>
 							<th>{$_('Von')}</th>
 							<th>{$_('Bis')}</th>
-							<th>{$_('Projekt / Kunde')}</th>
 							<th>{$_('Tätigkeit')}</th>
 							<th class="text-right">{$_('Dauer')}</th>
 							<th>{$_('Spesen-Beschreibung')}</th>
@@ -113,14 +112,6 @@
 											type="datetime-local"
 											value={r.bis}
 											required
-											class="admin-input"
-										/>
-									</td>
-									<td>
-										<input
-											form="edit-{r.id}"
-											name="projekt"
-											value={r.projekt}
 											class="admin-input"
 										/>
 									</td>
@@ -170,7 +161,6 @@
 									<td>{r.name || '–'}</td>
 									<td class="nowrap">{fmtDateTime(r.von)}</td>
 									<td class="nowrap">{fmtBis(r.von, r.bis)}</td>
-									<td>{r.projekt || '–'}</td>
 									<td class="whitespace-pre-wrap">{r.taetigkeit || '–'}</td>
 									<td class="nowrap text-right">{fmtDuration(r.minutes)}</td>
 									<td>{r.spesenText || '–'}</td>
@@ -201,7 +191,7 @@
 					</tbody>
 					<tfoot>
 						<tr class="font-semibold">
-							<td colspan="5">{$_('Total')}</td>
+							<td colspan="4">{$_('Total')}</td>
 							<td class="nowrap text-right">{fmtDuration(totalMinutes)}</td>
 							<td></td>
 							<td class="nowrap text-right">{fmtChf(totalSpesen)}</td>
