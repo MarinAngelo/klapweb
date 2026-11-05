@@ -545,7 +545,8 @@
 
 <a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
-<div class="bg-page-bg [min-height:100vh]">
+<!-- Sticky footer: column fills the screen, <main> grows → footer at the bottom on short pages -->
+<div class="site-shell bg-page-bg">
 	{#if !hideChrome}
 		<Header
 			navigation={chromeNavigation}
