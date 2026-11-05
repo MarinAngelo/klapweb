@@ -516,6 +516,11 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	padding-bottom: 1rem;
 	overflow: visible;
 }
+/* Legal page opened from a landing page (?landing): no navigation before hydration either */
+html.legal-landing .smart-header,
+html.legal-landing .footer-shell {
+	display: none;
+}
 /* Landing pages: only the legal links of the footer (+layout.svelte) */
 .footer-legal-bar {
 	padding-top: 1rem;

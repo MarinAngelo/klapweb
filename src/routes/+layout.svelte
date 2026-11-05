@@ -238,6 +238,8 @@
 	}
 	// Inline <head> script (runs before the first paint on full page loads); client-side
 	// navigations are handled by the reactive redirect above
+	// Legal page from a landing page: hide header/footer before hydration (no flash of navigation)
+	const legalLandingScript = `<script>if(/[?&]landing(=|&|$)/.test(location.search))document.documentElement.classList.add('legal-landing')<\/script>`;
 	const rememberedLangScript = `<script>(function(){try{var pref=localStorage.getItem('klap_lang');if(!pref)return;var links=[].slice.call(document.querySelectorAll('link[rel=alternate][hreflang]'));var first=location.pathname.split('/')[1];if(links.some(function(l){return l.hreflang===first}))return;var t=links.filter(function(l){return l.hreflang===pref})[0];if(!t)return;var path=new URL(t.href).pathname;if(path!==location.pathname)location.replace(path+location.search+location.hash)}catch(e){}})()<\/script>`;
 
 	// Shown once per page and visit (translationNoticeShown)
@@ -447,10 +449,23 @@
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
 		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
-	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	// Legal page opened from a landing page (legal bar links with ?landing): landing style too.
+	// Only in the browser — prerendered pages cannot read query parameters on the server;
+	// legalLandingScript (head) hides the navigation before hydration.
+	$: isLegalLanding =
+		browser &&
+		($page.route.id ?? '').includes('[legal=legal]') &&
+		$page.url.searchParams.has('landing');
+	$: if (browser) document.documentElement.classList.toggle('legal-landing', isLegalLanding);
+	$: hideChrome =
+		isLandingPage || isLegalLanding || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
 	// Landing pages hide header and footer — except the legal links
 	$: showLegalBarOnly =
-		isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome && !isAdminPage;
+		(isLandingPage || isLegalLanding) &&
+		!isSlicePreview &&
+		!isDokuPage &&
+		!isNoChrome &&
+		!isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
@@ -511,6 +526,7 @@
 			{@html rememberedLangScript}
 		{/if}
 	{/if}
+	{@html legalLandingScript}
 
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
@@ -576,7 +592,12 @@
 	{:else if showLegalBarOnly && chromeSettings}
 		<!-- Landing page: the legal links stay (privacy, legal notice, cookie settings) -->
 		<Bounded tag="footer" yPadding="none" class="footer-body footer-legal-bar text-center">
-			<FooterLegalLinks settings={chromeSettings} lang={chromeLang} mainLang={data.mainLang} />
+			<FooterLegalLinks
+				settings={chromeSettings}
+				lang={chromeLang}
+				mainLang={data.mainLang}
+				landing
+			/>
 		</Bounded>
 	{/if}
 </div>
