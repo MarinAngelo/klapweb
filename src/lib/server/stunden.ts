@@ -25,7 +25,12 @@ export type StundenEintrag = {
 	spesenText?: string;
 	createdAt: string;
 	updatedAt?: string;
+	/** Billed: time of the billing and its id (all entries billed together share it) */
+	abgerechnetAm?: string;
+	abrechnung?: string;
 };
+
+export const isAbgerechnet = (e: Pick<StundenEintrag, 'abrechnung'>) => !!e.abrechnung;
 
 export type StundenInput = Pick<
 	StundenEintrag,
@@ -109,13 +114,49 @@ export async function listStunden(): Promise<StundenEintrag[]> {
 	return entries.filter((e): e is StundenEintrag => !!e).sort((a, b) => a.von.localeCompare(b.von));
 }
 
+export async function getStunden(id: string): Promise<StundenEintrag | null> {
+	return (await getStundenStore().get(id, { type: 'json' })) as StundenEintrag | null;
+}
+
 export async function updateStunden(id: string, input: StundenInput): Promise<boolean> {
 	const store = getStundenStore();
-	const existing = (await store.get(id, { type: 'json' })) as StundenEintrag | null;
+	const existing = await getStunden(id);
 	if (!existing) return false;
 	await store.setJSON(id, { ...existing, ...input, updatedAt: new Date().toISOString() });
 	return true;
 }
+
+/**
+ * Bills all open entries of a person (name, case-insensitive) in one go.
+ * Returns the id of the billing and the number of entries.
+ */
+export async function abrechnen(name: string): Promise<{ abrechnung: string; count: number }> {
+	const store = getStundenStore();
+	const key = name.trim().toLowerCase();
+	const open = (await listStunden()).filter(
+		(e) => !isAbgerechnet(e) && (e.name ?? '').trim().toLowerCase() === key
+	);
+	const now = new Date().toISOString();
+	const abrechnung = `${now.slice(0, 19).replace(/[-:T]/g, '')}_${randomUUID().slice(0, 8)}`;
+	await Promise.all(open.map((e) => store.setJSON(e.id, { ...e, abgerechnetAm: now, abrechnung })));
+	return { abrechnung, count: open.length };
+}
+
+/** Undoes a billing: its entries are open again */
+export async function abrechnungZuruecksetzen(abrechnung: string): Promise<number> {
+	const store = getStundenStore();
+	const billed = (await listStunden()).filter((e) => e.abrechnung === abrechnung);
+	await Promise.all(
+		billed.map((e) => {
+			const { abgerechnetAm: _am, abrechnung: _id, ...rest } = e;
+			return store.setJSON(e.id, rest);
+		})
+	);
+	return billed.length;
+}
+
+export const isValidAbrechnungId = (value: unknown): value is string =>
+	typeof value === 'string' && /^\d{14}_[a-f0-9]{8}$/.test(value);
 
 export async function deleteStunden(id: string): Promise<void> {
 	await getStundenStore().delete(id);

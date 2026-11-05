@@ -1139,6 +1139,62 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Ohne Name': { 'de-ch': 'Ohne Name', 'en-us': 'Without name' },
 	Spesen: { 'de-ch': 'Spesen', 'en-us': 'Expenses' },
+	'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Mark open hours per person as billed with «Abrechnen»; they then appear under «Abgerechnet» (billed).'
+		},
+	'{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?': {
+		'de-ch': '{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?',
+		'en-us': 'Bill {anzahl} open entries ({dauer}) of {name} now?'
+	},
+	'{anzahl} Einträge abgerechnet.': {
+		'de-ch': '{anzahl} Einträge abgerechnet.',
+		'en-us': '{anzahl} entries billed.'
+	},
+	Offen: {
+		'de-ch': 'Offen',
+		'en-us': 'Open'
+	},
+	Abgerechnet: {
+		'de-ch': 'Abgerechnet',
+		'en-us': 'Billed'
+	},
+	'Offene Stunden abrechnen': {
+		'de-ch': 'Offene Stunden abrechnen',
+		'en-us': 'Bill open hours'
+	},
+	'Keine offenen Einträge.': {
+		'de-ch': 'Keine offenen Einträge.',
+		'en-us': 'No open entries.'
+	},
+	'Abrechnung vom': {
+		'de-ch': 'Abrechnung vom',
+		'en-us': 'Billing of'
+	},
+	Eintrag: {
+		'de-ch': 'Eintrag',
+		'en-us': 'entry'
+	},
+	Einträge: {
+		'de-ch': 'Einträge',
+		'en-us': 'entries'
+	},
+	'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.': {
+		'de-ch': 'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.',
+		'en-us': 'Reset billing? The entries will be open again.'
+	},
+	'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.': {
+		'de-ch':
+			'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.',
+		'en-us': 'Billed entries cannot be changed — reset the billing first.'
+	},
+	'Ungültige Abrechnung': {
+		'de-ch': 'Ungültige Abrechnung',
+		'en-us': 'Invalid billing'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',

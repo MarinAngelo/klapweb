@@ -470,7 +470,8 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 - Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
 - Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
 - **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
-- Admin: Tabelle mit Dauer (Std./Min.), Total Dauer + Spesen, Bearbeiten/Löschen, CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal)
+- Admin: pro Person ein Abschnitt; **Offen** (Tabelle mit Dauer Std./Min., Total Dauer + Spesen, Bearbeiten/Löschen) und **Abgerechnet** (pro Abrechnung aufklappbar, nur lesen, «Zurücksetzen» → wieder offen). «Offene Stunden abrechnen» setzt `abgerechnetAm` + gemeinsame `abrechnung`-ID (`abrechnen()`); abgerechnete Einträge sind serverseitig gegen Ändern/Löschen gesperrt
+- CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal, Spalte Status), Filter `?name=`, `?status=offen|abgerechnet`, `?abrechnung=<id>`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 

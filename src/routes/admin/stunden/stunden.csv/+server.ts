@@ -7,12 +7,30 @@ export const prerender = false;
 /** CSV export of the time sheet (Excel: semicolon, UTF-8 with BOM). Admin session via hooks. */
 export async function GET({ url }) {
 	if (!FEATURE_STUNDENABRECHNUNG) throw error(404, 'Nicht gefunden');
-	// ?name=… → only this person (admin table per person); without → all
+	// Filters: ?name=… (one person), ?status=offen|abgerechnet, ?abrechnung=<id> (one billing)
 	const nameFilter = url.searchParams.get('name');
+	const statusFilter = url.searchParams.get('status');
+	const billingFilter = url.searchParams.get('abrechnung');
 	const entries = (await listStunden()).filter(
 		(e) =>
-			nameFilter === null || (e.name ?? '').trim().toLowerCase() === nameFilter.trim().toLowerCase()
+			(nameFilter === null ||
+				(e.name ?? '').trim().toLowerCase() === nameFilter.trim().toLowerCase()) &&
+			(statusFilter !== 'offen' || !e.abrechnung) &&
+			(statusFilter !== 'abgerechnet' || !!e.abrechnung) &&
+			(billingFilter === null || e.abrechnung === billingFilter)
 	);
+	// Billing time in Swiss time
+	const billedAt = (iso?: string) =>
+		iso
+			? new Date(iso).toLocaleString('de-CH', {
+					timeZone: 'Europe/Zurich',
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit'
+				})
+			: '';
 	const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
 	const dt = (v: string) => v.replace('T', ' ');
 	const hours = (min: number) => (min / 60).toFixed(2);
@@ -30,7 +48,8 @@ export async function GET({ url }) {
 			e.taetigkeit,
 			hours(min),
 			e.spesenText ?? '',
-			e.spesen.toFixed(2)
+			e.spesen.toFixed(2),
+			e.abrechnung ? `abgerechnet ${billedAt(e.abgerechnetAm)}` : 'offen'
 		]
 			.map(esc)
 			.join(';');
@@ -42,12 +61,15 @@ export async function GET({ url }) {
 		'Tätigkeit',
 		'Stunden',
 		'Spesen-Beschreibung',
-		'Spesen (CHF)'
+		'Spesen (CHF)',
+		'Status'
 	];
-	const total = ['Total', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2)];
+	const total = ['Total', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2), ''];
 	const csv = [header.map(esc).join(';'), ...rows, total.map(esc).join(';')].join('\r\n');
 
-	const slug = (nameFilter ?? '')
+	const slug = [nameFilter ?? '', statusFilter ?? '', billingFilter ? 'abrechnung' : '']
+		.filter(Boolean)
+		.join(' ')
 		.toLowerCase()
 		.normalize('NFD')
 		.replace(/[\u0300-\u036f]/g, '')
