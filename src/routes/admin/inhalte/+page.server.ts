@@ -1,6 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { createClient, repositoryName } from '$lib/prismicio';
 import { checkContent } from '$lib/contentCheck.js';
+// Labels of the fields as in Prismic → column «Dokument» names the affected field
+import fieldReference from '$lib/generated/prismic-field-reference.json';
 import { env } from '$env/dynamic/private';
 import { getMailAddress } from '$lib/server/mailFrom';
 
@@ -29,7 +31,7 @@ export const prerender = false;
 // Same check as scripts/check-translations.js, for editors (live from Prismic)
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const result = await checkContent(createClient({ fetch }));
+		const result = await checkContent(createClient({ fetch }), fieldReference as any[]);
 		// Sender domain in Resend (only if the address itself is set)
 		const settingsProblem = result.links.find((p) => p.kind === 'mail_from');
 		const mailFrom = settingsProblem ? '' : await getMailAddress(fetch);

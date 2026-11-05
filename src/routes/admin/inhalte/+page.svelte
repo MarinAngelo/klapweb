@@ -47,6 +47,9 @@
 								<td>
 									<span class="font-semibold">{p.doc.title}</span>
 									<span class="admin-mono admin-muted">{p.doc.type}</span>
+									{#if p.field}
+										<span class="block text-sm">{$_('Feld')}: {p.field}</span>
+									{/if}
 								</td>
 								<td class="admin-muted">{p.doc.lang}</td>
 								{#if p.kind === 'relative'}
@@ -63,13 +66,6 @@
 										<span class="admin-mono">{p.token}</span>
 									</td>
 									<td>{$_('In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen')}</td>
-								{:else if p.kind === 'legal_default'}
-									<td>{$_('Keine eigene Datenschutzerklärung')}</td>
-									<td>
-										{$_(
-											'Es erscheint ein allgemeiner Standardtext — eigenen Text im Feld «Datenschutzerklärung» erfassen'
-										)}
-									</td>
 								{:else if p.kind === 'empty_slice'}
 									<td>
 										{$_('Inhalts-Element ohne Inhalt')}: <span class="admin-mono">{p.token}</span>

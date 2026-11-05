@@ -1203,17 +1203,6 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen',
 		'en-us': 'Fill in under Settings (tab «Main») and publish'
 	},
-	'Keine eigene Datenschutzerklärung': {
-		'de-ch': 'Keine eigene Datenschutzerklärung',
-		'en-us': 'No own privacy policy'
-	},
-	'Es erscheint ein allgemeiner Standardtext — eigenen Text im Feld «Datenschutzerklärung» erfassen':
-		{
-			'de-ch':
-				'Es erscheint ein allgemeiner Standardtext — eigenen Text im Feld «Datenschutzerklärung» erfassen',
-			'en-us':
-				'A general default text is shown — enter your own text in the «Datenschutzerklärung» field'
-		},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
