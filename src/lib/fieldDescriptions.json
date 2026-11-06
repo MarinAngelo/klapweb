@@ -183,6 +183,10 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"settings.booking_invoice": {
+		"de-ch": "Wenn eingeschaltet, erhält jede Buchung eines Angebots mit «Preis» automatisch eine Rechnung (mit QR-Zahlteil) als Anhang der Bestätigungs-Mail. Die Rechnung erscheint im Admin unter «Rechnungen» mit der Quelle «Terminbuchung». Angebote ohne Preis bleiben ohne Rechnung. Bei Buchungen durch dich im Admin wird die Rechnung erstellt und nur mitgeschickt, wenn du «Bestätigung per E-Mail senden» wählst.",
+		"en-us": "When on, every booking of an offer with a «Preis» (price) automatically gets an invoice (with QR payment part) attached to the confirmation e-mail. The invoice appears in the admin under «Rechnungen» with source «Terminbuchung». Offers without a price get no invoice. For bookings you make in the admin, the invoice is created and only sent if you choose «Bestätigung per E-Mail senden»."
+	},
 	"settings.chat_knowledge_extra": {
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",
 		"en-us": "Your own additions and corrections for the chat bot, e.g. terms, special rules or current notices («Closed this week»). If something contradicts «Chat-Bot Wissensbasis», this field wins. This lets you replace the knowledge base completely without losing your additions. Empty in a language = the additions of the main language apply."
@@ -202,6 +206,14 @@
 	"settings.email_from_name": {
 		"de-ch": "Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Muster Praxis» statt nur info@muster-praxis.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.",
 		"en-us": "Name your e-mails show in the inbox, e.g. «Muster Praxis» instead of just info@muster-praxis.ch. Empty = the website name from the settings, otherwise «Verantwortliche Person/Firma». Applies to all e-mails except the newsletter, which has its own sender name."
+	},
+	"settings.invoice_iban": {
+		"de-ch": "Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.",
+		"en-us": "Account your invoices are paid to. Shown on every invoice and in the QR payment part, e.g. «CH93 0076 2011 6238 5295 7». For the QR payment part it must be a Swiss or Liechtenstein IBAN. A QR-IBAN from your bank works too; the matching reference is created automatically."
+	},
+	"settings.invoice_qr_bill": {
+		"de-ch": "Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.",
+		"en-us": "Prints a Swiss QR payment part at the bottom of every invoice. Customers scan it with their banking app; amount, account and reference are filled in. Requirements: a valid Swiss or Liechtenstein «IBAN», invoice in CHF or EUR, and in «Verantwortliche Adresse» (address) street + number and «postcode city» each on its own line (e.g. «Musterstrasse 12» / «8000 Zürich»). If something is missing, the invoice is issued without the QR part and «Inhalte prüfen» reports it."
 	},
 	"settings.notification_email": {
 		"de-ch": "An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.",

@@ -32,6 +32,15 @@
 				"label": "Erinnerung: Stunden vor Termin",
 				"placeholder": "24 (leer = keine Erinnerung)"
 			}
+		},
+		"booking_invoice": {
+			"type": "Boolean",
+			"config": {
+				"label": "Rechnung bei Buchung senden (Angebote mit Preis)",
+				"placeholder_false": "Nein",
+				"placeholder_true": "Ja",
+				"default_value": false
+			}
 		}
 	}
 }

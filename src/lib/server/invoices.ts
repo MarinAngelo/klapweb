@@ -10,8 +10,8 @@
  *
  * Admin view: /admin/rechnungen (Login unter /admin)
  *
- * Called from:
- *   - src/routes/admin/rechnungen/+page.server.ts (Create, Preview, Email)
+ * Create invoices only via src/lib/server/invoicing (createInvoice: PDF incl. QR bill + storage);
+ * this file is the storage layer.
  */
 import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
@@ -19,8 +19,14 @@ import { env } from '$env/dynamic/private';
 export interface InvoiceLineItem {
 	description: string;
 	quantity: number;
+	/** Negative = discount line */
 	unitPrice: number;
+	/** «Einmalig» / «Jährlich» / «Monatlich» (separate totals without VAT) */
+	billingType?: string | null;
 }
+
+/** Feature that issued the invoice; missing = older invoice (checkout or admin) */
+export type InvoiceSource = 'checkout' | 'admin' | 'terminbuchung' | 'event' | 'bar';
 
 export interface ManualInvoiceRecord {
 	id: string;
@@ -29,6 +35,11 @@ export interface ManualInvoiceRecord {
 	status: 'gespeichert' | 'gesendet';
 	paymentStatus: 'offen' | 'bezahlt';
 	paymentMethod?: 'rechnung' | 'bar';
+	source?: InvoiceSource;
+	/** Id in the source feature, e.g. booking terminId */
+	relatedId?: string;
+	/** Payment reference of the QR bill (RF… or 27-digit QR reference) */
+	reference?: string;
 	// Billing address / contact
 	vorname: string;
 	nachname: string;
@@ -43,7 +54,7 @@ export interface ManualInvoiceRecord {
 	// Optional notes
 	notes?: string;
 	// Delivery metadata
-	emailSentAt?: string;
+	emailSentAt?: string | null;
 	currency?: string;
 }
 

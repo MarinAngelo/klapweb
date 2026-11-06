@@ -2524,6 +2524,35 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us':
 			'Offer «{titel}» is not linked to any current working day – no appointments can be booked'
 	},
+	'Kein QR-Zahlteil auf Rechnungen': {
+		'de-ch': 'Kein QR-Zahlteil auf Rechnungen',
+		'en-us': 'No QR payment part on invoices'
+	},
+	'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten':
+		{
+			'de-ch':
+				'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten',
+			'en-us':
+				'Complete in the settings (tab «Rechnungen» or «Main») or switch off «QR-Zahlteil auf Rechnungen»'
+		},
+	'IBAN fehlt': {
+		'de-ch': 'IBAN fehlt',
+		'en-us': 'IBAN missing'
+	},
+	'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN': {
+		'de-ch': 'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN',
+		'en-us': 'IBAN is not a valid Swiss or Liechtenstein IBAN'
+	},
+	'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)': {
+		'de-ch':
+			'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)',
+		'en-us':
+			'Address for the QR bill incomplete (street + number and «postcode city» each on its own line)'
+	},
+	'QR-Rechnung nur in CHF oder EUR möglich': {
+		'de-ch': 'QR-Rechnung nur in CHF oder EUR möglich',
+		'en-us': 'QR bill only possible in CHF or EUR'
+	},
 	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
 };
 

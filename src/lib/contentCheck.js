@@ -8,6 +8,7 @@
 /** Custom types rendered as their own (static) pages — keep in sync with the routes */
 import { isGoogleShortLink, parseMapPoint } from './mapPoint.js';
 import { diagnoseAngebot, diagnoseArbeitstag } from './terminDiagnose.js';
+import { parseAddress, qrBillProblems } from './qrBill.js';
 
 export const TRANSLATED_TYPES = ['page', 'leistung', 'ressource'];
 
@@ -109,7 +110,7 @@ const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin' | 'stunden_unprotected' | 'empty_slice' | 'legal_missing'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string; field?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin' | 'stunden_unprotected' | 'empty_slice' | 'legal_missing' | 'invoice_qr'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string; field?: string }} LinkProblem
  */
 
 /** @typedef {{ slice?: string; path: string[]; inText?: boolean }} FieldCtx */
@@ -336,6 +337,38 @@ export async function checkContent(client, fieldReference = /** @type {any[]} */
 				kind: 'legal_missing',
 				token: missingFields.join(', '),
 				field: missingFields.join(', ')
+			});
+		}
+	}
+
+	// 6c. QR bill on invoices: IBAN + issuer address of the main-language settings
+	//     (only when an invoicing feature is active, i.e. the settings have the field «IBAN»)
+	const invoicing = fieldReference.some(
+		(f) => f.customType === 'settings' && f.field === 'invoice_iban'
+	);
+	const invoiceSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
+	const invoiceData = /** @type {any} */ (invoiceSettings?.data) ?? {};
+	if (invoicing && invoiceSettings && invoiceData.invoice_qr_bill !== false) {
+		const lines = Array.isArray(invoiceData.responsible_address)
+			? invoiceData.responsible_address.map((/** @type {any} */ b) => b?.text ?? '')
+			: [];
+		const currency = String(invoiceData.invoice_currency ?? 'CHF')
+			.split(' - ')[0]
+			.trim();
+		for (const problem of qrBillProblems({
+			iban: invoiceData.invoice_iban ?? '',
+			creditor: parseAddress(invoiceData.responsible_person_company ?? '', lines),
+			currency
+		})) {
+			links.push({
+				doc: ref(invoiceSettings),
+				kind: 'invoice_qr',
+				token: problem,
+				field: problem.startsWith('IBAN')
+					? 'IBAN'
+					: problem.startsWith('QR-Rechnung nur')
+						? 'Grundwährung'
+						: 'Verantwortliche Adresse'
 			});
 		}
 	}

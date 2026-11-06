@@ -6,6 +6,14 @@
 
 	export let data: PageData;
 
+	// Feature that issued the invoice (src/lib/server/invoicing)
+	const SOURCE_LABELS: Record<string, string> = {
+		checkout: 'Bestellung',
+		event: 'Event',
+		terminbuchung: 'Terminbuchung',
+		admin: 'Manuell'
+	};
+
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
@@ -443,6 +451,9 @@
 								</td>
 								<td>
 									<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
+									{#if inv.source && SOURCE_LABELS[inv.source]}
+										<span class="admin-muted block text-xs">{SOURCE_LABELS[inv.source]}</span>
+									{/if}
 								</td>
 								<td class="nowrap space-x-3">
 									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>

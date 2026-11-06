@@ -26,6 +26,8 @@ export interface BookingRecord {
 	telefon?: string;
 	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
 	source?: 'online' | 'admin';
+	/** Invoice of the booking (offers with «Preis», setting «Rechnung bei Buchung senden») */
+	invoiceNumber?: string;
 }
 
 function toMinutes(value: string): number | null {

@@ -308,6 +308,8 @@ Ablauf Änderung bei einem Kunden:
 | Variation | `variations.{id}.plan/feature`               | Variation erscheint nicht in `model.json` |
 | Feld      | `fields.{key}.plan/feature`                  | Feld fehlt in allen Variationen           |
 
+`features: ["a", "b"]` statt `feature` = **oder**-Gate (aktiv, wenn eines der Features aktiv ist), z.B. die Rechnungsfelder in `customTypes.settings.fields`.
+
 ### Variationen aus full.json
 
 Extra-Variationen (die nicht in `base.json` stehen) werden in `full.json` definiert.
@@ -405,6 +407,15 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - E-Mail ist primäres Merkmal (case-insensitive)
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
+
+### Rechnungsmodul (`src/lib/server/invoicing/`) — für alle Features
+
+- **Jede Rechnung nur über `createInvoice()`** (`$lib/server/invoicing`): rendert das PDF (`pdf.ts`, einziger Renderer) inkl. **Schweizer QR-Zahlteil** und speichert im Blob-Store `manuelle_rechnungen` (sichtbar in `/admin/rechnungen`). Versand macht der Aufrufer (eigener Mail-Text, `invoiceAttachment()`) oder `sendInvoiceMail()` (setzt «gesendet»)
+- Nutzer: Checkout `/api/invoice` (`source: 'checkout'`/`'event'`), Admin `/admin/rechnungen` (`'admin'`), Terminbuchung `/api/buche-termin` (`'terminbuchung'`, Einstellung «Rechnung bei Buchung senden», nur Angebote mit «Preis», Rechnungsnummer in der Buchung). Neues Feature → `source` in `InvoiceSource` (`invoices.ts`) + Label in `SOURCE_LABELS` (`admin/rechnungen/+page.svelte`)
+- Positionen: `{ description, quantity, unitPrice, billingType? }`, Rabatt = Position mit negativem Preis. Total inkl. MWST = Betrag im QR-Code
+- Einstellungen: Tab «Rechnungen» (`invoice_*` + `invoice_qr_bill`, in `customtypes/settings/base.json`, Feld-Gate `features: [...]` = aktiv bei einem der Rechnungs-Features); Laden nur über `loadInvoiceSettings()` / `invoiceSettingsFrom()`
+- **QR-Rechnung** (`src/lib/qrBill.js`, Standard 2.3, nur strukturierte Adressen): IBAN CH/LI, Absender-Adresse aus «Verantwortliche Adresse» (Zeile «Strasse Nr.» + Zeile «PLZ Ort»), nur CHF/EUR. Referenz: normale IBAN → Creditor Reference `RF…`, QR-IBAN → 27-stellige QR-Referenz, beides aus der Rechnungsnummer. Fehlt etwas → PDF ohne QR-Teil, «Inhalte prüfen» meldet `invoice_qr`
+- Zahlungseingang wird **nicht** automatisch erkannt (keine Bankanbindung) → «bezahlt» von Hand; Referenz erleichtert den Abgleich
 
 ### Kunden-Management (`/admin/kunden`)
 
