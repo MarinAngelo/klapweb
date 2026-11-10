@@ -41,6 +41,20 @@
 				"type": "Number",
 				"config": { "label": "Preis (optional)", "placeholder": "" }
 			},
+			"cancel_free_hours": {
+				"type": "Number",
+				"config": {
+					"label": "Kostenlos stornierbar bis (Std. vor Termin)",
+					"placeholder": "leer = Standard aus den Einstellungen"
+				}
+			},
+			"cancel_fee_percent": {
+				"type": "Number",
+				"config": {
+					"label": "Stornogebühr nach Ablauf (% vom Preis)",
+					"placeholder": "z.B. 80 — leer = Standard aus den Einstellungen"
+				}
+			},
 			"ort": {
 				"type": "Link",
 				"config": {

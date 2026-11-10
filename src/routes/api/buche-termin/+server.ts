@@ -1,13 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import {
-	bookSlot,
-	hasOverlappingBooking,
-	isBooked,
-	isCancelled,
-	updateBooking
-} from '$lib/server/bookings';
-import { updateManualInvoice } from '$lib/server/invoices';
-import { createInvoice, invoiceAttachment, invoiceSettingsFrom } from '$lib/server/invoicing';
+import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
+import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingCancel';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
@@ -205,6 +198,9 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	// Invoice for offers with «Preis» (setting «Rechnung bei Buchung senden»)
 	let settingsData: Record<string, unknown> = {};
 	let offerPrice: number | null = null;
+	// Cancellation terms: offer, otherwise default of the settings
+	let cancelHours: number | null = null;
+	let cancelFeePercent: number | null = null;
 
 	try {
 		const client = createClient({ fetch });
@@ -245,6 +241,12 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 		const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
 		const price = Number((offerDoc?.data as any)?.preis);
 		offerPrice = price > 0 ? price : null;
+		const positive = (value: unknown) => (Number(value) > 0 ? Number(value) : null);
+		const od = (offerDoc?.data ?? {}) as any;
+		cancelHours =
+			positive(od.cancel_free_hours) ?? positive(settingsData.booking_cancel_free_hours);
+		cancelFeePercent =
+			positive(od.cancel_fee_percent) ?? positive(settingsData.booking_cancel_fee_percent);
 		const ortLink = (offerDoc?.data as any)?.ort;
 		if (ortLink?.uid) {
 			try {
@@ -296,6 +298,12 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 		);
 	}
 
+	const cancelFreeUntil = cancelDeadline(datum, uhrzeit, zeitzone, cancelHours);
+	const cancelToken = crypto.randomUUID().replace(/-/g, '');
+	const stornoLink = cancelLink(origin, { terminId, cancelToken });
+	// «Kostenlos stornierbar bis …» for the e-mail ({{Stornofrist}}); '' = no deadline
+	const stornoFrist = cancelFreeUntil ? formatDeadline(cancelFreeUntil, zeitzone) : '';
+
 	await bookSlot({
 		terminId,
 		datum,
@@ -307,45 +315,22 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 		name,
 		email,
 		telefon: telefon?.trim() || undefined,
+		price: offerPrice ?? undefined,
+		cancelFreeUntil,
+		cancelFeePercent: cancelFreeUntil ? (cancelFeePercent ?? undefined) : undefined,
+		cancelToken,
+		zeitzone,
+		// Invoice after the appointment (src/lib/server/bookingInvoices.ts, scheduled)
+		invoicePending: settingsData.booking_invoice === true && !!offerPrice ? true : undefined,
+		invoiceAddress:
+			fields?.adresse || fields?.plz || fields?.ort
+				? { adresse: fields.adresse, plz: fields.plz, ort: fields.ort, land: fields.land }
+				: undefined,
 		arbeitstagId,
 		angebotId,
 		source: byAdmin ? 'admin' : 'online'
 	});
 	invalidateTermineCache();
-
-	// Invoice incl. QR bill via the shared invoice module; attached to the confirmation below
-	let invoice: Awaited<ReturnType<typeof createInvoice>> | null = null;
-	if (settingsData.booking_invoice === true && offerPrice) {
-		try {
-			const nameParts = (name ?? '').trim().split(/\s+/).filter(Boolean);
-			invoice = await createInvoice({
-				source: 'terminbuchung',
-				relatedId: terminId,
-				recipient: {
-					vorname: nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : (nameParts[0] ?? ''),
-					nachname: nameParts.length > 1 ? nameParts[nameParts.length - 1] : '',
-					email,
-					tel: telefon || fields?.tel,
-					// Optional address fields of the booking form (field keys as in the checkout)
-					adresse: fields?.adresse,
-					plz: fields?.plz,
-					ort: fields?.ort,
-					land: fields?.land
-				},
-				items: [
-					{
-						description: datum ? `${titel} – ${fmtDate(datum, uhrzeit)}` : titel,
-						quantity: 1,
-						unitPrice: offerPrice
-					}
-				],
-				settings: invoiceSettingsFrom(settingsData)
-			});
-			await updateBooking(terminId, { invoiceNumber: invoice.invoiceNumber });
-		} catch (e) {
-			console.error('Rechnung zur Buchung fehlgeschlagen:', e);
-		}
-	}
 
 	// Kunde erfassen (mit Duplikat-Prüfung per E-Mail)
 	if (email) {
@@ -395,7 +380,8 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 			Ort: ortAdresse || ortName,
 			Wegbeschreibung: ortWegbeschreibung,
 			'Ort-Telefon': ortTelefon,
-			'Ort-Karte': ortKarte
+			'Ort-Karte': ortKarte,
+			Stornofrist: stornoFrist
 		};
 
 		const subject = custEmailSubject
@@ -428,14 +414,20 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
 				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
 				``,
+				...(stornoFrist
+					? [
+							cancelFeePercent && offerPrice
+								? `Kostenlos stornierbar bis ${stornoFrist} Uhr, danach mit einer Stornogebühr von ${cancelFeePercent}%.`
+								: `Online stornierbar bis ${stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
+							``
+						]
+					: []),
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,
 				`Freundliche Grüsse`,
 				companyName
 			].join('\n');
 
-		const invoiceLine = invoice ? '\n\nDie Rechnung finden Sie im Anhang.' : '';
-		const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
 		const stornoLine = `\n\nStornieren: ${stornoLink}`;
 		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
@@ -462,7 +454,6 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 							.split('\n')
 							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
 							.join('') +
-						(invoiceLine ? `<p>${invoiceLine.trim()}</p>` : '') +
 						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
 						(calendarLine
 							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
@@ -474,20 +465,12 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 							from: fromEmail,
 							to: email,
 							subject,
-							text: bodyText + invoiceLine + customerTzLine + calendarLine + stornoLine,
+							text: bodyText + customerTzLine + calendarLine + stornoLine,
 							html: htmlBody,
-							attachments: [
-								...icsAttachment,
-								...(invoice ? [invoiceAttachment(invoice.invoiceNumber, invoice.pdf)] : [])
-							]
+							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
 							if (e) console.error('Buchung Kunden-E-Mail fehlgeschlagen:', e);
-							else if (invoice?.id)
-								updateManualInvoice(invoice.id, {
-									status: 'gesendet',
-									emailSentAt: new Date().toISOString()
-								}).catch(() => {});
 						});
 				}
 
@@ -540,8 +523,6 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 			'Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail in den Einstellungen) — keine Buchungs-E-Mails gesendet'
 		);
 	}
-
-	const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
 
 	return new Response(
 		JSON.stringify({

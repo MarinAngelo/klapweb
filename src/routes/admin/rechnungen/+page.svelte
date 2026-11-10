@@ -444,9 +444,15 @@
 									<span
 										class="admin-badge {inv.paymentStatus === 'bezahlt'
 											? 'admin-badge-green'
-											: 'admin-badge-orange'}"
+											: inv.paymentStatus === 'storniert'
+												? 'admin-badge-red'
+												: 'admin-badge-orange'}"
 									>
-										{inv.paymentStatus === 'bezahlt' ? '✓ bezahlt' : '⏱ offen'}
+										{inv.paymentStatus === 'bezahlt'
+											? '✓ bezahlt'
+											: inv.paymentStatus === 'storniert'
+												? '✕ storniert'
+												: '⏱ offen'}
 									</span>
 								</td>
 								<td>
@@ -891,6 +897,7 @@
 									>
 										<option value="offen">⏱ offen</option>
 										<option value="bezahlt">✓ bezahlt</option>
+										<option value="storniert">✕ storniert</option>
 									</select>
 								</div>
 							</fieldset>

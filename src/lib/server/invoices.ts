@@ -33,7 +33,8 @@ export interface ManualInvoiceRecord {
 	invoiceNumber: string;
 	date: string;
 	status: 'gespeichert' | 'gesendet';
-	paymentStatus: 'offen' | 'bezahlt';
+	/** 'storniert' = no longer payable (e.g. booking cancelled) */
+	paymentStatus: 'offen' | 'bezahlt' | 'storniert';
 	paymentMethod?: 'rechnung' | 'bar';
 	source?: InvoiceSource;
 	/** Id in the source feature, e.g. booking terminId */

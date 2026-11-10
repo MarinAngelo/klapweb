@@ -37,7 +37,7 @@ export interface CreateInvoiceInput {
 	notes?: string;
 	invoiceNumber?: string;
 	paymentMethod?: 'rechnung' | 'bar';
-	paymentStatus?: 'offen' | 'bezahlt';
+	paymentStatus?: 'offen' | 'bezahlt' | 'storniert';
 	showQuantity?: boolean;
 	/** Already loaded settings (saves a Prismic request) */
 	settings?: InvoiceSettings;

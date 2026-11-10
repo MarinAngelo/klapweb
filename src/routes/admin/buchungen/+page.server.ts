@@ -12,11 +12,14 @@ import {
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { diagnoseArbeitstag } from '$lib/terminDiagnose.js';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { sendDueBookingInvoices } from '$lib/server/bookingInvoices';
 import { createClient } from '$lib/prismicio';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	// Due invoices of past appointments (same job as the hourly Netlify function)
+	await sendDueBookingInvoices().catch((e) => console.error('Termin-Rechnungen:', e));
 	const today = new Date().toISOString().slice(0, 10);
 	const allSlotsFrom = '2000-01-01'; // Admin sieht alle Termine, auch vergangene
 

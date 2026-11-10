@@ -7,6 +7,14 @@
 		"de-ch": "Optionales Bild, das oben in der Kachel des Angebots erscheint (Inhalts-Element «Kacheln», Variante «Buchbare Angebote»). Querformat empfohlen, z.B. 2200 × 1200 Pixel.",
 		"en-us": "Optional image shown at the top of the offer tile (element «Kacheln», variation «Buchbare Angebote»). Landscape recommended, e.g. 2200 × 1200 pixels."
 	},
+	"angebot.cancel_fee_percent": {
+		"de-ch": "Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = Standard aus den Einstellungen. Ohne Gebühr (und bei Angeboten ohne Preis) ist nach Ablauf keine Online-Stornierung mehr möglich; die Seite bittet dann, dich direkt zu kontaktieren.",
+		"en-us": "Fee in percent of the offer «Preis» (price) when cancelling after the free period, e.g. 80 (price CHF 120 → fee CHF 96). The customer confirms the fee on the cancellation page and receives an invoice with QR payment part. Empty = default from the settings. Without a fee (and for offers without a price) online cancellation is no longer possible after the deadline; the page then asks to contact you directly."
+	},
+	"angebot.cancel_free_hours": {
+		"de-ch": "Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = Standard aus den Einstellungen (Tab «Terminbuchung»).",
+		"en-us": "How many hours before the appointment a booking can be cancelled free of charge, e.g. 24 (appointment Monday 09:00 → free until Sunday 09:00). The deadline is shown in the confirmation e-mail (placeholder {{Stornofrist}}) and on the cancellation page. Empty = default from the settings (tab «Terminbuchung»)."
+	},
 	"angebot.info_page": {
 		"de-ch": "Seite mit ausführlichen Infos zu diesem Angebot. Im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote») führt «Mehr erfahren» auf diese Seite. Leer = «Mehr erfahren» öffnet ein Fenster mit Beschreibung, Dauer, Preis und Ort.",
 		"en-us": "Page with detailed information about this offer. In the «Kacheln» element (variation «Buchbare Angebote») the «Mehr erfahren» (learn more) button links here. Empty = «Mehr erfahren» opens a window with description, duration, price and location."
@@ -183,9 +191,17 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"settings.booking_cancel_fee_percent": {
+		"de-ch": "Standard für alle Angebote ohne eigene Angabe. Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = nach Ablauf der Frist keine Online-Stornierung (Hinweis, dich direkt zu kontaktieren).",
+		"en-us": "Default for all offers without their own value. Fee in percent of the offer «Preis» (price) when cancelling after the free period, e.g. 80 (price CHF 120 → fee CHF 96). The customer confirms the fee on the cancellation page and receives an invoice with QR payment part. Empty = no online cancellation after the deadline (asks to contact you directly)."
+	},
+	"settings.booking_cancel_free_hours": {
+		"de-ch": "Standard für alle Angebote ohne eigene Angabe. Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = jederzeit kostenlos stornierbar (bis Terminbeginn).",
+		"en-us": "Default for all offers without their own value. How many hours before the appointment a booking can be cancelled free of charge, e.g. 24 (appointment Monday 09:00 → free until Sunday 09:00). The deadline is shown in the confirmation e-mail (placeholder {{Stornofrist}}) and on the cancellation page. Empty = free cancellation at any time (until the appointment starts)."
+	},
 	"settings.booking_invoice": {
-		"de-ch": "Wenn eingeschaltet, erhält jede Buchung eines Angebots mit «Preis» automatisch eine Rechnung (mit QR-Zahlteil) als Anhang der Bestätigungs-Mail. Die Rechnung erscheint im Admin unter «Rechnungen» mit der Quelle «Terminbuchung». Angebote ohne Preis bleiben ohne Rechnung. Bei Buchungen durch dich im Admin wird die Rechnung erstellt und nur mitgeschickt, wenn du «Bestätigung per E-Mail senden» wählst.",
-		"en-us": "When on, every booking of an offer with a «Preis» (price) automatically gets an invoice (with QR payment part) attached to the confirmation e-mail. The invoice appears in the admin under «Rechnungen» with source «Terminbuchung». Offers without a price get no invoice. For bookings you make in the admin, the invoice is created and only sent if you choose «Bestätigung per E-Mail senden»."
+		"de-ch": "Wenn eingeschaltet, erhält jede Buchung eines Angebots mit «Preis» nach dem Termin automatisch eine Rechnung mit QR-Zahlteil per E-Mail (spätestens etwa eine Stunde nach Terminende). Die Rechnung erscheint im Admin unter «Rechnungen» mit der Quelle «Terminbuchung». Angebote ohne Preis und stornierte Buchungen erhalten keine Rechnung; Buchungen ohne E-Mail-Adresse bekommen die Rechnung nur im Admin.",
+		"en-us": "When on, every booking of an offer with a «Preis» (price) automatically receives an invoice with QR payment part by e-mail after the appointment (at the latest about one hour after it ends). The invoice appears in the admin under «Rechnungen» with source «Terminbuchung». Offers without a price and cancelled bookings get no invoice; bookings without an e-mail address only get the invoice in the admin."
 	},
 	"settings.chat_knowledge_extra": {
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",

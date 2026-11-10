@@ -63,7 +63,8 @@ export const CODE_TOKENS = [
 	'Event-Name',
 	'Wegbeschreibung',
 	'Ort-Telefon',
-	'Ort-Karte'
+	'Ort-Karte',
+	'Stornofrist'
 ];
 
 const TOKEN = /\{\{([^{}]+)\}\}/g;

@@ -172,7 +172,8 @@ export const actions: Actions = {
 				land: (formData.get('land') as string) || undefined,
 				items,
 				notes: (formData.get('notes') as string) || undefined,
-				paymentStatus: (formData.get('payment-status') as 'offen' | 'bezahlt') || 'offen'
+				paymentStatus:
+					(formData.get('payment-status') as 'offen' | 'bezahlt' | 'storniert') || 'offen'
 			});
 
 			return { success: true };
