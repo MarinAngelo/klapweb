@@ -553,6 +553,7 @@
 				"type": "Link",
 				"config": {
 					"label": "Umleitungs-Seite",
+					"placeholder": "Leer = Standardseite «Website im Aufbau»",
 					"select": "document",
 					"customtypes": ["page"]
 				}

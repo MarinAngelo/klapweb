@@ -1405,6 +1405,11 @@ export const translations: Record<string, Record<string, string>> = {
 	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Website im Aufbau': { 'de-ch': 'Website im Aufbau', 'en-us': 'Website under construction' },
+	'Unsere neue Website entsteht gerade. Schauen Sie bald wieder vorbei.': {
+		'de-ch': 'Unsere neue Website entsteht gerade. Schauen Sie bald wieder vorbei.',
+		'en-us': 'Our new website is on its way. Please check back soon.'
+	},
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {

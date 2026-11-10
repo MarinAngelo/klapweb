@@ -50,7 +50,7 @@ const config = {
 		},
 
 		prerender: {
-			entries: ['*', '/sitemap.xml', '/robots.txt'],
+			entries: ['*', '/sitemap.xml', '/robots.txt', '/im-aufbau'],
 			// Verhindert den Build-Abbruch bei toten Links im CMS
 			handleHttpError: ({ path, referrer, message }) => {
 				// 404 Fehler (tote Links) werden geloggt, aber der Build läuft weiter
