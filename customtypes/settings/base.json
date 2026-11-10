@@ -601,13 +601,6 @@
 					"thumbnails": []
 				}
 			},
-			"adobe_font_id": {
-				"type": "Text",
-				"config": {
-					"label": "Adobe Project ID",
-					"placeholder": "Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy"
-				}
-			},
 			"favicon": {
 				"type": "Image",
 				"config": {
