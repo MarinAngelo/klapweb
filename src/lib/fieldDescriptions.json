@@ -223,6 +223,14 @@
 		"de-ch": "Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Muster Praxis» statt nur info@muster-praxis.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.",
 		"en-us": "Name your e-mails show in the inbox, e.g. «Muster Praxis» instead of just info@muster-praxis.ch. Empty = the website name from the settings, otherwise «Verantwortliche Person/Firma». Applies to all e-mails except the newsletter, which has its own sender name."
 	},
+	"settings.home_redirect_active": {
+		"de-ch": "Leitet Besucher der Startseite auf eine andere Seite um, z.B. solange die Website im Aufbau ist. Das Ziel bestimmt «Umleitungs-Seite»; ist sie leer, erscheint die Standardseite «Website im Aufbau» (mit Kontakt-E-Mail aus «Verantwortliche E-Mail»). Nur die Startseite wird umgeleitet, alle anderen Seiten bleiben erreichbar.",
+		"en-us": "Redirects visitors of the home page to another page, e.g. while the website is under construction. «Umleitungs-Seite» sets the target; if it is empty, the default page «Website im Aufbau» (website under construction, with the contact e-mail from «Verantwortliche E-Mail») is shown. Only the home page is redirected, all other pages stay reachable."
+	},
+	"settings.home_redirect_url": {
+		"de-ch": "Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.",
+		"en-us": "Page the home page redirects to when «Startseite umleiten» (redirect home page) is on. Empty = default page «Website im Aufbau» (website under construction) with default text."
+	},
 	"settings.invoice_iban": {
 		"de-ch": "Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.",
 		"en-us": "Account your invoices are paid to. Shown on every invoice and in the QR payment part, e.g. «CH93 0076 2011 6238 5295 7». For the QR payment part it must be a Swiss or Liechtenstein IBAN. A QR-IBAN from your bank works too; the matching reference is created automatically."
