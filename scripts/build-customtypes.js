@@ -152,6 +152,8 @@ function isActive(gate) {
 	if (!gate) return true;
 	if (gate.plan && activePlanChain.length > 0 && !activePlanChain.includes(gate.plan)) return false;
 	if (gate.feature && !allFeatures.includes(gate.feature)) return false;
+	// OR gate: active when at least one of the features is (e.g. invoice fields)
+	if (gate.features && !gate.features.some((f) => allFeatures.includes(f))) return false;
 	return true;
 }
 

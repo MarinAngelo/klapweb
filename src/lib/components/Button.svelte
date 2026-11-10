@@ -136,7 +136,7 @@
 {/if}
 
 <style>
-	:global(.button-prismic-link:hover) {
+	:global(.button-prismic-link:not(:disabled):hover) {
 		color: var(--hover-text-color) !important;
 		background-color: var(--hover-bg-color) !important;
 		border-color: var(--hover-text-color) !important;

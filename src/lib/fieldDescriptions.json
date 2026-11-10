@@ -3,6 +3,22 @@
 		"de-ch": "Der Punkt, den die Karte neben der Adresse zeigt, inkl. Link «Route planen»; leer = nur die Adresse ohne Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
 		"en-us": "The point the map next to the address shows, incl. a «Route planen» (directions) link; empty = address only, no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
 	},
+	"angebot.bild": {
+		"de-ch": "Optionales Bild, das oben in der Kachel des Angebots erscheint (Inhalts-Element «Kacheln», Variante «Buchbare Angebote»). Querformat empfohlen, z.B. 2200 × 1200 Pixel.",
+		"en-us": "Optional image shown at the top of the offer tile (element «Kacheln», variation «Buchbare Angebote»). Landscape recommended, e.g. 2200 × 1200 pixels."
+	},
+	"angebot.cancel_fee_percent": {
+		"de-ch": "Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = Standard aus den Einstellungen. Ohne Gebühr (und bei Angeboten ohne Preis) ist nach Ablauf keine Online-Stornierung mehr möglich; die Seite bittet dann, dich direkt zu kontaktieren.",
+		"en-us": "Fee in percent of the offer «Preis» (price) when cancelling after the free period, e.g. 80 (price CHF 120 → fee CHF 96). The customer confirms the fee on the cancellation page and receives an invoice with QR payment part. Empty = default from the settings. Without a fee (and for offers without a price) online cancellation is no longer possible after the deadline; the page then asks to contact you directly."
+	},
+	"angebot.cancel_free_hours": {
+		"de-ch": "Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = Standard aus den Einstellungen (Tab «Terminbuchung»).",
+		"en-us": "How many hours before the appointment a booking can be cancelled free of charge, e.g. 24 (appointment Monday 09:00 → free until Sunday 09:00). The deadline is shown in the confirmation e-mail (placeholder {{Stornofrist}}) and on the cancellation page. Empty = default from the settings (tab «Terminbuchung»)."
+	},
+	"angebot.info_page": {
+		"de-ch": "Seite mit ausführlichen Infos zu diesem Angebot. Im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote») führt «Mehr erfahren» auf diese Seite. Leer = «Mehr erfahren» öffnet ein Fenster mit Beschreibung, Dauer, Preis und Ort.",
+		"en-us": "Page with detailed information about this offer. In the «Kacheln» element (variation «Buchbare Angebote») the «Mehr erfahren» (learn more) button links here. Empty = «Mehr erfahren» opens a window with description, duration, price and location."
+	},
 	"angebot.ort": {
 		"de-ch": "Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.",
 		"en-us": "Where the offer takes place. Link a document of the content type «Ort» (location) here (create it first under «Ort», e.g. «Praxis Zürich City» with address). Name, address, directions and phone of the location appear in the appointment confirmation (in a custom e-mail text via the placeholders {{Ort}}, {{Wegbeschreibung}} and {{Ort-Telefon}}); name and address also in your notification and on the confirmation page. If «Aktiv» is switched off for the location or the field is empty, no location details are shown – booking still works."
@@ -10,6 +26,10 @@
 	"angebot.puffer_danach": {
 		"de-ch": "Pause nach jedem Termin dieses Angebots in Minuten, z. B. für Notizen, Lüften oder den Weg. Während des Puffers kann nichts anderes gebucht werden, auch kein anderes Angebot. Beispiel: Termin 60 Minuten, Puffer 15, gebucht um 09:00 → belegt bis 10:15; bei Buchungsintervall 30 ist die nächste freie Anfangszeit 10:30. Auch der letzte Termin des Tages muss inklusive Puffer vor der Endzeit fertig sein. Leer oder 0 = kein Puffer.",
 		"en-us": "Break after each appointment of this offer, in minutes, e.g. for notes, airing the room or travel. Nothing else can be booked during the buffer, not even another offer. Example: appointment 60 minutes, buffer 15, booked at 09:00 → occupied until 10:15; with a booking interval of 30 the next free start time is 10:30. The last appointment of the day must also end, including the buffer, before the end time. Empty or 0 = no buffer."
+	},
+	"angebot.sort_order": {
+		"de-ch": "Bestimmt die Reihenfolge der Angebote im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote»): kleinere Zahl = weiter vorne, z.B. 1, 2, 3. Angebote ohne Zahl erscheinen am Schluss, alphabetisch nach «Bezeichnung».",
+		"en-us": "Sets the order of the offers in the «Kacheln» element (variation «Buchbare Angebote»): lower number = further forward, e.g. 1, 2, 3. Offers without a number appear last, sorted alphabetically by «Bezeichnung» (name)."
 	},
 	"angebot.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
@@ -135,6 +155,14 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"Kacheln.booking_page": {
+		"de-ch": "Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = keine Schaltfläche «Buchen».",
+		"en-us": "Page with the form containing a «Termin» field. «Buchen» (book) opens this page and shows only the appointments of the chosen offer (with a «Alle Angebote anzeigen» link to show all). Empty = no «Buchen» button."
+	},
+	"Kacheln.show_price": {
+		"de-ch": "Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.",
+		"en-us": "Shows the offer's «Preis» (price) in CHF on the tile. Offers without a price show none."
+	},
 	"leistung.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
@@ -163,6 +191,18 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"settings.booking_cancel_fee_percent": {
+		"de-ch": "Standard für alle Angebote ohne eigene Angabe. Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = nach Ablauf der Frist keine Online-Stornierung (Hinweis, dich direkt zu kontaktieren).",
+		"en-us": "Default for all offers without their own value. Fee in percent of the offer «Preis» (price) when cancelling after the free period, e.g. 80 (price CHF 120 → fee CHF 96). The customer confirms the fee on the cancellation page and receives an invoice with QR payment part. Empty = no online cancellation after the deadline (asks to contact you directly)."
+	},
+	"settings.booking_cancel_free_hours": {
+		"de-ch": "Standard für alle Angebote ohne eigene Angabe. Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = jederzeit kostenlos stornierbar (bis Terminbeginn).",
+		"en-us": "Default for all offers without their own value. How many hours before the appointment a booking can be cancelled free of charge, e.g. 24 (appointment Monday 09:00 → free until Sunday 09:00). The deadline is shown in the confirmation e-mail (placeholder {{Stornofrist}}) and on the cancellation page. Empty = free cancellation at any time (until the appointment starts)."
+	},
+	"settings.booking_invoice": {
+		"de-ch": "Wenn eingeschaltet, erhält jede Buchung eines Angebots mit «Preis» nach dem Termin automatisch eine Rechnung mit QR-Zahlteil per E-Mail (spätestens etwa eine Stunde nach Terminende). Die Rechnung erscheint im Admin unter «Rechnungen» mit der Quelle «Terminbuchung». Angebote ohne Preis und stornierte Buchungen erhalten keine Rechnung; Buchungen ohne E-Mail-Adresse bekommen die Rechnung nur im Admin.",
+		"en-us": "When on, every booking of an offer with a «Preis» (price) automatically receives an invoice with QR payment part by e-mail after the appointment (at the latest about one hour after it ends). The invoice appears in the admin under «Rechnungen» with source «Terminbuchung». Offers without a price and cancelled bookings get no invoice; bookings without an e-mail address only get the invoice in the admin."
+	},
 	"settings.chat_knowledge_extra": {
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",
 		"en-us": "Your own additions and corrections for the chat bot, e.g. terms, special rules or current notices («Closed this week»). If something contradicts «Chat-Bot Wissensbasis», this field wins. This lets you replace the knowledge base completely without losing your additions. Empty in a language = the additions of the main language apply."
@@ -182,6 +222,14 @@
 	"settings.email_from_name": {
 		"de-ch": "Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Muster Praxis» statt nur info@muster-praxis.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.",
 		"en-us": "Name your e-mails show in the inbox, e.g. «Muster Praxis» instead of just info@muster-praxis.ch. Empty = the website name from the settings, otherwise «Verantwortliche Person/Firma». Applies to all e-mails except the newsletter, which has its own sender name."
+	},
+	"settings.invoice_iban": {
+		"de-ch": "Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.",
+		"en-us": "Account your invoices are paid to. Shown on every invoice and in the QR payment part, e.g. «CH93 0076 2011 6238 5295 7». For the QR payment part it must be a Swiss or Liechtenstein IBAN. A QR-IBAN from your bank works too; the matching reference is created automatically."
+	},
+	"settings.invoice_qr_bill": {
+		"de-ch": "Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.",
+		"en-us": "Prints a Swiss QR payment part at the bottom of every invoice. Customers scan it with their banking app; amount, account and reference are filled in. Requirements: a valid Swiss or Liechtenstein «IBAN», invoice in CHF or EUR, and in «Verantwortliche Adresse» (address) street + number and «postcode city» each on its own line (e.g. «Musterstrasse 12» / «8000 Zürich»). If something is missing, the invoice is issued without the QR part and «Inhalte prüfen» reports it."
 	},
 	"settings.notification_email": {
 		"de-ch": "An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.",

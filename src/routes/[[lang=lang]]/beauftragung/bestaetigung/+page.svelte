@@ -9,15 +9,14 @@
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 
 	export let data: {
-		confirmationTexts: { stripe: unknown; rechnung: unknown; bar: unknown };
+		confirmationTexts: { rechnung: unknown; bar: unknown };
 		confirmationHeading: string | null;
 		confirmationIntro: string | null;
 	};
 
-	$: isSimulated = $page.url.searchParams.get('simulated') === 'true';
-	$: method = $page.url.searchParams.get('method') ?? 'stripe';
+	$: method = $page.url.searchParams.get('method') ?? '';
 	$: serviceLabel = $page.url.searchParams.get('label') ?? '';
-	$: confirmationText = data.confirmationTexts[method as 'stripe' | 'rechnung' | 'bar'] ?? null;
+	$: confirmationText = data.confirmationTexts[method as 'rechnung' | 'bar'] ?? null;
 
 	// Inject service label as token so {{Dienstleistung}} works in Prismic confirmation texts
 	$: variables.update((v) => ({ ...v, Dienstleistung: serviceLabel }));
@@ -33,22 +32,6 @@
 </svelte:head>
 
 <Bounded class="bg-page-bg text-page" as="section">
-	{#if isSimulated}
-		<div class="mb-8 px-4 py-3 border border-yellow-500 text-yellow-600 text-sm">
-			<strong>DEV-Simulation:</strong> Zahlungsart: <code>{method}</code>
-			{#if method === 'stripe'}
-				— In Production würde der User nach erfolgter Stripe-Zahlung hier landen.
-				<code class="block mt-1"
-					>/beauftragung/bestaetigung?session_id=&#123;CHECKOUT_SESSION_ID&#125;</code
-				>
-			{:else if method === 'rechnung'}
-				— In Production wird die PDF-Rechnung per E-Mail verschickt (Resend).
-			{:else if method === 'bar'}
-				— In Production wird die Bestellung an Netlify Forms gesendet.
-			{/if}
-		</div>
-	{/if}
-
 	<Heading tag="h1"
 		>{data.confirmationHeading ?? t('Vielen Dank für Ihre Bestellung!', lang)}</Heading
 	>

@@ -53,7 +53,8 @@ const UNLOCALIZED_ROUTES = new Set([
 	'sitemap.xml',
 	'slice-preview',
 	'slice-simulator',
-	'termin-gebucht'
+	'termin-gebucht',
+	'termin-stornieren'
 ]);
 
 /**

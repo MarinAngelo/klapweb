@@ -16,7 +16,6 @@ export interface ProductData {
 	label: string;
 	price: number | null;
 	displayAmount: number | null;
-	stripeUrl: string | null;
 	billingType: string | null;
 	addons: AddonData[];
 }
@@ -36,7 +35,6 @@ export async function load({ fetch, url, parent }) {
 
 	// Payment methods — default to true if not explicitly set to false
 	const paymentMethods = {
-		stripe: (settings.data as any).payment_stripe_enabled !== false,
 		rechnung: (settings.data as any).payment_rechnung_enabled !== false,
 		bar: (settings.data as any).payment_bar_enabled !== false
 	};
@@ -57,8 +55,7 @@ export async function load({ fetch, url, parent }) {
 			baseCurrency,
 			additionalCodes,
 			rates,
-			// Stripe payment links exist per product only → not available for a cart
-			paymentMethods: { ...paymentMethods, stripe: false },
+			paymentMethods,
 			barDescription: null,
 			eventTexts: null,
 			isEventCheckout: false,
@@ -89,7 +86,6 @@ export async function load({ fetch, url, parent }) {
 			const basePrice = (d.ticket_price_chf as number) ?? null;
 			const displayAmount = calcDisplayPrice(basePrice, null, null);
 			const eventPaymentMethods = {
-				stripe: false,
 				rechnung: (d.payment_rechnung_enabled as boolean) !== false,
 				bar: (d.payment_bar_enabled as boolean) !== false
 			};
@@ -123,7 +119,6 @@ export async function load({ fetch, url, parent }) {
 					label: (d.title as string) || serviceUid,
 					price: basePrice,
 					displayAmount,
-					stripeUrl: null,
 					billingType: 'Einmalig',
 					addons: []
 				} satisfies ProductData,
@@ -145,7 +140,6 @@ export async function load({ fetch, url, parent }) {
 
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
 		const d = pageDoc.data as Record<string, unknown>;
-		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
@@ -185,7 +179,6 @@ export async function load({ fetch, url, parent }) {
 					: serviceUid,
 				price: basePrice,
 				displayAmount,
-				stripeUrl: stripeLink?.url ?? null,
 				billingType,
 				addons
 			} satisfies ProductData,

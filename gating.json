@@ -162,6 +162,27 @@
 				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
+				},
+				"invoice_currency": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_iban": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bank": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bic": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_payment_terms_days": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_vat_rate": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_qr_bill": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 				}
 			}
 		},
@@ -231,6 +252,9 @@
 			"variations": {
 				"plaene": {
 					"feature": "ecommerce"
+				},
+				"angebote": {
+					"feature": "terminbuchung"
 				}
 			}
 		},
