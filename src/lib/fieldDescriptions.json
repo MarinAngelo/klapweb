@@ -156,8 +156,8 @@
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
 	"Kacheln.booking_page": {
-		"de-ch": "Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = keine Schaltfläche «Buchen».",
-		"en-us": "Page with the form containing a «Termin» field. «Buchen» (book) opens this page and shows only the appointments of the chosen offer (with a «Alle Angebote anzeigen» link to show all). Empty = no «Buchen» button."
+		"de-ch": "Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = automatisch die erste Seite mit einem Formular der Variante «Mit Termin»; gibt es keine, erscheint keine Schaltfläche «Buchen».",
+		"en-us": "Page with the form containing a «Termin» field. «Buchen» (book) opens this page and shows only the appointments of the chosen offer (with a «Alle Angebote anzeigen» link to show all). Empty = automatically the first page with a form of the «Mit Termin» variation; if there is none, no «Buchen» button is shown."
 	},
 	"Kacheln.show_price": {
 		"de-ch": "Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.",

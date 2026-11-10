@@ -46,7 +46,12 @@
 
 	$: infoLabel = primary?.info_button_label || $_('Mehr erfahren');
 	$: bookingLabel = primary?.booking_button_label || $_('Buchen');
-	$: bookingBase = isFilled.link(primary?.booking_page) ? $linkHref(primary.booking_page) : '';
+	// «Buchungsseite» empty → first page with a form of variation «Mit Termin» (found in onMount)
+	let detectedBookingPage: any = null;
+	$: bookingPage = isFilled.link(primary?.booking_page)
+		? primary.booking_page
+		: detectedBookingPage;
+	$: bookingBase = bookingPage ? $linkHref(bookingPage) || '' : '';
 
 	// Booking page with the offer preselected (InputField «Termin» reads ?angebot=)
 	function bookingHref(offer: Offer): string {
@@ -78,10 +83,53 @@
 		};
 	}
 
+	// Only slice type + variation of each page (keeps the response small)
+	const bookingFormQuery = `{
+  page {
+    slices {
+      ...on form {
+        variation {
+          ...on mitTermin {
+            primary {
+              zwei_spalten
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
+
+	async function findBookingPage(client: any, lang: string): Promise<any> {
+		const hasBookingForm = (doc: any) =>
+			(doc.data?.slices ?? []).some(
+				(slice: any) => slice.slice_type === 'form' && slice.variation === 'mitTermin'
+			);
+		const load = (params: Record<string, unknown>) =>
+			client
+				.getAllByType('page', { graphQuery: bookingFormQuery, ...params })
+				.catch(() => []) as Promise<any[]>;
+		let doc = (await load({ lang })).find(hasBookingForm);
+		// No translation of the booking page → main language
+		if (!doc) doc = (await load({})).find(hasBookingForm);
+		if (!doc) return null;
+		return {
+			link_type: 'Document',
+			id: doc.id,
+			type: doc.type,
+			uid: doc.uid,
+			lang: doc.lang,
+			url: doc.url
+		};
+	}
+
 	onMount(async () => {
 		try {
 			const client = createClient() as any;
 			const lang = $page.data.lang;
+			if (!isFilled.link(primary?.booking_page)) {
+				findBookingPage(client, lang).then((link) => (detectedBookingPage = link));
+			}
 			const query = { fetchLinks: ['ort.name'], orderings: [{ field: 'my.angebot.titel' }] };
 			const slotsRequest = fetch('/api/termine')
 				.then((r) => (r.ok ? r.json() : null))

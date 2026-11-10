@@ -684,16 +684,6 @@
 						]
 					}
 				},
-				"booking_page": {
-					"type": "Link",
-					"config": {
-						"label": "Buchungsseite",
-						"placeholder": "Seite mit dem Formular «Termin»",
-						"select": null,
-						"allowTargetBlank": false,
-						"customtypes": ["page"]
-					}
-				},
 				"info_button_label": {
 					"type": "Text",
 					"config": {
@@ -805,6 +795,16 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": true
+					}
+				},
+				"booking_page": {
+					"type": "Link",
+					"config": {
+						"label": "Buchungsseite",
+						"placeholder": "Leer = Seite mit dem Formular «Mit Termin» (automatisch)",
+						"select": null,
+						"allowTargetBlank": false,
+						"customtypes": ["page"]
 					}
 				},
 				"animate": {
