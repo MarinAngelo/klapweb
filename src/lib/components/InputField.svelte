@@ -67,6 +67,9 @@
 		arbeitstagLabel?: string;
 		angebotId?: string;
 	}
+	// Appointment field without a name in the CMS → default label
+	$: fieldLabel = field.field_name || (field.field_type === 'Termin' ? $_('Termin') : '');
+
 	let termine: AvailableTermin[] = [];
 	// Offer preselected via ?angebot=<uid> (Kacheln «Buchbare Angebote»); cleared by «Alle Angebote anzeigen»
 	let allTermine: AvailableTermin[] = [];
@@ -420,7 +423,7 @@
 					? 'block text-sm font-semibold mb-1'
 					: 'block text-base font-bold'}
 		>
-			{field.field_name ?? ''}{field.required ? ' *' : ''}
+			{fieldLabel}{field.required ? ' *' : ''}
 		</label>
 	{/if}
 
