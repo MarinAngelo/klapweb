@@ -112,6 +112,10 @@ git push origin <ursprung>
 Push abgelehnt (Remote neuer): `git pull --no-rebase`, Konflikte wie in Schritt 3 (inkl.
 `slicemachine.config.json`-Prüfung), erneut Build, dann pushen. **Nie `--force`.**
 
+Push scheitert an fehlenden Zugangsdaten (`could not read Username`, `Permission denied (publickey)`):
+nicht weiter versuchen, keine Zugangsdaten erfragen oder einrichten — in der Rückmeldung die
+Push-Befehle zum Kopieren ausgeben (Commits sind lokal fertig).
+
 ## 6. Rückmeldung
 
 Kurz melden:
