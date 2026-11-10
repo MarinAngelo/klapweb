@@ -1,4 +1,4 @@
-// Retired service worker (formerly cached Prismic images / Adobe fonts).
+// Retired service worker (formerly cached Prismic images / web fonts).
 // Two service workers on the same scope (this one + SvelteKit's /service-worker.js) replaced
 // each other on every page load → hanging requests. Visitors who still have it installed get
 // this version on their next visit: it deletes its cache and unregisters itself.
