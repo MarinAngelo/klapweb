@@ -156,20 +156,22 @@
 						<p class="text-muted text-sm">{$_('Zurzeit keine freien Termine.')}</p>
 					{/if}
 				</div>
-				<div class="flex flex-wrap gap-x-3 px-6">
-					{#if offer.infoPage}
-						<Button link={offer.infoPage} text={infoLabel} {...buttonColors} />
-					{:else}
-						<Button text={infoLabel} {...buttonColors} on:click={() => (detailOffer = offer)} />
-					{/if}
-					{#if bookingBase}
-						{#if isBookable(offer, bookableOffers)}
-							<Button href={bookingHref(offer)} text={bookingLabel} {...buttonColors} />
-						{:else}
-							<Button text={bookingLabel} disabled {...buttonColors} />
+				{#if offer.infoPage || isFilled.richText(offer.beschreibung) || bookingBase}
+					<div class="flex flex-wrap gap-x-3 px-6">
+						{#if offer.infoPage}
+							<Button link={offer.infoPage} text={infoLabel} {...buttonColors} />
+						{:else if isFilled.richText(offer.beschreibung)}
+							<Button text={infoLabel} {...buttonColors} on:click={() => (detailOffer = offer)} />
 						{/if}
-					{/if}
-				</div>
+						{#if bookingBase}
+							{#if isBookable(offer, bookableOffers)}
+								<Button href={bookingHref(offer)} text={bookingLabel} {...buttonColors} />
+							{:else}
+								<Button text={bookingLabel} disabled {...buttonColors} />
+							{/if}
+						{/if}
+					</div>
+				{/if}
 			</li>
 		{/each}
 	</ul>
