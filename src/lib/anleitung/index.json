@@ -1,0 +1,240 @@
+[
+	{
+		"id": "grundbegriffe",
+		"title": "Prismic: Grundbegriffe",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/page/base.json"]
+	},
+	{
+		"id": "prismic-startseite",
+		"title": "Prismic: Die Startseite (Übersicht)",
+		"stand": "2026-10-30"
+	},
+	{
+		"id": "prismic-editor",
+		"title": "Prismic: Die Bearbeitungsseite (Editor)",
+		"stand": "2026-10-30"
+	},
+	{
+		"id": "inhalt-bearbeiten",
+		"title": "Bestehenden Inhalt bearbeiten",
+		"stand": "2026-10-30"
+	},
+	{
+		"id": "neue-seite",
+		"title": "Neue Seite erstellen",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/page/base.json"]
+	},
+	{
+		"id": "navigation",
+		"title": "Seite in der Navigation verlinken",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/navigation/base.json"]
+	},
+	{
+		"id": "bilder-dateien",
+		"title": "Bilder und Dateien",
+		"stand": "2026-10-30"
+	},
+	{
+		"id": "kartenpunkt",
+		"title": "Karten und Kartenpunkt",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/mapPoint.js"]
+	},
+	{
+		"id": "videos",
+		"title": "Eigene Videos",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/components/VideoFile.svelte"]
+	},
+	{
+		"id": "vorschau",
+		"title": "Vorschau vor dem Veröffentlichen",
+		"stand": "2026-10-30",
+		"sources": ["src/routes/api/preview"]
+	},
+	{
+		"id": "seo",
+		"title": "SEO (Google und Social Media)",
+		"stand": "2026-10-30"
+	},
+	{
+		"id": "einstellungen",
+		"title": "Einstellungen (Settings)",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/settings/base.json"]
+	},
+	{
+		"id": "design",
+		"title": "Design anpassen (Design-Vorlage)",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/theme"]
+	},
+	{
+		"id": "inhalts-elemente",
+		"title": "Inhalts-Elemente im Überblick",
+		"stand": "2026-10-30",
+		"sources": ["customtypes/page/base.json"]
+	},
+	{
+		"id": "kontaktformular",
+		"title": "Kontaktformular",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/slices/Formular/base.json"]
+	},
+	{
+		"id": "cookie-banner",
+		"title": "Cookie-Banner und Datenschutz",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/consent"]
+	},
+	{
+		"id": "passwortschutz",
+		"title": "Passwortgeschützte Seiten",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/server/pageAuth.ts"]
+	},
+	{
+		"id": "mehrsprachigkeit",
+		"title": "Mehrsprachigkeit",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/i18n/i18n.ts"]
+	},
+	{
+		"id": "admin-bereich",
+		"title": "Der Admin-Bereich deiner Website",
+		"stand": "2026-10-30",
+		"sources": ["src/routes/admin/dashboard"]
+	},
+	{
+		"id": "inhalte-pruefen",
+		"title": "Inhalte prüfen",
+		"stand": "2026-10-30",
+		"sources": ["src/lib/contentCheck.js"]
+	},
+	{
+		"id": "terminbuchung",
+		"title": "Terminbuchung einrichten",
+		"feature": "terminbuchung",
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/terminbuchung",
+			"src/lib/server/bookings.ts",
+			"src/lib/server/terminSlots.ts",
+			"src/routes/admin/buchungen",
+			"src/routes/api/buche-termin"
+		]
+	},
+	{
+		"id": "globale-events",
+		"title": "Globale Events (Veranstaltungen)",
+		"feature": "global_events",
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/global_events",
+			"src/lib/slices/GlobaleEvents",
+			"src/lib/slices/Event",
+			"src/routes/admin/event-anmeldungen"
+		]
+	},
+	{
+		"id": "newsletter",
+		"title": "Newsletter / Info-Mails",
+		"feature": "newsletter",
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/newsletter",
+			"src/lib/server/newsletter.ts",
+			"src/routes/admin/newsletter",
+			"src/routes/api/newsletter"
+		]
+	},
+	{
+		"id": "stundenabrechnung",
+		"title": "Stundenabrechnung",
+		"feature": "stundenabrechnung",
+		"stand": "2026-10-30",
+		"sources": [
+			"src/lib/server/stunden.ts",
+			"src/routes/admin/stunden",
+			"src/lib/components/StundenErfassung.svelte"
+		]
+	},
+	{
+		"id": "kundenverwaltung",
+		"title": "Kundenverwaltung",
+		"feature": "kundenverwaltung",
+		"stand": "2026-10-30",
+		"sources": ["src/routes/admin/kunden"]
+	},
+	{
+		"id": "kundenkonto",
+		"title": "Kundenkonto",
+		"feature": "kundenkonto",
+		"stand": "2026-10-30",
+		"sources": ["src/routes/konto"]
+	},
+	{
+		"id": "online-handel",
+		"title": "Online-Handel (Produkte und Dienstleistungen verkaufen)",
+		"feature": "ecommerce",
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/ecommerce",
+			"src/lib/server/cartLines.ts",
+			"src/routes/api/invoice",
+			"src/routes/[[lang=lang]]/warenkorb"
+		]
+	},
+	{
+		"id": "manuelle-rechnungen",
+		"title": "Manuelle Rechnungen",
+		"feature": "manuelle_rechnungen",
+		"stand": "2026-10-30",
+		"sources": ["src/routes/admin/rechnungen", "src/lib/server/invoices.ts"]
+	},
+	{
+		"id": "ressourcen-buchung",
+		"title": "Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)",
+		"feature": "ressourcenbuchung",
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/ressourcenbuchung",
+			"src/lib/server/ressourceBuchungen.ts",
+			"src/lib/slices/RessourceBuchung",
+			"src/routes/admin/ressource-buchungen"
+		]
+	},
+	{
+		"id": "pwa",
+		"title": "Progressive Web App (PWA)",
+		"feature": "pwa",
+		"stand": "2026-10-30",
+		"sources": ["src/service-worker.ts", "src/routes/manifest.webmanifest"]
+	},
+	{
+		"id": "chat-bot",
+		"title": "Chat-Bot",
+		"feature": "chatbot",
+		"stand": "2026-10-30",
+		"sources": [
+			"src/routes/api/chat",
+			"src/routes/admin/chatbot",
+			"src/lib/components/ChatWidget.svelte"
+		]
+	},
+	{
+		"id": "erweiterte-gestaltung",
+		"title": "Design Panel und erweiterte Gestaltung",
+		"feature": "erweiterte_gestaltung",
+		"covers": ["klapstudio", "variablen"],
+		"stand": "2026-10-30",
+		"sources": [
+			"customtypes/_features/erweiterte_gestaltung",
+			"customtypes/_features/variablen",
+			"src/lib/components/KlapStudio.svelte"
+		]
+	}
+]

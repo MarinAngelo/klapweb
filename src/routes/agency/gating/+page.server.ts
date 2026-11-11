@@ -118,6 +118,10 @@ function collectGatingItems(gating: any): GatingItem[] {
 			const fieldGate = gateOf(fieldDef);
 			if (fieldGate)
 				items.push({ kind: 'customTypeField', target: typeId, detail: field, gate: fieldGate });
+			// OR gate (e.g. invoice fields): listed under each feature
+			for (const feature of (fieldDef.features ?? []) as string[]) {
+				items.push({ kind: 'customTypeField', target: typeId, detail: field, gate: { feature } });
+			}
 		}
 	}
 

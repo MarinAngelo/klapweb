@@ -7,7 +7,6 @@ export async function load({ parent, url, fetch, cookies }) {
 	const d = settings.data as Record<string, unknown>;
 
 	let confirmationTexts = {
-		stripe: d.payment_stripe_confirmation_text ?? null,
 		rechnung: d.payment_rechnung_confirmation_text ?? null,
 		bar: d.payment_bar_confirmation_text ?? null
 	};
@@ -25,7 +24,6 @@ export async function load({ parent, url, fetch, cookies }) {
 			confirmationHeading = (ed.confirmation_heading as string)?.trim() || null;
 			confirmationIntro = (ed.confirmation_intro as string)?.trim() || null;
 			confirmationTexts = {
-				stripe: null,
 				rechnung: ed.confirmation_text_rechnung ?? confirmationTexts.rechnung,
 				bar: ed.confirmation_text_bar ?? confirmationTexts.bar
 			};

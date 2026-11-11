@@ -35,21 +35,23 @@ async function main() {
 			console.warn(
 				p.kind === 'relative'
 					? `  → ${where}: Web-Link ohne "/" am Anfang → "${p.url}"`
-					: p.kind === 'legal_missing'
-						? `  → ${where}: Rechtliche Angaben fehlen in den Einstellungen: ${p.token} — auf Impressum/Datenschutz steht «… fehlt»`
-						: p.kind === 'empty_slice'
-							? `  → ${where}: Inhalts-Element «${p.token}» ohne Inhalt (Variante fehlt im Prismic-Modell) — wird nicht angezeigt; in Prismic entfernen oder neu anlegen`
-							: p.kind === 'stunden_unprotected'
-								? `  → ${where}: Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz — Einträge werden abgelehnt`
-								: p.kind === 'termin'
-									? `  → ${where}: Terminbuchung — ${p.problem.key.replace(/\{(\w+)\}/g, (_, k) => p.problem.params?.[k] ?? '')}`
-									: p.kind === 'mail_from'
-										? `  → ${where}: «Absender-E-Mail» fehlt oder ist ungültig — alle E-Mails der Website brauchen sie`
-										: p.kind === 'map_point'
-											? `  → ${where}: Kartenpunkt nicht erkannt → "${p.url}" (OSM-Link oder Koordinaten verwenden)`
-											: p.kind === 'unknown_token'
-												? `  → ${where}: unbekannter Token ${p.token}${p.suggestion ? ` — meintest du ${p.suggestion}?` : ''}`
-												: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
+					: p.kind === 'invoice_qr'
+						? `  → ${where}: Kein QR-Zahlteil auf Rechnungen — ${p.token}`
+						: p.kind === 'legal_missing'
+							? `  → ${where}: Rechtliche Angaben fehlen in den Einstellungen: ${p.token} — auf Impressum/Datenschutz steht «… fehlt»`
+							: p.kind === 'empty_slice'
+								? `  → ${where}: Inhalts-Element «${p.token}» ohne Inhalt (Variante fehlt im Prismic-Modell) — wird nicht angezeigt; in Prismic entfernen oder neu anlegen`
+								: p.kind === 'stunden_unprotected'
+									? `  → ${where}: Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz — Einträge werden abgelehnt`
+									: p.kind === 'termin'
+										? `  → ${where}: Terminbuchung — ${p.problem.key.replace(/\{(\w+)\}/g, (_, k) => p.problem.params?.[k] ?? '')}`
+										: p.kind === 'mail_from'
+											? `  → ${where}: «Absender-E-Mail» fehlt oder ist ungültig — alle E-Mails der Website brauchen sie`
+											: p.kind === 'map_point'
+												? `  → ${where}: Kartenpunkt nicht erkannt → "${p.url}" (OSM-Link oder Koordinaten verwenden)`
+												: p.kind === 'unknown_token'
+													? `  → ${where}: unbekannter Token ${p.token}${p.suggestion ? ` — meintest du ${p.suggestion}?` : ''}`
+													: `  → ${where}: verlinkt ${p.target}, Übersetzung vorhanden → ${p.suggestion} wählen`
 			);
 		}
 	} else {

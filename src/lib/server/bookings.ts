@@ -23,6 +23,24 @@ export interface BookingRecord {
 	arbeitstagId?: string;
 	angebotId?: string;
 	reminderSent?: boolean;
+	telefon?: string;
+	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
+	source?: 'online' | 'admin';
+	/** Invoice of the booking (offers with «Preis», setting «Rechnung bei Buchung senden») */
+	invoiceNumber?: string;
+	/** Snapshot at booking time (offer «Preis», cancellation terms) — later changes don't apply */
+	price?: number;
+	/** ISO time until which cancelling is free; missing = always free */
+	cancelFreeUntil?: string;
+	/** Fee after cancelFreeUntil in % of price; missing = no online cancellation after the deadline */
+	cancelFeePercent?: number;
+	/** Secret of the cancellation link; older bookings without it accept the id alone */
+	cancelToken?: string;
+	zeitzone?: string;
+	/** Invoice due after the appointment (setting «Rechnung nach dem Termin senden», offer with price) */
+	invoicePending?: boolean;
+	/** Billing address from the booking form (for the invoice / QR bill) */
+	invoiceAddress?: { adresse?: string; plz?: string; ort?: string; land?: string };
 }
 
 function toMinutes(value: string): number | null {

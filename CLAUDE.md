@@ -308,6 +308,8 @@ Ablauf Änderung bei einem Kunden:
 | Variation | `variations.{id}.plan/feature`               | Variation erscheint nicht in `model.json` |
 | Feld      | `fields.{key}.plan/feature`                  | Feld fehlt in allen Variationen           |
 
+`features: ["a", "b"]` statt `feature` = **oder**-Gate (aktiv, wenn eines der Features aktiv ist), z.B. die Rechnungsfelder in `customTypes.settings.fields`.
+
 ### Variationen aus full.json
 
 Extra-Variationen (die nicht in `base.json` stehen) werden in `full.json` definiert.
@@ -406,6 +408,22 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
 
+### Rechnungsmodul (`src/lib/server/invoicing/`) — für alle Features
+
+- **Jede Rechnung nur über `createInvoice()`** (`$lib/server/invoicing`): rendert das PDF (`pdf.ts`, einziger Renderer) inkl. **Schweizer QR-Zahlteil** und speichert im Blob-Store `manuelle_rechnungen` (sichtbar in `/admin/rechnungen`). Versand macht der Aufrufer (eigener Mail-Text, `invoiceAttachment()`) oder `sendInvoiceMail()` (setzt «gesendet»)
+- Nutzer: Checkout `/api/invoice` (`source: 'checkout'`/`'event'`), Admin `/admin/rechnungen` (`'admin'`), Terminbuchung (`'terminbuchung'`, Einstellung «Rechnung nach dem Termin senden», nur Angebote mit «Preis»): Buchung merkt `invoicePending` + Preis + Rechnungsadresse vor, `sendDueBookingInvoices()` (`src/lib/server/bookingInvoices.ts`) erstellt und verschickt nach Terminende — stündlich via `netlify/functions/termin-rechnungen.ts` → `/api/cron/termin-rechnungen` (Schlüssel `cronKey()` aus `ADMIN_SECRET`) und beim Öffnen der Terminverwaltung. Neues Feature → `source` in `InvoiceSource` (`invoices.ts`) + Label in `SOURCE_LABELS` (`admin/rechnungen/+page.svelte`)
+- Positionen: `{ description, quantity, unitPrice, billingType? }`, Rabatt = Position mit negativem Preis. Total inkl. MWST = Betrag im QR-Code
+- Einstellungen: Tab «Rechnungen» (`invoice_*` + `invoice_qr_bill`, in `customtypes/settings/base.json`, Feld-Gate `features: [...]` = aktiv bei einem der Rechnungs-Features); Laden nur über `loadInvoiceSettings()` / `invoiceSettingsFrom()`
+- **QR-Rechnung** (`src/lib/qrBill.js`, Standard 2.3, nur strukturierte Adressen): IBAN CH/LI, Absender-Adresse aus «Verantwortliche Adresse» (Zeile «Strasse Nr.» + Zeile «PLZ Ort»), nur CHF/EUR. Referenz: normale IBAN → Creditor Reference `RF…`, QR-IBAN → 27-stellige QR-Referenz, beides aus der Rechnungsnummer. Fehlt etwas → PDF ohne QR-Teil, «Inhalte prüfen» meldet `invoice_qr`
+- Zahlungseingang wird **nicht** automatisch erkannt (keine Bankanbindung) → «bezahlt» von Hand; Referenz erleichtert den Abgleich
+
+### Terminbuchung: Stornierung (`/termin-stornieren`)
+
+- Link in der Bestätigungs-Mail: `cancelLink()` (`src/lib/server/bookingCancel.ts`) mit zufälligem `cancelToken` der Buchung. **Nie beim Aufruf stornieren** (Mail-Scanner öffnen Links) — Seite zeigt Bedingungen, Stornierung erst per Knopf (Form-Action). Alte Links `/api/storniere-termin` leiten dorthin um
+- Bedingungen werden **beim Buchen in der Buchung gespeichert** (`price`, `cancelFreeUntil`, `cancelFeePercent`): Angebot «Kostenlos stornierbar bis (Std. vor Termin)» / «Stornogebühr nach Ablauf (%)», sonst Standard aus Einstellungen › Terminbuchung. Platzhalter `{{Stornofrist}}`
+- `cancelTerms()`: `free` (in der Frist bzw. ohne Frist), `fee` (nach der Frist, Gebühr % × Preis → Rechnung mit QR über das Rechnungsmodul), `contact` (nach der Frist ohne Gebühr oder ohne Preis → keine Online-Stornierung), `past` (Termin begonnen)
+- `cancelBooking()`: gibt den Termin frei, setzt eine offene Rechnung der Buchung auf `storniert` (bezahlt → Hinweis «Rückerstattung prüfen» an den Betreiber), erstellt die Gebührenrechnung, informiert Kunde + Betreiber
+
 ### Kunden-Management (`/admin/kunden`)
 
 - Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
@@ -432,7 +450,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Store `src/lib/stores/cart.ts` (localStorage `klap_cart`, Consent-Dienst `cart`), Seite `/warenkorb`, Icon mit Anzahl in der Navbar
 - Transport nur als Referenzen `?warenkorb=leistung:<uid>,page:<uid>` (`src/lib/utils/cartSpec.ts`) → Beauftragung → Zusammenfassung → `/api/invoice` (`cart`). **Preise immer serverseitig** via `src/lib/server/cartLines.ts`, nie aus dem Browser
 - Pakete im Warenkorb bringen ihre Zusatzleistungen (Pflicht) mit; Rabatt-Code gilt für Hauptpositionen, nicht für Zusatzleistungen
-- Stripe (Payment Links pro Produkt) ist beim Warenkorb ausgeblendet; Rechnung + PDF mit allen Positionen
+- Zahlungsarten nur «gegen Rechnung» und «bar» — **keine Online-Zahlung, kein Stripe** (bewusst entfernt); Rechnung + PDF mit allen Positionen
 
 ### E-Commerce Checkout-Anpassungen
 
@@ -483,6 +501,15 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 - **Bewertung:** pro Antwort 👍/👎; bei 👎 Mini-Formular (Name, E-Mail, Kommentar, alles optional) → einmalige Mail an «Verantwortliche E-Mail» (Reply-To = Besucher), Name/E-Mail nicht im Log → `/api/chat/rating`, gespeichert im Chat-Log-Eintrag (`rateChatExchange`, nur eigene Gesprächs-ID, 24 h), Auswertung in `/admin/chatbot`
 - Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
+
+## Anleitung für Redakteure (`src/lib/anleitung/`)
+
+- **Eine Quelle im Code** für die Anleitungstexte: `index.json` (Reihenfolge, `id`, `title`, `feature`, `stand`, `sources`) + `kapitel/<id>.html` (nur h3/p/ol/ul/li). Daraus entstehen die Website klap-web.ch/anleitung **und** der Abschnitt `AUTO:ANLEITUNGEN` der Chat-Bot-Wissensbasis (`npm run wissensbasis`) — nie dort oder in Prismic Anleitungstexte schreiben
+- **Funktion geändert → Kapitel im selben Commit anpassen** und `stand` auf heute setzen; neue Funktion → neues Kapitel + Index-Eintrag (`feature` = ID aus `gating.json`, `covers` für mit-dokumentierte Features)
+- `scripts/check-anleitung.js` meldet Kapitel, deren `sources` seit `stand` Commits haben, und Features ohne Kapitel (Warnung bei `npm run dev`; `npm run check:anleitung` mit Details und Fehler-Exit)
+- **Website:** Inhalts-Element «Anleitung», Feld «Kapitel aus der Anleitung» (`chapter`, nur Plan `klap-web-ch`; Optionen erzeugt `build-customtypes.js` aus den Kapitel-Titeln). Reihenfolge: Titel → eigener Teil aus Prismic (Beschreibung mit Bildern, Video, Schritte) → «Claude Anleitung Titel» (`chapter_title`, h3) → Kapitel-Text aus dem Code. «Alle übrigen Kapitel» zeigt jedes Kapitel, das kein anderes Element der Seite gewählt hat → neue Kapitel erscheinen ohne Prismic-Änderung
+- Texte kommen serverseitig über den Seiten-Load (`src/lib/server/anleitung.ts` → SliceZone-Kontext `guideChapters`), nie in den Client-Bundle importieren. Kapitel mit `feature` folgen dem Paket-Filter (`planFilter`)
+- Kapitel-Titel nicht umbenennen, ohne die Auswahl in Prismic nachzuziehen (Select speichert den Titel; sonst «Kapitel nicht gefunden»)
 
 ## Newsletter / Info-Mails (`/admin/newsletter`)
 

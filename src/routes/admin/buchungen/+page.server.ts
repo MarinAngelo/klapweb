@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 import { SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 import {
 	listBookings,
@@ -11,11 +12,14 @@ import {
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { diagnoseArbeitstag } from '$lib/terminDiagnose.js';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { sendDueBookingInvoices } from '$lib/server/bookingInvoices';
 import { createClient } from '$lib/prismicio';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	// Due invoices of past appointments (same job as the hourly Netlify function)
+	await sendDueBookingInvoices().catch((e) => console.error('Termin-Rechnungen:', e));
 	const today = new Date().toISOString().slice(0, 10);
 	const allSlotsFrom = '2000-01-01'; // Admin sieht alle Termine, auch vergangene
 
@@ -160,6 +164,42 @@ export const actions: Actions = {
 			await uncancelSlot(id);
 			invalidateTermineCache();
 		}
+	},
+
+	// Operator books for a customer who cannot book online → same logic as the website
+	// (/api/buche-termin: conflicts, buffer, customer), stored with source 'admin'
+	bookForCustomer: async ({ request, fetch }) => {
+		const form = await request.formData();
+		const value = (key: string) => String(form.get(key) ?? '').trim();
+		const terminId = value('id');
+		const name = value('name');
+		const email = value('email');
+		if (!terminId) return fail(400, { bookError: 'Termin fehlt' });
+		if (!name) return fail(400, { bookError: 'Name fehlt', bookId: terminId });
+		if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			return fail(400, { bookError: 'E-Mail ist ungültig', bookId: terminId });
+		}
+		// Server-side fetch to the own endpoint forwards the admin session cookie
+		const response = await fetch('/api/buche-termin', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				terminId,
+				name,
+				email: email || undefined,
+				telefon: value('telefon') || undefined,
+				byAdmin: true,
+				sendConfirmation: form.get('sendConfirmation') === 'on'
+			})
+		});
+		if (!response.ok) {
+			const result = await response.json().catch(() => ({}));
+			return fail(response.status, {
+				bookError: result.error || 'Buchung fehlgeschlagen',
+				bookId: terminId
+			});
+		}
+		return { booked: name };
 	},
 
 	deleteAll: async () => {

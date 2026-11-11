@@ -573,14 +573,6 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Zahlungsart',
 		'en-us': 'Payment method'
 	},
-	'Kreditkarte / TWINT': {
-		'de-ch': 'Kreditkarte / TWINT',
-		'en-us': 'Credit card / TWINT'
-	},
-	'Sofortige, sichere Zahlung via Stripe.': {
-		'de-ch': 'Sofortige, sichere Zahlung via Stripe.',
-		'en-us': 'Immediate, secure payment via Stripe.'
-	},
 	'Gegen Rechnung': {
 		'de-ch': 'Gegen Rechnung',
 		'en-us': 'By invoice'
@@ -1413,6 +1405,12 @@ export const translations: Record<string, Record<string, string>> = {
 	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Website im Aufbau': { 'de-ch': 'Website im Aufbau', 'en-us': 'Website under construction' },
+	'Meine neue Website entsteht gerade. Schau bald wieder vorbei.': {
+		'de-ch': 'Meine neue Website entsteht gerade. Schau bald wieder vorbei.',
+		'en-us': 'My new website is on its way. Check back soon.'
+	},
+	'Kapitel nicht gefunden': { 'de-ch': 'Kapitel nicht gefunden', 'en-us': 'Chapter not found' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {
@@ -2509,7 +2507,119 @@ export const translations: Record<string, Record<string, string>> = {
 	'Speichern fehlgeschlagen': { 'de-ch': 'Speichern fehlgeschlagen', 'en-us': 'Saving failed' },
 	'In Prismic speichern': { 'de-ch': 'In Prismic speichern', 'en-us': 'Save in Prismic' },
 	AUS: { 'de-ch': 'AUS', 'en-us': 'OFF' },
-	AN: { 'de-ch': 'AN', 'en-us': 'ON' }
+	AN: { 'de-ch': 'AN', 'en-us': 'ON' },
+	// Kacheln «Buchbare Angebote» + offer preselection in the Termin field
+	Buchen: { 'de-ch': 'Buchen', 'en-us': 'Book' },
+	'Angebote werden geladen…': { 'de-ch': 'Angebote werden geladen…', 'en-us': 'Loading offers…' },
+	'Zurzeit sind keine Angebote buchbar.': {
+		'de-ch': 'Zurzeit sind keine Angebote buchbar.',
+		'en-us': 'No offers can be booked at the moment.'
+	},
+	'Termine für': { 'de-ch': 'Termine für', 'en-us': 'Appointments for' },
+	'Zurzeit keine freien Termine.': {
+		'de-ch': 'Zurzeit keine freien Termine.',
+		'en-us': 'No free appointments at the moment.'
+	},
+	'Für das gewählte Angebot sind zurzeit keine Termine frei.': {
+		'de-ch': 'Für das gewählte Angebot sind zurzeit keine Termine frei.',
+		'en-us': 'There are currently no free appointments for the selected offer.'
+	},
+	'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar': {
+		'de-ch':
+			'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar',
+		'en-us':
+			'Offer «{titel}» is not linked to any current working day – no appointments can be booked'
+	},
+	'Kein QR-Zahlteil auf Rechnungen': {
+		'de-ch': 'Kein QR-Zahlteil auf Rechnungen',
+		'en-us': 'No QR payment part on invoices'
+	},
+	'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten':
+		{
+			'de-ch':
+				'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten',
+			'en-us':
+				'Complete in the settings (tab «Rechnungen» or «Main») or switch off «QR-Zahlteil auf Rechnungen»'
+		},
+	'IBAN fehlt': {
+		'de-ch': 'IBAN fehlt',
+		'en-us': 'IBAN missing'
+	},
+	'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN': {
+		'de-ch': 'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN',
+		'en-us': 'IBAN is not a valid Swiss or Liechtenstein IBAN'
+	},
+	'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)': {
+		'de-ch':
+			'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)',
+		'en-us':
+			'Address for the QR bill incomplete (street + number and «postcode city» each on its own line)'
+	},
+	'QR-Rechnung nur in CHF oder EUR möglich': {
+		'de-ch': 'QR-Rechnung nur in CHF oder EUR möglich',
+		'en-us': 'QR bill only possible in CHF or EUR'
+	},
+	'Termin stornieren': {
+		'de-ch': 'Termin stornieren',
+		'en-us': 'Cancel appointment'
+	},
+	'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.': {
+		'de-ch': 'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.',
+		'en-us': 'Your booking has been cancelled. The slot is available again.'
+	},
+	'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.': {
+		'de-ch': 'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.',
+		'en-us': 'You will receive the invoice for the cancellation fee by e-mail.'
+	},
+	'Diese Buchung wurde bereits storniert oder existiert nicht mehr.': {
+		'de-ch': 'Diese Buchung wurde bereits storniert oder existiert nicht mehr.',
+		'en-us': 'This booking has already been cancelled or no longer exists.'
+	},
+	'Der Stornierungs-Link ist ungültig.': {
+		'de-ch': 'Der Stornierungs-Link ist ungültig.',
+		'en-us': 'The cancellation link is invalid.'
+	},
+	'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The booking could not be checked. Please try again later.'
+	},
+	'Dieser Termin hat bereits begonnen und kann nicht mehr storniert werden.': {
+		'de-ch': 'Dieser Termin hat bereits begonnen und kann nicht mehr storniert werden.',
+		'en-us': 'This appointment has already started and can no longer be cancelled.'
+	},
+	'Die kostenlose Stornierung war bis {datum} Uhr möglich.': {
+		'de-ch': 'Die kostenlose Stornierung war bis {datum} Uhr möglich.',
+		'en-us': 'Free cancellation was possible until {datum}.'
+	},
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.': {
+		'de-ch': 'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.',
+		'en-us': 'Online cancellation is no longer possible. Please contact us directly.'
+	},
+	'Kostenlos stornierbar bis {datum} Uhr.': {
+		'de-ch': 'Kostenlos stornierbar bis {datum} Uhr.',
+		'en-us': 'Free cancellation until {datum}.'
+	},
+	'Stornogebühr: {betrag} ({prozent}% von {preis})': {
+		'de-ch': 'Stornogebühr: {betrag} ({prozent}% von {preis})',
+		'en-us': 'Cancellation fee: {betrag} ({prozent}% of {preis})'
+	},
+	'Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.': {
+		'de-ch': 'Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.',
+		'en-us': 'I accept the cancellation fee and will receive an invoice for it.'
+	},
+	'Bitte bestätigen Sie die Stornogebühr.': {
+		'de-ch': 'Bitte bestätigen Sie die Stornogebühr.',
+		'en-us': 'Please confirm the cancellation fee.'
+	},
+	'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.': {
+		'de-ch': 'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.',
+		'en-us': 'The cancellation deadline has passed in the meantime. Please reload the page.'
+	},
+	'Kostenpflichtig stornieren': {
+		'de-ch': 'Kostenpflichtig stornieren',
+		'en-us': 'Cancel with fee'
+	},
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
 };
 
 /**

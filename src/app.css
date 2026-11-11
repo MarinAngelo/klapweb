@@ -452,6 +452,11 @@ a:not([href^='mailto:']):not(.site-title-link):not(.dropdown-link):not(.nav-link
 	opacity: 0.4;
 }
 
+.btn-dynamic:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
 .table-pagination-ellipsis {
 	min-width: 1.5rem;
 	text-align: center;

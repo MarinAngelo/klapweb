@@ -73,6 +73,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			status: 'gespeichert',
 			paymentStatus: 'offen',
 			paymentMethod: 'bar',
+			source: 'bar',
 			vorname,
 			nachname,
 			firma: firma || undefined,

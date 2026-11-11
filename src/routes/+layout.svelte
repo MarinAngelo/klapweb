@@ -56,6 +56,7 @@
 		mainLang,
 		userBackendActive,
 		chatActive,
+		pwaActive,
 		chatBotName,
 		chatGreeting,
 		klapstudioActive,
@@ -430,7 +431,10 @@
 				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
-	$: isLandingPage = $page.data?.page?.data?.landing_page === true || $errorPageLanding;
+	// Default page «Website im Aufbau» (home redirect) is always a landing page
+	$: isUnderConstruction = $page.route.id === '/[[lang=lang]]/im-aufbau';
+	$: isLandingPage =
+		$page.data?.page?.data?.landing_page === true || $errorPageLanding || isUnderConstruction;
 	$: isFullscreenP5LandingPage =
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&
@@ -514,11 +518,14 @@
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
 	{#if appleTouchIconUrl}<link rel="apple-touch-icon" href={appleTouchIconUrl} />{/if}
-	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if pwaActive}
+		<!-- Feature pwa only: a manifest alone makes browsers offer to install the site -->
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	{/if}
 	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
-	<meta name="mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<link rel="canonical" href={currentUrl} />
 
 	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}

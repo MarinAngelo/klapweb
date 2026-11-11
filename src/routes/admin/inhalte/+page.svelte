@@ -66,6 +66,13 @@
 										<span class="admin-mono">{p.token}</span>
 									</td>
 									<td>{$_('In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen')}</td>
+								{:else if p.kind === 'invoice_qr' && p.token}
+									<td>{$_('Kein QR-Zahlteil auf Rechnungen')}: {$_(p.token)}</td>
+									<td
+										>{$_(
+											'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten'
+										)}</td
+									>
 								{:else if p.kind === 'empty_slice'}
 									<td>
 										{$_('Inhalts-Element ohne Inhalt')}: <span class="admin-mono">{p.token}</span>

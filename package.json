@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "node scripts/clear-ports.js && node scripts/build-customtypes.js && node scripts/chatbot-dev-wissensbasis.js && node scripts/check-translations.js && node scripts/check-i18n-keys.js --warn && node scripts/self-host-fonts.js && concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
+		"dev": "node scripts/clear-ports.js && node scripts/build-customtypes.js && node scripts/chatbot-dev-wissensbasis.js && node scripts/check-translations.js && node scripts/check-i18n-keys.js --warn && node scripts/check-anleitung.js --warn && node scripts/self-host-fonts.js && concurrently \"npm:vite:dev\" \"npm:slicemachine\" --prefix-colors blue,magenta",
 		"vite:dev": "vite dev",
 		"build": "node scripts/build-customtypes.js && node scripts/chatbot-dev-wissensbasis.js && node scripts/check-translations.js && node scripts/check-i18n-keys.js --warn && node scripts/self-host-fonts.js && vite build && node scripts/build-search-index.js",
 		"preview": "vite preview",
@@ -14,6 +14,7 @@
 		"fonts": "node scripts/self-host-fonts.js",
 		"wissensbasis:dev": "node scripts/chatbot-dev-wissensbasis.js",
 		"wissensbasis": "node scripts/chatbot-wissensbasis.js",
+		"check:anleitung": "node scripts/check-anleitung.js",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
@@ -33,6 +34,7 @@
 		"@types/dompurify": "^3.0.5",
 		"@types/eslint": "^8.56.10",
 		"@types/p5": "^1.7.7",
+		"@types/qrcode": "^1.5.6",
 		"@vite-pwa/sveltekit": "^1.1.0",
 		"autoprefixer": "^10.4.19",
 		"concurrently": "^8.2.2",
@@ -76,6 +78,7 @@
 		"dompurify": "^3.3.1",
 		"p5": "^2.2.2",
 		"pdf-lib": "^1.17.1",
+		"qrcode": "^1.5.4",
 		"resend": "^6.9.2"
 	}
 }

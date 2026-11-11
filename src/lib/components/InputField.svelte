@@ -65,8 +65,16 @@
 		endzeit?: string;
 		sessionLaenge?: number | null;
 		arbeitstagLabel?: string;
+		angebotId?: string;
 	}
+	// Appointment field without a name in the CMS → default label
+	$: fieldLabel = field.field_name || (field.field_type === 'Termin' ? $_('Termin') : '');
+
 	let termine: AvailableTermin[] = [];
+	// Offer preselected via ?angebot=<uid> (Kacheln «Buchbare Angebote»); cleared by «Alle Angebote anzeigen»
+	let allTermine: AvailableTermin[] = [];
+	let preselectedOffer = '';
+	let offerWithoutSlots = false;
 	let termineLoading = false;
 	let termineError = false;
 	let selectedTermin = '';
@@ -86,6 +94,15 @@
 	$: selectedWorkdaySlots = termineByWorkday[selectedWorkday] ?? {};
 	$: selectedTimeTermine = selectedWorkdaySlots[selectedTime] ?? [];
 
+	function showAllOffers() {
+		preselectedOffer = '';
+		offerWithoutSlots = false;
+		termine = allTermine;
+		selectedWorkday = '';
+		selectedTime = '';
+		selectedTermin = '';
+	}
+
 	function chooseWorkday(workday: string) {
 		selectedWorkday = workday;
 		selectedTime = '';
@@ -94,7 +111,9 @@
 
 	function chooseTime(time: string) {
 		selectedTime = time;
-		selectedTermin = '';
+		// Offer already chosen (?angebot=) → one appointment per time, skip the offer step
+		const timeTermine = selectedWorkdaySlots[time] ?? [];
+		selectedTermin = preselectedOffer && timeTermine.length === 1 ? timeTermine[0].id : '';
 	}
 
 	const countries = [
@@ -311,7 +330,15 @@
 				termineError = true;
 				return;
 			}
-			termine = await r.json();
+			allTermine = await r.json();
+			const offerUid = new URL(window.location.href).searchParams.get('angebot') ?? '';
+			const offerTermine = offerUid
+				? allTermine.filter((termin) => termin.angebotId === offerUid)
+				: [];
+			// No free slots for the chosen offer → hint (other offers on request)
+			preselectedOffer = offerTermine.length ? offerTermine[0].titel || offerUid : '';
+			offerWithoutSlots = !!offerUid && !offerTermine.length;
+			termine = offerUid ? offerTermine : allTermine;
 		} catch {
 			termineError = true;
 		} finally {
@@ -398,7 +425,7 @@
 					? 'block text-sm font-semibold mb-1'
 					: 'block text-base font-bold'}
 		>
-			{field.field_name ?? ''}{field.required ? ' *' : ''}
+			{fieldLabel}{field.required ? ' *' : ''}
 		</label>
 	{/if}
 
@@ -616,9 +643,27 @@
 				<p class="text-sm opacity-60">{$_('Termine werden geladen…')}</p>
 			{:else if termineError}
 				<p class="text-sm text-red-500">{$_('Termine konnten nicht geladen werden.')}</p>
+			{:else if offerWithoutSlots}
+				<p class="termin-offer-hint text-sm">
+					{$_('Für das gewählte Angebot sind zurzeit keine Termine frei.')}
+					{#if allTermine.length}
+						·
+						<button type="button" class="underline" on:click={showAllOffers}>
+							{$_('Alle Angebote anzeigen')}
+						</button>
+					{/if}
+				</p>
 			{:else if termine.length === 0}
 				<p class="text-sm opacity-60">{$_('Keine verfügbaren Termine.')}</p>
 			{:else}
+				{#if preselectedOffer}
+					<p class="termin-offer-hint text-sm">
+						{$_('Termine für')} «{preselectedOffer}» ·
+						<button type="button" class="underline" on:click={showAllOffers}>
+							{$_('Alle Angebote anzeigen')}
+						</button>
+					</p>
+				{/if}
 				<div
 					class="termin-selection"
 					role="radiogroup"
@@ -658,7 +703,9 @@
 										<strong
 											>{time}{slotTermine[0]?.endzeit ? `–${slotTermine[0].endzeit}` : ''}</strong
 										>
-										<span>{slotTermine.length} {$_('Angebote')}</span>
+										{#if !preselectedOffer}
+											<span>{slotTermine.length} {$_('Angebote')}</span>
+										{/if}
 									</button>
 								{/each}
 							</div>
@@ -676,26 +723,39 @@
 									? `–${selectedTimeTermine[0].endzeit}`
 									: ''}
 							</h5>
-							<div class="termin-options">
-								{#each selectedTimeTermine as t}
-									<label class:selected={selectedTermin === t.id} class="termin-option">
-										<input
-											type="radio"
-											id={`${key}-${t.id}`}
-											name={key}
-											value={t.id}
-											bind:group={selectedTermin}
-											required={field.required}
-											on:blur
-											on:change
-										/>
+							{#if preselectedOffer && selectedTermin && selectedTimeTermine.length === 1}
+								{@const t = selectedTimeTermine[0]}
+								<input type="hidden" name={key} value={t.id} />
+								<div class="termin-options">
+									<div class="termin-option termin-option-static selected">
 										<span class="termin-option-content">
 											<strong>{t.titel ?? t.label}</strong>
-											{#if t.sessionLaenge}<small>{t.sessionLaenge} Minuten</small>{/if}
+											{#if t.sessionLaenge}<small>{t.sessionLaenge} {$_('Minuten')}</small>{/if}
 										</span>
-									</label>
-								{/each}
-							</div>
+									</div>
+								</div>
+							{:else}
+								<div class="termin-options">
+									{#each selectedTimeTermine as t}
+										<label class:selected={selectedTermin === t.id} class="termin-option">
+											<input
+												type="radio"
+												id={`${key}-${t.id}`}
+												name={key}
+												value={t.id}
+												bind:group={selectedTermin}
+												required={field.required}
+												on:blur
+												on:change
+											/>
+											<span class="termin-option-content">
+												<strong>{t.titel ?? t.label}</strong>
+												{#if t.sessionLaenge}<small>{t.sessionLaenge} {$_('Minuten')}</small>{/if}
+											</span>
+										</label>
+									{/each}
+								</div>
+							{/if}
 						</section>
 					{/if}
 				</div>
@@ -850,6 +910,10 @@
 			border-color 0.15s ease,
 			background-color 0.15s ease,
 			transform 0.15s ease;
+	}
+
+	.termin-option-static {
+		cursor: default;
 	}
 
 	.termin-option:hover {
