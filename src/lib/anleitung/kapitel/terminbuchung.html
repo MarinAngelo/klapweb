@@ -1,30 +1,160 @@
-<ol>
-	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional «Preis (optional)» und Ort. Für die Stornierung «Kostenlos stornierbar bis (Std. vor Termin)» und «Stornogebühr nach Ablauf (% vom Preis)» (leer = Standard aus den Einstellungen). Für die Darstellung als Kacheln «Bild (für Kacheln)», «Seite mit mehr Infos» und «Reihenfolge (Kacheln)». «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben (ist ein Datum gesetzt, gilt nur das Datum). Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
-	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren. Erscheinen keine freien Termine, zeigt die Terminverwaltung die Gründe an, z. B. «Kein «Buchbares Angebot» verknüpft», «Angebot … ist nicht aktiv» oder «Die Serie ist abgelaufen».</li>
-	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Die Terminauswahl ist in dieser Variante fest eingebaut und steht an erster Stelle; ein eigenes Feld vom Typ «Termin» brauchst du nur, wenn es an einer anderen Stelle stehen soll. Felder anlegen: «Name» (Textfeld) und «E-Mail» (E-Mail). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich. Mit Feldern, die genau «Adresse», «PLZ» und «Ort» heissen, steht die Adresse des Kunden später auf der Rechnung.</li>
-	<li>Optional die Angebote als Kacheln zeigen: Element «Kacheln» in der Variante «Buchbare Angebote» einfügen. Es zeigt automatisch alle aktiven Angebote mit den Schaltflächen «Mehr erfahren» und «Buchen»; «Preis anzeigen» blendet den Preis ein. «Buchen» öffnet die «Buchungsseite» und zeigt dort nur die Termine dieses Angebots (mit Link «Alle Angebote anzeigen»). Ist «Buchungsseite» leer, wird die erste Seite mit dem Formular «Mit Termin» verwendet. «Mehr erfahren» führt auf die «Seite mit mehr Infos» des Angebots, sonst öffnet sich ein Fenster mit Beschreibung, Dauer, Preis und Ort.</li>
-	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Stornofrist}} (bis wann kostenlos storniert werden kann), {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
-	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
-</ol>
-<p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
-<p>Für einen Kunden buchen (z. B. bei einer telefonischen Anfrage): In der Terminverwaltung beim freien Termin «Für Kunde buchen» wählen und Name, optional E-Mail und Telefon eintragen. Mit E-Mail erhält der Kunde Bestätigung und Erinnerung, ohne E-Mail werden keine E-Mails verschickt.</p>
-<p>Stornierung durch den Kunden: Die Bestätigungs-Mail enthält einen Link zum Stornieren. Die Seite zeigt zuerst die Bedingungen; storniert wird erst mit dem Knopf.</p>
+<h4>1. Orte anlegen (optional)</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Ort / Standort</strong>.</p>
 <ul>
-	<li>Einstellungen → Tab «Terminbuchung»: «Kostenlos stornierbar bis (Std. vor Termin)» und «Stornogebühr nach Ablauf (% vom Preis)» gelten für alle Angebote ohne eigene Angabe. Beispiel: 24 Stunden und 80 % → Termin am Montag um 09:00 ist bis Sonntag 09:00 kostenlos stornierbar, danach kostet die Stornierung 80 % des Preises.</li>
-	<li>Innerhalb der Frist (oder ohne Frist): kostenlos. Der Termin wird wieder frei.</li>
-	<li>Nach der Frist mit Stornogebühr: Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil.</li>
-	<li>Nach der Frist ohne Stornogebühr oder ohne Preis: Online stornieren ist nicht mehr möglich; die Seite verweist auf den direkten Kontakt.</li>
-	<li>Es gelten die Bedingungen vom Zeitpunkt der Buchung. Du und der Kunde erhalten eine E-Mail. Eine offene Rechnung zur Buchung wird als storniert markiert; war sie schon bezahlt, erhältst du den Hinweis, eine Rückerstattung zu prüfen.</li>
+	<li data-field="ort.uid"></li>
+	<li data-field="ort.name"></li>
+	<li data-field="ort.adresse"></li>
+	<li data-field="ort.geo_koordinaten"></li>
+	<li><span data-field="ort.telefon"></span>, <span data-field="ort.email"></span>, <span data-field="ort.oeffnungszeiten"></span>, <span data-field="ort.wegbeschreibung"></span>, <span data-field="ort.bild"></span>: optional</li>
+	<li data-field="ort.aktiv">einschalten</li>
 </ul>
-<p>Rechnung nach dem Termin: Einstellungen → Tab «Terminbuchung» → «Rechnung nach dem Termin senden (Angebote mit Preis)» einschalten. Jede Buchung eines Angebots mit Preis erhält dann etwa eine Stunde nach Terminende automatisch eine Rechnung mit QR-Zahlteil per E-Mail. Die Rechnung erscheint im Admin-Bereich unter «Rechnungen» mit der Quelle «Terminbuchung». Bankangaben: Einstellungen → Tab «Rechnungen».</p>
-<p>Häufige Probleme:</p>
+<p>Veröffentliche den Ort.</p>
+
+<h4>2. Buchbare Angebote anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Buchbares Angebot</strong>.</p>
 <ul>
-	<li>Kein Termin sichtbar: Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
-	<li>Formular sendet nicht: Pflichtfelder fehlen oder es ist kein Termin gewählt.</li>
-	<li>Keine Bestätigungs-Mail: E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
-	<li>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic: Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
-	<li>Bereits gebuchte Termine bleiben gespeichert, wenn du einen Arbeitstag änderst. Serien deshalb möglichst nicht kurzfristig ändern.</li>
+	<li data-field="angebot.uid">z. B. massage-60</li>
+	<li data-field="angebot.titel"></li>
+	<li data-field="angebot.beschreibung"></li>
+	<li data-field="angebot.dauer"></li>
+	<li data-field="angebot.puffer_danach"></li>
+	<li data-field="angebot.vorlaufzeit"></li>
+	<li data-field="angebot.preis"></li>
+	<li data-field="angebot.ort"></li>
+	<li data-field="angebot.cancel_free_hours"></li>
+	<li data-field="angebot.cancel_fee_percent"></li>
+	<li data-field="angebot.bild"></li>
+	<li data-field="angebot.info_page"></li>
+	<li data-field="angebot.sort_order"></li>
+	<li data-field="angebot.aktiv">einschalten</li>
+</ul>
+<p>Veröffentliche das Angebot.</p>
+
+<h4>3. Arbeitstage anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Arbeitstag</strong>.</p>
+<ul>
+	<li data-field="arbeitstag.bezeichnung"></li>
+	<li data-field="arbeitstag.datum">Datum des ersten Tages.</li>
+	<li data-field="arbeitstag.startzeit"></li>
+	<li data-field="arbeitstag.endzeit"></li>
+	<li data-field="arbeitstag.zeitzone"></li>
+	<li><span data-field="arbeitstag.pause_von"></span> und <span data-field="arbeitstag.pause_bis"></span>: optionale Pause</li>
+	<li data-field="arbeitstag.buchungsintervall"></li>
+	<li data-field="arbeitstag.angebote"></li>
+	<li data-field="arbeitstag.wiederholung"></li>
+	<li data-field="arbeitstag.wiederholung_bis"></li>
+	<li data-field="arbeitstag.wiederholung_anzahl"></li>
+</ul>
+<p>Veröffentliche den Arbeitstag. Wiederholte Tage werden automatisch erzeugt.</p>
+
+<h4>4. Ergebnis kontrollieren</h4>
+<p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>.</p>
+<p>Prüfe unter <strong>Freie Termine</strong>, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen.</p>
+<p>Einzelne Termine kannst du dort sperren.</p>
+<p>Erscheinen keine freien Termine, zeigt die Terminverwaltung die Gründe an, z. B.:</p>
+<ul>
+	<li>«Kein «Buchbares Angebot» verknüpft»</li>
+	<li>«Angebot … ist nicht aktiv»</li>
+	<li>«Die Serie ist abgelaufen»</li>
+</ul>
+
+<h4>5. Buchungsformular einfügen</h4>
+<p>Öffne die Seite oder erstelle eine neue.</p>
+<p>Füge das Element <strong>Formulare</strong> in der Variante <strong>Mit Termin</strong> ein.</p>
+<p>Die Terminauswahl ist in dieser Variante fest eingebaut und steht an erster Stelle. Ein eigenes Feld vom Typ «Termin» brauchst du nur, wenn es an einer anderen Stelle stehen soll.</p>
+<p>Lege diese Felder an:</p>
+<ul>
+	<li><strong>Name:</strong> Textfeld</li>
+	<li><strong>E-Mail:</strong> E-Mail</li>
+</ul>
+<p>Schreibe die Feldnamen <strong>Name</strong> und <strong>E-Mail</strong> genau so.</p>
+<p>Weitere Felder sind möglich, z. B. Telefon, Nachricht, AGB-Checkbox.</p>
+<p>Mit Feldern, die genau <strong>Adresse</strong>, <strong>PLZ</strong> und <strong>Ort</strong> heissen, steht die Adresse des Kunden später auf der Rechnung.</p>
+
+<h4>6. Angebote als Kacheln zeigen (optional)</h4>
+<p>Füge das Element <strong>Kacheln</strong> in der Variante <strong>Buchbare Angebote</strong> ein.</p>
+<p>Es zeigt automatisch alle aktiven Angebote mit den Schaltflächen «Mehr erfahren» und «Buchen».</p>
+<ul>
+	<li data-field="Kacheln.show_price"></li>
+	<li data-field="Kacheln.booking_page"></li>
+	<li><strong>Mehr erfahren:</strong> führt auf die «Seite mit mehr Infos» des Angebots, sonst öffnet sich ein Fenster mit Beschreibung, Dauer, Preis und Ort</li>
+</ul>
+
+<h4>7. Texte des Formulars ausfüllen</h4>
+<ul>
+	<li data-field="Formular.form_title"></li>
+	<li data-field="Formular.form_instructions"></li>
+	<li data-field="Formular.submitt_button_text"></li>
+	<li>Titel und Text nach erfolgreicher Buchung</li>
+</ul>
+
+<h4>8. E-Mail-Texte</h4>
+<p>Öffne die <strong>Einstellungen</strong> und den Tab <strong>Terminbuchung</strong>.</p>
+<ul>
+	<li data-field="settings.booking_customer_email_subject"></li>
+	<li data-field="settings.booking_customer_email_body"></li>
+	<li data-field="settings.booking_reminder_hours"></li>
+</ul>
+<p><strong>Platzhalter:</strong></p>
+<ul>
+	<li>{{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}</li>
+	<li>{{Stornofrist}}: bis wann kostenlos storniert werden kann</li>
+	<li>{{Ort}}: Adresse, sonst Name des Orts</li>
+	<li>{{Wegbeschreibung}}</li>
+	<li>{{Ort-Telefon}}</li>
+	<li>{{Ort-Karte}}: Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse</li>
+</ul>
+<p>Die letzten vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist.</p>
+<p>Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen». Sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</p>
+
+<h4>9. Veröffentlichen</h4>
+<p>Veröffentliche in dieser Reihenfolge:</p>
+<ol>
+	<li>Angebote</li>
+	<li>Arbeitstage</li>
+	<li>die Seite mit dem Formular</li>
+</ol>
+<p>Mache danach eine Testbuchung.</p>
+
+<h3>Buchungen verwalten</h3>
+<p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>. Dort siehst du gebuchte, freie und gesperrte Termine.</p>
+<p><strong>Achtung:</strong> Eine gelöschte Buchung gibt den Termin wieder frei. Der Kunde erhält dabei keine automatische Absage-Mail.</p>
+
+<h3>Für einen Kunden buchen</h3>
+<p>Z. B. bei einer telefonischen Anfrage: Wähle in der Terminverwaltung beim freien Termin <strong>Für Kunde buchen</strong>.</p>
+<ul>
+	<li><strong>Name</strong></li>
+	<li><strong>E-Mail:</strong> optional; mit E-Mail erhält der Kunde Bestätigung und Erinnerung, ohne E-Mail werden keine E-Mails verschickt</li>
+	<li><strong>Telefon:</strong> optional</li>
+</ul>
+
+<h3>Stornierung durch den Kunden</h3>
+<p>Die Bestätigungs-Mail enthält einen Link zum Stornieren. Die Seite zeigt zuerst die Bedingungen; storniert wird erst mit dem Knopf.</p>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Terminbuchung</strong> gelten für alle Angebote ohne eigene Angabe:</p>
+<ul>
+	<li data-field="settings.booking_cancel_free_hours"></li>
+	<li data-field="settings.booking_cancel_fee_percent"></li>
+</ul>
+<ul>
+	<li><strong>Innerhalb der Frist (oder ohne Frist):</strong> kostenlos. Der Termin wird wieder frei.</li>
+	<li><strong>Nach der Frist mit Stornogebühr:</strong> Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil.</li>
+	<li><strong>Nach der Frist ohne Stornogebühr oder ohne Preis:</strong> Online stornieren ist nicht mehr möglich; die Seite verweist auf den direkten Kontakt.</li>
+</ul>
+<p>Es gelten die Bedingungen vom Zeitpunkt der Buchung. Du und der Kunde erhalten eine E-Mail.</p>
+<p>Eine offene Rechnung zur Buchung wird als storniert markiert. War sie schon bezahlt, erhältst du den Hinweis, eine Rückerstattung zu prüfen.</p>
+
+<h3>Rechnung nach dem Termin</h3>
+<p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Terminbuchung</strong> dieses Feld ein:</p>
+<ul>
+	<li data-field="settings.booking_invoice"></li>
+</ul>
+<p>Bankangaben: Einstellungen → Tab «Rechnungen».</p>
+
+<h3>Häufige Probleme</h3>
+<ul>
+	<li><strong>Kein Termin sichtbar:</strong> Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
+	<li><strong>Formular sendet nicht:</strong> Pflichtfelder fehlen oder es ist kein Termin gewählt.</li>
+	<li><strong>Keine Bestätigungs-Mail:</strong> E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
+	<li><strong>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic:</strong> Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
+	<li><strong>Arbeitstag geändert:</strong> Bereits gebuchte Termine bleiben gespeichert. Serien deshalb möglichst nicht kurzfristig ändern.</li>
 </ul>

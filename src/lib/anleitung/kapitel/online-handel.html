@@ -1,10 +1,74 @@
-<ol>
-	<li>Grundeinstellungen: Einstellungen → Tab «Rechnungen»: Grundwährung, IBAN, Bank, BIC / SWIFT, Zahlungsfrist, MWST-Satz und «QR-Zahlteil auf Rechnungen». Tab «Online-Handel»: weitere Währungen, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar; keine Online-Zahlung). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
-	<li>Produktseite erstellen: neue «Page» anlegen. Im Tab «Online-Handel» «E-Commerce aktiv» einschalten, «Preis exkl. MwSt. (CHF)», optional «Anzahlung %», «Rabatt %» und «Abrechnungsart» (Einmalig, Jährlich, Monatlich) eintragen.</li>
-	<li>Leistungen beschreiben: «Create a new page» → «Leistung» mit Bezeichnung, Beschreibung und Detailbeschreibung. Im Tab «Leistungen» der Produktseite die Leistungen verknüpfen. Unter «Zusatzleistungen» andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
-	<li>Auf der Produktseite Elemente einfügen: «Preisaufstellung» (Preis, Rabatt, Anzahlung, Restbetrag), «Akkordeon» in der Variante «Leistungen» und «Schaltfläche» in der Variante «Kauf-Schaltfläche».</li>
-	<li>Übersicht mehrerer Angebote: «Kacheln» in der Variante «Pläne» oder «Preisvergleich» mit bis zu drei Produktseiten.</li>
-	<li>Veröffentlichen und eine Testbestellung machen.</li>
-</ol>
-<p>Ablauf für Käufer: Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung. Bei «gegen Rechnung» wird automatisch eine Rechnung (mit QR-Zahlteil, wenn eingeschaltet) erstellt und per E-Mail verschickt. Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
-<p>Warenkorb: Hat eine Leistung einen «Preis exkl. MwSt. (CHF)», erscheint bei ihr «In den Warenkorb»; Leistungen ohne Preis lassen sich nicht einzeln bestellen. Auf Produktseiten steht «In den Warenkorb» neben der Kauf-Schaltfläche. Besucher sammeln so mehrere Leistungen und Pakete, sehen sie unter deine-website.ch/warenkorb (Symbol mit Anzahl in der Kopfzeile) und bestellen alles zusammen; die Rechnung enthält alle Positionen. Ein Rabatt-Code gilt für die Hauptpositionen, nicht für Zusatzleistungen.</p>
+<h4>1. Grundeinstellungen</h4>
+<p>Öffne die <strong>Einstellungen</strong>.</p>
+<p>Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li data-field="settings.invoice_currency"></li>
+	<li data-field="settings.invoice_iban"></li>
+	<li data-field="settings.invoice_bank"></li>
+	<li data-field="settings.invoice_bic"></li>
+	<li data-field="settings.invoice_payment_terms_days"></li>
+	<li data-field="settings.invoice_vat_rate"></li>
+	<li data-field="settings.invoice_qr_bill"></li>
+</ul>
+<p>Tab <strong>Online-Handel</strong>:</p>
+<ul>
+	<li data-field="settings.invoice_additional_currencies"></li>
+	<li data-field="settings.global_deposit_percent"></li>
+	<li data-field="settings.discount_codes"></li>
+	<li><strong>Zahlungsarten:</strong> <span data-field="settings.payment_rechnung_enabled"></span>, <span data-field="settings.payment_bar_enabled"></span>; keine Online-Zahlung</li>
+	<li>die E-Mail-Texte und Bestätigungstexte pro Zahlungsart</li>
+	<li>die Titel der Bestellseiten</li>
+</ul>
+
+<h4>2. Produktseite erstellen</h4>
+<p>Lege eine neue <strong>Page</strong> an. Im Tab <strong>Online-Handel</strong>:</p>
+<ul>
+	<li data-field="page.ecommerce_active">einschalten</li>
+	<li data-field="page.ecommerce_price_chf"></li>
+	<li data-field="page.ecommerce_deposit_percent">optional</li>
+	<li data-field="page.ecommerce_discount_percent">optional</li>
+	<li data-field="page.ecommerce_billing_type">Einmalig, Jährlich, Monatlich</li>
+</ul>
+
+<h4>3. Leistungen beschreiben</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Leistung</strong>.</p>
+<ul>
+	<li data-field="leistung.label"></li>
+	<li data-field="leistung.beschreibung"></li>
+	<li data-field="leistung.detail_description"></li>
+</ul>
+<p>Im Tab <strong>Leistungen</strong> der Produktseite:</p>
+<ul>
+	<li data-field="page.leistungen">Die Leistungen verknüpfen.</li>
+	<li data-field="page.ecommerce_addons">Andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
+</ul>
+
+<h4>4. Elemente auf der Produktseite einfügen</h4>
+<ul>
+	<li><strong>Preisaufstellung:</strong> Preis, Rabatt, Anzahlung, Restbetrag</li>
+	<li><strong>Akkordeon</strong> in der Variante <strong>Leistungen</strong></li>
+	<li><strong>Schaltfläche</strong> in der Variante <strong>Kauf-Schaltfläche</strong></li>
+</ul>
+
+<h4>5. Übersicht mehrerer Angebote</h4>
+<ul>
+	<li><strong>Kacheln</strong> in der Variante <strong>Pläne</strong></li>
+	<li>oder <strong>Preisvergleich</strong> mit bis zu drei Produktseiten</li>
+</ul>
+
+<h4>6. Veröffentlichen und testen</h4>
+<p>Veröffentliche und mache eine Testbestellung.</p>
+
+<h3>Ablauf für Käufer</h3>
+<p>Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung.</p>
+<p>Bei «gegen Rechnung» wird automatisch eine Rechnung (mit QR-Zahlteil, wenn eingeschaltet) erstellt und per E-Mail verschickt.</p>
+<p>Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
+
+<h3>Warenkorb</h3>
+<ul>
+	<li>Hat eine Leistung einen <span data-field="leistung.price_chf"></span>, erscheint bei ihr «In den Warenkorb». Leistungen ohne Preis lassen sich nicht einzeln bestellen.</li>
+	<li>Auf Produktseiten steht «In den Warenkorb» neben der Kauf-Schaltfläche.</li>
+	<li>Besucher sammeln so mehrere Leistungen und Pakete, sehen sie unter deine-website.ch/warenkorb (Symbol mit Anzahl in der Kopfzeile) und bestellen alles zusammen.</li>
+	<li>Die Rechnung enthält alle Positionen.</li>
+	<li>Ein Rabatt-Code gilt für die Hauptpositionen, nicht für Zusatzleistungen.</li>
+</ul>

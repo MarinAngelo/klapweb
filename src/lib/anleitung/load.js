@@ -5,7 +5,9 @@
  *
  *   index.json          order + metadata: id, title, feature? (gating.json), stand (date the text
  *                       was last checked), sources? (paths whose changes make the text stale)
- *   kapitel/<id>.html   text (h3/p/ol/ul/li only)
+ *   kapitel/<id>.html   text (h4 per numbered step, h3 per topic, p, ol/ul/li, strong/em); parts between
+ *                       <!-- NUR-WEBSITE:START --> and <!-- NUR-WEBSITE:END --> are shown on the
+ *                       website but left out of the chat bot knowledge base
  *
  * This loader reads from disk: Node scripts only. The website uses src/lib/server/anleitung.ts.
  */

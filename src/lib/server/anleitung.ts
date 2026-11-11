@@ -6,6 +6,9 @@
 import index from '$lib/anleitung/index.json';
 import { ALL_CHAPTERS } from '$lib/anleitung/options.js';
 import gating from '../../../gating.json';
+import fieldReference from '$lib/generated/prismic-field-reference.json';
+import { fieldDescriptions } from '$lib/fieldDescriptions';
+import { expandFieldRefs, fieldLookup } from '$lib/anleitung/fields.js';
 
 const files = import.meta.glob('../anleitung/kapitel/*.html', {
 	query: '?raw',
@@ -22,13 +25,18 @@ export type GuideChapter = {
 };
 
 const featureLabels = gating.features as Record<string, { label: string }>;
+// Field references (data-field) → current label + agency description of the field
+const lookup = fieldLookup(
+	fieldReference as { customType: string; field: string; label: string }[],
+	fieldDescriptions
+);
 
 const chapters: GuideChapter[] = (index as { id: string; title: string; feature?: string }[]).map(
 	(c) => ({
 		id: c.id,
 		title: c.title,
 		featureLabel: (c.feature && featureLabels[c.feature]?.label) || null,
-		html: files[`../anleitung/kapitel/${c.id}.html`] ?? ''
+		html: expandFieldRefs(files[`../anleitung/kapitel/${c.id}.html`] ?? '', lookup).html
 	})
 );
 

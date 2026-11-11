@@ -1,11 +1,32 @@
-<ol>
-	<li>Admin-Bereich → «Rechnungen».</li>
-	<li>Neue Rechnung: Kunden aus der Liste wählen oder direkt als neuen Kunden erfassen.</li>
-	<li>Leistungsposten mit Beschreibung, Menge und Preis hinzufügen, optional Notizen.</li>
-	<li>PDF-Vorschau prüfen.</li>
-	<li>Speichern und optional direkt per E-Mail an den Kunden senden. Das Versanddatum wird festgehalten.</li>
-	<li>Ist die Rechnung bezahlt, beim Zahlungsstatus «bezahlt» wählen.</li>
-</ol>
-<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden. Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
-<p>QR-Zahlteil: Einstellungen → Tab «Rechnungen» → «QR-Zahlteil auf Rechnungen» einschalten. Jede Rechnung der Website (manuell, Online-Handel, Terminbuchung) erhält dann unten einen Schweizer QR-Zahlteil; Betrag, Konto und Referenz sind beim Scannen mit der Banking-App schon ausgefüllt. Voraussetzungen: eine Schweizer oder Liechtensteiner «IBAN» (auch QR-IBAN), Rechnung in CHF oder EUR und eine vollständige «Verantwortliche Adresse» (Zeile «Strasse Nr.» und Zeile «PLZ Ort»). Fehlt etwas, wird die Rechnung ohne QR-Zahlteil erstellt, und «Inhalte prüfen» weist darauf hin.</p>
-<p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt». Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>
+<h4>1. Rechnungen öffnen</h4>
+<p>Öffne im Admin-Bereich <strong>Rechnungen</strong>.</p>
+
+<h4>2. Kunde wählen</h4>
+<p>Neue Rechnung: Wähle den Kunden aus der Liste oder erfasse ihn direkt als neuen Kunden.</p>
+
+<h4>3. Leistungsposten</h4>
+<p>Füge Leistungsposten mit Beschreibung, Menge und Preis hinzu, optional Notizen.</p>
+
+<h4>4. Vorschau</h4>
+<p>Prüfe die PDF-Vorschau.</p>
+
+<h4>5. Speichern und senden</h4>
+<p>Speichere und sende die Rechnung optional direkt per E-Mail an den Kunden. Das Versanddatum wird festgehalten.</p>
+
+<h4>6. Zahlung vermerken</h4>
+<p>Ist die Rechnung bezahlt, wähle beim Zahlungsstatus «bezahlt».</p>
+
+<h3>Rechnungen nachträglich bearbeiten</h3>
+<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden.</p>
+<p>Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
+
+<h3>QR-Zahlteil</h3>
+<p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong> dieses Feld ein:</p>
+<ul>
+	<li data-field="settings.invoice_qr_bill"></li>
+</ul>
+<p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
+
+<h3>Zahlungseingänge</h3>
+<p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt».</p>
+<p>Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>

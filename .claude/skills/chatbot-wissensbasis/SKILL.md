@@ -29,7 +29,17 @@ Die Wissensbasis ist die Vorlage für das Prismic-Feld «Chat-Bot Wissensbasis»
 
 4. **Kapitel anpassen** (`src/lib/anleitung/kapitel/*.html`; die von Hand geschriebenen Abschnitte der Wissensbasis — Über KLAP WEB, Preise, Häufige Fragen — direkt in `docs/chatbot-wissensbasis.html` ausserhalb der Markierungen):
    - Bestehende Abschnitte ergänzen statt neu schreiben; Gliederung beibehalten. Neue Funktion → neue Datei `kapitel/<id>.html` (ohne `<h2>`, der Titel steht im Index) + Eintrag in `index.json` an passender Stelle: `id`, `title`, `feature` (ID aus `gating.json`, steuert den Paket-Filter auf der Website), `stand`, `sources` (Pfade, deren Änderung den Text veralten lässt). Titel bestehender Kapitel nicht umbenennen (sonst verliert das Auswahlfeld in Prismic die Zuordnung) — wenn nötig, dem User melden.
-   - Nummerierte Schritte für Abläufe, Listen für Optionen. Kein Markdown, nur das vorhandene HTML (h3/p/ol/ul/li).
+   - **Formatierung eines Kapitels** (Muster: `kapitel/terminbuchung.html`, so will es der User). Die Formatierung ändert nie den Inhalt: beim Umformatieren nichts hinzufügen (keine Überblicke, Checklisten, Kurzfassungen, Beispiele, Tipps) und nichts weglassen. Neuer Inhalt nur, wenn sich die Funktion geändert hat oder der User ihn verlangt.
+     - Jeder nummerierte Schritt ist ein eigener Zwischentitel `<h4>1. …</h4>`, kein Listenpunkt. Weitere Themen des Kapitels (z. B. «Buchungen verwalten», «Häufige Probleme») sind `<h3>`.
+     - Schritt beginnt mit einem Handlungssatz («Klicke auf **Create a new page** und wähle **Arbeitstag**.») und endet mit «Veröffentliche …».
+     - **Ein Feld pro Zeile, als Verweis statt abgetippt:** `<li data-field="angebot.dauer"></li>` (Schlüssel `<Inhalts-Typ oder Inhalts-Element>.<Feld-API-ID>` wie in `src/lib/fieldDescriptions.json`). Die Website setzt das aktuelle Label und die Agentur-Beschreibung aus der Feldreferenz ein; die Bot-Wissensbasis nur das Label (die Beschreibungen stehen dort in der Feldreferenz). Text im `<li>` wird angehängt und ist nur für das, was allein in diesem Schritt gilt (z. B. «einschalten») — nie die Feld-Erklärung wiederholen. Feldname mitten im Satz: `<span data-field="ort.telefon"></span>`. Fehlt eine Beschreibung (`npm run check:anleitung` listet sie), mit `/field-description` schreiben, nicht ins Kapitel. Nie mehrere Felder in Klammern oder mit Kommas in einem Satz aufzählen (Ausnahme: Sammelzeile optionaler Felder).
+     - `<strong>` für alles, was man anklickt oder sucht: Inhalts-Typen, Felder, Varianten, Listen und Knöpfe im Admin.
+     - Beispiele als eigener Absatz mit «**Beispiel:**», Warnungen mit «**Achtung:**».
+     - Probleme als `<li><strong>Problem:</strong> Ursache</li>`.
+     - Kurze Sätze, ein Gedanke pro Absatz.
+     - Keine Hosting-Variablen, keine `?secret=`-Adressen, keine Werbesätze (die gehören in die Leistungs-Beschreibung).
+     - Teile, die nur auf der Website stehen sollen (falls der User solche verlangt), zwischen `<!-- NUR-WEBSITE:START -->` und `<!-- NUR-WEBSITE:END -->`: Sie fehlen in der Wissensbasis des Bots.
+   - Kein Markdown, nur dieses HTML: h3/h4/p/ol/ul/li/strong/em.
    - Feldnamen exakt wie das Label in Prismic (aus `base.json` bzw. der generierten Feldreferenz).
    - Begriffe prüfen: `grep -rn "Custom Type\|Page Type" src/lib/anleitung docs/chatbot-wissensbasis.html` → ausserhalb der Feldreferenz nichts. Jede Stelle mit «Type»/«Slice» darauf prüfen, ob sie wirklich das Prismic-GUI meint; sonst Inhalts-Typ/Inhalts-Element.
    - Keine Preise, Pakete oder Zusagen erfinden — Preise nur aus Prismic (klap-web.ch) bzw. `gating.json`; bei Unsicherheit den User fragen.

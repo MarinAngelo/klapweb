@@ -10,12 +10,13 @@
  * node scripts/check-anleitung.js --warn   warnings only        (npm run dev)
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import {
 	orphanChapterFiles,
 	readChapterHtml,
 	readChapterIndex
 } from '../src/lib/anleitung/load.js';
+import { fieldLookup, fieldRefs } from '../src/lib/anleitung/fields.js';
 
 const warnOnly = process.argv.includes('--warn');
 const gating = JSON.parse(readFileSync('gating.json', 'utf8'));
@@ -31,6 +32,27 @@ const git = (...args) => {
 const literal = (paths) => paths.map((p) => `:(literal)${p}`);
 
 const chapters = readChapterIndex();
+
+// Field references (data-field) can only be checked where every feature is active (klap-web-ch):
+// elsewhere the generated field reference lacks the fields of the other features
+const REFERENCE = 'src/lib/generated/prismic-field-reference.json';
+const config = JSON.parse(readFileSync('slicemachine.config.json', 'utf8'));
+const planChain = [];
+for (let plan = config.plan || 'basis'; plan; plan = gating.plans?.[plan]?.extends)
+	planChain.push(plan);
+const allFeaturesActive = Object.entries(gating.features ?? {}).every(
+	([id, def]) =>
+		!(config.featuresDisabled ?? []).includes(id) &&
+		((def.plans ?? []).some((p) => planChain.includes(p)) || (config.features ?? []).includes(id))
+);
+const lookup =
+	allFeaturesActive && existsSync(REFERENCE)
+		? fieldLookup(
+				JSON.parse(readFileSync(REFERENCE, 'utf8')),
+				JSON.parse(readFileSync('src/lib/fieldDescriptions.json', 'utf8'))
+			)
+		: null;
+const withoutDescription = new Set();
 const problems = [];
 const stale = [];
 
@@ -40,6 +62,13 @@ for (const c of chapters) {
 		if (seen.has(key))
 			problems.push(`«${key}» kommt mehrfach vor (id und Titel müssen eindeutig sein)`);
 		seen.add(key);
+	}
+	if (lookup) {
+		for (const key of new Set(fieldRefs(readChapterHtml(c.id) ?? ''))) {
+			const field = lookup(key);
+			if (!field) problems.push(`${c.id}: Feld «${key}» gibt es nicht (mehr)`);
+			else if (!field.text) withoutDescription.add(`${key} («${field.label}»)`);
+		}
 	}
 	if (!readChapterHtml(c.id))
 		problems.push(`${c.id}: Datei kapitel/${c.id}.html fehlt oder ist leer`);
@@ -99,6 +128,13 @@ if (stale.length) {
 }
 if (undocumented.length) {
 	console.warn(`⚠ Anleitung: kein Kapitel für die Funktionen ${undocumented.join(', ')}`);
+}
+// Not an error: the field appears with its label only until a description is written
+if (withoutDescription.size && !warnOnly) {
+	console.warn(
+		`ℹ Anleitung: ${withoutDescription.size} Felder ohne Beschreibung (erscheinen nur mit Namen; /field-description):`
+	);
+	for (const f of withoutDescription) console.warn(`  → ${f}`);
 }
 if (!problems.length && !stale.length && !undocumented.length) {
 	console.log(`✓ Anleitung: ${chapters.length} Kapitel aktuell`);
