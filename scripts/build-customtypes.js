@@ -48,6 +48,7 @@ import {
 	statSync
 } from 'fs';
 import { configUncommitted, readOverrides } from '../src/lib/gatingOverrides.js';
+import { ALL_CHAPTERS, readChapterIndex } from '../src/lib/anleitung/load.js';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -573,6 +574,15 @@ for (const sliceName of allSlices) {
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
 	validateAnimationFieldOrder(base, basePath);
+
+	// «Anleitung»: the chapters from the code (src/lib/anleitung) are the options of
+	// «Kapitel aus der Anleitung» — a new chapter appears in the dropdown after the next start
+	if (sliceName === 'Anleitung') {
+		const options = [ALL_CHAPTERS, ...readChapterIndex(ROOT).map((c) => c.title)];
+		for (const variation of base.variations ?? []) {
+			if (variation.primary?.chapter) variation.primary.chapter.config.options = options;
+		}
+	}
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)

@@ -1410,6 +1410,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Meine neue Website entsteht gerade. Schau bald wieder vorbei.',
 		'en-us': 'My new website is on its way. Check back soon.'
 	},
+	'Kapitel nicht gefunden': { 'de-ch': 'Kapitel nicht gefunden', 'en-us': 'Chapter not found' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {

@@ -502,6 +502,15 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 - Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
 
+## Anleitung für Redakteure (`src/lib/anleitung/`)
+
+- **Eine Quelle im Code** für die Anleitungstexte: `index.json` (Reihenfolge, `id`, `title`, `feature`, `stand`, `sources`) + `kapitel/<id>.html` (nur h3/p/ol/ul/li). Daraus entstehen die Website klap-web.ch/anleitung **und** der Abschnitt `AUTO:ANLEITUNGEN` der Chat-Bot-Wissensbasis (`npm run wissensbasis`) — nie dort oder in Prismic Anleitungstexte schreiben
+- **Funktion geändert → Kapitel im selben Commit anpassen** und `stand` auf heute setzen; neue Funktion → neues Kapitel + Index-Eintrag (`feature` = ID aus `gating.json`, `covers` für mit-dokumentierte Features)
+- `scripts/check-anleitung.js` meldet Kapitel, deren `sources` seit `stand` Commits haben, und Features ohne Kapitel (Warnung bei `npm run dev`; `npm run check:anleitung` mit Details und Fehler-Exit)
+- **Website:** Inhalts-Element «Anleitung», Feld «Kapitel aus der Anleitung» (`chapter`, nur Plan `klap-web-ch`; Optionen erzeugt `build-customtypes.js` aus den Kapitel-Titeln). Reihenfolge: Titel → eigener Teil aus Prismic (Beschreibung mit Bildern, Video, Schritte) → «Claude Anleitung Titel» (`chapter_title`, h3) → Kapitel-Text aus dem Code. «Alle übrigen Kapitel» zeigt jedes Kapitel, das kein anderes Element der Seite gewählt hat → neue Kapitel erscheinen ohne Prismic-Änderung
+- Texte kommen serverseitig über den Seiten-Load (`src/lib/server/anleitung.ts` → SliceZone-Kontext `guideChapters`), nie in den Client-Bundle importieren. Kapitel mit `feature` folgen dem Paket-Filter (`planFilter`)
+- Kapitel-Titel nicht umbenennen, ohne die Auswahl in Prismic nachzuziehen (Select speichert den Titel; sonst «Kapitel nicht gefunden»)
+
 ## Newsletter / Info-Mails (`/admin/newsletter`)
 
 - Feature `newsletter` (gating.json, ab Professionell), Admin-Bereich `newsletter`

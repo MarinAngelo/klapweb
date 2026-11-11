@@ -1,0 +1,19 @@
+<ol>
+	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
+	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional Preis und Ort. «Aktiv» einschalten. Veröffentlichen.</li>
+	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben (ist ein Datum gesetzt, gilt nur das Datum). Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
+	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
+	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
+	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
+	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
+	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
+</ol>
+<p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
+<p>Häufige Probleme:</p>
+<ul>
+	<li>Kein Termin sichtbar: Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
+	<li>Formular sendet nicht: Pflichtfelder fehlen oder es gibt kein Feld vom Typ «Termin».</li>
+	<li>Keine Bestätigungs-Mail: E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
+	<li>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic: Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
+	<li>Bereits gebuchte Termine bleiben gespeichert, wenn du einen Arbeitstag änderst. Serien deshalb möglichst nicht kurzfristig ändern.</li>
+</ul>

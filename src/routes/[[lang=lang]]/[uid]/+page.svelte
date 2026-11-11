@@ -66,6 +66,7 @@
 		globalDepositPct: data.globalDepositPct ?? null,
 		plaeneData: data.plaeneData ?? {},
 		pageLeistungen: data.pageLeistungen ?? [],
+		guideChapters: data.guideChapters ?? {},
 		lang: data.page.lang
 	}}
 />
