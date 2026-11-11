@@ -38,6 +38,7 @@ export const FEATURE_KUNDENKONTO = _check('kundenkonto');
 export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
 export const FEATURE_RESSOURCENBUCHUNG = _check('ressourcenbuchung');
 export const FEATURE_STUNDENABRECHNUNG = _check('stundenabrechnung');
+export const FEATURE_PWA = _check('pwa');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };
 type FeatureOverrides = { enabled?: string[]; disabled?: string[] };

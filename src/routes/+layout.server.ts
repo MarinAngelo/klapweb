@@ -7,6 +7,7 @@ import {
 	FEATURE_ECOMMERCE,
 	FEATURE_KLAPSTUDIO,
 	FEATURE_KUNDENKONTO,
+	FEATURE_PWA,
 	FEATURE_RESSOURCENBUCHUNG
 } from '$lib/server/features';
 import type { ConsentRequirement } from '$lib/consent/services';
@@ -252,6 +253,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			isMultilangActive,
 			userBackendActive,
 			chatActive,
+			// Web app manifest only with feature pwa (otherwise browsers offer to install the site)
+			pwaActive: FEATURE_PWA,
 			chatBotName,
 			chatGreeting,
 			consentInUse,
