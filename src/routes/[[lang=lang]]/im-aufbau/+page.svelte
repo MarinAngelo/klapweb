@@ -18,7 +18,7 @@
 	<div class="mx-auto max-w-xl py-16 text-center" data-pagefind-ignore data-page-search-ignore>
 		<Heading tag="h1">{$_('Website im Aufbau')}</Heading>
 		<p class="mt-6">
-			{$_('Unsere neue Website entsteht gerade. Schauen Sie bald wieder vorbei.')}
+			{$_('Meine neue Website entsteht gerade. Schau bald wieder vorbei.')}
 		</p>
 		{#if contactEmail}
 			<p class="mt-6">
