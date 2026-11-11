@@ -1,11 +1,50 @@
-<ol>
-	<li>Newsletter schreiben: In Prismic «Create a new page» → «Newsletter». Betreff, «Vorschautext im Posteingang», Inhalt und optional Button-Text und Button-Link ausfüllen. Platzhalter für die persönliche Anrede: {{Name}}, {{Vorname}}, {{Nachname}}, {{Firma}}.</li>
-	<li>Vorschau prüfen («Preview the page») und veröffentlichen.</li>
-	<li>Im Admin-Bereich «Newsletter» öffnen und den Newsletter wählen.</li>
-	<li>«1. Test-Mail an mich»: Test-Adresse eingeben, «Test senden» und die Mail im Postfach prüfen.</li>
-	<li>Versenden: «2. An ausgewählte Kunden senden» (Empfänger auswählen) oder «3. An alle Kunden senden». Den Versand mit der Checkbox bestätigen und «Jetzt senden» klicken.</li>
-	<li>Unter «Verlauf» siehst du, wann welcher Newsletter an wie viele Empfänger ging.</li>
-</ol>
+<h4>1. Newsletter schreiben</h4>
+<p>Klicke in Prismic auf <strong>Create a new page</strong> und wähle <strong>Newsletter</strong>.</p>
+<ul>
+	<li data-field="newsletter.subject"></li>
+	<li data-field="newsletter.preheader"></li>
+	<li data-field="newsletter.body"></li>
+	<li data-field="newsletter.cta_label"></li>
+	<li data-field="newsletter.cta_link"></li>
+</ul>
+<p><strong>Platzhalter</strong> für die persönliche Anrede: {{Name}}, {{Vorname}}, {{Nachname}}, {{Firma}}.</p>
+
+<h4>2. Vorschau und Veröffentlichen</h4>
+<p>Prüfe die Vorschau (<strong>Preview the page</strong>) und veröffentliche.</p>
+
+<h4>3. Newsletter wählen</h4>
+<p>Öffne im Admin-Bereich <strong>Newsletter</strong> und wähle den Newsletter.</p>
+
+<h4>4. Test-Mail</h4>
+<p><strong>1. Test-Mail an mich:</strong> Gib die Test-Adresse ein, klicke auf <strong>Test senden</strong> und prüfe die Mail im Postfach.</p>
+
+<h4>5. Versenden</h4>
+<ul>
+	<li><strong>2. An ausgewählte Kunden senden:</strong> Empfänger auswählen</li>
+	<li><strong>3. An alle Kunden senden</strong></li>
+</ul>
+<p>Bestätige den Versand mit der Checkbox und klicke auf <strong>Jetzt senden</strong>.</p>
+
+<h4>6. Verlauf</h4>
+<p>Unter <strong>Verlauf</strong> siehst du, wann welcher Newsletter an wie viele Empfänger ging.</p>
+
+<h3>Empfänger</h3>
 <p>Empfänger sind alle Kunden mit E-Mail-Adresse und alle bestätigten Abonnenten. Abgemeldete Adressen werden automatisch ausgeschlossen.</p>
-<p>Anmeldeformular auf der Website: Element «Formulare» in der Variante «Newsletter abonnieren» einfügen. Überschrift, Einleitungstext, «Namensfelder anzeigen», Einwilligungstext und Text nach dem Absenden festlegen. Neue Abonnenten erhalten eine Bestätigungsmail (Double-Opt-in) und werden erst nach dem Klick auf den Bestätigungslink gespeichert.</p>
-<p>Abonnenten verwalten: Im Newsletter-Admin unter «Abonnenten» siehst du Name, E-Mail, Sprache, «Bestätigt am» (Nachweis der Einwilligung) und Status. «Entfernen» trägt die Adresse als abgemeldet ein. «Als CSV exportieren» lädt die Liste herunter.</p>
+
+<h3>Anmeldeformular auf der Website</h3>
+<p>Füge das Element <strong>Formulare</strong> in der Variante <strong>Newsletter abonnieren</strong> ein und lege fest:</p>
+<ul>
+	<li>Überschrift</li>
+	<li>Einleitungstext</li>
+	<li data-field="Formular.show_name_fields"></li>
+	<li data-field="Formular.consent_text"></li>
+	<li>Text nach dem Absenden</li>
+</ul>
+<p>Neue Abonnenten erhalten eine Bestätigungsmail (Double-Opt-in) und werden erst nach dem Klick auf den Bestätigungslink gespeichert.</p>
+
+<h3>Abonnenten verwalten</h3>
+<p>Im Newsletter-Admin unter <strong>Abonnenten</strong> siehst du Name, E-Mail, Sprache, «Bestätigt am» (Nachweis der Einwilligung) und Status.</p>
+<ul>
+	<li><strong>Entfernen:</strong> trägt die Adresse als abgemeldet ein</li>
+	<li><strong>Als CSV exportieren:</strong> lädt die Liste herunter</li>
+</ul>

@@ -3,7 +3,7 @@
  *
  *   <!-- AUTO:ANLEITUNGEN:START --> … <!-- AUTO:ANLEITUNGEN:END -->
  *     the guide chapters from src/lib/anleitung/ (same source as the website /anleitung) —
- *     edit the chapters there, never between the markers
+ *     edit the chapters there, never between the markers; parts marked NUR-WEBSITE are left out
  *
  *   <!-- AUTO:FELDREFERENZ:START --> … <!-- AUTO:FELDREFERENZ:END -->
  *     «Prismic-Feldreferenz» from the generated field reference
@@ -16,6 +16,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { readChapterHtml, readChapterIndex } from '../src/lib/anleitung/load.js';
+import { expandFieldRefs, fieldLookup } from '../src/lib/anleitung/fields.js';
 
 const KB = 'docs/chatbot-wissensbasis.html';
 const REFERENCE = 'src/lib/generated/prismic-field-reference.json';
@@ -102,12 +103,34 @@ const html = [
 ].join('\n');
 
 // Guide chapters (src/lib/anleitung)
+// Parts between <!-- NUR-WEBSITE:START --> and <!-- NUR-WEBSITE:END --> (checklists, best
+// practices, summaries) are for readers of the website only — they would just make every
+// chat request longer
+// Field references (data-field): labels only — the descriptions are in the field reference below
+const lookup = fieldLookup(reference, descriptions);
+const unknownFields = new Set();
+const forBot = (source) => {
+	const { html, unknown } = expandFieldRefs(source, lookup, { descriptions: false });
+	for (const key of unknown) unknownFields.add(key);
+	return html
+		.replace(/<!-- NUR-WEBSITE:START -->[\s\S]*?<!-- NUR-WEBSITE:END -->\n?/g, '')
+		.replace(/\n{3,}/g, '\n\n')
+		.trim();
+};
 const chapters = readChapterIndex();
 const guidesHtml = [
 	GUIDES_START,
-	...chapters.map((c) => `<h2>${escapeHtml(c.title)}</h2>\n${readChapterHtml(c.id) ?? ''}\n`),
+	...chapters.map(
+		(c) => `<h2>${escapeHtml(c.title)}</h2>\n${forBot(readChapterHtml(c.id) ?? '')}\n`
+	),
 	GUIDES_END
 ].join('\n');
+
+if (unknownFields.size) {
+	console.warn(
+		`⚠ Anleitung: unbekannte Felder (auf klap-web-ch ausführen, dort sind alle Funktionen aktiv): ${[...unknownFields].join(', ')}`
+	);
+}
 
 let kb = readFileSync(KB, 'utf8');
 if (kb.includes(GUIDES_START) && kb.includes(GUIDES_END)) {
