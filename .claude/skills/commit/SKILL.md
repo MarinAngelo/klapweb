@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Committet die aktuellen Änderungen nach der Git-Strategie (Kern auf main, danach main in den Ursprungs-Branch mergen, slicemachine.config.json schützen, Build prüfen, pushen). Nur über /commit aufrufen.
+description: Committet die aktuellen Änderungen nach der Git-Strategie (Kern auf main, danach main in den Ursprungs-Branch mergen, slicemachine.config.json schützen, Build auf Wunsch prüfen). Pusht nicht. Nur über /commit aufrufen.
 disable-model-invocation: true
 argument-hint: '[Commit-Text]'
 ---
@@ -8,8 +8,8 @@ argument-hint: '[Commit-Text]'
 # Committen nach Git-Strategie
 
 Grundlage: `docs/git-strategie.md`. Antworten auf Deutsch, kurz. Der Aufruf von `/commit` ist die
-ausdrückliche Erlaubnis, für diesen Ablauf Branches zu wechseln, zu committen, zu mergen und zu pushen —
-**nur** für diesen Ablauf, nicht darüber hinaus.
+ausdrückliche Erlaubnis, für diesen Ablauf Branches zu wechseln, zu committen und zu mergen —
+**nur** für diesen Ablauf, nicht darüber hinaus. **Nie pushen** (das macht der User).
 
 `$ARGUMENTS` = Commit-Text (optional).
 
@@ -45,9 +45,9 @@ grep slicemachine .gitattributes   # muss "slicemachine.config.json merge=ours" 
 
 ## 2. Auf main committen
 
-Commit-Text: `$ARGUMENTS`; fehlt er → aus `git diff` einen kurzen deutschen Text vorschlagen
-(Betreffzeile + Stichpunkte, Stil wie `git log --oneline -10`) und **auf OK warten**.
-Immer mit Zeile `Co-Authored-By:` gemäss System-Hinweis abschliessen.
+Commit-Text: `$ARGUMENTS`; fehlt er → aus `git diff` selbst einen kurzen deutschen Text schreiben
+(Betreffzeile + Stichpunkte, Stil wie `git log --oneline -10`) und **ohne Rückfrage** committen;
+den Text in der Rückmeldung zeigen. Immer mit Zeile `Co-Authored-By:` gemäss System-Hinweis abschliessen.
 
 Wechsel vom Ursprungs-Branch nach `main`:
 
@@ -86,43 +86,45 @@ git merge --no-ff main
   erzeugen (`node scripts/build-customtypes.js`). Pro Datei Grund + Lösung notieren.
 - Unklare Konflikte (Kundencode vs. Kern, Inhalt fachlich widersprüchlich): **nachfragen**, nicht raten.
 
-## 4. Build prüfen
+## 4. Build prüfen (nur auf Wunsch)
+
+Nach dem Merge **fragen**, ob der Build geprüft werden soll (Dauer ca. 1½ Minuten), mit Empfehlung:
+
+- Empfehlung «Nein»: nur Texte/Doku geändert (`src/lib/anleitung/kapitel/`, `docs/`, `.claude/`,
+  `CLAUDE.md`, `src/lib/fieldDescriptions.json`) und Merge ohne Konflikte.
+- Empfehlung «Ja»: Code, Modelle oder Konfiguration geändert, oder Merge-Konflikte gelöst.
+
+Bei «Ja»:
 
 ```sh
 node scripts/build-customtypes.js
 npm run build 2>&1 | tail -60
-npx svelte-check --threshold error 2>&1 | tail -30
+npx svelte-check --threshold error --output machine 2>&1 | grep ERROR | grep -F -f <(git diff --name-only HEAD~1)
 ```
 
-- Bekannte, schon vorher vorhandene Fehler (z.B. `netlify-honeypot`) ignorieren — mit
-  `git stash`-freiem Vergleich: nur Fehler in geänderten/gemergten Dateien zählen.
+- `svelte-check` nur für die geänderten Dateien auswerten; alte Fehler in anderen Dateien ignorieren.
 - Fehler beheben:
   - **Kern-Datei** (auch auf `main` vorhanden, Plan basis/professional immer): Fix auf `main`
     committen (Schritt 2 wiederholen, Text «Build-Fix: …»), dann erneut Schritt 3.
   - **Kundencode:** im Ursprungs-Branch committen.
 - Build erneut, bis fehlerfrei. Warnungen von `check-i18n-keys` / `check-translations` melden.
 
-## 5. Pushen
+## 5. Nicht pushen
+
+Kein `git push`. In der Rückmeldung den Befehl zum Kopieren ausgeben (nur betroffene Branches):
 
 ```sh
-git push origin main            # nur wenn auf main committet wurde
-git push origin <ursprung>
+git push origin main <ursprung>
 ```
-
-Push abgelehnt (Remote neuer): `git pull --no-rebase`, Konflikte wie in Schritt 3 (inkl.
-`slicemachine.config.json`-Prüfung), erneut Build, dann pushen. **Nie `--force`.**
-
-Push scheitert an fehlenden Zugangsdaten (`could not read Username`, `Permission denied (publickey)`):
-nicht weiter versuchen, keine Zugangsdaten erfragen oder einrichten — in der Rückmeldung die
-Push-Befehle zum Kopieren ausgeben (Commits sind lokal fertig).
 
 ## 6. Rückmeldung
 
 Kurz melden:
 
-- Commits (SHA + Betreff) auf welchen Branches, gepusht ja/nein
+- Commits (SHA + Betreff) auf welchen Branches, darunter der verwendete Commit-Text
+- Push-Befehl zum Kopieren
 - Merge-Konflikte: Datei → Grund → Lösung
-- Build-Fixes
+- Build: geprüft (Ergebnis, Build-Fixes) oder übersprungen
 - Hinweise:
   - Modelle geändert (`git diff --stat HEAD~1 -- src/lib/slices customtypes`) → `slicemachine push`
   - Dev-Server neu starten (Branch wurde gewechselt)
