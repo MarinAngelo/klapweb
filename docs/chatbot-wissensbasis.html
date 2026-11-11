@@ -7,7 +7,7 @@
   Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Tab «Chat-Bot»).
   Übernehmen: Datei im Browser öffnen → alles markieren (Ctrl+A) → kopieren → in das Feld einfügen → veröffentlichen.
   Überschriften und Listen bleiben erhalten. Der Bot liest die Änderung nach spätestens 5 Minuten.
- Stand der Anleitungen: 2026-10-30 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
+ Stand der Anleitungen: 2026-11-11 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
 -->
 <style>
 	body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
@@ -227,7 +227,7 @@
 <ul>
 	<li>Pro Seite im Tab «SEO &amp; Metadata»: «Meta Titel» (ca. 50–60 Zeichen), «Meta Description» (ca. 150–160 Zeichen) und «Meta Image» (Vorschaubild beim Teilen).</li>
 	<li>«Keine Indexierung»: Die Seite erscheint nicht in Suchmaschinen, z. B. für interne Seiten.</li>
-	<li>«Landing Page»: Seite ohne normale Navigation, z. B. für Kampagnen.</li>
+	<li>«Landing Page»: Seite ohne normale Navigation und Fusszeile, z. B. für Kampagnen. Die rechtlichen Links (Datenschutzerklärung, Impressum, Cookie-Einstellungen) bleiben sichtbar.</li>
 	<li>Globale Werte unter Einstellungen → Tab «SEO»: Website-Domain, Website-Name, globaler SEO-Titel, globale Beschreibung, Social Image (1200 × 630 px) und Favicon (64 × 64 px). Sie gelten, wenn eine Seite keine eigenen Werte hat.</li>
 	<li>Gute Überschriften-Struktur: pro Seite eine H1, darunter H2 für Abschnitte und H3 für Unterpunkte.</li>
 </ul>
@@ -237,12 +237,12 @@
 <ul>
 	<li>Tab «Main»: Website-Titel und -Untertitel, verantwortliche Person bzw. Firma, Adresse, E-Mail-Adressen, Kontakte fürs Impressum und die rechtlichen Texte (Datenschutzerklärung, Haftungsausschluss, Impressum, Cookies-Text, AGB). Ausserdem Seiten-Passwort, Chat-Bot, Mehrsprachigkeit und Startseiten-Umleitung.</li>
 	<li>Tab «SEO»: globale SEO-Angaben, Favicon, App-Icon und Statusleisten-Farbe.</li>
-	<li>Je nach Paket weitere Tabs: «Terminbuchung», «Online-Handel», «Ressourcenbuchung».</li>
+	<li>Je nach Paket weitere Tabs: «Rechnungen» (Grundwährung, IBAN, Bank, BIC / SWIFT, Zahlungsfrist, MWST-Satz, «QR-Zahlteil auf Rechnungen»), «Terminbuchung», «Online-Handel», «Ressourcenbuchung».</li>
 	<li>«Absender-E-Mail (alle E-Mails der Website)» im Tab «Main»: Von dieser Adresse kommen alle E-Mails der Website (Buchungen, Rechnungen, Newsletter, Formulare). Die Domain muss beim Mail-Dienst (Resend) eingerichtet sein – das erledigt Angelo. Ist das Feld leer, werden keine E-Mails versendet; «Inhalte prüfen» im Admin-Bereich zeigt das an.</li>
 	<li>«Absender-Name» (Tab «Main»): Name, unter dem die E-Mails erscheinen, z. B. der Name deines Geschäfts. Leer = Website-Name.</li>
 	<li>«Benachrichtigungen an (intern)» (Tab «Main»): An diese Adresse gehen interne Meldungen wie neue Buchungen, Formular-Nachrichten und Bestellungen. Leer = «Verantwortliche E-Mail».</li>
 </ul>
-<p>«Startseite umleiten» mit «Umleitungs-Seite»: Besucher der Startseite werden automatisch auf eine andere Seite weitergeleitet, z. B. während einer Umbauphase.</p>
+<p>«Startseite umleiten» mit «Umleitungs-Seite»: Besucher der Startseite werden automatisch auf eine andere Seite weitergeleitet, z. B. während einer Umbauphase. Bleibt «Umleitungs-Seite» leer, erscheint die Standardseite «Website im Aufbau» mit deiner «Verantwortlichen E-Mail» als Kontakt; sie zeigt nur die rechtlichen Links, keine Navigation.</p>
 
 <h2>Design anpassen (Design-Vorlage)</h2>
 <ol>
@@ -268,7 +268,7 @@
 	<li>Bild: Einzelbild, Banner, Karussell oder Vorher/Nachher-Vergleich.</li>
 	<li>Galerie: mehrere Bilder als Galerie.</li>
 	<li>Schaltfläche: Button mit Link. Variante «Suche» (ab Paket Professionell): öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle. Praktisch für lange Seiten wie Anleitungen oder häufige Fragen.</li>
-	<li>Kacheln: Karten in Spalten, z. B. für Angebote.</li>
+	<li>Kacheln: Karten in Spalten, z. B. für Angebote. Variante «Buchbare Angebote» (mit Terminbuchung): zeigt automatisch alle buchbaren Angebote mit «Mehr erfahren» und «Buchen».</li>
 	<li>Akkordeon: aufklappbare Einträge, z. B. für häufige Fragen; mit optionaler Suche. Variante «Bild und Text» mit Bildern; dort legt das Feld «Titel-Ebene» fest, ob die Titel als H2 bis H6 dargestellt werden. Titel mit H2 oder H3 erscheinen im Inhaltsverzeichnis.</li>
 	<li>Inhaltsverzeichnis: listet automatisch alle Überschriften der Seite. «Tiefe» wählt «Nur H2» oder «H2 und H3».</li>
 	<li>Zitat: Einzelzitat oder Testimonials (Kundenstimmen).</li>
@@ -282,6 +282,14 @@
 </ul>
 <p>Animationen: Viele Elemente haben am Ende die Felder «Animation aktivieren», «Animations-Richtung», «Verzögerung (ms)» und «Animationsdauer (ms)». Damit blendet das Element beim Scrollen ein.</p>
 <p>«Vollbreite auf Mobile»: Das Element geht auf dem Smartphone bis an den Bildschirmrand.</p>
+
+<h2>Suche auf einer Seite</h2>
+<p>Für lange Seiten wie Anleitungen oder häufige Fragen gibt es zwei Arten von Suche (ab Paket Professionell):</p>
+<ul>
+	<li>Suche auf der ganzen Seite: Element «Schaltfläche» in der Variante «Suche» einfügen. Die Schaltfläche öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle.</li>
+	<li>Suche in einem Akkordeon: Im Element «Akkordeon» «Suche aktivieren» einschalten und optional den «Suchfeld-Platzhalter» anpassen. Über dem Akkordeon erscheint ein Suchfeld, das nur dessen Einträge filtert.</li>
+</ul>
+<p>Durchsucht wird immer nur die Seite, auf der die Suche steht, nicht die ganze Website.</p>
 
 <h2>Kontaktformular</h2>
 <ol>
@@ -332,7 +340,7 @@
 <ol>
 	<li>Im Browser deine-website.ch/admin aufrufen.</li>
 	<li>Das Admin-Passwort eingeben (du erhältst es von Angelo). Du bleibst 8 Stunden angemeldet, mit «Angemeldet bleiben» 14 Tage.</li>
-	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B. Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter, Chat-Bot, «Inhalte prüfen» und «Passwortgeschützte Seiten».</li>
+	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B. Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter, Stunden, Chat-Bot, «Inhalte prüfen» und «Passwortgeschützte Seiten».</li>
 	<li>Unter «Hilfe» findest du die Prismic-Feldreferenz: alle Felder der Inhalts-Typen und Inhalts-Elemente mit Erklärung.</li>
 	<li>Mit «Zur Website» kommst du zurück auf die Website, mit «Abmelden» meldest du dich ab.</li>
 </ol>
@@ -346,25 +354,42 @@
 	<li>Web-Links ohne «/» am Anfang, die ins Leere führen.</li>
 	<li>Links in einer Übersetzung auf die deutsche Seite, obwohl es die Seite übersetzt gibt.</li>
 	<li>Unbekannte Platzhalter, z. B. ein Tippfehler wie {{Resource}} statt {{Ressource}} – mit Vorschlag «meintest du …?».</li>
+	<li>Fehlende Pflichtangaben in den Einstellungen für Impressum und Datenschutzerklärung.</li>
+	<li>E-Mail-Versand: «Absender-E-Mail» leer oder Domain beim Mail-Dienst nicht eingerichtet.</li>
+	<li>QR-Zahlteil: IBAN oder «Verantwortliche Adresse» unvollständig.</li>
+	<li>Terminbuchung: Arbeitstage oder Angebote, aus denen keine freien Termine entstehen, mit dem Grund.</li>
+	<li>Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz.</li>
+	<li>Inhalts-Elemente ohne Inhalt.</li>
 	<li>«Kartenpunkt nicht erkannt»: Im Feld «Kartenpunkt» steht etwas, woraus kein Ort bestimmt werden kann, z. B. eine Adresse oder ein Google-Link ohne Koordinaten.</li>
 </ul>
 
 <h2>Terminbuchung einrichten</h2>
 <ol>
 	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional Preis und Ort. «Aktiv» einschalten. Veröffentlichen.</li>
+	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional «Preis (optional)» und Ort. Für die Stornierung «Kostenlos stornierbar bis (Std. vor Termin)» und «Stornogebühr nach Ablauf (% vom Preis)» (leer = Standard aus den Einstellungen). Für die Darstellung als Kacheln «Bild (für Kacheln)», «Seite mit mehr Infos» und «Reihenfolge (Kacheln)». «Aktiv» einschalten. Veröffentlichen.</li>
 	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben (ist ein Datum gesetzt, gilt nur das Datum). Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
-	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
-	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
+	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren. Erscheinen keine freien Termine, zeigt die Terminverwaltung die Gründe an, z. B. «Kein «Buchbares Angebot» verknüpft», «Angebot … ist nicht aktiv» oder «Die Serie ist abgelaufen».</li>
+	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Die Terminauswahl ist in dieser Variante fest eingebaut und steht an erster Stelle; ein eigenes Feld vom Typ «Termin» brauchst du nur, wenn es an einer anderen Stelle stehen soll. Felder anlegen: «Name» (Textfeld) und «E-Mail» (E-Mail). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich. Mit Feldern, die genau «Adresse», «PLZ» und «Ort» heissen, steht die Adresse des Kunden später auf der Rechnung.</li>
+	<li>Optional die Angebote als Kacheln zeigen: Element «Kacheln» in der Variante «Buchbare Angebote» einfügen. Es zeigt automatisch alle aktiven Angebote mit den Schaltflächen «Mehr erfahren» und «Buchen»; «Preis anzeigen» blendet den Preis ein. «Buchen» öffnet die «Buchungsseite» und zeigt dort nur die Termine dieses Angebots (mit Link «Alle Angebote anzeigen»). Ist «Buchungsseite» leer, wird die erste Seite mit dem Formular «Mit Termin» verwendet. «Mehr erfahren» führt auf die «Seite mit mehr Infos» des Angebots, sonst öffnet sich ein Fenster mit Beschreibung, Dauer, Preis und Ort.</li>
 	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
+	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Stornofrist}} (bis wann kostenlos storniert werden kann), {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
 	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
 </ol>
 <p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
+<p>Für einen Kunden buchen (z. B. bei einer telefonischen Anfrage): In der Terminverwaltung beim freien Termin «Für Kunde buchen» wählen und Name, optional E-Mail und Telefon eintragen. Mit E-Mail erhält der Kunde Bestätigung und Erinnerung, ohne E-Mail werden keine E-Mails verschickt.</p>
+<p>Stornierung durch den Kunden: Die Bestätigungs-Mail enthält einen Link zum Stornieren. Die Seite zeigt zuerst die Bedingungen; storniert wird erst mit dem Knopf.</p>
+<ul>
+	<li>Einstellungen → Tab «Terminbuchung»: «Kostenlos stornierbar bis (Std. vor Termin)» und «Stornogebühr nach Ablauf (% vom Preis)» gelten für alle Angebote ohne eigene Angabe. Beispiel: 24 Stunden und 80 % → Termin am Montag um 09:00 ist bis Sonntag 09:00 kostenlos stornierbar, danach kostet die Stornierung 80 % des Preises.</li>
+	<li>Innerhalb der Frist (oder ohne Frist): kostenlos. Der Termin wird wieder frei.</li>
+	<li>Nach der Frist mit Stornogebühr: Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil.</li>
+	<li>Nach der Frist ohne Stornogebühr oder ohne Preis: Online stornieren ist nicht mehr möglich; die Seite verweist auf den direkten Kontakt.</li>
+	<li>Es gelten die Bedingungen vom Zeitpunkt der Buchung. Du und der Kunde erhalten eine E-Mail. Eine offene Rechnung zur Buchung wird als storniert markiert; war sie schon bezahlt, erhältst du den Hinweis, eine Rückerstattung zu prüfen.</li>
+</ul>
+<p>Rechnung nach dem Termin: Einstellungen → Tab «Terminbuchung» → «Rechnung nach dem Termin senden (Angebote mit Preis)» einschalten. Jede Buchung eines Angebots mit Preis erhält dann etwa eine Stunde nach Terminende automatisch eine Rechnung mit QR-Zahlteil per E-Mail. Die Rechnung erscheint im Admin-Bereich unter «Rechnungen» mit der Quelle «Terminbuchung». Bankangaben: Einstellungen → Tab «Rechnungen».</p>
 <p>Häufige Probleme:</p>
 <ul>
 	<li>Kein Termin sichtbar: Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
-	<li>Formular sendet nicht: Pflichtfelder fehlen oder es gibt kein Feld vom Typ «Termin».</li>
+	<li>Formular sendet nicht: Pflichtfelder fehlen oder es ist kein Termin gewählt.</li>
 	<li>Keine Bestätigungs-Mail: E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
 	<li>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic: Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
 	<li>Bereits gebuchte Termine bleiben gespeichert, wenn du einen Arbeitstag änderst. Serien deshalb möglichst nicht kurzfristig ändern.</li>
@@ -425,14 +450,15 @@
 
 <h2>Online-Handel (Produkte und Dienstleistungen verkaufen)</h2>
 <ol>
-	<li>Grundeinstellungen: Einstellungen → Tab «Online-Handel»: Grundwährung und weitere Währungen, IBAN, Bank, BIC, Zahlungsfrist, MWST-Satz, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar; keine Online-Zahlung). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
+	<li>Grundeinstellungen: Einstellungen → Tab «Rechnungen»: Grundwährung, IBAN, Bank, BIC / SWIFT, Zahlungsfrist, MWST-Satz und «QR-Zahlteil auf Rechnungen». Tab «Online-Handel»: weitere Währungen, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar; keine Online-Zahlung). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
 	<li>Produktseite erstellen: neue «Page» anlegen. Im Tab «Online-Handel» «E-Commerce aktiv» einschalten, «Preis exkl. MwSt. (CHF)», optional «Anzahlung %», «Rabatt %» und «Abrechnungsart» (Einmalig, Jährlich, Monatlich) eintragen.</li>
 	<li>Leistungen beschreiben: «Create a new page» → «Leistung» mit Bezeichnung, Beschreibung und Detailbeschreibung. Im Tab «Leistungen» der Produktseite die Leistungen verknüpfen. Unter «Zusatzleistungen» andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
 	<li>Auf der Produktseite Elemente einfügen: «Preisaufstellung» (Preis, Rabatt, Anzahlung, Restbetrag), «Akkordeon» in der Variante «Leistungen» und «Schaltfläche» in der Variante «Kauf-Schaltfläche».</li>
 	<li>Übersicht mehrerer Angebote: «Kacheln» in der Variante «Pläne» oder «Preisvergleich» mit bis zu drei Produktseiten.</li>
 	<li>Veröffentlichen und eine Testbestellung machen.</li>
 </ol>
-<p>Ablauf für Käufer: Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung. Bei «gegen Rechnung» wird automatisch eine Rechnung erstellt und per E-Mail verschickt. Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
+<p>Ablauf für Käufer: Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung. Bei «gegen Rechnung» wird automatisch eine Rechnung (mit QR-Zahlteil, wenn eingeschaltet) erstellt und per E-Mail verschickt. Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
+<p>Warenkorb: Hat eine Leistung einen «Preis exkl. MwSt. (CHF)», erscheint bei ihr «In den Warenkorb»; Leistungen ohne Preis lassen sich nicht einzeln bestellen. Auf Produktseiten steht «In den Warenkorb» neben der Kauf-Schaltfläche. Besucher sammeln so mehrere Leistungen und Pakete, sehen sie unter deine-website.ch/warenkorb (Symbol mit Anzahl in der Kopfzeile) und bestellen alles zusammen; die Rechnung enthält alle Positionen. Ein Rabatt-Code gilt für die Hauptpositionen, nicht für Zusatzleistungen.</p>
 
 <h2>Manuelle Rechnungen</h2>
 <ol>
@@ -443,7 +469,9 @@
 	<li>Speichern und optional direkt per E-Mail an den Kunden senden. Das Versanddatum wird festgehalten.</li>
 	<li>Ist die Rechnung bezahlt, beim Zahlungsstatus «bezahlt» wählen.</li>
 </ol>
-<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden. Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Online-Handel»).</p>
+<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden. Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
+<p>QR-Zahlteil: Einstellungen → Tab «Rechnungen» → «QR-Zahlteil auf Rechnungen» einschalten. Jede Rechnung der Website (manuell, Online-Handel, Terminbuchung) erhält dann unten einen Schweizer QR-Zahlteil; Betrag, Konto und Referenz sind beim Scannen mit der Banking-App schon ausgefüllt. Voraussetzungen: eine Schweizer oder Liechtensteiner «IBAN» (auch QR-IBAN), Rechnung in CHF oder EUR und eine vollständige «Verantwortliche Adresse» (Zeile «Strasse Nr.» und Zeile «PLZ Ort»). Fehlt etwas, wird die Rechnung ohne QR-Zahlteil erstellt, und «Inhalte prüfen» weist darauf hin.</p>
+<p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt». Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>
 
 <h2>Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)</h2>
 <ol>
@@ -486,6 +514,17 @@
 	<li>Icons: unter dem Typ «Icon» eigene SVG-Icons erfassen.</li>
 	<li>Variablen: im Dokument «Variablen» Platzhalter definieren, z. B. Token-Name «Telefon» und Wert. Im Text {{Telefon}} schreiben; auf der Website und in den E-Mails erscheint der Wert. Ändert sich der Wert, ändert er sich überall. Für längere Texte mit Absätzen, Titeln und Links im selben Eintrag statt «Wert» das Feld «Text (mehrzeilig)» ausfüllen (es hat Vorrang vor «Wert») und den Platzhalter im Text allein in einen eigenen Absatz schreiben. Für andere Sprachen das Dokument «Variablen» in Prismic übersetzen; Token-Namen bleiben gleich.</li>
 </ul>
+
+<h2>P5.js Grafik (animierte Grafiken)</h2>
+<p>Das Element «P5.js Grafik» zeigt eine animierte, vom Computer gezeichnete Grafik, z. B. als Blickfang im Kopfbereich einer Seite.</p>
+<ol>
+	<li>Auf der Seite das Element «P5.js Grafik» einfügen.</li>
+	<li>Bei «Sketch» eine Grafik wählen, z. B. «Orbital Circles» oder «Particle Flow».</li>
+	<li>«Hintergrundfarbe» und «Akzentfarbe» festlegen; für bildbasierte Grafiken ein Bild bei «Bild (für bildbasierte Sketches)» hochladen.</li>
+	<li>Variante «Mit Titelbereich»: Die Grafik dient als Kopfbereich der Seite, mit Text, Schaltfläche und den Optionen «Überlappend mit Kopfzeile» und «Titelbild Höhe».</li>
+	<li>Veröffentlichen.</li>
+</ol>
+<p>Eine eigene Grafik (Sketch) programmiert Angelo auf Anfrage; sie erscheint danach in der Auswahl «Sketch».</p>
 
 <!-- AUTO:ANLEITUNGEN:END -->
 
@@ -539,6 +578,8 @@
 	<li>Video von YouTube / Vimeo (alternativ) (Einbettung): Video von YouTube oder Vimeo: Link einfügen (z.B. https://youtu.be/…). Besucher sehen das Video erst, wenn sie es im Cookie-Hinweis erlauben, weil dabei Daten an YouTube bzw. Vimeo gehen. Besser: eigenes Video im Feld «Video-Datei (MP4)» — es hat Vorrang.</li>
 	<li>Video Einbettungs-Code (alternativ) (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Claude Anleitung Titel (Text)</li>
+	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Globale Events (Veranstaltungen), Newsletter / Info-Mails, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
 	<li>Schritte (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -680,10 +721,10 @@
 	<li>CTA-Beschriftung (Text)</li>
 	<li>Button-Stil (Link)</li>
 	<li>Plan (Seite) (Link)</li>
-	<li>Buchungsseite (Link): Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = keine Schaltfläche «Buchen».</li>
 	<li>Text Schaltfläche «Mehr erfahren» (Text)</li>
 	<li>Text Schaltfläche «Buchen» (Text)</li>
 	<li>Preis anzeigen (Ein/Aus): Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.</li>
+	<li>Buchungsseite (Link): Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = automatisch die erste Seite mit einem Formular der Variante «Mit Termin»; gibt es keine, erscheint keine Schaltfläche «Buchen».</li>
 </ul>
 <h3>Kontakt (Inhalts-Element)</h3>
 <ul>
@@ -980,6 +1021,17 @@
 	<li>Überblendungsdauer (ms) (Zahl)</li>
 	<li>Anzeigedauer pro Bild (ms) (Zahl)</li>
 	<li>Bilder Karusell (Liste)</li>
+	<li>Blob-Form (Ein/Aus)</li>
+	<li>Blob-Farbe (Farbe)</li>
+	<li>Blob SVG-Code (Text)</li>
+	<li>Blob-Grösse (%) (Zahl)</li>
+	<li>Blob-Position horizontal (%) (Zahl)</li>
+	<li>Blob-Position vertikal (%) (Zahl)</li>
+	<li>Blob-Drehung (Grad) (Zahl)</li>
+	<li>Untere Kante wellenförmig (Ein/Aus)</li>
+	<li>Wellenhöhe (px) (Zahl)</li>
+	<li>Wellenamplitude (px) (Zahl)</li>
+	<li>Anzahl Wellen (Zahl)</li>
 </ul>
 <h3>Zitat (Inhalts-Element)</h3>
 <ul>
@@ -1128,8 +1180,8 @@
 	<li>Seiten-Passwort (Text)</li>
 	<li>User-Backend aktivieren (Ein/Aus)</li>
 	<li>Mehrere Sprachen verwenden (Ein/Aus)</li>
-	<li>Startseite umleiten (Ein/Aus)</li>
-	<li>Umleitungs-Seite (Link)</li>
+	<li>Startseite umleiten (Ein/Aus): Leitet Besucher der Startseite auf eine andere Seite um, z.B. solange die Website im Aufbau ist. Das Ziel bestimmt «Umleitungs-Seite»; ist sie leer, erscheint die Standardseite «Website im Aufbau» (mit Kontakt-E-Mail aus «Verantwortliche E-Mail»). Nur die Startseite wird umgeleitet, alle anderen Seiten bleiben erreichbar.</li>
+	<li>Umleitungs-Seite (Link): Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.</li>
 	<li>Website Domain (Text)</li>
 	<li>Website Name (SEO) (Text)</li>
 	<li>Globaler SEO Titel (Text)</li>
@@ -1138,6 +1190,11 @@
 	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
+	<li>Chat-Bot aktivieren (Ein/Aus)</li>
+	<li>Chat-Bot Name (Text)</li>
+	<li>Chat-Bot Begrüssung (Text)</li>
+	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
+	<li>Chat-Bot Wissensbasis – Ergänzungen (formatierter Text): Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.</li>
 	<li>Grundwährung (Auswahl): Optionen: AED - Dirham der Vereinigten Arabischen Emirate, AFN - Afghani, ALL - Albanischer Lek, AMD - Armenischer Dram, ANG - Niederländisch-Antillianischer Gulden, AOA - Angolanischer Kwanza, ARS - Argentinischer Peso, AUD - Australischer Dollar, AWG - Arubischer Florin, AZN - Aserbaidschanischer Manat, BAM - Bosnisch-Herzegowinische Konvertible Mark, BBD - Barbadischer Dollar, BDT - Bangladeschischer Taka, BGN - Bulgarischer Lew, BHD - Bahrainischer Dinar, BIF - Burundischer Franc, BMD - Bermudischer Dollar, BND - Bruneischer Dollar, BOB - Bolivianischer Boliviano, BRL - Brasilianischer Real, BSD - Bahamaischer Dollar, BTN - Bhutanischer Ngultrum, BWP - Botswanischer Pula, BYN - Belarussischer Rubel, BZD - Belizischer Dollar, CAD - Kanadischer Dollar, CDF - Kongoläsischer Franc, CHF - Schweizer Franken, CLP - Chilenischer Peso, CNY - Chinesischer Renminbi, COP - Kolumbianischer Peso, CRC - Costa-Ricanischer Colon, CUP - Kubanischer Peso, CVE - Kap-Verdischer Escudo, CZK - Tschechische Krone, DJF - Djiboutischer Franc, DKK - Dänische Krone, DOP - Dominikanischer Peso, DZD - Algerischer Dinar, EGP - Ägyptisches Pfund, ERN - Eritreischer Nakfa, ETB - Äthiopischer Birr, EUR - Euro, FJD - Fidschi-Dollar, FKP - Falkländisches Pfund, GBP - Britisches Pfund, GEL - Georgischer Lari, GHS - Ghanaischer Cedi, GIP - Gibraltarisches Pfund, GMD - Gambischer Dalasi, GNF - Guineischer Franc, GTQ - Guatemaltekischer Quetzal, GYD - Guyanischer Dollar, HKD - Hongkonger Dollar, HNL - Honduranischer Lempira, HTG - Haitianische Gourde, HUF - Ungarischer Forint, IDR - Indonesische Rupiah, ILS - Neuer Israelischer Schekel, INR - Indische Rupie, IQD - Irakischer Dinar, IRR - Iranischer Rial, ISK - Isländische Krone, JMD - Jamaikanischer Dollar, JOD - Jordanischer Dinar, JPY - Japanischer Yen, KES - Kenianischer Schilling, KGS - Kirgisischer Som, KHR - Kambodschanischer Riel, KMF - Komorischer Franc, KPW - Nordkoreanischer Won, KRW - Südkoreanischer Won, KWD - Kuwaitischer Dinar, KYD - Kaiman-Dollar, KZT - Kasachischer Tenge, LAK - Laotischer Kip, LBP - Libanesisches Pfund, LKR - Sri-Lankische Rupie, LRD - Liberianischer Dollar, LSL - Lesothischer Loti, LYD - Libyscher Dinar, MAD - Marokkanischer Dirham, MDL - Moldauischer Leu, MGA - Madagassischer Ariary, MKD - Nordmazedonischer Denar, MMK - Myanmarischer Kyat, MNT - Mongolischer Tögrög, MOP - Macao-Pataca, MRU - Mauretanischer Ouguiya, MUR - Mauritische Rupie, MVR - Maledivischer Rufiyaa, MWK - Malawischer Kwacha, MXN - Mexikanischer Peso, MYR - Malaysischer Ringgit, MZN - Mosambikanischer Metical, NAD - Namibischer Dollar, NGN - Nigerianische Naira, NIO - Nicaraguanischer Córdoba, NOK - Norwegische Krone, NPR - Nepalesische Rupie, NZD - Neuseeländischer Dollar, OMR - Omanischer Rial, PAB - Panamaischer Balboa, PEN - Peruanischer Sol, PGK - Papua-Neuguineischer Kina, PHP - Philippinischer Peso, PKR - Pakistanische Rupie, PLN - Polnischer Zloty, PYG - Paraguayischer Guaraní, QAR - Katarischer Riyal, RON - Rumänischer Leu, RSD - Serbischer Dinar, RUB - Russischer Rubel, RWF - Ruandischer Franc, SAR - Saudi-Arabischer Riyal, SBD - Salomonen-Dollar, SCR - Seychellische Rupie, SDG - Sudanesisches Pfund, SEK - Schwedische Krone, SGD - Singapurischer Dollar, SHP - St.-Helenisches Pfund, SLL - Sierraleonischer Leone, SOS - Somalischer Schilling, SRD - Surinamischer Dollar, STN - São-toménsische Dobra, SVC - El-Salvadorianischer Colón, SYP - Syrisches Pfund, SZL - Swasiland-Lilangeni, THB - Thailändischer Baht, TJS - Tadschikischer Somoni, TMT - Turkmenischer Manat, TND - Tunesischer Dinar, TOP - Tongaischer Paʻanga, TRY - Türkische Lira, TTD - Trinidad-und-Tobago-Dollar, TWD - Neuer Taiwanischer Dollar, TZS - Tansanischer Schilling, UAH - Ukrainische Hrywnja, UGX - Ugandischer Schilling, USD - US-Dollar, UYU - Uruguayischer Peso, UZS - Usbekischer Sum, VES - Venezolanischer Bolívar, VND - Vietnamesischer Dong, VUV - Vanuatuischer Vatu, WST - Samoanischer Tala, XAF - CFA-Franc BEAC, XCD - Ostkaribischer Dollar, XOF - CFA-Franc BCEAO, XPF - CFP-Franc, YER - Jemenitischer Rial, ZAR - Südafrikanischer Rand, ZMW - Sambischer Kwacha, ZWL - Simbabwischer Dollar</li>
 	<li>IBAN (Text): Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.</li>
 	<li>Bank (Text)</li>
