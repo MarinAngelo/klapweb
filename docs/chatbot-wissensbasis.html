@@ -305,9 +305,25 @@
 <h4>3. Vorschau teilen</h4>
 <p>Unten links erscheint die Prismic-Leiste, über die du einen teilbaren Vorschau-Link erzeugen kannst.</p>
 
+<h4>4. Vorschau beenden</h4>
+<p>Klicke in der Prismic-Leiste unten links auf das Kreuz.</p>
+<p><strong>Achtung:</strong> Solange die Vorschau aktiv ist, zeigt die Website im ganzen Browser den Stand dieser Vorschau – auch nach dem Veröffentlichen und auch am nächsten Tag, wenn der Browser die Sitzung wiederherstellt.</p>
+
 <h3>Wenn die Prismic-Leiste fehlt</h3>
-<p>Dein Browser blockiert Cookies von Drittanbietern (z. B. Brave, Safari oder privates Fenster).</p>
-<p>Die Vorschau selbst funktioniert trotzdem. Nur für «teilbare Links» musst du Cookies für prismic.io erlauben oder einen anderen Browser verwenden.</p>
+<p>Dein Browser blockiert Cookies von Drittanbietern (z. B. Brave, Safari oder privates Fenster). Ohne Leiste kannst du die Vorschau weder teilen noch beenden.</p>
+<p>So erscheint die Leiste:</p>
+<ul>
+	<li><strong>Brave:</strong> Auf deiner Website rechts in der Adressleiste auf das Löwen-Symbol (Shields) klicken und die Shields für diese Seite ausschalten oder Cookies von Drittanbietern erlauben.</li>
+	<li><strong>Safari:</strong> Einstellungen → Datenschutz → «Websiteübergreifendes Tracking verhindern» ausschalten.</li>
+	<li><strong>Anderer Browser:</strong> z. B. Chrome oder Firefox mit Standard-Einstellungen.</li>
+</ul>
+
+<h3>Website zeigt alte Inhalte</h3>
+<p>Siehst du nach dem Veröffentlichen noch den alten Stand, hängst du vermutlich in einer alten Vorschau fest.</p>
+<ul>
+	<li><strong>Prüfen:</strong> Die Seite in einem privaten Fenster öffnen. Erscheint dort der neue Inhalt, war es die Vorschau.</li>
+	<li><strong>Beheben:</strong> Den Browser ganz schliessen und neu öffnen. Stellt der Browser die Sitzung wieder her: in den Entwicklertools (F12) unter «Application» → «Cookies» das Cookie <strong>io.prismic.preview</strong> löschen und die Seite neu laden.</li>
+</ul>
 
 <h2>SEO (Google und Social Media)</h2>
 <h3>Pro Seite</h3>
@@ -1393,6 +1409,9 @@
 	<li>Bild (Bild)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Bild als Lightbox öffnen (Ein/Aus)</li>
+	<li>Bild-Lupe aktivieren (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1547,7 +1566,7 @@
 	<li>Nach Gruppe gruppieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -1695,7 +1714,7 @@
 	<li>Zentrieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -1732,7 +1751,7 @@
 	<li>Bild (Bild)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler Abstand Desktop (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -1837,7 +1856,7 @@
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
 	<li>Akzentfarbe (Anführungszeichen, Sterne, Rahmen) (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>

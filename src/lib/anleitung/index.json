@@ -52,7 +52,7 @@
 	{
 		"id": "vorschau",
 		"title": "Vorschau vor dem Veröffentlichen",
-		"stand": "2026-11-11",
+		"stand": "2026-11-12",
 		"sources": ["src/routes/api/preview"]
 	},
 	{
