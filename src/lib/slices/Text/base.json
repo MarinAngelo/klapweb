@@ -97,15 +97,6 @@
 						"default_value": false
 					}
 				},
-				"inner_apply": {
-					"type": "Boolean",
-					"config": {
-						"label": "Hintergrund als Kasten",
-						"placeholder_false": "Nein",
-						"placeholder_true": "Ja",
-						"default_value": false
-					}
-				},
 				"y_padding_same": {
 					"type": "Boolean",
 					"config": {
