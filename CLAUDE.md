@@ -165,9 +165,10 @@ Regeln:
 
 ## Prismic-Vorschau
 
-- `/api/preview` setzt das Cookie `io.prismic.preview` **ohne Ablaufdatum** (Sitzungs-Cookie); `createClient({ cookies })` liest damit überall den Vorschau-Stand statt der veröffentlichten Fassung
-- Beenden nur über die Prismic-Leiste (Script von prismic.io, braucht Drittanbieter-Cookies) — Brave/Safari/private Fenster blockieren sie. Brave stellt Sitzungs-Cookies beim Neustart wieder her → Website (auch `localhost`) zeigt tagelang einen alten Stand, obwohl Prismic und `curl` den neuen liefern
-- Diagnose: privates Fenster bzw. `curl` gegen die Seite; Abhilfe: Cookie löschen oder Shields für die Seite aus. Redakteurs-Anleitung: Kapitel «Vorschau»
+- `/api/preview` setzt das Cookie `io.prismic.preview` mit **Ablauf nach 1 Stunde** (`maxAge`); `createClient({ cookies })` liest damit überall den Vorschau-Stand statt der veröffentlichten Fassung
+- **Ungültiges/abgelaufenes Token** → `hooks.server.ts` löscht das Cookie (`dropInvalidPreviewCookie`, `src/lib/server/previewCookie.ts`, einmal pro Token geprüft, Netzwerkfehler behalten es). Ohne das scheitert jede Prismic-Abfrage → ganze Website auf der Fehlerseite (404 «Navigation fehlt»)
+- **Hinweis «Vorschau aktiv – Vorschau beenden»** (`PreviewNotice.svelte` im Root-Layout, Popover API): erscheint nur, wenn das Cookie gesetzt ist und die Prismic-Leiste nach 5 s fehlt (Brave/Safari/private Fenster blockieren sie: Script von prismic.io, Drittanbieter-Cookies). «Vorschau beenden» löscht das Cookie und öffnet die Seite ohne `/preview`. **Nie bei sichtbarer Leiste anzeigen:** Die Vorschau ist auch eine Sitzung bei prismic.io; die Leiste setzt ein gelöschtes Cookie aus dieser Sitzung neu — beenden kann sie nur das Kreuz der Leiste (`closeSession`)
+- Diagnose bei altem Stand: privates Fenster bzw. `curl` gegen die Seite. Redakteurs-Anleitung: Kapitel «Vorschau»
 
 ## Prismic Link-Felder in Custom Types
 
