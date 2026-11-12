@@ -1412,6 +1412,12 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Unterpunkte aufklappen': { 'de-ch': 'Unterpunkte aufklappen', 'en-us': 'Expand subsections' },
 	'Unterpunkte zuklappen': { 'de-ch': 'Unterpunkte zuklappen', 'en-us': 'Collapse subsections' },
+	'Vorschau aktiv': { 'de-ch': 'Vorschau aktiv', 'en-us': 'Preview active' },
+	'du siehst unveröffentlichte Inhalte.': {
+		'de-ch': 'du siehst unveröffentlichte Inhalte.',
+		'en-us': 'you are seeing unpublished content.'
+	},
+	'Vorschau beenden': { 'de-ch': 'Vorschau beenden', 'en-us': 'Exit preview' },
 	'Kapitel nicht gefunden': { 'de-ch': 'Kapitel nicht gefunden', 'en-us': 'Chapter not found' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },

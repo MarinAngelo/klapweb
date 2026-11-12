@@ -22,6 +22,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
+	import PreviewNotice from '$lib/components/PreviewNotice.svelte';
 	import CookieBanner from '$lib/components/CookieBanner.svelte';
 	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
@@ -632,6 +633,7 @@
 <CookieBanner lang={chromeLang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
+<PreviewNotice />
 {#if klapstudioActive}
 	<KlapStudio bind:open={studioOpen} />
 {/if}
