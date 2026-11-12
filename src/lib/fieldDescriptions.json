@@ -167,6 +167,10 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"LinkListe.inner_apply": {
+		"de-ch": "Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.",
+		"en-us": "Sets where the «Hintergrundfarbe» (background colour) applies. «Nein» (no) = across the full screen width, as a colour band from edge to edge. «Ja» (yes) = only within the content area (at most as wide as the page), as a coloured box with inner padding: the page colour stays visible to the left and right, the top and bottom spacing sits inside the box, and on smartphones it reaches the screen edge. The «Textfarbe» (text colour) applies either way."
+	},
 	"MapEinbetten.map_url": {
 		"de-ch": "Der Punkt, den die Karte zeigt (mit Markierung); leer = keine Karte. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.",
 		"en-us": "The point the map shows (with a marker); empty = no map. Easiest way: search the place on openstreetmap.org, choose «Share» and paste the short link (starts with https://osm.org/go/). You can also enter coordinates (latitude, longitude, e.g. 47.3769, 8.5417) or a link from Google Maps, Apple Maps or map.geo.admin.ch (swisstopo). The map is always shown as OpenStreetMap. A Google link to a place without coordinates is not recognised — «Inhalte prüfen» (check content) in the admin lists such entries."
@@ -255,6 +259,14 @@
 		"de-ch": "Wer für die Website verantwortlich ist, also der Name deiner Firma oder dein eigener Name, z. B. «Muster GmbH» oder «Anna Muster». Der Name erscheint im Impressum und in der Datenschutzerklärung (Pflichtangabe), in der Fusszeile («© 2026 … Alle Rechte vorbehalten»), auf Rechnungen und in den Bestätigungs-Mails der Terminbuchung (Platzhalter {{Firma}}). Ausserdem ist er der Absender-Name von E-Mails und Newsletter, wenn dort kein eigener Name eingetragen ist. Leer = auf Impressum und Datenschutz steht «Verantwortliche Person/Firma fehlt». Bei mehrsprachigen Websites in jeder Sprache der Einstellungen ausfüllen.",
 		"en-us": "Who is responsible for the website: the name of your company or your own name, e.g. «Muster GmbH» or «Anna Muster». It appears in the legal notice and the privacy policy (required), in the footer («© 2026 … All rights reserved»), on invoices and in the appointment booking confirmations (placeholder {{Firma}}). It is also the sender name of e-mails and newsletters if no own name is set there. Empty = the legal notice and privacy policy show «Verantwortliche Person/Firma fehlt» (missing). On multilingual websites fill it in for every language of the settings."
 	},
+	"Text.inner_apply": {
+		"de-ch": "Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.",
+		"en-us": "Sets where the «Hintergrundfarbe» (background colour) applies. «Nein» (no) = across the full screen width, as a colour band from edge to edge. «Ja» (yes) = only within the content area (at most as wide as the page), as a coloured box with inner padding: the page colour stays visible to the left and right, the top and bottom spacing sits inside the box, and on smartphones it reaches the screen edge. The «Schriftfarbe» (text colour) applies either way."
+	},
+	"TextMitBild.inner_apply": {
+		"de-ch": "Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.",
+		"en-us": "Sets where the «Hintergrundfarbe» (background colour) applies. «Nein» (no) = across the full screen width, as a colour band from edge to edge. «Ja» (yes) = only within the content area (at most as wide as the page), as a coloured box: the page colour stays visible to the left and right, the top and bottom spacing sits inside the box, and on smartphones it reaches the screen edge. The «Schriftfarbe» (text colour) applies either way."
+	},
 	"theme.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
@@ -262,5 +274,9 @@
 	"werkzeug.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
+	},
+	"Zitat.inner_apply": {
+		"de-ch": "Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.",
+		"en-us": "Sets where the «Hintergrundfarbe» (background colour) applies. «Nein» (no) = across the full screen width, as a colour band from edge to edge. «Ja» (yes) = only within the content area (at most as wide as the page), as a coloured box with inner padding: the page colour stays visible to the left and right, the top and bottom spacing sits inside the box, and on smartphones it reaches the screen edge. The «Textfarbe» (text colour) applies either way."
 	}
 }

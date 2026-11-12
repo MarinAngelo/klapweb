@@ -163,6 +163,12 @@ Regeln:
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
 
+## Prismic-Vorschau
+
+- `/api/preview` setzt das Cookie `io.prismic.preview` **ohne Ablaufdatum** (Sitzungs-Cookie); `createClient({ cookies })` liest damit überall den Vorschau-Stand statt der veröffentlichten Fassung
+- Beenden nur über die Prismic-Leiste (Script von prismic.io, braucht Drittanbieter-Cookies) — Brave/Safari/private Fenster blockieren sie. Brave stellt Sitzungs-Cookies beim Neustart wieder her → Website (auch `localhost`) zeigt tagelang einen alten Stand, obwohl Prismic und `curl` den neuen liefern
+- Diagnose: privates Fenster bzw. `curl` gegen die Seite; Abhilfe: Cookie löschen oder Shields für die Seite aus. Redakteurs-Anleitung: Kapitel «Vorschau»
+
 ## Prismic Link-Felder in Custom Types
 
 - **NIEMALS `"select": "document"` setzen** auf Link-Feldern — das blockiert externe URLs (Web Links) komplett!

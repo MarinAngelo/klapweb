@@ -210,7 +210,9 @@
 			animationOptions={anim.options}
 			class={`color-scope ${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
 		>
-			<div class={fullscreen ? 'h-full flex-1' : ''}>
+			<!-- «Hintergrund als Kasten» + «Vollbreite auf Mobile»: Bounded drops the inner padding
+			     (noPadding, edge-to-edge on mobile) → give the box its side padding on desktop -->
+			<div class={fullscreen ? 'h-full flex-1' : innerApply && mobileVollbreite ? 'md:px-14' : ''}>
 				<ImageTextGrid
 					image={isFilled.image(p.image) ? p.image : null}
 					images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
@@ -219,6 +221,7 @@
 					imageBgColor={p.bg_color || 'var(--page-bg-color)'}
 					imageRound={fullscreen ? false : p.image_round}
 					mobilePadding={mobileVollbreite ? '1.5rem' : ''}
+					desktopPadding={fullscreen ? 'clamp(2rem, 5vw, 5rem)' : ''}
 					noRoundMobile={fullscreen || mobileVollbreite}
 					noRound={fullscreen}
 					mobileTextFirst={mobileImageFirst ? false : !isBildLinks && mobileVollbreite}
