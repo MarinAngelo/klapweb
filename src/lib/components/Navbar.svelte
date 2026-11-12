@@ -164,13 +164,14 @@
                    lg:flex-row lg:items-center lg:text-center lg:gap-6 lg:w-auto"
 		>
 			{#each navigation.data?.links as item}
-				{#if item.dropdown_link === true}
+				{#if item.dropdown_link === true && !item.sub_link}
 					{@const subItems = getSubItems(item, navigation.data.links)}
 					{#if subItems.length > 0}
 						<li class="text-xl block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}
 								{subItems}
+								allLinks={navigation.data.links}
 								{headerBgColor}
 								{headerLinkColor}
 								{headerLinkFontSize}
