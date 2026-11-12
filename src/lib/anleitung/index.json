@@ -247,12 +247,8 @@
 		"title": "Design Panel und erweiterte Gestaltung",
 		"feature": "erweiterte_gestaltung",
 		"covers": ["klapstudio", "variablen"],
-		"stand": "2026-11-11",
-		"sources": [
-			"customtypes/_features/erweiterte_gestaltung",
-			"customtypes/_features/variablen",
-			"src/lib/components/KlapStudio.svelte"
-		]
+		"stand": "2026-11-12",
+		"sources": ["customtypes/_features/erweiterte_gestaltung", "customtypes/_features/variablen"]
 	},
 	{
 		"id": "p5-grafik",
