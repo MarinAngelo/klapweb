@@ -5,7 +5,7 @@ description: Aktualisiert die Chat-Bot-Wissensbasis docs/chatbot-wissensbasis.ht
 
 # Chat-Bot-Wissensbasis aktualisieren
 
-Die Wissensbasis ist die Vorlage für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Tab «Chat-Bot») von klap-web.ch. Manuelle Ergänzungen pflegt der User im Feld «Chat-Bot Wissensbasis – Ergänzungen» (Vorrang bei Widersprüchen) — nie in die generierte Datei übernehmen. Leser sind Kundinnen und Kunden von KLAP WEB (Website-Betreiber, keine Entwickler): Deutsch, du-Form, einfache Sprache.
+Die Wissensbasis (`docs/chatbot-wissensbasis.html`) liest der Chat-Bot von klap-web.ch direkt aus dem Code (`"chatKnowledgeFromCode": true` in `slicemachine.config.json` von `klap-web-ch`, `src/lib/server/chatKnowledge.ts`); sie gilt nach dem nächsten Deploy, nichts in Prismic kopieren. Manuelle Ergänzungen pflegt der User im Feld «Chat-Bot Wissensbasis – Ergänzungen» (Vorrang bei Widersprüchen) — nie in die generierte Datei übernehmen. Leser sind Kundinnen und Kunden von KLAP WEB (Website-Betreiber, keine Entwickler): Deutsch, du-Form, einfache Sprache.
 
 **Begriffe (verbindlich, wie auf klap-web.ch/anleitung):**
 
@@ -58,4 +58,4 @@ Die Wissensbasis ist die Vorlage für das Prismic-Feld «Chat-Bot Wissensbasis»
 
 7. **Testen** mit dem Bot-Modell (`claude-haiku-4-5-20251001`, `ANTHROPIC_API_KEY` aus `.env`, nie ausgeben): temporäres Script im Scratchpad, System-Prompt wie in `src/routes/api/chat/+server.ts` (Basis-Prompt + `WISSENSBASIS:` + Schlussregeln), Wissensbasis = Text der HTML-Datei (Überschriften als `#`, Listen als `- `). 4–6 Fragen zu den Neuerungen, je eine auf Deutsch und Englisch, plus eine Frage, die nicht in der Wissensbasis steht (muss auf die Kontaktseite verweisen). Falsche Antworten → Text präzisieren und erneut testen. Eine Frage zu den Begriffen («Was ist ein Inhalts-Typ?») gehört immer dazu.
 
-8. **Bericht an den User** (Deutsch, kurz): welche Abschnitte neu/geändert, gemeldete Widersprüche zur Prismic-Seite, Testergebnis, Grösse (Wörter), und der Hinweis zum Übernehmen: Datei im Browser öffnen (`file:///…/docs/chatbot-wissensbasis.html`, nicht über den Dev-Server) → Ctrl+A, kopieren → Prismic Einstellungen → «Chat-Bot Wissensbasis» → einfügen → veröffentlichen. Nichts committen.
+8. **Bericht an den User** (Deutsch, kurz): welche Abschnitte neu/geändert, gemeldete Widersprüche zur Prismic-Seite, Testergebnis, Grösse (Wörter). Hinweis: Änderungen gelten nach `/commit` und Deploy (kein Kopieren in Prismic). Nichts committen.
