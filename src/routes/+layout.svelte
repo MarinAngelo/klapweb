@@ -60,6 +60,7 @@
 		pwaActive,
 		chatBotName,
 		chatGreeting,
+		klapstudioActive,
 		user
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
@@ -492,7 +493,7 @@
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
-			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+			if (klapstudioActive && e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
@@ -633,7 +634,9 @@
 
 <PrismicPreview {repositoryName} />
 <PreviewNotice />
-<KlapStudio bind:open={studioOpen} />
+{#if klapstudioActive}
+	<KlapStudio bind:open={studioOpen} />
+{/if}
 {#if chatActive && !isAdminPage}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} lang={chromeLang} />
 {/if}
