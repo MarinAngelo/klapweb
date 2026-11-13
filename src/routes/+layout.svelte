@@ -465,9 +465,11 @@
 	$: if (browser) document.documentElement.classList.toggle('legal-landing', isLegalLanding);
 	$: hideChrome =
 		isLandingPage || isLegalLanding || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
-	// Landing pages hide header and footer — except the legal links
+	// Landing pages hide header and footer — except the legal links (unless switched off per page)
+	$: hideLegalBar = $page.data?.page?.data?.hide_legal_bar === true;
 	$: showLegalBarOnly =
 		(isLandingPage || isLegalLanding) &&
+		!hideLegalBar &&
 		!isSlicePreview &&
 		!isDokuPage &&
 		!isNoChrome &&
