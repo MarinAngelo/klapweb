@@ -1612,6 +1612,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'and accept it.'
 	},
 	Haftungsausschluss: { 'de-ch': 'Haftungsausschluss', 'en-us': 'Disclaimer' },
+	'Allgemeine Geschäftsbedingungen (AGB)': {
+		'de-ch': 'Allgemeine Geschäftsbedingungen (AGB)',
+		'en-us': 'General Terms and Conditions (T&C)'
+	},
 	'Wird geladen…': { 'de-ch': 'Wird geladen…', 'en-us': 'Loading…' },
 
 	// GlobaleEvents
