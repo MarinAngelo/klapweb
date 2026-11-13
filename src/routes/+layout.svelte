@@ -429,7 +429,8 @@
 		(s: any) =>
 			(s.slice_type === 'hero' ||
 				s.slice_type === 'galerie' ||
-				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich') ||
+				(s.slice_type === 'text_with_image' && s.variation === 'titelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
 	// Default page «Website im Aufbau» (home redirect) is always a landing page
@@ -445,6 +446,7 @@
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&
 		$page.data?.page?.data?.slices?.[0]?.slice_type === 'text_with_image' &&
+		$page.data?.page?.data?.slices?.[0]?.variation !== 'default' &&
 		$page.data?.page?.data?.slices?.[0]?.primary?.fullscreen === true;
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
