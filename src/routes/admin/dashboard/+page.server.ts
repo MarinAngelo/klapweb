@@ -1,12 +1,11 @@
 import type { PageServerLoad } from './$types';
-import { getGatedAdminSections } from '$lib/server/features';
-import { readOverrides } from '$lib/gatingOverrides.js';
+import { CONFIG_OVERRIDES, getGatedAdminSections } from '$lib/server/features';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async () => {
-	// Local agency switches of this repository (missing/unreadable → only gating.json gates)
-	const overrides = readOverrides();
+	// Agency switches of this branch (slicemachine.config.json, build-time)
+	const overrides = CONFIG_OVERRIDES;
 
 	// Hidden: manually disabled in agency panel + plan/feature gate in gating.json inactive
 	const disabledSections = [

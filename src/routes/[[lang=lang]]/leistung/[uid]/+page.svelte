@@ -7,13 +7,14 @@
 	import Button from '$lib/components/Button.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { components } from '$lib/slices';
+	import { renderableSlices } from '$lib/utils/renderableSlices';
 	import AddToCartButton from '$lib/components/AddToCartButton.svelte';
 	import { formatPrice, parseCurrencyCode } from '$lib/pricing';
 
 	export let data;
 
 	$: leistung = data.leistung;
-	$: slices = leistung?.data?.slices ?? [];
+	$: slices = renderableSlices<any>((leistung?.data as any)?.slices);
 	$: langPrefix = $page.params.lang ? `/${$page.params.lang}` : '';
 	$: price = ((leistung?.data as Record<string, unknown>)?.price_chf as number | null) ?? null;
 	$: label = ((leistung?.data as Record<string, unknown>)?.label as string) || leistung?.uid || '';

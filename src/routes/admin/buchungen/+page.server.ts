@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 import { SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 import {
 	listBookings,
@@ -6,15 +7,19 @@ import {
 	cancelSlot,
 	uncancelSlot,
 	listCancelled,
-	hasOverlappingBooking
+	overlapsBooking
 } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { diagnoseArbeitstag } from '$lib/terminDiagnose.js';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { sendDueBookingInvoices } from '$lib/server/bookingInvoices';
 import { createClient } from '$lib/prismicio';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	// Due invoices of past appointments (same job as the hourly Netlify function)
+	await sendDueBookingInvoices().catch((e) => console.error('Termin-Rechnungen:', e));
 	const today = new Date().toISOString().slice(0, 10);
 	const allSlotsFrom = '2000-01-01'; // Admin sieht alle Termine, auch vergangene
 
@@ -33,12 +38,14 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			const ortByUid = new Map(orte.map((o: any) => [o.uid, o]));
 
 			const slots = workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, allSlotsFrom));
-			return slots.map((slot) => {
+			const withOrt = slots.map((slot) => {
 				const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
 				const ortLink = (offerDoc?.data as any)?.ort;
 				const ortDoc = ortLink?.uid ? ortByUid.get(ortLink.uid) : null;
 				return { ...slot, ortName: ortDoc ? ((ortDoc.data as any).name ?? '') : '' };
 			});
+			// Sources too: no free slots → explain why (per working day)
+			return { slots: withOrt, workdays: workdays as any[], offers: offers as any[] };
 		})(),
 		listCancelled()
 	]);
@@ -49,7 +56,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			? String((bookingsResult as PromiseRejectedResult).reason)
 			: null;
 
-	const allSlots = slotsResult.status === 'fulfilled' ? slotsResult.value : [];
+	const allSlots = slotsResult.status === 'fulfilled' ? slotsResult.value.slots : [];
+	const slotSources = slotsResult.status === 'fulfilled' ? slotsResult.value : null;
 	const slotById = new Map(allSlots.map((s: any) => [s.id, s]));
 	const bookingsWithOrt = bookings.map((b) => ({
 		...b,
@@ -75,7 +83,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 				slot: s,
 				blocked:
 					!!s.endzeit &&
-					(await hasOverlappingBooking(s.datum, s.uhrzeit, s.blockedUntil ?? s.endzeit, s.id)),
+					// Bookings are loaded once above (one Blob request per slot overloaded Netlify)
+					overlapsBooking(bookings, s.datum, s.uhrzeit, s.blockedUntil ?? s.endzeit, s.id),
 				past: startTime !== null ? startTime - vorlaufMs < now : s.datum < today
 			};
 		})
@@ -94,7 +103,32 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		.filter((s) => cancelledIds.has(s.id))
 		.sort((a, b) => (a.datum + a.uhrzeit).localeCompare(b.datum + b.uhrzeit));
 
-	return { bookings: bookingsWithOrt, freeSlots, pastSlots, cancelledSlots, blobError };
+	// Hints when there are no free slots: what is missing in Prismic
+	let freeSlotHints: {
+		label: string;
+		problems: { key: string; params?: Record<string, string | number> }[];
+	}[] = [];
+	if (freeSlots.length === 0 && slotSources) {
+		const { workdays, offers } = slotSources;
+		freeSlotHints =
+			workdays.length === 0
+				? [{ label: '', problems: [{ key: 'Kein «Arbeitstag» veröffentlicht' }] }]
+				: workdays
+						.map((doc: any) => ({
+							label: doc.data?.bezeichnung || doc.uid,
+							problems: diagnoseArbeitstag(doc, offers, today)
+						}))
+						.filter((h) => h.problems.length > 0);
+	}
+
+	return {
+		bookings: bookingsWithOrt,
+		freeSlots,
+		pastSlots,
+		cancelledSlots,
+		freeSlotHints,
+		blobError
+	};
 };
 
 export const actions: Actions = {
@@ -130,6 +164,42 @@ export const actions: Actions = {
 			await uncancelSlot(id);
 			invalidateTermineCache();
 		}
+	},
+
+	// Operator books for a customer who cannot book online → same logic as the website
+	// (/api/buche-termin: conflicts, buffer, customer), stored with source 'admin'
+	bookForCustomer: async ({ request, fetch }) => {
+		const form = await request.formData();
+		const value = (key: string) => String(form.get(key) ?? '').trim();
+		const terminId = value('id');
+		const name = value('name');
+		const email = value('email');
+		if (!terminId) return fail(400, { bookError: 'Termin fehlt' });
+		if (!name) return fail(400, { bookError: 'Name fehlt', bookId: terminId });
+		if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			return fail(400, { bookError: 'E-Mail ist ungültig', bookId: terminId });
+		}
+		// Server-side fetch to the own endpoint forwards the admin session cookie
+		const response = await fetch('/api/buche-termin', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				terminId,
+				name,
+				email: email || undefined,
+				telefon: value('telefon') || undefined,
+				byAdmin: true,
+				sendConfirmation: form.get('sendConfirmation') === 'on'
+			})
+		});
+		if (!response.ok) {
+			const result = await response.json().catch(() => ({}));
+			return fail(response.status, {
+				bookError: result.error || 'Buchung fehlgeschlagen',
+				bookId: terminId
+			});
+		}
+		return { booked: name };
 	},
 
 	deleteAll: async () => {

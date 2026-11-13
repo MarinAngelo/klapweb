@@ -7,6 +7,8 @@
 
 /** Custom types rendered as their own (static) pages — keep in sync with the routes */
 import { isGoogleShortLink, parseMapPoint } from './mapPoint.js';
+import { diagnoseAngebot, diagnoseArbeitstag } from './terminDiagnose.js';
+import { parseAddress, qrBillProblems } from './qrBill.js';
 
 export const TRANSLATED_TYPES = ['page', 'leistung', 'ressource'];
 
@@ -61,7 +63,8 @@ export const CODE_TOKENS = [
 	'Event-Name',
 	'Wegbeschreibung',
 	'Ort-Telefon',
-	'Ort-Karte'
+	'Ort-Karte',
+	'Stornofrist'
 ];
 
 const TOKEN = /\{\{([^{}]+)\}\}/g;
@@ -88,20 +91,17 @@ function distance(/** @type {string} */ a, /** @type {string} */ b) {
 	return d[a.length][b.length];
 }
 
-/**
- * All strings of a document (text fields, rich text) except variable definitions
- * @param {any} node
- * @returns {Generator<string>}
- */
-function* textValues(node) {
-	if (typeof node === 'string') yield node;
-	else if (node && typeof node === 'object') {
-		for (const [key, value] of Object.entries(node)) {
-			if (key === 'schluessel') continue; // Token-Name of a variable is a definition
-			yield* textValues(value);
-		}
-	}
-}
+/** Field of the working day a diagnosis (terminDiagnose.js) refers to */
+const terminField = (/** @type {string} */ key) =>
+	key.startsWith('Angebot') || key.includes('Buchbares Angebot')
+		? 'Buchbare Angebote'
+		: key.startsWith('Datum')
+			? 'Datum'
+			: key.includes('Startzeit') || key.includes('Endzeit')
+				? 'Startzeit / Endzeit'
+				: key.startsWith('Die Serie')
+					? 'Wiederholung'
+					: '';
 
 /** «Kartenpunkt» fields (link or coordinates, see $lib/mapPoint.js) */
 const MAP_POINT_FIELDS = ['map_url', 'location_map_url', 'geo_koordinaten', 'map_point'];
@@ -111,18 +111,70 @@ const ABSOLUTE_OR_SPECIAL = /^(https?:|mailto:|tel:|\/|#|\{\{)/i;
 /**
  * @typedef {{ link_type?: string; url?: string; id?: string; type?: string; uid?: string; lang?: string }} LinkField
  * @typedef {{ id: string; type: string; uid: string | null; lang: string; title: string }} DocRef
- * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain'; url?: string; target?: string; suggestion?: string; token?: string }} LinkProblem
+ * @typedef {{ doc: DocRef; kind: 'relative' | 'untranslated_target' | 'unknown_token' | 'map_point' | 'mail_from' | 'mail_domain' | 'termin' | 'stunden_unprotected' | 'empty_slice' | 'legal_missing' | 'invoice_qr'; url?: string; problem?: import('./terminDiagnose.js').TerminProblem; target?: string; suggestion?: string; token?: string; field?: string }} LinkProblem
  */
 
+/** @typedef {{ slice?: string; path: string[]; inText?: boolean }} FieldCtx */
+
 /**
- * All link fields (incl. rich text hyperlinks) of a document
+ * All values of a document with their location (slice type + field keys), for messages that
+ * name the field: strings (text fields, rich text) and link objects (incl. rich text hyperlinks).
  * @param {any} node
- * @returns {Generator<LinkField>}
+ * @param {FieldCtx} [ctx]
+ * @returns {Generator<{ value: any; ctx: FieldCtx }>}
  */
-function* linkFields(node) {
+function* fieldValues(node, ctx = { path: [] }) {
+	if (typeof node === 'string') {
+		yield { value: node, ctx };
+		return;
+	}
 	if (!node || typeof node !== 'object') return;
-	if (typeof node.link_type === 'string') yield node;
-	for (const value of Object.values(node)) yield* linkFields(value);
+	if (Array.isArray(node)) {
+		for (const item of node) yield* fieldValues(item, ctx);
+		return;
+	}
+	if (typeof node.link_type === 'string') {
+		yield { value: node, ctx };
+		return;
+	}
+	// Slice: only its fields (primary, items), location restarts with the slice type
+	if (typeof node.slice_type === 'string') {
+		const sliceCtx = { slice: node.slice_type, path: [] };
+		yield* fieldValues(node.primary, sliceCtx);
+		yield* fieldValues(node.items, sliceCtx);
+		return;
+	}
+	// Rich text block (type + text/spans): its parts belong to the field above
+	const inText =
+		ctx.inText || (typeof node.type === 'string' && ('text' in node || 'spans' in node));
+	for (const [key, value] of Object.entries(node)) {
+		if (key === 'schluessel') continue; // Token name of a variable is a definition
+		const path = inText || key === 'slices' ? ctx.path : [...ctx.path, key];
+		yield* fieldValues(value, { slice: ctx.slice, path, inText });
+	}
+}
+
+/**
+ * Readable field name «Inhalts-Element › Feld» from the field reference (labels as in Prismic)
+ * @param {any[]} reference src/lib/generated/prismic-field-reference.json (may be empty)
+ * @param {string} docType
+ * @param {FieldCtx} ctx
+ */
+function fieldName(reference, docType, ctx) {
+	const labelOf = (/** @type {string} */ key) =>
+		reference.find((f) =>
+			ctx.slice
+				? f.sliceType === ctx.slice && f.field === key
+				: f.customType === docType && f.field === key
+		);
+	const [first, second, ...rest] = ctx.path;
+	const entry = first ? labelOf(first) : null;
+	// Group field: label of the sub-field from the reference (subfields: key → label)
+	const sub = second ? (entry?.subfields?.[second] ?? second) : undefined;
+	const field = [entry?.label ?? first, sub, ...rest].filter(Boolean).join(' › ');
+	if (!ctx.slice) return field;
+	const sliceName = reference.find((f) => f.sliceType === ctx.slice)?.customTypeLabel ?? ctx.slice;
+	return field ? `${sliceName} › ${field}` : sliceName;
 }
 
 /**
@@ -158,7 +210,9 @@ const ref = (doc) => ({
  *   links: LinkProblem[];
  * }>}
  */
-export async function checkContent(client) {
+export async function checkContent(client, fieldReference = /** @type {any[]} */ ([])) {
+	/** @param {any} doc @param {FieldCtx} ctx */
+	const where = (doc, ctx) => fieldName(fieldReference, doc.type, ctx);
 	const repo = await client.getRepository();
 	const langs = repo.languages.map((l) => l.id);
 	const master = repo.languages.find((l) => l.is_master)?.id ?? langs[0];
@@ -182,9 +236,10 @@ export async function checkContent(client) {
 	/** @type {LinkProblem[]} */
 	const links = [];
 	for (const doc of docs) {
-		for (const link of linkFields(doc.data)) {
+		for (const { value: link, ctx } of fieldValues(doc.data)) {
+			if (typeof link !== 'object') continue;
 			if (link.link_type === 'Web' && link.url && !ABSOLUTE_OR_SPECIAL.test(link.url)) {
-				links.push({ doc: ref(doc), kind: 'relative', url: link.url });
+				links.push({ doc: ref(doc), kind: 'relative', url: link.url, field: where(doc, ctx) });
 			}
 			if (link.link_type === 'Document' && doc.lang !== master && link.lang === master) {
 				const translation = byId
@@ -194,6 +249,7 @@ export async function checkContent(client) {
 					links.push({
 						doc: ref(doc),
 						kind: 'untranslated_target',
+						field: where(doc, ctx),
 						target: `${link.type}/${link.uid} (${master})`,
 						suggestion: `${translation.uid} (${doc.lang})`
 					});
@@ -203,18 +259,15 @@ export async function checkContent(client) {
 	}
 
 	// 3. «Kartenpunkt» fields that are not understood (address text, Google place without coordinates …)
-	/** @param {any} node @param {any} doc */
-	const scanMapFields = (node, doc) => {
-		if (!node || typeof node !== 'object') return;
-		for (const [key, value] of Object.entries(node)) {
-			if (MAP_POINT_FIELDS.includes(key) && typeof value === 'string' && value.trim()) {
-				if (!parseMapPoint(value) && !isGoogleShortLink(value)) {
-					links.push({ doc: ref(doc), kind: 'map_point', url: value.trim() });
-				}
-			} else scanMapFields(value, doc);
+	for (const doc of docs) {
+		for (const { value, ctx } of fieldValues(doc.data)) {
+			const key = ctx.path[ctx.path.length - 1];
+			if (typeof value !== 'string' || !MAP_POINT_FIELDS.includes(key) || !value.trim()) continue;
+			if (!parseMapPoint(value) && !isGoogleShortLink(value)) {
+				links.push({ doc: ref(doc), kind: 'map_point', url: value.trim(), field: where(doc, ctx) });
+			}
 		}
-	};
-	for (const doc of docs) scanMapFields(doc.data, doc);
+	}
 
 	// 4. Unknown tokens ({{…}} that neither the code nor a variable fills in)
 	const known = new Set(CODE_TOKENS);
@@ -226,7 +279,8 @@ export async function checkContent(client) {
 	}
 	for (const doc of docs) {
 		const reported = new Set();
-		for (const text of textValues(doc.data)) {
+		for (const { value: text, ctx } of fieldValues(doc.data)) {
+			if (typeof text !== 'string') continue;
 			for (const [, raw] of text.matchAll(TOKEN)) {
 				const name = tokenName(raw);
 				if (known.has(name) || reported.has(name)) continue;
@@ -237,6 +291,7 @@ export async function checkContent(client) {
 				links.push({
 					doc: ref(doc),
 					kind: 'unknown_token',
+					field: where(doc, ctx),
 					token: `{{${raw}}}`,
 					// Only close matches (typos), not unrelated short names
 					suggestion: best && best.d <= 2 && best.d < name.length / 3 ? `{{${best.k}}}` : undefined
@@ -245,11 +300,113 @@ export async function checkContent(client) {
 		}
 	}
 
-	// 5. Sender address of all e-mails (Settings → «Absender-E-Mail», main language)
+	// 5. Appointment booking: working days that cannot produce slots (offer without duration …).
+	//    An ended series is normal and not reported here (only in the admin «Terminverwaltung»).
+	const offers = docs.filter((d) => d.type === 'angebot' && d.lang === master);
+	const today = new Date().toISOString().slice(0, 10);
+	const workdays = docs.filter((d) => d.type === 'arbeitstag' && d.lang === master);
+	for (const workday of workdays) {
+		for (const problem of diagnoseArbeitstag(workday, offers, today)) {
+			if (problem.key.startsWith('Die Serie ist abgelaufen')) continue;
+			links.push({ doc: ref(workday), kind: 'termin', problem, field: terminField(problem.key) });
+		}
+	}
+	// Offer without a current working day: «Buchen» in the Kacheln stays disabled
+	for (const offer of offers) {
+		for (const problem of diagnoseAngebot(offer, workdays, today)) {
+			links.push({ doc: ref(offer), kind: 'termin', problem });
+		}
+	}
+
+	// 6b. Legal pages (Impressum, Datenschutz): required entries of the settings, per language —
+	//     each translation of the settings has its own fields, empty → «… fehlt» on the website
+	const REQUIRED_LEGAL = [
+		['responsible_person_company', 'Verantwortlich (Person/Unternehmen)'],
+		['responsible_address', 'Verantwortliche Adresse'],
+		['responsible_email', 'Verantwortliche E-Mail']
+	];
+	const filled = (/** @type {unknown} */ v) =>
+		Array.isArray(v) ? v.some((b) => String(b?.text ?? '').trim()) : !!String(v ?? '').trim();
+	for (const settings of docs.filter((d) => d.type === 'settings')) {
+		const data = /** @type {any} */ (settings.data) ?? {};
+		const missingFields = REQUIRED_LEGAL.filter(([key]) => !filled(data[key])).map(
+			([, label]) => label
+		);
+		if (missingFields.length) {
+			links.push({
+				doc: ref(settings),
+				kind: 'legal_missing',
+				token: missingFields.join(', '),
+				field: missingFields.join(', ')
+			});
+		}
+	}
+
+	// 6c. QR bill on invoices: IBAN + issuer address of the main-language settings
+	//     (only when an invoicing feature is active, i.e. the settings have the field «IBAN»)
+	const invoicing = fieldReference.some(
+		(f) => f.customType === 'settings' && f.field === 'invoice_iban'
+	);
+	const invoiceSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
+	const invoiceData = /** @type {any} */ (invoiceSettings?.data) ?? {};
+	if (invoicing && invoiceSettings && invoiceData.invoice_qr_bill !== false) {
+		const lines = Array.isArray(invoiceData.responsible_address)
+			? invoiceData.responsible_address.map((/** @type {any} */ b) => b?.text ?? '')
+			: [];
+		const currency = String(invoiceData.invoice_currency ?? 'CHF')
+			.split(' - ')[0]
+			.trim();
+		for (const problem of qrBillProblems({
+			iban: invoiceData.invoice_iban ?? '',
+			creditor: parseAddress(invoiceData.responsible_person_company ?? '', lines),
+			currency
+		})) {
+			links.push({
+				doc: ref(invoiceSettings),
+				kind: 'invoice_qr',
+				token: problem,
+				field: problem.startsWith('IBAN')
+					? 'IBAN'
+					: problem.startsWith('QR-Rechnung nur')
+						? 'Grundwährung'
+						: 'Verantwortliche Adresse'
+			});
+		}
+	}
+
+	// 6a. Slices without content (variation no longer in the Prismic model) — skipped on the website
+	for (const doc of docs) {
+		for (const slice of /** @type {any[]} */ (/** @type {any} */ (doc.data)?.slices ?? [])) {
+			if (slice && (!slice.primary || !slice.variation)) {
+				links.push({
+					doc: ref(doc),
+					kind: 'empty_slice',
+					token: slice.slice_type,
+					field: fieldName(fieldReference, doc.type, { slice: slice.slice_type, path: [] })
+				});
+			}
+		}
+	}
+
+	// 6. Time sheet form (Formular «Stundenabrechnung») only works on password-protected pages
+	for (const doc of docs) {
+		if (doc.type !== 'page' || /** @type {any} */ (doc.data)?.password_protected === true) continue;
+		const slices = /** @type {any[]} */ (/** @type {any} */ (doc.data)?.slices ?? []);
+		if (slices.some((s) => s.slice_type === 'form' && s.variation === 'stunden')) {
+			links.push({ doc: ref(doc), kind: 'stunden_unprotected', field: 'Passwortgeschützt' });
+		}
+	}
+
+	// 7. Sender address of all e-mails (Settings → «Absender-E-Mail», main language)
 	const mainSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
 	const mailFrom = String(/** @type {any} */ (mainSettings?.data)?.email_from_address ?? '').trim();
 	if (mainSettings && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailFrom)) {
-		links.push({ doc: ref(mainSettings), kind: 'mail_from', url: mailFrom || undefined });
+		links.push({
+			doc: ref(mainSettings),
+			kind: 'mail_from',
+			url: mailFrom || undefined,
+			field: 'Absender-E-Mail (alle E-Mails der Website)'
+		});
 	}
 
 	return { langs, master, missing, links };

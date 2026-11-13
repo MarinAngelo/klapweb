@@ -20,6 +20,13 @@
 			icon: '👥'
 		},
 		{
+			id: 'stunden',
+			title: 'Stunden',
+			description: 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',
+			href: `/admin/stunden`,
+			icon: '⏱️'
+		},
+		{
 			id: 'buchungen',
 			title: 'Terminverwaltung',
 			description: 'Buchungen anzeigen, löschen, Termine sperren',

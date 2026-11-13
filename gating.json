@@ -62,7 +62,12 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
-			"plans": ["individuell"]
+			"plans": ["klap-web-ch"]
+		},
+		"stundenabrechnung": {
+			"label": "Stundenabrechnung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
 		"suche": {
 			"label": "Website-Suche",
@@ -157,6 +162,27 @@
 				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
+				},
+				"invoice_currency": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_iban": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bank": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bic": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_payment_terms_days": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_vat_rate": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_qr_bill": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 				}
 			}
 		},
@@ -165,6 +191,16 @@
 		}
 	},
 	"slices": {
+		"Anleitung": {
+			"fields": {
+				"chapter_title": {
+					"plan": "klap-web-ch"
+				},
+				"chapter": {
+					"plan": "klap-web-ch"
+				}
+			}
+		},
 		"Akkordeon": {
 			"fields": {
 				"mit_suche": {
@@ -216,6 +252,9 @@
 				},
 				"newsletterSignup": {
 					"feature": "newsletter"
+				},
+				"stunden": {
+					"feature": "stundenabrechnung"
 				}
 			}
 		},
@@ -223,6 +262,9 @@
 			"variations": {
 				"plaene": {
 					"feature": "ecommerce"
+				},
+				"angebote": {
+					"feature": "terminbuchung"
 				}
 			}
 		},
@@ -303,6 +345,10 @@
 		"chatbot": {
 			"label": "Chat-Bot",
 			"feature": "chatbot"
+		},
+		"stunden": {
+			"label": "Stunden",
+			"feature": "stundenabrechnung"
 		}
 	}
 }

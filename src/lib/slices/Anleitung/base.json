@@ -103,6 +103,21 @@
 						"default_value": false
 					}
 				},
+				"chapter_title": {
+					"type": "Text",
+					"config": {
+						"label": "Claude Anleitung Titel",
+						"placeholder": "Zwischentitel über dem Kapitel aus der Anleitung"
+					}
+				},
+				"chapter": {
+					"type": "Select",
+					"config": {
+						"label": "Kapitel aus der Anleitung",
+						"placeholder": "Leer = nur die Inhalte dieses Elements",
+						"options": []
+					}
+				},
 				"steps": {
 					"type": "Group",
 					"config": {

@@ -573,14 +573,6 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Zahlungsart',
 		'en-us': 'Payment method'
 	},
-	'Kreditkarte / TWINT': {
-		'de-ch': 'Kreditkarte / TWINT',
-		'en-us': 'Credit card / TWINT'
-	},
-	'Sofortige, sichere Zahlung via Stripe.': {
-		'de-ch': 'Sofortige, sichere Zahlung via Stripe.',
-		'en-us': 'Immediate, secure payment via Stripe.'
-	},
 	'Gegen Rechnung': {
 		'de-ch': 'Gegen Rechnung',
 		'en-us': 'By invoice'
@@ -931,6 +923,278 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Domain in Resend unter «Domains» hinzufügen und die DNS-Einträge setzen',
 		'en-us': 'Add the domain in Resend under «Domains» and set the DNS records'
 	},
+	'Mögliche Ursachen in Prismic': {
+		'de-ch': 'Mögliche Ursachen in Prismic',
+		'en-us': 'Possible causes in Prismic'
+	},
+	'Kein «Arbeitstag» veröffentlicht': {
+		'de-ch': 'Kein «Arbeitstag» veröffentlicht',
+		'en-us': 'No «Arbeitstag» (working day) published'
+	},
+	'Datum fehlt': {
+		'de-ch': 'Datum fehlt',
+		'en-us': 'Date missing'
+	},
+	'«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM': {
+		'de-ch': '«Startzeit» oder «Endzeit» fehlt oder ist nicht im Format HH:MM',
+		'en-us': '«Startzeit» or «Endzeit» missing or not in HH:MM format'
+	},
+	'«Endzeit» liegt nicht nach der «Startzeit»': {
+		'de-ch': '«Endzeit» liegt nicht nach der «Startzeit»',
+		'en-us': '«Endzeit» is not after «Startzeit»'
+	},
+	'Kein «Buchbares Angebot» verknüpft': {
+		'de-ch': 'Kein «Buchbares Angebot» verknüpft',
+		'en-us': 'No «Buchbares Angebot» (bookable offer) linked'
+	},
+	'Angebot «{titel}» ist nicht veröffentlicht': {
+		'de-ch': 'Angebot «{titel}» ist nicht veröffentlicht',
+		'en-us': 'Offer «{titel}» is not published'
+	},
+	'Angebot «{titel}» ist nicht aktiv': {
+		'de-ch': 'Angebot «{titel}» ist nicht aktiv',
+		'en-us': 'Offer «{titel}» is not active'
+	},
+	'Angebot «{titel}»: «Dauer (Minuten)» fehlt': {
+		'de-ch': 'Angebot «{titel}»: «Dauer (Minuten)» fehlt',
+		'en-us': 'Offer «{titel}»: «Dauer (Minuten)» (duration) missing'
+	},
+	'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster': {
+		'de-ch': 'Angebot «{titel}»: Dauer + Puffer ({minuten} Min.) passen nicht ins Zeitfenster',
+		'en-us': 'Offer «{titel}»: duration + buffer ({minuten} min) do not fit into the time window'
+	},
+	'Die Serie ist abgelaufen (letzter Tag {datum})': {
+		'de-ch': 'Die Serie ist abgelaufen (letzter Tag {datum})',
+		'en-us': 'The series has ended (last day {datum})'
+	},
+	'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen': {
+		'de-ch': 'Im Arbeitstag bzw. Buchbaren Angebot ergänzen, dann veröffentlichen',
+		'en-us': 'Complete it in the working day or bookable offer, then publish'
+	},
+	'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz': {
+		'de-ch': 'Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz',
+		'en-us': '«Stundenabrechnung» form on a page without password protection'
+	},
+	'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern': {
+		'de-ch': 'In der Seite «Passwortgeschützt» einschalten, sonst kann niemand Stunden speichern',
+		'en-us': 'Turn on «Passwortgeschützt» for the page, otherwise nobody can save hours'
+	},
+	Stunden: {
+		'de-ch': 'Stunden',
+		'en-us': 'Hours'
+	},
+	'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export': {
+		'de-ch': 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',
+		'en-us': 'Recorded working hours and expenses, totals and CSV export'
+	},
+	'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Erfassen auf der passwortgeschützten Seite mit diesem Formular.',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Record them on the password-protected page with this form.'
+		},
+	Von: {
+		'de-ch': 'Von',
+		'en-us': 'From'
+	},
+	Bis: {
+		'de-ch': 'Bis',
+		'en-us': 'To'
+	},
+	'Projekt / Kunde': {
+		'de-ch': 'Projekt / Kunde',
+		'en-us': 'Project / client'
+	},
+	Tätigkeit: {
+		'de-ch': 'Tätigkeit',
+		'en-us': 'Activity'
+	},
+	'Spesen (CHF)': {
+		'de-ch': 'Spesen (CHF)',
+		'en-us': 'Expenses (CHF)'
+	},
+	'Std.': {
+		'de-ch': 'Std.',
+		'en-us': 'h'
+	},
+	'CSV-Export': {
+		'de-ch': 'CSV-Export',
+		'en-us': 'CSV export'
+	},
+	Bearbeiten: {
+		'de-ch': 'Bearbeiten',
+		'en-us': 'Edit'
+	},
+	'Diesen Eintrag endgültig löschen?': {
+		'de-ch': 'Diesen Eintrag endgültig löschen?',
+		'en-us': 'Delete this entry permanently?'
+	},
+	'Der Eintrag wurde gespeichert.': {
+		'de-ch': 'Der Eintrag wurde gespeichert.',
+		'en-us': 'The entry has been saved.'
+	},
+	'Weiteren Eintrag erfassen': {
+		'de-ch': 'Weiteren Eintrag erfassen',
+		'en-us': 'Record another entry'
+	},
+	'Eintrag speichern': {
+		'de-ch': 'Eintrag speichern',
+		'en-us': 'Save entry'
+	},
+	'Der Eintrag konnte nicht gespeichert werden.': {
+		'de-ch': 'Der Eintrag konnte nicht gespeichert werden.',
+		'en-us': 'The entry could not be saved.'
+	},
+	'Bitte melde dich zuerst mit dem Seiten-Passwort an.': {
+		'de-ch': 'Bitte melde dich zuerst mit dem Seiten-Passwort an.',
+		'en-us': 'Please log in with the page password first.'
+	},
+	'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.': {
+		'de-ch': 'Bitte «Von» und «Bis» mit Datum und Uhrzeit ausfüllen.',
+		'en-us': 'Please fill in «From» and «To» with date and time.'
+	},
+	'«Bis» muss nach «Von» liegen.': {
+		'de-ch': '«Bis» muss nach «Von» liegen.',
+		'en-us': '«To» must be after «From».'
+	},
+	'Ein Eintrag darf höchstens 24 Stunden dauern.': {
+		'de-ch': 'Ein Eintrag darf höchstens 24 Stunden dauern.',
+		'en-us': 'An entry may last at most 24 hours.'
+	},
+	'Spesen: bitte einen Betrag wie 12.50 eingeben.': {
+		'de-ch': 'Spesen: bitte einen Betrag wie 12.50 eingeben.',
+		'en-us': 'Expenses: please enter an amount like 12.50.'
+	},
+	'Ungültiger Eintrag': {
+		'de-ch': 'Ungültiger Eintrag',
+		'en-us': 'Invalid entry'
+	},
+	'Eintrag nicht gefunden': {
+		'de-ch': 'Eintrag nicht gefunden',
+		'en-us': 'Entry not found'
+	},
+	'Spesen-Beschreibung': { 'de-ch': 'Spesen-Beschreibung', 'en-us': 'Expense description' },
+	'z.B. Zugbillett, Parkgebühr': {
+		'de-ch': 'z.B. Zugbillett, Parkgebühr',
+		'en-us': 'e.g. train ticket, parking fee'
+	},
+	'Bitte deinen Namen eintragen.': {
+		'de-ch': 'Bitte deinen Namen eintragen.',
+		'en-us': 'Please enter your name.'
+	},
+	'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.':
+		{
+			'de-ch':
+				'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.',
+			'en-us':
+				'Plan and switches are saved in slicemachine.config.json of this branch. Commit and deploy afterwards so they also apply in production.'
+		},
+	'Nur auf dem lokalen Dev-Server möglich': {
+		'de-ch': 'Nur auf dem lokalen Dev-Server möglich',
+		'en-us': 'Only possible on the local dev server'
+	},
+	'Inhalts-Element ohne Inhalt': {
+		'de-ch': 'Inhalts-Element ohne Inhalt',
+		'en-us': 'Content element without content'
+	},
+	'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen': {
+		'de-ch': 'Variante existiert nicht mehr – Element in Prismic entfernen und neu anlegen',
+		'en-us': 'Variation no longer exists – remove the element in Prismic and add it again'
+	},
+	'Gespeichert in slicemachine.config.json.': {
+		'de-ch': 'Gespeichert in slicemachine.config.json.',
+		'en-us': 'Saved in slicemachine.config.json.'
+	},
+	'Jetzt committen und deployen': {
+		'de-ch': 'Jetzt committen und deployen',
+		'en-us': 'Now commit and deploy'
+	},
+	'sonst gelten Plan und Feature-Schalter nicht in Production.': {
+		'de-ch': 'sonst gelten Plan und Feature-Schalter nicht in Production.',
+		'en-us': 'otherwise plan and feature switches do not apply in production.'
+	},
+	'slicemachine.config.json hat nicht committete Änderungen': {
+		'de-ch': 'slicemachine.config.json hat nicht committete Änderungen',
+		'en-us': 'slicemachine.config.json has uncommitted changes'
+	},
+	'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production':
+		{
+			'de-ch':
+				'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production',
+			'en-us':
+				'These switches are only in the old local file gating.overrides.json and do not apply in production'
+		},
+	'Unten anwählen und speichern, dann committen.': {
+		'de-ch': 'Unten anwählen und speichern, dann committen.',
+		'en-us': 'Select them below and save, then commit.'
+	},
+	'Ohne Name': { 'de-ch': 'Ohne Name', 'en-us': 'Without name' },
+	Spesen: { 'de-ch': 'Spesen', 'en-us': 'Expenses' },
+	'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».':
+		{
+			'de-ch':
+				'Einträge aus dem Formular «Stundenabrechnung». Offene Stunden pro Person mit «Abrechnen» als abgerechnet markieren; sie erscheinen danach unter «Abgerechnet».',
+			'en-us':
+				'Entries from the «Stundenabrechnung» form. Mark open hours per person as billed with «Abrechnen»; they then appear under «Abgerechnet» (billed).'
+		},
+	'{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?': {
+		'de-ch': '{anzahl} offene Einträge ({dauer}) von {name} jetzt abrechnen?',
+		'en-us': 'Bill {anzahl} open entries ({dauer}) of {name} now?'
+	},
+	'{anzahl} Einträge abgerechnet.': {
+		'de-ch': '{anzahl} Einträge abgerechnet.',
+		'en-us': '{anzahl} entries billed.'
+	},
+	Offen: {
+		'de-ch': 'Offen',
+		'en-us': 'Open'
+	},
+	Abgerechnet: {
+		'de-ch': 'Abgerechnet',
+		'en-us': 'Billed'
+	},
+	'Offene Stunden abrechnen': {
+		'de-ch': 'Offene Stunden abrechnen',
+		'en-us': 'Bill open hours'
+	},
+	'Keine offenen Einträge.': {
+		'de-ch': 'Keine offenen Einträge.',
+		'en-us': 'No open entries.'
+	},
+	'Abrechnung vom': {
+		'de-ch': 'Abrechnung vom',
+		'en-us': 'Billing of'
+	},
+	Eintrag: {
+		'de-ch': 'Eintrag',
+		'en-us': 'entry'
+	},
+	Einträge: {
+		'de-ch': 'Einträge',
+		'en-us': 'entries'
+	},
+	'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.': {
+		'de-ch': 'Abrechnung zurücksetzen? Die Einträge sind danach wieder offen.',
+		'en-us': 'Reset billing? The entries will be open again.'
+	},
+	'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.': {
+		'de-ch':
+			'Abgerechnete Einträge können nicht geändert werden — zuerst die Abrechnung zurücksetzen.',
+		'en-us': 'Billed entries cannot be changed — reset the billing first.'
+	},
+	'Ungültige Abrechnung': {
+		'de-ch': 'Ungültige Abrechnung',
+		'en-us': 'Invalid billing'
+	},
+	'Pflichtangaben für Impressum/Datenschutz fehlen': {
+		'de-ch': 'Pflichtangaben für Impressum/Datenschutz fehlen',
+		'en-us': 'Required details for legal notice/privacy policy missing'
+	},
+	'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen': {
+		'de-ch': 'In den Einstellungen (Tab «Main») ausfüllen und veröffentlichen',
+		'en-us': 'Fill in under Settings (tab «Main») and publish'
+	},
 	'Admin-Bereich': { 'de-ch': 'Admin-Bereich', 'en-us': 'Admin area' },
 	'Verwaltung der Website (eigene Anmeldung)': {
 		'de-ch': 'Verwaltung der Website (eigene Anmeldung)',
@@ -1141,6 +1405,20 @@ export const translations: Record<string, Record<string, string>> = {
 	Uhr: { 'de-ch': 'Uhr', 'en-us': "o'clock" },
 	Dauer: { 'de-ch': 'Dauer', 'en-us': 'Duration' },
 	Minuten: { 'de-ch': 'Minuten', 'en-us': 'minutes' },
+	'Website im Aufbau': { 'de-ch': 'Website im Aufbau', 'en-us': 'Website under construction' },
+	'Meine neue Website entsteht gerade. Schau bald wieder vorbei.': {
+		'de-ch': 'Meine neue Website entsteht gerade. Schau bald wieder vorbei.',
+		'en-us': 'My new website is on its way. Check back soon.'
+	},
+	'Unterpunkte aufklappen': { 'de-ch': 'Unterpunkte aufklappen', 'en-us': 'Expand subsections' },
+	'Unterpunkte zuklappen': { 'de-ch': 'Unterpunkte zuklappen', 'en-us': 'Collapse subsections' },
+	'Vorschau aktiv': { 'de-ch': 'Vorschau aktiv', 'en-us': 'Preview active' },
+	'du siehst unveröffentlichte Inhalte.': {
+		'de-ch': 'du siehst unveröffentlichte Inhalte.',
+		'en-us': 'you are seeing unpublished content.'
+	},
+	'Vorschau beenden': { 'de-ch': 'Vorschau beenden', 'en-us': 'Exit preview' },
+	'Kapitel nicht gefunden': { 'de-ch': 'Kapitel nicht gefunden', 'en-us': 'Chapter not found' },
 	'Zum Kalender hinzufügen': { 'de-ch': 'Zum Kalender hinzufügen', 'en-us': 'Add to calendar' },
 	'Zurück zur Homepage': { 'de-ch': 'Zurück zur Homepage', 'en-us': 'Back to homepage' },
 	'Weitere Termine buchen': {
@@ -2237,7 +2515,119 @@ export const translations: Record<string, Record<string, string>> = {
 	'Speichern fehlgeschlagen': { 'de-ch': 'Speichern fehlgeschlagen', 'en-us': 'Saving failed' },
 	'In Prismic speichern': { 'de-ch': 'In Prismic speichern', 'en-us': 'Save in Prismic' },
 	AUS: { 'de-ch': 'AUS', 'en-us': 'OFF' },
-	AN: { 'de-ch': 'AN', 'en-us': 'ON' }
+	AN: { 'de-ch': 'AN', 'en-us': 'ON' },
+	// Kacheln «Buchbare Angebote» + offer preselection in the Termin field
+	Buchen: { 'de-ch': 'Buchen', 'en-us': 'Book' },
+	'Angebote werden geladen…': { 'de-ch': 'Angebote werden geladen…', 'en-us': 'Loading offers…' },
+	'Zurzeit sind keine Angebote buchbar.': {
+		'de-ch': 'Zurzeit sind keine Angebote buchbar.',
+		'en-us': 'No offers can be booked at the moment.'
+	},
+	'Termine für': { 'de-ch': 'Termine für', 'en-us': 'Appointments for' },
+	'Zurzeit keine freien Termine.': {
+		'de-ch': 'Zurzeit keine freien Termine.',
+		'en-us': 'No free appointments at the moment.'
+	},
+	'Für das gewählte Angebot sind zurzeit keine Termine frei.': {
+		'de-ch': 'Für das gewählte Angebot sind zurzeit keine Termine frei.',
+		'en-us': 'There are currently no free appointments for the selected offer.'
+	},
+	'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar': {
+		'de-ch':
+			'Angebot «{titel}» ist mit keinem aktuellen Arbeitstag verknüpft – keine Termine buchbar',
+		'en-us':
+			'Offer «{titel}» is not linked to any current working day – no appointments can be booked'
+	},
+	'Kein QR-Zahlteil auf Rechnungen': {
+		'de-ch': 'Kein QR-Zahlteil auf Rechnungen',
+		'en-us': 'No QR payment part on invoices'
+	},
+	'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten':
+		{
+			'de-ch':
+				'In den Einstellungen ergänzen (Tab «Rechnungen» bzw. «Main») oder «QR-Zahlteil auf Rechnungen» ausschalten',
+			'en-us':
+				'Complete in the settings (tab «Rechnungen» or «Main») or switch off «QR-Zahlteil auf Rechnungen»'
+		},
+	'IBAN fehlt': {
+		'de-ch': 'IBAN fehlt',
+		'en-us': 'IBAN missing'
+	},
+	'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN': {
+		'de-ch': 'IBAN ist keine gültige Schweizer oder Liechtensteiner IBAN',
+		'en-us': 'IBAN is not a valid Swiss or Liechtenstein IBAN'
+	},
+	'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)': {
+		'de-ch':
+			'Adresse für die QR-Rechnung unvollständig (Strasse Nr. und «PLZ Ort» je auf eigener Zeile)',
+		'en-us':
+			'Address for the QR bill incomplete (street + number and «postcode city» each on its own line)'
+	},
+	'QR-Rechnung nur in CHF oder EUR möglich': {
+		'de-ch': 'QR-Rechnung nur in CHF oder EUR möglich',
+		'en-us': 'QR bill only possible in CHF or EUR'
+	},
+	'Termin stornieren': {
+		'de-ch': 'Termin stornieren',
+		'en-us': 'Cancel appointment'
+	},
+	'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.': {
+		'de-ch': 'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.',
+		'en-us': 'Your booking has been cancelled. The slot is available again.'
+	},
+	'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.': {
+		'de-ch': 'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.',
+		'en-us': 'You will receive the invoice for the cancellation fee by e-mail.'
+	},
+	'Diese Buchung wurde bereits storniert oder existiert nicht mehr.': {
+		'de-ch': 'Diese Buchung wurde bereits storniert oder existiert nicht mehr.',
+		'en-us': 'This booking has already been cancelled or no longer exists.'
+	},
+	'Der Stornierungs-Link ist ungültig.': {
+		'de-ch': 'Der Stornierungs-Link ist ungültig.',
+		'en-us': 'The cancellation link is invalid.'
+	},
+	'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.': {
+		'de-ch': 'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.',
+		'en-us': 'The booking could not be checked. Please try again later.'
+	},
+	'Dieser Termin hat bereits begonnen und kann nicht mehr storniert werden.': {
+		'de-ch': 'Dieser Termin hat bereits begonnen und kann nicht mehr storniert werden.',
+		'en-us': 'This appointment has already started and can no longer be cancelled.'
+	},
+	'Die kostenlose Stornierung war bis {datum} Uhr möglich.': {
+		'de-ch': 'Die kostenlose Stornierung war bis {datum} Uhr möglich.',
+		'en-us': 'Free cancellation was possible until {datum}.'
+	},
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.': {
+		'de-ch': 'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.',
+		'en-us': 'Online cancellation is no longer possible. Please contact us directly.'
+	},
+	'Kostenlos stornierbar bis {datum} Uhr.': {
+		'de-ch': 'Kostenlos stornierbar bis {datum} Uhr.',
+		'en-us': 'Free cancellation until {datum}.'
+	},
+	'Stornogebühr: {betrag} ({prozent}% von {preis})': {
+		'de-ch': 'Stornogebühr: {betrag} ({prozent}% von {preis})',
+		'en-us': 'Cancellation fee: {betrag} ({prozent}% of {preis})'
+	},
+	'Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.': {
+		'de-ch': 'Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.',
+		'en-us': 'I accept the cancellation fee and will receive an invoice for it.'
+	},
+	'Bitte bestätigen Sie die Stornogebühr.': {
+		'de-ch': 'Bitte bestätigen Sie die Stornogebühr.',
+		'en-us': 'Please confirm the cancellation fee.'
+	},
+	'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.': {
+		'de-ch': 'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.',
+		'en-us': 'The cancellation deadline has passed in the meantime. Please reload the page.'
+	},
+	'Kostenpflichtig stornieren': {
+		'de-ch': 'Kostenpflichtig stornieren',
+		'en-us': 'Cancel with fee'
+	},
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
 };
 
 /**

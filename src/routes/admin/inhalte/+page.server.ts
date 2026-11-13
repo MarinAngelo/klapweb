@@ -1,8 +1,10 @@
 import type { PageServerLoad } from './$types';
 import { createClient, repositoryName } from '$lib/prismicio';
 import { checkContent } from '$lib/contentCheck.js';
+// Labels of the fields as in Prismic → column «Dokument» names the affected field
+import fieldReference from '$lib/generated/prismic-field-reference.json';
 import { env } from '$env/dynamic/private';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailAddress } from '$lib/server/mailFrom';
 
 /**
  * Is the domain of the sender address verified in Resend? null = unknown (no key, the key has
@@ -29,10 +31,10 @@ export const prerender = false;
 // Same check as scripts/check-translations.js, for editors (live from Prismic)
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const result = await checkContent(createClient({ fetch }));
+		const result = await checkContent(createClient({ fetch }), fieldReference as any[]);
 		// Sender domain in Resend (only if the address itself is set)
 		const settingsProblem = result.links.find((p) => p.kind === 'mail_from');
-		const mailFrom = settingsProblem ? '' : await getMailFrom(fetch);
+		const mailFrom = settingsProblem ? '' : await getMailAddress(fetch);
 		if (mailFrom && (await senderDomainVerified(mailFrom)) === false) {
 			const settingsDoc = result.links.find((p) => p.doc.type === 'settings')?.doc;
 			const client = createClient({ fetch });

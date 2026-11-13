@@ -82,7 +82,7 @@ interface FontDocumentData {
 	 * - **Tab**: Main
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
-	provider: prismic.SelectField<'Google' | 'Adobe' | 'Lokal', 'filled'>;
+	provider: prismic.SelectField<'Google' | 'Lokal', 'filled'>;
 
 	/**
 	 * Varianten (Google) field in *Schrift*
@@ -734,17 +734,6 @@ interface SettingsDocumentData {
 	meta_image: prismic.ImageField<never>;
 
 	/**
-	 * Adobe Project ID field in *Einstellungen*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy
-	 * - **API ID Path**: settings.adobe_font_id
-	 * - **Tab**: SEO
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	adobe_font_id: prismic.KeyTextField;
-
-	/**
 	 * Favicon (64 × 64 px, quadratisch) field in *Einstellungen*
 	 *
 	 * - **Field Type**: Image
@@ -1220,7 +1209,7 @@ interface ThemeDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	site_title_font: ContentRelationshipFieldWithData<
-		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+		[{ id: 'font'; fields: ['name', 'provider', 'variants'] }]
 	>;
 
 	/**
@@ -3379,7 +3368,7 @@ export interface HeroSliceDefaultPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	font: ContentRelationshipFieldWithData<
-		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+		[{ id: 'font'; fields: ['name', 'provider', 'variants'] }]
 	>;
 
 	/**
@@ -3667,7 +3656,7 @@ export interface HeroSliceFarbverlaufPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	font: ContentRelationshipFieldWithData<
-		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+		[{ id: 'font'; fields: ['name', 'provider', 'variants'] }]
 	>;
 
 	/**
@@ -4040,7 +4029,7 @@ export interface HeroSliceMitBildKarusellPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	font: ContentRelationshipFieldWithData<
-		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+		[{ id: 'font'; fields: ['name', 'provider', 'variants'] }]
 	>;
 
 	/**
@@ -5768,7 +5757,7 @@ export interface P5GrafikSliceMitTitelbereichPrimary {
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
 	font: ContentRelationshipFieldWithData<
-		[{ id: 'font'; fields: ['name', 'provider', 'variants', 'adobeFontId'] }]
+		[{ id: 'font'; fields: ['name', 'provider', 'variants'] }]
 	>;
 
 	/**

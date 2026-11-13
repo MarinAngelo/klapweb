@@ -1993,11 +1993,6 @@
 							<code>Monatlich</code></td
 						></tr
 					>
-					<tr
-						><td><code>ecommerce_stripe_url</code></td><td>Link</td><td
-							>Stripe Hosted Checkout URL (<code>https://buy.stripe.com/…</code>)</td
-						></tr
-					>
 				</tbody>
 			</table>
 			<p class="table-label">
@@ -2439,7 +2434,7 @@
 			<p>
 				Drei-Schritt-Checkout (<code>/beauftragung</code> →
 				<code>/beauftragung/zusammenfassung</code>
-				→ <code>/beauftragung/bestaetigung</code>) mit drei Zahlungswegen (Stripe, Rechnung, Bar),
+				→ <code>/beauftragung/bestaetigung</code>) mit zwei Zahlungswegen (Rechnung, Bar),
 				PDF-Rechnungsgenerierung, E-Mail-Versand über Resend und Kundendatenspeicherung via Netlify
 				Blobs.
 			</p>
@@ -2561,12 +2556,6 @@
 							>POST <code>/api/save-customer</code> → Netlify Blobs <code>kunden</code> + POST zu
 							Netlify Forms (<code>beauftragung_bar</code>)</td
 						><td>Ja</td></tr
-					>
-					<tr
-						><td><strong>Stripe</strong></td><td
-							>Redirect zu Stripe Hosted Checkout (<code>ecommerce_stripe_url</code> aus Prismic +
-							<code>?prefilled_email=…</code>). Kein SDK, kein Webhook.</td
-						><td>Nein</td></tr
 					>
 				</tbody>
 			</table>
@@ -2748,18 +2737,12 @@
 						><td>Nein</td><td>Nur Übergang, solange das Prismic-Feld leer ist</td></tr
 					>
 					<tr
-						><td><code>INVOICE_TO_EMAIL</code></td><td
-							>Empfänger der Geschäfts-Benachrichtigungen</td
-						><td>Ja</td><td>Beliebige E-Mail-Adresse</td></tr
+						><td><code>notification_email</code> (Prismic)</td><td
+							>Empfänger der Geschäfts-Benachrichtigungen (leer = Verantwortliche E-Mail)</td
+						><td>Nein</td><td>Keine Env-Var mehr</td></tr
 					>
 				</tbody>
 			</table>
-
-			<div class="callout">
-				<strong>Stripe:</strong> Kein SDK installiert, kein Webhook. Nur externer Redirect zu Stripe
-				Hosted Checkout (<code>ecommerce_stripe_url</code> aus dem Prismic Page-Dokument der
-				Dienstleistung). Kein <code>STRIPE_SECRET_KEY</code> nötig.
-			</div>
 		</section>
 
 		<div class="section-divider">Klap Studio</div>
@@ -3364,8 +3347,8 @@
 						></tr
 					>
 					<tr
-						><td><code>INVOICE_TO_EMAIL</code></td><td>Geschäfts-E-Mail (optional)</td><td
-							>Geschäfts-E-Mail für Benachrichtigungen (bei E-Commerce)</td
+						><td><code>notification_email</code></td><td>Benachrichtigungen an (intern)</td><td
+							>Empfänger interner Meldungen (leer = Verantwortliche E-Mail)</td
 						></tr
 					>
 				</tbody>

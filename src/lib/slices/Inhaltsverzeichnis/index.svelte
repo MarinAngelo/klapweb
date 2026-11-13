@@ -34,7 +34,10 @@
 	let dismissed = false;
 	let dismissedAtY = 0;
 	let mobileOpen = false;
-	let openDropdowns = new Set<string>();
+	// H2 entries with H3s are dropdowns, all closed by default: sidebar/mobile expand inline
+	// (several at once), the horizontal desktop bar opens one overlay at a time
+	let openGroups = new Set<string>();
+	let topOpen = '';
 	let mobileSheetEl: HTMLElement | null = null;
 	let mobileBarEl: HTMLElement | null = null;
 	let mounted = false;
@@ -55,6 +58,17 @@
 		else if (groups.length) groups[groups.length - 1].h3s.push(entry);
 		return groups;
 	}, []);
+
+	function toggleGroup(id: string) {
+		const next = new Set(openGroups);
+		if (next.has(id)) next.delete(id);
+		else next.add(id);
+		openGroups = next;
+	}
+
+	function closeTopOnOutside(event: MouseEvent) {
+		if (topOpen && !(event.target as Element | null)?.closest?.('.toc-top-item')) topOpen = '';
+	}
 
 	const toSlug = (value: string) =>
 		value
@@ -184,6 +198,11 @@
 	});
 </script>
 
+<svelte:window
+	on:click={closeTopOnOutside}
+	on:keydown={(e) => e.key === 'Escape' && (topOpen = '')}
+/>
+
 <Bounded
 	as="nav"
 	yPadding="base-top"
@@ -217,13 +236,44 @@
 					<h5>{tocTitle}</h5>
 				</div>
 				<ul class="space-y-2 text-sm">
-					{#each tocEntries as entry}<li style:padding-left={entry.level === 3 ? '0.75rem' : '0'}>
-							<a
-								href="#{entry.id}"
-								class="toc-link block"
-								on:click={() => activate(entry.id)}
-								class:toc-active={entry.id === activeId}>{entry.text}</a
-							>
+					{#each tocGroups as group}<li>
+							<div class="toc-row">
+								<a
+									href="#{group.h2.id}"
+									class="toc-link"
+									on:click={() => activate(group.h2.id)}
+									class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+								>{#if group.h3s.length}<button
+										type="button"
+										class="toc-toggle"
+										aria-expanded={openGroups.has(group.h2.id)}
+										aria-label={openGroups.has(group.h2.id)
+											? $_('Unterpunkte zuklappen')
+											: $_('Unterpunkte aufklappen')}
+										on:click={() => toggleGroup(group.h2.id)}
+										><svg
+											class="toc-chevron"
+											class:rotate-180={openGroups.has(group.h2.id)}
+											viewBox="0 0 20 20"
+											aria-hidden="true"
+											><path
+												d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+											/></svg
+										></button
+									>{/if}
+							</div>
+							{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
+									class="toc-sub mt-1.5 space-y-1.5 pl-3"
+								>
+									{#each group.h3s as sub}<li>
+											<a
+												href="#{sub.id}"
+												class="toc-link block"
+												on:click={() => activate(sub.id)}
+												class:toc-active={sub.id === activeId}>{sub.text}</a
+											>
+										</li>{/each}
+								</ul>{/if}
 						</li>{/each}
 				</ul>
 			</nav>
@@ -241,24 +291,45 @@
 			>
 				<h5 class="toc-top-title">{tocTitle}</h5>
 				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
-					{#each tocGroups as group}<li class="flex flex-col gap-1">
+					{#each tocGroups as group}<li class="toc-top-item">
 							<a
 								href="#{group.h2.id}"
 								class="toc-link"
-								on:click={() => activate(group.h2.id)}
+								on:click={() => {
+									topOpen = '';
+									activate(group.h2.id);
+								}}
 								class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
-							>{#if group.h3s.length}<ul
-									class="flex flex-col gap-0.5 pl-3 border-l [border-color:currentColor] [opacity:0.4]"
-								>
-									{#each group.h3s as sub}<li>
-											<a
-												href="#{sub.id}"
-												class="toc-link block"
-												on:click={() => activate(sub.id)}
-												class:toc-active={sub.id === activeId}>{sub.text}</a
-											>
-										</li>{/each}
-								</ul>{/if}
+							>{#if group.h3s.length}<button
+									type="button"
+									class="toc-toggle"
+									aria-expanded={topOpen === group.h2.id}
+									aria-label={topOpen === group.h2.id
+										? $_('Unterpunkte zuklappen')
+										: $_('Unterpunkte aufklappen')}
+									on:click={() => (topOpen = topOpen === group.h2.id ? '' : group.h2.id)}
+									><svg
+										class="toc-chevron"
+										class:rotate-180={topOpen === group.h2.id}
+										viewBox="0 0 20 20"
+										aria-hidden="true"
+										><path
+											d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+										/></svg
+									></button
+								>{#if topOpen === group.h2.id}<ul class="toc-dropdown">
+										{#each group.h3s as sub}<li>
+												<a
+													href="#{sub.id}"
+													class="toc-link block"
+													on:click={() => {
+														topOpen = '';
+														activate(sub.id);
+													}}
+													class:toc-active={sub.id === activeId}>{sub.text}</a
+												>
+											</li>{/each}
+									</ul>{/if}{/if}
 						</li>{/each}
 				</ul>
 			</div>
@@ -301,15 +372,37 @@
 			{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
 					<ul class="space-y-3 text-sm">
 						{#each tocGroups as group}<li>
-								<a
-									href="#{group.h2.id}"
-									on:click={() => {
-										mobileOpen = false;
-										activate(group.h2.id);
-									}}
-									class="toc-link"
-									class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
-								>{#if group.h3s.length}<ul class="mt-1.5 space-y-1.5 pl-3 border-l">
+								<div class="toc-row">
+									<a
+										href="#{group.h2.id}"
+										on:click={() => {
+											mobileOpen = false;
+											activate(group.h2.id);
+										}}
+										class="toc-link"
+										class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+									>{#if group.h3s.length}<button
+											type="button"
+											class="toc-toggle"
+											aria-expanded={openGroups.has(group.h2.id)}
+											aria-label={openGroups.has(group.h2.id)
+												? $_('Unterpunkte zuklappen')
+												: $_('Unterpunkte aufklappen')}
+											on:click={() => toggleGroup(group.h2.id)}
+											><svg
+												class="toc-chevron"
+												class:rotate-180={openGroups.has(group.h2.id)}
+												viewBox="0 0 20 20"
+												aria-hidden="true"
+												><path
+													d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+												/></svg
+											></button
+										>{/if}
+								</div>
+								{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
+										class="toc-sub mt-1.5 space-y-1.5 pl-3 border-l"
+									>
 										{#each group.h3s as sub}<li>
 												<a
 													href="#{sub.id}"
@@ -345,7 +438,79 @@
 		text-decoration: underline !important;
 		text-underline-offset: 0.15em;
 	}
-	.toc-items > li:not(:last-child) > .toc-link::after {
+	/* Global li margin (app.css) would make the sub entries uneven */
+	.toc-sub > li,
+	.toc-dropdown > li {
+		margin-bottom: 0;
+	}
+	.toc-row {
+		display: flex;
+		align-items: stretch;
+		justify-content: space-between;
+		gap: 0.25rem;
+	}
+	.toc-row > .toc-link {
+		align-self: center;
+	}
+	/* As tall as its entry, background slightly darker than the TOC */
+	.toc-toggle {
+		flex-shrink: 0;
+		align-self: stretch;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0 0.35rem;
+		border: none;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		color: var(--toc-link-color, inherit);
+		background-color: color-mix(
+			in srgb,
+			var(--toc-bg, var(--scope-bg, var(--page-bg-color))) 88%,
+			#000
+		);
+	}
+	.toc-toggle:hover {
+		background-color: color-mix(
+			in srgb,
+			var(--toc-bg, var(--scope-bg, var(--page-bg-color))) 80%,
+			#000
+		);
+	}
+	.toc-chevron {
+		width: 1.1em;
+		height: 1.1em;
+		fill: currentColor;
+		transition: transform 0.2s ease;
+	}
+	.toc-top-item {
+		position: relative;
+		display: inline-flex;
+		align-items: stretch;
+		gap: 0.15rem;
+	}
+	.toc-dropdown {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 50;
+		min-width: 14rem;
+		max-width: 22rem;
+		margin-top: 0.4rem;
+		padding: 0.75rem 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		background-color: var(--scope-bg, var(--page-bg-color));
+		color: var(--scope-color, var(--page-color));
+		border-radius: 0.375rem;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	}
+	.toc-top-item > .toc-link {
+		align-self: center;
+	}
+	.toc-items > li:not(:last-child)::after {
+		align-self: center;
 		content: '|';
 		display: inline-block;
 		padding-inline: 0.75rem;

@@ -311,7 +311,7 @@
 					"customtypes": [
 						{
 							"id": "font",
-							"fields": ["name", "provider", "variants", "adobeFontId"]
+							"fields": ["name", "provider", "variants"]
 						}
 					]
 				}
@@ -440,6 +440,15 @@
 				"type": "Boolean",
 				"config": {
 					"label": "Kopfzeile fixiert (Sticky)",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"animated_mobile_menu": {
+				"type": "Boolean",
+				"config": {
+					"label": "Animiertes Menü-Symbol (Mobile)",
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false

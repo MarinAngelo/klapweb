@@ -30,7 +30,7 @@ import {
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 function naechte(von: string, bis: string): number {
 	return Math.round((new Date(bis).getTime() - new Date(von).getTime()) / (1000 * 60 * 60 * 24));
@@ -201,7 +201,7 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 
 	// Vermieter-Benachrichtigung mit Bestätigungslink
 	const resendKey = env.RESEND_API_KEY;
-	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
+	const toEmail = (await getNotifyTo(fetch)) || companyEmail;
 	const emailFrom = await getMailFrom();
 	if (resendKey && emailFrom && toEmail && env.ADMIN_SECRET) {
 		const origin = url.origin;

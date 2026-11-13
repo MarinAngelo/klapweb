@@ -263,7 +263,7 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": ["name", "provider", "variants", "adobeFontId"]
+								"fields": ["name", "provider", "variants"]
 							}
 						]
 					}
