@@ -187,6 +187,10 @@
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
 	},
+	"page.hide_legal_bar": {
+		"de-ch": "Nur zusammen mit «Landing Page»: blendet auf dieser Seite auch die Leiste mit Datenschutzerklärung, Impressum und Cookie-Einstellungen aus, die Seite zeigt dann nur noch ihren Inhalt. Achtung: Impressum und Datenschutzerklärung müssen für Besucher leicht erreichbar sein – verlinke sie in diesem Fall selbst auf der Seite.",
+		"en-us": "Only together with «Landing Page»: also hides the bar with privacy policy, legal notice and cookie settings on this page, so the page shows only its content. Note: the legal notice and privacy policy must be easy to reach for visitors – link them on the page yourself in this case."
+	},
 	"page.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
