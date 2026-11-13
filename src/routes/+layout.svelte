@@ -85,7 +85,8 @@
 	$: appleTouchIconUrl =
 		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
-	$: noIndex = $page.data?.no_index || false;
+	// Prismic field «Keine Indexierung» (no_index) of the page document; routes can also set data.no_index
+	$: noIndex = $page.data?.no_index === true || $page.data?.page?.data?.no_index === true;
 
 	// --- DOMAIN & URL ---
 	$: rawDomain = settings?.data?.domain || 'klap-web.ch';
@@ -533,7 +534,7 @@
 	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
 	<link rel="canonical" href={currentUrl} />
 
-	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
+	{#if noIndex}<meta name="robots" content="noindex, follow" />{/if}
 
 	{#if showSwitcher}
 		{#each seoAlternates as alt}
