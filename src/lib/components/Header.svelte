@@ -301,6 +301,7 @@
 			{#if navigation && settings && prismicTheme}
 				<Navbar
 					{navigation}
+					animatedMenuIcon={prismicTheme?.data?.animated_mobile_menu === true}
 					headerBgColor={computedBgColor}
 					{headerLinkColor}
 					{headerLinkFontSize}

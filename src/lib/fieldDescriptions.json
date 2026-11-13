@@ -271,6 +271,10 @@
 		"de-ch": "Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.",
 		"en-us": "Sets where the «Hintergrundfarbe» (background colour) applies. «Nein» (no) = across the full screen width, as a colour band from edge to edge. «Ja» (yes) = only within the content area (at most as wide as the page), as a coloured box: the page colour stays visible to the left and right, the top and bottom spacing sits inside the box, and on smartphones it reaches the screen edge. The «Schriftfarbe» (text colour) applies either way."
 	},
+	"theme.animated_mobile_menu": {
+		"de-ch": "Menü-Symbol in der Kopfzeile auf dem Smartphone: «Ja» = zwei Striche, die sich beim Öffnen des Menüs zu einem X drehen (animiert). «Nein» = das bisherige Symbol mit drei Strichen, das beim Öffnen durch ein X ersetzt wird.",
+		"en-us": "Menu icon in the header on smartphones: «Ja» (yes) = two lines that rotate into an X when the menu opens (animated). «Nein» (no) = the previous three-line icon, replaced by an X when the menu opens."
+	},
 	"theme.uid": {
 		"de-ch": "Legt eine eindeutige Kennung fest, die für die Zuordnung und Verlinkung verwendet wird.",
 		"en-us": "Creates a unique name used to connect and link this item."
