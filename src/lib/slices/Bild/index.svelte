@@ -8,6 +8,7 @@
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import Lightbox from '$lib/components/Lightbox.svelte';
+	import BildLupe from '$lib/components/BildLupe.svelte';
 
 	export let slice: Content.ImageSlice;
 	export let index: number | undefined = undefined;
@@ -18,14 +19,20 @@
 	$: p = slice.primary as any;
 	$: mobileVollbreite = p.mobile_full_width ?? false;
 	$: lightbox = p.lightbox ?? false;
+	$: lupe = p.bild_lupe ?? false;
+	// CMS colors as CSS variables only (app.css › .color-scope)
+	$: scopeStyle = [
+		`--scope-bg: ${p.bg_color || 'var(--page-bg-color)'}`,
+		`--scope-color: ${p.color || 'var(--page-color)'}`
+	].join('; ');
 	$: primaryVN = p;
 	$: isVorherNachher = (slice.variation as string) === 'vorherNachher';
 </script>
 
 <Bounded
 	tag="section"
-	class={clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}
-	style="background-color: var(--page-bg-color);"
+	class="color-scope {clsx(index === 0 && 'pt-0 md:pt-0', mobileVollbreite && 'overflow-x-clip')}"
+	style={scopeStyle}
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 	animate={anim.animate}
@@ -42,8 +49,18 @@
 				animationOptions={anim.options}
 			/>
 		{:else if isFilled.image(p.image)}
-			<div style="background-color: var(--page-bg-color);">
-				{#if lightbox}
+			<div>
+				{#if lupe && lightbox}
+					<Lightbox src={p.image.url ?? ''} alt={p.image.alt ?? ''}>
+						<BildLupe imageUrl={p.image.url ?? ''}>
+							<PrismicImage field={p.image} sizes="100vw" class="w-full" />
+						</BildLupe>
+					</Lightbox>
+				{:else if lupe}
+					<BildLupe imageUrl={p.image.url ?? ''}>
+						<PrismicImage field={p.image} sizes="100vw" class="w-full" />
+					</BildLupe>
+				{:else if lightbox}
 					<Lightbox src={p.image.url ?? ''} alt={p.image.alt ?? ''}>
 						<PrismicImage field={p.image} sizes="100vw" class="w-full" />
 					</Lightbox>

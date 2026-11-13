@@ -1,6 +1,7 @@
 import { theme } from '$lib/stores/theme';
 import { get } from 'svelte/store';
 import { presetFontUrls } from '$lib/utils/presetFonts';
+import { mixHex, readableColor } from '$lib/utils/color';
 // import { convertNumber } from '$lib/utils/convertNumber';
 
 // Typisierung für die Prismic-Daten, falls nicht bereits vorhanden
@@ -27,8 +28,20 @@ interface PrismicThemeData {
 	header_link_hover_bg_color?: string;
 	header_link_font_size?: number;
 	header_link_font?: { data?: { name?: string } };
+	header_bottom_curve?: boolean;
+	header_bottom_curve_color?: string;
+	header_bottom_curve_height?: number;
+	header_bottom_curve_amplitude?: number;
+	header_bottom_curve_waves?: number;
+	header_bottom_curve_start?: string;
 	footer_color?: string;
 	footer_bg_color?: string;
+	footer_top_curve?: boolean;
+	footer_top_curve_color?: string;
+	footer_top_curve_height?: number;
+	footer_top_curve_amplitude?: number;
+	footer_top_curve_waves?: number;
+	footer_top_curve_start?: string;
 	footer_font_size_top_bar?: number;
 	footer_font_size_button_bar?: number;
 	footer_link_color?: string;
@@ -81,34 +94,6 @@ const getCssVar = (name: string): string => {
 	return ''; // Fallback für SSR (Server-Side Rendering)
 };
 
-// Adobe Fonts benötigen Gewichtssuffixe (z.B. "Soleil Regular" statt nur "Soleil")
-// Diese Fonts müssen IMMER mit Suffix eingegeben werden
-const ADOBE_FONTS_REQUIRING_SUFFIX = ['Soleil'];
-
-// Normalisiert Font-Namen: Fügt "Regular" hinzu falls kein Suffix vorhanden ist
-const normalizeAdobeFont = (fontName: string): string => {
-	if (!fontName) return fontName;
-
-	const trimmed = fontName.trim();
-
-	// Prüfe ob Font in der Liste ist und kein Suffix hat
-	const needsSuffix = ADOBE_FONTS_REQUIRING_SUFFIX.some(
-		(name) => trimmed.startsWith(name) && trimmed.length === name.length
-	);
-
-	// Häufige Gewichtssuffixe
-	const hasSuffix =
-		/\s+(Regular|Bold|Light|Thin|Medium|SemiBold|ExtraBold|Black|Italic)(\s+Italic)?$/i.test(
-			trimmed
-		);
-
-	if (needsSuffix && !hasSuffix) {
-		return `${trimmed} Regular`;
-	}
-
-	return trimmed;
-};
-
 export function updateTheme(data: ThemeUpdateData): void {
 	const prismicThemeData = data.prismicTheme?.data;
 
@@ -121,11 +106,10 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const bannerTop = prismicThemeData.banner_top === true;
 	const pageColor = prismicThemeData.page_color || getCssVar('--page-color');
 	const pageBgColor = prismicThemeData.page_bg_color || getCssVar('--page-bg-color');
-	const pageFont = normalizeAdobeFont(
+	const pageFont =
 		prismicThemeData.page_font?.data?.name ||
-			prismicThemeData.preset_font ||
-			getCssVar('--page-font')
-	);
+		prismicThemeData.preset_font ||
+		getCssVar('--page-font');
 	const pageLinkColor = prismicThemeData.page_link_color || getCssVar('--page-link-color');
 	const pageLinkHoverColor =
 		prismicThemeData.page_link_hover_color || getCssVar('--page-link-hover-color');
@@ -136,9 +120,8 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const pageButtonHoverBgColor = prismicThemeData.page_button_hover_bg_color || '';
 	const siteTitleFontSize =
 		prismicThemeData.site_title_font_size || parseFloat(getCssVar('--site-title-font-size'));
-	const siteTitleFont = normalizeAdobeFont(
-		prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font')
-	);
+	const siteTitleFont =
+		prismicThemeData.site_title_font?.data?.name || getCssVar('--site-title-font');
 	const siteSubtitleFontSize =
 		prismicThemeData.site_subtitle_font_size || parseFloat(getCssVar('--site-sub-title-font-size'));
 	const headerFontSize =
@@ -153,11 +136,27 @@ export function updateTheme(data: ThemeUpdateData): void {
 		prismicThemeData.header_link_hover_bg_color || getCssVar('--header-link-hover-bg-color');
 	const headerLinkFontSize =
 		prismicThemeData.header_link_font_size || parseFloat(getCssVar('--header-link-font-size'));
-	const headerLinkFont = normalizeAdobeFont(
-		prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font')
-	);
+	const headerLinkFont =
+		prismicThemeData.header_link_font?.data?.name || getCssVar('--header-link-font');
 	const footerColor = prismicThemeData.footer_color || getCssVar('--footer-color');
 	const footerBgColor = prismicThemeData.footer_bg_color || getCssVar('--footer-bg-color');
+	// Bis das neue Footer-Schema publiziert ist, erbt der Footer die Header-Wave-Werte.
+	const footerTopCurve =
+		prismicThemeData.footer_top_curve ?? prismicThemeData.header_bottom_curve ?? false;
+	const footerTopCurveColor =
+		prismicThemeData.footer_top_curve_color ||
+		prismicThemeData.header_bottom_curve_color ||
+		footerBgColor;
+	const footerTopCurveHeight =
+		prismicThemeData.footer_top_curve_height ?? prismicThemeData.header_bottom_curve_height ?? 32;
+	const footerTopCurveAmplitude =
+		prismicThemeData.footer_top_curve_amplitude ??
+		prismicThemeData.header_bottom_curve_amplitude ??
+		16;
+	const footerTopCurveWaves =
+		prismicThemeData.footer_top_curve_waves ?? prismicThemeData.header_bottom_curve_waves ?? 1;
+	const footerTopCurveStart =
+		prismicThemeData.footer_top_curve_start || prismicThemeData.header_bottom_curve_start || '0';
 	const footerFontSizeTopBar =
 		prismicThemeData.footer_font_size_top_bar ||
 		parseFloat(getCssVar('--footer-font-size-top-bar'));
@@ -167,6 +166,12 @@ export function updateTheme(data: ThemeUpdateData): void {
 	const footerLinkColor = prismicThemeData.footer_link_color || getCssVar('--footer-link-color');
 	const footerLinkHoverColor =
 		prismicThemeData.footer_link_hover_color || getCssVar('--footer-link-hover-color');
+	const headerBottomCurve = prismicThemeData.header_bottom_curve ?? false;
+	const headerBottomCurveColor = prismicThemeData.header_bottom_curve_color || headerBgColor;
+	const headerBottomCurveHeight = prismicThemeData.header_bottom_curve_height ?? 32;
+	const headerBottomCurveAmplitude = prismicThemeData.header_bottom_curve_amplitude ?? 16;
+	const headerBottomCurveWaves = prismicThemeData.header_bottom_curve_waves ?? 1;
+	const headerBottomCurveStart = prismicThemeData.header_bottom_curve_start || '0';
 	const noMarginTop = prismicThemeData.no_margin_top || false;
 	const pageLinkActiveColor =
 		prismicThemeData.page_link_active_color || getCssVar('--page-link-active-color');
@@ -199,8 +204,20 @@ export function updateTheme(data: ThemeUpdateData): void {
 		headerLinkHoverBgColor,
 		headerLinkFontSize,
 		headerLinkFont,
+		headerBottomCurve,
+		headerBottomCurveColor,
+		headerBottomCurveHeight,
+		headerBottomCurveAmplitude,
+		headerBottomCurveWaves,
+		headerBottomCurveStart,
 		footerColor,
 		footerBgColor,
+		footerTopCurve,
+		footerTopCurveColor,
+		footerTopCurveHeight,
+		footerTopCurveAmplitude,
+		footerTopCurveWaves,
+		footerTopCurveStart,
 		footerFontSizeTopBar,
 		footerFontSizeButtonBar,
 		footerLinkColor,
@@ -321,4 +338,27 @@ export function updateTheme(data: ThemeUpdateData): void {
 			document.head.appendChild(link);
 		}
 	}
+}
+
+/**
+ * Contrast-safe derived colors (WCAG AA), set as CSS variables:
+ * - --panel-bg / --panel-color: tinted panels (.panel-tinted, e.g. accordion items) are
+ *   darker/lighter than the page background → text color adjusted for them
+ * - --btn-solid-color: text on filled buttons (.btn-solid, background = page color)
+ * Without hex colors the CSS fallbacks apply.
+ */
+export function updateContrastColors(pageColor: string, pageBgColor: string): void {
+	if (typeof document === 'undefined') return;
+	const root = document.documentElement;
+	const isHex = (c: string) => /^#[0-9a-f]{6}/i.test(c?.trim() ?? '');
+	if (!isHex(pageColor) || !isHex(pageBgColor)) {
+		root.style.removeProperty('--panel-bg');
+		root.style.removeProperty('--panel-color');
+		root.style.removeProperty('--btn-solid-color');
+		return;
+	}
+	const panelBg = mixHex(pageBgColor.trim(), pageColor.trim(), 0.07);
+	root.style.setProperty('--panel-bg', panelBg);
+	root.style.setProperty('--panel-color', readableColor(pageColor.trim(), panelBg));
+	root.style.setProperty('--btn-solid-color', readableColor(pageBgColor.trim(), pageColor.trim()));
 }

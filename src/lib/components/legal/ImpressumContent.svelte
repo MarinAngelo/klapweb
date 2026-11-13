@@ -47,7 +47,7 @@
 			<strong>Website:</strong>
 			<a href="https://www.klap-web.ch/" target="_blank" class="hover:underline"> Klap Web </a><br
 			/>
-			<strong>E-Mail:</strong>
+			<strong>{$_('E-Mail')}:</strong>
 			<a href="mailto:marinus.angelo@klap-web.ch" class="hover:underline"
 				>marinus.angelo@klap-web.ch</a
 			>

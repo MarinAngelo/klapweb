@@ -1,12 +1,21 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createClient } from '$lib/prismicio';
-import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
+import { calcDisplayPrice } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 import { saveCustomer, listCustomers } from '$lib/server/customers';
-import { saveManualInvoice, getManualInvoice, updateManualInvoice } from '$lib/server/invoices';
+import { updateManualInvoice } from '$lib/server/invoices';
+import {
+	createInvoice,
+	invoiceAttachment,
+	invoiceSettingsFrom,
+	type InvoiceItem,
+	type InvoiceSettings
+} from '$lib/server/invoicing';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
+import { parseCartSpec } from '$lib/utils/cartSpec';
+import { resolveCartLines, cartLabel } from '$lib/server/cartLines';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -18,6 +27,9 @@ interface InvoiceRequest {
 	eventPrice?: number | null;
 	eventLabel?: string;
 	eventManagerEmail?: string | null;
+	/** Cart checkout: "leistung:<uid>,page:<uid>" — prices are resolved here */
+	cart?: string;
+	lang?: string;
 }
 
 interface EmailTemplate {
@@ -25,17 +37,7 @@ interface EmailTemplate {
 	body: Array<{ text?: string }> | null;
 }
 
-interface CompanyInfo {
-	name: string;
-	address: string;
-	email: string;
-	uid: string;
-	iban: string;
-	bank: string;
-	bic: string;
-	paymentTermsDays: number;
-	vatRate: number | null;
-	currency: string;
+interface CompanyInfo extends InvoiceSettings {
 	globalDepositPct: number | null;
 	discountCodes: Array<{ code: string; discount_percent: number | null }>;
 	emailTemplates: {
@@ -46,7 +48,7 @@ interface CompanyInfo {
 
 /** Replaces {{TOKEN}} placeholders in a plain string. */
 function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
 }
 
 /** Converts Prismic StructuredText blocks to a plain-text string with token replacement. */
@@ -62,67 +64,31 @@ function richTextToEmail(
 }
 
 async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
+	let d: Record<string, unknown> = {};
 	try {
-		const client = createClient({ fetch });
-		const settings = await client.getSingle('settings');
-		const d = settings.data as Record<string, unknown>;
-
-		return {
-			name: (d.responsible_person_company as string) ?? '',
-			address:
-				(Array.isArray(d.responsible_address)
-					? (d.responsible_address as Array<{ text?: string }>)
-							.map((b) => b?.text ?? '')
-							.filter(Boolean)
-							.join('\n')
-					: '') ?? '',
-			email: (d.responsible_email as string) ?? (d.e_mail as string) ?? '',
-			uid: (d.company_identification_number as string) ?? '',
-			iban: (d.invoice_iban as string) ?? '',
-			bank: (d.invoice_bank as string) ?? '',
-			bic: (d.invoice_bic as string) ?? '',
-			paymentTermsDays: (d.invoice_payment_terms_days as number) ?? 30,
-			vatRate: (d.invoice_vat_rate as number) ?? null,
-			currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF',
-			globalDepositPct: (d.global_deposit_percent as number) ?? null,
-			discountCodes: Array.isArray(d.discount_codes)
-				? (d.discount_codes as Array<{ code?: string; discount_percent?: number }>)
-						.filter((c) => c.code?.trim())
-						.map((c) => ({ code: c.code!.trim(), discount_percent: c.discount_percent ?? null }))
-				: [],
-			emailTemplates: {
-				rechnung: {
-					subject: (d.payment_rechnung_email_subject as string) || null,
-					body: Array.isArray(d.payment_rechnung_email_body)
-						? (d.payment_rechnung_email_body as Array<{ text?: string }>)
-						: null
-				},
-				bar: {
-					subject: (d.payment_bar_email_subject as string) || null,
-					body: Array.isArray(d.payment_bar_email_body)
-						? (d.payment_bar_email_body as Array<{ text?: string }>)
-						: null
-				}
-			}
-		};
+		const settings = await createClient({ fetch }).getSingle('settings');
+		d = settings.data as Record<string, unknown>;
 	} catch {
-		const noTemplate: EmailTemplate = { subject: null, body: null };
-		return {
-			name: '',
-			address: '',
-			email: '',
-			uid: '',
-			iban: '',
-			bank: '',
-			bic: '',
-			paymentTermsDays: 30,
-			vatRate: null,
-			currency: 'CHF',
-			globalDepositPct: null,
-			discountCodes: [],
-			emailTemplates: { rechnung: noTemplate, bar: noTemplate }
-		};
+		// Without settings: empty issuer, defaults
 	}
+	const template = (subject: unknown, body: unknown): EmailTemplate => ({
+		subject: (subject as string) || null,
+		body: Array.isArray(body) ? (body as Array<{ text?: string }>) : null
+	});
+	return {
+		// Issuer, bank, VAT, QR bill: shared invoice module
+		...invoiceSettingsFrom(d),
+		globalDepositPct: (d.global_deposit_percent as number) ?? null,
+		discountCodes: Array.isArray(d.discount_codes)
+			? (d.discount_codes as Array<{ code?: string; discount_percent?: number }>)
+					.filter((c) => c.code?.trim())
+					.map((c) => ({ code: c.code!.trim(), discount_percent: c.discount_percent ?? null }))
+			: [],
+		emailTemplates: {
+			rechnung: template(d.payment_rechnung_email_subject, d.payment_rechnung_email_body),
+			bar: template(d.payment_bar_email_subject, d.payment_bar_email_body)
+		}
+	};
 }
 
 interface AddonInfo {
@@ -189,345 +155,30 @@ async function fetchProductInfo(
 	}
 }
 
-async function generatePdf(
-	invoiceNumber: string,
-	data: Record<string, string>,
-	serviceLabel: string,
-	netPrice: number | null,
-	co: CompanyInfo,
-	codeDiscount: { code: string; pct: number } | null,
-	addons: Array<{ label: string; price: number | null; billingType: string | null }>,
-	mainBillingType: string | null
-): Promise<Uint8Array> {
-	const pdfDoc = await PDFDocument.create();
-	const page = pdfDoc.addPage([595, 842]); // A4
-	const { width, height } = page.getSize();
+/** One invoice position; discount codes apply to `discountable` positions only */
+interface PdfLine {
+	label: string;
+	price: number | null;
+	billingType: string | null;
+	discountable: boolean;
+}
 
-	const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-	const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+const BILLING_TYPE_SUFFIX: Record<string, string> = {
+	Einmalig: 'Einmalig',
+	Jährlich: 'pro Jahr',
+	Monatlich: 'pro Monat'
+};
 
-	const black = rgb(0, 0, 0);
-	const gray = rgb(0.45, 0.45, 0.45);
-	const lightGray = rgb(0.85, 0.85, 0.85);
+/** "Chat-Bot (Einmalig)", "Hosting (pro Jahr)" */
+function lineLabel(line: { label: string; billingType: string | null }): string {
+	const suffix = line.billingType ? BILLING_TYPE_SUFFIX[line.billingType] : undefined;
+	return suffix ? `${line.label} (${suffix})` : line.label;
+}
 
-	const marginL = 60;
-	const marginR = width - 60;
-	let y = height - 60;
-
-	// --- Firmenname ---
-	page.drawText(co.name || 'Unbekannte Firma', {
-		x: marginL,
-		y,
-		size: 18,
-		font: fontBold,
-		color: black
-	});
-
-	// --- Datum (oben rechts) ---
-	const dateStr = new Intl.DateTimeFormat('de-CH', {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric'
-	}).format(new Date());
-	const dateWidth = fontRegular.widthOfTextAtSize(dateStr, 10);
-	page.drawText(dateStr, { x: marginR - dateWidth, y, size: 10, font: fontRegular, color: gray });
-
-	y -= 20;
-	// Adresse (mehrzeilig)
-	for (const line of (co.address || '').split('\n').filter(Boolean)) {
-		page.drawText(line, { x: marginL, y, size: 10, font: fontRegular, color: gray });
-		y -= 14;
-	}
-	if (co.uid) {
-		page.drawText(`UID: ${co.uid}`, { x: marginL, y, size: 9, font: fontRegular, color: gray });
-		y -= 14;
-	}
-	if (co.email) {
-		page.drawText(co.email, { x: marginL, y, size: 9, font: fontRegular, color: gray });
-	}
-
-	y -= 40;
-
-	// --- Trennlinie ---
-	page.drawLine({
-		start: { x: marginL, y },
-		end: { x: marginR, y },
-		thickness: 0.5,
-		color: lightGray
-	});
-	y -= 30;
-
-	// --- Rechnungstitel + Nummer ---
-	page.drawText('RECHNUNG', { x: marginL, y, size: 20, font: fontBold, color: black });
-	y -= 22;
-	page.drawText(`Nr. ${invoiceNumber}`, {
-		x: marginL,
-		y,
-		size: 11,
-		font: fontRegular,
-		color: gray
-	});
-
-	y -= 40;
-
-	// --- Empfänger ---
-	page.drawText('Rechnungsempfänger', { x: marginL, y, size: 9, font: fontBold, color: gray });
-	y -= 16;
-
-	const d = data;
-	const recipientLines: Array<{ text: string; bold?: boolean }> = [];
-
-	// Name / Firma
-	const fullName = [d['vorname'], d['nachname']].filter(Boolean).join(' ');
-	if (fullName) recipientLines.push({ text: fullName });
-	if (d['firma']) recipientLines.push({ text: d['firma'] });
-
-	// Adresse
-	if (d['adresse']) recipientLines.push({ text: d['adresse'] });
-	const plzOrt = [d['plz'], d['ort']].filter(Boolean).join(' ');
-	if (plzOrt) recipientLines.push({ text: plzOrt });
-	if (d['land']) recipientLines.push({ text: d['land'] });
-
-	// Leerzeile + E-Mail + Projektname
-	recipientLines.push({ text: '' });
-	if (d['email']) recipientLines.push({ text: `E-Mail: ${d['email']}` });
-	if (d['tel']) recipientLines.push({ text: `Tel.: ${d['tel']}` });
-	if (d['projektname']) recipientLines.push({ text: `Projektname: ${d['projektname']}` });
-
-	for (const line of recipientLines) {
-		if (line.text === '') {
-			y -= 8;
-			continue;
-		}
-		page.drawText(line.text, { x: marginL, y, size: 10, font: fontRegular, color: black });
-		y -= 16;
-	}
-
-	y -= 30;
-
-	// --- Leistungsübersicht ---
-	// Header-Zeile
-	page.drawRectangle({
-		x: marginL,
-		y: y - 4,
-		width: marginR - marginL,
-		height: 22,
-		color: lightGray
-	});
-	page.drawText('Leistung', { x: marginL + 8, y: y + 4, size: 10, font: fontBold, color: black });
-	const totalLabel = `Betrag ${co.currency}`;
-	const totalLabelWidth = fontBold.widthOfTextAtSize(totalLabel, 10);
-	page.drawText(totalLabel, {
-		x: marginR - totalLabelWidth - 8,
-		y: y + 4,
-		size: 10,
-		font: fontBold,
-		color: black
-	});
-	y -= 28;
-
-	const drawRight = (text: string, yPos: number, font = fontRegular) => {
-		const w = font.widthOfTextAtSize(text, 10);
-		page.drawText(text, { x: marginR - w - 8, y: yPos, size: 10, font, color: black });
-	};
-
-	// pdf-lib StandardFonts only support WinAnsi (Latin-1). Currency symbols like ₹ (INR)
-	// are not in WinAnsi, so use currency code display (e.g. "INR 1'234.00") instead of symbol.
-	const fmt = (n: number) =>
-		new Intl.NumberFormat('de-CH', {
-			style: 'currency',
-			currency: co.currency,
-			currencyDisplay: 'code',
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		}).format(n);
-	// Apply code discount to main service
-	const codeDiscountAmount =
-		codeDiscount && netPrice !== null ? Math.round(netPrice * codeDiscount.pct) / 100 : 0;
-	const discountedPrice = netPrice !== null ? netPrice - codeDiscountAmount : null;
-
-	const billingTypeSuffix: Record<string, string> = {
-		Einmalig: 'Einmalig',
-		Jährlich: 'pro Jahr',
-		Monatlich: 'pro Monat'
-	};
-
-	// --- Line items ---
-	// Main service
-	page.drawText(serviceLabel, { x: marginL + 8, y, size: 10, font: fontRegular, color: black });
-	drawRight(netPrice !== null ? fmt(netPrice) : '—', y);
-	y -= 20;
-
-	// Code discount
-	if (codeDiscount && netPrice !== null) {
-		page.drawText(`Rabatt ${codeDiscount.code} (-${codeDiscount.pct}%)`, {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontRegular,
-			color: gray
-		});
-		drawRight(fmt(-codeDiscountAmount), y);
-		y -= 20;
-	}
-
-	// Addon lines
-	for (const addon of addons) {
-		const addonSuffix =
-			addon.billingType && billingTypeSuffix[addon.billingType]
-				? ` (${billingTypeSuffix[addon.billingType]})`
-				: '';
-		page.drawText(`${addon.label}${addonSuffix}`, {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontRegular,
-			color: black
-		});
-		drawRight(addon.price !== null ? fmt(addon.price) : '—', y);
-		y -= 20;
-	}
-
-	y -= 10;
-	page.drawLine({
-		start: { x: marginL, y },
-		end: { x: marginR, y },
-		thickness: 0.5,
-		color: lightGray
-	});
-	y -= 16;
-
-	// --- Totals ---
-	if (co.vatRate && discountedPrice !== null) {
-		// VAT: apply to sum of all items
-		const allItemsNet = [discountedPrice, ...addons.map((a) => a.price ?? 0)].reduce(
-			(s, p) => s + p,
-			0
-		);
-		const vatAmount = Math.round(allItemsNet * co.vatRate) / 100;
-		const grandTotal = allItemsNet + vatAmount;
-
-		if (addons.length > 0) {
-			page.drawText('Zwischensumme', {
-				x: marginL + 8,
-				y,
-				size: 10,
-				font: fontRegular,
-				color: black
-			});
-			drawRight(fmt(allItemsNet), y);
-			y -= 20;
-		}
-		page.drawText(`MwSt ${co.vatRate}%`, {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontRegular,
-			color: black
-		});
-		drawRight(fmt(vatAmount), y);
-		y -= 20;
-		page.drawText('Total inkl. MwSt.', {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontBold,
-			color: black
-		});
-		drawRight(fmt(grandTotal), y, fontBold);
-	} else if (addons.length > 0) {
-		// No VAT, multiple items: grouped totals by billing type
-		const byType: Record<string, number> = {};
-		if (discountedPrice !== null) {
-			const t = mainBillingType ?? 'Einmalig';
-			byType[t] = (byType[t] ?? 0) + discountedPrice;
-		}
-		for (const addon of addons) {
-			if (addon.price === null) continue;
-			const t = addon.billingType ?? 'Einmalig';
-			byType[t] = (byType[t] ?? 0) + addon.price;
-		}
-		const typeEntries = Object.entries(byType);
-		const multipleTypes = typeEntries.length > 1;
-		for (const [type, total] of typeEntries) {
-			page.drawText(multipleTypes ? `${type} exkl. MwSt.` : `Total exkl. MwSt.`, {
-				x: marginL + 8,
-				y,
-				size: 10,
-				font: multipleTypes ? fontRegular : fontBold,
-				color: black
-			});
-			drawRight(fmt(total), y, multipleTypes ? fontRegular : fontBold);
-			y -= 18;
-		}
-		if (multipleTypes) {
-			// Trennlinie + Gesamttotal
-			page.drawLine({
-				start: { x: marginL + 8, y: y + 12 },
-				end: { x: marginR - 8, y: y + 12 },
-				thickness: 0.5,
-				color: lightGray
-			});
-			y -= 6;
-			const grandTotalNet = [discountedPrice ?? 0, ...addons.map((a) => a.price ?? 0)].reduce(
-				(s, p) => s + p,
-				0
-			);
-			page.drawText('Gesamttotal exkl. MwSt.', {
-				x: marginL + 8,
-				y,
-				size: 10,
-				font: fontBold,
-				color: black
-			});
-			drawRight(fmt(grandTotalNet), y, fontBold);
-			y -= 18;
-		}
-	} else {
-		// No VAT, single item
-		const priceStr = discountedPrice !== null ? fmt(discountedPrice) : '—';
-		page.drawText('Total exkl. MwSt.', {
-			x: marginL + 8,
-			y,
-			size: 10,
-			font: fontBold,
-			color: black
-		});
-		drawRight(priceStr, y, fontBold);
-	}
-
-	y -= 50;
-
-	// --- Zahlungsbedingungen ---
-	page.drawText(`Zahlungsbedingungen: ${co.paymentTermsDays} Tage netto`, {
-		x: marginL,
-		y,
-		size: 10,
-		font: fontRegular,
-		color: black
-	});
-	y -= 18;
-	if (co.iban) {
-		page.drawText(
-			`Bitte zahlen Sie innerhalb von ${co.paymentTermsDays} Tagen auf folgendes Konto:`,
-			{ x: marginL, y, size: 10, font: fontRegular, color: black }
-		);
-		y -= 18;
-		page.drawText(
-			`IBAN: ${co.iban}${co.bank ? `  |  Bank: ${co.bank}` : ''}${co.bic ? `  |  BIC: ${co.bic}` : ''}`,
-			{ x: marginL, y, size: 10, font: fontRegular, color: black }
-		);
-		y -= 16;
-	}
-	page.drawText(`Zahlungsreferenz: ${invoiceNumber}`, {
-		x: marginL,
-		y,
-		size: 10,
-		font: fontBold,
-		color: black
-	});
-
-	return pdfDoc.save();
+/** Discount of one position (same rounding as before: whole cents) */
+function lineDiscount(line: PdfLine, codeDiscount: { pct: number } | null): number {
+	if (!codeDiscount || !line.discountable || line.price === null) return 0;
+	return Math.round(line.price * codeDiscount.pct) / 100;
 }
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
@@ -547,45 +198,77 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		isEventCheckout,
 		eventPrice,
 		eventLabel,
-		eventManagerEmail
+		eventManagerEmail,
+		cart,
+		lang
 	} = body;
 	const invoiceNumber = `INV-${Date.now()}`;
 
 	// Firmendaten + Produktdaten laden
 	const co = await fetchCompanyInfo(fetch);
-	const product = isEventCheckout
-		? {
-				label: eventLabel || serviceKey,
-				price: eventPrice ?? null,
-				billingType: 'Einmalig' as const,
-				addons: []
-			}
-		: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+	const cartRefs = isEventCheckout ? [] : parseCartSpec(cart);
+	const isCart = cartRefs.length > 0;
+
+	// Positions in the base currency: cart lines, or main product followed by its add-ons
+	let baseLines: PdfLine[];
+	let orderLabel: string;
+	if (isCart) {
+		const cartLines = await resolveCartLines(
+			createClient({ fetch }),
+			cartRefs,
+			lang,
+			co.globalDepositPct
+		);
+		if (cartLines.length === 0) {
+			return new Response(JSON.stringify({ error: 'Der Warenkorb ist leer' }), { status: 400 });
+		}
+		baseLines = cartLines.map((line) => ({
+			label: line.label,
+			price: line.price,
+			billingType: line.billingType,
+			discountable: line.kind === 'main'
+		}));
+		orderLabel = cartLabel(cartLines);
+	} else {
+		const product = isEventCheckout
+			? {
+					label: eventLabel || serviceKey,
+					price: eventPrice ?? null,
+					billingType: 'Einmalig' as const,
+					addons: [] as AddonInfo[]
+				}
+			: await fetchProductInfo(fetch, serviceKey, co.globalDepositPct);
+		baseLines = [
+			{
+				label: product.label,
+				price: product.price,
+				billingType: product.billingType,
+				discountable: true
+			},
+			...product.addons.map((addon) => ({ ...addon, discountable: false }))
+		];
+		orderLabel = product.label;
+	}
 
 	// Währungskonvertierung (falls Käufer andere Währung gewählt hat)
 	const invoiceCurrency = selectedCurrency?.trim() || co.currency;
-	let invoicePrice = product.price;
 	let conversionRate: number | null = null;
 	if (invoiceCurrency !== co.currency) {
 		const rates = await fetchExchangeRates(co.currency, [invoiceCurrency]);
 		conversionRate = rates[invoiceCurrency] ?? null;
-		if (invoicePrice !== null && conversionRate !== null) {
-			invoicePrice = Math.round(invoicePrice * conversionRate * 100) / 100;
-		}
 	}
-
-	// Convert addon prices to invoiceCurrency
-	const convertedAddons = product.addons.map((addon) => ({
-		...addon,
+	const lines: PdfLine[] = baseLines.map((line) => ({
+		...line,
 		price:
-			addon.price !== null && conversionRate !== null
-				? Math.round(addon.price * conversionRate * 100) / 100
-				: addon.price
+			line.price !== null && conversionRate !== null
+				? Math.round(line.price * conversionRate * 100) / 100
+				: line.price
 	}));
+	const invoicePrice = lines[0]?.price ?? null;
 
 	// Rabatt-Code validieren
 	let codeDiscountInfo: { code: string; pct: number } | null = null;
-	if (discountCode?.trim() && invoicePrice !== null) {
+	if (discountCode?.trim() && lines.some((line) => line.discountable && line.price !== null)) {
 		const match = co.discountCodes.find(
 			(c) => c.code.toLowerCase() === discountCode.trim().toLowerCase()
 		);
@@ -593,78 +276,74 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			codeDiscountInfo = { code: discountCode.trim(), pct: match.discount_percent };
 		}
 	}
-	// Final price (after code discount) — used for email tokens
-	const finalPrice =
-		codeDiscountInfo && invoicePrice !== null
+	// Amount for e-mail tokens / customer list: single product = main price after discount
+	// (unchanged), cart = total of all positions after discount
+	const finalPrice = isCart
+		? Math.round(
+				lines.reduce(
+					(sum, line) => sum + (line.price ?? 0) - lineDiscount(line, codeDiscountInfo),
+					0
+				) * 100
+			) / 100
+		: codeDiscountInfo && invoicePrice !== null
 			? Math.round(invoicePrice * (1 - codeDiscountInfo.pct / 100) * 100) / 100
 			: invoicePrice;
 
-	// Build service label with billing type suffix for PDF
-	const billingTypeSuffix: Record<string, string> = {
-		Einmalig: 'Einmalig',
-		Jährlich: 'pro Jahr',
-		Monatlich: 'pro Monat'
-	};
-	const pdfServiceLabel =
-		product.billingType && billingTypeSuffix[product.billingType]
-			? `${product.label} (${billingTypeSuffix[product.billingType]})`
-			: product.label;
+	// Invoice positions: discount line right after the last discounted position
+	const totalDiscount = lines.reduce((sum, line) => sum + lineDiscount(line, codeDiscountInfo), 0);
+	const lastDiscountable = lines.reduce(
+		(last, line, i) => (line.discountable && line.price !== null ? i : last),
+		-1
+	);
+	const items: InvoiceItem[] = [];
+	lines.forEach((line, i) => {
+		items.push({
+			description: lineLabel(line),
+			quantity: 1,
+			unitPrice: line.price ?? 0,
+			billingType: line.billingType
+		});
+		if (codeDiscountInfo && i === lastDiscountable) {
+			items.push({
+				description: `Rabatt ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)`,
+				quantity: 1,
+				unitPrice: -totalDiscount,
+				billingType: line.billingType
+			});
+		}
+	});
 
-	// PDF generieren (generatePdf receives price before code discount; applies discount internally)
+	// PDF (incl. QR bill) + storage via the shared invoice module
 	let pdfBytes: Uint8Array;
+	let invoiceId: string | null = null;
 	try {
-		pdfBytes = await generatePdf(
+		const created = await createInvoice({
+			source: isEventCheckout ? 'event' : 'checkout',
+			relatedId: serviceKey || undefined,
 			invoiceNumber,
-			data,
-			pdfServiceLabel,
-			invoicePrice,
-			{
-				...co,
-				currency: invoiceCurrency
+			recipient: {
+				vorname: data['vorname'],
+				nachname: data['nachname'],
+				firma: data['firma'],
+				email: data['email'],
+				tel: data['tel'],
+				adresse: data['adresse'],
+				plz: data['plz'],
+				ort: data['ort'],
+				land: data['land'],
+				extraLines: data['projektname'] ? [`Projektname: ${data['projektname']}`] : []
 			},
-			codeDiscountInfo,
-			convertedAddons,
-			product.billingType
-		);
+			items,
+			currency: invoiceCurrency,
+			settings: co
+		});
+		pdfBytes = created.pdf;
+		invoiceId = created.id;
 	} catch (e) {
 		console.error('PDF-Generierung fehlgeschlagen:', e);
 		return new Response(JSON.stringify({ error: 'PDF konnte nicht erstellt werden' }), {
 			status: 500
 		});
-	}
-
-	// Speichere Rechnung in Blobs (vor Dev-Modus, damit sie auch lokal funktioniert)
-	let invoiceId: string | null = null;
-	try {
-		invoiceId = await saveManualInvoice({
-			invoiceNumber,
-			date: new Date().toISOString(),
-			status: 'gespeichert',
-			paymentStatus: 'offen',
-			paymentMethod: 'rechnung',
-			vorname: data['vorname'],
-			nachname: data['nachname'],
-			firma: data['firma'] || undefined,
-			email: data['email'] || undefined,
-			adresse: data['adresse'] || undefined,
-			plz: data['plz'] || undefined,
-			ort: data['ort'] || undefined,
-			land: data['land'] || undefined,
-			items: [
-				{
-					description: pdfServiceLabel,
-					quantity: 1,
-					unitPrice: invoicePrice ?? 0
-				}
-			],
-			notes: codeDiscountInfo
-				? `Rabatt-Code: ${codeDiscountInfo.code} (-${codeDiscountInfo.pct}%)`
-				: '',
-			emailSentAt: null,
-			currency: invoiceCurrency
-		});
-	} catch (e) {
-		console.error('Rechnung konnte nicht in Blobs gespeichert werden:', e);
 	}
 
 	// Kundendaten speichern (mit Duplikat-Prüfung)
@@ -702,7 +381,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			await saveCustomer({
 				date: new Date().toISOString(),
 				paymentMethod: 'rechnung',
-				service: product.label,
+				service: orderLabel,
 				amount: finalPrice,
 				currency: invoiceCurrency,
 				discountCode: codeDiscountInfo?.code,
@@ -722,18 +401,18 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Production: E-Mail via Resend
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.INVOICE_FROM_EMAIL;
+	const fromEmail = await getMailFrom();
 	const businessEmail = isEventCheckout && eventManagerEmail ? eventManagerEmail : co.email;
 
 	if (!resendKey || !fromEmail) {
-		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL)');
+		console.error('Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail (Einstellungen))');
 		return new Response(JSON.stringify({ error: 'E-Mail-Konfiguration fehlt' }), { status: 500 });
 	}
 
 	const customerEmail = data['email'] ?? '';
 	const customerName =
 		[data['vorname'], data['nachname']].filter(Boolean).join(' ') || data['name'] || 'Kunde';
-	const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+	const attachment = invoiceAttachment(invoiceNumber, pdfBytes);
 
 	// Token map for email templates
 	const emailFmt = (n: number) =>
@@ -750,7 +429,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		Vorname: data['vorname'] ?? '',
 		Nachname: data['nachname'] ?? '',
 		Email: customerEmail,
-		Dienstleistung: product.label,
+		Dienstleistung: orderLabel,
 		Betrag: finalPrice !== null ? emailFmt(finalPrice) : '—',
 		Waehrung: invoiceCurrency,
 		Firma: co.name,
@@ -767,7 +446,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const { Resend } = await import('resend');
 		const resend = new Resend(resendKey);
-		const fromWithName = co.name ? `${co.name} <${fromEmail}>` : fromEmail;
+		// Sender incl. name from the settings («Absender-Name»)
+		const fromWithName = fromEmail;
 
 		// E-Mail an Kunden
 		if (customerEmail) {
@@ -776,7 +456,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				to: customerEmail,
 				subject: custSubject,
 				text: custText,
-				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
+				attachments: [attachment]
 			});
 			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);
 		}
@@ -787,13 +467,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				from: fromWithName,
 				to: businessEmail,
 				subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
-				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${serviceKey}\n\nAlle Angaben:\n${Object.entries(
+				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${isCart ? orderLabel : serviceKey}\n\nAlle Angaben:\n${Object.entries(
 					data
 				)
 					.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
 					.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
 					.join('\n')}`,
-				attachments: [{ filename: `Rechnung_${invoiceNumber}.pdf`, content: pdfBase64 }]
+				attachments: [attachment]
 			});
 			if (bizErr) console.error('Geschäfts-E-Mail fehlgeschlagen:', bizErr);
 		}

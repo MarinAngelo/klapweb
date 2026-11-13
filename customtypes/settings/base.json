@@ -45,7 +45,53 @@
 					"placeholder": "",
 					"allowTargetBlank": false,
 					"multi": "paragraph",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"responsible_email": {
@@ -62,14 +108,81 @@
 					"placeholder": ""
 				}
 			},
+			"email_from_address": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-E-Mail (alle E-Mails der Website)",
+					"placeholder": "info@deine-domain.ch – Domain muss in Resend verifiziert sein"
+				}
+			},
+			"email_from_name": {
+				"type": "Text",
+				"config": {
+					"label": "Absender-Name",
+					"placeholder": "Name, unter dem die E-Mails erscheinen – leer = Website-Name"
+				}
+			},
+			"notification_email": {
+				"type": "Text",
+				"config": {
+					"label": "Benachrichtigungen an (intern)",
+					"placeholder": "E-Mail für Meldungen zu Buchungen, Formularen, Bestellungen – leer = Verantwortliche E-Mail"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {
-					"label": "Datenschutzerkärung",
+					"label": "Datenschutzerklärung",
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"haftungsausschluss": {
@@ -79,16 +192,53 @@
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
-				}
-			},
-			"haftungsausschluss": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Haftungsausschluss",
-					"placeholder": "",
-					"allowTargetBlank": true,
-					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl"
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"legal_disclosure": {
@@ -98,7 +248,53 @@
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"contacts": {
@@ -155,7 +351,53 @@
 								"placeholder": "",
 								"allowTargetBlank": false,
 								"multi": "paragraph",
-								"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+								"labels": [
+									"highlight",
+									"note",
+									"quote",
+									"size-xs",
+									"size-sm",
+									"size-lg",
+									"size-xl",
+									"size-2xl",
+									"size-3xl",
+									"size-4xl",
+									"size-5xl",
+									"size-6xl",
+									"weight-thin",
+									"weight-light",
+									"weight-medium",
+									"weight-semibold",
+									"weight-black",
+									"tracking-tight",
+									"tracking-wide",
+									"tracking-wider",
+									"tracking-widest",
+									"leading-tight",
+									"leading-loose",
+									"uppercase",
+									"lowercase",
+									"capitalize",
+									"underline",
+									"block",
+									"muted",
+									"display-thin",
+									"display-light",
+									"display-bold",
+									"display-black",
+									"giant-thin",
+									"giant-light",
+									"giant-bold",
+									"hero-thin",
+									"hero-light",
+									"hero-bold",
+									"subtitle",
+									"subtitle-bold",
+									"kicker",
+									"overline",
+									"invisible",
+									"copy"
+								]
 							}
 						}
 					}
@@ -168,7 +410,53 @@
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"agb": {
@@ -178,7 +466,53 @@
 					"placeholder": "",
 					"allowTargetBlank": true,
 					"multi": "paragraph,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,list-item,o-list-item,rtl",
-					"labels": ["highlight","note","quote","size-xs","size-sm","size-lg","size-xl","size-2xl","size-3xl","size-4xl","size-5xl","size-6xl","weight-thin","weight-light","weight-medium","weight-semibold","weight-black","tracking-tight","tracking-wide","tracking-wider","tracking-widest","leading-tight","leading-loose","uppercase","lowercase","capitalize","underline","block","muted","display-thin","display-light","display-bold","display-black","giant-thin","giant-light","giant-bold","hero-thin","hero-light","hero-bold","subtitle","subtitle-bold","kicker","overline","invisible"]
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
 				}
 			},
 			"page_password": {
@@ -195,37 +529,6 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
-				}
-			},
-			"chat_active": {
-				"type": "Boolean",
-				"config": {
-					"label": "Chat-Bot aktivieren",
-					"placeholder_false": "Nein",
-					"placeholder_true": "Ja",
-					"default_value": false
-				}
-			},
-			"chat_bot_name": {
-				"type": "Text",
-				"config": {
-					"label": "Chat-Bot Name",
-					"placeholder": "Assistent"
-				}
-			},
-			"chat_greeting": {
-				"type": "Text",
-				"config": {
-					"label": "Chat-Bot Begrüssung",
-					"placeholder": "Hallo! Wie kann ich helfen?"
-				}
-			},
-			"chat_knowledge_base": {
-				"type": "StructuredText",
-				"config": {
-					"label": "Chat-Bot Wissensbasis",
-					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
-					"multi": "paragraph,preformatted"
 				}
 			},
 			"show_language_switcher": {
@@ -250,10 +553,9 @@
 				"type": "Link",
 				"config": {
 					"label": "Umleitungs-Seite",
+					"placeholder": "Leer = Standardseite «Website im Aufbau»",
 					"select": "document",
-					"customtypes": [
-						"page"
-					]
+					"customtypes": ["page"]
 				}
 			}
 		},
@@ -299,13 +601,6 @@
 					"thumbnails": []
 				}
 			},
-			"adobe_font_id": {
-				"type": "Text",
-				"config": {
-					"label": "Adobe Project ID",
-					"placeholder": "Die ID aus Adobe Fonts (Typekit), z.B. lal6jiy"
-				}
-			},
 			"favicon": {
 				"type": "Image",
 				"config": {
@@ -344,6 +639,350 @@
 				"config": {
 					"label": "App & Browser Statusleisten-Farbe",
 					"placeholder": "Standard: Hintergrundfarbe des aktiven Themes"
+				}
+			}
+		},
+		"Chat-Bot": {
+			"chat_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_bot_name": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Name",
+					"placeholder": "Assistent"
+				}
+			},
+			"chat_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Chat-Bot Begrüssung",
+					"placeholder": "Hallo! Wie kann ich helfen?"
+				}
+			},
+			"chat_knowledge_base": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis",
+					"placeholder": "Schreibe hier alles, was der Bot über dein Business wissen soll: Dienstleistungen, Preise, Ablauf, Kontakt, häufige Fragen...",
+					"multi": "paragraph,preformatted,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
+				}
+			},
+			"chat_knowledge_extra": {
+				"type": "StructuredText",
+				"config": {
+					"label": "Chat-Bot Wissensbasis – Ergänzungen",
+					"placeholder": "Eigene Ergänzungen und Korrekturen; haben Vorrang vor der Wissensbasis (z. B. Begriffe, Sonderregeln, aktuelle Hinweise)",
+					"multi": "paragraph,preformatted,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
+					"labels": [
+						"highlight",
+						"note",
+						"quote",
+						"size-xs",
+						"size-sm",
+						"size-lg",
+						"size-xl",
+						"size-2xl",
+						"size-3xl",
+						"size-4xl",
+						"size-5xl",
+						"size-6xl",
+						"weight-thin",
+						"weight-light",
+						"weight-medium",
+						"weight-semibold",
+						"weight-black",
+						"tracking-tight",
+						"tracking-wide",
+						"tracking-wider",
+						"tracking-widest",
+						"leading-tight",
+						"leading-loose",
+						"uppercase",
+						"lowercase",
+						"capitalize",
+						"underline",
+						"block",
+						"muted",
+						"display-thin",
+						"display-light",
+						"display-bold",
+						"display-black",
+						"giant-thin",
+						"giant-light",
+						"giant-bold",
+						"hero-thin",
+						"hero-light",
+						"hero-bold",
+						"subtitle",
+						"subtitle-bold",
+						"kicker",
+						"overline",
+						"invisible",
+						"copy"
+					]
+				}
+			}
+		},
+		"Rechnungen": {
+			"invoice_currency": {
+				"type": "Select",
+				"config": {
+					"label": "Grundwährung",
+					"options": [
+						"AED - Dirham der Vereinigten Arabischen Emirate",
+						"AFN - Afghani",
+						"ALL - Albanischer Lek",
+						"AMD - Armenischer Dram",
+						"ANG - Niederländisch-Antillianischer Gulden",
+						"AOA - Angolanischer Kwanza",
+						"ARS - Argentinischer Peso",
+						"AUD - Australischer Dollar",
+						"AWG - Arubischer Florin",
+						"AZN - Aserbaidschanischer Manat",
+						"BAM - Bosnisch-Herzegowinische Konvertible Mark",
+						"BBD - Barbadischer Dollar",
+						"BDT - Bangladeschischer Taka",
+						"BGN - Bulgarischer Lew",
+						"BHD - Bahrainischer Dinar",
+						"BIF - Burundischer Franc",
+						"BMD - Bermudischer Dollar",
+						"BND - Bruneischer Dollar",
+						"BOB - Bolivianischer Boliviano",
+						"BRL - Brasilianischer Real",
+						"BSD - Bahamaischer Dollar",
+						"BTN - Bhutanischer Ngultrum",
+						"BWP - Botswanischer Pula",
+						"BYN - Belarussischer Rubel",
+						"BZD - Belizischer Dollar",
+						"CAD - Kanadischer Dollar",
+						"CDF - Kongoläsischer Franc",
+						"CHF - Schweizer Franken",
+						"CLP - Chilenischer Peso",
+						"CNY - Chinesischer Renminbi",
+						"COP - Kolumbianischer Peso",
+						"CRC - Costa-Ricanischer Colon",
+						"CUP - Kubanischer Peso",
+						"CVE - Kap-Verdischer Escudo",
+						"CZK - Tschechische Krone",
+						"DJF - Djiboutischer Franc",
+						"DKK - Dänische Krone",
+						"DOP - Dominikanischer Peso",
+						"DZD - Algerischer Dinar",
+						"EGP - Ägyptisches Pfund",
+						"ERN - Eritreischer Nakfa",
+						"ETB - Äthiopischer Birr",
+						"EUR - Euro",
+						"FJD - Fidschi-Dollar",
+						"FKP - Falkländisches Pfund",
+						"GBP - Britisches Pfund",
+						"GEL - Georgischer Lari",
+						"GHS - Ghanaischer Cedi",
+						"GIP - Gibraltarisches Pfund",
+						"GMD - Gambischer Dalasi",
+						"GNF - Guineischer Franc",
+						"GTQ - Guatemaltekischer Quetzal",
+						"GYD - Guyanischer Dollar",
+						"HKD - Hongkonger Dollar",
+						"HNL - Honduranischer Lempira",
+						"HTG - Haitianische Gourde",
+						"HUF - Ungarischer Forint",
+						"IDR - Indonesische Rupiah",
+						"ILS - Neuer Israelischer Schekel",
+						"INR - Indische Rupie",
+						"IQD - Irakischer Dinar",
+						"IRR - Iranischer Rial",
+						"ISK - Isländische Krone",
+						"JMD - Jamaikanischer Dollar",
+						"JOD - Jordanischer Dinar",
+						"JPY - Japanischer Yen",
+						"KES - Kenianischer Schilling",
+						"KGS - Kirgisischer Som",
+						"KHR - Kambodschanischer Riel",
+						"KMF - Komorischer Franc",
+						"KPW - Nordkoreanischer Won",
+						"KRW - Südkoreanischer Won",
+						"KWD - Kuwaitischer Dinar",
+						"KYD - Kaiman-Dollar",
+						"KZT - Kasachischer Tenge",
+						"LAK - Laotischer Kip",
+						"LBP - Libanesisches Pfund",
+						"LKR - Sri-Lankische Rupie",
+						"LRD - Liberianischer Dollar",
+						"LSL - Lesothischer Loti",
+						"LYD - Libyscher Dinar",
+						"MAD - Marokkanischer Dirham",
+						"MDL - Moldauischer Leu",
+						"MGA - Madagassischer Ariary",
+						"MKD - Nordmazedonischer Denar",
+						"MMK - Myanmarischer Kyat",
+						"MNT - Mongolischer Tögrög",
+						"MOP - Macao-Pataca",
+						"MRU - Mauretanischer Ouguiya",
+						"MUR - Mauritische Rupie",
+						"MVR - Maledivischer Rufiyaa",
+						"MWK - Malawischer Kwacha",
+						"MXN - Mexikanischer Peso",
+						"MYR - Malaysischer Ringgit",
+						"MZN - Mosambikanischer Metical",
+						"NAD - Namibischer Dollar",
+						"NGN - Nigerianische Naira",
+						"NIO - Nicaraguanischer Córdoba",
+						"NOK - Norwegische Krone",
+						"NPR - Nepalesische Rupie",
+						"NZD - Neuseeländischer Dollar",
+						"OMR - Omanischer Rial",
+						"PAB - Panamaischer Balboa",
+						"PEN - Peruanischer Sol",
+						"PGK - Papua-Neuguineischer Kina",
+						"PHP - Philippinischer Peso",
+						"PKR - Pakistanische Rupie",
+						"PLN - Polnischer Zloty",
+						"PYG - Paraguayischer Guaraní",
+						"QAR - Katarischer Riyal",
+						"RON - Rumänischer Leu",
+						"RSD - Serbischer Dinar",
+						"RUB - Russischer Rubel",
+						"RWF - Ruandischer Franc",
+						"SAR - Saudi-Arabischer Riyal",
+						"SBD - Salomonen-Dollar",
+						"SCR - Seychellische Rupie",
+						"SDG - Sudanesisches Pfund",
+						"SEK - Schwedische Krone",
+						"SGD - Singapurischer Dollar",
+						"SHP - St.-Helenisches Pfund",
+						"SLL - Sierraleonischer Leone",
+						"SOS - Somalischer Schilling",
+						"SRD - Surinamischer Dollar",
+						"STN - São-toménsische Dobra",
+						"SVC - El-Salvadorianischer Colón",
+						"SYP - Syrisches Pfund",
+						"SZL - Swasiland-Lilangeni",
+						"THB - Thailändischer Baht",
+						"TJS - Tadschikischer Somoni",
+						"TMT - Turkmenischer Manat",
+						"TND - Tunesischer Dinar",
+						"TOP - Tongaischer Paʻanga",
+						"TRY - Türkische Lira",
+						"TTD - Trinidad-und-Tobago-Dollar",
+						"TWD - Neuer Taiwanischer Dollar",
+						"TZS - Tansanischer Schilling",
+						"UAH - Ukrainische Hrywnja",
+						"UGX - Ugandischer Schilling",
+						"USD - US-Dollar",
+						"UYU - Uruguayischer Peso",
+						"UZS - Usbekischer Sum",
+						"VES - Venezolanischer Bolívar",
+						"VND - Vietnamesischer Dong",
+						"VUV - Vanuatuischer Vatu",
+						"WST - Samoanischer Tala",
+						"XAF - CFA-Franc BEAC",
+						"XCD - Ostkaribischer Dollar",
+						"XOF - CFA-Franc BCEAO",
+						"XPF - CFP-Franc",
+						"YER - Jemenitischer Rial",
+						"ZAR - Südafrikanischer Rand",
+						"ZMW - Sambischer Kwacha",
+						"ZWL - Simbabwischer Dollar"
+					],
+					"default_value": "CHF - Schweizer Franken"
+				}
+			},
+			"invoice_iban": {
+				"type": "Text",
+				"config": {
+					"label": "IBAN",
+					"placeholder": "CH00 0000 0000 0000 0000 0"
+				}
+			},
+			"invoice_bank": {
+				"type": "Text",
+				"config": {
+					"label": "Bank",
+					"placeholder": "Musterbank"
+				}
+			},
+			"invoice_bic": {
+				"type": "Text",
+				"config": {
+					"label": "BIC / SWIFT",
+					"placeholder": "XXXXXXXX"
+				}
+			},
+			"invoice_payment_terms_days": {
+				"type": "Number",
+				"config": {
+					"label": "Zahlungsfrist (Tage)",
+					"placeholder": "30"
+				}
+			},
+			"invoice_vat_rate": {
+				"type": "Number",
+				"config": {
+					"label": "MWST-Satz (%)",
+					"placeholder": "8.1"
+				}
+			},
+			"invoice_qr_bill": {
+				"type": "Boolean",
+				"config": {
+					"label": "QR-Zahlteil auf Rechnungen",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": true
 				}
 			}
 		}

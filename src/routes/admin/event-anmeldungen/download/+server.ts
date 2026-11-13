@@ -1,12 +1,10 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 import { listEventRegistrations } from '$lib/server/eventRegistrations';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 export const GET: RequestHandler = async ({ url }) => {
-	const secret = url.searchParams.get('secret');
-	if (!secret || secret !== env.ADMIN_SECRET) throw error(403, 'Kein Zugriff');
+	// Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
 
 	const uid = url.searchParams.get('uid') ?? '';
 	const all = await listEventRegistrations();

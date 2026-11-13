@@ -1,16 +1,9 @@
-type Entry = { schluessel?: string; wert?: string };
+import { websiteVariables } from '$lib/variables.js';
 
 /**
- * Baut eine Token-Map aus dem "Variablen"-Prismic-Dokument.
- * Jeder Eintrag mit Schlüssel + Wert wird als {{Schlüssel}} → Wert Token registriert.
+ * Token maps from the "Variablen" Prismic document in the page language (see $lib/variables.js):
+ * plain = {{Token}} → text, rich = {{Token}} alone in a paragraph → paragraphs
  */
-export function buildTokenMap(vData: unknown): Record<string, string> {
-	const tokenMap: Record<string, string> = {};
-	const entries: Entry[] = (vData as any)?.eintraege ?? [];
-	for (const entry of entries) {
-		if (entry.schluessel && entry.wert != null) {
-			tokenMap[entry.schluessel] = entry.wert;
-		}
-	}
-	return tokenMap;
+export function buildTokenMap(vData: Parameters<typeof websiteVariables>[0], lang = '') {
+	return websiteVariables(vData, lang);
 }

@@ -2,7 +2,7 @@
 
 ## Symptom
 
-Wenn in einem TextMitBild-Slice die Option `y_padding_same` (Abstand oben / unten gleich) aktiviert ist, hat der Slice auf Mobile **keinen** unteren Abstand. Auf Desktop funktioniert es korrekt.
+Wenn in einem TextMitBild-Slice die Option `y_padding_same` (Innerer Abstand oben / unten gleich) aktiviert ist, hat der Slice auf Mobile **keinen** unteren Abstand. Auf Desktop funktioniert es korrekt.
 
 ## Ursache (bekannt)
 

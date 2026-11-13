@@ -5,7 +5,7 @@ import AdresseUndMap from './AdresseUndMap/index.svelte';
 import Anleitung from './Anleitung/index.svelte';
 import Aufgaben from './Aufgaben/index.svelte';
 import Button from './Button/index.svelte';
-import GoogleMapEinbetten from './GoogleMapEinbetten/index.svelte';
+import MapEinbetten from './MapEinbetten/index.svelte';
 import Event from './Event/index.svelte';
 import Formular from './Formular/index.svelte';
 import Galerie from './Galerie/index.svelte';
@@ -35,7 +35,7 @@ export const components = {
 	anleitung: Anleitung,
 	aufgaben: Aufgaben,
 	button: Button,
-	code_einbetten: GoogleMapEinbetten,
+	code_einbetten: MapEinbetten,
 	event: Event,
 	form: Formular,
 	galerie: Galerie,

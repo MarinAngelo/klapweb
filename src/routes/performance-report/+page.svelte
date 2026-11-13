@@ -169,7 +169,7 @@
 							>
 						</svg>
 						<div class="gauge-label">{cat.label}</div>
-						<div class="gauge-status" style="color:{color}">{scoreLabel(score)}</div>
+						<div class="gauge-status" style:color>{scoreLabel(score)}</div>
 					</div>
 				{/each}
 			</div>
@@ -177,13 +177,13 @@
 			<!-- Legend -->
 			<div class="legend">
 				<div class="legend-item">
-					<span class="dot" style="background:#0cce6b"></span>90–100 Gut
+					<span class="dot [background:#0cce6b]"></span>90–100 Gut
 				</div>
 				<div class="legend-item">
-					<span class="dot" style="background:#ffa400"></span>50–89 Verbesserungsbedarf
+					<span class="dot [background:#ffa400]"></span>50–89 Verbesserungsbedarf
 				</div>
 				<div class="legend-item">
-					<span class="dot" style="background:#ff4e42"></span>0–49 Schlecht
+					<span class="dot [background:#ff4e42]"></span>0–49 Schlecht
 				</div>
 			</div>
 

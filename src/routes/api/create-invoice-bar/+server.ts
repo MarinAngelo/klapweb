@@ -2,9 +2,11 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { saveManualInvoice } from '$lib/server/invoices';
 import { listCustomers, saveCustomer } from '$lib/server/customers';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
+import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const body = await request.json();
 
@@ -71,6 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			status: 'gespeichert',
 			paymentStatus: 'offen',
 			paymentMethod: 'bar',
+			source: 'bar',
 			vorname,
 			nachname,
 			firma: firma || undefined,
@@ -112,13 +115,13 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 
 			const resendKey = env.RESEND_API_KEY;
-			const fromEmail = env.INVOICE_FROM_EMAIL;
+			const fromEmail = await getMailFrom();
 			if (resendKey && fromEmail) {
 				try {
 					const { Resend } = await import('resend');
 					const resend = new Resend(resendKey);
-					const fromName = env.INVOICE_FROM_NAME;
-					const fromWithName = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
+					// Sender incl. name from the settings («Absender-Name»)
+					const fromWithName = fromEmail;
 					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
 					const fmt = (n: number) =>
 						new Intl.NumberFormat('de-CH', {
@@ -139,7 +142,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 
 					// Benachrichtigung an Eventverantwortliche/n
-					const notifyEmail = eventManagerEmail || env.INVOICE_TO_EMAIL;
+					const notifyEmail = eventManagerEmail || (await getNotifyTo());
 					if (notifyEmail) {
 						const fieldLines = labels
 							? Object.entries(labels as Record<string, string>)

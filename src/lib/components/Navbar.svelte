@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { PrismicLink, PrismicText } from '@prismicio/svelte';
+	import { _ } from '$lib/stores/i18n';
+	import { PrismicText } from '@prismicio/svelte';
+	import PrismicLink from '$lib/components/PrismicLink.svelte';
 	import { page } from '$app/stores'; // NEU: Für die Pfad-Überwachung
 	import Dropdown from './Dropdown.svelte';
 	import SvgIcon from './SvgIcons.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import CartLink from './CartLink.svelte';
+	import { cartCount } from '$lib/stores/cart';
 	// import { theme } from '../stores/theme';
 	// import { get } from 'svelte/store';
 	import { isMenuOpen } from '../stores/isMenuOpen';
@@ -23,6 +27,8 @@
 	export let headerLinkFont;
 	export let userBackendActive: boolean = false;
 	export let user: { name: string; email: string } | null = null;
+	/** Design-Vorlage «Animiertes Menü-Symbol (Mobile)»: two lines that turn into an X */
+	export let animatedMenuIcon: boolean = false;
 
 	// const { headerLinkFont } = get(theme);
 
@@ -68,10 +74,22 @@
 		}
 	}
 
+	// Crossing the desktop breakpoint (e.g. window resized while the mobile menu is open):
+	// close the mobile menu, otherwise its mobile-only styles (scroll container, body scroll
+	// lock) stay active on desktop
+	let desktopQuery: MediaQueryList | null = null;
+	function handleDesktopChange(e: MediaQueryListEvent) {
+		if (e.matches) isMenuOpen.set(false);
+		// Open submenus keep the position measured for the other layout → close them as well
+		window.dispatchEvent(new CustomEvent('close-dropdown'));
+	}
+
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			window.addEventListener('scroll', handleWindowScroll, { passive: true });
 			window.addEventListener('touchmove', handleTouchmove, { passive: true });
+			desktopQuery = window.matchMedia('(min-width: 1024px)');
+			desktopQuery.addEventListener('change', handleDesktopChange);
 		}
 	});
 
@@ -80,6 +98,7 @@
 			window.removeEventListener('scroll', handleWindowScroll);
 			window.removeEventListener('touchmove', handleTouchmove);
 		}
+		desktopQuery?.removeEventListener('change', handleDesktopChange);
 		if (typeof document !== 'undefined') {
 			document.body.style.overflow = '';
 		}
@@ -107,19 +126,34 @@
 </script>
 
 <nav
-	aria-label="Hauptnavigation"
+	aria-label={$_('Hauptnavigation')}
 	class="flex items-center justify-between flex-wrap p-6 pr-0 lg:py-0 lg:pr-6"
-	style="font-family: {headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'};"
+	style:font-family={headerLinkFont ? headerLinkFont : 'var(--page-font), sans-serif'}
 >
-	<div class="flex lg:hidden h-full items-center">
+	<div class="flex lg:hidden h-full items-center gap-3">
+		<!-- Mobile: cart stays visible next to the burger -->
+		<CartLink color={headerLinkColor} />
 		<button
 			class="btn btn-square btn-ghost h-10 w-10"
 			on:click={toggleMenu}
-			aria-label="Menü"
+			aria-label={$_('Menü')}
 			aria-expanded={$isMenuOpen}
 			aria-controls="main-nav-menu"
 		>
-			{#if $isMenuOpen}
+			{#if animatedMenuIcon}
+				<svg
+					class="menu-duo"
+					class:open={$isMenuOpen}
+					viewBox="0 0 24 24"
+					width="1.5rem"
+					height="1.5rem"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path class="menu-duo-line menu-duo-top" d="M3 9H21" stroke={headerLinkColor} />
+					<path class="menu-duo-line menu-duo-bottom" d="M3 15H21" stroke={headerLinkColor} />
+				</svg>
+			{:else if $isMenuOpen}
 				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
 				<SvgIcon name="menu" color={headerLinkColor} size="1.5rem" />
@@ -131,24 +165,28 @@
 		id="main-nav-menu"
 		bind:this={menuEl}
 		class={`${
-			$isMenuOpen ? 'fixed left-0 right-0 z-50 flex flex-col items-start text-left p-8' : 'hidden'
+			$isMenuOpen
+				? 'fixed left-0 right-0 bottom-0 z-50 flex flex-col items-start text-left p-8 overflow-y-auto lg:overflow-visible'
+				: 'hidden'
 		} lg:static lg:block lg:w-auto lg:max-w-none lg:shadow-none lg:p-0`}
-		style={$isMenuOpen
-			? `top: ${$headerHeight}px; bottom: 0; background-color: ${headerBgColor}; overflow-y: auto;`
-			: ''}
+		style:top={$isMenuOpen
+			? /* 1px overlap with the header → no hairline on fractional device pixel ratios */ `${Math.max(0, $headerHeight - 1)}px`
+			: undefined}
+		style:background-color={$isMenuOpen ? headerBgColor : undefined}
 	>
 		<ul
 			class="flex flex-col items-start text-left gap-6 w-full
                    lg:flex-row lg:items-center lg:text-center lg:gap-6 lg:w-auto"
 		>
 			{#each navigation.data?.links as item}
-				{#if item.dropdown_link === true}
+				{#if item.dropdown_link === true && !item.sub_link}
 					{@const subItems = getSubItems(item, navigation.data.links)}
 					{#if subItems.length > 0}
 						<li class="text-xl block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}
 								{subItems}
+								allLinks={navigation.data.links}
 								{headerBgColor}
 								{headerLinkColor}
 								{headerLinkFontSize}
@@ -160,7 +198,8 @@
 					{:else if item.link?.url}
 						<li
 							class="font-semibold block mt-4 lg:inline-block lg:mt-0"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 						>
 							<PrismicLink field={item.link} on:click={() => isMenuOpen.set(false)}>
 								<PrismicText field={item.label} />
@@ -172,13 +211,14 @@
 						class="text-xl font-semibold {currentPath === item.link.url
 							? 'underline'
 							: ''} hover:no-underline"
-						style="color: {headerLinkColor}; --hover-text-color: {headerLinkHoverColor};"
+						style:color={headerLinkColor}
+						style:--hover-text-color={headerLinkHoverColor}
 					>
 						<PrismicLink
 							field={item.link}
 							on:click={() => isMenuOpen.set(false)}
-							class="transition nav-link"
-							style="color: inherit; font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
+							class="transition nav-link !text-inherit"
+							style="font-size: {headerLinkFontSize}rem; --hover-text-color: {headerLinkHoverColor};"
 						>
 							<PrismicText field={item.label} />
 						</PrismicLink>
@@ -189,8 +229,16 @@
 			{#if showSwitcher && lang && locales}
 				<li
 					class="mt-4 pt-6 border-t border-white/10 w-full lg:w-auto lg:mt-0 lg:pt-0 lg:border-none lg:ml-4"
+					style:color={headerLinkColor}
+					style:--hover-text-color={headerLinkHoverColor}
 				>
 					<LanguageSwitcher {lang} {locales} {allAlternates} />
+				</li>
+			{/if}
+
+			{#if $cartCount > 0}
+				<li class="hidden lg:flex lg:items-center lg:ml-4">
+					<CartLink color={headerLinkColor} fontSize={headerLinkFontSize} />
 				</li>
 			{/if}
 
@@ -203,7 +251,8 @@
 							href="/konto"
 							on:click={() => isMenuOpen.set(false)}
 							class="nav-link flex items-center gap-1.5 transition"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 							title={user.name}
 						>
 							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
@@ -214,10 +263,11 @@
 							href="/konto/anmelden"
 							on:click={() => isMenuOpen.set(false)}
 							class="nav-link flex items-center gap-1.5 transition"
-							style="color: {headerLinkColor}; font-size: {headerLinkFontSize}rem;"
+							style:color={headerLinkColor}
+							style:font-size="{headerLinkFontSize}rem"
 						>
 							<SvgIcon name="user" color={headerLinkColor} size="1.25em" />
-							<span class="lg:hidden">Anmelden</span>
+							<span class="lg:hidden">{$_('Anmelden')}</span>
 						</a>
 					{/if}
 				</li>
@@ -227,6 +277,25 @@
 </nav>
 
 <style>
+	/* Animated menu icon: two lines move to the centre and rotate into an X */
+	.menu-duo-line {
+		stroke-width: 2;
+		stroke-linecap: round;
+		transform-box: view-box;
+		transform-origin: 12px 12px;
+		transition: transform 0.3s ease;
+	}
+	.menu-duo.open .menu-duo-top {
+		transform: translateY(3px) rotate(45deg) scaleX(0.8);
+	}
+	.menu-duo.open .menu-duo-bottom {
+		transform: translateY(-3px) rotate(-45deg) scaleX(0.8);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.menu-duo-line {
+			transition: none;
+		}
+	}
 	/* Override global li { mb-4 } — nav li must have no bottom margin for correct flex centering */
 	nav :global(li) {
 		margin-bottom: 0;

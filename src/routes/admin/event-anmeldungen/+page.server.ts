@@ -1,16 +1,10 @@
 import type { PageServerLoad, Actions } from './$types';
-import { error } from '@sveltejs/kit';
 import { listEventRegistrations, deleteEventRegistration } from '$lib/server/eventRegistrations';
 import { createClient } from '$lib/prismicio';
-import { env } from '$env/dynamic/private';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async ({ url, fetch }) => {
-	const secret = env.ADMIN_SECRET;
-	const provided = url.searchParams.get('secret');
-	if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+export const load: PageServerLoad = async ({ fetch }) => {
 	const registrations = await listEventRegistrations().catch(() => []);
 
 	// Event-Daten (start_date) für alle vorkommenden UIDs laden
@@ -34,25 +28,18 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		);
 	}
 
-	return { registrations, eventDates, secret: provided };
+	return { registrations, eventDates };
 };
 
 export const actions: Actions = {
-	delete: async ({ request, url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
-
+	delete: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id') as string;
 		if (id) await deleteEventRegistration(id);
 		return { ok: true };
 	},
 
-	deleteAll: async ({ url }) => {
-		const secret = env.ADMIN_SECRET;
-		const provided = url.searchParams.get('secret');
-		if (!secret || provided !== secret) throw error(403, 'Kein Zugriff');
+	deleteAll: async () => {
 		const all = await listEventRegistrations();
 		await Promise.all(all.map((r) => deleteEventRegistration(r.id)));
 		return { ok: true };

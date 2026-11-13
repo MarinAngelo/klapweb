@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { t } from '$lib/i18n/translations';
 	import { page } from '$app/stores';
 
@@ -42,7 +43,7 @@
 		<p class="text-red-600 font-semibold">{responsible_email}</p>
 	{:else if responsible_email}
 		<p>
-			<strong>E-Mail:</strong>
+			<strong>{$_('E-Mail')}:</strong>
 			<a href={`mailto:${responsible_email}`} class="hover:underline">{responsible_email}</a>
 		</p>
 	{/if}

@@ -8,6 +8,7 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { headingAnchor } from '$lib/actions/headingAnchor';
 	import Button from '$lib/components/Button.svelte';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 
 	export let slice: Content.TextWithImageSlice;
 	export let slices: any[] | undefined = undefined;
@@ -45,7 +46,11 @@
 	$: mobileImageFirst = p.mobile_image_first ?? false;
 	$: textCenterV = p.text_center_v ?? false;
 	$: textCenterH = p.text_center_h ?? false;
-	$: fullscreen = p.fullscreen ?? false;
+	// «Vollbild (100vh)»: not in «Standard» (moved to «Titelbereich»); header overlap only in «Titelbereich»
+	const isTitelbereich = variation === 'titelbereich';
+	$: fullscreen = variation !== 'default' && ((p as any).fullscreen ?? false);
+	$: bannerOverlap = isTitelbereich && ((p as any).banner_overlap ?? false);
+	$: headerBgOpacityRaw = isTitelbereich ? ((p as any).header_bg_opacity ?? null) : null;
 	$: visible = isVisibleForPlan(p.feature_gate, $planFilter);
 
 	const rowGapMap: Record<string, string> = {
@@ -70,6 +75,8 @@
 	$: imageRound = !!p.image_round;
 	$: lightbox = !!p.lightbox;
 	$: isFullWidth = !!p.full_width;
+	// Overlapping the header: the section starts behind it and fills the whole viewport
+	$: fullscreenHeight = bannerOverlap ? '100dvh' : `calc(100dvh - ${$headerHeight}px)`;
 
 	$: defaultSliderImages = (() => {
 		const imgs: any[] = [];
@@ -114,6 +121,8 @@
 	};
 
 	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: marginTopSize = p.margin_top as string | undefined;
+	$: innerApply = p.inner_apply ?? false;
 	$: computedPaddingTopClass = yPaddingMobileVal
 		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
 				.filter(Boolean)
@@ -126,26 +135,41 @@
 					.join(' ')
 			: ''
 		: undefined;
+
+	// CMS colors as CSS variables only (app.css › .color-scope)
+	$: sectionStyle = [
+		`--scope-bg: ${innerApply ? 'var(--page-bg-color)' : p.bg_color || 'var(--page-bg-color)'}`,
+		`--scope-color: ${p.color || 'var(--page-color)'}`,
+		p.color && `--page-color: ${p.color}`,
+		fullscreen && `--fullscreen-height: ${fullscreenHeight}`
+	]
+		.filter(Boolean)
+		.join('; ');
 </script>
+
+{#if isTitelbereich}
+	<BannerThemeSync {bannerOverlap} {headerBgOpacityRaw} />
+{/if}
 
 {#if visible}
 	{#if isMulti}
 		<Bounded
 			as="section"
 			{yPadding}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
 			fullWidth={isFullWidth}
 			noPadding={isFullWidth}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}"
+			class="color-scope"
+			style={sectionStyle}
 		>
 			{#if p.section_title}
 				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
 			{/if}
-			<div class="flex flex-col" style="gap: {rowGap};">
+			<div class="flex flex-col" style:gap={rowGap}>
 				{#each multiItemsWithImages as item, i}
 					<ImageTextGrid
 						image={isFilled.image(item.image) ? item.image : null}
@@ -183,34 +207,40 @@
 			as="section"
 			yPadding={fullscreen ? 'none' : yPadding}
 			fullHeight={fullscreen}
-			noPadding={mobileVollbreite}
+			fullWidth={fullscreen || isFullWidth}
+			noPadding={fullscreen || mobileVollbreite}
 			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
 			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
-			style="background-color: {p.bg_color || 'var(--page-bg-color)'}; color: {p.color ||
-				'var(--page-color)'};{p.color ? ` --page-color: ${p.color};` : ''}{fullscreen
-				? ` min-height: calc(100vh - ${$headerHeight}px);`
-				: ''}"
+			{marginTopSize}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+			style={sectionStyle}
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			animate={anim.animate}
 			animationOptions={anim.options}
-			class={mobileVollbreite ? 'md:px-6' : ''}
+			class={`color-scope ${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
 		>
-			<div class={fullscreen ? 'flex-1 flex items-center' : ''}>
+			<!-- «Hintergrund als Kasten» + «Vollbreite auf Mobile»: Bounded drops the inner padding
+			     (noPadding, edge-to-edge on mobile) → give the box its side padding on desktop -->
+			<div class={fullscreen ? 'h-full flex-1' : innerApply && mobileVollbreite ? 'md:px-14' : ''}>
 				<ImageTextGrid
 					image={isFilled.image(p.image) ? p.image : null}
 					images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
 					text={p.text}
 					imageLeft={isBildLinks}
 					imageBgColor={p.bg_color || 'var(--page-bg-color)'}
-					imageRound={p.image_round}
+					imageRound={fullscreen ? false : p.image_round}
 					mobilePadding={mobileVollbreite ? '1.5rem' : ''}
-					noRoundMobile={mobileVollbreite}
+					desktopPadding={fullscreen ? 'clamp(2rem, 5vw, 5rem)' : ''}
+					noRoundMobile={fullscreen || mobileVollbreite}
+					noRound={fullscreen}
 					mobileTextFirst={mobileImageFirst ? false : !isBildLinks && mobileVollbreite}
+					columnGap={fullscreen ? 'kein' : 'mittel'}
 					{lightbox}
-					{textCenterV}
-					{textCenterH}
+					textCenterV={fullscreen || textCenterV}
+					textCenterH={fullscreen || textCenterH}
 					{fullscreen}
+					headerOverlap={bannerOverlap}
 				>
 					{#if p.buttonText && isFilled.link(p.buttonLink)}
 						<Button
@@ -225,3 +255,25 @@
 		</Bounded>
 	{/if}
 {/if}
+
+<style>
+	:global(.fullscreen-text-image) {
+		height: auto;
+		min-height: 0;
+		overflow: visible;
+	}
+
+	@media (max-width: 767px) {
+		:global(.fullscreen-text-image > div) {
+			flex: none;
+		}
+	}
+
+	@media (min-width: 768px) {
+		:global(.fullscreen-text-image) {
+			height: var(--fullscreen-height);
+			min-height: var(--fullscreen-height);
+			overflow: hidden;
+		}
+	}
+</style>

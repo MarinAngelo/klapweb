@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { asLink, type RTLinkNode } from '@prismicio/client';
+	import type { RTLinkNode } from '@prismicio/client';
+	import { linkHref } from '$lib/stores/linkContext';
 
 	export let node: RTLinkNode;
 
-	const href = asLink(node.data as any); // node.data ist das eigentliche Link-Feld
+	// node.data is the link field; ressource/leistung URLs + /<lang> prefix via linkHref
+	$: href = $linkHref(node.data) ?? undefined;
 </script>
 
 <a

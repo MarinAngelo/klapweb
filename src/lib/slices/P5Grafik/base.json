@@ -212,7 +212,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -262,7 +263,7 @@
 						"customtypes": [
 							{
 								"id": "font",
-								"fields": ["name", "provider", "variants", "adobeFontId"]
+								"fields": ["name", "provider", "variants"]
 							}
 						]
 					}
@@ -293,7 +294,7 @@
 				"button_hover_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche T & R Mouseover",
+						"label": "Text & Rahmen wenn Maus drüber",
 						"placeholder": ""
 					}
 				},
@@ -307,7 +308,7 @@
 				"button_hover_bg_color": {
 					"type": "Color",
 					"config": {
-						"label": "Schaltfläche Hintergrund Mouseover",
+						"label": "Hintergrund wenn Maus drüber",
 						"placeholder": ""
 					}
 				},

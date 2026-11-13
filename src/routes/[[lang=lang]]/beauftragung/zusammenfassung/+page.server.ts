@@ -1,6 +1,8 @@
 import { createClient } from '$lib/prismicio';
 import { calcDisplayPrice, parseCurrencyCode } from '$lib/pricing';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
+import { parseCartSpec, serializeCart } from '$lib/utils/cartSpec';
+import { resolveCartLines } from '$lib/server/cartLines';
 
 export const prerender = false;
 
@@ -14,7 +16,6 @@ export interface ProductData {
 	label: string;
 	price: number | null;
 	displayAmount: number | null;
-	stripeUrl: string | null;
 	billingType: string | null;
 	addons: AddonData[];
 }
@@ -34,12 +35,33 @@ export async function load({ fetch, url, parent }) {
 
 	// Payment methods — default to true if not explicitly set to false
 	const paymentMethods = {
-		stripe: (settings.data as any).payment_stripe_enabled !== false,
 		rechnung: (settings.data as any).payment_rechnung_enabled !== false,
 		bar: (settings.data as any).payment_bar_enabled !== false
 	};
 
 	const globalDepositPct: number | null = (settings.data as any).global_deposit_percent ?? null;
+
+	// Cart checkout: several Leistungen / package pages, prices resolved here (never from the browser)
+	const cartRefs = parseCartSpec(url.searchParams.get('warenkorb'));
+	if (cartRefs.length) {
+		const client = createClient({ fetch });
+		const cartLines = await resolveCartLines(client, cartRefs, lang, globalDepositPct);
+		return {
+			product: null,
+			cartLines,
+			cartSpec: serializeCart(cartRefs),
+			pageTitle,
+			checkoutButtonText,
+			baseCurrency,
+			additionalCodes,
+			rates,
+			paymentMethods,
+			barDescription: null,
+			eventTexts: null,
+			isEventCheckout: false,
+			eventUid: ''
+		};
+	}
 
 	const serviceUid = url.searchParams.get('service') ?? '';
 	const isEventCheckout = url.searchParams.get('event_checkout') === 'true';
@@ -64,7 +86,6 @@ export async function load({ fetch, url, parent }) {
 			const basePrice = (d.ticket_price_chf as number) ?? null;
 			const displayAmount = calcDisplayPrice(basePrice, null, null);
 			const eventPaymentMethods = {
-				stripe: false,
 				rechnung: (d.payment_rechnung_enabled as boolean) !== false,
 				bar: (d.payment_bar_enabled as boolean) !== false
 			};
@@ -98,7 +119,6 @@ export async function load({ fetch, url, parent }) {
 					label: (d.title as string) || serviceUid,
 					price: basePrice,
 					displayAmount,
-					stripeUrl: null,
 					billingType: 'Einmalig',
 					addons: []
 				} satisfies ProductData,
@@ -120,7 +140,6 @@ export async function load({ fetch, url, parent }) {
 
 		const pageDoc = await client.getByUID('page', serviceUid, { lang });
 		const d = pageDoc.data as Record<string, unknown>;
-		const stripeLink = d.ecommerce_stripe_url as { url?: string } | null | undefined;
 		const basePrice = (d.ecommerce_price_chf as number) ?? null;
 		const discountPct = (d.ecommerce_discount_percent as number) ?? null;
 		const depositPct = (d.ecommerce_deposit_percent as number) ?? globalDepositPct;
@@ -160,7 +179,6 @@ export async function load({ fetch, url, parent }) {
 					: serviceUid,
 				price: basePrice,
 				displayAmount,
-				stripeUrl: stripeLink?.url ?? null,
 				billingType,
 				addons
 			} satisfies ProductData,

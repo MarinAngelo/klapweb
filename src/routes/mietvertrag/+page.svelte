@@ -118,20 +118,20 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<div class="min-h-screen" style="background:#f4f5f7; font-family: inherit;">
+<div class="min-h-screen [background:#f4f5f7] [font-family:inherit]">
 	<!-- Header -->
-	<div style="background:#1e2d5a; color:#fff; padding:2rem 0;">
-		<div class="mx-auto px-6" style="max-width:800px;">
-			<h1 style="margin:0; font-size:1.6rem; font-weight:700; letter-spacing:-0.02em;">
+	<div class="[background:#1e2d5a] [color:#fff] [padding:2rem_0]">
+		<div class="mx-auto px-6 [max-width:800px]">
+			<h1 class="m-0 [font-size:1.6rem] font-bold [letter-spacing:-0.02em]">
 				Mietvertrag Generator
 			</h1>
-			<p style="margin:0.4rem 0 0; opacity:0.7; font-size:0.9rem;">
+			<p class="[margin:0.4rem_0_0] [opacity:0.7] [font-size:0.9rem]">
 				Kanton Zürich · Wohn- und Gewerberäume · OR Art. 253 ff.
 			</p>
 		</div>
 	</div>
 
-	<form on:submit|preventDefault={submit} class="mx-auto px-6 py-8" style="max-width:800px;">
+	<form on:submit|preventDefault={submit} class="mx-auto px-6 py-8 [max-width:800px]">
 		<!-- ── Vermieter ──────────────────────────────────────────────────── -->
 		<section class="card">
 			<h2 class="section-title">Vermieter</h2>
@@ -210,7 +210,7 @@
 				</div>
 			</div>
 
-			<p class="hint" style="margin-top:1.25rem;">2. Mieter/in (optional)</p>
+			<p class="hint [margin-top:1.25rem]">2. Mieter/in (optional)</p>
 			<div class="grid3">
 				<div class="field">
 					<label>Vorname</label>
@@ -231,10 +231,8 @@
 		<section class="card">
 			<div class="toggle-header">
 				<div>
-					<h2 class="section-title" style="margin:0; border:none; padding:0;">Untermiete</h2>
-					<p class="hint" style="margin:.2rem 0 0;">
-						Hauptmieter vermietet Teile weiter (OR Art. 262)
-					</p>
+					<h2 class="section-title m-0 border-0 p-0">Untermiete</h2>
+					<p class="hint [margin:.2rem_0_0]">Hauptmieter vermietet Teile weiter (OR Art. 262)</p>
 				</div>
 				<label class="toggle-switch">
 					<input type="checkbox" bind:checked={untermiete} />
@@ -243,7 +241,7 @@
 			</div>
 
 			{#if untermiete}
-				<div style="margin-top:1.25rem;">
+				<div class="[margin-top:1.25rem]">
 					{#each Array.from({ length: untermietersAnzahl }, (_, i) => i + 1) as nr}
 						<div class="untermieter-block">
 							<p class="hint">Untermieter/in {nr}{nr === 1 ? ' *' : ' (optional)'}</p>
@@ -331,7 +329,7 @@
 						{/if}
 					</div>
 
-					<div class="grid2" style="margin-top:1rem;">
+					<div class="grid2 [margin-top:1rem]">
 						<div class="field span2">
 							<label>Untervermietete Räume / Teile <span class="req">*</span></label>
 							<input
@@ -354,8 +352,8 @@
 								/>
 							</div>
 						</div>
-						<div class="field" style="align-self:end;">
-							<p class="hint" style="margin:0; font-size:.75rem; line-height:1.4;">
+						<div class="field [align-self:end]">
+							<p class="hint m-0 [font-size:.75rem] [line-height:1.4]">
 								Darf den anteiligen Hauptmietzins nicht übermässig übersteigen (OR Art. 262 Abs. 2
 								lit. b).
 							</p>
@@ -587,7 +585,7 @@
 			<p class="error">{error}</p>
 		{/if}
 
-		<div style="text-align:center; padding:1rem 0 2rem;">
+		<div class="text-center [padding:1rem_0_2rem]">
 			<button type="submit" class="btn-primary" disabled={loading}>
 				{#if loading}
 					<span class="spinner"></span> PDF wird generiert …
@@ -595,7 +593,7 @@
 					PDF generieren & herunterladen
 				{/if}
 			</button>
-			<p style="margin-top:.75rem; font-size:.8rem; color:#888;">
+			<p class="[margin-top:.75rem] [font-size:.8rem] [color:#888]">
 				Dieser Vertrag basiert auf OR Art. 253 ff. · Bitte durch Anwalt oder Verband prüfen lassen.
 			</p>
 		</div>

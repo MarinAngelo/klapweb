@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Button from '$lib/components/Button.svelte';
+	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import { _ } from '$lib/stores/i18n';
 	export let data: PageData;
 
-	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
-	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Adresse', 'Quelle', ''];
-	$: secret = $page.url.searchParams.get('secret') ?? '';
+	// Column headers are i18n keys
+	const cols = ['Datum', 'Name', 'E-Mail', 'Firma', 'Adresse', 'Sprache', 'Quelle', ''];
 
 	let isFormOpen = false;
 	let vorname = '';
@@ -19,11 +19,18 @@
 	let plz = '';
 	let ort = '';
 	let land = '';
+	// Default: Prismic master language (first entry)
+	let lang = data.languages[0]?.id ?? '';
 	let isLoading = false;
 
 	function confirmDelete(e: SubmitEvent, name: string) {
-		if (!confirm(`${name} wirklich löschen?`)) return;
+		if (!confirm(`${name} ${$_('wirklich löschen?')}`)) return;
 		(e.currentTarget as HTMLFormElement).submit();
+	}
+
+	// Submit the row form as soon as a language is chosen
+	function submitOnChange(event: Event) {
+		(event.currentTarget as HTMLSelectElement).form?.requestSubmit();
 	}
 
 	function fmt(c: (typeof data.customers)[0]) {
@@ -36,17 +43,22 @@
 			minute: '2-digit'
 		});
 		const adresse = [c.adresse, c.plz, c.ort].filter(Boolean).join(', ') || '–';
-		const quelle = c.paymentMethod === 'manuell' ? 'Manuell erfasst' : 'E-Commerce';
+		const quelle =
+			c.paymentMethod === 'manuell'
+				? 'Manuell erfasst'
+				: c.paymentMethod === 'terminbuchung'
+					? 'Terminbuchung'
+					: 'E-Commerce';
 		return { date, name, email: c.email ?? '–', firma: c.firma ?? '–', adresse, quelle };
 	}
 
-	const handleCreate: SubmitFunction = async ({ formData }) => {
+	const handleCreate: SubmitFunction = async () => {
 		isLoading = true;
 
 		return async ({ result }) => {
 			isLoading = false;
 			if (result.type === 'success') {
-				alert('Kunde erfasst');
+				alert($_('Kunde erfasst'));
 				vorname = '';
 				nachname = '';
 				firma = '';
@@ -55,243 +67,197 @@
 				plz = '';
 				ort = '';
 				land = '';
+				lang = data.languages[0]?.id ?? '';
 				isFormOpen = false;
 				// Reload to show new customer
 				location.reload();
 			} else if (result.type === 'failure') {
-				alert('Fehler beim Erfassen: ' + (result.data?.message || 'Unbekannter Fehler'));
+				alert(`${$_('Fehler beim Erfassen')}: ${result.data?.message || $_('Unbekannter Fehler')}`);
 			} else if (result.type === 'error') {
-				alert('Fehler beim Erfassen: ' + (result.error?.message || 'Server-Fehler'));
+				alert(`${$_('Fehler beim Erfassen')}: ${result.error?.message || $_('Server-Fehler')}`);
 			} else {
-				alert('Fehler beim Erfassen: Unbekannter Fehler');
+				alert(`${$_('Fehler beim Erfassen')}: ${$_('Unbekannter Fehler')}`);
 			}
+		};
+	};
+
+	const handleSetLang: SubmitFunction = () => {
+		return async ({ result, update }) => {
+			if (result.type === 'failure' || result.type === 'error') {
+				alert($_('Sprache konnte nicht gespeichert werden'));
+			}
+			await update({ reset: false });
 		};
 	};
 </script>
 
-<svelte:head><title>Kundenliste</title></svelte:head>
+<svelte:head><title>{$_('Kundenliste')}</title></svelte:head>
 
-<div style="font-family: sans-serif; padding: 2rem; max-width: 1200px; margin: 0 auto;">
-	<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-		<h1 style="font-size: 1.5rem; font-weight: bold; margin: 0;">
-			Kunden ({data.customers.length})
-		</h1>
-		<div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
-			<Button
-				href="/admin/dashboard?secret={secret}"
-				text="← Dashboard"
-				color="#374151"
-				bgColor="transparent"
-				hoverColor="#111827"
-				hoverBgColor="transparent"
-				size="sm"
-				mb={false}
-			/>
-			<form
-				method="POST"
-				action="?/deleteAll&secret={secret}"
-				on:submit={(e) => {
-					if (!confirm('Alle Kunden löschen?')) e.preventDefault();
-				}}
-			>
-				<input type="hidden" name="secret" value={secret} />
-				<Button
-					text="Alle löschen"
-					color="#dc2626"
-					bgColor="transparent"
-					hoverColor="#991b1b"
-					hoverBgColor="transparent"
-					size="sm"
-					mb={false}
-				/>
-			</form>
-		</div>
-	</div>
+<div class="admin-container">
+	<AdminHeader title={$_('Kunden')} count={data.customers.length}>
+		<form
+			method="POST"
+			action="?/deleteAll"
+			on:submit={(e) => {
+				if (!confirm($_('Alle Kunden löschen?'))) e.preventDefault();
+			}}
+		>
+			<button type="submit" class="admin-btn admin-btn-danger-outline">{$_('Alle löschen')}</button>
+		</form>
+	</AdminHeader>
 
 	{#if data.blobError}
-		<p style="color: red; font-family: monospace; font-size: 0.8rem;">Fehler: {data.blobError}</p>
+		<p class="admin-notice admin-notice-error admin-mono">{$_('Fehler')}: {data.blobError}</p>
 	{/if}
 
-	<!-- Neuer Kunde Form -->
-	<div
-		style="margin-bottom: 2rem; background: #f9fafb; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e5e7eb;"
-	>
+	<!-- Neuer Kunde -->
+	<section class="admin-card">
 		<button
+			type="button"
 			on:click={() => (isFormOpen = !isFormOpen)}
-			style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 500;"
+			class="admin-btn admin-btn-primary"
 		>
-			{isFormOpen ? '✕ Formular schliessen' : '+ Neuer Kunde'}
+			{isFormOpen ? `✕ ${$_('Formular schliessen')}` : `+ ${$_('Neuer Kunde')}`}
 		</button>
 
 		{#if isFormOpen}
 			<form
 				method="POST"
-				action="?/create&secret={secret}"
+				action="?/create"
 				use:enhance={handleCreate}
-				style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;"
+				class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2"
 			>
-				<input type="hidden" name="secret" value={secret} />
-
-				<div style="grid-column: 1;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Vorname *</label
-					>
+				<div>
+					<label for="kunde-vorname" class="admin-label">{$_('Vorname')} *</label>
 					<input
+						id="kunde-vorname"
 						type="text"
 						name="vorname"
 						bind:value={vorname}
 						required
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+						class="admin-input"
 					/>
 				</div>
-
-				<div style="grid-column: 2;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Nachname *</label
-					>
+				<div>
+					<label for="kunde-nachname" class="admin-label">{$_('Nachname')} *</label>
 					<input
+						id="kunde-nachname"
 						type="text"
 						name="nachname"
 						bind:value={nachname}
 						required
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+						class="admin-input"
 					/>
 				</div>
-
-				<div style="grid-column: 1;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Firma</label
-					>
-					<input
-						type="text"
-						name="firma"
-						bind:value={firma}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
-					/>
+				<div>
+					<label for="kunde-firma" class="admin-label">{$_('Firma')}</label>
+					<input id="kunde-firma" type="text" name="firma" bind:value={firma} class="admin-input" />
 				</div>
-
-				<div style="grid-column: 2;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>E-Mail</label
-					>
+				<div>
+					<label for="kunde-email" class="admin-label">{$_('E-Mail')}</label>
 					<input
+						id="kunde-email"
 						type="email"
 						name="email"
 						bind:value={email}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+						class="admin-input"
 					/>
 				</div>
-
-				<div style="grid-column: 1 / -1;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Adresse</label
-					>
+				<div class="md:col-span-2">
+					<label for="kunde-adresse" class="admin-label">{$_('Adresse')}</label>
 					<input
+						id="kunde-adresse"
 						type="text"
 						name="adresse"
 						bind:value={adresse}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
+						class="admin-input"
 					/>
 				</div>
-
-				<div style="grid-column: 1;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>PLZ</label
-					>
-					<input
-						type="text"
-						name="plz"
-						bind:value={plz}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
-					/>
+				<div>
+					<label for="kunde-plz" class="admin-label">{$_('PLZ')}</label>
+					<input id="kunde-plz" type="text" name="plz" bind:value={plz} class="admin-input" />
+				</div>
+				<div>
+					<label for="kunde-ort" class="admin-label">{$_('Ort')}</label>
+					<input id="kunde-ort" type="text" name="ort" bind:value={ort} class="admin-input" />
+				</div>
+				<div>
+					<label for="kunde-land" class="admin-label">{$_('Land')}</label>
+					<input id="kunde-land" type="text" name="land" bind:value={land} class="admin-input" />
+				</div>
+				<div>
+					<label for="kunde-lang" class="admin-label">{$_('Sprache')}</label>
+					<select id="kunde-lang" name="lang" bind:value={lang} class="admin-input">
+						{#each data.languages as language}
+							<option value={language.id}>{language.name}</option>
+						{/each}
+					</select>
 				</div>
 
-				<div style="grid-column: 2;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Ort</label
-					>
-					<input
-						type="text"
-						name="ort"
-						bind:value={ort}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
-					/>
-				</div>
-
-				<div style="grid-column: 1;">
-					<label
-						style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;"
-						>Land</label
-					>
-					<input
-						type="text"
-						name="land"
-						bind:value={land}
-						style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"
-					/>
-				</div>
-
-				<div style="grid-column: 1 / -1; display: flex; gap: 0.5rem;">
-					<button
-						type="submit"
-						disabled={isLoading}
-						style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 500; disabled-opacity: 0.5;"
-					>
-						{isLoading ? 'Wird gespeichert...' : '✓ Speichern'}
+				<div class="md:col-span-2">
+					<button type="submit" disabled={isLoading} class="admin-btn admin-btn-success">
+						{isLoading ? $_('Wird gespeichert …') : `✓ ${$_('Speichern')}`}
 					</button>
 				</div>
 			</form>
 		{/if}
-	</div>
+	</section>
 
-	{#if data.customers.length === 0}
-		<p style="opacity: 0.5;">Noch keine Einträge.</p>
-	{:else}
-		<div style="overflow-x: auto;">
-			<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-				<thead>
-					<tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
-						{#each cols as col}
-							<th style="padding: 0.5rem 0.75rem; white-space: nowrap;">{col}</th>
-						{/each}
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.customers as c}
-						{@const r = fmt(c)}
-						<tr style="border-bottom: 1px solid #e5e7eb;">
-							<td style="padding: 0.5rem 0.75rem; white-space: nowrap; opacity: 0.6;">{r.date}</td>
-							<td style="padding: 0.5rem 0.75rem;">{r.name}</td>
-							<td style="padding: 0.5rem 0.75rem;">{r.email}</td>
-							<td style="padding: 0.5rem 0.75rem;">{r.firma}</td>
-							<td style="padding: 0.5rem 0.75rem;">{r.adresse}</td>
-							<td style="padding: 0.5rem 0.75rem; white-space: nowrap;">{r.quelle}</td>
-							<td style="padding: 0.5rem 0.75rem;">
-								<form
-									method="POST"
-									action="?/delete&secret={secret}"
-									on:submit|preventDefault={(e) => confirmDelete(e, r.name)}
-								>
-									<input type="hidden" name="id" value={c.id} />
-									<button
-										type="submit"
-										style="color: #dc2626; font-size: 0.75rem; background: none; border: none; cursor: pointer; padding: 0;"
-									>
-										Löschen
-									</button>
-								</form>
-							</td>
+	<section class="admin-card">
+		{#if data.customers.length === 0}
+			<p class="admin-empty">{$_('Noch keine Einträge.')}</p>
+		{:else}
+			<div class="admin-table-wrap">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							{#each cols as col}
+								<th>{col ? $_(col) : ''}</th>
+							{/each}
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	{/if}
+					</thead>
+					<tbody>
+						{#each data.customers as c (c.id)}
+							{@const r = fmt(c)}
+							<tr>
+								<td class="nowrap admin-muted">{r.date}</td>
+								<td>{r.name}</td>
+								<td>{r.email}</td>
+								<td>{r.firma}</td>
+								<td>{r.adresse}</td>
+								<td>
+									<form method="POST" action="?/setLang" use:enhance={handleSetLang}>
+										<input type="hidden" name="id" value={c.id} />
+										<select
+											name="lang"
+											value={c.lang ?? ''}
+											on:change={submitOnChange}
+											aria-label={$_('Sprache')}
+											class="admin-input admin-input-sm"
+										>
+											<option value="">–</option>
+											{#each data.languages as language}
+												<option value={language.id}>{language.name}</option>
+											{/each}
+										</select>
+									</form>
+								</td>
+								<td class="nowrap">{$_(r.quelle)}</td>
+								<td>
+									<form
+										method="POST"
+										action="?/delete"
+										on:submit|preventDefault={(e) => confirmDelete(e, r.name)}
+									>
+										<input type="hidden" name="id" value={c.id} />
+										<button type="submit" class="admin-link-danger text-xs">{$_('Löschen')}</button>
+									</form>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+	</section>
 </div>

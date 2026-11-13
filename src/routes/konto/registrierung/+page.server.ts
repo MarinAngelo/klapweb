@@ -2,12 +2,13 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createUser } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
-import { FEATURE_TERMINBUCHUNG } from '$lib/server/features';
+import { FEATURE_KUNDENKONTO } from '$lib/server/features';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!FEATURE_TERMINBUCHUNG) throw error(404, 'Funktion nicht verfügbar');
+	if (!FEATURE_KUNDENKONTO) throw error(404, 'Funktion nicht verfügbar');
 	if (locals.user) throw redirect(303, '/konto');
 };
 
@@ -43,7 +44,7 @@ export const actions: Actions = {
 
 		// Verifikations-E-Mail via Resend senden
 		const resendKey = env.RESEND_API_KEY;
-		const fromEmail = env.INVOICE_FROM_EMAIL;
+		const fromEmail = await getMailFrom();
 		if (resendKey && fromEmail) {
 			try {
 				const { Resend } = await import('resend');

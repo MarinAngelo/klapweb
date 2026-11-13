@@ -1,8 +1,19 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { bookSlot, isBooked } from '$lib/server/bookings';
+import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
+import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingCancel';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
-import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
+import {
+	osmMarkerUrl,
+	osmSearchUrl,
+	parseMapPoint,
+	resolveGoogleShortLink
+} from '$lib/mapPoint.js';
+import { expandArbeitstag } from '$lib/server/terminSlots';
+import { invalidateTermineCache } from '$lib/server/termineCache';
+import { getMailFrom } from '$lib/server/mailFrom';
+import { isAdmin } from '$lib/server/adminAuth';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -10,7 +21,7 @@ function fmtDate(datum: string, uhrzeit: string): string {
 }
 
 function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{(\w+)\}\}/g, (_, k) => tokens[k] ?? `{{${k}}}`);
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
 }
 
 function richTextToPlain(
@@ -80,25 +91,6 @@ function generateICS(
 	].join('\r\n');
 }
 
-function googleCalendarUrl(
-	titel: string,
-	datum: string,
-	uhrzeit: string,
-	sessionLaenge: number | null
-): string {
-	if (!datum) return '';
-	let dates: string;
-	if (uhrzeit) {
-		const start = buildDatetimeStr(datum, uhrzeit);
-		const end = addMinutes(datum, uhrzeit, sessionLaenge ?? 60);
-		dates = `${start}/${end}`;
-	} else {
-		const d = datum.replace(/-/g, '');
-		dates = `${d}/${d}`;
-	}
-	return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dates}`;
-}
-
 function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz: string): string {
 	if (!datum || !uhrzeit || fromTz === toTz) return '';
 	const [y, mo, d] = datum.split('-').map(Number);
@@ -135,22 +127,48 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 	);
 }
 
-export const POST: RequestHandler = async ({ request, fetch }) => {
-	let body: { terminId?: string; name?: string; email?: string; customerTimezone?: string };
+export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
+	let body: {
+		terminId?: string;
+		name?: string;
+		email?: string;
+		customerTimezone?: string;
+		fields?: Record<string, string>;
+		fieldLabels?: Record<string, string>;
+		telefon?: string;
+		/** Operator books for a customer (admin «Terminverwaltung»), requires admin session */
+		byAdmin?: boolean;
+		/** Admin booking: send the confirmation to the customer (only with e-mail) */
+		sendConfirmation?: boolean;
+	};
 	try {
 		body = await request.json();
 	} catch {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email, customerTimezone } = body;
+	const { terminId, name, email, customerTimezone, fields, fieldLabels, telefon } = body;
+	const origin = new URL(request.url).origin;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
 	}
+	// Source is decided by the server: «byAdmin» from the browser alone is not trusted
+	const byAdmin = !!body.byAdmin;
+	if (byAdmin && !isAdmin(cookies)) {
+		return new Response(JSON.stringify({ error: 'Nicht angemeldet' }), { status: 403 });
+	}
 
-	// Check if already booked
+	// Check if already booked or cancelled
 	const alreadyBooked = await isBooked(terminId);
 	if (alreadyBooked) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	const cancelled = await isCancelled(terminId);
+	if (cancelled) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
 			{ status: 409 }
@@ -160,62 +178,191 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	// Fetch termin + company info from Prismic
 	let datum = '';
 	let uhrzeit = '';
+	let endzeit = '';
+	let blockedUntil = '';
+	let vorlaufzeit = 0;
 	let titel = terminId;
 	let sessionLaenge: number | null = null;
 	let zeitzone = 'Europe/Zurich';
+	let arbeitstagId: string | undefined;
+	let angebotId: string | undefined;
+	let ortName = '';
+	let ortAdresse = '';
+	let ortWegbeschreibung = '';
+	let ortTelefon = '';
+	let ortKarte = '';
 	let companyName = '';
 	let companyEmail = '';
-	let bookingFromEmail = '';
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
-
-	// Recurring slots use ID format "<uid>_YYYY-MM-DD"; non-recurring use plain uid
-	const recurringMatch = terminId.match(/^(.+)_(\d{4}-\d{2}-\d{2})$/);
-	const baseUid = recurringMatch ? recurringMatch[1] : terminId;
-	const occurrenceDate = recurringMatch ? recurringMatch[2] : null;
+	// Invoice for offers with «Preis» (setting «Rechnung bei Buchung senden»)
+	let settingsData: Record<string, unknown> = {};
+	let offerPrice: number | null = null;
+	// Cancellation terms: offer, otherwise default of the settings
+	let cancelHours: number | null = null;
+	let cancelFeePercent: number | null = null;
 
 	try {
 		const client = createClient({ fetch });
-		const [doc, settings] = await Promise.all([
-			client.getByUID('terminplanung', baseUid),
-			client.getSingle('settings').catch(() => null)
-		]);
-
-		const d = doc.data as any;
-		datum = occurrenceDate ?? d.datum ?? '';
-		uhrzeit = d.uhrzeit ?? '';
-		titel = d.titel ?? baseUid;
-		sessionLaenge = d.session_laenge ?? null;
-		zeitzone = d.zeitzone ?? 'Europe/Zurich';
-
+		const dynamicClient = client as any;
+		const settings = await client.getSingle('settings').catch(() => null);
 		if (settings) {
 			const s = settings.data as any;
+			settingsData = s;
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			bookingFromEmail = (s.booking_from_email as string) ?? '';
 			custEmailSubject = (s.booking_customer_email_subject as string) || null;
 			custEmailBody = Array.isArray(s.booking_customer_email_body)
 				? s.booking_customer_email_body
 				: null;
 		}
+
+		const [workdays, offers] = await Promise.all([
+			dynamicClient.getAllByType('arbeitstag'),
+			dynamicClient.getAllByType('angebot')
+		]);
+		const today = new Date().toISOString().slice(0, 10);
+		const slot = workdays
+			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.find((item) => item.id === terminId);
+		if (!slot) throw new Error('Termin nicht gefunden');
+		datum = slot.datum;
+		uhrzeit = slot.uhrzeit;
+		endzeit = slot.endzeit ?? '';
+		blockedUntil = slot.blockedUntil ?? endzeit;
+		vorlaufzeit = slot.vorlaufzeit ?? 0;
+		titel = slot.titel;
+		sessionLaenge = slot.sessionLaenge;
+		zeitzone = slot.zeitzone;
+		arbeitstagId = slot.arbeitstagId;
+		angebotId = slot.angebotId;
+
+		// Ort aus dem verknüpften Angebot laden
+		const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
+		const price = Number((offerDoc?.data as any)?.preis);
+		offerPrice = price > 0 ? price : null;
+		const positive = (value: unknown) => (Number(value) > 0 ? Number(value) : null);
+		const od = (offerDoc?.data ?? {}) as any;
+		cancelHours =
+			positive(od.cancel_free_hours) ?? positive(settingsData.booking_cancel_free_hours);
+		cancelFeePercent =
+			positive(od.cancel_fee_percent) ?? positive(settingsData.booking_cancel_fee_percent);
+		const ortLink = (offerDoc?.data as any)?.ort;
+		if (ortLink?.uid) {
+			try {
+				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
+				const o = ortDoc.data as any;
+				// Inactive location («Aktiv» off) → no location details
+				if (o.aktiv !== false) {
+					const lines = (blocks: unknown) =>
+						Array.isArray(blocks) ? blocks.map((b: any) => b?.text ?? '').filter(Boolean) : [];
+					ortName = o.name ?? '';
+					ortAdresse = lines(o.adresse).join(', ');
+					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
+					ortTelefon = (o.telefon ?? '').trim();
+					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
+					const punkt =
+						parseMapPoint(o.geo_koordinaten) ??
+						(await resolveGoogleShortLink(o.geo_koordinaten ?? '', fetch)).point;
+					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
+					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
+				}
+			} catch {
+				/* Ort nicht erreichbar */
+			}
+		}
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
+
+	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier.
+	// The operator may book at short notice (no lead time), but not in the past
+	if (
+		datum &&
+		uhrzeit &&
+		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) -
+			(byAdmin ? 0 : vorlaufzeit) * 60000 <
+			Date.now()
+	) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	// Incl. buffer on both sides (Puffer danach)
+	if (blockedUntil && (await hasOverlappingBooking(datum, uhrzeit, blockedUntil, terminId))) {
+		return new Response(
+			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
+			{ status: 409 }
+		);
+	}
+
+	const cancelFreeUntil = cancelDeadline(datum, uhrzeit, zeitzone, cancelHours);
+	const cancelToken = crypto.randomUUID().replace(/-/g, '');
+	const stornoLink = cancelLink(origin, { terminId, cancelToken });
+	// «Kostenlos stornierbar bis …» for the e-mail ({{Stornofrist}}); '' = no deadline
+	const stornoFrist = cancelFreeUntil ? formatDeadline(cancelFreeUntil, zeitzone) : '';
 
 	await bookSlot({
 		terminId,
 		datum,
 		uhrzeit,
+		endzeit,
+		blockedUntil,
 		titel,
 		bookedAt: new Date().toISOString(),
 		name,
-		email
+		email,
+		telefon: telefon?.trim() || undefined,
+		price: offerPrice ?? undefined,
+		cancelFreeUntil,
+		cancelFeePercent: cancelFreeUntil ? (cancelFeePercent ?? undefined) : undefined,
+		cancelToken,
+		zeitzone,
+		// Invoice after the appointment (src/lib/server/bookingInvoices.ts, scheduled)
+		invoicePending: settingsData.booking_invoice === true && !!offerPrice ? true : undefined,
+		invoiceAddress:
+			fields?.adresse || fields?.plz || fields?.ort
+				? { adresse: fields.adresse, plz: fields.plz, ort: fields.ort, land: fields.land }
+				: undefined,
+		arbeitstagId,
+		angebotId,
+		source: byAdmin ? 'admin' : 'online'
 	});
+	invalidateTermineCache();
+
+	// Kunde erfassen (mit Duplikat-Prüfung per E-Mail)
+	if (email) {
+		try {
+			const { saveCustomer, listCustomers } = await import('$lib/server/customers');
+			const emailLower = email.trim().toLowerCase();
+			const existing = await listCustomers();
+			const isDuplicate = existing.some((c) => c.email && c.email.toLowerCase() === emailLower);
+			if (!isDuplicate) {
+				const nameParts = (name ?? '').trim().split(/\s+/);
+				await saveCustomer({
+					date: new Date().toISOString(),
+					paymentMethod: 'terminbuchung',
+					service: titel,
+					amount: null,
+					currency: 'CHF',
+					vorname: nameParts.slice(0, -1).join(' ') || nameParts[0] || undefined,
+					nachname: nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined,
+					email
+				});
+			}
+		} catch (e) {
+			console.error('Kunde konnte nicht gespeichert werden:', e);
+		}
+	}
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = bookingFromEmail || env.INVOICE_FROM_EMAIL;
-	const toEmail = env.INVOICE_TO_EMAIL || companyEmail;
+	const fromEmail = await getMailFrom();
+	const toEmail = companyEmail;
+
+	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
 		const dateLabel = fmtDate(datum, uhrzeit);
@@ -229,15 +376,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Uhrzeit: uhrzeit || '–',
 			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
 			Name: name || '',
-			Firma: companyName
+			Firma: companyName,
+			Ort: ortAdresse || ortName,
+			Wegbeschreibung: ortWegbeschreibung,
+			'Ort-Telefon': ortTelefon,
+			'Ort-Karte': ortKarte,
+			Stornofrist: stornoFrist
 		};
 
 		const subject = custEmailSubject
 			? applyTokens(custEmailSubject, tokens)
 			: `Terminbestätigung: ${titel}`;
 
-		const gcalUrl = googleCalendarUrl(titel, datum, uhrzeit, sessionLaenge);
-		const calendarLine = gcalUrl ? `\nZum Kalender hinzufügen: ${gcalUrl}` : '';
+		// .ics download works with every calendar app (no Google Calendar link)
+		const calendarLine = datum ? `\nZum Kalender hinzufügen: ${icsDownloadLink}` : '';
 
 		const convertedTime = customerTimezone
 			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
@@ -254,12 +406,30 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				`Ihr Termin wurde erfolgreich gebucht.`,
 				``,
 				`Termin: ${terminLine}`,
+				// Location of the offer (if linked and active)
+				...(ortName || ortAdresse
+					? [``, `Ort: ${[ortName, ortAdresse].filter(Boolean).join(', ')}`]
+					: []),
+				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
+				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
+				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
 				``,
+				...(stornoFrist
+					? [
+							cancelFeePercent && offerPrice
+								? `Kostenlos stornierbar bis ${stornoFrist} Uhr, danach mit einer Stornogebühr von ${cancelFeePercent}%.`
+								: `Online stornierbar bis ${stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
+							``
+						]
+					: []),
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,
 				`Freundliche Grüsse`,
 				companyName
 			].join('\n');
+
+		const stornoLine = `\n\nStornieren: ${stornoLink}`;
+		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
@@ -268,10 +438,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		// Provider ICS includes customer name in title
 		const providerTitel = name ? `${titel} – ${name}` : titel;
-		const providerGcalUrl = googleCalendarUrl(providerTitel, datum, uhrzeit, sessionLaenge);
-		const providerCalendarLine = providerGcalUrl
-			? `\nZum Kalender hinzufügen: ${providerGcalUrl}`
-			: '';
 		const providerIcsContent = generateICS(terminId, providerTitel, datum, uhrzeit, sessionLaenge);
 		const providerIcsAttachment = providerIcsContent
 			? [{ filename: 'termin.ics', content: Buffer.from(providerIcsContent).toString('base64') }]
@@ -281,14 +447,26 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.then(({ Resend }) => {
 				const resend = new Resend(resendKey);
 
-				// E-Mail an Kunden
-				if (email) {
+				// E-Mail an Kunden (admin booking: only if requested)
+				if (email && (!byAdmin || body.sendConfirmation)) {
+					const htmlBody =
+						bodyText
+							.split('\n')
+							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
+							.join('') +
+						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
+						(calendarLine
+							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
+							: '') +
+						stornoHtml;
+
 					resend.emails
 						.send({
 							from: fromEmail,
 							to: email,
 							subject,
-							text: bodyText + customerTzLine + calendarLine,
+							text: bodyText + customerTzLine + calendarLine + stornoLine,
+							html: htmlBody,
 							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
@@ -296,19 +474,43 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						});
 				}
 
-				// Benachrichtigung an Anbieter
+				// Benachrichtigung an Anbieter — not when the operator booked it themselves
+				if (byAdmin) return;
+				const extraLines =
+					fields && fieldLabels
+						? Object.entries(fields)
+								.filter(
+									([key, value]) =>
+										!['termin', 'name', 'email', 'subject', 'form-name', 'bot-field'].includes(
+											key
+										) && value !== 'Ausgewählt'
+								)
+								.map(([key, value]) => {
+									const label = fieldLabels[key] ?? key;
+									return value ? `${label}: ${value}` : '';
+								})
+								.filter(Boolean)
+						: [];
+
 				resend.emails
 					.send({
 						from: fromEmail,
 						to: toEmail,
 						subject: `Neue Buchung: ${titel}`,
-						text:
-							[
-								`Neue Buchung eingegangen.`,
-								``,
-								`Termin: ${terminLine}`,
-								`Kunde: ${customerName}${email ? ' <' + email + '>' : ''}`
-							].join('\n') + providerCalendarLine,
+						text: [
+							`Neue Buchung eingegangen.`,
+							``,
+							`Angebot: ${titel}`,
+							`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
+							`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
+							`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
+							...(ortName ? [`Ort: ${ortName}`] : []),
+							...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
+							``,
+							`Name: ${customerName}`,
+							...(email ? [`E-Mail: ${email}`] : []),
+							...(extraLines.length ? [``, ...extraLines] : [])
+						].join('\n'),
 						attachments: providerIcsAttachment
 					})
 					.then(({ error: e }) => {
@@ -318,9 +520,25 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
 		console.warn(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / INVOICE_FROM_EMAIL / INVOICE_TO_EMAIL) — keine Buchungs-E-Mails gesendet'
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail in den Einstellungen) — keine Buchungs-E-Mails gesendet'
 		);
 	}
 
-	return new Response(JSON.stringify({ ok: true }), { status: 200 });
+	return new Response(
+		JSON.stringify({
+			ok: true,
+			titel,
+			datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '',
+			uhrzeit: uhrzeit || '',
+			endzeit: endzeit || '',
+			dauer: sessionLaenge ?? '',
+			name: name || '',
+			email: email || '',
+			storno: stornoLink,
+			ics: icsDownloadLink,
+			ort: ortAdresse || ortName,
+			karte: ortKarte
+		}),
+		{ status: 200 }
+	);
 };
