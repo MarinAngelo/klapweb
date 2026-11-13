@@ -1,12 +1,14 @@
 import { createClient } from '$lib/prismicio';
 import { getMainLang, langParam } from '$lib/server/prerenderEntries';
 import { error, redirect, isRedirect } from '@sveltejs/kit';
+import { building } from '$app/environment';
 import { asText, asHTML } from '@prismicio/client';
 import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { parseCurrencyCode, calcDisplayPrice } from '$lib/pricing';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import { isAdmin } from '$lib/server/adminAuth';
 import { hasPageAccess } from '$lib/server/pageAuth';
+import { guideChaptersFor } from '$lib/server/anleitung';
 
 export interface AddonRow {
 	label: string;
@@ -46,6 +48,11 @@ export async function load({ params, parent, fetch, cookies }) {
 
 		// Password protection – angemeldete Admins (Session-Cookie) sehen die Seite ohne Passwort
 		if ((page.data as any).password_protected === true) {
+			// Never prerender: the build has no login, a static file would be a fixed redirect to
+			// /login and the live page would loop forever. 404 during the build → no file is written
+			// (svelte.config.js handleHttpError ignores 404) → served by the server function instead.
+			if (building) throw error(404, 'Passwortgeschützte Seite wird nicht vorgerendert');
+
 			const isAdminBypass = isAdmin(cookies);
 
 			if (!isAdminBypass) {
@@ -57,10 +64,14 @@ export async function load({ params, parent, fetch, cookies }) {
 			}
 		}
 
+		// Texts for «Anleitung» elements that show chapters from the code (src/lib/anleitung)
+		const guideChapters = guideChaptersFor((page.data as any).slices);
+
 		// Guard 1 (Plan-Level): E-Commerce-Feature im aktiven Plan nicht verfügbar
 		if (!FEATURE_ECOMMERCE) {
 			return {
 				page,
+				guideChapters,
 				title: asText(page.data.title) || '',
 				meta_title: page.data.meta_title || '',
 				meta_description: page.data.meta_description,
@@ -86,6 +97,7 @@ export async function load({ params, parent, fetch, cookies }) {
 		if (!hasEcommerceSlices && !hasPrice && !hasLeistungen && !hasAddons) {
 			return {
 				page,
+				guideChapters,
 				title: asText(page.data.title) || '',
 				meta_title: page.data.meta_title || '',
 				meta_description: page.data.meta_description,
@@ -223,6 +235,7 @@ export async function load({ params, parent, fetch, cookies }) {
 
 		return {
 			page,
+			guideChapters,
 			title: asText(page.data.title) || '',
 			meta_title: page.data.meta_title || '',
 			meta_description: page.data.meta_description,

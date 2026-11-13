@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { browser, building } from '$app/environment';
+	import { browser, building, dev } from '$app/environment';
 	import { PrismicPreview } from '@prismicio/svelte/kit';
 	import { asText } from '@prismicio/client';
 
@@ -22,6 +22,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
+	import PreviewNotice from '$lib/components/PreviewNotice.svelte';
 	import CookieBanner from '$lib/components/CookieBanner.svelte';
 	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
@@ -56,8 +57,10 @@
 		mainLang,
 		userBackendActive,
 		chatActive,
+		pwaActive,
 		chatBotName,
 		chatGreeting,
+		klapstudioActive,
 		user
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
@@ -82,7 +85,8 @@
 	$: appleTouchIconUrl =
 		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
-	$: noIndex = $page.data?.no_index || false;
+	// Prismic field «Keine Indexierung» (no_index) of the page document; routes can also set data.no_index
+	$: noIndex = $page.data?.no_index === true || $page.data?.page?.data?.no_index === true;
 
 	// --- DOMAIN & URL ---
 	$: rawDomain = settings?.data?.domain || 'klap-web.ch';
@@ -238,6 +242,8 @@
 	}
 	// Inline <head> script (runs before the first paint on full page loads); client-side
 	// navigations are handled by the reactive redirect above
+	// Legal page from a landing page: hide header/footer before hydration (no flash of navigation)
+	const legalLandingScript = `<script>if(/[?&]landing(=|&|$)/.test(location.search))document.documentElement.classList.add('legal-landing')<\/script>`;
 	const rememberedLangScript = `<script>(function(){try{var pref=localStorage.getItem('klap_lang');if(!pref)return;var links=[].slice.call(document.querySelectorAll('link[rel=alternate][hreflang]'));var first=location.pathname.split('/')[1];if(links.some(function(l){return l.hreflang===first}))return;var t=links.filter(function(l){return l.hreflang===pref})[0];if(!t)return;var path=new URL(t.href).pathname;if(path!==location.pathname)location.replace(path+location.search+location.hash)}catch(e){}})()<\/script>`;
 
 	// Shown once per page and visit (translationNoticeShown)
@@ -424,10 +430,14 @@
 		(s: any) =>
 			(s.slice_type === 'hero' ||
 				s.slice_type === 'galerie' ||
-				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich') ||
+				(s.slice_type === 'text_with_image' && s.variation === 'titelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
-	$: isLandingPage = $page.data?.page?.data?.landing_page === true || $errorPageLanding;
+	// Default page «Website im Aufbau» (home redirect) is always a landing page
+	$: isUnderConstruction = $page.route.id === '/[[lang=lang]]/im-aufbau';
+	$: isLandingPage =
+		$page.data?.page?.data?.landing_page === true || $errorPageLanding || isUnderConstruction;
 	$: isFullscreenP5LandingPage =
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&
@@ -437,6 +447,7 @@
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&
 		$page.data?.page?.data?.slices?.[0]?.slice_type === 'text_with_image' &&
+		$page.data?.page?.data?.slices?.[0]?.variation !== 'default' &&
 		$page.data?.page?.data?.slices?.[0]?.primary?.fullscreen === true;
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
@@ -447,23 +458,47 @@
 		$page.url.pathname.startsWith('/admin/') ||
 		// Agency editor: login keeps the site look, the editor itself is neutral
 		(/^\/agency(\/|$)/.test($page.url.pathname) && $page.data?.authenticated === true);
-	$: hideChrome = isLandingPage || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
-	// Landing pages hide header and footer — except the legal links
+	// Legal page opened from a landing page (legal bar links with ?landing): landing style too.
+	// Only in the browser — prerendered pages cannot read query parameters on the server;
+	// legalLandingScript (head) hides the navigation before hydration.
+	$: isLegalLanding =
+		browser &&
+		($page.route.id ?? '').includes('[legal=legal]') &&
+		$page.url.searchParams.has('landing');
+	$: if (browser) document.documentElement.classList.toggle('legal-landing', isLegalLanding);
+	$: hideChrome =
+		isLandingPage || isLegalLanding || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
+	// Landing pages hide header and footer — except the legal links (unless switched off per page)
+	$: hideLegalBar = $page.data?.page?.data?.hide_legal_bar === true;
 	$: showLegalBarOnly =
-		isLandingPage && !isSlicePreview && !isDokuPage && !isNoChrome && !isAdminPage;
+		(isLandingPage || isLegalLanding) &&
+		!hideLegalBar &&
+		!isSlicePreview &&
+		!isDokuPage &&
+		!isNoChrome &&
+		!isAdminPage;
 	$: stickyHeader = !hideChrome && (prismicTheme?.data?.sticky_header ?? false);
 
 	let studioOpen = false;
 
+	// Service worker: only SvelteKit's /service-worker.js (feature pwa, svelte.config.js).
+	// The old /sw.js is no longer registered (both replaced each other → hanging tabs).
+	// Dev server: no service worker at all — remove any installed one (e.g. from another branch,
+	// all branches share localhost:5173), otherwise it intercepts and caches the Vite modules.
 	onMount(() => {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/sw.js').catch(() => {});
-		}
+		if (!dev || !('serviceWorker' in navigator)) return;
+		navigator.serviceWorker.getRegistrations().then((registrations) => {
+			if (!registrations.length) return;
+			Promise.all(registrations.map((r) => r.unregister()))
+				.then(() => caches.keys())
+				.then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+				.then(() => console.info('[dev] Service Worker entfernt (im Dev-Server deaktiviert)'));
+		});
 	});
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
-			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+			if (klapstudioActive && e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
@@ -489,14 +524,17 @@
 	<meta name="description" content={finalDesc} />
 	<link rel="icon" href={faviconUrl} />
 	{#if appleTouchIconUrl}<link rel="apple-touch-icon" href={appleTouchIconUrl} />{/if}
-	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if pwaActive}
+		<!-- Feature pwa only: a manifest alone makes browsers offer to install the site -->
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	{/if}
 	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
-	<meta name="mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<link rel="canonical" href={currentUrl} />
 
-	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
+	{#if noIndex}<meta name="robots" content="noindex, follow" />{/if}
 
 	{#if showSwitcher}
 		{#each seoAlternates as alt}
@@ -511,6 +549,7 @@
 			{@html rememberedLangScript}
 		{/if}
 	{/if}
+	{@html legalLandingScript}
 
 	<meta property="og:title" content={finalTitle} />
 	<meta property="og:description" content={finalDesc} />
@@ -529,7 +568,8 @@
 
 <a href="#main-content" class="skip-link">{$_('Zum Inhalt springen')}</a>
 
-<div class="bg-page-bg [min-height:100vh]">
+<!-- Sticky footer: column fills the screen, <main> grows → footer at the bottom on short pages -->
+<div class="site-shell bg-page-bg">
 	{#if !hideChrome}
 		<Header
 			navigation={chromeNavigation}
@@ -576,7 +616,12 @@
 	{:else if showLegalBarOnly && chromeSettings}
 		<!-- Landing page: the legal links stay (privacy, legal notice, cookie settings) -->
 		<Bounded tag="footer" yPadding="none" class="footer-body footer-legal-bar text-center">
-			<FooterLegalLinks settings={chromeSettings} lang={chromeLang} mainLang={data.mainLang} />
+			<FooterLegalLinks
+				settings={chromeSettings}
+				lang={chromeLang}
+				mainLang={data.mainLang}
+				landing
+			/>
 		</Bounded>
 	{/if}
 </div>
@@ -593,7 +638,10 @@
 <CookieBanner lang={chromeLang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
-<KlapStudio bind:open={studioOpen} />
+<PreviewNotice />
+{#if klapstudioActive}
+	<KlapStudio bind:open={studioOpen} />
+{/if}
 {#if chatActive && !isAdminPage}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} lang={chromeLang} />
 {/if}

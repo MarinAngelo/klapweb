@@ -1,8 +1,9 @@
 import adapter from '@sveltejs/adapter-netlify';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
+import { overridesFromConfig } from './src/lib/gatingOverrides.js';
 
-// SW nur registrieren wenn pwa-Feature im aktiven Plan (oder Override) aktiv ist
+// Register the SW only if feature pwa is active (plan or branch switch in slicemachine.config.json)
 function isPwaActive() {
 	try {
 		const smConfig = JSON.parse(readFileSync('./slicemachine.config.json', 'utf-8'));
@@ -16,23 +17,25 @@ function isPwaActive() {
 			chain.push(cur);
 		}
 
-		let overrides = { enabled: [], disabled: [] };
-		if (existsSync('./gating.overrides.json')) {
-			overrides = JSON.parse(readFileSync('./gating.overrides.json', 'utf-8'));
-		}
+		// Branch switches (features / featuresDisabled), same as src/lib/server/features.ts
+		const overrides = overridesFromConfig(smConfig);
 
 		const pwaPlans = gating.features?.pwa?.plans ?? [];
 		const inPlan = pwaPlans.some((p) => chain.includes(p));
-		const inEnabled = (overrides.enabled ?? []).includes('pwa');
-		const inDisabled = (overrides.disabled ?? []).includes('pwa');
-		return (inPlan || inEnabled) && !inDisabled;
+		if (overrides.enabled.includes('pwa')) return true;
+		if (overrides.disabled.includes('pwa')) return false;
+		return inPlan;
 	} catch {
 		return false;
 	}
 }
 
-const registerServiceWorker = isPwaActive();
-console.log(`Service Worker: ${registerServiceWorker ? 'aktiv' : 'deaktiviert'} (pwa-Feature)`);
+// Never in the dev server: it would intercept and cache the Vite modules (stale code, hanging tabs)
+const isDevServer = process.argv.includes('dev');
+const registerServiceWorker = isPwaActive() && !isDevServer;
+console.log(
+	`Service Worker: ${registerServiceWorker ? 'aktiv' : 'deaktiviert'} (pwa-Feature${isDevServer ? ', Dev-Server' : ''})`
+);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -46,7 +49,7 @@ const config = {
 		},
 
 		prerender: {
-			entries: ['*', '/sitemap.xml', '/robots.txt'],
+			entries: ['*', '/sitemap.xml', '/robots.txt', '/im-aufbau'],
 			// Verhindert den Build-Abbruch bei toten Links im CMS
 			handleHttpError: ({ path, referrer, message }) => {
 				// 404 Fehler (tote Links) werden geloggt, aber der Build läuft weiter

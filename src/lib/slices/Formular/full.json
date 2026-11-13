@@ -65,7 +65,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -145,7 +146,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -318,7 +320,8 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
 						]
 					}
 				},
@@ -766,7 +769,8 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
 						]
 					}
 				},
@@ -830,7 +834,8 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
 						]
 					}
 				},
@@ -892,7 +897,183 @@
 							"subtitle-bold",
 							"kicker",
 							"overline",
-							"invisible"
+							"invisible",
+							"copy"
+						]
+					}
+				},
+				"mobile_full_width": {
+					"type": "Boolean",
+					"config": {
+						"label": "Vollbreite auf Mobile",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": true
+					}
+				},
+				"animate": {
+					"type": "Boolean",
+					"config": {
+						"label": "Animation aktivieren",
+						"default_value": false
+					}
+				},
+				"anim_direction": {
+					"type": "Select",
+					"config": {
+						"label": "Animations-Richtung",
+						"options": ["Oben", "Unten", "Links", "Rechts", "Keine"],
+						"default_value": "Oben"
+					}
+				},
+				"anim_delay": {
+					"type": "Number",
+					"config": {
+						"label": "Verzögerung (ms)",
+						"placeholder": "500"
+					}
+				},
+				"anim_duration": {
+					"type": "Number",
+					"config": {
+						"label": "Animationsdauer (ms)",
+						"placeholder": "2000"
+					}
+				}
+			},
+			"items": {}
+		},
+		{
+			"id": "stunden",
+			"name": "Stundenabrechnung",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Arbeitszeit und Spesen erfassen (nur auf einer passwortgeschützten Seite); Auswertung im Admin unter «Stunden».",
+			"imageUrl": "",
+			"primary": {
+				"heading": {
+					"type": "Text",
+					"config": {
+						"label": "Überschrift",
+						"placeholder": "z.B. Stunden erfassen"
+					}
+				},
+				"intro_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Einleitungstext",
+						"placeholder": "Wozu und wie oft Sie Info-Mails verschicken",
+						"allowTargetBlank": true,
+						"multi": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible",
+							"copy"
+						]
+					}
+				},
+				"submit_label": {
+					"type": "Text",
+					"config": {
+						"label": "Senden-Button Text",
+						"placeholder": "Leer = „Eintrag speichern“"
+					}
+				},
+				"success_text": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Text nach dem Speichern",
+						"placeholder": "Leer = Hinweis, die Anmeldung per E-Mail zu bestätigen",
+						"allowTargetBlank": true,
+						"multi": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,list-item,o-list-item",
+						"labels": [
+							"highlight",
+							"note",
+							"quote",
+							"size-xs",
+							"size-sm",
+							"size-lg",
+							"size-xl",
+							"size-2xl",
+							"size-3xl",
+							"size-4xl",
+							"size-5xl",
+							"size-6xl",
+							"weight-thin",
+							"weight-light",
+							"weight-medium",
+							"weight-semibold",
+							"weight-black",
+							"tracking-tight",
+							"tracking-wide",
+							"tracking-wider",
+							"tracking-widest",
+							"leading-tight",
+							"leading-loose",
+							"uppercase",
+							"lowercase",
+							"capitalize",
+							"underline",
+							"block",
+							"muted",
+							"display-thin",
+							"display-light",
+							"display-bold",
+							"display-black",
+							"giant-thin",
+							"giant-light",
+							"giant-bold",
+							"hero-thin",
+							"hero-light",
+							"hero-bold",
+							"subtitle",
+							"subtitle-bold",
+							"kicker",
+							"overline",
+							"invisible",
+							"copy"
 						]
 					}
 				},

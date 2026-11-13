@@ -14,6 +14,7 @@ import {
 	logSend,
 	sendNewsletter
 } from '$lib/server/newsletter';
+import { getMailAddress, getNotifyTo } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -31,6 +32,8 @@ async function loadNewsletter(client: AnyClient, uid: string) {
 }
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	const mailFrom = await getMailAddress(fetch);
+	const notifyTo = await getNotifyTo(fetch);
 	checkAccess();
 	const client = createClient({ fetch }) as unknown as AnyClient;
 
@@ -74,8 +77,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		sends,
 		subscribers,
 		loadError,
-		mailConfigured: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM_ADDRESS),
-		defaultTestEmail: env.INVOICE_TO_EMAIL || env.EMAIL_FROM_ADDRESS || ''
+		mailConfigured: Boolean(env.RESEND_API_KEY && mailFrom),
+		defaultTestEmail: notifyTo || mailFrom || ''
 	};
 };
 

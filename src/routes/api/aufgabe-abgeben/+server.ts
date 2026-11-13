@@ -9,6 +9,7 @@ import { getAnnahme, updateAnnahme, berechneCredits } from '$lib/server/aufgaben
 import { getBuchungByReferenz, getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let form: FormData;
@@ -98,7 +99,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Abrechnungs-Mail senden
 	const resendKey = env.RESEND_API_KEY;
-	let emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	let adminEmail = '';
 	try {
 		const client = createClient({ fetch });
@@ -106,7 +107,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		if (settings) {
 			const s = settings.data as any;
 			adminEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			emailFrom = (s.booking_from_email as string) || emailFrom;
 		}
 	} catch {
 		/* non-critical */

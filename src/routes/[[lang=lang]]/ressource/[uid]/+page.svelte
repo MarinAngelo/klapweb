@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { renderableSlices } from '$lib/utils/renderableSlices';
 	// Own wrapper: replaces {{Variables}}, theme headings/links
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { SliceZone } from '@prismicio/svelte';
@@ -39,7 +40,7 @@
 {/if}
 
 <SliceZone
-	slices={data.doc.data.slices ?? []}
+	slices={renderableSlices(data.doc.data.slices)}
 	components={safeComponents}
 	context={{ ressource: data.ressource }}
 />

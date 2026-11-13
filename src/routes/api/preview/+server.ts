@@ -18,8 +18,14 @@ export async function GET({ fetch, request, cookies }) {
 	});
 
 	// Prevent a flash of non-preview content by setting the preview token on the initial page load
+	// Expires after 1 hour: browsers that restore sessions (Brave) would otherwise keep showing an
+	// old preview for days — and without the Prismic toolbar (blocked) it cannot be exited
 	if (previewToken) {
-		cookies.set(prismic.cookie.preview, previewToken, { path: '/', httpOnly: false });
+		cookies.set(prismic.cookie.preview, previewToken, {
+			path: '/',
+			httpOnly: false,
+			maxAge: 60 * 60
+		});
 	}
 
 	return new Response(undefined, { status: 307, headers: { Location: '/preview' + previewURL } });

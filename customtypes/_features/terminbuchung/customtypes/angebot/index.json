@@ -41,12 +41,50 @@
 				"type": "Number",
 				"config": { "label": "Preis (optional)", "placeholder": "" }
 			},
+			"cancel_free_hours": {
+				"type": "Number",
+				"config": {
+					"label": "Kostenlos stornierbar bis (Std. vor Termin)",
+					"placeholder": "leer = Standard aus den Einstellungen"
+				}
+			},
+			"cancel_fee_percent": {
+				"type": "Number",
+				"config": {
+					"label": "Stornogebühr nach Ablauf (% vom Preis)",
+					"placeholder": "z.B. 80 — leer = Standard aus den Einstellungen"
+				}
+			},
 			"ort": {
 				"type": "Link",
 				"config": {
 					"label": "Ort",
 					"select": "document",
 					"customtypes": ["ort"]
+				}
+			},
+			"bild": {
+				"type": "Image",
+				"config": {
+					"label": "Bild (für Kacheln)",
+					"constraint": { "width": 2200, "height": 1200 },
+					"thumbnails": []
+				}
+			},
+			"info_page": {
+				"type": "Link",
+				"config": {
+					"label": "Seite mit mehr Infos",
+					"placeholder": "",
+					"allowTargetBlank": true,
+					"customtypes": ["page"]
+				}
+			},
+			"sort_order": {
+				"type": "Number",
+				"config": {
+					"label": "Reihenfolge (Kacheln)",
+					"placeholder": "1 = zuerst, leer = am Schluss"
 				}
 			},
 			"aktiv": {

@@ -66,7 +66,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -100,6 +101,21 @@
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
+					}
+				},
+				"chapter_title": {
+					"type": "Text",
+					"config": {
+						"label": "Claude Anleitung Titel",
+						"placeholder": "Zwischentitel über dem Kapitel aus der Anleitung"
+					}
+				},
+				"chapter": {
+					"type": "Select",
+					"config": {
+						"label": "Kapitel aus der Anleitung",
+						"placeholder": "Leer = nur die Inhalte dieses Elements",
+						"options": []
 					}
 				},
 				"steps": {
@@ -162,7 +178,8 @@
 										"subtitle",
 										"subtitle-bold",
 										"kicker",
-										"overline"
+										"overline",
+										"copy"
 									]
 								}
 							},

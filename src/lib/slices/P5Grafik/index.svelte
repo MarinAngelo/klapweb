@@ -52,7 +52,9 @@
 		sketchParams.color = p.color || null;
 	}
 
-	$: canvasBg = p.hintergrundfarbe || get(theme).pageBgColor;
+	// CSS variable instead of the theme store: the store is empty in the prerendered HTML, so the
+	// background would only appear after JavaScript has loaded — the canvas (p5) loads afterwards anyway
+	$: canvasBg = p.hintergrundfarbe || 'var(--page-bg-color)';
 
 	const sketch = getSketch(p.sketch_name, sketchParams);
 

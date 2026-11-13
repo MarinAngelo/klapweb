@@ -19,7 +19,7 @@
 						"placeholder": "",
 						"allowTargetBlank": true,
 						"multi": "paragraph,heading1,heading2,heading3,heading4,strong,em,hyperlink,list-item,o-list-item",
-						"labels": ["kompakt"]
+						"labels": ["kompakt", "copy"]
 					}
 				},
 				"map_url": {

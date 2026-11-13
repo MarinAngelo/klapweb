@@ -28,6 +28,7 @@ import { Resend } from 'resend';
 import { readFileSync } from 'fs';
 import type { RequestHandler } from './$types';
 import { formatDateShort } from '$lib/utils/formatDate';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 const formatDate = formatDateShort;
 
@@ -45,7 +46,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const siteID = env.NETLIFY_SITE_ID;
 	const token = env.NETLIFY_TOKEN;
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.EMAIL_FROM_ADDRESS;
+	const fromEmail = await getMailFrom();
 	const smConfig = JSON.parse(readFileSync('slicemachine.config.json', 'utf-8'));
 	const repoName = env.PRISMIC_REPOSITORY_NAME || smConfig.repositoryName;
 	const dryRun = url.searchParams.get('dryRun') === 'true';

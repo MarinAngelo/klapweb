@@ -33,6 +33,13 @@
 			icon: '📖'
 		},
 		{
+			title: 'How-to-Guide (Entwickler-Dokumentation)',
+			description:
+				'Abläufe der Agentur: Prismic-Konto, Netlify, Mail, Katalog, Migration (passwortgeschützt)',
+			href: 'https://klap-web.ch/how-to-guide',
+			icon: '🛠️'
+		},
+		{
 			title: 'Chat-Bot Wissensbasis',
 			description: 'Generierte Wissensbasis zum Kopieren nach Prismic (Einstellungen → Chat-Bot)',
 			href: '/agency/wissensbasis',

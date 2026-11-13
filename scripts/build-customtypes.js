@@ -47,7 +47,8 @@ import {
 	rmSync,
 	statSync
 } from 'fs';
-import { readOverrides } from '../src/lib/gatingOverrides.js';
+import { configUncommitted, readOverrides } from '../src/lib/gatingOverrides.js';
+import { ALL_CHAPTERS, readChapterIndex } from '../src/lib/anleitung/load.js';
 import { join, dirname } from 'path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -102,7 +103,7 @@ function copyCustomType(srcPath, typeId, label) {
 
 const config = read('slicemachine.config.json');
 const gating = read('gating.json');
-// Lokale Feature-Schalter des Agency-Editors, pro Prismic-Repository (src/lib/gatingOverrides.js)
+// Feature-Schalter des Agency-Editors für diesen Branch (slicemachine.config.json, src/lib/gatingOverrides.js)
 const overrides = readOverrides(ROOT);
 
 // ── Plan-Chain auflösen ──────────────────────────────────────────────────────────
@@ -113,7 +114,16 @@ function resolvePlanChain(planKey) {
 	return [planKey, ...(parent ? resolvePlanChain(parent) : [])];
 }
 
-const activePlanChain = config.plan ? resolvePlanChain(config.plan) : [];
+// Plan/Feature-Schalter geändert, aber nicht committet → gelten nicht in Production
+if (configUncommitted(ROOT)) {
+	console.warn(
+		'⚠ slicemachine.config.json hat nicht committete Änderungen (Plan / features / featuresDisabled) — erst nach Commit und Deploy gelten sie in Production.'
+	);
+}
+
+// Ohne Plan gilt «basis» — gleich wie src/lib/server/features.ts (Website/API)
+if (!config.plan) console.warn('⚠ slicemachine.config.json: kein "plan" — es gilt «basis»');
+const activePlanChain = resolvePlanChain(config.plan || 'basis');
 
 // ── Aktive Features aus Plan + gating.features ───────────────────────────────────
 
@@ -121,7 +131,7 @@ const features = Object.entries(gating.features ?? {})
 	.filter(([, def]) => (def.plans ?? []).some((p) => activePlanChain.includes(p)))
 	.map(([id]) => id);
 
-// Zusätzliche Features aus gating.overrides.json (pro Repository, siehe gatingOverrides.js)
+// Zusatz-Features / abgeschaltete Features dieses Branches (slicemachine.config.json)
 const enabledFeatures = (overrides.enabled ?? []).filter((f) => gating.features?.[f]);
 const disabledFeatures = overrides.disabled ?? [];
 const allFeatures = [
@@ -129,7 +139,7 @@ const allFeatures = [
 ];
 
 console.log(
-	`Plan: ${config.plan} (${gating.plans[config.plan]?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
+	`Plan: ${config.plan || 'basis'} (${gating.plans[config.plan || 'basis']?.label ?? '?'}) → features: [${allFeatures.join(', ') || 'none'}]`
 );
 
 // ── Gating-Hilfsfunktionen ───────────────────────────────────────────────────────
@@ -143,6 +153,8 @@ function isActive(gate) {
 	if (!gate) return true;
 	if (gate.plan && activePlanChain.length > 0 && !activePlanChain.includes(gate.plan)) return false;
 	if (gate.feature && !allFeatures.includes(gate.feature)) return false;
+	// OR gate: active when at least one of the features is (e.g. invoice fields)
+	if (gate.features && !gate.features.some((f) => allFeatures.includes(f))) return false;
 	return true;
 }
 
@@ -199,6 +211,15 @@ const customTypeLabelOverrides = {
 	page: 'Seiten',
 	settings: 'Einstellungen'
 };
+
+/** Group field: labels of its sub-fields (key → label), e.g. for «Inhalte prüfen» */
+function subfieldLabels(fieldConfig) {
+	const fields = fieldConfig?.type === 'Group' ? fieldConfig.config?.fields : null;
+	if (!fields) return undefined;
+	return Object.fromEntries(
+		Object.entries(fields).map(([key, f]) => [key, f?.config?.label || key])
+	);
+}
 
 function describeField(fieldConfig, label, elementType) {
 	const config = fieldConfig?.config ?? {};
@@ -278,7 +299,8 @@ function collectFieldReference() {
 						fieldConfig?.config?.label || fieldName,
 						'Custom Type'
 					),
-					type: fieldConfig?.type || 'unknown'
+					type: fieldConfig?.type || 'unknown',
+					subfields: subfieldLabels(fieldConfig)
 				});
 			}
 		}
@@ -303,6 +325,8 @@ function collectFieldReference() {
 							name: model.name || entry.name,
 							elementType: 'Slice',
 							customType: entry.name,
+							// slice_type in the Prismic data (e.g. text_with_image) → «Inhalte prüfen» names the field
+							sliceType: model.id,
 							customTypeLabel: model.name || entry.name,
 							tab: variation.name || variation.id,
 							field: fieldName,
@@ -313,7 +337,8 @@ function collectFieldReference() {
 								fieldConfig?.config?.label || fieldName,
 								'Slice'
 							),
-							type: fieldConfig?.type || 'unknown'
+							type: fieldConfig?.type || 'unknown',
+							subfields: subfieldLabels(fieldConfig)
 						});
 					}
 				}
@@ -549,6 +574,15 @@ for (const sliceName of allSlices) {
 
 	const { _meta: _baseMeta, ...base } = read(basePath);
 	validateAnimationFieldOrder(base, basePath);
+
+	// «Anleitung»: the chapters from the code (src/lib/anleitung) are the options of
+	// «Kapitel aus der Anleitung» — a new chapter appears in the dropdown after the next start
+	if (sliceName === 'Anleitung') {
+		const options = [ALL_CHAPTERS, ...readChapterIndex(ROOT).map((c) => c.title)];
+		for (const variation of base.variations ?? []) {
+			if (variation.primary?.chapter) variation.primary.chapter.config.options = options;
+		}
+	}
 	const sliceGating = sliceGatingMap[sliceName];
 
 	// Slice-level gate (gating.json hat Vorrang, _meta als Fallback)

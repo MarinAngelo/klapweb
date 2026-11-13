@@ -11,6 +11,7 @@ import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
+import { getMailFrom } from '$lib/server/mailFrom';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let body: any;
@@ -112,7 +113,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const resendKey = env.RESEND_API_KEY;
 		const adminSecret = env.ADMIN_SECRET;
 
-		let emailFrom = env.EMAIL_FROM_ADDRESS;
+		const emailFrom = await getMailFrom();
 		let adminEmail = '';
 		try {
 			const client = createClient({ fetch });
@@ -120,7 +121,6 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			if (settings) {
 				const s = settings.data as any;
 				adminEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-				emailFrom = (s.booking_from_email as string) || emailFrom;
 			}
 		} catch {
 			/* non-critical */

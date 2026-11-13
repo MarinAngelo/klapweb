@@ -19,6 +19,7 @@ import { createHash, createHmac, timingSafeEqual } from 'crypto';
 import * as prismic from '@prismicio/client';
 import { listCustomers } from '$lib/server/customers';
 import { t } from '$lib/i18n/translations';
+import { getMailAddress } from '$lib/server/mailFrom';
 
 export type NewsletterRecipient = {
 	email: string;
@@ -417,8 +418,10 @@ export async function sendNewsletter(
 	origin: string
 ): Promise<{ sent: number; failed: number; errors: string[] }> {
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.EMAIL_FROM_ADDRESS;
-	if (!resendKey || !fromEmail) throw new Error('RESEND_API_KEY / EMAIL_FROM_ADDRESS fehlt');
+	// Own sender name (newsletter branding) → only the address here
+	const fromEmail = await getMailAddress();
+	if (!resendKey || !fromEmail)
+		throw new Error('RESEND_API_KEY / Absender-E-Mail (Einstellungen) fehlt');
 
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);
@@ -481,8 +484,10 @@ export async function sendSubscribeConfirmation(
 	origin: string
 ): Promise<void> {
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = env.EMAIL_FROM_ADDRESS;
-	if (!resendKey || !fromEmail) throw new Error('RESEND_API_KEY / EMAIL_FROM_ADDRESS fehlt');
+	// Own sender name (newsletter branding) → only the address here
+	const fromEmail = await getMailAddress();
+	if (!resendKey || !fromEmail)
+		throw new Error('RESEND_API_KEY / Absender-E-Mail (Einstellungen) fehlt');
 
 	const lang = data.lang || 'de-ch';
 	const link = subscribeConfirmUrl(origin, data);

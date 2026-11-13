@@ -28,6 +28,7 @@ import {
 	fallbackSubject,
 	getRessourceDocForBooking
 } from '$lib/server/ressourceMail';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -66,7 +67,7 @@ export const load: PageServerLoad = async () => {
 
 async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalThis.fetch) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
 	// CMS template in the booking language (fallback: main language)
@@ -129,7 +130,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 
 async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const { Resend } = await import('resend');
@@ -150,7 +151,7 @@ async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 
 async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freigabeUrl: string) {
 	const resendKey = env.RESEND_API_KEY;
-	const emailFrom = env.EMAIL_FROM_ADDRESS;
+	const emailFrom = await getMailFrom();
 	if (!resendKey || !emailFrom || !toEmail) return;
 
 	const annahmen = await listAnnahmenFuerBuchung(buchung.id).catch(() => []);
@@ -221,7 +222,7 @@ export const actions: Actions = {
 			status: 'checked_in',
 			checkedInAt: new Date().toISOString()
 		});
-		const toEmail = env.INVOICE_TO_EMAIL || '';
+		const toEmail = await getNotifyTo();
 		await mailCheckIn(buchung, toEmail).catch(console.error);
 	},
 
@@ -233,7 +234,7 @@ export const actions: Actions = {
 			status: 'checked_out',
 			checkOutAt: new Date().toISOString()
 		});
-		const toEmail = env.INVOICE_TO_EMAIL || '';
+		const toEmail = await getNotifyTo();
 		const origin = url.origin;
 		const freigabeUrl = `${origin}/api/freigabe-abrechnung?id=${encodeURIComponent(id)}&token=${adminActionToken('freigabe-abrechnung', id)}`;
 		await mailAbrechnung(buchung, toEmail, freigabeUrl).catch(console.error);

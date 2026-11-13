@@ -6,6 +6,14 @@
 
 	export let data: PageData;
 
+	// Feature that issued the invoice (src/lib/server/invoicing)
+	const SOURCE_LABELS: Record<string, string> = {
+		checkout: 'Bestellung',
+		event: 'Event',
+		terminbuchung: 'Terminbuchung',
+		admin: 'Manuell'
+	};
+
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
@@ -436,13 +444,22 @@
 									<span
 										class="admin-badge {inv.paymentStatus === 'bezahlt'
 											? 'admin-badge-green'
-											: 'admin-badge-orange'}"
+											: inv.paymentStatus === 'storniert'
+												? 'admin-badge-red'
+												: 'admin-badge-orange'}"
 									>
-										{inv.paymentStatus === 'bezahlt' ? '✓ bezahlt' : '⏱ offen'}
+										{inv.paymentStatus === 'bezahlt'
+											? '✓ bezahlt'
+											: inv.paymentStatus === 'storniert'
+												? '✕ storniert'
+												: '⏱ offen'}
 									</span>
 								</td>
 								<td>
 									<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
+									{#if inv.source && SOURCE_LABELS[inv.source]}
+										<span class="admin-muted block text-xs">{SOURCE_LABELS[inv.source]}</span>
+									{/if}
 								</td>
 								<td class="nowrap space-x-3">
 									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>
@@ -880,6 +897,7 @@
 									>
 										<option value="offen">⏱ offen</option>
 										<option value="bezahlt">✓ bezahlt</option>
+										<option value="storniert">✕ storniert</option>
 									</select>
 								</div>
 							</fieldset>
