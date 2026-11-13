@@ -8,6 +8,7 @@
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 	import { headingAnchor } from '$lib/actions/headingAnchor';
 	import Button from '$lib/components/Button.svelte';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 
 	export let slice: Content.TextWithImageSlice;
 	export let slices: any[] | undefined = undefined;
@@ -45,7 +46,11 @@
 	$: mobileImageFirst = p.mobile_image_first ?? false;
 	$: textCenterV = p.text_center_v ?? false;
 	$: textCenterH = p.text_center_h ?? false;
-	$: fullscreen = p.fullscreen ?? false;
+	// «Vollbild (100vh)»: not in «Standard» (moved to «Titelbereich»); header overlap only in «Titelbereich»
+	const isTitelbereich = variation === 'titelbereich';
+	$: fullscreen = variation !== 'default' && ((p as any).fullscreen ?? false);
+	$: bannerOverlap = isTitelbereich && ((p as any).banner_overlap ?? false);
+	$: headerBgOpacityRaw = isTitelbereich ? ((p as any).header_bg_opacity ?? null) : null;
 	$: visible = isVisibleForPlan(p.feature_gate, $planFilter);
 
 	const rowGapMap: Record<string, string> = {
@@ -70,7 +75,8 @@
 	$: imageRound = !!p.image_round;
 	$: lightbox = !!p.lightbox;
 	$: isFullWidth = !!p.full_width;
-	$: fullscreenHeight = `calc(100dvh - ${$headerHeight}px)`;
+	// Overlapping the header: the section starts behind it and fills the whole viewport
+	$: fullscreenHeight = bannerOverlap ? '100dvh' : `calc(100dvh - ${$headerHeight}px)`;
 
 	$: defaultSliderImages = (() => {
 		const imgs: any[] = [];
@@ -140,6 +146,10 @@
 		.filter(Boolean)
 		.join('; ');
 </script>
+
+{#if isTitelbereich}
+	<BannerThemeSync {bannerOverlap} {headerBgOpacityRaw} />
+{/if}
 
 {#if visible}
 	{#if isMulti}
@@ -230,6 +240,7 @@
 					textCenterV={fullscreen || textCenterV}
 					textCenterH={fullscreen || textCenterH}
 					{fullscreen}
+					headerOverlap={bannerOverlap}
 				>
 					{#if p.buttonText && isFilled.link(p.buttonLink)}
 						<Button
