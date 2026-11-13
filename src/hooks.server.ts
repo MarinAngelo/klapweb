@@ -3,6 +3,7 @@ import { building } from '$app/environment';
 import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
+import { dropInvalidPreviewCookie } from '$lib/server/previewCookie';
 
 // In-Memory-Cache für Session→User-Auflösung.
 // Ohne Cache kostet jeder Request mit Session-Cookie zwei serielle
@@ -51,6 +52,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 			throw redirect(303, `/admin?next=${encodeURIComponent(pathname + event.url.search)}`);
 		}
 	}
+
+	// Expired/invalid Prismic preview token would turn every page into the error page
+	if (!building) await dropInvalidPreviewCookie(event.cookies, globalThis.fetch);
 
 	const sessionToken = event.cookies.get('klap_user_session');
 	if (sessionToken) {

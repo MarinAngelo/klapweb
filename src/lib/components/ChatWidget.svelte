@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { linkify } from '$lib/utils/linkify';
 	import { consentServices } from '$lib/consent/services';
@@ -41,8 +41,12 @@
 	$: displayName = botName || $_('Assistent');
 	$: chatAllowed = $isServiceAllowed(SERVICE_ID);
 
-	// Opt-out consent: the chat sends messages to Anthropic → banner/settings must list it
-	onMount(() => registerServiceUsage(SERVICE_ID));
+	// Opt-out consent: the chat sends messages to Anthropic → banner/settings must list it.
+	// Registered only once the visitor opens the chat: the closed button transfers nothing,
+	// so pages don't show the cookie banner just because of the chat button
+	let unregisterUsage: (() => void) | null = null;
+	$: if (isOpen && !unregisterUsage) unregisterUsage = registerServiceUsage(SERVICE_ID);
+	onDestroy(() => unregisterUsage?.());
 
 	const errorKeys: Record<string, string> = {
 		rate_limit: 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',

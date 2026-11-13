@@ -62,7 +62,7 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
-			"plans": ["individuell"]
+			"plans": ["klap-web-ch"]
 		},
 		"stundenabrechnung": {
 			"label": "Stundenabrechnung",
@@ -191,6 +191,16 @@
 		}
 	},
 	"slices": {
+		"Anleitung": {
+			"fields": {
+				"chapter_title": {
+					"plan": "klap-web-ch"
+				},
+				"chapter": {
+					"plan": "klap-web-ch"
+				}
+			}
+		},
 		"Akkordeon": {
 			"fields": {
 				"mit_suche": {

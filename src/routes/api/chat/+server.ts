@@ -16,6 +16,7 @@ import {
 	recordChatExchange
 } from '$lib/server/chatLog';
 import { isAgencyAuthenticated } from '$lib/server/agencyAuth';
+import { CHAT_KNOWLEDGE_FROM_CODE, codeKnowledgeBase } from '$lib/server/chatKnowledge';
 
 // Developer knowledge base for `@dev` (scripts/chatbot-dev-wissensbasis.js, generated before
 // dev/build). Glob: a missing file must not break the build — dev mode then says so.
@@ -30,7 +31,8 @@ const DEV_PREFIX = /^@dev\b[:\s]*/i;
 
 /**
  * Chat-Bot (Feature `chatbot`): answers visitor questions with Claude Haiku,
- * based on the knowledge base in the Settings document (per language, fallback master language).
+ * based on the knowledge base in the Settings document (per language, fallback master language),
+ * or on klap-web-ch the one generated from the code ($lib/server/chatKnowledge).
  *
  * Error responses carry an `error` code; the widget translates it (i18n).
  */
@@ -86,7 +88,10 @@ async function getChatSettings(fetchFn: typeof fetch, lang: string): Promise<Cha
 		richTextToMarkdown(localizedData[field]) || richTextToMarkdown(masterData[field]);
 	const value: ChatSettings = {
 		active: masterData.chat_active === true,
-		knowledgeBase: text('chat_knowledge_base'),
+		// klap-web-ch: generated from the code (docs/chatbot-wissensbasis.html), the Prismic field is ignored
+		knowledgeBase: CHAT_KNOWLEDGE_FROM_CODE
+			? await codeKnowledgeBase()
+			: text('chat_knowledge_base'),
 		// «Ergänzungen»: manual additions/corrections, take precedence over the knowledge base
 		knowledgeExtra: text('chat_knowledge_extra')
 	};

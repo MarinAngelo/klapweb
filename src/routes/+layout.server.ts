@@ -257,6 +257,7 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			pwaActive: FEATURE_PWA,
 			chatBotName,
 			chatGreeting,
+			klapstudioActive,
 			consentInUse,
 			locales: allLocales,
 			variables,

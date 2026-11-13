@@ -163,6 +163,13 @@ Regeln:
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
 
+## Prismic-Vorschau
+
+- `/api/preview` setzt das Cookie `io.prismic.preview` mit **Ablauf nach 1 Stunde** (`maxAge`); `createClient({ cookies })` liest damit überall den Vorschau-Stand statt der veröffentlichten Fassung
+- **Ungültiges/abgelaufenes Token** → `hooks.server.ts` löscht das Cookie (`dropInvalidPreviewCookie`, `src/lib/server/previewCookie.ts`, einmal pro Token geprüft, Netzwerkfehler behalten es). Ohne das scheitert jede Prismic-Abfrage → ganze Website auf der Fehlerseite (404 «Navigation fehlt»)
+- **Hinweis «Vorschau aktiv – Vorschau beenden»** (`PreviewNotice.svelte` im Root-Layout, Popover API): erscheint nur, wenn das Cookie gesetzt ist und die Prismic-Leiste nach 5 s fehlt (Brave/Safari/private Fenster blockieren sie: Script von prismic.io, Drittanbieter-Cookies). «Vorschau beenden» löscht das Cookie und öffnet die Seite ohne `/preview`. **Nie bei sichtbarer Leiste anzeigen:** Die Vorschau ist auch eine Sitzung bei prismic.io; die Leiste setzt ein gelöschtes Cookie aus dieser Sitzung neu — beenden kann sie nur das Kreuz der Leiste (`closeSession`)
+- Diagnose bei altem Stand: privates Fenster bzw. `curl` gegen die Seite. Redakteurs-Anleitung: Kapitel «Vorschau»
+
 ## Prismic Link-Felder in Custom Types
 
 - **NIEMALS `"select": "document"` setzen** auf Link-Feldern — das blockiert externe URLs (Web Links) komplett!
@@ -494,13 +501,23 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 
 - Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings, Tab «Chat-Bot» (`chat_active`, Name, Begrüssung, Wissensbasis + «Ergänzungen» (`chat_knowledge_extra`, Vorrang bei Widersprüchen) pro Sprache, je Feld Fallback Hauptsprache)
-- Wissensbasis-Vorlage für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich)
+- Wissensbasis für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich). Mit `"chatKnowledgeFromCode": true` in `slicemachine.config.json` (nur `klap-web-ch`) liest der Bot sie direkt aus dem Code (`src/lib/server/chatKnowledge.ts`, in die Server-Funktion eingebunden) statt aus dem Prismic-Feld «Chat-Bot Wissensbasis» — aktualisieren = `npm run wissensbasis` + Deploy, kein Kopieren. «Ergänzungen» kommen weiterhin aus Prismic
 - Anthropic-Aufruf mit `globalThis.fetch` — der SvelteKit-Event-`fetch` setzt einen Origin-Header → 401 (CORS)
 - **Sicherheit:** Kostendeckel `CHAT_DAILY_BUDGET_USD` / `CHAT_MONTHLY_BUDGET_USD` (Standard 2 / 20 USD, `isOverBudget()` in `chatUsage.ts`); Verlauf für das Modell kommt aus dem Chat-Log (`loadConversationHistory`), vom Browser wird nur die neue Frage übernommen — nie wieder Verlauf aus dem Request vertrauen; Regel 5 im Prompt: keine Zusagen ausserhalb der Wissensbasis
 - **Entwickler-Modus `@dev`:** Nachricht mit `@dev` → nur mit Agentur-Login (`isAgencyAuthenticated`), sonst 403 `dev_forbidden`; bleibt im Chat-Fenster aktiv bis `@exit`. Wissensbasis `src/lib/generated/chatbot-dev-wissensbasis.md` (gitignored) erzeugt `scripts/chatbot-dev-wissensbasis.js` bei `npm run dev`/`build` automatisch aus CLAUDE.md, `docs/*.md`, `.env.example`, `gating.json`, Env-Var-Scan des Codes, Netlify-Function-Kommentaren, der Prismic-Seite `how-to-guide` (Repo klap-web-ch, live geladen) und Feldreferenz → **Doku aktuell halten = Dev-Bot aktuell**. Env-Vars einer Funktion gehören in `gating.json` → `features.<id>.env`
 - **Bewertung:** pro Antwort 👍/👎; bei 👎 Mini-Formular (Name, E-Mail, Kommentar, alles optional) → einmalige Mail an «Verantwortliche E-Mail» (Reply-To = Besucher), Name/E-Mail nicht im Log → `/api/chat/rating`, gespeichert im Chat-Log-Eintrag (`rateChatExchange`, nur eigene Gesprächs-ID, 24 h), Auswertung in `/admin/chatbot`
-- Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
+- Cookie-Banner: Dienst/Kategorie `ai_chat`, erst beim Öffnen des Chats angemeldet (`registerServiceUsage` in `ChatWidget.svelte`) → der geschlossene Button allein löst keinen Banner aus; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
+
+## Anleitung für Redakteure (`src/lib/anleitung/`)
+
+- **Eine Quelle im Code** für die Anleitungstexte: `index.json` (Reihenfolge, `id`, `title`, `feature`, `stand`, `sources`) + `kapitel/<id>.html` (h4 pro Schritt, h3 pro Thema, ein Feld pro Zeile mit `<strong>`; Stil-Regeln im Skill `/chatbot-wissensbasis`, Muster `terminbuchung.html`; Teile zwischen `<!-- NUR-WEBSITE:START/END -->` fehlen in der Bot-Wissensbasis). Daraus entstehen die Website klap-web.ch/anleitung **und** der Abschnitt `AUTO:ANLEITUNGEN` der Chat-Bot-Wissensbasis (`npm run wissensbasis`) — nie dort oder in Prismic Anleitungstexte schreiben
+- **Funktion geändert → Kapitel im selben Commit anpassen** und `stand` auf heute setzen; neue Funktion → neues Kapitel + Index-Eintrag (`feature` = ID aus `gating.json`, `covers` für mit-dokumentierte Features)
+- **Prismic-Felder in Kapiteln nie abtippen:** `<li data-field="angebot.dauer"></li>` bzw. `<span data-field="…"></span>` (`src/lib/anleitung/fields.js`) → Label aus dem Modell, Beschreibung aus `fieldDescriptions.json` (`/agency/feldreferenz`); Bot-Wissensbasis nur mit Label. Feld umbenannt → Anleitung stimmt automatisch; Beschreibung fehlt → `/field-description`
+- `scripts/check-anleitung.js` meldet Kapitel, deren `sources` seit `stand` Commits haben, Features ohne Kapitel und (nur auf `klap-web-ch`, wo alle Features aktiv sind) Verweise auf Felder, die es nicht mehr gibt (Warnung bei `npm run dev`; `npm run check:anleitung` mit Details und Fehler-Exit)
+- **Website:** Inhalts-Element «Anleitung», Feld «Kapitel aus der Anleitung» (`chapter`, nur Plan `klap-web-ch`; Optionen erzeugt `build-customtypes.js` aus den Kapitel-Titeln). Reihenfolge: Titel → eigener Teil aus Prismic (Beschreibung mit Bildern, Video, Schritte) → «Claude Anleitung Titel» (`chapter_title`, h3) → Kapitel-Text aus dem Code. «Alle übrigen Kapitel» zeigt jedes Kapitel, das kein anderes Element der Seite gewählt hat → neue Kapitel erscheinen ohne Prismic-Änderung
+- Texte kommen serverseitig über den Seiten-Load (`src/lib/server/anleitung.ts` → SliceZone-Kontext `guideChapters`), nie in den Client-Bundle importieren. Kapitel mit `feature` folgen dem Paket-Filter (`planFilter`)
+- Kapitel-Titel nicht umbenennen, ohne die Auswahl in Prismic nachzuziehen (Select speichert den Titel; sonst «Kapitel nicht gefunden»)
 
 ## Newsletter / Info-Mails (`/admin/newsletter`)
 

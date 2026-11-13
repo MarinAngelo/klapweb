@@ -22,6 +22,7 @@
 	import Bounded from '$lib/components/Bounded.svelte';
 	import KlapStudio from '$lib/components/KlapStudio.svelte';
 	import PageUpButton from '$lib/components/PageUpButton.svelte';
+	import PreviewNotice from '$lib/components/PreviewNotice.svelte';
 	import CookieBanner from '$lib/components/CookieBanner.svelte';
 	import MissingTranslationModal from '$lib/components/MissingTranslationModal.svelte';
 
@@ -59,6 +60,7 @@
 		pwaActive,
 		chatBotName,
 		chatGreeting,
+		klapstudioActive,
 		user
 	} = data);
 	$: dynamicDefaultLang = mainLang || 'de-de';
@@ -83,7 +85,8 @@
 	$: appleTouchIconUrl =
 		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
-	$: noIndex = $page.data?.no_index || false;
+	// Prismic field «Keine Indexierung» (no_index) of the page document; routes can also set data.no_index
+	$: noIndex = $page.data?.no_index === true || $page.data?.page?.data?.no_index === true;
 
 	// --- DOMAIN & URL ---
 	$: rawDomain = settings?.data?.domain || 'klap-web.ch';
@@ -427,7 +430,8 @@
 		(s: any) =>
 			(s.slice_type === 'hero' ||
 				s.slice_type === 'galerie' ||
-				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich')) &&
+				(s.slice_type === 'p5_grafik' && s.variation === 'mitTitelbereich') ||
+				(s.slice_type === 'text_with_image' && s.variation === 'titelbereich')) &&
 			s.primary?.banner_overlap === true
 	);
 	// Default page «Website im Aufbau» (home redirect) is always a landing page
@@ -443,6 +447,7 @@
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&
 		$page.data?.page?.data?.slices?.[0]?.slice_type === 'text_with_image' &&
+		$page.data?.page?.data?.slices?.[0]?.variation !== 'default' &&
 		$page.data?.page?.data?.slices?.[0]?.primary?.fullscreen === true;
 	$: isSlicePreview = $page.url.pathname.startsWith('/slice-preview/');
 	$: isDokuPage = $page.url.pathname.startsWith('/doku');
@@ -463,9 +468,11 @@
 	$: if (browser) document.documentElement.classList.toggle('legal-landing', isLegalLanding);
 	$: hideChrome =
 		isLandingPage || isLegalLanding || isSlicePreview || isDokuPage || isNoChrome || isAdminPage;
-	// Landing pages hide header and footer — except the legal links
+	// Landing pages hide header and footer — except the legal links (unless switched off per page)
+	$: hideLegalBar = $page.data?.page?.data?.hide_legal_bar === true;
 	$: showLegalBarOnly =
 		(isLandingPage || isLegalLanding) &&
+		!hideLegalBar &&
 		!isSlicePreview &&
 		!isDokuPage &&
 		!isNoChrome &&
@@ -491,7 +498,7 @@
 
 	onMount(() => {
 		function onKeydown(e: KeyboardEvent) {
-			if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+			if (klapstudioActive && e.ctrlKey && e.shiftKey && e.key === 'K') {
 				e.preventDefault();
 				studioOpen = !studioOpen;
 			}
@@ -527,7 +534,7 @@
 	{#if pwaThemeColor}<meta name="theme-color" content={pwaThemeColor} />{/if}
 	<link rel="canonical" href={currentUrl} />
 
-	{#if noIndex}<meta name="robots" content="noindex, nofollow" />{/if}
+	{#if noIndex}<meta name="robots" content="noindex, follow" />{/if}
 
 	{#if showSwitcher}
 		{#each seoAlternates as alt}
@@ -631,7 +638,10 @@
 <CookieBanner lang={chromeLang} mainLang={data.mainLang} />
 
 <PrismicPreview {repositoryName} />
-<KlapStudio bind:open={studioOpen} />
+<PreviewNotice />
+{#if klapstudioActive}
+	<KlapStudio bind:open={studioOpen} />
+{/if}
 {#if chatActive && !isAdminPage}
 	<ChatWidget botName={chatBotName} greeting={chatGreeting} lang={chromeLang} />
 {/if}
