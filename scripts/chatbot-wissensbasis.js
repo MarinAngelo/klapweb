@@ -1,20 +1,30 @@
 /**
- * Chat-Bot Wissensbasis (docs/chatbot-wissensbasis.html): updates the automatic section
- * «Prismic-Feldreferenz» between the markers
- *   <!-- AUTO:FELDREFERENZ:START --> … <!-- AUTO:FELDREFERENZ:END -->
- * from the generated field reference (src/lib/generated/prismic-field-reference.json, active
- * plan → run on klap-web-ch for all features) and the agency descriptions
- * (src/lib/fieldDescriptions.json, /agency/feldreferenz). The written guides stay untouched.
+ * Chat-Bot Wissensbasis (docs/chatbot-wissensbasis.html): updates the two automatic sections
  *
- * npm run wissensbasis   (the Claude task /chatbot-wissensbasis also updates the guides)
+ *   <!-- AUTO:ANLEITUNGEN:START --> … <!-- AUTO:ANLEITUNGEN:END -->
+ *     the guide chapters from src/lib/anleitung/ (same source as the website /anleitung) —
+ *     edit the chapters there, never between the markers; parts marked NUR-WEBSITE are left out
+ *
+ *   <!-- AUTO:FELDREFERENZ:START --> … <!-- AUTO:FELDREFERENZ:END -->
+ *     «Prismic-Feldreferenz» from the generated field reference
+ *     (src/lib/generated/prismic-field-reference.json, active plan → run on klap-web-ch for all
+ *     features) and the agency descriptions (src/lib/fieldDescriptions.json, /agency/feldreferenz)
+ *
+ * Everything outside the markers (about KLAP WEB, prices, FAQ) is written by hand.
+ *
+ * npm run wissensbasis   (the Claude task /chatbot-wissensbasis also updates the chapters)
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readChapterHtml, readChapterIndex } from '../src/lib/anleitung/load.js';
+import { expandFieldRefs, fieldLookup } from '../src/lib/anleitung/fields.js';
 
 const KB = 'docs/chatbot-wissensbasis.html';
 const REFERENCE = 'src/lib/generated/prismic-field-reference.json';
 const DESCRIPTIONS = 'src/lib/fieldDescriptions.json';
 const START = '<!-- AUTO:FELDREFERENZ:START -->';
 const END = '<!-- AUTO:FELDREFERENZ:END -->';
+const GUIDES_START = '<!-- AUTO:ANLEITUNGEN:START -->';
+const GUIDES_END = '<!-- AUTO:ANLEITUNGEN:END -->';
 
 const escapeHtml = (value) =>
 	String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -92,7 +102,46 @@ const html = [
 	END
 ].join('\n');
 
+// Guide chapters (src/lib/anleitung)
+// Parts between <!-- NUR-WEBSITE:START --> and <!-- NUR-WEBSITE:END --> (checklists, best
+// practices, summaries) are for readers of the website only — they would just make every
+// chat request longer
+// Field references (data-field): labels only — the descriptions are in the field reference below
+const lookup = fieldLookup(reference, descriptions);
+const unknownFields = new Set();
+const forBot = (source) => {
+	const { html, unknown } = expandFieldRefs(source, lookup, { descriptions: false });
+	for (const key of unknown) unknownFields.add(key);
+	return html
+		.replace(/<!-- NUR-WEBSITE:START -->[\s\S]*?<!-- NUR-WEBSITE:END -->\n?/g, '')
+		.replace(/\n{3,}/g, '\n\n')
+		.trim();
+};
+const chapters = readChapterIndex();
+const guidesHtml = [
+	GUIDES_START,
+	...chapters.map(
+		(c) => `<h2>${escapeHtml(c.title)}</h2>\n${forBot(readChapterHtml(c.id) ?? '')}\n`
+	),
+	GUIDES_END
+].join('\n');
+
+if (unknownFields.size) {
+	console.warn(
+		`⚠ Anleitung: unbekannte Felder (auf klap-web-ch ausführen, dort sind alle Funktionen aktiv): ${[...unknownFields].join(', ')}`
+	);
+}
+
 let kb = readFileSync(KB, 'utf8');
+if (kb.includes(GUIDES_START) && kb.includes(GUIDES_END)) {
+	kb =
+		kb.slice(0, kb.indexOf(GUIDES_START)) +
+		guidesHtml +
+		kb.slice(kb.indexOf(GUIDES_END) + GUIDES_END.length);
+} else {
+	console.error(`✗ ${KB}: Markierungen ${GUIDES_START} … ${GUIDES_END} fehlen`);
+	process.exit(1);
+}
 if (kb.includes(START) && kb.includes(END)) {
 	kb = kb.slice(0, kb.indexOf(START)) + html + kb.slice(kb.indexOf(END) + END.length);
 } else {
@@ -113,5 +162,5 @@ const words = kb
 	.split(/\s+/)
 	.filter(Boolean).length;
 console.log(
-	`✓ ${KB}: Feldreferenz mit ${groups.size} Elementen, ${fields} Feldern (${described} mit Agentur-Beschreibung) — Wissensbasis gesamt ca. ${words} Wörter`
+	`✓ ${KB}: ${chapters.length} Anleitungs-Kapitel, Feldreferenz mit ${groups.size} Elementen, ${fields} Feldern (${described} mit Agentur-Beschreibung) — Wissensbasis gesamt ca. ${words} Wörter`
 );

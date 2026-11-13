@@ -7,7 +7,7 @@
   Quelle für das Prismic-Feld «Chat-Bot Wissensbasis» (Einstellungen → Tab «Chat-Bot»).
   Übernehmen: Datei im Browser öffnen → alles markieren (Ctrl+A) → kopieren → in das Feld einfügen → veröffentlichen.
   Überschriften und Listen bleiben erhalten. Der Bot liest die Änderung nach spätestens 5 Minuten.
- Stand der Anleitungen: 2026-10-30 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
+ Stand der Anleitungen: 2026-11-11 (aktualisieren: Claude-Task /chatbot-wissensbasis, Feldreferenz: npm run wissensbasis)
 -->
 <style>
 	body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
@@ -112,369 +112,1221 @@
 	<li>Es gilt Schweizer Recht. Die vollständigen AGB stehen auf der Website unter «AGB».</li>
 </ul>
 
+<!-- AUTO:ANLEITUNGEN:START -->
 <h2>Prismic: Grundbegriffe</h2>
 <ul>
-	<li>Prismic ist das CMS (Backend), in dem du deine Website pflegst. Anmeldung unter prismic.io mit deinem Benutzerkonto.</li>
-	<li>Inhalts-Typen (in Prismic «Type»): das Grundgerüst, z. B. Page (Seite), Navigation, Einstellungen, Design-Vorlage, Event. Mehrfache Typen (z. B. Page, Event) kannst du beliebig oft anlegen. Einmalige Typen (z. B. Navigation, Einstellungen) gibt es nur einmal; ist er schon angelegt, erscheint er in der Auswahlliste blass.</li>
-	<li>Inhalts-Elemente (in Prismic «Slice»): Bausteine, aus denen eine Seite zusammengesetzt wird, z. B. Titelbereich, Text, Bild, Akkordeon, Kacheln, Formulare. Viele Inhalts-Elemente haben Varianten (Variations), z. B. Text «Standard», «Zwei Spalten» oder «Überschrift».</li>
-	<li>Dokument: ein einzelner Eintrag, z. B. die Seite «Über mich».</li>
-	<li>Veröffentlichen (Publish): Erst veröffentlichte Änderungen sind auf der Website sichtbar. Gespeichert wird automatisch.</li>
+	<li><strong>Prismic:</strong> das CMS (Backend), in dem du deine Website pflegst. Anmeldung unter prismic.io mit deinem Benutzerkonto.</li>
+	<li><strong>Inhalts-Typen</strong> (in Prismic «Type»): das Grundgerüst, z. B. Page (Seite), Navigation, Einstellungen, Design-Vorlage, Event.</li>
+	<li><strong>Mehrfache Typen</strong> (z. B. Page, Event): kannst du beliebig oft anlegen.</li>
+	<li><strong>Einmalige Typen</strong> (z. B. Navigation, Einstellungen): gibt es nur einmal; ist er schon angelegt, erscheint er in der Auswahlliste blass.</li>
+	<li><strong>Inhalts-Elemente</strong> (in Prismic «Slice»): Bausteine, aus denen eine Seite zusammengesetzt wird, z. B. Titelbereich, Text, Bild, Akkordeon, Kacheln, Formulare.</li>
+	<li><strong>Varianten</strong> (Variations): Viele Inhalts-Elemente haben Varianten, z. B. Text «Standard», «Zwei Spalten» oder «Überschrift».</li>
+	<li><strong>Dokument:</strong> ein einzelner Eintrag, z. B. die Seite «Über mich».</li>
+	<li><strong>Veröffentlichen</strong> (Publish): Erst veröffentlichte Änderungen sind auf der Website sichtbar. Gespeichert wird automatisch.</li>
 </ul>
 
 <h2>Prismic: Die Startseite (Übersicht)</h2>
 <ul>
-	<li>Dokumentliste: alle Seiten und Inhalte mit Status («Live» = veröffentlicht), Name, Typ, letzter Änderung und Autor. Klick auf den Namen öffnet das Dokument.</li>
-	<li>Filter: nach Typ (z. B. nur «Page»), Autor oder Tags.</li>
-	<li>Suche: findet Dokumente über den Titel.</li>
-	<li>«Create a new page» (oben rechts): neues Dokument anlegen, zuerst den Typ wählen.</li>
-	<li>Auswahl-Kästchen: mehrere Dokumente markieren, um sie gemeinsam zu veröffentlichen, zu archivieren oder in eine andere Sprache zu kopieren.</li>
-	<li>Tabs «Work» (aktuelle Dokumente), «Planned» (zeitlich geplante Veröffentlichungen) und «Archived» (archivierte Dokumente).</li>
-	<li>Archivieren: nimmt Dokumente aus der Arbeitsliste. Sie sind nicht gelöscht und lassen sich wiederherstellen.</li>
-	<li>Sprachwahl oben links: wechselt die Sprachversion der Inhalte.</li>
-	<li>«Copy to another locale»: kopiert markierte Dokumente als Ausgangspunkt für eine Übersetzung.</li>
-	<li>Media library (Mediathek): alle hochgeladenen Bilder und Dateien.</li>
-	<li>«Production» beim Projektnamen bedeutet: Das ist deine echte, öffentliche Website.</li>
-	<li>Nicht verändern: «Switch to type builder» (Entwickler-Bereich) und «Settings» (technische Einstellungen). Änderungen dort können Fehler auf der Website verursachen. «Migration release» ist für dich nicht relevant.</li>
-	<li>«Invite»: weitere Personen einladen. Je nach Prismic-Abo können zusätzliche Benutzer Kosten verursachen.</li>
-	<li>Der Chat-Button unten links ist der englischsprachige Support von Prismic. Bei Fragen zu deiner Website wende dich an Angelo.</li>
+	<li><strong>Dokumentliste:</strong> alle Seiten und Inhalte mit Status («Live» = veröffentlicht), Name, Typ, letzter Änderung und Autor. Klick auf den Namen öffnet das Dokument.</li>
+	<li><strong>Filter:</strong> nach Typ (z. B. nur «Page»), Autor oder Tags.</li>
+	<li><strong>Suche:</strong> findet Dokumente über den Titel.</li>
+	<li><strong>Create a new page</strong> (oben rechts): neues Dokument anlegen, zuerst den Typ wählen.</li>
+	<li><strong>Auswahl-Kästchen:</strong> mehrere Dokumente markieren, um sie gemeinsam zu veröffentlichen, zu archivieren oder in eine andere Sprache zu kopieren.</li>
+	<li><strong>Tabs:</strong> «Work» (aktuelle Dokumente), «Planned» (zeitlich geplante Veröffentlichungen) und «Archived» (archivierte Dokumente).</li>
+	<li><strong>Archivieren:</strong> nimmt Dokumente aus der Arbeitsliste. Sie sind nicht gelöscht und lassen sich wiederherstellen.</li>
+	<li><strong>Sprachwahl</strong> (oben links): wechselt die Sprachversion der Inhalte.</li>
+	<li><strong>Copy to another locale:</strong> kopiert markierte Dokumente als Ausgangspunkt für eine Übersetzung.</li>
+	<li><strong>Media library</strong> (Mediathek): alle hochgeladenen Bilder und Dateien.</li>
+	<li><strong>Production</strong> (beim Projektnamen): Das ist deine echte, öffentliche Website.</li>
+	<li><strong>Invite:</strong> weitere Personen einladen. Je nach Prismic-Abo können zusätzliche Benutzer Kosten verursachen.</li>
+	<li><strong>Chat-Button</strong> (unten links): der englischsprachige Support von Prismic. Bei Fragen zu deiner Website wende dich an Angelo.</li>
 </ul>
+<p><strong>Achtung:</strong> Nicht verändern: «Switch to type builder» (Entwickler-Bereich) und «Settings» (technische Einstellungen). Änderungen dort können Fehler auf der Website verursachen. «Migration release» ist für dich nicht relevant.</p>
 
 <h2>Prismic: Die Bearbeitungsseite (Editor)</h2>
 <ul>
-	<li>Linke Spalte: alle Inhalts-Elemente der Seite. Klick auf ein Element öffnet es in der Mitte zur Bearbeitung.</li>
-	<li>Plus-Symbole ober- und unterhalb der Elemente: neues Element einfügen.</li>
-	<li>Sechs-Punkte-Symbol: Element packen und nach oben oder unten verschieben.</li>
-	<li>Menü beim Element: Optionen wie Duplizieren oder Löschen.</li>
-	<li>Tabs oben, z. B. «Main» (alles, was direkt sichtbar ist) und «SEO &amp; Metadata» (wirkt im Hintergrund, z. B. für Google).</li>
-	<li>Statusanzeige oben rechts: zeigt, ob deine Änderungen gespeichert sind. Warte, bis gespeichert ist, bevor du veröffentlichst oder die Seite verlässt.</li>
-	<li>«Publish»: veröffentlicht die Seite. Mit dem Kalender-Symbol hinten auf der Schaltfläche kannst du die Veröffentlichung terminieren.</li>
-	<li>Nach dem Veröffentlichen heisst die Schaltfläche «Unpublish». Damit nimmst du die Seite offline; sie wird ins Archiv verschoben und kann jederzeit wieder veröffentlicht werden.</li>
-	<li>Tags: Stichworte, um Dokumente später schneller zu finden. Nur bei grossen Websites nötig.</li>
-	<li>Verlauf: zeigt, wer wann was geändert hat.</li>
+	<li><strong>Linke Spalte:</strong> alle Inhalts-Elemente der Seite. Klick auf ein Element öffnet es in der Mitte zur Bearbeitung.</li>
+	<li><strong>Plus-Symbole</strong> (ober- und unterhalb der Elemente): neues Element einfügen.</li>
+	<li><strong>Sechs-Punkte-Symbol:</strong> Element packen und nach oben oder unten verschieben.</li>
+	<li><strong>Menü beim Element:</strong> Optionen wie Duplizieren oder Löschen.</li>
+	<li><strong>Tabs oben:</strong> z. B. «Main» (alles, was direkt sichtbar ist) und «SEO &amp; Metadata» (wirkt im Hintergrund, z. B. für Google).</li>
+	<li><strong>Statusanzeige</strong> (oben rechts): zeigt, ob deine Änderungen gespeichert sind. Warte, bis gespeichert ist, bevor du veröffentlichst oder die Seite verlässt.</li>
+	<li><strong>Publish:</strong> veröffentlicht die Seite. Mit dem Kalender-Symbol hinten auf der Schaltfläche kannst du die Veröffentlichung terminieren.</li>
+	<li><strong>Unpublish:</strong> So heisst die Schaltfläche nach dem Veröffentlichen. Damit nimmst du die Seite offline; sie wird ins Archiv verschoben und kann jederzeit wieder veröffentlicht werden.</li>
+	<li><strong>Tags:</strong> Stichworte, um Dokumente später schneller zu finden. Nur bei grossen Websites nötig.</li>
+	<li><strong>Verlauf:</strong> zeigt, wer wann was geändert hat.</li>
 </ul>
 
-<h2>Anleitung: Bestehenden Inhalt bearbeiten</h2>
-<ol>
-	<li>In Prismic auf der Startseite das Dokument in der Liste anklicken (z. B. die Seite «Über mich»).</li>
-	<li>In der linken Spalte das Inhalts-Element anklicken, das du ändern willst.</li>
-	<li>In der Mitte die Texte, Bilder oder Einstellungen anpassen.</li>
-	<li>Warten, bis oben rechts «gespeichert» angezeigt wird.</li>
-	<li>Wenn alles fertig ist, auf «Publish» klicken. Erst dann ist die Änderung auf der Website sichtbar.</li>
-</ol>
+<h2>Bestehenden Inhalt bearbeiten</h2>
+<h4>1. Dokument öffnen</h4>
+<p>Klicke in Prismic auf der Startseite das Dokument in der Liste an, z. B. die Seite «Über mich».</p>
 
-<h2>Anleitung: Neue Seite erstellen</h2>
-<ol>
-	<li>Auf der Prismic-Startseite oben rechts auf «Create a new page» klicken.</li>
-	<li>In der Liste «Page» auswählen.</li>
-	<li>Seitentitel eingeben: kurz und möglichst genau, das ist wichtig für Suchmaschinen.</li>
-	<li>UID eingeben: Teil der Adresse im Browser. Kleinbuchstaben, keine Umlaute, Bindestriche statt Leerzeichen, auf der ganzen Website einmalig. Aus «Über mich» wird «ueber-mich», die Adresse lautet dann deine-website.ch/ueber-mich.</li>
-	<li>Mit dem Plus-Symbol Inhalts-Elemente hinzufügen und befüllen. Pro Seite nur eine Überschrift der höchsten Ebene (H1) verwenden.</li>
-	<li>Im Tab «SEO &amp; Metadata» Meta-Titel, Meta-Beschreibung und Vorschaubild ausfüllen.</li>
-	<li>Veröffentlichen.</li>
-	<li>Die Seite in der Navigation verlinken (siehe nächste Anleitung). Solange sie nicht verlinkt ist, finden Besucher sie nicht, du erreichst sie aber direkt über die Adresse mit der UID.</li>
-</ol>
+<h4>2. Inhalts-Element wählen</h4>
+<p>Klicke in der linken Spalte das Inhalts-Element an, das du ändern willst.</p>
 
-<h2>Anleitung: Seite in der Navigation verlinken</h2>
-<ol>
-	<li>Auf der Prismic-Startseite das Dokument «Navigation» öffnen.</li>
-	<li>Ganz unten bei «Links» auf «Add item» klicken.</li>
-	<li>«Label» eingeben (der angezeigte Menütext) und bei «Link» das Ziel wählen: «Link to Prismic Page» für eigene Seiten. Je nach Paket lassen sich dort auch Ressourcen (Ferienwohnungen) und Leistungen direkt auswählen – die Adresse musst du nicht kennen.</li>
-	<li>Externe Adressen (Web-Links) sind ebenfalls möglich. Eigene Adressen als Web-Link immer mit «/» beginnen, z. B. «/kontakt» – ohne «/» führt der Link je nach Seite ins Leere.</li>
-	<li>Optional: «Sub-Link von» wählen, damit der Eintrag als Unterpunkt in einem Ausklapp-Menü erscheint. Mit «Ausklappbare Schaltfläche» wird ein Eintrag zum Ausklapp-Menü.</li>
-	<li>Festlegen, ob der Link in der Hauptnavigation und/oder in der sekundären Navigation der Fusszeile erscheint.</li>
-	<li>Reihenfolge per Sechs-Punkte-Symbol anpassen und veröffentlichen.</li>
-</ol>
-<p>Mehrsprachige Websites: In der Navigation einer weiteren Sprache (z. B. Englisch) wählst du möglichst die übersetzte Seite. Gibt es noch keine Übersetzung, darfst du die deutsche Seite verlinken: Besucher bleiben in ihrer Sprache und sehen einen Hinweis, dass die Seite noch nicht übersetzt ist.</p>
+<h4>3. Anpassen</h4>
+<p>Passe in der Mitte die Texte, Bilder oder Einstellungen an.</p>
 
-<h2>Anleitung: Bilder und Dateien</h2>
+<h4>4. Speichern abwarten</h4>
+<p>Warte, bis oben rechts «gespeichert» angezeigt wird.</p>
+
+<h4>5. Veröffentlichen</h4>
+<p>Wenn alles fertig ist, klicke auf <strong>Publish</strong>. Erst dann ist die Änderung auf der Website sichtbar.</p>
+
+<h2>Neue Seite erstellen</h2>
+<h4>1. Neues Dokument anlegen</h4>
+<p>Klicke auf der Prismic-Startseite oben rechts auf <strong>Create a new page</strong>.</p>
+
+<h4>2. Typ wählen</h4>
+<p>Wähle in der Liste <strong>Page</strong>.</p>
+
+<h4>3. Seitentitel eingeben</h4>
 <ul>
-	<li>Bilder lädst du direkt im Bildfeld eines Elements hoch oder wählst sie aus der Mediathek. Die Mediathek findest du auch links auf der Prismic-Startseite.</li>
-	<li>Bilder werden automatisch komprimiert und in passender Grösse ausgeliefert. Lade trotzdem keine riesigen Originaldateien hoch (Faustregel: unter 5 MB, sRGB, JPG für Fotos, PNG oder SVG für Grafiken mit Transparenz).</li>
-	<li>Beim Bild immer einen Alternativtext (Alt-Text) eingeben: kurze Beschreibung, was zu sehen ist. Wichtig für Barrierefreiheit und Google.</li>
-	<li>Mit dem Zuschneide-Werkzeug im Bildfeld legst du den Bildausschnitt fest.</li>
+	<li><strong>Seitentitel</strong>: kurz und möglichst genau, das ist wichtig für Suchmaschinen</li>
 </ul>
 
-<h2>Anleitung: Karten und Kartenpunkt</h2>
-<p>Alle Felder, die einen Ort auf der Karte festlegen, heissen «Kartenpunkt»: in «Karte einbetten», «Adresse und Karte», im Element «Event», im Inhalts-Typ «Event» (Tab «Ort») und im Inhalts-Typ «Ort / Standort». Die Karte wird immer mit OpenStreetMap angezeigt, egal welchen Link du einträgst. Besucher laden dabei nichts von Google.</p>
-<p>Das kannst du ins Feld «Kartenpunkt» eintragen:</p>
+<h4>4. UID eingeben</h4>
 <ul>
-	<li>Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink (beginnt mit https://osm.org/go/) oder die «Geo-URI» (beginnt mit geo:) kopieren.</li>
-	<li>Koordinaten: Breite, Länge, z. B. 47.3769, 8.5417.</li>
-	<li>Google Maps: der Link aus «Teilen» → «Link kopieren» (https://maps.app.goo.gl/…) oder der Code aus «Karte einbetten» (&lt;iframe …&gt;). Beim Einbettungscode zählt die Kartenmitte; hast du den Ausschnitt verschoben, sitzt der Punkt leicht daneben.</li>
-	<li>Apple Karten oder map.geo.admin.ch (swisstopo): den Link zum Ort.</li>
+	<li><strong>UID</strong>: Teil der Adresse im Browser</li>
+	<li>Kleinbuchstaben, keine Umlaute, Bindestriche statt Leerzeichen</li>
+	<li>Auf der ganzen Website einmalig</li>
 </ul>
-<p>Leer = keine Karte. Ein Google-Link auf einen Ort ohne Koordinaten (z. B. https://www.google.com/maps/place/Name) wird nicht erkannt; im Admin-Bereich unter «Inhalte prüfen» erscheint er als «Kartenpunkt nicht erkannt».</p>
+<p><strong>Beispiel:</strong> Aus «Über mich» wird «ueber-mich», die Adresse lautet dann deine-website.ch/ueber-mich.</p>
 
-<h2>Anleitung: Eigene Videos</h2>
-<p>Im Element «Anleitung» kannst du eigene Videos zeigen, ohne YouTube und ohne Cookie-Banner:</p>
-<ol>
-	<li>Video als MP4-Datei exportieren (max. 100 MB; 1080p oder 720p, kurz halten).</li>
-	<li>Im Element «Anleitung» (beim Gesamt-Video oder bei einem Schritt) im Feld «Video-Datei (MP4)» die Datei hochladen bzw. aus der Mediathek wählen.</li>
-	<li>Veröffentlichen. Das Video spielt direkt auf der Website ab.</li>
-</ol>
-<p>Ist eine Video-Datei gewählt, wird «Video von YouTube / Vimeo (alternativ)» ignoriert. YouTube- und Vimeo-Videos erscheinen erst, wenn Besucher sie im Cookie-Banner erlauben.</p>
+<h4>5. Inhalts-Elemente hinzufügen</h4>
+<p>Füge mit dem Plus-Symbol Inhalts-Elemente hinzu und befülle sie.</p>
+<p>Verwende pro Seite nur eine Überschrift der höchsten Ebene (H1).</p>
 
-<h2>Anleitung: Vorschau vor dem Veröffentlichen</h2>
-<ol>
-	<li>Im Editor oben rechts auf das Augen-Symbol (Vorschau) klicken.</li>
-	<li>Die Website öffnet sich in einem neuen Tab mit deinen noch nicht veröffentlichten Änderungen.</li>
-	<li>Unten links erscheint die Prismic-Leiste, über die du einen teilbaren Vorschau-Link erzeugen kannst.</li>
-</ol>
-<p>Wenn die Prismic-Leiste fehlt: Dein Browser blockiert Cookies von Drittanbietern (z. B. Brave, Safari oder privates Fenster). Die Vorschau selbst funktioniert trotzdem. Nur für «teilbare Links» musst du Cookies für prismic.io erlauben oder einen anderen Browser verwenden.</p>
+<h4>6. SEO ausfüllen</h4>
+<p>Fülle im Tab <strong>SEO &amp; Metadata</strong> Meta-Titel, Meta-Beschreibung und Vorschaubild aus.</p>
 
-<h2>Anleitung: SEO (Google und Social Media)</h2>
+<h4>7. Veröffentlichen</h4>
+<p>Veröffentliche die Seite.</p>
+
+<h4>8. In der Navigation verlinken</h4>
+<p>Verlinke die Seite in der Navigation (siehe nächste Anleitung).</p>
+<p>Solange sie nicht verlinkt ist, finden Besucher sie nicht. Du erreichst sie aber direkt über die Adresse mit der UID.</p>
+
+<h2>Seite in der Navigation verlinken</h2>
+<h4>1. Navigation öffnen</h4>
+<p>Öffne auf der Prismic-Startseite das Dokument <strong>Navigation</strong>.</p>
+
+<h4>2. Eintrag hinzufügen</h4>
+<p>Klicke ganz unten bei <strong>Links</strong> auf <strong>Add item</strong>.</p>
+
+<h4>3. Label und Ziel festlegen</h4>
 <ul>
-	<li>Pro Seite im Tab «SEO &amp; Metadata»: «Meta Titel» (ca. 50–60 Zeichen), «Meta Description» (ca. 150–160 Zeichen) und «Meta Image» (Vorschaubild beim Teilen).</li>
-	<li>«Keine Indexierung»: Die Seite erscheint nicht in Suchmaschinen, z. B. für interne Seiten.</li>
-	<li>«Landing Page»: Seite ohne normale Navigation, z. B. für Kampagnen.</li>
-	<li>Globale Werte unter Einstellungen → Tab «SEO»: Website-Domain, Website-Name, globaler SEO-Titel, globale Beschreibung, Social Image (1200 × 630 px) und Favicon (64 × 64 px). Sie gelten, wenn eine Seite keine eigenen Werte hat.</li>
-	<li>Gute Überschriften-Struktur: pro Seite eine H1, darunter H2 für Abschnitte und H3 für Unterpunkte.</li>
+	<li><strong>Label:</strong> der angezeigte Menütext</li>
+	<li><strong>Link:</strong> das Ziel; «Link to Prismic Page» für eigene Seiten</li>
+</ul>
+<p>Je nach Paket lassen sich dort auch Ressourcen (Ferienwohnungen) und Leistungen direkt auswählen – die Adresse musst du nicht kennen.</p>
+
+<h4>4. Externe Adressen</h4>
+<p>Externe Adressen (Web-Links) sind ebenfalls möglich.</p>
+<p><strong>Achtung:</strong> Eigene Adressen als Web-Link immer mit «/» beginnen, z. B. «/kontakt» – ohne «/» führt der Link je nach Seite ins Leere.</p>
+
+<h4>5. Ausklapp-Menü (optional)</h4>
+<ul>
+	<li><strong>Sub-Link von:</strong> der Eintrag erscheint als Unterpunkt in einem Ausklapp-Menü</li>
+	<li><strong>Ausklappbare Schaltfläche:</strong> macht einen Eintrag zum Ausklapp-Menü</li>
 </ul>
 
-<h2>Anleitung: Einstellungen (Settings)</h2>
-<p>Das Dokument «Einstellungen» enthält Daten, die für die ganze Website gelten:</p>
-<ul>
-	<li>Tab «Main»: Website-Titel und -Untertitel, verantwortliche Person bzw. Firma, Adresse, E-Mail-Adressen, Kontakte fürs Impressum und die rechtlichen Texte (Datenschutzerklärung, Haftungsausschluss, Impressum, Cookies-Text, AGB). Ausserdem Seiten-Passwort, Chat-Bot, Mehrsprachigkeit und Startseiten-Umleitung.</li>
-	<li>Tab «SEO»: globale SEO-Angaben, Favicon, App-Icon und Statusleisten-Farbe.</li>
-	<li>Je nach Paket weitere Tabs: «Terminbuchung», «Online-Handel», «Ressourcenbuchung».</li>
-</ul>
-<p>«Startseite umleiten» mit «Umleitungs-Seite»: Besucher der Startseite werden automatisch auf eine andere Seite weitergeleitet, z. B. während einer Umbauphase.</p>
+<h4>6. Ort des Links</h4>
+<p>Lege fest, ob der Link in der Hauptnavigation und/oder in der sekundären Navigation der Fusszeile erscheint.</p>
 
-<h2>Anleitung: Design anpassen (Design-Vorlage)</h2>
-<ol>
-	<li>Auf der Prismic-Startseite das Dokument vom Typ «Design Vorlage» öffnen. Es ist immer nur die Vorlage aktiv, bei der «Aktiv» eingeschaltet ist.</li>
-	<li>Tab «Generell»: Schrift- und Hintergrundfarbe, Hauptschrift, Schriftgrössen für Mobile und Desktop, Container-Breite, Link- und Schaltflächen-Farben, Highlight-Farben und Titel-Animation.</li>
-	<li>Tab «Kopfzeile»: Logo, Logo-Grösse, Farben, Schriften, fixierte Kopfzeile (Sticky) und optional eine kurvige untere Kante (Welle).</li>
-	<li>Tab «Fusszeile»: Farben, Textgrössen und optional eine kurvige obere Kante.</li>
-	<li>Veröffentlichen. Die Änderungen gelten sofort auf der ganzen Website. Auch die E-Mails an Gäste und Kunden (z. B. Buchungsbestätigung, Erinnerungen) erscheinen in den Farben der Website.</li>
-</ol>
-<p>Schriften: Alle Schriften werden von deiner eigenen Website ausgeliefert, Besucher laden nichts von Google. Unter dem Typ «Schrift» erfasst du eine Schrift und wählst sie dann in der Design-Vorlage aus. Alternativ eine «Vorinstallierte Hauptschrift» wählen.</p>
+<h4>7. Reihenfolge und Veröffentlichen</h4>
+<p>Passe die Reihenfolge mit dem Sechs-Punkte-Symbol an und veröffentliche.</p>
+
+<h3>Mehrsprachige Websites</h3>
+<p>In der Navigation einer weiteren Sprache (z. B. Englisch) wählst du möglichst die übersetzte Seite.</p>
+<p>Gibt es noch keine Übersetzung, darfst du die deutsche Seite verlinken: Besucher bleiben in ihrer Sprache und sehen einen Hinweis, dass die Seite noch nicht übersetzt ist.</p>
+
+<h2>Bilder und Dateien</h2>
 <ul>
-	<li>Anbieter «Google»: Name genau wie bei Google Fonts (z. B. «Jura») und optional «Varianten». Die Schrift wird beim nächsten Veröffentlichen der Website automatisch heruntergeladen.</li>
-	<li>Anbieter «Lokal» (eigene, z. B. gekaufte Schrift): Pro Schnitt eine Zeile in «Schriftdateien»: Datei hochladen (am besten .woff2, auch .woff, .ttf, .otf), Gewicht (400 = normal, 700 = fett) und Stil (normal/kursiv). Die Lizenz muss die Verwendung als Webfont erlauben.</li>
+	<li><strong>Hochladen:</strong> Bilder lädst du direkt im Bildfeld eines Elements hoch oder wählst sie aus der Mediathek. Die Mediathek findest du auch links auf der Prismic-Startseite.</li>
+	<li><strong>Grösse:</strong> Bilder werden automatisch komprimiert und in passender Grösse ausgeliefert. Lade trotzdem keine riesigen Originaldateien hoch.</li>
+	<li><strong>Faustregel:</strong> unter 5 MB, sRGB, JPG für Fotos, PNG oder SVG für Grafiken mit Transparenz.</li>
+	<li><strong>Alternativtext (Alt-Text):</strong> beim Bild immer eingeben: kurze Beschreibung, was zu sehen ist. Wichtig für Barrierefreiheit und Google.</li>
+	<li><strong>Bildausschnitt:</strong> legst du mit dem Zuschneide-Werkzeug im Bildfeld fest.</li>
 </ul>
-<p>Farben pro Seite: Im Tab «Erscheinungsbild» einer Seite kannst du Hintergrund-, Schrift- und Linkfarbe nur für diese Seite überschreiben. Viele Inhalts-Elemente haben ebenfalls eigene Farbfelder; leer bedeutet: es gilt die globale Farbe.</p>
+
+<h2>Karten und Kartenpunkt</h2>
+<p>Alle Felder, die einen Ort auf der Karte festlegen, heissen <strong>Kartenpunkt</strong>:</p>
+<ul>
+	<li>im Element «Karte einbetten»</li>
+	<li>im Element «Adresse und Karte»</li>
+	<li>im Element «Event»</li>
+	<li>im Inhalts-Typ «Event» (Tab «Ort»)</li>
+	<li>im Inhalts-Typ «Ort / Standort»</li>
+</ul>
+<p>Die Karte wird immer mit OpenStreetMap angezeigt, egal welchen Link du einträgst. Besucher laden dabei nichts von Google.</p>
+
+<h3>Das kannst du ins Feld «Kartenpunkt» eintragen</h3>
+<ul>
+	<li><strong>Am einfachsten:</strong> auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink (beginnt mit https://osm.org/go/) oder die «Geo-URI» (beginnt mit geo:) kopieren.</li>
+	<li><strong>Koordinaten:</strong> Breite, Länge, z. B. 47.3769, 8.5417.</li>
+	<li><strong>Google Maps:</strong> der Link aus «Teilen» → «Link kopieren» (https://maps.app.goo.gl/…) oder der Code aus «Karte einbetten» (&lt;iframe …&gt;). Beim Einbettungscode zählt die Kartenmitte; hast du den Ausschnitt verschoben, sitzt der Punkt leicht daneben.</li>
+	<li><strong>Apple Karten oder map.geo.admin.ch (swisstopo):</strong> den Link zum Ort.</li>
+	<li><strong>Leer:</strong> keine Karte.</li>
+</ul>
+<p><strong>Achtung:</strong> Ein Google-Link auf einen Ort ohne Koordinaten (z. B. https://www.google.com/maps/place/Name) wird nicht erkannt. Im Admin-Bereich unter «Inhalte prüfen» erscheint er als «Kartenpunkt nicht erkannt».</p>
+
+<h2>Eigene Videos</h2>
+<p>Im Element <strong>Anleitung</strong> kannst du eigene Videos zeigen, ohne YouTube und ohne Cookie-Banner.</p>
+
+<h4>1. Video exportieren</h4>
+<p>Exportiere das Video als MP4-Datei.</p>
+<ul>
+	<li>max. 100 MB</li>
+	<li>1080p oder 720p</li>
+	<li>kurz halten</li>
+</ul>
+
+<h4>2. Video hochladen</h4>
+<p>Lade die Datei im Element <strong>Anleitung</strong> (beim Gesamt-Video oder bei einem Schritt) in diesem Feld hoch oder wähle sie aus der Mediathek:</p>
+<ul>
+	<li><strong>Video-Datei (MP4)</strong></li>
+</ul>
+
+<h4>3. Veröffentlichen</h4>
+<p>Veröffentliche die Seite. Das Video spielt direkt auf der Website ab.</p>
+
+<h3>YouTube und Vimeo</h3>
+<p>Ist eine Video-Datei gewählt, wird <strong>Video von YouTube / Vimeo (alternativ)</strong> ignoriert.</p>
+<p>YouTube- und Vimeo-Videos erscheinen erst, wenn Besucher sie im Cookie-Banner erlauben.</p>
+
+<h2>Vorschau vor dem Veröffentlichen</h2>
+<h4>1. Vorschau öffnen</h4>
+<p>Klicke im Editor oben rechts auf das Augen-Symbol (Vorschau).</p>
+
+<h4>2. Änderungen ansehen</h4>
+<p>Die Website öffnet sich in einem neuen Tab mit deinen noch nicht veröffentlichten Änderungen.</p>
+
+<h4>3. Vorschau teilen</h4>
+<p>Unten links erscheint die Prismic-Leiste, über die du einen teilbaren Vorschau-Link erzeugen kannst.</p>
+
+<h4>4. Vorschau beenden</h4>
+<p>Klicke in der Prismic-Leiste unten links auf das Kreuz. Fehlt die Leiste, zeigt die Website oben den Hinweis «Vorschau aktiv»: Klicke dort auf <strong>Vorschau beenden</strong>.</p>
+<p><strong>Achtung:</strong> Solange die Vorschau aktiv ist, zeigt die Website im ganzen Browser den Stand dieser Vorschau – auch nach dem Veröffentlichen. Spätestens nach einer Stunde endet die Vorschau von selbst.</p>
+
+<h3>Wenn die Prismic-Leiste fehlt</h3>
+<p>Dein Browser blockiert Cookies von Drittanbietern (z. B. Brave, Safari oder privates Fenster). Ohne Leiste kannst du die Vorschau nicht teilen; beenden kannst du sie über den Hinweis «Vorschau aktiv» oben auf der Website.</p>
+<p>So erscheint die Leiste:</p>
+<ul>
+	<li><strong>Brave:</strong> Auf deiner Website rechts in der Adressleiste auf das Löwen-Symbol (Shields) klicken und die Shields für diese Seite ausschalten oder Cookies von Drittanbietern erlauben.</li>
+	<li><strong>Safari:</strong> Einstellungen → Datenschutz → «Websiteübergreifendes Tracking verhindern» ausschalten.</li>
+	<li><strong>Anderer Browser:</strong> z. B. Chrome oder Firefox mit Standard-Einstellungen.</li>
+</ul>
+
+<h3>Website zeigt alte Inhalte</h3>
+<p>Siehst du nach dem Veröffentlichen noch den alten Stand, bist du vermutlich noch in der Vorschau: Klicke in der Prismic-Leiste auf das Kreuz oder im Hinweis «Vorschau aktiv» auf <strong>Vorschau beenden</strong>.</p>
+
+<h2>SEO (Google und Social Media)</h2>
+<h3>Pro Seite</h3>
+<p>Im Tab <strong>SEO &amp; Metadata</strong> der Seite:</p>
+<ul>
+	<li><strong>Meta Titel:</strong> ca. 50–60 Zeichen</li>
+	<li><strong>Meta Description:</strong> ca. 150–160 Zeichen</li>
+	<li><strong>Meta Image:</strong> Vorschaubild beim Teilen</li>
+	<li><strong>Keine Indexierung:</strong> Die Seite erscheint nicht in Suchmaschinen, z. B. für interne Seiten.</li>
+	<li><strong>Landing Page:</strong> Seite ohne normale Navigation und Fusszeile, z. B. für Kampagnen. Die rechtlichen Links (Datenschutzerklärung, Impressum, Cookie-Einstellungen) bleiben sichtbar.</li>
+	<li><strong>Landing Page ohne Rechtliches-Leiste</strong></li>
+</ul>
+
+<h3>Globale Werte</h3>
+<p>Unter <strong>Einstellungen</strong> im Tab <strong>SEO</strong>. Sie gelten, wenn eine Seite keine eigenen Werte hat.</p>
+<ul>
+	<li><strong>Website Domain</strong></li>
+	<li><strong>Website Name (SEO)</strong></li>
+	<li><strong>Globaler SEO Titel</strong></li>
+	<li><strong>Globale Beschreibung</strong></li>
+	<li><strong>Social Image (1200 × 630 px, 16:9)</strong></li>
+	<li><strong>Favicon (64 × 64 px, quadratisch)</strong></li>
+</ul>
+
+<h3>Überschriften-Struktur</h3>
+<p>Gute Überschriften-Struktur: pro Seite eine H1, darunter H2 für Abschnitte und H3 für Unterpunkte.</p>
+
+<h2>Einstellungen (Settings)</h2>
+<p>Das Dokument <strong>Einstellungen</strong> enthält Daten, die für die ganze Website gelten.</p>
+
+<h3>Tab «Main»</h3>
+<ul>
+	<li><strong>Website Titel</strong></li>
+	<li><strong>Website Untertitel</strong></li>
+	<li><strong>Verantwortlich (Person/Unternehmen)</strong></li>
+	<li><strong>Verantwortliche Adresse</strong></li>
+	<li><strong>Verantwortliche E-Mail</strong></li>
+	<li><strong>Korrespondenz E-Mail</strong></li>
+	<li><strong>Kontakte:</strong> Kontakte fürs Impressum</li>
+	<li>Rechtliche Texte: <strong>Datenschutzerklärung</strong>, <strong>Haftungsausschluss</strong>, <strong>Impressum</strong>, <strong>Cookies Text</strong>, <strong>AGB</strong></li>
+	<li><strong>Seiten-Passwort</strong></li>
+	<li><strong>Mehrere Sprachen verwenden</strong></li>
+</ul>
+
+<h3>E-Mails der Website</h3>
+<ul>
+	<li><strong>Absender-E-Mail (alle E-Mails der Website)</strong></li>
+	<li><strong>Absender-Name</strong></li>
+	<li><strong>Benachrichtigungen an (intern)</strong></li>
+</ul>
+
+<h3>Startseite umleiten</h3>
+<ul>
+	<li><strong>Startseite umleiten</strong></li>
+	<li><strong>Umleitungs-Seite</strong></li>
+</ul>
+<p>Die Standardseite «Website im Aufbau» zeigt nur die rechtlichen Links, keine Navigation.</p>
+
+<h3>Tab «SEO»</h3>
+<ul>
+	<li>globale SEO-Angaben</li>
+	<li><strong>Favicon (64 × 64 px, quadratisch)</strong></li>
+	<li><strong>App-Icon – quadratisch (mind. 512 × 512 px)</strong></li>
+	<li><strong>App &amp; Browser Statusleisten-Farbe</strong></li>
+</ul>
+
+<h3>Weitere Tabs je nach Paket</h3>
+<ul>
+	<li><strong>Chat-Bot</strong></li>
+	<li><strong>Rechnungen:</strong> <strong>Grundwährung</strong>, <strong>IBAN</strong>, <strong>Bank</strong>, <strong>BIC / SWIFT</strong>, <strong>Zahlungsfrist (Tage)</strong>, <strong>MWST-Satz (%)</strong>, <strong>QR-Zahlteil auf Rechnungen</strong></li>
+	<li><strong>Terminbuchung</strong></li>
+	<li><strong>Online-Handel</strong></li>
+	<li><strong>Ressourcenbuchung</strong></li>
+</ul>
+
+<h2>Design anpassen (Design-Vorlage)</h2>
+<h4>1. Design-Vorlage öffnen</h4>
+<p>Öffne auf der Prismic-Startseite das Dokument vom Typ <strong>Design Vorlage</strong>.</p>
+<p>Es ist immer nur die Vorlage aktiv, bei der <strong>Aktiv</strong> eingeschaltet ist.</p>
+
+<h4>2. Tab «Generell»</h4>
+<ul>
+	<li>Schrift- und Hintergrundfarbe</li>
+	<li>Hauptschrift</li>
+	<li>Schriftgrössen für Mobile und Desktop</li>
+	<li>Container-Breite</li>
+	<li>Link- und Schaltflächen-Farben</li>
+	<li>Highlight-Farben</li>
+	<li>Titel-Animation</li>
+</ul>
+
+<h4>3. Tab «Kopfzeile»</h4>
+<ul>
+	<li>Logo und Logo-Grösse</li>
+	<li>Farben und Schriften</li>
+	<li>fixierte Kopfzeile (Sticky)</li>
+	<li>optional eine kurvige untere Kante (Welle)</li>
+</ul>
+
+<h4>4. Tab «Fusszeile»</h4>
+<ul>
+	<li>Farben</li>
+	<li>Textgrössen</li>
+	<li>optional eine kurvige obere Kante</li>
+</ul>
+
+<h4>5. Veröffentlichen</h4>
+<p>Veröffentliche die Vorlage. Die Änderungen gelten sofort auf der ganzen Website.</p>
+<p>Auch die E-Mails an Gäste und Kunden (z. B. Buchungsbestätigung, Erinnerungen) erscheinen in den Farben der Website.</p>
+
+<h3>Schriften</h3>
+<p>Alle Schriften werden von deiner eigenen Website ausgeliefert, Besucher laden nichts von Google.</p>
+<p>Unter dem Typ <strong>Schrift</strong> erfasst du eine Schrift und wählst sie dann in der Design-Vorlage aus. Alternativ wählst du eine <strong>Vorinstallierte Hauptschrift</strong>.</p>
+<ul>
+	<li><strong>Anbieter «Google»:</strong> Name genau wie bei Google Fonts (z. B. «Jura») und optional «Varianten». Die Schrift wird beim nächsten Veröffentlichen der Website automatisch heruntergeladen.</li>
+	<li><strong>Anbieter «Lokal»</strong> (eigene, z. B. gekaufte Schrift): pro Schnitt eine Zeile in «Schriftdateien» mit Datei, Gewicht und Stil.</li>
+</ul>
+<p>Angaben pro Schnitt bei Anbieter «Lokal»:</p>
+<ul>
+	<li><strong>Datei:</strong> hochladen, am besten .woff2, auch .woff, .ttf, .otf</li>
+	<li><strong>Gewicht:</strong> 400 = normal, 700 = fett</li>
+	<li><strong>Stil:</strong> normal oder kursiv</li>
+</ul>
+<p><strong>Achtung:</strong> Die Lizenz muss die Verwendung als Webfont erlauben.</p>
+
+<h3>Farben pro Seite</h3>
+<p>Im Tab <strong>Erscheinungsbild</strong> einer Seite kannst du Hintergrund-, Schrift- und Linkfarbe nur für diese Seite überschreiben.</p>
+<p>Viele Inhalts-Elemente haben ebenfalls eigene Farbfelder; leer bedeutet: es gilt die globale Farbe.</p>
 
 <h2>Inhalts-Elemente im Überblick</h2>
 <ul>
-	<li>Titelbereich: auffälliger Kopfbereich, z. B. mit Bild, Farbverlauf oder Bild-Karussell.</li>
-	<li>Text: Fliesstext, auch zweispaltig oder als reine Überschrift.</li>
-	<li>Text mit Bild: Text neben einem Bild, optional mit Schaltfläche oder mehreren Zeilen.</li>
-	<li>Text &amp; Aktion: Text mit Handlungsaufforderung (Call to Action).</li>
-	<li>Bild: Einzelbild, Banner, Karussell oder Vorher/Nachher-Vergleich.</li>
-	<li>Galerie: mehrere Bilder als Galerie.</li>
-	<li>Schaltfläche: Button mit Link. Variante «Suche» (ab Paket Professionell): öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle. Praktisch für lange Seiten wie Anleitungen oder häufige Fragen.</li>
-	<li>Kacheln: Karten in Spalten, z. B. für Angebote.</li>
-	<li>Akkordeon: aufklappbare Einträge, z. B. für häufige Fragen; mit optionaler Suche. Variante «Bild und Text» mit Bildern; dort legt das Feld «Titel-Ebene» fest, ob die Titel als H2 bis H6 dargestellt werden. Titel mit H2 oder H3 erscheinen im Inhaltsverzeichnis.</li>
-	<li>Inhaltsverzeichnis: listet automatisch alle Überschriften der Seite. «Tiefe» wählt «Nur H2» oder «H2 und H3».</li>
-	<li>Zitat: Einzelzitat oder Testimonials (Kundenstimmen).</li>
-	<li>Timeline: zeitlicher Ablauf.</li>
-	<li>Formulare: Kontaktformular und Spezialformulare (siehe unten).</li>
-	<li>Kontakt, Adresse und Karte, Karte einbetten: Kontaktangaben und Karten. Den Ort trägst du im Feld «Kartenpunkt» ein (siehe «Anleitung: Karten und Kartenpunkt»).</li>
-	<li>Link-Liste: Sammlung von Links.</li>
-	<li>Anleitung: Schritt-für-Schritt-Anleitung mit Bildern oder Video. Am besten ein eigenes Video im Feld «Video-Datei (MP4)» (siehe «Anleitung: Eigene Videos»); alternativ «Video von YouTube / Vimeo (alternativ)» oder ein eingefügter Einbettungscode.</li>
-	<li>Event: einzelne Veranstaltung direkt auf einer Seite, mit Kalenderdatei und optional «Kartenpunkt» für den Link «Standort auf der Karte anzeigen».</li>
-	<li>HTML-Code: eigener Einbettungscode. Nur verwenden, wenn du weisst, was der Code tut.</li>
+	<li><strong>Titelbereich:</strong> auffälliger Kopfbereich, z. B. mit Bild, Farbverlauf oder Bild-Karussell.</li>
+	<li><strong>Text:</strong> Fliesstext, auch zweispaltig oder als reine Überschrift.</li>
+	<li><strong>Text mit Bild:</strong> Text neben einem Bild, optional mit Schaltfläche oder mehreren Zeilen.</li>
+	<li><strong>Text &amp; Aktion:</strong> Text mit Handlungsaufforderung (Call to Action).</li>
+	<li><strong>Bild:</strong> Einzelbild, Banner, Karussell oder Vorher/Nachher-Vergleich.</li>
+	<li><strong>Galerie:</strong> mehrere Bilder als Galerie.</li>
+	<li><strong>Schaltfläche:</strong> Button mit Link. Variante «Suche» (ab Paket Professionell): öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle. Praktisch für lange Seiten wie Anleitungen oder häufige Fragen.</li>
+	<li><strong>Kacheln:</strong> Karten in Spalten, z. B. für Angebote. Variante «Buchbare Angebote» (mit Terminbuchung): zeigt automatisch alle buchbaren Angebote mit «Mehr erfahren» und «Buchen».</li>
+	<li><strong>Akkordeon:</strong> aufklappbare Einträge, z. B. für häufige Fragen; mit optionaler Suche. Variante «Bild und Text» mit Bildern; dort legt das Feld <strong>Titel-Ebene</strong> fest, ob die Titel als H2 bis H6 dargestellt werden. Titel mit H2 oder H3 erscheinen im Inhaltsverzeichnis.</li>
+	<li><strong>Inhaltsverzeichnis:</strong> listet automatisch alle Überschriften der Seite. <strong>Tiefe</strong> wählt «Nur H2» oder «H2 und H3».</li>
+	<li><strong>Zitat:</strong> Einzelzitat oder Testimonials (Kundenstimmen).</li>
+	<li><strong>Timeline:</strong> zeitlicher Ablauf.</li>
+	<li><strong>Formulare:</strong> Kontaktformular und Spezialformulare (siehe unten).</li>
+	<li><strong>Kontakt, Adresse und Karte, Karte einbetten:</strong> Kontaktangaben und Karten. Den Ort trägst du im Feld «Kartenpunkt» ein (siehe «Karten und Kartenpunkt»).</li>
+	<li><strong>Link-Liste:</strong> Sammlung von Links.</li>
+	<li><strong>Anleitung:</strong> Schritt-für-Schritt-Anleitung mit Bildern oder Video. Am besten ein eigenes Video im Feld <strong>Video-Datei (MP4)</strong> (siehe «Eigene Videos»); alternativ <strong>Video von YouTube / Vimeo (alternativ)</strong> oder ein eingefügter Einbettungscode.</li>
+	<li><strong>Event:</strong> einzelne Veranstaltung direkt auf einer Seite, mit Kalenderdatei und optional «Kartenpunkt» für den Link «Standort auf der Karte anzeigen».</li>
+	<li><strong>HTML-Code:</strong> eigener Einbettungscode. Nur verwenden, wenn du weisst, was der Code tut.</li>
 </ul>
-<p>Animationen: Viele Elemente haben am Ende die Felder «Animation aktivieren», «Animations-Richtung», «Verzögerung (ms)» und «Animationsdauer (ms)». Damit blendet das Element beim Scrollen ein.</p>
-<p>«Vollbreite auf Mobile»: Das Element geht auf dem Smartphone bis an den Bildschirmrand.</p>
 
-<h2>Anleitung: Kontaktformular</h2>
-<ol>
-	<li>Auf der gewünschten Seite das Element «Formulare» in der Variante «Standard» einfügen.</li>
-	<li>«Formular Titel», «Formular Instruktionen» und «Senden-Schaltflächen-Text» ausfüllen.</li>
-	<li>Unter «Formular Felder» die Felder anlegen: Feldname (z. B. Name, E-Mail, Telefon, Nachricht), Feldtyp (Textfeld, E-Mail, Telefon, Textbereich, Checkbox usw.) und ob das Feld obligatorisch ist.</li>
-	<li>«Gesendet Titel» und «Gesendet Text» für die Bestätigung nach dem Absenden ausfüllen.</li>
-	<li>Veröffentlichen und ein Testformular abschicken.</li>
-</ol>
+<h3>Animationen</h3>
+<p>Viele Elemente haben am Ende diese Felder. Damit blendet das Element beim Scrollen ein.</p>
+<ul>
+	<li><strong>Animation aktivieren</strong></li>
+	<li><strong>Animations-Richtung</strong></li>
+	<li><strong>Verzögerung (ms)</strong></li>
+	<li><strong>Animationsdauer (ms)</strong></li>
+</ul>
+
+<h3>Vollbreite auf Mobile</h3>
+<p>Das Element geht auf dem Smartphone bis an den Bildschirmrand.</p>
+
+<h2>Suche auf einer Seite</h2>
+<p>Für lange Seiten wie Anleitungen oder häufige Fragen gibt es zwei Arten von Suche (ab Paket Professionell).</p>
+
+<h3>Suche auf der ganzen Seite</h3>
+<p>Füge das Element <strong>Schaltfläche</strong> in der Variante <strong>Suche</strong> ein.</p>
+<p>Die Schaltfläche öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge.</p>
+<p>Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle.</p>
+
+<h3>Suche in einem Akkordeon</h3>
+<p>Im Element <strong>Akkordeon</strong>:</p>
+<ul>
+	<li><strong>Suche aktivieren:</strong> einschalten</li>
+	<li><strong>Suchfeld-Platzhalter:</strong> optional anpassen</li>
+</ul>
+<p>Über dem Akkordeon erscheint ein Suchfeld, das nur dessen Einträge filtert.</p>
+
+<p><strong>Achtung:</strong> Durchsucht wird immer nur die Seite, auf der die Suche steht, nicht die ganze Website.</p>
+
+<h2>Kontaktformular</h2>
+<h4>1. Formular einfügen</h4>
+<p>Füge auf der gewünschten Seite das Element <strong>Formulare</strong> in der Variante <strong>Standard</strong> ein.</p>
+
+<h4>2. Texte ausfüllen</h4>
+<ul>
+	<li><strong>Formular Titel</strong></li>
+	<li><strong>Formular Instruktionen</strong></li>
+	<li><strong>Senden-Schaltflächen-Text</strong></li>
+</ul>
+
+<h4>3. Felder anlegen</h4>
+<p>Lege unter <strong>Formular Felder</strong> die Felder an:</p>
+<ul>
+	<li><strong>Feldname:</strong> z. B. Name, E-Mail, Telefon, Nachricht</li>
+	<li><strong>Feldtyp:</strong> Textfeld, E-Mail, Telefon, Textbereich, Checkbox usw.</li>
+	<li><strong>Obligatorisch:</strong> ob das Feld ausgefüllt werden muss</li>
+</ul>
+
+<h4>4. Bestätigung ausfüllen</h4>
+<p>Für die Bestätigung nach dem Absenden:</p>
+<ul>
+	<li><strong>Gesendet Titel</strong></li>
+	<li><strong>Gesendet Text</strong></li>
+</ul>
+
+<h4>5. Veröffentlichen und testen</h4>
+<p>Veröffentliche die Seite und schicke ein Testformular ab.</p>
 
 <h2>Cookie-Banner und Datenschutz</h2>
 <ul>
-	<li>Die Website hat einen Cookie-Banner nach Schweizer Recht (Opt-out-Modell gemäss FMG und DSG): Besucher werden informiert und können externe Dienste ablehnen.</li>
-	<li>Der Banner erscheint automatisch nur auf Seiten, die externe Dienste nutzen (z. B. Karten von OpenStreetMap, YouTube-Videos, Vimeo, Chat-Bot). Abgelehnte Inhalte werden durch einen Platzhalter mit «Einmal laden» ersetzt.</li>
-	<li>Ohne Banner kommen aus: Schriften (werden von deiner Website ausgeliefert), Icons in der Link-Liste und eigene Videos aus der Mediathek.</li>
-	<li>Die Datenschutzerklärung listet die verwendeten Dienste automatisch auf. Du musst dafür nichts tun.</li>
-	<li>Über den Link «Cookie-Einstellungen» in der Fusszeile können Besucher ihre Auswahl jederzeit ändern.</li>
-	<li>Rechtliche Texte (Impressum, Datenschutz, AGB) pflegst du in den Einstellungen. Für die rechtliche Richtigkeit deiner Texte bist du verantwortlich.</li>
+	<li><strong>Schweizer Recht:</strong> Die Website hat einen Cookie-Banner nach Schweizer Recht (Opt-out-Modell gemäss FMG und DSG): Besucher werden informiert und können externe Dienste ablehnen.</li>
+	<li><strong>Wann der Banner erscheint:</strong> automatisch nur auf Seiten, die externe Dienste nutzen (z. B. Karten von OpenStreetMap, YouTube-Videos, Vimeo, Chat-Bot).</li>
+	<li><strong>Abgelehnte Inhalte:</strong> werden durch einen Platzhalter mit «Einmal laden» ersetzt.</li>
+	<li><strong>Ohne Banner kommen aus:</strong> Schriften (werden von deiner Website ausgeliefert), Icons in der Link-Liste und eigene Videos aus der Mediathek.</li>
+	<li><strong>Datenschutzerklärung:</strong> listet die verwendeten Dienste automatisch auf. Du musst dafür nichts tun.</li>
+	<li><strong>Cookie-Einstellungen:</strong> Über diesen Link in der Fusszeile können Besucher ihre Auswahl jederzeit ändern.</li>
+	<li><strong>Rechtliche Texte</strong> (Impressum, Datenschutz, AGB): pflegst du in den Einstellungen. Für die rechtliche Richtigkeit deiner Texte bist du verantwortlich.</li>
 </ul>
 
-<h2>Anleitung: Passwortgeschützte Seiten</h2>
-<ol>
-	<li>Einstellungen öffnen und im Feld «Seiten-Passwort» ein Passwort eintragen. Es gilt für alle geschützten Seiten. Veröffentlichen.</li>
-	<li>Die gewünschte Seite öffnen und im Tab «SEO &amp; Metadata» «Passwortgeschützt» einschalten. Veröffentlichen.</li>
-	<li>Besucher sehen nun zuerst eine Passwort-Abfrage. Nach der Eingabe bleibt die Freigabe eine Weile im Browser gespeichert.</li>
-</ol>
-<p>Wichtig: Der Passwortschutz ist eine praktische Hürde, aber kein sicherer Tresor. Technisch versierte Personen können die Inhalte und teilweise das Passwort über das Hintergrundsystem einsehen. Keine vertraulichen Daten (Kundendaten, Verträge, Zugangsdaten, interne Kalkulationen) auf geschützte Seiten stellen und kein Passwort verwenden, das du anderswo nutzt. Für einen wirklich geschlossenen Bereich (Kundenportal, Mitarbeiter-Login) bitte Angelo kontaktieren.</p>
-
-<h2>Anleitung: Mehrsprachigkeit</h2>
-<ol>
-	<li>Die zusätzliche Sprache richtet Angelo in Prismic ein. Eine Zusatzsprache ist im kostenlosen Prismic-Plan enthalten; für mehr Sprachen musst du den Prismic-Plan auf deine Rechnung erweitern.</li>
-	<li>In den Einstellungen «Mehrere Sprachen verwenden» einschalten. Dann erscheint auf der Website ein Sprachumschalter (auf dem Handy im Menü).</li>
-	<li>Auf der Prismic-Startseite die zu übersetzenden Dokumente markieren und «Copy to another locale» wählen, Zielsprache auswählen.</li>
-	<li>Oben links die Sprache wechseln, die kopierten Dokumente öffnen, Texte übersetzen und veröffentlichen.</li>
-	<li>Auch Navigation, Einstellungen, Design-Vorlage und das Dokument «Variablen» brauchen eine Version in der neuen Sprache.</li>
-</ol>
-<p>So verhält sich die Website:</p>
+<h2>Passwortgeschützte Seiten</h2>
+<h4>1. Passwort festlegen</h4>
+<p>Öffne die <strong>Einstellungen</strong> und trage ein Passwort ein:</p>
 <ul>
-	<li>Die gewählte Sprache wird gemerkt. Besuchende sehen beim nächsten Besuch automatisch wieder ihre Sprache.</li>
-	<li>Hat eine Seite noch keine Übersetzung, ist die Sprache im Umschalter durchgestrichen. Führt ein Link trotzdem dorthin, erscheint der Hinweis «Leider gibt es für diese Seite noch keine Übersetzung» und danach die deutsche Version – Menü und Fusszeile bleiben in der gewählten Sprache.</li>
-	<li>Platzhalter (z. B. {{Name}}, {{Anreise}}, eigene Variablen) werden nie übersetzt: Im englischen Text heisst der Platzhalter genau gleich wie im deutschen. Übersetzt wird nur, was er einsetzt.</li>
-	<li>Ressourcen mit Schlafzimmern: Die Reihenfolge der Schlafzimmer muss in allen Sprachen gleich sein, sonst stimmt der Belegungsplan nicht.</li>
-	<li>Was noch fehlt, zeigt der Admin-Bereich unter «Inhalte prüfen».</li>
+	<li><strong>Seiten-Passwort:</strong> Es gilt für alle geschützten Seiten.</li>
+</ul>
+<p>Veröffentliche die Einstellungen.</p>
+
+<h4>2. Seite schützen</h4>
+<p>Öffne die gewünschte Seite und schalte im Tab <strong>SEO &amp; Metadata</strong> dieses Feld ein:</p>
+<ul>
+	<li><strong>Passwortgeschützt</strong></li>
+</ul>
+<p>Veröffentliche die Seite.</p>
+
+<h4>3. Ergebnis</h4>
+<p>Besucher sehen nun zuerst eine Passwort-Abfrage. Nach der Eingabe bleibt die Freigabe eine Weile im Browser gespeichert.</p>
+
+<h3>Wichtig</h3>
+<p>Der Passwortschutz ist eine praktische Hürde, aber kein sicherer Tresor.</p>
+<ul>
+	<li>Technisch versierte Personen können die Inhalte und teilweise das Passwort über das Hintergrundsystem einsehen.</li>
+	<li>Keine vertraulichen Daten (Kundendaten, Verträge, Zugangsdaten, interne Kalkulationen) auf geschützte Seiten stellen.</li>
+	<li>Kein Passwort verwenden, das du anderswo nutzt.</li>
+	<li>Für einen wirklich geschlossenen Bereich (Kundenportal, Mitarbeiter-Login) bitte Angelo kontaktieren.</li>
+</ul>
+
+<h2>Mehrsprachigkeit</h2>
+<h4>1. Sprache einrichten lassen</h4>
+<p>Die zusätzliche Sprache richtet Angelo in Prismic ein.</p>
+<p>Eine Zusatzsprache ist im kostenlosen Prismic-Plan enthalten; für mehr Sprachen musst du den Prismic-Plan auf deine Rechnung erweitern.</p>
+
+<h4>2. Mehrsprachigkeit einschalten</h4>
+<p>Schalte in den <strong>Einstellungen</strong> dieses Feld ein:</p>
+<ul>
+	<li><strong>Mehrere Sprachen verwenden</strong></li>
+</ul>
+<p>Dann erscheint auf der Website ein Sprachumschalter (auf dem Handy im Menü).</p>
+
+<h4>3. Dokumente kopieren</h4>
+<p>Markiere auf der Prismic-Startseite die zu übersetzenden Dokumente, wähle <strong>Copy to another locale</strong> und die Zielsprache.</p>
+
+<h4>4. Übersetzen</h4>
+<p>Wechsle oben links die Sprache, öffne die kopierten Dokumente, übersetze die Texte und veröffentliche.</p>
+
+<h4>5. Weitere Dokumente</h4>
+<p>Auch diese Dokumente brauchen eine Version in der neuen Sprache:</p>
+<ul>
+	<li>Navigation</li>
+	<li>Einstellungen</li>
+	<li>Design-Vorlage</li>
+	<li>das Dokument «Variablen»</li>
+</ul>
+
+<h3>So verhält sich die Website</h3>
+<ul>
+	<li><strong>Gemerkte Sprache:</strong> Die gewählte Sprache wird gemerkt. Besuchende sehen beim nächsten Besuch automatisch wieder ihre Sprache.</li>
+	<li><strong>Fehlende Übersetzung:</strong> Hat eine Seite noch keine Übersetzung, ist die Sprache im Umschalter durchgestrichen. Führt ein Link trotzdem dorthin, erscheint der Hinweis «Leider gibt es für diese Seite noch keine Übersetzung» und danach die deutsche Version – Menü und Fusszeile bleiben in der gewählten Sprache.</li>
+	<li><strong>Platzhalter</strong> (z. B. {{Name}}, {{Anreise}}, eigene Variablen): werden nie übersetzt. Im englischen Text heisst der Platzhalter genau gleich wie im deutschen. Übersetzt wird nur, was er einsetzt.</li>
+	<li><strong>Ressourcen mit Schlafzimmern:</strong> Die Reihenfolge der Schlafzimmer muss in allen Sprachen gleich sein, sonst stimmt der Belegungsplan nicht.</li>
+	<li><strong>Was noch fehlt:</strong> zeigt der Admin-Bereich unter «Inhalte prüfen».</li>
 </ul>
 
 <h2>Der Admin-Bereich deiner Website</h2>
 <p>Für Buchungen, Kunden, Rechnungen, Newsletter und Kontrollen gibt es einen geschützten Verwaltungsbereich direkt auf deiner Website (nicht in Prismic).</p>
-<ol>
-	<li>Im Browser deine-website.ch/admin aufrufen.</li>
-	<li>Das Admin-Passwort eingeben (du erhältst es von Angelo). Du bleibst 8 Stunden angemeldet, mit «Angemeldet bleiben» 14 Tage.</li>
-	<li>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B. Rechnungen, Kunden, Terminverwaltung, Ressource-Buchungen, Aufgaben, Event-Anmeldungen, Newsletter, Chat-Bot, «Inhalte prüfen» und «Passwortgeschützte Seiten».</li>
-	<li>Unter «Hilfe» findest du die Prismic-Feldreferenz: alle Felder der Inhalts-Typen und Inhalts-Elemente mit Erklärung.</li>
-	<li>Mit «Zur Website» kommst du zurück auf die Website, mit «Abmelden» meldest du dich ab.</li>
-</ol>
-<p>Ältere Anleitungen nennen Adressen mit «?secret=…». Das ist nicht mehr nötig: Melde dich einfach unter /admin an.</p>
-<p>E-Mail-Versand (Bestätigungen, Rechnungen, Newsletter) funktioniert nur, wenn er auf dem Hosting eingerichtet ist. Das erledigt Angelo. Kommen keine E-Mails an, bitte Angelo informieren.</p>
 
-<h2>Anleitung: Inhalte prüfen</h2>
-<p>Im Admin-Bereich unter «Inhalte prüfen» kontrolliert die Website deine Prismic-Inhalte und zeigt pro Problem, was zu tun ist, mit dem Knopf «In Prismic öffnen»:</p>
+<h4>1. Admin-Bereich aufrufen</h4>
+<p>Rufe im Browser deine-website.ch/admin auf.</p>
+
+<h4>2. Anmelden</h4>
+<p>Gib das Admin-Passwort ein (du erhältst es von Angelo).</p>
+<p>Du bleibst 8 Stunden angemeldet, mit <strong>Angemeldet bleiben</strong> 14 Tage.</p>
+
+<h4>3. Dashboard</h4>
+<p>Im Dashboard erscheinen die Bereiche, die in deinem Paket enthalten sind, z. B.:</p>
 <ul>
-	<li>Fehlende Übersetzungen: Seiten, die es in einer Sprache noch nicht gibt.</li>
-	<li>Web-Links ohne «/» am Anfang, die ins Leere führen.</li>
-	<li>Links in einer Übersetzung auf die deutsche Seite, obwohl es die Seite übersetzt gibt.</li>
-	<li>Unbekannte Platzhalter, z. B. ein Tippfehler wie {{Resource}} statt {{Ressource}} – mit Vorschlag «meintest du …?».</li>
-	<li>«Kartenpunkt nicht erkannt»: Im Feld «Kartenpunkt» steht etwas, woraus kein Ort bestimmt werden kann, z. B. eine Adresse oder ein Google-Link ohne Koordinaten.</li>
+	<li>Rechnungen</li>
+	<li>Kunden</li>
+	<li>Terminverwaltung</li>
+	<li>Ressource-Buchungen</li>
+	<li>Aufgaben</li>
+	<li>Event-Anmeldungen</li>
+	<li>Newsletter</li>
+	<li>Stunden</li>
+	<li>Chat-Bot</li>
+	<li>«Inhalte prüfen»</li>
+	<li>«Passwortgeschützte Seiten»</li>
 </ul>
 
-<h2>Anleitung: Terminbuchung einrichten</h2>
-<p>Besucher buchen freie Zeitfenster direkt auf der Website. Du legst fest, an welchen Tagen welche Angebote buchbar sind; das System berechnet die freien Termine automatisch.</p>
-<ol>
-	<li>Optional Orte anlegen: «Create a new page» → «Ort / Standort». UID, Name, Adresse, «Kartenpunkt» (z. B. 47.3769, 8.5417 oder ein OpenStreetMap-Link), optional Telefon, E-Mail, Öffnungszeiten, Wegbeschreibung und Bild. «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Buchbare Angebote anlegen: «Create a new page» → «Buchbares Angebot». UID (z. B. massage-60), Bezeichnung, Beschreibung, «Dauer (Minuten)», «Puffer danach (Minuten)» (Pause bis zum nächsten Termin), «Vorlaufzeit (Minuten)» (wie kurzfristig gebucht werden darf), optional Preis und Ort. «Aktiv» einschalten. Veröffentlichen.</li>
-	<li>Arbeitstage anlegen: «Create a new page» → «Arbeitstag». Bezeichnung, Datum des ersten Tages, «Startzeit (HH:MM)» und «Endzeit (HH:MM)», Zeitzone (normalerweise Europe/Zurich), optional Pause, «Buchungsintervall» (15, 30 oder 60 Minuten), die «Buchbaren Angebote» verknüpfen. Bei «Wiederholung» z. B. «Wöchentlich» wählen und «Wiederholen bis (Datum)» oder «Anzahl Wiederholungen» angeben. Veröffentlichen. Wiederholte Tage werden automatisch erzeugt.</li>
-	<li>Ergebnis kontrollieren: Im Admin-Bereich «Terminverwaltung» öffnen. Unter «Freie Termine» prüfen, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen. Einzelne Termine kannst du dort sperren.</li>
-	<li>Buchungsformular einfügen: Seite öffnen (oder neu erstellen), Element «Formulare» in der Variante «Mit Termin» einfügen. Felder anlegen: «Name» (Textfeld), «E-Mail» (E-Mail) und «Termin» (Feldtyp Termin, obligatorisch). Die Feldnamen «Name» und «E-Mail» genau so schreiben. Weitere Felder (Telefon, Nachricht, AGB-Checkbox) sind möglich.</li>
-	<li>Texte des Formulars ausfüllen: Formular-Titel, Instruktionen, Senden-Text, Titel und Text nach erfolgreicher Buchung.</li>
-	<li>E-Mail-Texte: Einstellungen → Tab «Terminbuchung»: Absender-E-Mail, Betreff und Text der Bestätigung, «Erinnerung: Stunden vor Termin». Platzhalter: {{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}, {{Ort}} (Adresse, sonst Name des Orts), {{Wegbeschreibung}}, {{Ort-Telefon}} und {{Ort-Karte}} (Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse). Diese vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist. Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen»; sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</li>
-	<li>In dieser Reihenfolge veröffentlichen: Angebote, Arbeitstage, dann die Seite mit dem Formular. Danach eine Testbuchung machen.</li>
-</ol>
-<p>Buchungen verwalten: Admin-Bereich → «Terminverwaltung». Dort siehst du gebuchte, freie und gesperrte Termine. Eine gelöschte Buchung gibt den Termin wieder frei; der Kunde erhält dabei keine automatische Absage-Mail.</p>
-<p>Häufige Probleme:</p>
+<h4>4. Hilfe</h4>
+<p>Unter <strong>Hilfe</strong> findest du die Prismic-Feldreferenz: alle Felder der Inhalts-Typen und Inhalts-Elemente mit Erklärung.</p>
+
+<h4>5. Zurück und Abmelden</h4>
+<p>Mit <strong>Zur Website</strong> kommst du zurück auf die Website, mit <strong>Abmelden</strong> meldest du dich ab.</p>
+
+<h3>Hinweise</h3>
 <ul>
-	<li>Kein Termin sichtbar: Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
-	<li>Formular sendet nicht: Pflichtfelder fehlen oder es gibt kein Feld vom Typ «Termin».</li>
-	<li>Keine Bestätigungs-Mail: E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
-	<li>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic: Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
-	<li>Bereits gebuchte Termine bleiben gespeichert, wenn du einen Arbeitstag änderst. Serien deshalb möglichst nicht kurzfristig ändern.</li>
+	<li><strong>Adressen mit «?secret=…»:</strong> Ältere Anleitungen nennen solche Adressen. Das ist nicht mehr nötig: Melde dich einfach unter /admin an.</li>
+	<li><strong>E-Mail-Versand</strong> (Bestätigungen, Rechnungen, Newsletter): funktioniert nur, wenn er auf dem Hosting eingerichtet ist. Das erledigt Angelo. Kommen keine E-Mails an, bitte Angelo informieren.</li>
 </ul>
 
-<h2>Anleitung: Globale Events (Veranstaltungen)</h2>
-<p>Veranstaltungen einmal zentral erfassen und auf beliebig vielen Seiten zeigen. Änderungen (Datum, Status, Preis) sind sofort überall aktuell.</p>
-<ol>
-	<li>«Create a new page» → «Event».</li>
-	<li>Tab «Allgemein»: UID, Titel, Untertitel, Kurzbeschreibung, Beschreibung, Hauptbild, optional «Hervorgehoben».</li>
-	<li>Tab «Datum &amp; Zeit»: Beginn, Ende, optional «Einlass ab», Zeitzone.</li>
-	<li>Tab «Details»: Status (z. B. Bestätigt, Verschoben, Abgesagt, Ausgebucht), Veranstaltungsart, Sprache, Zielgruppe, Veranstalter, Kontakt, Barrierefreiheit, Teilnehmerzahl.</li>
-	<li>Tab «Ort»: Veranstaltungsort und Adresse, «Kartenpunkt» (zeigt eine Karte in der Event-Ansicht), Wegbeschreibung. Für Online-Veranstaltungen «Online-Veranstaltung» einschalten und den Stream-Link eintragen.</li>
-	<li>Tab «Tickets &amp; Anmeldung»: kostenlos oder Preis, Anmeldung per E-Mail, WhatsApp, Telegram oder externem Ticket-Link. Für Ticketkauf über die Website «Checkout-Flow verwenden» einschalten, Ticketpreis und Zahlungsarten (Rechnung, bar) festlegen sowie die Texte der Bestell- und Bestätigungsseite ausfüllen.</li>
-	<li>Tab «Serie &amp; Wiederholung» für Kurse oder Reihen: «Veranstaltungsserie» einschalten, Rhythmus, Wochentage, Serienende oder Anzahl Termine sowie Ausnahmen angeben. Mit «Einzeln buchbar» können einzelne Termine separat gebucht werden.</li>
-	<li>Tab «SEO»: eigener SEO-Titel, Beschreibung und Vorschaubild.</li>
-	<li>Veröffentlichen.</li>
-	<li>Auf der gewünschten Seite das Element «Globale Events» einfügen. Es zeigt die Events an; über «Serie / Eltern-Event» lässt sich die Anzeige auf eine Serie beschränken.</li>
-</ol>
-<p>Besucher können Termine mit einem Klick als Kalenderdatei (.ics) in ihren Kalender übernehmen; das funktioniert mit allen Kalender-Apps. Anmeldungen über die Website findest du im Admin-Bereich unter «Event-Anmeldungen».</p>
+<h2>Inhalte prüfen</h2>
+<p>Im Admin-Bereich unter <strong>Inhalte prüfen</strong> kontrolliert die Website deine Prismic-Inhalte und zeigt pro Problem, was zu tun ist, mit dem Knopf <strong>In Prismic öffnen</strong>.</p>
+<ul>
+	<li><strong>Fehlende Übersetzungen:</strong> Seiten, die es in einer Sprache noch nicht gibt.</li>
+	<li><strong>Web-Links ohne «/» am Anfang:</strong> Sie führen ins Leere.</li>
+	<li><strong>Links in einer Übersetzung auf die deutsche Seite:</strong> obwohl es die Seite übersetzt gibt.</li>
+	<li><strong>Unbekannte Platzhalter:</strong> z. B. ein Tippfehler wie {{Resource}} statt {{Ressource}} – mit Vorschlag «meintest du …?».</li>
+	<li><strong>Fehlende Pflichtangaben:</strong> in den Einstellungen für Impressum und Datenschutzerklärung.</li>
+	<li><strong>E-Mail-Versand:</strong> «Absender-E-Mail» leer oder Domain beim Mail-Dienst nicht eingerichtet.</li>
+	<li><strong>QR-Zahlteil:</strong> IBAN oder «Verantwortliche Adresse» unvollständig.</li>
+	<li><strong>Terminbuchung:</strong> Arbeitstage oder Angebote, aus denen keine freien Termine entstehen, mit dem Grund.</li>
+	<li><strong>Stundenabrechnung:</strong> Formular «Stundenabrechnung» auf einer Seite ohne Passwortschutz.</li>
+	<li><strong>Leere Inhalts-Elemente:</strong> Inhalts-Elemente ohne Inhalt.</li>
+	<li><strong>Kartenpunkt nicht erkannt:</strong> Im Feld «Kartenpunkt» steht etwas, woraus kein Ort bestimmt werden kann, z. B. eine Adresse oder ein Google-Link ohne Koordinaten.</li>
+</ul>
 
-<h2>Anleitung: Newsletter / Info-Mails</h2>
-<p>Info-Mails an deine Kunden und Abonnenten senden, nach Schweizer Recht (UWG): jede Mail enthält deine Absenderangaben und einen Abmelde-Link.</p>
+<h2>Terminbuchung einrichten</h2>
+<h4>1. Orte anlegen (optional)</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Ort / Standort</strong>.</p>
+<ul>
+	<li><strong>UID</strong></li>
+	<li><strong>Name</strong></li>
+	<li><strong>Adresse</strong></li>
+	<li><strong>Kartenpunkt</strong></li>
+	<li><strong>Telefon</strong>, <strong>E-Mail</strong>, <strong>Öffnungszeiten</strong>, <strong>Wegbeschreibung</strong>, <strong>Bild</strong>: optional</li>
+	<li><strong>Aktiv:</strong> einschalten</li>
+</ul>
+<p>Veröffentliche den Ort.</p>
+
+<h4>2. Buchbare Angebote anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Buchbares Angebot</strong>.</p>
+<ul>
+	<li><strong>UID:</strong> z. B. massage-60</li>
+	<li><strong>Bezeichnung</strong></li>
+	<li><strong>Beschreibung</strong></li>
+	<li><strong>Dauer (Minuten)</strong></li>
+	<li><strong>Puffer danach (Minuten)</strong></li>
+	<li><strong>Vorlaufzeit (Minuten)</strong></li>
+	<li><strong>Preis (optional)</strong></li>
+	<li><strong>Ort</strong></li>
+	<li><strong>Kostenlos stornierbar bis (Std. vor Termin)</strong></li>
+	<li><strong>Stornogebühr nach Ablauf (% vom Preis)</strong></li>
+	<li><strong>Bild (für Kacheln)</strong></li>
+	<li><strong>Seite mit mehr Infos</strong></li>
+	<li><strong>Reihenfolge (Kacheln)</strong></li>
+	<li><strong>Aktiv:</strong> einschalten</li>
+</ul>
+<p>Veröffentliche das Angebot.</p>
+
+<h4>3. Arbeitstage anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Arbeitstag</strong>.</p>
+<ul>
+	<li><strong>Bezeichnung</strong></li>
+	<li><strong>Datum:</strong> Datum des ersten Tages.</li>
+	<li><strong>Startzeit (HH:MM)</strong></li>
+	<li><strong>Endzeit (HH:MM)</strong></li>
+	<li><strong>Zeitzone</strong></li>
+	<li><strong>Pause von (optional)</strong> und <strong>Pause bis (optional)</strong>: optionale Pause</li>
+	<li><strong>Buchungsintervall</strong></li>
+	<li><strong>Buchbare Angebote</strong></li>
+	<li><strong>Wiederholung</strong></li>
+	<li><strong>Wiederholen bis (Datum)</strong></li>
+	<li><strong>Anzahl Wiederholungen</strong></li>
+</ul>
+<p>Veröffentliche den Arbeitstag. Wiederholte Tage werden automatisch erzeugt.</p>
+
+<h4>4. Ergebnis kontrollieren</h4>
+<p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>.</p>
+<p>Prüfe unter <strong>Freie Termine</strong>, ob Datum, Uhrzeiten, Pausen, Puffer und Angebote stimmen.</p>
+<p>Einzelne Termine kannst du dort sperren.</p>
+<p>Erscheinen keine freien Termine, zeigt die Terminverwaltung die Gründe an, z. B.:</p>
+<ul>
+	<li>«Kein «Buchbares Angebot» verknüpft»</li>
+	<li>«Angebot … ist nicht aktiv»</li>
+	<li>«Die Serie ist abgelaufen»</li>
+</ul>
+
+<h4>5. Buchungsformular einfügen</h4>
+<p>Öffne die Seite oder erstelle eine neue.</p>
+<p>Füge das Element <strong>Formulare</strong> in der Variante <strong>Mit Termin</strong> ein.</p>
+<p>Die Terminauswahl ist in dieser Variante fest eingebaut und steht an erster Stelle. Ein eigenes Feld vom Typ «Termin» brauchst du nur, wenn es an einer anderen Stelle stehen soll.</p>
+<p>Lege diese Felder an:</p>
+<ul>
+	<li><strong>Name:</strong> Textfeld</li>
+	<li><strong>E-Mail:</strong> E-Mail</li>
+</ul>
+<p>Schreibe die Feldnamen <strong>Name</strong> und <strong>E-Mail</strong> genau so.</p>
+<p>Weitere Felder sind möglich, z. B. Telefon, Nachricht, AGB-Checkbox.</p>
+<p>Mit Feldern, die genau <strong>Adresse</strong>, <strong>PLZ</strong> und <strong>Ort</strong> heissen, steht die Adresse des Kunden später auf der Rechnung.</p>
+
+<h4>6. Angebote als Kacheln zeigen (optional)</h4>
+<p>Füge das Element <strong>Kacheln</strong> in der Variante <strong>Buchbare Angebote</strong> ein.</p>
+<p>Es zeigt automatisch alle aktiven Angebote mit den Schaltflächen «Mehr erfahren» und «Buchen».</p>
+<ul>
+	<li><strong>Preis anzeigen</strong></li>
+	<li><strong>Buchungsseite</strong></li>
+	<li><strong>Mehr erfahren:</strong> führt auf die «Seite mit mehr Infos» des Angebots, sonst öffnet sich ein Fenster mit Beschreibung, Dauer, Preis und Ort</li>
+</ul>
+
+<h4>7. Texte des Formulars ausfüllen</h4>
+<ul>
+	<li><strong>Formular Titel</strong></li>
+	<li><strong>Formular Instruktionen</strong></li>
+	<li><strong>Senden-Schaltflächen-Text</strong></li>
+	<li>Titel und Text nach erfolgreicher Buchung</li>
+</ul>
+
+<h4>8. E-Mail-Texte</h4>
+<p>Öffne die <strong>Einstellungen</strong> und den Tab <strong>Terminbuchung</strong>.</p>
+<ul>
+	<li><strong>Kunden-E-Mail: Betreff</strong></li>
+	<li><strong>Kunden-E-Mail: Text</strong></li>
+	<li><strong>Erinnerung: Stunden vor Termin</strong></li>
+</ul>
+<p><strong>Platzhalter:</strong></p>
+<ul>
+	<li>{{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}</li>
+	<li>{{Stornofrist}}: bis wann kostenlos storniert werden kann</li>
+	<li>{{Ort}}: Adresse, sonst Name des Orts</li>
+	<li>{{Wegbeschreibung}}</li>
+	<li>{{Ort-Telefon}}</li>
+	<li>{{Ort-Karte}}: Link «Auf der Karte anzeigen» zum Kartenpunkt des Orts; ohne Kartenpunkt sucht der Link nach Name und Adresse</li>
+</ul>
+<p>Die letzten vier kommen vom Ort, der beim Buchbaren Angebot verknüpft und aktiv ist.</p>
+<p>Die Bestätigung enthält zusätzlich eine Kalenderdatei (.ics) mit Titel, Datum, Uhrzeit und Dauer des Termins und einen Link «Zum Kalender hinzufügen». Sie funktioniert mit allen Kalendern (Apple, Outlook, Google, Thunderbird).</p>
+
+<h4>9. Veröffentlichen</h4>
+<p>Veröffentliche in dieser Reihenfolge:</p>
 <ol>
-	<li>Newsletter schreiben: In Prismic «Create a new page» → «Newsletter». Betreff, «Vorschautext im Posteingang», Inhalt und optional Button-Text und Button-Link ausfüllen. Platzhalter für die persönliche Anrede: {{Name}}, {{Vorname}}, {{Nachname}}, {{Firma}}.</li>
-	<li>Vorschau prüfen («Preview the page») und veröffentlichen.</li>
-	<li>Im Admin-Bereich «Newsletter» öffnen und den Newsletter wählen.</li>
-	<li>«1. Test-Mail an mich»: Test-Adresse eingeben, «Test senden» und die Mail im Postfach prüfen.</li>
-	<li>Versenden: «2. An ausgewählte Kunden senden» (Empfänger auswählen) oder «3. An alle Kunden senden». Den Versand mit der Checkbox bestätigen und «Jetzt senden» klicken.</li>
-	<li>Unter «Verlauf» siehst du, wann welcher Newsletter an wie viele Empfänger ging.</li>
+	<li>Angebote</li>
+	<li>Arbeitstage</li>
+	<li>die Seite mit dem Formular</li>
 </ol>
+<p>Mache danach eine Testbuchung.</p>
+
+<h3>Buchungen verwalten</h3>
+<p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>. Dort siehst du gebuchte, freie und gesperrte Termine.</p>
+<p><strong>Achtung:</strong> Eine gelöschte Buchung gibt den Termin wieder frei. Der Kunde erhält dabei keine automatische Absage-Mail.</p>
+
+<h3>Für einen Kunden buchen</h3>
+<p>Z. B. bei einer telefonischen Anfrage: Wähle in der Terminverwaltung beim freien Termin <strong>Für Kunde buchen</strong>.</p>
+<ul>
+	<li><strong>Name</strong></li>
+	<li><strong>E-Mail:</strong> optional; mit E-Mail erhält der Kunde Bestätigung und Erinnerung, ohne E-Mail werden keine E-Mails verschickt</li>
+	<li><strong>Telefon:</strong> optional</li>
+</ul>
+
+<h3>Stornierung durch den Kunden</h3>
+<p>Die Bestätigungs-Mail enthält einen Link zum Stornieren. Die Seite zeigt zuerst die Bedingungen; storniert wird erst mit dem Knopf.</p>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Terminbuchung</strong> gelten für alle Angebote ohne eigene Angabe:</p>
+<ul>
+	<li><strong>Kostenlos stornierbar bis (Std. vor Termin)</strong></li>
+	<li><strong>Stornogebühr nach Ablauf (% vom Preis)</strong></li>
+</ul>
+<ul>
+	<li><strong>Innerhalb der Frist (oder ohne Frist):</strong> kostenlos. Der Termin wird wieder frei.</li>
+	<li><strong>Nach der Frist mit Stornogebühr:</strong> Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil.</li>
+	<li><strong>Nach der Frist ohne Stornogebühr oder ohne Preis:</strong> Online stornieren ist nicht mehr möglich; die Seite verweist auf den direkten Kontakt.</li>
+</ul>
+<p>Es gelten die Bedingungen vom Zeitpunkt der Buchung. Du und der Kunde erhalten eine E-Mail.</p>
+<p>Eine offene Rechnung zur Buchung wird als storniert markiert. War sie schon bezahlt, erhältst du den Hinweis, eine Rückerstattung zu prüfen.</p>
+
+<h3>Rechnung nach dem Termin</h3>
+<p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Terminbuchung</strong> dieses Feld ein:</p>
+<ul>
+	<li><strong>Rechnung nach dem Termin senden (Angebote mit Preis)</strong></li>
+</ul>
+<p>Bankangaben: Einstellungen → Tab «Rechnungen».</p>
+
+<h3>Häufige Probleme</h3>
+<ul>
+	<li><strong>Kein Termin sichtbar:</strong> Arbeitstag nicht veröffentlicht, kein Angebot verknüpft oder Angebot nicht aktiv.</li>
+	<li><strong>Formular sendet nicht:</strong> Pflichtfelder fehlen oder es ist kein Termin gewählt.</li>
+	<li><strong>Keine Bestätigungs-Mail:</strong> E-Mail-Versand nicht eingerichtet oder Absender-E-Mail fehlt.</li>
+	<li><strong>Typen «Buchbares Angebot» oder «Arbeitstag» fehlen in Prismic:</strong> Die Terminbuchung ist nicht in deinem Paket. Sie ist ab Paket Professionell enthalten oder kann hinzugebucht werden.</li>
+	<li><strong>Arbeitstag geändert:</strong> Bereits gebuchte Termine bleiben gespeichert. Serien deshalb möglichst nicht kurzfristig ändern.</li>
+</ul>
+
+<h2>Globale Events (Veranstaltungen)</h2>
+<h4>1. Event anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Event</strong>.</p>
+
+<h4>2. Tab «Allgemein»</h4>
+<ul>
+	<li><strong>UID</strong></li>
+	<li><strong>Titel</strong></li>
+	<li><strong>Untertitel</strong></li>
+	<li><strong>Kurzbeschreibung</strong></li>
+	<li><strong>Beschreibung</strong></li>
+	<li><strong>Hauptbild</strong></li>
+	<li><strong>Hervorgehoben:</strong> optional</li>
+</ul>
+
+<h4>3. Tab «Datum &amp; Zeit»</h4>
+<ul>
+	<li><strong>Beginn (Datum &amp; Uhrzeit)</strong></li>
+	<li><strong>Ende (Datum &amp; Uhrzeit)</strong></li>
+	<li><strong>Einlass ab:</strong> optional</li>
+	<li><strong>Zeitzone</strong></li>
+</ul>
+
+<h4>4. Tab «Details»</h4>
+<ul>
+	<li><strong>Status:</strong> z. B. Bestätigt, Verschoben, Abgesagt, Ausgebucht</li>
+	<li><strong>Veranstaltungsart</strong></li>
+	<li><strong>Sprache der Veranstaltung</strong></li>
+	<li><strong>Zielgruppe</strong></li>
+	<li><strong>Veranstalter</strong></li>
+	<li>Kontakt</li>
+	<li><strong>Barrierefreiheit</strong></li>
+	<li>Teilnehmerzahl</li>
+</ul>
+
+<h4>5. Tab «Ort»</h4>
+<ul>
+	<li>Veranstaltungsort und Adresse</li>
+	<li><strong>Kartenpunkt</strong></li>
+	<li><strong>Wegbeschreibung</strong></li>
+	<li><strong>Online-Veranstaltungen:</strong> <strong>Online-Veranstaltung</strong> einschalten und den Stream-Link bei <strong>Online-Link / Stream</strong> eintragen</li>
+</ul>
+
+<h4>6. Tab «Tickets &amp; Anmeldung»</h4>
+<ul>
+	<li>kostenlos oder Preis</li>
+	<li>Anmeldung per E-Mail, WhatsApp, Telegram oder externem Ticket-Link</li>
+</ul>
+<p>Für Ticketkauf über die Website:</p>
+<ul>
+	<li><strong>Checkout-Flow verwenden (Ticketkauf über Website)</strong> einschalten</li>
+	<li>Ticketpreis und Zahlungsarten (Rechnung, bar) festlegen</li>
+	<li>die Texte der Bestell- und Bestätigungsseite ausfüllen</li>
+</ul>
+
+<h4>7. Tab «Serie &amp; Wiederholung»</h4>
+<p>Für Kurse oder Reihen:</p>
+<ul>
+	<li><strong>Veranstaltungsserie</strong> einschalten</li>
+	<li>Rhythmus, Wochentage, Serienende oder Anzahl Termine sowie Ausnahmen angeben</li>
+	<li><strong>Einzeln buchbar:</strong> Einzelne Termine können separat gebucht werden.</li>
+</ul>
+
+<h4>8. Tab «SEO»</h4>
+<ul>
+	<li><strong>SEO-Titel</strong></li>
+	<li><strong>SEO-Beschreibung</strong></li>
+	<li><strong>SEO-Bild (Open Graph)</strong></li>
+</ul>
+
+<h4>9. Veröffentlichen</h4>
+<p>Veröffentliche das Event.</p>
+
+<h4>10. Events auf einer Seite zeigen</h4>
+<p>Füge auf der gewünschten Seite das Element <strong>Globale Events</strong> ein. Es zeigt die Events an.</p>
+<ul>
+	<li><strong>Serie / Eltern-Event:</strong> Damit lässt sich die Anzeige auf eine Serie beschränken.</li>
+</ul>
+
+<h3>Kalender und Anmeldungen</h3>
+<p>Besucher können Termine mit einem Klick als Kalenderdatei (.ics) in ihren Kalender übernehmen; das funktioniert mit allen Kalender-Apps.</p>
+<p>Anmeldungen über die Website findest du im Admin-Bereich unter <strong>Event-Anmeldungen</strong>.</p>
+
+<h2>Newsletter / Info-Mails</h2>
+<h4>1. Newsletter schreiben</h4>
+<p>Klicke in Prismic auf <strong>Create a new page</strong> und wähle <strong>Newsletter</strong>.</p>
+<ul>
+	<li><strong>Betreff</strong></li>
+	<li><strong>Vorschautext im Posteingang</strong></li>
+	<li><strong>Inhalt</strong></li>
+	<li><strong>Button-Text (optional)</strong></li>
+	<li><strong>Button-Link (optional)</strong></li>
+</ul>
+<p><strong>Platzhalter</strong> für die persönliche Anrede: {{Name}}, {{Vorname}}, {{Nachname}}, {{Firma}}.</p>
+
+<h4>2. Vorschau und Veröffentlichen</h4>
+<p>Prüfe die Vorschau (<strong>Preview the page</strong>) und veröffentliche.</p>
+
+<h4>3. Newsletter wählen</h4>
+<p>Öffne im Admin-Bereich <strong>Newsletter</strong> und wähle den Newsletter.</p>
+
+<h4>4. Test-Mail</h4>
+<p><strong>1. Test-Mail an mich:</strong> Gib die Test-Adresse ein, klicke auf <strong>Test senden</strong> und prüfe die Mail im Postfach.</p>
+
+<h4>5. Versenden</h4>
+<ul>
+	<li><strong>2. An ausgewählte Kunden senden:</strong> Empfänger auswählen</li>
+	<li><strong>3. An alle Kunden senden</strong></li>
+</ul>
+<p>Bestätige den Versand mit der Checkbox und klicke auf <strong>Jetzt senden</strong>.</p>
+
+<h4>6. Verlauf</h4>
+<p>Unter <strong>Verlauf</strong> siehst du, wann welcher Newsletter an wie viele Empfänger ging.</p>
+
+<h3>Empfänger</h3>
 <p>Empfänger sind alle Kunden mit E-Mail-Adresse und alle bestätigten Abonnenten. Abgemeldete Adressen werden automatisch ausgeschlossen.</p>
-<p>Anmeldeformular auf der Website: Element «Formulare» in der Variante «Newsletter abonnieren» einfügen. Überschrift, Einleitungstext, «Namensfelder anzeigen», Einwilligungstext und Text nach dem Absenden festlegen. Neue Abonnenten erhalten eine Bestätigungsmail (Double-Opt-in) und werden erst nach dem Klick auf den Bestätigungslink gespeichert.</p>
-<p>Abonnenten verwalten: Im Newsletter-Admin unter «Abonnenten» siehst du Name, E-Mail, Sprache, «Bestätigt am» (Nachweis der Einwilligung) und Status. «Entfernen» trägt die Adresse als abgemeldet ein. «Als CSV exportieren» lädt die Liste herunter.</p>
 
-<h2>Anleitung: Kundenverwaltung</h2>
+<h3>Anmeldeformular auf der Website</h3>
+<p>Füge das Element <strong>Formulare</strong> in der Variante <strong>Newsletter abonnieren</strong> ein und lege fest:</p>
 <ul>
-	<li>Admin-Bereich → «Kunden»: Liste aller Kunden mit Datum, Name, E-Mail, Firma, Adresse, Sprache und Quelle (manuell erfasst, Online-Handel, Terminbuchung).</li>
-	<li>Kunden aus Bestellungen und Buchungen werden automatisch gespeichert. Mit «+ Neuer Kunde» erfasst du Kunden von Hand.</li>
-	<li>Doppelte Einträge werden verhindert (Prüfung über E-Mail, sonst über Vor- und Nachname).</li>
-	<li>Die Sprache eines Kunden bestimmt, in welcher Sprache er E-Mails erhält.</li>
+	<li>Überschrift</li>
+	<li>Einleitungstext</li>
+	<li><strong>Namensfelder anzeigen</strong></li>
+	<li><strong>Einwilligungstext (Checkbox)</strong></li>
+	<li>Text nach dem Absenden</li>
+</ul>
+<p>Neue Abonnenten erhalten eine Bestätigungsmail (Double-Opt-in) und werden erst nach dem Klick auf den Bestätigungslink gespeichert.</p>
+
+<h3>Abonnenten verwalten</h3>
+<p>Im Newsletter-Admin unter <strong>Abonnenten</strong> siehst du Name, E-Mail, Sprache, «Bestätigt am» (Nachweis der Einwilligung) und Status.</p>
+<ul>
+	<li><strong>Entfernen:</strong> trägt die Adresse als abgemeldet ein</li>
+	<li><strong>Als CSV exportieren:</strong> lädt die Liste herunter</li>
 </ul>
 
-<h2>Anleitung: Kundenkonto</h2>
-<ol>
-	<li>In den Einstellungen «User-Backend aktivieren» einschalten und veröffentlichen.</li>
-	<li>Besucher können sich nun unter deine-website.ch/konto/registrierung registrieren und unter /konto/anmelden anmelden. Passwort vergessen: /konto/passwort-reset.</li>
-	<li>Im Konto sehen Kunden ihre kommenden und vergangenen Buchungen.</li>
-</ol>
-
-<h2>Anleitung: Online-Handel (Produkte und Dienstleistungen verkaufen)</h2>
-<ol>
-	<li>Grundeinstellungen: Einstellungen → Tab «Online-Handel»: Grundwährung und weitere Währungen, IBAN, Bank, BIC, Zahlungsfrist, MWST-Satz, globale Anzahlung, Rabatt-Codes und Zahlungsarten (gegen Rechnung, bar, Kreditkarte/TWINT über Stripe). Dazu die E-Mail-Texte und Bestätigungstexte pro Zahlungsart und die Titel der Bestellseiten.</li>
-	<li>Produktseite erstellen: neue «Page» anlegen. Im Tab «Online-Handel» «E-Commerce aktiv» einschalten, «Preis exkl. MwSt. (CHF)», optional «Anzahlung %», «Rabatt %» und «Abrechnungsart» (Einmalig, Jährlich, Monatlich) eintragen.</li>
-	<li>Leistungen beschreiben: «Create a new page» → «Leistung» mit Bezeichnung, Beschreibung und Detailbeschreibung. Im Tab «Leistungen» der Produktseite die Leistungen verknüpfen. Unter «Zusatzleistungen» andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
-	<li>Auf der Produktseite Elemente einfügen: «Preisaufstellung» (Preis, Rabatt, Anzahlung, Restbetrag), «Akkordeon» in der Variante «Leistungen» und «Schaltfläche» in der Variante «Kauf-Schaltfläche».</li>
-	<li>Übersicht mehrerer Angebote: «Kacheln» in der Variante «Pläne» oder «Preisvergleich» mit bis zu drei Produktseiten.</li>
-	<li>Veröffentlichen und eine Testbestellung machen.</li>
-</ol>
-<p>Ablauf für Käufer: Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung. Bei «gegen Rechnung» wird automatisch eine Rechnung erstellt und per E-Mail verschickt. Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
-
-<h2>Anleitung: Manuelle Rechnungen</h2>
-<ol>
-	<li>Admin-Bereich → «Rechnungen».</li>
-	<li>Neue Rechnung: Kunden aus der Liste wählen oder direkt als neuen Kunden erfassen.</li>
-	<li>Leistungsposten mit Beschreibung, Menge und Preis hinzufügen, optional Notizen.</li>
-	<li>PDF-Vorschau prüfen.</li>
-	<li>Speichern und optional direkt per E-Mail an den Kunden senden. Das Versanddatum wird festgehalten.</li>
-	<li>Ist die Rechnung bezahlt, beim Zahlungsstatus «bezahlt» wählen.</li>
-</ol>
-<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden. Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Online-Handel»).</p>
-
-<h2>Anleitung: Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)</h2>
-<ol>
-	<li>«Create a new page» → «Ressource». Tab «Main»: UID, Bezeichnung, Beschreibung, Hauptbild. Bei einem Haus mit mehreren Wohnungen die untergeordneten Ressourcen verknüpfen; «Zimmer einzeln buchbar» bei Bedarf einschalten.</li>
-	<li>Tab «Kapazität»: maximale Personenzahl (0 = unbegrenzt) und optional Schlafzimmer mit Betttyp, Anzahl Betten und Bild. Sind Schlafzimmer erfasst, können Gäste einzelne Zimmer buchen. Bei mehreren Sprachen: Reihenfolge der Schlafzimmer überall gleich lassen und Zimmernamen in der Hauptsprache nicht mehr umbenennen, sobald es Buchungen gibt.</li>
-	<li>Tab «Preise &amp; Regeln»: Preis pro Nacht, Mindestaufenthalt, Check-in-Tage und Saisonpreise (Bezeichnung, von, bis, Preis pro Nacht). Es gilt die erste passende Saison, sonst der Basispreis.</li>
-	<li>Tab «Buchungsbestätigung» und «Erinnerungen»: E-Mail-Texte für Bestätigung, vor Ankunft, nach Ankunft und vor Abreise. Titel (Überschrift 1–3), Listen und Links sind möglich.</li>
-	<li>Veröffentlichen.</li>
-	<li>Auf einer Seite (oder im Tab «Inhalt» der Ressource) das Element «RessourceBuchung» einfügen und die Ressource verknüpfen. Optional Überschrift, Einleitung (erscheint im Kalender), Button-Text und Erfolgsmeldung (erscheint nach dem Absenden als Fenster).</li>
-	<li>Für Check-in und Check-out vor Ort gibt es die Formular-Varianten «Check-in» und «Check-out» mit Buchungsreferenz.</li>
-</ol>
-<p>Platzhalter in den E-Mail-Texten (Betreff und Text): {{Name}}, {{Ressource}}, {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}, {{Türcode}} und {{Messenger-Apps}}. {{Messenger-Apps}} fügt Knöpfe für Signal, Telegram und WhatsApp mit der Messenger-Nummer aus den Einstellungen ein. Den Türcode richtet Angelo auf dem Hosting ein.</p>
-<p>Gleiche Texte für mehrere Ressourcen: Textblöcke, die in mehreren Ressourcen vorkommen (z. B. Anfahrt, Schlüsseltresor, WLAN), einmal im Dokument «Variablen» als mehrzeiligen Text erfassen und in den E-Mail-Texten nur den Platzhalter in einen eigenen Absatz schreiben, z. B. {{Anfahrt}}. Im Variablentext dürfen auch {{Name}} oder {{Anreise}} stehen.</p>
-<p>Gäste wählen An- und Abreise im Kalender, sehen den Gesamtpreis und senden die Anfrage. Gast und Anbieter erhalten automatisch eine E-Mail, der Gast in der Sprache, in der er gebucht hat. Die Anbieter-Mail enthält einen Knopf zum Bestätigen. Doppelbuchungen werden verhindert. Alle Buchungen siehst du im Admin-Bereich unter «Ressource-Buchungen».</p>
-
-<h2>Anleitung: Progressive Web App (PWA)</h2>
-<ol>
-	<li>Einstellungen → Tab «SEO»: ein quadratisches «App-Icon» (mindestens 512 × 512 px) hochladen und die «App &amp; Browser Statusleisten-Farbe» wählen. Der App-Name kommt aus dem Website-Titel.</li>
-	<li>Veröffentlichen.</li>
-	<li>Besucher installieren die Website auf dem Smartphone: auf dem iPhone in Safari «Teilen» → «Zum Home-Bildschirm», auf Android im Browser-Menü «App installieren» bzw. «Zum Startbildschirm hinzufügen».</li>
-</ol>
-
-<h2>Anleitung: Chat-Bot</h2>
-<ol>
-	<li>Einstellungen → Tab «Chat-Bot»: «Chat-Bot aktivieren» einschalten.</li>
-	<li>Optional «Chat-Bot Name» (Standard «Assistent») und «Chat-Bot Begrüssung» festlegen.</li>
-	<li>In «Chat-Bot Wissensbasis» alles eintragen, was der Bot wissen soll: Angebote, Preise, Abläufe, Öffnungszeiten, Kontakt, häufige Fragen. Überschriften und Listen helfen dem Bot, die Informationen richtig zuzuordnen.</li>
-	<li>Optional «Chat-Bot Wissensbasis – Ergänzungen»: eigene Ergänzungen und Korrekturen, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise. Widerspricht etwas der Wissensbasis, gilt die Ergänzung. So kannst du die Wissensbasis austauschen, ohne deine Ergänzungen zu verlieren.</li>
-	<li>Veröffentlichen. Der Bot verwendet die Änderungen nach spätestens 5 Minuten.</li>
-	<li>Bei mehrsprachigen Websites kann jede Sprache eine eigene Wissensbasis haben. Ist sie leer, verwendet der Bot die Wissensbasis der Hauptsprache.</li>
-</ol>
-<p>Der Bot erscheint als runder Button unten rechts auf jeder Seite. Er beantwortet Fragen nur anhand der Wissensbasis und verweist bei Unklarheiten auf die Kontaktseite. Die Nachrichten werden zur Beantwortung an den KI-Anbieter Anthropic übertragen; das steht im Cookie-Banner und in der Datenschutzerklärung. Pro Besucher sind 20 Nachrichten in 10 Minuten möglich.</p>
-<p>Besucher können jede Antwort mit «Hilfreich» oder «Nicht hilfreich» bewerten. Bei «Nicht hilfreich» erscheint ein kleines Formular für Name, E-Mail und Kommentar (alles freiwillig); es wird an die «Verantwortliche E-Mail» aus den Einstellungen gesendet, und mit «Antworten» im Mailprogramm schreibst du direkt dem Besucher. Die Bewertungen siehst du im Admin-Bereich unter «Chat-Bot» bei den Gesprächen, dazu den Anteil hilfreicher Antworten im Monat. Antworten mit «Nicht hilfreich» zeigen dir, was in der Wissensbasis oder den Ergänzungen fehlt.</p>
-<p>Im Admin-Bereich unter «Chat-Bot» siehst du die geschätzten Kosten pro Tag und Monat sowie alle Gespräche mit Fragen und Antworten. Gespräche werden ohne IP-Adresse gespeichert und nach 90 Tagen automatisch gelöscht; einzelne Gespräche kannst du sofort löschen. So erkennst du, welche Fragen der Bot noch nicht gut beantwortet, und kannst die Wissensbasis ergänzen.</p>
-
-<h2>Anleitung: Design Panel und erweiterte Gestaltung</h2>
+<h2>Stundenabrechnung</h2>
+<h4>1. Geschützte Seite erstellen</h4>
+<p>Erstelle eine Seite (z. B. «Stunden») und schalte dieses Feld ein:</p>
 <ul>
-	<li>Design Panel: Auf der Website die Tastenkombination Ctrl+Shift+K drücken. Es öffnet sich ein Panel, in dem du Gestaltungsoptionen (z. B. die Welle der Kopfzeile) live ausprobieren kannst. Speichern ist nur möglich, wenn du im Admin-Bereich angemeldet bist. Mit Esc schliessen.</li>
-	<li>Schaltflächen-Stile: In der Design-Vorlage unter «Button-Stile» eigene Stile mit Schrift- und Hintergrundfarbe (auch für Hover) und Symbol festlegen. Diese Stile stehen dann in den Inhalts-Elementen bei «Button-Stil» zur Auswahl.</li>
-	<li>Icons: unter dem Typ «Icon» eigene SVG-Icons erfassen.</li>
-	<li>Variablen: im Dokument «Variablen» Platzhalter definieren, z. B. Token-Name «Telefon» und Wert. Im Text {{Telefon}} schreiben; auf der Website und in den E-Mails erscheint der Wert. Ändert sich der Wert, ändert er sich überall. Für längere Texte mit Absätzen, Titeln und Links im selben Eintrag statt «Wert» das Feld «Text (mehrzeilig)» ausfüllen (es hat Vorrang vor «Wert») und den Platzhalter im Text allein in einen eigenen Absatz schreiben. Für andere Sprachen das Dokument «Variablen» in Prismic übersetzen; Token-Namen bleiben gleich.</li>
+	<li><strong>Passwortgeschützt</strong></li>
 </ul>
+<p>Das Passwort ist das «Seiten-Passwort» aus den Einstellungen.</p>
+
+<h4>2. Formular einfügen</h4>
+<p>Füge das Element <strong>Formulare</strong> in der Variante <strong>Stundenabrechnung</strong> ein. Optional Überschrift und Einleitungstext.</p>
+
+<h4>3. Veröffentlichen</h4>
+<p>Veröffentliche die Seite. Wer das Seiten-Passwort kennt, erfasst:</p>
+<ul>
+	<li>Name</li>
+	<li>Von und Bis</li>
+	<li>Tätigkeit</li>
+	<li>Spesen mit Beschreibung</li>
+</ul>
+
+<h4>4. Auswerten</h4>
+<p>Öffne im Admin-Bereich <strong>Stunden</strong>.</p>
+<ul>
+	<li><strong>Offen:</strong> pro Person eine eigene Tabelle mit der Dauer jedes Eintrags in Stunden und Minuten und dem Total der Stunden und Spesen</li>
+	<li>Offene Einträge lassen sich bearbeiten und löschen</li>
+	<li><strong>CSV-Export:</strong> lädt sie für Excel herunter</li>
+</ul>
+
+<h4>5. Abrechnen</h4>
+<p>Mit <strong>Offene Stunden abrechnen</strong> werden alle offenen Einträge der Person als abgerechnet markiert.</p>
+<ul>
+	<li><strong>Abgerechnet:</strong> dort erscheinen sie danach, gruppiert pro Abrechnung mit Datum, Total und eigenem CSV</li>
+	<li>Abgerechnete Einträge sind gesperrt</li>
+	<li><strong>Zurücksetzen:</strong> bei einem Fehler wählen, dann sind sie wieder offen</li>
+</ul>
+
+<p><strong>Achtung:</strong> Ohne Passwortschutz der Seite werden Einträge abgelehnt; «Inhalte prüfen» weist darauf hin.</p>
+
+<h2>Kundenverwaltung</h2>
+<ul>
+	<li><strong>Kundenliste:</strong> Admin-Bereich → «Kunden»: Liste aller Kunden mit Datum, Name, E-Mail, Firma, Adresse, Sprache und Quelle (manuell erfasst, Online-Handel, Terminbuchung).</li>
+	<li><strong>Automatisch gespeichert:</strong> Kunden aus Bestellungen und Buchungen werden automatisch gespeichert.</li>
+	<li><strong>+ Neuer Kunde:</strong> Damit erfasst du Kunden von Hand.</li>
+	<li><strong>Doppelte Einträge:</strong> werden verhindert (Prüfung über E-Mail, sonst über Vor- und Nachname).</li>
+	<li><strong>Sprache:</strong> Die Sprache eines Kunden bestimmt, in welcher Sprache er E-Mails erhält.</li>
+</ul>
+
+<h2>Kundenkonto</h2>
+<h4>1. Kundenkonto einschalten</h4>
+<p>Schalte in den <strong>Einstellungen</strong> dieses Feld ein und veröffentliche:</p>
+<ul>
+	<li><strong>User-Backend aktivieren</strong></li>
+</ul>
+
+<h4>2. Registrieren und Anmelden</h4>
+<p>Besucher können sich nun registrieren und anmelden:</p>
+<ul>
+	<li><strong>Registrieren:</strong> deine-website.ch/konto/registrierung</li>
+	<li><strong>Anmelden:</strong> /konto/anmelden</li>
+	<li><strong>Passwort vergessen:</strong> /konto/passwort-reset</li>
+</ul>
+
+<h4>3. Im Konto</h4>
+<p>Im Konto sehen Kunden ihre kommenden und vergangenen Buchungen.</p>
+
+<h2>Online-Handel (Produkte und Dienstleistungen verkaufen)</h2>
+<h4>1. Grundeinstellungen</h4>
+<p>Öffne die <strong>Einstellungen</strong>.</p>
+<p>Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li><strong>Grundwährung</strong></li>
+	<li><strong>IBAN</strong></li>
+	<li><strong>Bank</strong></li>
+	<li><strong>BIC / SWIFT</strong></li>
+	<li><strong>Zahlungsfrist (Tage)</strong></li>
+	<li><strong>MWST-Satz (%)</strong></li>
+	<li><strong>QR-Zahlteil auf Rechnungen</strong></li>
+</ul>
+<p>Tab <strong>Online-Handel</strong>:</p>
+<ul>
+	<li><strong>Weitere Währungen (Käufer-Auswahl)</strong></li>
+	<li><strong>Globale Anzahlung (%)</strong></li>
+	<li><strong>Rabatt-Codes</strong></li>
+	<li><strong>Zahlungsarten:</strong> <strong>Zahlung: Gegen Rechnung</strong>, <strong>Zahlung: Gegen Bar</strong>; keine Online-Zahlung</li>
+	<li>die E-Mail-Texte und Bestätigungstexte pro Zahlungsart</li>
+	<li>die Titel der Bestellseiten</li>
+</ul>
+
+<h4>2. Produktseite erstellen</h4>
+<p>Lege eine neue <strong>Page</strong> an. Im Tab <strong>Online-Handel</strong>:</p>
+<ul>
+	<li><strong>E-Commerce aktiv:</strong> einschalten</li>
+	<li><strong>Preis exkl. MwSt. (CHF)</strong></li>
+	<li><strong>Anzahlung %:</strong> optional</li>
+	<li><strong>Rabatt %:</strong> optional</li>
+	<li><strong>Abrechnungsart:</strong> Einmalig, Jährlich, Monatlich</li>
+</ul>
+
+<h4>3. Leistungen beschreiben</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Leistung</strong>.</p>
+<ul>
+	<li><strong>Bezeichnung</strong></li>
+	<li><strong>Beschreibung</strong></li>
+	<li><strong>Detailbeschreibung</strong></li>
+</ul>
+<p>Im Tab <strong>Leistungen</strong> der Produktseite:</p>
+<ul>
+	<li><strong>Leistungen:</strong> Die Leistungen verknüpfen.</li>
+	<li><strong>Zusatzleistungen:</strong> Andere Produktseiten als Option verknüpfen (z. B. Hosting).</li>
+</ul>
+
+<h4>4. Elemente auf der Produktseite einfügen</h4>
+<ul>
+	<li><strong>Preisaufstellung:</strong> Preis, Rabatt, Anzahlung, Restbetrag</li>
+	<li><strong>Akkordeon</strong> in der Variante <strong>Leistungen</strong></li>
+	<li><strong>Schaltfläche</strong> in der Variante <strong>Kauf-Schaltfläche</strong></li>
+</ul>
+
+<h4>5. Übersicht mehrerer Angebote</h4>
+<ul>
+	<li><strong>Kacheln</strong> in der Variante <strong>Pläne</strong></li>
+	<li>oder <strong>Preisvergleich</strong> mit bis zu drei Produktseiten</li>
+</ul>
+
+<h4>6. Veröffentlichen und testen</h4>
+<p>Veröffentliche und mache eine Testbestellung.</p>
+
+<h3>Ablauf für Käufer</h3>
+<p>Produktseite → Kauf-Schaltfläche → Beauftragungsseite (Angaben und Zusatzleistungen) → Bestellübersicht → Bestätigung.</p>
+<p>Bei «gegen Rechnung» wird automatisch eine Rechnung (mit QR-Zahlteil, wenn eingeschaltet) erstellt und per E-Mail verschickt.</p>
+<p>Bestellungen erscheinen im Admin-Bereich unter «Rechnungen» und die Käufer unter «Kunden».</p>
+
+<h3>Warenkorb</h3>
+<ul>
+	<li>Hat eine Leistung einen <strong>Preis exkl. MwSt. (CHF)</strong>, erscheint bei ihr «In den Warenkorb». Leistungen ohne Preis lassen sich nicht einzeln bestellen.</li>
+	<li>Auf Produktseiten steht «In den Warenkorb» neben der Kauf-Schaltfläche.</li>
+	<li>Besucher sammeln so mehrere Leistungen und Pakete, sehen sie unter deine-website.ch/warenkorb (Symbol mit Anzahl in der Kopfzeile) und bestellen alles zusammen.</li>
+	<li>Die Rechnung enthält alle Positionen.</li>
+	<li>Ein Rabatt-Code gilt für die Hauptpositionen, nicht für Zusatzleistungen.</li>
+</ul>
+
+<h2>Manuelle Rechnungen</h2>
+<h4>1. Rechnungen öffnen</h4>
+<p>Öffne im Admin-Bereich <strong>Rechnungen</strong>.</p>
+
+<h4>2. Kunde wählen</h4>
+<p>Neue Rechnung: Wähle den Kunden aus der Liste oder erfasse ihn direkt als neuen Kunden.</p>
+
+<h4>3. Leistungsposten</h4>
+<p>Füge Leistungsposten mit Beschreibung, Menge und Preis hinzu, optional Notizen.</p>
+
+<h4>4. Vorschau</h4>
+<p>Prüfe die PDF-Vorschau.</p>
+
+<h4>5. Speichern und senden</h4>
+<p>Speichere und sende die Rechnung optional direkt per E-Mail an den Kunden. Das Versanddatum wird festgehalten.</p>
+
+<h4>6. Zahlung vermerken</h4>
+<p>Ist die Rechnung bezahlt, wähle beim Zahlungsstatus «bezahlt».</p>
+
+<h3>Rechnungen nachträglich bearbeiten</h3>
+<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden.</p>
+<p>Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
+
+<h3>QR-Zahlteil</h3>
+<p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong> dieses Feld ein:</p>
+<ul>
+	<li><strong>QR-Zahlteil auf Rechnungen</strong></li>
+</ul>
+<p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
+
+<h3>Zahlungseingänge</h3>
+<p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt».</p>
+<p>Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>
+
+<h2>Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)</h2>
+<h4>1. Ressource anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Ressource</strong>. Tab <strong>Main</strong>:</p>
+<ul>
+	<li><strong>UID</strong></li>
+	<li><strong>Bezeichnung</strong></li>
+	<li><strong>Beschreibung</strong></li>
+	<li><strong>Hauptbild</strong></li>
+	<li><strong>Untergeordnete Ressourcen (z.B. Wohnungen in einem Haus):</strong> Bei einem Haus mit mehreren Wohnungen verknüpfen.</li>
+	<li><strong>Zimmer einzeln buchbar:</strong> bei Bedarf einschalten</li>
+</ul>
+
+<h4>2. Tab «Kapazität»</h4>
+<ul>
+	<li><strong>Maximale Personenanzahl:</strong> 0 = unbegrenzt</li>
+	<li><strong>Schlafzimmer:</strong> optional, mit Betttyp, Anzahl Betten und Bild</li>
+</ul>
+<p>Sind Schlafzimmer erfasst, können Gäste einzelne Zimmer buchen.</p>
+<p><strong>Achtung:</strong> Bei mehreren Sprachen die Reihenfolge der Schlafzimmer überall gleich lassen und Zimmernamen in der Hauptsprache nicht mehr umbenennen, sobald es Buchungen gibt.</p>
+
+<h4>3. Tab «Preise &amp; Regeln»</h4>
+<ul>
+	<li><strong>Preis pro Nacht (CHF)</strong></li>
+	<li><strong>Mindestaufenthalt (Nächte)</strong></li>
+	<li><strong>Check-in Tage</strong></li>
+	<li><strong>Saisonpreise:</strong> Bezeichnung, von, bis, Preis pro Nacht</li>
+</ul>
+<p>Es gilt die erste passende Saison, sonst der Basispreis.</p>
+
+<h4>4. Tabs «Buchungsbestätigung» und «Erinnerungen»</h4>
+<p>E-Mail-Texte für:</p>
+<ul>
+	<li>Bestätigung</li>
+	<li>vor Ankunft</li>
+	<li>nach Ankunft</li>
+	<li>vor Abreise</li>
+</ul>
+<p>Titel (Überschrift 1–3), Listen und Links sind möglich.</p>
+
+<h4>5. Veröffentlichen</h4>
+<p>Veröffentliche die Ressource.</p>
+
+<h4>6. Buchungs-Element einfügen</h4>
+<p>Füge auf einer Seite (oder im Tab «Inhalt» der Ressource) das Element <strong>RessourceBuchung</strong> ein und verknüpfe die Ressource. Optional:</p>
+<ul>
+	<li><strong>Überschrift</strong></li>
+	<li><strong>Einleitung:</strong> Erscheint im Kalender.</li>
+	<li><strong>Senden-Schaltflächen-Text</strong></li>
+	<li><strong>Erfolgsmeldung:</strong> erscheint nach dem Absenden als Fenster</li>
+</ul>
+
+<h4>7. Check-in und Check-out</h4>
+<p>Für Check-in und Check-out vor Ort gibt es die Formular-Varianten <strong>Check-in</strong> und <strong>Check-out</strong> mit Buchungsreferenz.</p>
+
+<h3>Platzhalter in den E-Mail-Texten</h3>
+<p>In Betreff und Text:</p>
+<ul>
+	<li>{{Name}}, {{Ressource}}, {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}</li>
+	<li>{{Türcode}}: Den Türcode richtet Angelo auf dem Hosting ein.</li>
+	<li>{{Messenger-Apps}}: fügt Knöpfe für Signal, Telegram und WhatsApp mit der Messenger-Nummer aus den Einstellungen ein</li>
+</ul>
+
+<h3>Gleiche Texte für mehrere Ressourcen</h3>
+<p>Textblöcke, die in mehreren Ressourcen vorkommen (z. B. Anfahrt, Schlüsseltresor, WLAN), erfasst du einmal im Dokument <strong>Variablen</strong> als mehrzeiligen Text.</p>
+<p>In den E-Mail-Texten schreibst du nur den Platzhalter in einen eigenen Absatz, z. B. {{Anfahrt}}.</p>
+<p>Im Variablentext dürfen auch {{Name}} oder {{Anreise}} stehen.</p>
+
+<h3>Ablauf für Gäste</h3>
+<ul>
+	<li>Gäste wählen An- und Abreise im Kalender, sehen den Gesamtpreis und senden die Anfrage.</li>
+	<li>Gast und Anbieter erhalten automatisch eine E-Mail, der Gast in der Sprache, in der er gebucht hat.</li>
+	<li>Die Anbieter-Mail enthält einen Knopf zum Bestätigen.</li>
+	<li>Doppelbuchungen werden verhindert.</li>
+	<li>Alle Buchungen siehst du im Admin-Bereich unter «Ressource-Buchungen».</li>
+</ul>
+
+<h2>Progressive Web App (PWA)</h2>
+<h4>1. App-Icon und Farbe</h4>
+<p>Öffne die <strong>Einstellungen</strong> und den Tab <strong>SEO</strong>:</p>
+<ul>
+	<li><strong>App-Icon – quadratisch (mind. 512 × 512 px):</strong> Ein quadratisches Bild hochladen.</li>
+	<li><strong>App &amp; Browser Statusleisten-Farbe</strong></li>
+</ul>
+<p>Der App-Name kommt aus dem Website-Titel.</p>
+
+<h4>2. Veröffentlichen</h4>
+<p>Veröffentliche die Einstellungen.</p>
+
+<h4>3. Installieren</h4>
+<p>Besucher installieren die Website auf dem Smartphone:</p>
+<ul>
+	<li><strong>iPhone:</strong> in Safari «Teilen» → «Zum Home-Bildschirm»</li>
+	<li><strong>Android:</strong> im Browser-Menü «App installieren» bzw. «Zum Startbildschirm hinzufügen»</li>
+</ul>
+
+<h2>Chat-Bot</h2>
+<h4>1. Chat-Bot einschalten</h4>
+<p>Öffne die <strong>Einstellungen</strong> und den Tab <strong>Chat-Bot</strong>:</p>
+<ul>
+	<li><strong>Chat-Bot aktivieren:</strong> einschalten</li>
+</ul>
+
+<h4>2. Name und Begrüssung (optional)</h4>
+<ul>
+	<li><strong>Chat-Bot Name:</strong> Standard «Assistent»</li>
+	<li><strong>Chat-Bot Begrüssung</strong></li>
+</ul>
+
+<h4>3. Wissensbasis</h4>
+<ul>
+	<li><strong>Chat-Bot Wissensbasis:</strong> Alles eintragen, was der Bot wissen soll: Angebote, Preise, Abläufe, Öffnungszeiten, Kontakt, häufige Fragen. Überschriften und Listen helfen dem Bot, die Informationen richtig zuzuordnen.</li>
+</ul>
+
+<h4>4. Ergänzungen (optional)</h4>
+<ul>
+	<li><strong>Chat-Bot Wissensbasis – Ergänzungen</strong></li>
+</ul>
+
+<h4>5. Veröffentlichen</h4>
+<p>Veröffentliche die Einstellungen. Der Bot verwendet die Änderungen nach spätestens 5 Minuten.</p>
+
+<h4>6. Mehrsprachige Websites</h4>
+<p>Jede Sprache kann eine eigene Wissensbasis haben. Ist sie leer, verwendet der Bot die Wissensbasis der Hauptsprache.</p>
+
+<h3>So arbeitet der Bot</h3>
+<ul>
+	<li>Der Bot erscheint als runder Button unten rechts auf jeder Seite.</li>
+	<li>Er beantwortet Fragen nur anhand der Wissensbasis und verweist bei Unklarheiten auf die Kontaktseite.</li>
+	<li>Die Nachrichten werden zur Beantwortung an den KI-Anbieter Anthropic übertragen; das steht im Cookie-Banner und in der Datenschutzerklärung.</li>
+	<li>Pro Besucher sind 20 Nachrichten in 10 Minuten möglich.</li>
+</ul>
+
+<h3>Bewertungen</h3>
+<ul>
+	<li>Besucher können jede Antwort mit «Hilfreich» oder «Nicht hilfreich» bewerten.</li>
+	<li>Bei «Nicht hilfreich» erscheint ein kleines Formular für Name, E-Mail und Kommentar (alles freiwillig).</li>
+	<li>Es wird an die «Verantwortliche E-Mail» aus den Einstellungen gesendet, und mit «Antworten» im Mailprogramm schreibst du direkt dem Besucher.</li>
+	<li>Die Bewertungen siehst du im Admin-Bereich unter «Chat-Bot» bei den Gesprächen, dazu den Anteil hilfreicher Antworten im Monat.</li>
+	<li>Antworten mit «Nicht hilfreich» zeigen dir, was in der Wissensbasis oder den Ergänzungen fehlt.</li>
+</ul>
+
+<h3>Kosten und Gespräche</h3>
+<ul>
+	<li>Im Admin-Bereich unter «Chat-Bot» siehst du die geschätzten Kosten pro Tag und Monat sowie alle Gespräche mit Fragen und Antworten.</li>
+	<li>Gespräche werden ohne IP-Adresse gespeichert und nach 90 Tagen automatisch gelöscht; einzelne Gespräche kannst du sofort löschen.</li>
+	<li>So erkennst du, welche Fragen der Bot noch nicht gut beantwortet, und kannst die Wissensbasis ergänzen.</li>
+</ul>
+
+<h2>Design Panel und erweiterte Gestaltung</h2>
+<h3>Schaltflächen-Stile</h3>
+<p>In der Design-Vorlage unter <strong>Button-Stile</strong> legst du eigene Stile mit Schrift- und Hintergrundfarbe (auch für Hover) und Symbol fest.</p>
+<p>Diese Stile stehen dann in den Inhalts-Elementen bei «Button-Stil» zur Auswahl.</p>
+
+<h3>Icons</h3>
+<p>Unter dem Typ <strong>Icon</strong> erfasst du eigene SVG-Icons.</p>
+
+<h3>Variablen</h3>
+<p>Im Dokument <strong>Variablen</strong> definierst du Platzhalter, z. B. Token-Name «Telefon» und Wert.</p>
+<ul>
+	<li>Im Text {{Telefon}} schreiben; auf der Website und in den E-Mails erscheint der Wert.</li>
+	<li>Ändert sich der Wert, ändert er sich überall.</li>
+	<li><strong>Längere Texte</strong> mit Absätzen, Titeln und Links: im selben Eintrag statt «Wert» das Feld «Text (mehrzeilig)» ausfüllen (es hat Vorrang vor «Wert») und den Platzhalter im Text allein in einen eigenen Absatz schreiben.</li>
+	<li><strong>Andere Sprachen:</strong> das Dokument «Variablen» in Prismic übersetzen; Token-Namen bleiben gleich.</li>
+</ul>
+
+<h2>P5.js Grafik (animierte Grafiken)</h2>
+<p>Das Element <strong>P5.js Grafik</strong> zeigt eine animierte, vom Computer gezeichnete Grafik, z. B. als Blickfang im Kopfbereich einer Seite.</p>
+
+<h4>1. Element einfügen</h4>
+<p>Füge auf der Seite das Element <strong>P5.js Grafik</strong> ein.</p>
+
+<h4>2. Grafik wählen</h4>
+<ul>
+	<li><strong>Sketch:</strong> z. B. «Orbital Circles» oder «Particle Flow»</li>
+</ul>
+
+<h4>3. Farben und Bild</h4>
+<ul>
+	<li><strong>Hintergrundfarbe</strong></li>
+	<li><strong>Akzentfarbe</strong></li>
+	<li><strong>Bild (für bildbasierte Sketches)</strong></li>
+</ul>
+
+<h4>4. Variante «Mit Titelbereich»</h4>
+<p>Die Grafik dient als Kopfbereich der Seite, mit Text, Schaltfläche und diesen Optionen:</p>
+<ul>
+	<li><strong>Überlappend mit Kopfzeile</strong></li>
+	<li><strong>Titelbild Höhe</strong></li>
+</ul>
+
+<h4>5. Veröffentlichen</h4>
+<p>Veröffentliche die Seite.</p>
+
+<h3>Eigene Grafik</h3>
+<p>Eine eigene Grafik (Sketch) programmiert Angelo auf Anfrage; sie erscheint danach in der Auswahl «Sketch».</p>
+
+<!-- AUTO:ANLEITUNGEN:END -->
 
 <!-- AUTO:FELDREFERENZ:START -->
 <h2>Prismic-Feldreferenz (alle Felder)</h2>
@@ -526,6 +1378,8 @@
 	<li>Video von YouTube / Vimeo (alternativ) (Einbettung): Video von YouTube oder Vimeo: Link einfügen (z.B. https://youtu.be/…). Besucher sehen das Video erst, wenn sie es im Cookie-Hinweis erlauben, weil dabei Daten an YouTube bzw. Vimeo gehen. Besser: eigenes Video im Feld «Video-Datei (MP4)» — es hat Vorrang.</li>
 	<li>Video Einbettungs-Code (alternativ) (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Claude Anleitung Titel (Text)</li>
+	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Globale Events (Veranstaltungen), Newsletter / Info-Mails, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
 	<li>Schritte (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -544,6 +1398,9 @@
 	<li>Bild (Bild)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Bild als Lightbox öffnen (Ein/Aus)</li>
+	<li>Bild-Lupe aktivieren (Ein/Aus)</li>
+	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Schriftfarbe (Farbe)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -667,6 +1524,10 @@
 	<li>CTA-Beschriftung (Text)</li>
 	<li>Button-Stil (Link)</li>
 	<li>Plan (Seite) (Link)</li>
+	<li>Text Schaltfläche «Mehr erfahren» (Text)</li>
+	<li>Text Schaltfläche «Buchen» (Text)</li>
+	<li>Preis anzeigen (Ein/Aus): Zeigt den «Preis» des Angebots in CHF in der Kachel. Angebote ohne Preis zeigen keinen Preis.</li>
+	<li>Buchungsseite (Link): Seite mit dem Formular, das ein Feld «Termin» enthält. «Buchen» öffnet diese Seite und zeigt dort nur die Termine des gewählten Angebots (mit Link «Alle Angebote anzeigen»). Leer = automatisch die erste Seite mit einem Formular der Variante «Mit Termin»; gibt es keine, erscheint keine Schaltfläche «Buchen».</li>
 </ul>
 <h3>Kontakt (Inhalts-Element)</h3>
 <ul>
@@ -694,7 +1555,7 @@
 	<li>Nach Gruppe gruppieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -842,7 +1703,7 @@
 	<li>Zentrieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -879,7 +1740,7 @@
 	<li>Bild (Bild)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler Abstand Desktop (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -891,12 +1752,14 @@
 	<li>Bild zuerst auf Mobile (Ein/Aus)</li>
 	<li>Schrift vertikal zentrieren (Ein/Aus)</li>
 	<li>Schrift horizontal zentrieren (Ein/Aus)</li>
-	<li>Vollbild (100vh) (Ein/Aus)</li>
 	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Globale Events</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
 	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Vollbild (100vh) (Ein/Aus)</li>
+	<li>Überlappend mit Kopfzeile (Ein/Aus)</li>
+	<li>Transparenz der Kopfzeile (Zahl)</li>
 	<li>Button Link (Link)</li>
 	<li>Button Text (Text)</li>
 	<li>Button-Stil (Link)</li>
@@ -984,7 +1847,7 @@
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
 	<li>Akzentfarbe (Anführungszeichen, Sterne, Rahmen) (Farbe)</li>
-	<li>Innen anwenden (Ein/Aus)</li>
+	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
@@ -1008,8 +1871,8 @@
 	<li>Buchungsintervall (Auswahl): Abstand zwischen den möglichen Anfangszeiten in Minuten (15, 30 oder 60), gezählt ab der Startzeit. Beispiel: Start 09:00, Intervall 30, Termin 60 Minuten → buchbar um 09:00, 09:30, 10:00 usw. Ist ein Termin gebucht, verschwinden die Anfangszeiten, die sich damit überschneiden, automatisch. Kleineres Intervall = mehr Auswahl für die Kundschaft.</li>
 	<li>Buchbare Angebote (Liste): Welche Angebote an diesem Arbeitstag gebucht werden können. Pro Zeile ein «Buchbares Angebot» verknüpfen. Für jedes Angebot entstehen eigene Anfangszeiten mit seiner Dauer und seinem Puffer. Sobald ein Termin gebucht ist, sind überschneidende Zeiten auch für die anderen Angebote gesperrt. Angebote, bei denen «Aktiv» ausgeschaltet ist, erscheinen nicht. Ohne Angebot ist der Arbeitstag nicht buchbar.</li>
 	<li>Wiederholung (Auswahl): Wiederholt den Arbeitstag ab dem «Datum» mit gleichen Zeiten und Angeboten: «Täglich», «Wöchentlich» (gleicher Wochentag), «Zweiwöchentlich» oder «Monatlich» (gleicher Kalendertag; fehlt er in einem Monat, z. B. der 31., gilt der letzte Tag des Monats). «Keine» = nur dieser eine Tag. Die Serie endet bei «Wiederholen bis (Datum)» oder nach der «Anzahl Wiederholungen» – was zuerst eintritt. Ohne Ende läuft sie weiter (höchstens 500 Arbeitstage).</li>
-	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone.</li>
-	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Leer = kein Ende über die Anzahl (dann gilt «Wiederholen bis (Datum)»).</li>
+	<li>Wiederholen bis (Datum) (Datum): Letzter Tag, an dem sich der Arbeitstag wiederholt (bis und mit diesem Tag). Datum ohne Uhrzeit, keine Zeitzone. Hat Vorrang: Ist ein Datum eingetragen, wird «Anzahl Wiederholungen» ignoriert.</li>
+	<li>Anzahl Wiederholungen (Zahl): Wie viele Arbeitstage die Serie insgesamt hat, der erste Tag mitgezählt. Beispiel: «Wöchentlich» ab Montag 4. Januar mit Anzahl 4 → 4., 11., 18. und 25. Januar. Wird nur verwendet, wenn «Wiederholen bis (Datum)» leer ist. Sind beide leer, läuft die Serie ohne Ende.</li>
 </ul>
 <h3>Aufgabe (Inhalts-Typ)</h3>
 <ul>
@@ -1035,7 +1898,12 @@
 	<li>Puffer danach (Minuten) (Zahl): Pause nach jedem Termin dieses Angebots in Minuten, z. B. für Notizen, Lüften oder den Weg. Während des Puffers kann nichts anderes gebucht werden, auch kein anderes Angebot. Beispiel: Termin 60 Minuten, Puffer 15, gebucht um 09:00 → belegt bis 10:15; bei Buchungsintervall 30 ist die nächste freie Anfangszeit 10:30. Auch der letzte Termin des Tages muss inklusive Puffer vor der Endzeit fertig sein. Leer oder 0 = kein Puffer.</li>
 	<li>Vorlaufzeit (Minuten) (Zahl): Wie kurzfristig dieses Angebot spätestens gebucht werden kann, in Minuten vor Terminbeginn. Beispiel: Vorlaufzeit 120 → ein Termin um 14:00 kann bis 12:00 gebucht werden, danach verschwindet er aus der Auswahl. Für einen Tag Vorlauf 1440 eintragen (24 × 60). Leer oder 0 = bis Terminbeginn buchbar. Es gilt die Zeitzone des Arbeitstags.</li>
 	<li>Preis (optional) (Zahl)</li>
+	<li>Kostenlos stornierbar bis (Std. vor Termin) (Zahl): Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = Standard aus den Einstellungen (Tab «Terminbuchung»).</li>
+	<li>Stornogebühr nach Ablauf (% vom Preis) (Zahl): Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = Standard aus den Einstellungen. Ohne Gebühr (und bei Angeboten ohne Preis) ist nach Ablauf keine Online-Stornierung mehr möglich; die Seite bittet dann, dich direkt zu kontaktieren.</li>
 	<li>Ort (Link): Wo das Angebot stattfindet. Verknüpfe hier ein Dokument vom Inhalts-Typ «Ort» (zuerst unter «Ort» anlegen, z. B. «Praxis Zürich City» mit Adresse). Name, Adresse, Wegbeschreibung und Telefon des Orts erscheinen in der Terminbestätigung (in einem eigenen Mailtext über die Platzhalter {{Ort}}, {{Wegbeschreibung}} und {{Ort-Telefon}}); Name und Adresse auch in deiner Benachrichtigung und auf der Bestätigungsseite. Ist beim Ort «Aktiv» ausgeschaltet oder das Feld leer, werden keine Ortsangaben gezeigt – die Buchung funktioniert trotzdem.</li>
+	<li>Bild (für Kacheln) (Bild): Optionales Bild, das oben in der Kachel des Angebots erscheint (Inhalts-Element «Kacheln», Variante «Buchbare Angebote»). Querformat empfohlen, z.B. 2200 × 1200 Pixel.</li>
+	<li>Seite mit mehr Infos (Link): Seite mit ausführlichen Infos zu diesem Angebot. Im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote») führt «Mehr erfahren» auf diese Seite. Leer = «Mehr erfahren» öffnet ein Fenster mit Beschreibung, Dauer, Preis und Ort.</li>
+	<li>Reihenfolge (Kacheln) (Zahl): Bestimmt die Reihenfolge der Angebote im Inhalts-Element «Kacheln» (Variante «Buchbare Angebote»): kleinere Zahl = weiter vorne, z.B. 1, 2, 3. Angebote ohne Zahl erscheinen am Schluss, alphabetisch nach «Bezeichnung».</li>
 	<li>Aktiv (Ein/Aus)</li>
 </ul>
 <h3>Design Vorlage (Inhalts-Typ)</h3>
@@ -1100,12 +1968,15 @@
 <ul>
 	<li>Website Titel (formatierter Text)</li>
 	<li>Website Untertitel (formatierter Text)</li>
-	<li>Verantwortlich (Person/Unternehmen) (Text)</li>
-	<li>Unternehmenskennnummer (Text)</li>
-	<li>Verantwortliche Adresse (formatierter Text)</li>
-	<li>Verantwortliche E-Mail (Text)</li>
-	<li>Korrespondenz E-Mail (Text)</li>
-	<li>Datenschutzerkärung (formatierter Text)</li>
+	<li>Verantwortlich (Person/Unternehmen) (Text): Wer für die Website verantwortlich ist, also der Name deiner Firma oder dein eigener Name, z. B. «Muster GmbH» oder «Anna Muster». Der Name erscheint im Impressum und in der Datenschutzerklärung (Pflichtangabe), in der Fusszeile («© 2026 … Alle Rechte vorbehalten»), auf Rechnungen und in den Bestätigungs-Mails der Terminbuchung (Platzhalter {{Firma}}). Ausserdem ist er der Absender-Name von E-Mails und Newsletter, wenn dort kein eigener Name eingetragen ist. Leer = auf Impressum und Datenschutz steht «Verantwortliche Person/Firma fehlt». Bei mehrsprachigen Websites in jeder Sprache der Einstellungen ausfüllen.</li>
+	<li>Unternehmenskennnummer (Text): Unternehmens-Identifikationsnummer, falls vorhanden, z. B. «CHE-123.456.789» oder mit Mehrwertsteuer «CHE-123.456.789 MWST». Erscheint im Impressum und auf Rechnungen. Für eingetragene Firmen und MWST-pflichtige Betriebe nötig; Einzelpersonen ohne Handelsregister-Eintrag lassen das Feld leer. Leer = wird weggelassen.</li>
+	<li>Verantwortliche Adresse (formatierter Text): Postadresse der verantwortlichen Person oder Firma: Strasse und Nummer, PLZ und Ort, bei Bedarf Land, je auf einer eigenen Zeile. Erscheint im Impressum und in der Datenschutzerklärung (Pflichtangabe) sowie als Absender-Adresse auf Rechnungen. Leer = auf Impressum und Datenschutz steht «Adresse fehlt». Bei mehrsprachigen Websites in jeder Sprache ausfüllen.</li>
+	<li>Verantwortliche E-Mail (Text): E-Mail-Adresse der verantwortlichen Person oder Firma, z. B. info@deine-domain.ch. Erscheint im Impressum und in der Datenschutzerklärung (Pflichtangabe; dort wenden sich Besucher z. B. mit Datenschutz-Anfragen hin) und als Kontakt auf Rechnungen. Interne Meldungen (Buchungen, Formulare) gehen hierhin, wenn «Benachrichtigungen an (intern)» leer ist. Leer = auf Impressum und Datenschutz steht «E-Mail fehlt».</li>
+	<li>Korrespondenz E-Mail (Text): Allgemeine Kontaktadresse für Besucher. Erscheint in der Fusszeile als «Kontakt: …» (anklickbar). Sie darf gleich sein wie die «Verantwortliche E-Mail» oder eine andere Adresse, z. B. hallo@deine-domain.ch. Wird zusätzlich als Rückfall für interne Meldungen und Rechnungen verwendet, wenn die anderen E-Mail-Felder leer sind. Leer = keine Kontaktzeile in der Fusszeile.</li>
+	<li>Absender-E-Mail (alle E-Mails der Website) (Text): Von dieser Adresse verschickt die Website alle E-Mails: Buchungsbestätigungen, Rechnungen, Newsletter, Formulare, Kundenkonto. Die Domain der Adresse (der Teil nach @) muss beim Mail-Dienst Resend eingerichtet und verifiziert sein, sonst kommen keine E-Mails an — das richtet die Agentur ein. Beispiel: info@deine-domain.ch. Ein Postfach braucht es dafür nicht. Leer = es werden keine E-Mails verschickt; «Inhalte prüfen» im Admin meldet das.</li>
+	<li>Absender-Name (Text): Name, unter dem deine E-Mails im Posteingang erscheinen, z. B. «Muster Praxis» statt nur info@muster-praxis.ch. Leer = der Website-Name aus den Einstellungen, sonst «Verantwortliche Person/Firma». Gilt für alle E-Mails ausser dem Newsletter, der seinen eigenen Absender-Namen hat.</li>
+	<li>Benachrichtigungen an (intern) (Text): An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.</li>
+	<li>Datenschutzerklärung (formatierter Text)</li>
 	<li>Haftungsausschluss (formatierter Text)</li>
 	<li>Impressum (formatierter Text)</li>
 	<li>Kontakte (Liste)</li>
@@ -1114,14 +1985,13 @@
 	<li>Seiten-Passwort (Text)</li>
 	<li>User-Backend aktivieren (Ein/Aus)</li>
 	<li>Mehrere Sprachen verwenden (Ein/Aus)</li>
-	<li>Startseite umleiten (Ein/Aus)</li>
-	<li>Umleitungs-Seite (Link)</li>
+	<li>Startseite umleiten (Ein/Aus): Leitet Besucher der Startseite auf eine andere Seite um, z.B. solange die Website im Aufbau ist. Das Ziel bestimmt «Umleitungs-Seite»; ist sie leer, erscheint die Standardseite «Website im Aufbau» (mit Kontakt-E-Mail aus «Verantwortliche E-Mail»). Nur die Startseite wird umgeleitet, alle anderen Seiten bleiben erreichbar.</li>
+	<li>Umleitungs-Seite (Link): Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.</li>
 	<li>Website Domain (Text)</li>
 	<li>Website Name (SEO) (Text)</li>
 	<li>Globaler SEO Titel (Text)</li>
 	<li>Globale Beschreibung (formatierter Text)</li>
 	<li>Social Image (1200 × 630 px, 16:9) (Bild)</li>
-	<li>Adobe Project ID (Text)</li>
 	<li>Favicon (64 × 64 px, quadratisch) (Bild)</li>
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
@@ -1130,28 +2000,29 @@
 	<li>Chat-Bot Begrüssung (Text)</li>
 	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
 	<li>Chat-Bot Wissensbasis – Ergänzungen (formatierter Text): Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.</li>
-	<li>Absender-E-Mail (Text)</li>
-	<li>Kunden-E-Mail: Betreff (Text)</li>
-	<li>Kunden-E-Mail: Text (formatierter Text)</li>
-	<li>Buchungsbestätigung: Titel (Text)</li>
-	<li>Erinnerung: Stunden vor Termin (Zahl)</li>
 	<li>Grundwährung (Auswahl): Optionen: AED - Dirham der Vereinigten Arabischen Emirate, AFN - Afghani, ALL - Albanischer Lek, AMD - Armenischer Dram, ANG - Niederländisch-Antillianischer Gulden, AOA - Angolanischer Kwanza, ARS - Argentinischer Peso, AUD - Australischer Dollar, AWG - Arubischer Florin, AZN - Aserbaidschanischer Manat, BAM - Bosnisch-Herzegowinische Konvertible Mark, BBD - Barbadischer Dollar, BDT - Bangladeschischer Taka, BGN - Bulgarischer Lew, BHD - Bahrainischer Dinar, BIF - Burundischer Franc, BMD - Bermudischer Dollar, BND - Bruneischer Dollar, BOB - Bolivianischer Boliviano, BRL - Brasilianischer Real, BSD - Bahamaischer Dollar, BTN - Bhutanischer Ngultrum, BWP - Botswanischer Pula, BYN - Belarussischer Rubel, BZD - Belizischer Dollar, CAD - Kanadischer Dollar, CDF - Kongoläsischer Franc, CHF - Schweizer Franken, CLP - Chilenischer Peso, CNY - Chinesischer Renminbi, COP - Kolumbianischer Peso, CRC - Costa-Ricanischer Colon, CUP - Kubanischer Peso, CVE - Kap-Verdischer Escudo, CZK - Tschechische Krone, DJF - Djiboutischer Franc, DKK - Dänische Krone, DOP - Dominikanischer Peso, DZD - Algerischer Dinar, EGP - Ägyptisches Pfund, ERN - Eritreischer Nakfa, ETB - Äthiopischer Birr, EUR - Euro, FJD - Fidschi-Dollar, FKP - Falkländisches Pfund, GBP - Britisches Pfund, GEL - Georgischer Lari, GHS - Ghanaischer Cedi, GIP - Gibraltarisches Pfund, GMD - Gambischer Dalasi, GNF - Guineischer Franc, GTQ - Guatemaltekischer Quetzal, GYD - Guyanischer Dollar, HKD - Hongkonger Dollar, HNL - Honduranischer Lempira, HTG - Haitianische Gourde, HUF - Ungarischer Forint, IDR - Indonesische Rupiah, ILS - Neuer Israelischer Schekel, INR - Indische Rupie, IQD - Irakischer Dinar, IRR - Iranischer Rial, ISK - Isländische Krone, JMD - Jamaikanischer Dollar, JOD - Jordanischer Dinar, JPY - Japanischer Yen, KES - Kenianischer Schilling, KGS - Kirgisischer Som, KHR - Kambodschanischer Riel, KMF - Komorischer Franc, KPW - Nordkoreanischer Won, KRW - Südkoreanischer Won, KWD - Kuwaitischer Dinar, KYD - Kaiman-Dollar, KZT - Kasachischer Tenge, LAK - Laotischer Kip, LBP - Libanesisches Pfund, LKR - Sri-Lankische Rupie, LRD - Liberianischer Dollar, LSL - Lesothischer Loti, LYD - Libyscher Dinar, MAD - Marokkanischer Dirham, MDL - Moldauischer Leu, MGA - Madagassischer Ariary, MKD - Nordmazedonischer Denar, MMK - Myanmarischer Kyat, MNT - Mongolischer Tögrög, MOP - Macao-Pataca, MRU - Mauretanischer Ouguiya, MUR - Mauritische Rupie, MVR - Maledivischer Rufiyaa, MWK - Malawischer Kwacha, MXN - Mexikanischer Peso, MYR - Malaysischer Ringgit, MZN - Mosambikanischer Metical, NAD - Namibischer Dollar, NGN - Nigerianische Naira, NIO - Nicaraguanischer Córdoba, NOK - Norwegische Krone, NPR - Nepalesische Rupie, NZD - Neuseeländischer Dollar, OMR - Omanischer Rial, PAB - Panamaischer Balboa, PEN - Peruanischer Sol, PGK - Papua-Neuguineischer Kina, PHP - Philippinischer Peso, PKR - Pakistanische Rupie, PLN - Polnischer Zloty, PYG - Paraguayischer Guaraní, QAR - Katarischer Riyal, RON - Rumänischer Leu, RSD - Serbischer Dinar, RUB - Russischer Rubel, RWF - Ruandischer Franc, SAR - Saudi-Arabischer Riyal, SBD - Salomonen-Dollar, SCR - Seychellische Rupie, SDG - Sudanesisches Pfund, SEK - Schwedische Krone, SGD - Singapurischer Dollar, SHP - St.-Helenisches Pfund, SLL - Sierraleonischer Leone, SOS - Somalischer Schilling, SRD - Surinamischer Dollar, STN - São-toménsische Dobra, SVC - El-Salvadorianischer Colón, SYP - Syrisches Pfund, SZL - Swasiland-Lilangeni, THB - Thailändischer Baht, TJS - Tadschikischer Somoni, TMT - Turkmenischer Manat, TND - Tunesischer Dinar, TOP - Tongaischer Paʻanga, TRY - Türkische Lira, TTD - Trinidad-und-Tobago-Dollar, TWD - Neuer Taiwanischer Dollar, TZS - Tansanischer Schilling, UAH - Ukrainische Hrywnja, UGX - Ugandischer Schilling, USD - US-Dollar, UYU - Uruguayischer Peso, UZS - Usbekischer Sum, VES - Venezolanischer Bolívar, VND - Vietnamesischer Dong, VUV - Vanuatuischer Vatu, WST - Samoanischer Tala, XAF - CFA-Franc BEAC, XCD - Ostkaribischer Dollar, XOF - CFA-Franc BCEAO, XPF - CFP-Franc, YER - Jemenitischer Rial, ZAR - Südafrikanischer Rand, ZMW - Sambischer Kwacha, ZWL - Simbabwischer Dollar</li>
-	<li>Weitere Währungen (Käufer-Auswahl) (Liste)</li>
-	<li>IBAN (Text)</li>
+	<li>IBAN (Text): Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.</li>
 	<li>Bank (Text)</li>
 	<li>BIC / SWIFT (Text)</li>
 	<li>Zahlungsfrist (Tage) (Zahl)</li>
 	<li>MWST-Satz (%) (Zahl)</li>
+	<li>QR-Zahlteil auf Rechnungen (Ein/Aus): Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.</li>
+	<li>Kunden-E-Mail: Betreff (Text)</li>
+	<li>Kunden-E-Mail: Text (formatierter Text)</li>
+	<li>Buchungsbestätigung: Titel (Text)</li>
+	<li>Erinnerung: Stunden vor Termin (Zahl)</li>
+	<li>Rechnung nach dem Termin senden (Angebote mit Preis) (Ein/Aus): Wenn eingeschaltet, erhält jede Buchung eines Angebots mit «Preis» nach dem Termin automatisch eine Rechnung mit QR-Zahlteil per E-Mail (spätestens etwa eine Stunde nach Terminende). Die Rechnung erscheint im Admin unter «Rechnungen» mit der Quelle «Terminbuchung». Angebote ohne Preis und stornierte Buchungen erhalten keine Rechnung; Buchungen ohne E-Mail-Adresse bekommen die Rechnung nur im Admin.</li>
+	<li>Kostenlos stornierbar bis (Std. vor Termin) (Zahl): Standard für alle Angebote ohne eigene Angabe. Bis wie viele Stunden vor Terminbeginn eine Buchung kostenlos storniert werden kann, z.B. 24 (Termin Montag 09:00 → kostenlos bis Sonntag 09:00). Die Frist steht in der Bestätigungs-Mail (Platzhalter {{Stornofrist}}) und auf der Stornierungs-Seite. Leer = jederzeit kostenlos stornierbar (bis Terminbeginn).</li>
+	<li>Stornogebühr nach Ablauf (% vom Preis) (Zahl): Standard für alle Angebote ohne eigene Angabe. Gebühr in Prozent vom «Preis» des Angebots, wenn nach Ablauf der kostenlosen Frist storniert wird, z.B. 80 (Preis CHF 120 → Gebühr CHF 96). Die Kundin oder der Kunde bestätigt die Gebühr auf der Stornierungs-Seite und erhält eine Rechnung mit QR-Zahlteil. Leer = nach Ablauf der Frist keine Online-Stornierung (Hinweis, dich direkt zu kontaktieren).</li>
+	<li>Weitere Währungen (Käufer-Auswahl) (Liste)</li>
 	<li>Globale Anzahlung (%) (Zahl)</li>
 	<li>Rabatt-Codes (Liste)</li>
-	<li>Zahlung: Kreditkarte / TWINT (Stripe) (Ein/Aus)</li>
 	<li>Zahlung: Gegen Rechnung (Ein/Aus)</li>
 	<li>Zahlung: Gegen Bar (Ein/Aus)</li>
 	<li>Rechnung E-Mail: Betreff (Text)</li>
 	<li>Rechnung E-Mail: Text (formatierter Text)</li>
 	<li>Bar E-Mail: Betreff (Text)</li>
 	<li>Bar E-Mail: Text (formatierter Text)</li>
-	<li>Bestätigungstext: Kreditkarte / TWINT (formatierter Text)</li>
 	<li>Bestätigungstext: Gegen Rechnung (formatierter Text)</li>
 	<li>Bestätigungstext: Gegen Bar (formatierter Text)</li>
 	<li>Beauftragungsseite Titel (Text)</li>
@@ -1337,7 +2208,6 @@
 	<li>Anzahlung % (Zahl)</li>
 	<li>Rabatt % (Zahl)</li>
 	<li>Abrechnungsart (Auswahl): Optionen: Einmalig, Jährlich, Monatlich</li>
-	<li>Stripe Payment Link (Link)</li>
 	<li>Zusatzleistungen (Liste)</li>
 	<li>Leistungen (Liste)</li>
 	<li>Meta Titel (Text)</li>
@@ -1345,6 +2215,7 @@
 	<li>Meta Image (Bild)</li>
 	<li>Keine Indexierung (Ein/Aus)</li>
 	<li>Landing Page (Ein/Aus)</li>
+	<li>Landing Page ohne Rechtliches-Leiste (Ein/Aus): Nur zusammen mit «Landing Page»: blendet auf dieser Seite auch die Leiste mit Datenschutzerklärung, Impressum und Cookie-Einstellungen aus, die Seite zeigt dann nur noch ihren Inhalt. Achtung: Impressum und Datenschutzerklärung müssen für Besucher leicht erreichbar sein – verlinke sie in diesem Fall selbst auf der Seite.</li>
 	<li>Passwortgeschützt (Ein/Aus)</li>
 </ul>
 <h3>Variablen (Inhalts-Typ)</h3>

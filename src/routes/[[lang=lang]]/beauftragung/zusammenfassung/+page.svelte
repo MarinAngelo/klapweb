@@ -23,7 +23,7 @@
 		baseCurrency: string;
 		additionalCodes: string[];
 		rates: Record<string, number>;
-		paymentMethods: { stripe: boolean; rechnung: boolean; bar: boolean };
+		paymentMethods: { rechnung: boolean; bar: boolean };
 		barDescription: string | null;
 		eventTexts: {
 			summaryTitle: string | null;
@@ -51,10 +51,8 @@
 	let checkoutData: CheckoutData | null = null;
 	let agbAccepted = false;
 	// Wenn nur eine Zahlungsart aktiv ist, automatisch vorauswählen
-	const availableMethods = (['stripe', 'rechnung', 'bar'] as const).filter(
-		(m) => data.paymentMethods[m]
-	);
-	let selectedPayment: 'stripe' | 'rechnung' | 'bar' | null =
+	const availableMethods = (['rechnung', 'bar'] as const).filter((m) => data.paymentMethods[m]);
+	let selectedPayment: 'rechnung' | 'bar' | null =
 		availableMethods.length === 1 ? availableMethods[0] : null;
 	let isLoading = false;
 	let orderError: string | null = null;
@@ -211,20 +209,11 @@
 		? lineEffectivePrices.reduce<number>((s, p) => s + (p ?? 0), 0) + (additionalCostDisplay ?? 0)
 		: null;
 
-	$: stripeUrl =
-		data.product?.stripeUrl && checkoutData?.data['email']
-			? `${data.product.stripeUrl}?prefilled_email=${encodeURIComponent(checkoutData.data['email'])}`
-			: (data.product?.stripeUrl ?? '');
-
 	$: noChrome = $page.url.searchParams.get('no_chrome') === 'true';
 	$: noChromeParam = noChrome ? '&no_chrome=true' : '';
 	$: eventCheckoutParam = data.isEventCheckout ? '&event_checkout=true' : '';
 	$: returnUrlRaw = $page.url.searchParams.get('return_url');
 	$: returnUrlParam = returnUrlRaw ? `&return_url=${encodeURIComponent(returnUrlRaw)}` : '';
-
-	$: stripeTarget = import.meta.env.DEV
-		? `/beauftragung/bestaetigung?simulated=true&service=${encodeURIComponent(serviceKey)}&label=${encodeURIComponent(displayLabel)}${noChromeParam}${eventCheckoutParam}${returnUrlParam}`
-		: stripeUrl;
 
 	$: buttonText = isLoading
 		? t('Bitte warten…', lang)
@@ -239,13 +228,6 @@
 
 		const serviceParam = encodeURIComponent(serviceKey);
 		const labelParam = encodeURIComponent(displayLabel);
-
-		if (selectedPayment === 'stripe') {
-			sessionStorage.removeItem('checkoutData');
-			sessionStorage.removeItem('preferredCurrency');
-			window.location.href = stripeTarget;
-			return;
-		}
 
 		if (selectedPayment === 'rechnung') {
 			try {
@@ -608,29 +590,6 @@
 		<div class="mb-10">
 			<Heading tag="h2">{t('Zahlungsart', lang)}</Heading>
 			<div class="flex flex-col gap-4 mt-4">
-				<!-- Kreditkarte / TWINT -->
-				{#if data.paymentMethods.stripe}
-					<label
-						class="flex items-start gap-4 p-4 border cursor-pointer {selectedPayment === 'stripe'
-							? 'border-page'
-							: 'scope-border-strong'}"
-					>
-						<input
-							type="radio"
-							name="payment"
-							value="stripe"
-							bind:group={selectedPayment}
-							class="mt-1 shrink-0 accent-page"
-						/>
-						<div>
-							<p class="font-semibold">{t('Kreditkarte / TWINT', lang)}</p>
-							<p class="text-sm text-muted mt-0.5">
-								{t('Sofortige, sichere Zahlung via Stripe.', lang)}
-							</p>
-						</div>
-					</label>
-				{/if}
-
 				<!-- Gegen Rechnung -->
 				{#if data.paymentMethods.rechnung}
 					<label

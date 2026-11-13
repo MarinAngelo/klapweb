@@ -59,7 +59,8 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
@@ -107,7 +108,7 @@
 				"inner_apply": {
 					"type": "Boolean",
 					"config": {
-						"label": "Innen anwenden",
+						"label": "Hintergrund als Kasten",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -136,7 +137,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -184,7 +184,7 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 						"single": "heading2",
-						"labels": []
+						"labels": ["copy"]
 					}
 				},
 				"spalten": {
@@ -222,7 +222,7 @@
 				"inner_apply": {
 					"type": "Boolean",
 					"config": {
-						"label": "Innen anwenden",
+						"label": "Hintergrund als Kasten",
 						"placeholder_false": "Nein",
 						"placeholder_true": "Ja",
 						"default_value": false
@@ -251,7 +251,6 @@
 						"options": ["wenig", "mittel", "gross"]
 					}
 				},
-
 				"animate": {
 					"type": "Boolean",
 					"config": {
@@ -290,7 +289,7 @@
 						"placeholder": "",
 						"allowTargetBlank": false,
 						"single": "strong,em,paragraph",
-						"labels": []
+						"labels": ["copy"]
 					}
 				},
 				"source": {

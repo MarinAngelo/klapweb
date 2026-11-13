@@ -238,6 +238,30 @@
 				</form>
 			</AdminHeader>
 
+			<!-- Reminders: plan and switches live in slicemachine.config.json of this branch -->
+			{#if data.justSaved && data.configUncommitted}
+				<p class="admin-notice admin-notice-ok">
+					✓ {$_('Gespeichert in slicemachine.config.json.')}
+					<strong>{$_('Jetzt committen und deployen')}</strong>
+					— {$_('sonst gelten Plan und Feature-Schalter nicht in Production.')}
+				</p>
+			{:else if data.configUncommitted}
+				<p class="admin-notice admin-notice-warn">
+					⚠ {$_('slicemachine.config.json hat nicht committete Änderungen')}
+					— {$_('sonst gelten Plan und Feature-Schalter nicht in Production.')}
+					<strong>{$_('Jetzt committen und deployen')}</strong>.
+				</p>
+			{/if}
+			{#if data.legacyMissing?.length}
+				<p class="admin-notice admin-notice-warn">
+					⚠ {$_(
+						'Diese Schalter stehen nur in der alten lokalen Datei gating.overrides.json und gelten nicht in Production'
+					)}:
+					<span class="admin-mono">{data.legacyMissing.join(', ')}</span>.
+					{$_('Unten anwählen und speichern, dann committen.')}
+				</p>
+			{/if}
+
 			{#if (data.missingEnv?.length ?? 0) > 0}
 				<button
 					type="button"
@@ -327,7 +351,18 @@
 					</div>
 				</fieldset>
 
-				<button type="submit" class="admin-btn admin-btn-primary">{$_('Speichern')}</button>
+				<p class="admin-hint mb-2">
+					{$_(
+						'Plan und Schalter werden in slicemachine.config.json dieses Branches gespeichert. Danach committen und deployen, damit sie auch in Production gelten.'
+					)}
+				</p>
+				<button
+					type="submit"
+					class="admin-btn admin-btn-primary"
+					disabled={!data.canEditDefinition}
+					title={data.canEditDefinition ? undefined : $_('Nur auf dem lokalen Dev-Server möglich')}
+					>{$_('Speichern')}</button
+				>
 			</form>
 
 			<div class="admin-notice">
@@ -507,7 +542,7 @@
 				<strong>{$_('Setzen')}:</strong>
 				{$_('Lokal in der Datei')} <code class="admin-mono">.env</code>, {$_('auf Netlify unter')}
 				<strong>Site Settings → Environment variables</strong>. {$_(
-					'Hinweis: Einzelne Variablen (z.B. EMAIL_FROM_ADDRESS) haben CMS-Fallbacks – ohne sie greifen die Fallbacks bzw. der Versand entfällt.'
+					'Hinweis: Die Absender-E-Mail ist keine Variable mehr, sie steht in Prismic unter Einstellungen → «Absender-E-Mail».'
 				)}
 			</p>
 

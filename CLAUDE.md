@@ -24,6 +24,8 @@ Konkrete Regeln:
 
 ## Environment Variables
 
+**Grundsatz: Env-Vars nur verwenden, wenn es unbedingt nötig ist.** Erlaubt sind nur Secrets (API-Keys, Tokens, Passwörter wie `ADMIN_SECRET`) und Werte, die vor dem Laden von Prismic gebraucht werden. Alles, was ein Website-Betreiber kennen oder ändern könnte (Adressen, Namen, Texte, Schalter), gehört in Prismic (Einstellungen) — gleiche Quelle für Website, Mails und Netlify-Functions, sichtbar und änderbar ohne Deploy. Neue Konfiguration → zuerst ein Prismic-Feld prüfen; eine neue Env-Var nur mit Begründung und Eintrag in `.env.example` + `gating.json` (`features.<id>.env`).
+
 ### Lokale Entwicklung (.env)
 
 - `.env` ist **gitignored** — nicht committed
@@ -92,6 +94,12 @@ Regeln:
 - Wiederkehrende Kombinationen (≥ 2 Komponenten) als Klasse in `app.css`, nicht kopieren; komponenten-lokale `<style>`-Blöcke nur für wirklich Einmaliges
 - Theme-Farben unterstützen keine Opacity-Modifier (`bg-page/50`) — Tönungen über `color-mix()` in `app.css`
 
+## Service Worker
+
+- Nur **einer**: SvelteKits `src/service-worker.ts` (Feature `pwa`, Registrierung in `svelte.config.js`), cacht auch Prismic-Bilder. Nie einen zweiten Service Worker registrieren — zwei auf demselben Scope ersetzen sich bei jedem Seitenaufruf (hängende Tabs)
+- `static/sw.js` ist ein Selbstzerstörer für Besucher mit dem alten Worker — nicht wieder verwenden
+- Im Dev-Server nie aktiv (`svelte.config.js`); das Layout entfernt dort installierte Worker (alle Branches teilen `localhost:5173`)
+
 ## Schriften (selbst gehostet, kein Google)
 
 - Google-Schriften werden beim `npm run dev` / `build` von `scripts/self-host-fonts.js` nach `static/fonts/` geladen (gitignored): eine CSS pro Schrift (`/fonts/<slug>.css`) + woff2. Besucher laden nie von Google
@@ -154,6 +162,13 @@ Regeln:
 
 - Package `@netlify/blobs` v10: Auto-Detection funktioniert nicht mit `adapter-auto`
 - `siteID` + `token` immer explizit via `$env/dynamic/private` übergeben (nie `process.env`)
+
+## Prismic-Vorschau
+
+- `/api/preview` setzt das Cookie `io.prismic.preview` mit **Ablauf nach 1 Stunde** (`maxAge`); `createClient({ cookies })` liest damit überall den Vorschau-Stand statt der veröffentlichten Fassung
+- **Ungültiges/abgelaufenes Token** → `hooks.server.ts` löscht das Cookie (`dropInvalidPreviewCookie`, `src/lib/server/previewCookie.ts`, einmal pro Token geprüft, Netzwerkfehler behalten es). Ohne das scheitert jede Prismic-Abfrage → ganze Website auf der Fehlerseite (404 «Navigation fehlt»)
+- **Hinweis «Vorschau aktiv – Vorschau beenden»** (`PreviewNotice.svelte` im Root-Layout, Popover API): erscheint nur, wenn das Cookie gesetzt ist und die Prismic-Leiste nach 5 s fehlt (Brave/Safari/private Fenster blockieren sie: Script von prismic.io, Drittanbieter-Cookies). «Vorschau beenden» löscht das Cookie und öffnet die Seite ohne `/preview`. **Nie bei sichtbarer Leiste anzeigen:** Die Vorschau ist auch eine Sitzung bei prismic.io; die Leiste setzt ein gelöschtes Cookie aus dieser Sitzung neu — beenden kann sie nur das Kreuz der Leiste (`closeSession`)
+- Diagnose bei altem Stand: privates Fenster bzw. `curl` gegen die Seite. Redakteurs-Anleitung: Kapitel «Vorschau»
 
 ## Prismic Link-Felder in Custom Types
 
@@ -257,11 +272,33 @@ Details: `docs/git-strategie.md`
 }
 ```
 
-### Lokale Feature-Schalter (`gating.overrides.json`)
+### Feature-Schalter pro Kunde (`slicemachine.config.json`)
 
-- Agency-Editor (`/agency/gating`) speichert zusätzliche/abgeschaltete Features in `gating.overrides.json` (gitignored)
-- **Pro Prismic-Repository** (`repositoryName` aus `slicemachine.config.json`): `{ "repos": { "<repo>": { enabled, disabled, admin_sections_disabled } } }` — die Datei bleibt beim Branch-Wechsel liegen, Schalter eines Branches dürfen nie für ein anderes Repo gelten (sonst löscht `slicemachine push` Custom Types)
-- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`
+- Zusatz-Features und Abschaltungen gehören in die **committete** `slicemachine.config.json` des Branches (branch-eigen, `merge=ours`): `"features": [...]` (über den Plan hinaus), `"featuresDisabled": [...]`, `"adminSectionsDisabled": [...]`
+- Wirkt überall gleich: `build-customtypes.js` (Modelle), `src/lib/server/features.ts` (`FEATURE_*`, statischer Import → Build-Zeit, gilt in Production), Admin-Dashboard
+- Agency-Editor (`/agency/gating`) schreibt diese Felder — nur auf dem lokalen Dev-Server, danach committen und deployen. Erinnerung: Editor zeigt nach dem Speichern bzw. bei nicht committeter Config einen Hinweis, `npm run dev` warnt ebenfalls (`configUncommitted()`)
+- Lesen/Schreiben nur über `src/lib/gatingOverrides.js`. Die frühere `gating.overrides.json` (gitignored) wirkte nur lokal und wird nicht mehr gelesen; Reste meldet `npm run dev` mit Warnung
+- Ohne `"plan"` gilt überall «basis»
+
+#### Agency-Editor: lokal vs. Production
+
+|                                    | Lokal (`npm run dev`)                                       | Production                                                                |
+| ---------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Plan + Feature-Schalter des Kunden | speichern in `slicemachine.config.json` **dieses Branches** | nur anzeigen («Speichern» gesperrt)                                       |
+| Plan-Definition (Feature → Paket)  | speichern in `gating.json`, gilt für **alle** Branches      | nur anzeigen                                                              |
+| Modelle (Custom Types, Slices)     | werden beim Speichern neu erzeugt (`build-customtypes.js`)  | —                                                                         |
+| Angezeigter Stand                  | Dateien auf dem Rechner                                     | Stand des letzten Deploys (`gating.json` + Config beim Build eingebunden) |
+
+Grund: Netlify-Functions können keine Dateien dauerhaft ändern; Plan/Schalter müssen über Git laufen, damit Modelle, Prismic und Website zusammenpassen.
+
+Ablauf Änderung bei einem Kunden:
+
+1. Lokal auf den Kunden-Branch, `npm run dev`, `/agency/gating` öffnen
+2. Plan/Schalter setzen, speichern (Editor erinnert ans Committen)
+3. Modelle geändert (neue Variante, neuer Custom Type) → `slicemachine push`
+4. Committen + pushen → Netlify-Deploy; erst dann gilt es live
+
+`gating.json` (Plan-Definition) ist Kern → Änderungen auf `main`, dann in die Kunden-Branches mergen. Plan/Schalter eines einzelnen Kunden → nur auf dessen Branch.
 
 ### Plan-Hierarchie & Features
 
@@ -277,6 +314,8 @@ Details: `docs/git-strategie.md`
 | Slice     | direkt `plan`/`feature` auf dem Slice-Objekt | `model.json` wird nicht generiert         |
 | Variation | `variations.{id}.plan/feature`               | Variation erscheint nicht in `model.json` |
 | Feld      | `fields.{key}.plan/feature`                  | Feld fehlt in allen Variationen           |
+
+`features: ["a", "b"]` statt `feature` = **oder**-Gate (aktiv, wenn eines der Features aktiv ist), z.B. die Rechnungsfelder in `customTypes.settings.fields`.
 
 ### Variationen aus full.json
 
@@ -332,7 +371,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - **Links in E-Mails** (Freigaben/Bestätigungen): `adminActionToken(action, id)` aus `src/lib/server/adminAuth.ts` statt Admin-Passwort; prüfen mit `isAuthorizedAdminAction()`
 - APIs für Admins ausserhalb von `/admin` (z.B. `/api/design-theme`): `isAdmin(cookies)`
 - `ADMIN_SECRET` ändern → alle Sessions und alle Aktions-Links werden ungültig
-- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
+- **Passwortgeschützte Seiten:** Cookie `klap_auth` = Ablaufzeit + Signatur (`src/lib/server/pageAuth.ts`), nie das Passwort selbst; Seiten-Passwort ändern → alle Freigaben ungültig. **Geschützte Seiten werden nie vorgerendert** (`[uid]/+page.server.ts`: `building` → 404, keine Datei → Server-Funktion); sonst liefert Netlify eine feste Login-Weiterleitung aus (Endlosschleife) Weiterleitung nach Login nur auf relative Pfade (`safeRedirectPath`)
 
 ## Anmeldungen (alle Logins)
 
@@ -376,6 +415,22 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Falls keine E-Mail: Prüfung nach Name (Vorname + Nachname)
 - Verhindert doppelte Kundenerträge
 
+### Rechnungsmodul (`src/lib/server/invoicing/`) — für alle Features
+
+- **Jede Rechnung nur über `createInvoice()`** (`$lib/server/invoicing`): rendert das PDF (`pdf.ts`, einziger Renderer) inkl. **Schweizer QR-Zahlteil** und speichert im Blob-Store `manuelle_rechnungen` (sichtbar in `/admin/rechnungen`). Versand macht der Aufrufer (eigener Mail-Text, `invoiceAttachment()`) oder `sendInvoiceMail()` (setzt «gesendet»)
+- Nutzer: Checkout `/api/invoice` (`source: 'checkout'`/`'event'`), Admin `/admin/rechnungen` (`'admin'`), Terminbuchung (`'terminbuchung'`, Einstellung «Rechnung nach dem Termin senden», nur Angebote mit «Preis»): Buchung merkt `invoicePending` + Preis + Rechnungsadresse vor, `sendDueBookingInvoices()` (`src/lib/server/bookingInvoices.ts`) erstellt und verschickt nach Terminende — stündlich via `netlify/functions/termin-rechnungen.ts` → `/api/cron/termin-rechnungen` (Schlüssel `cronKey()` aus `ADMIN_SECRET`) und beim Öffnen der Terminverwaltung. Neues Feature → `source` in `InvoiceSource` (`invoices.ts`) + Label in `SOURCE_LABELS` (`admin/rechnungen/+page.svelte`)
+- Positionen: `{ description, quantity, unitPrice, billingType? }`, Rabatt = Position mit negativem Preis. Total inkl. MWST = Betrag im QR-Code
+- Einstellungen: Tab «Rechnungen» (`invoice_*` + `invoice_qr_bill`, in `customtypes/settings/base.json`, Feld-Gate `features: [...]` = aktiv bei einem der Rechnungs-Features); Laden nur über `loadInvoiceSettings()` / `invoiceSettingsFrom()`
+- **QR-Rechnung** (`src/lib/qrBill.js`, Standard 2.3, nur strukturierte Adressen): IBAN CH/LI, Absender-Adresse aus «Verantwortliche Adresse» (Zeile «Strasse Nr.» + Zeile «PLZ Ort»), nur CHF/EUR. Referenz: normale IBAN → Creditor Reference `RF…`, QR-IBAN → 27-stellige QR-Referenz, beides aus der Rechnungsnummer. Fehlt etwas → PDF ohne QR-Teil, «Inhalte prüfen» meldet `invoice_qr`
+- Zahlungseingang wird **nicht** automatisch erkannt (keine Bankanbindung) → «bezahlt» von Hand; Referenz erleichtert den Abgleich
+
+### Terminbuchung: Stornierung (`/termin-stornieren`)
+
+- Link in der Bestätigungs-Mail: `cancelLink()` (`src/lib/server/bookingCancel.ts`) mit zufälligem `cancelToken` der Buchung. **Nie beim Aufruf stornieren** (Mail-Scanner öffnen Links) — Seite zeigt Bedingungen, Stornierung erst per Knopf (Form-Action). Alte Links `/api/storniere-termin` leiten dorthin um
+- Bedingungen werden **beim Buchen in der Buchung gespeichert** (`price`, `cancelFreeUntil`, `cancelFeePercent`): Angebot «Kostenlos stornierbar bis (Std. vor Termin)» / «Stornogebühr nach Ablauf (%)», sonst Standard aus Einstellungen › Terminbuchung. Platzhalter `{{Stornofrist}}`
+- `cancelTerms()`: `free` (in der Frist bzw. ohne Frist), `fee` (nach der Frist, Gebühr % × Preis → Rechnung mit QR über das Rechnungsmodul), `contact` (nach der Frist ohne Gebühr oder ohne Preis → keine Online-Stornierung), `past` (Termin begonnen)
+- `cancelBooking()`: gibt den Termin frei, setzt eine offene Rechnung der Buchung auf `storniert` (bezahlt → Hinweis «Rückerstattung prüfen» an den Betreiber), erstellt die Gebührenrechnung, informiert Kunde + Betreiber
+
 ### Kunden-Management (`/admin/kunden`)
 
 - Feature `kundenverwaltung` (gating.json, ab Professionell) schaltet den Admin-Bereich frei. Kunden werden unabhängig davon von Checkout/Terminbuchung gespeichert
@@ -402,7 +457,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Store `src/lib/stores/cart.ts` (localStorage `klap_cart`, Consent-Dienst `cart`), Seite `/warenkorb`, Icon mit Anzahl in der Navbar
 - Transport nur als Referenzen `?warenkorb=leistung:<uid>,page:<uid>` (`src/lib/utils/cartSpec.ts`) → Beauftragung → Zusammenfassung → `/api/invoice` (`cart`). **Preise immer serverseitig** via `src/lib/server/cartLines.ts`, nie aus dem Browser
 - Pakete im Warenkorb bringen ihre Zusatzleistungen (Pflicht) mit; Rabatt-Code gilt für Hauptpositionen, nicht für Zusatzleistungen
-- Stripe (Payment Links pro Produkt) ist beim Warenkorb ausgeblendet; Rechnung + PDF mit allen Positionen
+- Zahlungsarten nur «gegen Rechnung» und «bar» — **keine Online-Zahlung, kein Stripe** (bewusst entfernt); Rechnung + PDF mit allen Positionen
 
 ### E-Commerce Checkout-Anpassungen
 
@@ -430,20 +485,39 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 Für E-Commerce/Admin Rechnungen erforderlich:
 
 - `RESEND_API_KEY`: API-Key von resend.com
-- `EMAIL_FROM_ADDRESS`: z.B. `rechnung@klap-web.ch` (muss in Resend verifiziert sein)
-- `INVOICE_TO_EMAIL` (optional): Geschäfts-E-Mail für Benachrichtigungen
+- **Absender-Adresse:** Prismic Einstellungen → «Absender-E-Mail» (`email_from_address`, Hauptsprache), gilt für **alle** Mails. Im Code nur über `getMailFrom()` (`src/lib/server/mailFrom.ts`) lesen. Domain muss in Resend verifiziert sein («Inhalte prüfen» meldet leeres Feld und nicht verifizierte Domain). `EMAIL_FROM_ADDRESS` ist veraltet: nur noch Übergangs-Rückgriff, solange das Feld leer ist
+- **Absender-Name** (`email_from_name`, leer = Website-Name, dann Verantwortliche Person/Firma) und **Benachrichtigungen an (intern)** (`notification_email`, leer = Verantwortliche E-Mail, dann Korrespondenz E-Mail): ebenfalls Einstellungen → Main. `getMailFrom()` liefert «Name <Adresse>», `getMailAddress()` nur die Adresse, `getNotifyTo()` den internen Empfänger. `EMAIL_FROM_NAME` und `INVOICE_TO_EMAIL` gibt es nicht mehr
 
-Wenn nicht gesetzt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
+
+## Stundenabrechnung (`/admin/stunden`)
+
+- Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`
+- Erfassen: Name (Pflicht), Von/Bis (`datetime-local`, Ortszeit), Tätigkeit, Spesen (CHF) + Spesen-Beschreibung → `/api/stunden` → Blob-Store `stunden` (`src/lib/server/stunden.ts`, Key = Startzeit + ID)
+- **Nur auf passwortgeschützten Seiten:** API verlangt Seiten-Freigabe (`hasPageAccess`) oder Admin-Session; «Inhalte prüfen» meldet die Variante auf ungeschützten Seiten
+- Admin: pro Person ein Abschnitt; **Offen** (Tabelle mit Dauer Std./Min., Total Dauer + Spesen, Bearbeiten/Löschen) und **Abgerechnet** (pro Abrechnung aufklappbar, nur lesen, «Zurücksetzen» → wieder offen). «Offene Stunden abrechnen» setzt `abgerechnetAm` + gemeinsame `abrechnung`-ID (`abrechnen()`); abgerechnete Einträge sind serverseitig gegen Ändern/Löschen gesperrt
+- CSV-Export `/admin/stunden/stunden.csv` (Stunden dezimal, Spalte Status), Filter `?name=`, `?status=offen|abgerechnet`, `?abrechnung=<id>`
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
 
 - Feature `chatbot` (gating.json), Env `ANTHROPIC_API_KEY`, Modell Claude Haiku 4.5; Einstellungen in Prismic Settings, Tab «Chat-Bot» (`chat_active`, Name, Begrüssung, Wissensbasis + «Ergänzungen» (`chat_knowledge_extra`, Vorrang bei Widersprüchen) pro Sprache, je Feld Fallback Hauptsprache)
-- Wissensbasis-Vorlage für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich)
+- Wissensbasis für klap-web.ch: `docs/chatbot-wissensbasis.html` (nicht nach `static/`, wäre öffentlich). Mit `"chatKnowledgeFromCode": true` in `slicemachine.config.json` (nur `klap-web-ch`) liest der Bot sie direkt aus dem Code (`src/lib/server/chatKnowledge.ts`, in die Server-Funktion eingebunden) statt aus dem Prismic-Feld «Chat-Bot Wissensbasis» — aktualisieren = `npm run wissensbasis` + Deploy, kein Kopieren. «Ergänzungen» kommen weiterhin aus Prismic
 - Anthropic-Aufruf mit `globalThis.fetch` — der SvelteKit-Event-`fetch` setzt einen Origin-Header → 401 (CORS)
 - **Sicherheit:** Kostendeckel `CHAT_DAILY_BUDGET_USD` / `CHAT_MONTHLY_BUDGET_USD` (Standard 2 / 20 USD, `isOverBudget()` in `chatUsage.ts`); Verlauf für das Modell kommt aus dem Chat-Log (`loadConversationHistory`), vom Browser wird nur die neue Frage übernommen — nie wieder Verlauf aus dem Request vertrauen; Regel 5 im Prompt: keine Zusagen ausserhalb der Wissensbasis
+- **Entwickler-Modus `@dev`:** Nachricht mit `@dev` → nur mit Agentur-Login (`isAgencyAuthenticated`), sonst 403 `dev_forbidden`; bleibt im Chat-Fenster aktiv bis `@exit`. Wissensbasis `src/lib/generated/chatbot-dev-wissensbasis.md` (gitignored) erzeugt `scripts/chatbot-dev-wissensbasis.js` bei `npm run dev`/`build` automatisch aus CLAUDE.md, `docs/*.md`, `.env.example`, `gating.json`, Env-Var-Scan des Codes, Netlify-Function-Kommentaren, der Prismic-Seite `how-to-guide` (Repo klap-web-ch, live geladen) und Feldreferenz → **Doku aktuell halten = Dev-Bot aktuell**. Env-Vars einer Funktion gehören in `gating.json` → `features.<id>.env`
 - **Bewertung:** pro Antwort 👍/👎; bei 👎 Mini-Formular (Name, E-Mail, Kommentar, alles optional) → einmalige Mail an «Verantwortliche E-Mail» (Reply-To = Besucher), Name/E-Mail nicht im Log → `/api/chat/rating`, gespeichert im Chat-Log-Eintrag (`rateChatExchange`, nur eigene Gesprächs-ID, 24 h), Auswertung in `/admin/chatbot`
-- Cookie-Banner: Dienst/Kategorie `ai_chat`; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
+- Cookie-Banner: Dienst/Kategorie `ai_chat`, erst beim Öffnen des Chats angemeldet (`registerServiceUsage` in `ChatWidget.svelte`) → der geschlossene Button allein löst keinen Banner aus; Rate-Limit 20 Anfragen / 10 Min pro IP (in-memory, pro Instanz)
 - **Kosten:** `src/lib/server/chatUsage.ts`, Blob-Store `chat_usage`, ein Eintrag pro Frage (Zahlen im Key, append-only) + Monats-Zusammenfassung für abgeschlossene Monate. Keine Zähler mit `onlyIfMatch`: bedingte Writes werden via siteID+token nicht durchgesetzt. Listenpreise in `PRICE_PER_MTOK` (keine Preis-API bei Anthropic)
+
+## Anleitung für Redakteure (`src/lib/anleitung/`)
+
+- **Eine Quelle im Code** für die Anleitungstexte: `index.json` (Reihenfolge, `id`, `title`, `feature`, `stand`, `sources`) + `kapitel/<id>.html` (h4 pro Schritt, h3 pro Thema, ein Feld pro Zeile mit `<strong>`; Stil-Regeln im Skill `/chatbot-wissensbasis`, Muster `terminbuchung.html`; Teile zwischen `<!-- NUR-WEBSITE:START/END -->` fehlen in der Bot-Wissensbasis). Daraus entstehen die Website klap-web.ch/anleitung **und** der Abschnitt `AUTO:ANLEITUNGEN` der Chat-Bot-Wissensbasis (`npm run wissensbasis`) — nie dort oder in Prismic Anleitungstexte schreiben
+- **Funktion geändert → Kapitel im selben Commit anpassen** und `stand` auf heute setzen; neue Funktion → neues Kapitel + Index-Eintrag (`feature` = ID aus `gating.json`, `covers` für mit-dokumentierte Features)
+- **Prismic-Felder in Kapiteln nie abtippen:** `<li data-field="angebot.dauer"></li>` bzw. `<span data-field="…"></span>` (`src/lib/anleitung/fields.js`) → Label aus dem Modell, Beschreibung aus `fieldDescriptions.json` (`/agency/feldreferenz`); Bot-Wissensbasis nur mit Label. Feld umbenannt → Anleitung stimmt automatisch; Beschreibung fehlt → `/field-description`
+- `scripts/check-anleitung.js` meldet Kapitel, deren `sources` seit `stand` Commits haben, Features ohne Kapitel und (nur auf `klap-web-ch`, wo alle Features aktiv sind) Verweise auf Felder, die es nicht mehr gibt (Warnung bei `npm run dev`; `npm run check:anleitung` mit Details und Fehler-Exit)
+- **Website:** Inhalts-Element «Anleitung», Feld «Kapitel aus der Anleitung» (`chapter`, nur Plan `klap-web-ch`; Optionen erzeugt `build-customtypes.js` aus den Kapitel-Titeln). Reihenfolge: Titel → eigener Teil aus Prismic (Beschreibung mit Bildern, Video, Schritte) → «Claude Anleitung Titel» (`chapter_title`, h3) → Kapitel-Text aus dem Code. «Alle übrigen Kapitel» zeigt jedes Kapitel, das kein anderes Element der Seite gewählt hat → neue Kapitel erscheinen ohne Prismic-Änderung
+- Texte kommen serverseitig über den Seiten-Load (`src/lib/server/anleitung.ts` → SliceZone-Kontext `guideChapters`), nie in den Client-Bundle importieren. Kapitel mit `feature` folgen dem Paket-Filter (`planFilter`)
+- Kapitel-Titel nicht umbenennen, ohne die Auswahl in Prismic nachzuziehen (Select speichert den Titel; sonst «Kapitel nicht gefunden»)
 
 ## Newsletter / Info-Mails (`/admin/newsletter`)
 

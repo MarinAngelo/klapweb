@@ -212,13 +212,17 @@
 							"subtitle",
 							"subtitle-bold",
 							"kicker",
-							"overline"
+							"overline",
+							"copy"
 						]
 					}
 				},
 				"color": {
 					"type": "Color",
-					"config": { "label": "Schriftfarbe", "placeholder": "" }
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": ""
+					}
 				},
 				"preset_font": {
 					"type": "Select",
@@ -257,7 +261,10 @@
 						"select": "document",
 						"repeat": false,
 						"customtypes": [
-							{ "id": "font", "fields": ["name", "provider", "variants", "adobeFontId"] }
+							{
+								"id": "font",
+								"fields": ["name", "provider", "variants"]
+							}
 						]
 					}
 				},
@@ -272,31 +279,52 @@
 				},
 				"button_text": {
 					"type": "Text",
-					"config": { "label": "Schaltflächentext", "placeholder": "" }
+					"config": {
+						"label": "Schaltflächentext",
+						"placeholder": ""
+					}
 				},
 				"button_color": {
 					"type": "Color",
-					"config": { "label": "Schaltfläche Text- und Rahmenfarbe", "placeholder": "" }
+					"config": {
+						"label": "Schaltfläche Text- und Rahmenfarbe",
+						"placeholder": ""
+					}
 				},
 				"button_hover_color": {
 					"type": "Color",
-					"config": { "label": "Text & Rahmen wenn Maus drüber", "placeholder": "" }
+					"config": {
+						"label": "Text & Rahmen wenn Maus drüber",
+						"placeholder": ""
+					}
 				},
 				"button_bg_color": {
 					"type": "Color",
-					"config": { "label": "Schaltfläche Hintergrundfarbe", "placeholder": "" }
+					"config": {
+						"label": "Schaltfläche Hintergrundfarbe",
+						"placeholder": ""
+					}
 				},
 				"button_hover_bg_color": {
 					"type": "Color",
-					"config": { "label": "Hintergrund wenn Maus drüber", "placeholder": "" }
+					"config": {
+						"label": "Hintergrund wenn Maus drüber",
+						"placeholder": ""
+					}
 				},
 				"text_overlay_color": {
 					"type": "Color",
-					"config": { "label": "Text Überlagerungsfarbe", "placeholder": "" }
+					"config": {
+						"label": "Text Überlagerungsfarbe",
+						"placeholder": ""
+					}
 				},
 				"text_overlay_opacity": {
 					"type": "Number",
-					"config": { "label": "Transparenz Text Überlagerungsfarbe", "placeholder": "0 - 100 %" }
+					"config": {
+						"label": "Transparenz Text Überlagerungsfarbe",
+						"placeholder": "0 - 100 %"
+					}
 				},
 				"switch_off_text_overlay": {
 					"type": "Boolean",

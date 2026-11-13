@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { renderableSlices } from '$lib/utils/renderableSlices';
 	import { tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { SliceZone } from '@prismicio/svelte';
@@ -58,13 +59,14 @@
 {/if}
 
 <SliceZone
-	slices={data.page.data.slices}
+	slices={renderableSlices(data.page.data.slices)}
 	{components}
 	context={{
 		baseCurrency: data.baseCurrency,
 		globalDepositPct: data.globalDepositPct ?? null,
 		plaeneData: data.plaeneData ?? {},
 		pageLeistungen: data.pageLeistungen ?? [],
+		guideChapters: data.guideChapters ?? {},
 		lang: data.page.lang
 	}}
 />

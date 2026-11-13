@@ -128,7 +128,10 @@
 						<div class="flex flex-col gap-3 border-t border-gray-200 px-3 py-3">
 							{#each c.entries as e (e.at)}
 								<div class="flex flex-col gap-1">
-									<span class="admin-muted text-xs">{fmtTime(e.at)}</span>
+									<span class="admin-muted text-xs"
+										>{fmtTime(e.at)}{#if e.dev}
+											<span class="admin-badge admin-badge-purple ml-1">@dev</span>{/if}</span
+									>
 									<p class="m-0 whitespace-pre-wrap rounded bg-gray-100 px-3 py-2">
 										<span class="font-semibold">{$_('Frage')}:</span>
 										{e.question}

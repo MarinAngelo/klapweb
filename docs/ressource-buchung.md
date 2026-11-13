@@ -129,14 +129,13 @@ Unterstützte Tokens:
 
 In den Einstellungen beziehungsweise den Netlify-Environment-Variablen werden die technischen Werte hinterlegt:
 
-| Wert                 | Verwendung                                                  |
-| -------------------- | ----------------------------------------------------------- |
-| **E-Mail im CMS**    | Standard-Empfänger für Anbieter-Benachrichtigungen          |
-| `EMAIL_FROM_ADDRESS` | Technische Absenderadresse; muss in Resend verifiziert sein |
-| `EMAIL_FROM_NAME`    | Optionaler Fallback-Absendername                            |
-| `INVOICE_TO_EMAIL`   | Empfänger für Check-in- und Abrechnungsbenachrichtigungen   |
+| Wert                               | Verwendung                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Benachrichtigungen an (intern)** | Empfänger der Anbieter-, Check-in- und Abrechnungs-Mails (leer = Verantwortliche E-Mail) |
+| **Absender-E-Mail**                | Absenderadresse aller E-Mails; Domain muss in Resend verifiziert sein                    |
+| **Absender-Name**                  | Name, unter dem die E-Mails erscheinen (leer = Website-Name)                             |
 
-Der sichtbare Firmenname für Rechnungs- und Bar-Mails kommt primär aus dem CMS-Feld **Verantwortliche Person/Firma**. `EMAIL_FROM_NAME` dient nur als Rückfall.
+Alle drei Felder stehen in Prismic unter Einstellungen → Main; dafür gibt es keine Env-Vars mehr.
 
 ---
 
@@ -369,7 +368,7 @@ Häufigste Ursachen:
 
 - **Vor Abreise – E-Mail Text** fehlt im CMS
 - Die Buchung hat keine E-Mail-Adresse
-- `RESEND_API_KEY` oder `EMAIL_FROM_ADDRESS` ist nicht gesetzt
+- `RESEND_API_KEY` ist nicht gesetzt oder die **Absender-E-Mail** in den Einstellungen fehlt
 - Der Abreise-Reminder wurde bereits gesendet
 
 ---

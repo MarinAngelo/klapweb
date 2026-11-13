@@ -8,6 +8,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import NewsletterSignup from '$lib/components/NewsletterSignup.svelte';
+	import StundenErfassung from '$lib/components/StundenErfassung.svelte';
 	import { mapAnimation } from '$lib/utils/animationMapper';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -24,6 +25,8 @@
 	$: isEinChecken = (slice.variation as string) === 'einChecken';
 	$: isAusChecken = (slice.variation as string) === 'ausChecken';
 	$: isNewsletterSignup = (slice.variation as string) === 'newsletterSignup';
+	$: isStunden = (slice.variation as string) === 'stunden';
+	$: stundenPrimary = slice.primary as any;
 	// Feature-gated variation → not part of the generated Prismic types
 	$: newsletterPrimary = slice.primary as any;
 	$: checkPrimary = slice.primary as any;
@@ -134,7 +137,31 @@
 	// CMS-Name hat Vorrang; Fallback: per-Seite-Zählung (form_1, form_2 ...)
 	const formIndex = slices.slice(0, index + 1).filter((s) => s.slice_type === 'form').length;
 	const formName = (slice.primary as any)?.form_name?.trim() || `form_${formIndex}`;
-	const formFields = (slice.primary?.form_fields ?? []) as FormSliceDefaultPrimaryFormFieldsItem[];
+	const cmsFormFields = (slice.primary?.form_fields ??
+		[]) as FormSliceDefaultPrimaryFormFieldsItem[];
+	// Variation «Mit Termin»: appointment field is built in (first position) unless the editor added one
+	const needsTerminField =
+		(slice.variation as string) === 'mitTermin' &&
+		!cmsFormFields.some((f) => (f as any)?.field_type === 'Termin');
+	$: formFields = needsTerminField
+		? [
+				{
+					field_name: t('Termin', lang),
+					field_type: 'Termin',
+					required: true,
+					invalid_feedback_text: null,
+					options: null,
+					placeholder: null
+				} as unknown as FormSliceDefaultPrimaryFormFieldsItem,
+				...cmsFormFields
+			]
+		: cmsFormFields;
+
+	// Two-column layout: message and appointment picker take the full row
+	function spansFullRow(field: FormSliceDefaultPrimaryFormFieldsItem): boolean {
+		const type = (field as any).field_type as string | null;
+		return type === 'Textbereich' || type === 'Termin';
+	}
 
 	// Checkout-Modus: Wenn gesetzt → "Weiter" statt Netlify-Submit
 	$: checkoutUrl =
@@ -541,6 +568,10 @@
 				{/if}
 			{/if}
 		</div>
+	{:else if isStunden}
+		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+			<StundenErfassung primary={stundenPrimary} idPrefix="stunden-{index ?? 0}" />
+		</div>
 	{:else if isNewsletterSignup}
 		<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
 			<NewsletterSignup primary={newsletterPrimary} {lang} idPrefix="newsletter-{index ?? 0}" />
@@ -580,11 +611,7 @@
 					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
 						{#each formFields as field}
 							{#if field && effectiveKey(field)}
-								<div
-									class={isDefaultZweiSpalten && field.field_type === 'Textbereich'
-										? 'sm:col-span-2'
-										: ''}
-								>
+								<div class={isDefaultZweiSpalten && spansFullRow(field) ? 'sm:col-span-2' : ''}>
 									<InputField
 										{field}
 										refreshKey={termineRefreshKey}

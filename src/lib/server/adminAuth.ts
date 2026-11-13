@@ -67,6 +67,18 @@ export function isAdmin(cookies: Cookies): boolean {
 export type AdminAction = 'freigabe-aufgabe' | 'bestaetige-buchung' | 'freigabe-abrechnung';
 
 /** Token that authorises exactly one action for one id (no admin access) */
+/**
+ * Key of a scheduled job calling an own endpoint (netlify/functions → /api/cron/<job>).
+ * The Netlify function computes the same HMAC from ADMIN_SECRET (purpose «cron»).
+ */
+export function cronKey(job: string): string {
+	return hmac('cron', job);
+}
+
+export function isValidCronKey(job: string, key: string | null): boolean {
+	return !!key && !!env.ADMIN_SECRET && safeEqual(key, cronKey(job));
+}
+
 export function adminActionToken(action: AdminAction, id: string): string {
 	return hmac('admin-action', `${action}:${id}`);
 }

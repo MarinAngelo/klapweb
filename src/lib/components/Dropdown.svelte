@@ -8,6 +8,8 @@
 
 	export let item;
 	export let subItems;
+	/** All navigation links: a sub item with «Ausklappbare Schaltfläche» opens its own sub items (3rd level) */
+	export let allLinks: any[] = [];
 	export let headerBgColor: string = '';
 	export let headerLinkColor;
 	export let headerLinkHoverColor;
@@ -19,6 +21,15 @@
 	export let selectMode = false;
 	export let inputId: string | undefined = undefined;
 	let selectOpen = false;
+	/** Label of the open 3rd-level submenu */
+	let openSub = '';
+
+	const labelOf = (navItem: any): string => navItem?.label?.[0]?.text ?? '';
+	function childrenOf(navItem: any): any[] {
+		const label = labelOf(navItem);
+		if (!navItem?.dropdown_link || !label) return [];
+		return allLinks.filter((link) => link !== navItem && link.sub_link === label);
+	}
 
 	$: selectedOption = options.find((option) => option.value === value);
 
@@ -56,6 +67,7 @@
 
 	function closeDropdown() {
 		isOpen = false;
+		openSub = '';
 	}
 
 	function handleGlobalClose() {
@@ -134,24 +146,77 @@
 				style:--dropdown-top="{dropdownTop}px"
 			>
 				{#each subItems as dropdownItem}
-					<li
-						class="{currentPath === dropdownItem.link.url
-							? 'underline'
-							: ''} px-5 py-0 font-semibold tracking-tight block text-left [white-space:normal] [overflow-wrap:break-word] [hyphens:auto] [min-width:14rem] text-left"
-						style:font-size="{headerLinkFontSize}rem"
-					>
-						<PrismicLink
-							field={dropdownItem.link}
-							on:click={() => {
-								closeDropdown();
-								dispatch('click');
-							}}
-							class="block w-full transition-colors dropdown-link"
-							style="color: {headerLinkColor}; --header-link-hover-color: {headerLinkHoverColor};"
+					{@const children = childrenOf(dropdownItem)}
+					{#if children.length}
+						<!-- 3rd level: desktop flyout to the right on hover, mobile expands below -->
+						<li
+							class="submenu-item px-5 py-0 font-semibold tracking-tight block text-left [min-width:14rem]"
+							style:font-size="{headerLinkFontSize}rem"
+							on:mouseenter={() => (openSub = labelOf(dropdownItem))}
+							on:mouseleave={() => (openSub = '')}
 						>
-							<PrismicText field={dropdownItem.label} />
-						</PrismicLink>
-					</li>
+							<button
+								type="button"
+								class="submenu-trigger dropdown-link w-full flex items-center justify-between gap-2 text-left"
+								style="color: {headerLinkColor}; --header-link-hover-color: {headerLinkHoverColor};"
+								aria-expanded={openSub === labelOf(dropdownItem)}
+								on:click={() =>
+									(openSub = openSub === labelOf(dropdownItem) ? '' : labelOf(dropdownItem))}
+							>
+								<PrismicText field={dropdownItem.label} />
+								<SvgIcons
+									name={openSub === labelOf(dropdownItem) ? 'up' : 'down'}
+									size="0.9em"
+									color={headerLinkColor}
+								/>
+							</button>
+							{#if openSub === labelOf(dropdownItem)}
+								<ul
+									class="dropdown-submenu shadow-lg rounded pt-3 pb-3 [min-width:14rem]"
+									style:background-color={dropdownBg || headerBgColor}
+								>
+									{#each children as child}
+										<li
+											class="{currentPath === child.link?.url
+												? 'underline'
+												: ''} px-5 py-0 block text-left [white-space:normal] [overflow-wrap:break-word] [hyphens:auto]"
+										>
+											<PrismicLink
+												field={child.link}
+												on:click={() => {
+													closeDropdown();
+													dispatch('click');
+												}}
+												class="block w-full transition-colors dropdown-link"
+												style="color: {headerLinkColor}; --header-link-hover-color: {headerLinkHoverColor};"
+											>
+												<PrismicText field={child.label} />
+											</PrismicLink>
+										</li>
+									{/each}
+								</ul>
+							{/if}
+						</li>
+					{:else}
+						<li
+							class="{currentPath === dropdownItem.link.url
+								? 'underline'
+								: ''} px-5 py-0 font-semibold tracking-tight block text-left [white-space:normal] [overflow-wrap:break-word] [hyphens:auto] [min-width:14rem] text-left"
+							style:font-size="{headerLinkFontSize}rem"
+						>
+							<PrismicLink
+								field={dropdownItem.link}
+								on:click={() => {
+									closeDropdown();
+									dispatch('click');
+								}}
+								class="block w-full transition-colors dropdown-link"
+								style="color: {headerLinkColor}; --header-link-hover-color: {headerLinkHoverColor};"
+							>
+								<PrismicText field={dropdownItem.label} />
+							</PrismicLink>
+						</li>
+					{/if}
 				{/each}
 			</ul>
 		{/if}
@@ -183,6 +248,36 @@
 			right: 0;
 			bottom: 100%;
 			height: calc(var(--dropdown-top, 0px) + 1rem);
+		}
+	}
+
+	.submenu-trigger {
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+	}
+	/* Mobile: 3rd level expands below, indented */
+	.dropdown-submenu {
+		position: static;
+		box-shadow: none;
+		padding-left: 0.75rem;
+	}
+	@media (min-width: 1024px) {
+		.submenu-item {
+			position: relative;
+		}
+		/* Desktop: flyout to the right of its entry */
+		.dropdown-submenu {
+			position: absolute;
+			left: 100%;
+			top: -0.75rem;
+			width: max-content;
+			padding-left: 0;
+			box-shadow:
+				0 10px 15px -3px rgb(0 0 0 / 0.1),
+				0 4px 6px -4px rgb(0 0 0 / 0.1);
 		}
 	}
 

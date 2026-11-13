@@ -3,13 +3,6 @@
 		"insertBefore": null
 	},
 	"Terminbuchung": {
-		"booking_from_email": {
-			"type": "Text",
-			"config": {
-				"label": "Absender-E-Mail",
-				"placeholder": "termine@beispiel.ch"
-			}
-		},
 		"booking_customer_email_subject": {
 			"type": "Text",
 			"config": {
@@ -38,6 +31,29 @@
 			"config": {
 				"label": "Erinnerung: Stunden vor Termin",
 				"placeholder": "24 (leer = keine Erinnerung)"
+			}
+		},
+		"booking_invoice": {
+			"type": "Boolean",
+			"config": {
+				"label": "Rechnung nach dem Termin senden (Angebote mit Preis)",
+				"placeholder_false": "Nein",
+				"placeholder_true": "Ja",
+				"default_value": false
+			}
+		},
+		"booking_cancel_free_hours": {
+			"type": "Number",
+			"config": {
+				"label": "Kostenlos stornierbar bis (Std. vor Termin)",
+				"placeholder": "leer = jederzeit kostenlos stornierbar"
+			}
+		},
+		"booking_cancel_fee_percent": {
+			"type": "Number",
+			"config": {
+				"label": "Stornogebühr nach Ablauf (% vom Preis)",
+				"placeholder": "z.B. 80 — leer = danach keine Online-Stornierung"
 			}
 		}
 	}

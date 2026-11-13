@@ -20,24 +20,18 @@
 		"terminbuchung": {
 			"label": "Terminbuchung",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"manuelle_rechnungen": {
 			"label": "Manuelle Rechnungen",
 			"plans": ["individuell"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"ecommerce": {
 			"label": "E-Commerce",
 			"plans": ["individuell"],
 			"linkTargets": ["leistung"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY"]
 		},
 		"p5js": {
 			"label": "P5.js",
@@ -51,18 +45,12 @@
 			"label": "Ressourcen-Buchung",
 			"plans": ["individuell"],
 			"linkTargets": ["ressource"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"global_events": {
 			"label": "Globale Events",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
 		"erweiterte_gestaltung": {
 			"label": "Erweiterte Gestaltung",
@@ -74,7 +62,12 @@
 		},
 		"klapstudio": {
 			"label": "KlapStudio Design Panel",
-			"plans": ["individuell"]
+			"plans": ["klap-web-ch"]
+		},
+		"stundenabrechnung": {
+			"label": "Stundenabrechnung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
 		"suche": {
 			"label": "Website-Suche",
@@ -88,18 +81,12 @@
 		"newsletter": {
 			"label": "Newsletter",
 			"plans": ["professional"],
-			"env": [
-				"NETLIFY_SITE_ID",
-				"NETLIFY_TOKEN",
-				"RESEND_API_KEY",
-				"EMAIL_FROM_ADDRESS",
-				"ADMIN_SECRET"
-			]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"kundenkonto": {
 			"label": "Kundenkonto",
 			"plans": ["professional"],
-			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "EMAIL_FROM_ADDRESS"]
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY"]
 		},
 		"kundenverwaltung": {
 			"label": "Kundenverwaltung",
@@ -175,6 +162,27 @@
 				},
 				"user_backend_active": {
 					"feature": "kundenkonto"
+				},
+				"invoice_currency": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_iban": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bank": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_bic": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_payment_terms_days": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_vat_rate": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_qr_bill": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 				}
 			}
 		},
@@ -183,6 +191,16 @@
 		}
 	},
 	"slices": {
+		"Anleitung": {
+			"fields": {
+				"chapter_title": {
+					"plan": "klap-web-ch"
+				},
+				"chapter": {
+					"plan": "klap-web-ch"
+				}
+			}
+		},
 		"Akkordeon": {
 			"fields": {
 				"mit_suche": {
@@ -234,6 +252,9 @@
 				},
 				"newsletterSignup": {
 					"feature": "newsletter"
+				},
+				"stunden": {
+					"feature": "stundenabrechnung"
 				}
 			}
 		},
@@ -241,6 +262,9 @@
 			"variations": {
 				"plaene": {
 					"feature": "ecommerce"
+				},
+				"angebote": {
+					"feature": "terminbuchung"
 				}
 			}
 		},
@@ -321,6 +345,10 @@
 		"chatbot": {
 			"label": "Chat-Bot",
 			"feature": "chatbot"
+		},
+		"stunden": {
+			"label": "Stunden",
+			"feature": "stundenabrechnung"
 		}
 	}
 }

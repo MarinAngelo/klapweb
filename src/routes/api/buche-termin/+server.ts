@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { bookSlot, hasOverlappingBooking, isBooked, isCancelled } from '$lib/server/bookings';
+import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingCancel';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
@@ -11,6 +12,8 @@ import {
 } from '$lib/mapPoint.js';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { getMailFrom } from '$lib/server/mailFrom';
+import { isAdmin } from '$lib/server/adminAuth';
 
 function fmtDate(datum: string, uhrzeit: string): string {
 	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
@@ -124,7 +127,7 @@ function convertToTimezone(datum: string, uhrzeit: string, fromTz: string, toTz:
 	);
 }
 
-export const POST: RequestHandler = async ({ request, fetch }) => {
+export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	let body: {
 		terminId?: string;
 		name?: string;
@@ -132,6 +135,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		customerTimezone?: string;
 		fields?: Record<string, string>;
 		fieldLabels?: Record<string, string>;
+		telefon?: string;
+		/** Operator books for a customer (admin «Terminverwaltung»), requires admin session */
+		byAdmin?: boolean;
+		/** Admin booking: send the confirmation to the customer (only with e-mail) */
+		sendConfirmation?: boolean;
 	};
 	try {
 		body = await request.json();
@@ -139,10 +147,15 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
 	}
 
-	const { terminId, name, email, customerTimezone, fields, fieldLabels } = body;
+	const { terminId, name, email, customerTimezone, fields, fieldLabels, telefon } = body;
 	const origin = new URL(request.url).origin;
 	if (!terminId) {
 		return new Response(JSON.stringify({ error: 'terminId fehlt' }), { status: 400 });
+	}
+	// Source is decided by the server: «byAdmin» from the browser alone is not trusted
+	const byAdmin = !!body.byAdmin;
+	if (byAdmin && !isAdmin(cookies)) {
+		return new Response(JSON.stringify({ error: 'Nicht angemeldet' }), { status: 403 });
 	}
 
 	// Check if already booked or cancelled
@@ -180,9 +193,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 	let ortKarte = '';
 	let companyName = '';
 	let companyEmail = '';
-	let bookingFromEmail = '';
 	let custEmailSubject: string | null = null;
 	let custEmailBody: Array<{ text?: string }> | null = null;
+	// Invoice for offers with «Preis» (setting «Rechnung bei Buchung senden»)
+	let settingsData: Record<string, unknown> = {};
+	let offerPrice: number | null = null;
+	// Cancellation terms: offer, otherwise default of the settings
+	let cancelHours: number | null = null;
+	let cancelFeePercent: number | null = null;
 
 	try {
 		const client = createClient({ fetch });
@@ -190,9 +208,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		const settings = await client.getSingle('settings').catch(() => null);
 		if (settings) {
 			const s = settings.data as any;
+			settingsData = s;
 			companyName = (s.responsible_person_company as string) ?? '';
 			companyEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
-			bookingFromEmail = (s.booking_from_email as string) ?? '';
 			custEmailSubject = (s.booking_customer_email_subject as string) || null;
 			custEmailBody = Array.isArray(s.booking_customer_email_body)
 				? s.booking_customer_email_body
@@ -221,6 +239,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 		// Ort aus dem verknüpften Angebot laden
 		const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
+		const price = Number((offerDoc?.data as any)?.preis);
+		offerPrice = price > 0 ? price : null;
+		const positive = (value: unknown) => (Number(value) > 0 ? Number(value) : null);
+		const od = (offerDoc?.data ?? {}) as any;
+		cancelHours =
+			positive(od.cancel_free_hours) ?? positive(settingsData.booking_cancel_free_hours);
+		cancelFeePercent =
+			positive(od.cancel_fee_percent) ?? positive(settingsData.booking_cancel_fee_percent);
 		const ortLink = (offerDoc?.data as any)?.ort;
 		if (ortLink?.uid) {
 			try {
@@ -249,11 +275,14 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
 
-	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier
+	// Lead time («Vorlaufzeit») also when submitting: the slot list may have been loaded earlier.
+	// The operator may book at short notice (no lead time), but not in the past
 	if (
 		datum &&
 		uhrzeit &&
-		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) - vorlaufzeit * 60000 < Date.now()
+		zonedTimeToUtc(datum, uhrzeit, zeitzone || SITE_TIME_ZONE) -
+			(byAdmin ? 0 : vorlaufzeit) * 60000 <
+			Date.now()
 	) {
 		return new Response(
 			JSON.stringify({ error: 'Dieser Termin ist leider nicht mehr verfügbar.' }),
@@ -269,6 +298,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		);
 	}
 
+	const cancelFreeUntil = cancelDeadline(datum, uhrzeit, zeitzone, cancelHours);
+	const cancelToken = crypto.randomUUID().replace(/-/g, '');
+	const stornoLink = cancelLink(origin, { terminId, cancelToken });
+	// «Kostenlos stornierbar bis …» for the e-mail ({{Stornofrist}}); '' = no deadline
+	const stornoFrist = cancelFreeUntil ? formatDeadline(cancelFreeUntil, zeitzone) : '';
+
 	await bookSlot({
 		terminId,
 		datum,
@@ -279,8 +314,21 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		bookedAt: new Date().toISOString(),
 		name,
 		email,
+		telefon: telefon?.trim() || undefined,
+		price: offerPrice ?? undefined,
+		cancelFreeUntil,
+		cancelFeePercent: cancelFreeUntil ? (cancelFeePercent ?? undefined) : undefined,
+		cancelToken,
+		zeitzone,
+		// Invoice after the appointment (src/lib/server/bookingInvoices.ts, scheduled)
+		invoicePending: settingsData.booking_invoice === true && !!offerPrice ? true : undefined,
+		invoiceAddress:
+			fields?.adresse || fields?.plz || fields?.ort
+				? { adresse: fields.adresse, plz: fields.plz, ort: fields.ort, land: fields.land }
+				: undefined,
 		arbeitstagId,
-		angebotId
+		angebotId,
+		source: byAdmin ? 'admin' : 'online'
 	});
 	invalidateTermineCache();
 
@@ -311,7 +359,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	// Send emails (fire-and-forget — booking is already saved)
 	const resendKey = env.RESEND_API_KEY;
-	const fromEmail = bookingFromEmail || env.EMAIL_FROM_ADDRESS;
+	const fromEmail = await getMailFrom();
 	const toEmail = companyEmail;
 
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
@@ -332,7 +380,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			Ort: ortAdresse || ortName,
 			Wegbeschreibung: ortWegbeschreibung,
 			'Ort-Telefon': ortTelefon,
-			'Ort-Karte': ortKarte
+			'Ort-Karte': ortKarte,
+			Stornofrist: stornoFrist
 		};
 
 		const subject = custEmailSubject
@@ -365,13 +414,20 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
 				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
 				``,
+				...(stornoFrist
+					? [
+							cancelFeePercent && offerPrice
+								? `Kostenlos stornierbar bis ${stornoFrist} Uhr, danach mit einer Stornogebühr von ${cancelFeePercent}%.`
+								: `Online stornierbar bis ${stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
+							``
+						]
+					: []),
 				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
 				``,
 				`Freundliche Grüsse`,
 				companyName
 			].join('\n');
 
-		const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
 		const stornoLine = `\n\nStornieren: ${stornoLink}`;
 		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
 
@@ -391,8 +447,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.then(({ Resend }) => {
 				const resend = new Resend(resendKey);
 
-				// E-Mail an Kunden
-				if (email) {
+				// E-Mail an Kunden (admin booking: only if requested)
+				if (email && (!byAdmin || body.sendConfirmation)) {
 					const htmlBody =
 						bodyText
 							.split('\n')
@@ -418,7 +474,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						});
 				}
 
-				// Benachrichtigung an Anbieter
+				// Benachrichtigung an Anbieter — not when the operator booked it themselves
+				if (byAdmin) return;
 				const extraLines =
 					fields && fieldLabels
 						? Object.entries(fields)
@@ -463,11 +520,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	} else {
 		console.warn(
-			'Resend-Konfiguration fehlt (RESEND_API_KEY / EMAIL_FROM_ADDRESS / CMS-Anbieter-E-Mail) — keine Buchungs-E-Mails gesendet'
+			'Resend-Konfiguration fehlt (RESEND_API_KEY / Absender-E-Mail in den Einstellungen) — keine Buchungs-E-Mails gesendet'
 		);
 	}
-
-	const stornoLink = `${origin}/api/storniere-termin?id=${encodeURIComponent(terminId)}`;
 
 	return new Response(
 		JSON.stringify({

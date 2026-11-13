@@ -164,6 +164,15 @@
 					"default_value": false
 				}
 			},
+			"hide_legal_bar": {
+				"type": "Boolean",
+				"config": {
+					"label": "Landing Page ohne Rechtliches-Leiste",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"password_protected": {
 				"type": "Boolean",
 				"config": {

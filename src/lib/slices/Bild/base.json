@@ -43,6 +43,29 @@
 						"default_value": false
 					}
 				},
+				"bild_lupe": {
+					"type": "Boolean",
+					"config": {
+						"label": "Bild-Lupe aktivieren",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Schriftfarbe",
+						"placeholder": "Hex-Farbcode (#RRGGBB)"
+					}
+				},
 				"animate": {
 					"type": "Boolean",
 					"config": {

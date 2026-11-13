@@ -38,6 +38,11 @@
 	export let textCenterV: boolean = false;
 	export let textCenterH: boolean = false;
 	export let fullscreen: boolean = false;
+	/** Fullscreen behind the header (header overlap): the header covers the top of the section */
+	export let headerOverlap: boolean = false;
+	// Fullscreen below the header: shift the text up by half the header → centred in the viewport.
+	// Behind the header: shift it down by half the header → centred in the visible area below it
+	$: fullscreenTextOffset = headerOverlap ? -$headerHeight / 2 : $headerHeight / 2;
 
 	let imageColumn: HTMLDivElement;
 	let textColumn: HTMLDivElement;
@@ -177,7 +182,7 @@
 			style:--mob-pad-top={mobilePaddingTop}
 			style:--desk-pad={desktopPadding}
 			style:--desk-pad-y={desktopPaddingY}
-			style:--fullscreen-text-offset="{$headerHeight / 2}px"
+			style:--fullscreen-text-offset="{fullscreenTextOffset}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />
@@ -199,7 +204,7 @@
 			style:--mob-pad-top={mobilePaddingTop}
 			style:--desk-pad={desktopPadding}
 			style:--desk-pad-y={desktopPaddingY}
-			style:--fullscreen-text-offset="{$headerHeight / 2}px"
+			style:--fullscreen-text-offset="{fullscreenTextOffset}px"
 		>
 			<div class="text-content">
 				<PrismicRichText field={text} />

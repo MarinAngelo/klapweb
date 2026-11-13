@@ -1,8 +1,30 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { formatDateWithWeekday } from '$lib/utils/formatDate';
+	import { _ } from '$lib/stores/i18n';
+	import { formatProblem } from '$lib/terminDiagnose.js';
 	export let data: PageData;
+	export let form: ActionData;
+
+	// «Für Kunde buchen»: slot the operator books for a customer (modal)
+	type FreeSlot = PageData['freeSlots'][number];
+	let bookingSlot: FreeSlot | null = null;
+	let bookingEmail = '';
+	// Error from the action → reopen the modal with the message
+	$: if (form?.bookId && !bookingSlot) {
+		bookingSlot = data.freeSlots.find((s) => s.id === form?.bookId) ?? null;
+	}
+
+	function openBooking(slot: FreeSlot) {
+		bookingSlot = slot;
+		bookingEmail = '';
+	}
+
+	function closeBooking() {
+		bookingSlot = null;
+		form = null;
+	}
 
 	function confirmDelete(e: SubmitEvent, titel: string) {
 		if (!confirm(`Buchung "${titel}" wirklich löschen (Termin wird wieder frei)?`)) return;
@@ -33,7 +55,7 @@
 	let actionLoading = false;
 
 	function isFreeSlotSelected(index: number): boolean {
-		const id = data.freeSlots[index]?.id;
+		const id = visibleSlots[index]?.id;
 		return !!id && selectedFreeSlots.includes(id);
 	}
 
@@ -42,7 +64,7 @@
 		const end = Math.max(startIndex, endIndex);
 		const next = new Set(selectedFreeSlots);
 		for (let i = start; i <= end; i++) {
-			const id = data.freeSlots[i]?.id;
+			const id = visibleSlots[i]?.id;
 			if (!id) continue;
 			if (checked) next.add(id);
 			else next.delete(id);
@@ -90,7 +112,7 @@
 	}
 
 	function toggleAllFreeSlots(checked: boolean) {
-		selectedFreeSlots = checked ? data.freeSlots.map((s) => s.id) : [];
+		selectedFreeSlots = checked ? visibleSlots.map((s) => s.id) : [];
 		lastFreeSlotIndex = null;
 		mobileRangeStartIndex = null;
 	}
@@ -105,8 +127,33 @@
 		}
 	}
 
-	$: allFreeSelected =
-		data.freeSlots.length > 0 && selectedFreeSlots.length === data.freeSlots.length;
+	$: allFreeSelected = visibleSlots.length > 0 && selectedFreeSlots.length === visibleSlots.length;
+
+	// Column filters for the free slots (Datum, Titel) — client-side
+	let filterDate = '';
+	let filterOffer = '';
+	$: offerTitles = [...new Set(data.freeSlots.map((s) => s.titel))].sort((a, b) =>
+		a.localeCompare(b, 'de')
+	);
+	$: visibleSlots = data.freeSlots.filter((s) => {
+		if (filterDate && s.datum !== filterDate) return false;
+		if (filterOffer && s.titel !== filterOffer) return false;
+		return true;
+	});
+	$: isFiltered = !!(filterDate || filterOffer);
+
+	// Selection refers to the visible rows → reset when the filter changes
+	function onFilterChange() {
+		selectedFreeSlots = [];
+		lastFreeSlotIndex = null;
+		mobileRangeStartIndex = null;
+	}
+
+	function resetFilters() {
+		filterDate = '';
+		filterOffer = '';
+		onFilterChange();
+	}
 	$: someFreeSelected = selectedFreeSlots.length > 0;
 </script>
 
@@ -125,6 +172,10 @@
 		</form>
 	</AdminHeader>
 
+	{#if form?.booked}
+		<p class="admin-notice admin-notice-ok">Termin für {form.booked} gebucht.</p>
+	{/if}
+
 	{#if data.blobError}
 		<p class="admin-notice admin-notice-error admin-mono">Fehler: {data.blobError}</p>
 	{/if}
@@ -141,7 +192,7 @@
 				<table class="admin-table">
 					<thead>
 						<tr>
-							{#each ['Termin', 'Titel', 'Ort', 'Name', 'E-Mail', 'Gebucht am', ''] as col}
+							{#each ['Termin', 'Titel', 'Ort', 'Name', 'E-Mail', 'Gebucht am', 'Quelle', ''] as col}
 								<th>{col}</th>
 							{/each}
 						</tr>
@@ -152,7 +203,10 @@
 								<td class="nowrap">{fmtDate(b.datum, b.uhrzeit, b.endzeit)}</td>
 								<td>{b.titel || b.terminId}</td>
 								<td class="admin-muted">{getOrtName(b)}</td>
-								<td>{b.name ?? '–'}</td>
+								<td>
+									{b.name ?? '–'}
+									{#if b.telefon}<br /><span class="admin-muted text-xs">{b.telefon}</span>{/if}
+								</td>
 								<td>{b.email ?? '–'}</td>
 								<td class="nowrap admin-muted">
 									{new Date(b.bookedAt).toLocaleString('de-CH', {
@@ -162,6 +216,13 @@
 										hour: '2-digit',
 										minute: '2-digit'
 									})}
+								</td>
+								<td class="nowrap">
+									{#if b.source === 'admin'}
+										<span class="admin-badge admin-badge-purple">Betreiber</span>
+									{:else}
+										<span class="admin-muted text-xs">Online</span>
+									{/if}
 								</td>
 								<td>
 									<form
@@ -184,10 +245,30 @@
 	<!-- Freie Termine -->
 	<section class="admin-card">
 		<h2 class="admin-card-title">
-			Freie Termine <span class="admin-count">({data.freeSlots.length})</span>
+			Freie Termine <span class="admin-count"
+				>({isFiltered
+					? `${visibleSlots.length} von ${data.freeSlots.length}`
+					: data.freeSlots.length})</span
+			>
 		</h2>
 		{#if data.freeSlots.length === 0}
 			<p class="admin-empty">Keine freien Termine.</p>
+			{#if data.freeSlotHints.length}
+				<!-- Why: missing or contradictory entries in Prismic (src/lib/terminDiagnose.js) -->
+				<div class="admin-notice admin-notice-warn mt-3">
+					<p class="m-0 mb-2 font-semibold">{$_('Mögliche Ursachen in Prismic')}:</p>
+					<ul class="m-0 pl-5">
+						{#each data.freeSlotHints as hint}
+							{#each hint.problems as problem}
+								<li>
+									{#if hint.label}<span class="font-semibold">{hint.label}</span>:
+									{/if}{formatProblem($_(problem.key), problem.params)}
+								</li>
+							{/each}
+						{/each}
+					</ul>
+				</div>
+			{/if}
 		{:else}
 			<form method="POST" action="?/cancelSelected" on:submit={confirmBulkCancel}>
 				<div class="mb-3 flex flex-wrap items-center gap-3">
@@ -229,13 +310,52 @@
 										on:change={(e) => toggleAllFreeSlots(e.currentTarget.checked)}
 									/>
 								</th>
-								{#each ['Datum', 'Von–Bis', 'Titel', 'Dauer', 'Zeitzone', ''] as col}
+								{#each ['', 'Datum', 'Von–Bis', 'Titel', 'Dauer', 'Zeitzone'] as col}
 									<th>{col}</th>
 								{/each}
 							</tr>
+							<!-- Column filters -->
+							<tr>
+								<th></th>
+								<th>
+									{#if isFiltered}
+										<button type="button" class="admin-link text-xs" on:click={resetFilters}
+											>Filter zurücksetzen</button
+										>
+									{/if}
+								</th>
+								<th>
+									<input
+										type="date"
+										class="admin-input admin-input-sm"
+										aria-label="Nach Datum filtern"
+										bind:value={filterDate}
+										on:change={onFilterChange}
+									/>
+								</th>
+								<th></th>
+								<th>
+									<select
+										class="admin-input admin-input-sm"
+										aria-label="Nach Titel filtern"
+										bind:value={filterOffer}
+										on:change={onFilterChange}
+									>
+										<option value="">Alle</option>
+										{#each offerTitles as title}
+											<option value={title}>{title}</option>
+										{/each}
+									</select>
+								</th>
+								<th></th>
+								<th></th>
+							</tr>
 						</thead>
 						<tbody>
-							{#each data.freeSlots as s, i}
+							{#if visibleSlots.length === 0}
+								<tr><td colspan="7" class="admin-empty">Keine Termine für diesen Filter.</td></tr>
+							{/if}
+							{#each visibleSlots as s, i}
 								<tr class:admin-row-selected={mobileSelectionMode && mobileRangeStartIndex === i}>
 									<td class="nowrap">
 										<input
@@ -250,21 +370,26 @@
 											on:change={() => onFreeSlotChange(i)}
 										/>
 									</td>
-									<td class="nowrap">{formatDateWithWeekday(s.datum, null)}</td>
-									<td class="nowrap">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
-									<td>{s.titel}</td>
-									<td class="nowrap">{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
-									<td class="admin-muted">{s.zeitzone}</td>
-									<td>
+									<td class="nowrap">
+										<button type="button" class="admin-link text-xs" on:click={() => openBooking(s)}
+											>Für Kunde buchen</button
+										>
+										·
 										<form
 											method="POST"
 											action="?/cancel"
+											class="inline"
 											on:submit|preventDefault={(e) => confirmCancel(e, s.titel)}
 										>
 											<input type="hidden" name="id" value={s.id} />
 											<button type="submit" class="admin-link-warn text-xs">Sperren</button>
 										</form>
 									</td>
+									<td class="nowrap">{formatDateWithWeekday(s.datum, null)}</td>
+									<td class="nowrap">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>
+									<td>{s.titel}</td>
+									<td class="nowrap">{s.sessionLaenge ? s.sessionLaenge + ' min' : '–'}</td>
+									<td class="admin-muted">{s.zeitzone}</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -338,6 +463,67 @@
 				</table>
 			</div>
 		</section>
+	{/if}
+
+	{#if bookingSlot}
+		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+		<div class="admin-modal-backdrop" on:click|self={closeBooking}>
+			<form
+				method="POST"
+				action="?/bookForCustomer"
+				class="admin-modal max-w-md"
+				on:submit={() => (actionLoading = true)}
+			>
+				<h2 class="mb-1">Für Kunde buchen</h2>
+				<p class="admin-muted mb-4 text-sm">
+					{bookingSlot.titel} · {fmtDate(
+						bookingSlot.datum,
+						bookingSlot.uhrzeit,
+						bookingSlot.endzeit
+					)}
+				</p>
+				{#if form?.bookError}
+					<p class="admin-notice admin-notice-error">{form.bookError}</p>
+				{/if}
+				<input type="hidden" name="id" value={bookingSlot.id} />
+				<div class="space-y-3">
+					<div>
+						<label class="admin-label" for="book-name">Name *</label>
+						<input id="book-name" name="name" class="admin-input admin-input-sm" required />
+					</div>
+					<div>
+						<label class="admin-label" for="book-email">E-Mail</label>
+						<input
+							id="book-email"
+							name="email"
+							type="email"
+							class="admin-input admin-input-sm"
+							bind:value={bookingEmail}
+						/>
+						<p class="admin-hint">Für Bestätigung und Erinnerung; leer = keine E-Mails</p>
+					</div>
+					<div>
+						<label class="admin-label" for="book-telefon">Telefon</label>
+						<input id="book-telefon" name="telefon" type="tel" class="admin-input admin-input-sm" />
+					</div>
+					<label class="flex items-center gap-2 text-sm">
+						<input
+							type="checkbox"
+							name="sendConfirmation"
+							class="admin-checkbox"
+							disabled={!bookingEmail.trim()}
+						/>
+						Bestätigung per E-Mail senden
+					</label>
+				</div>
+				<div class="mt-6 flex justify-end gap-3">
+					<button type="button" class="admin-btn admin-btn-sm" on:click={closeBooking}
+						>Abbrechen</button
+					>
+					<button type="submit" class="admin-btn admin-btn-primary admin-btn-sm">Buchen</button>
+				</div>
+			</form>
+		</div>
 	{/if}
 
 	{#if actionLoading}

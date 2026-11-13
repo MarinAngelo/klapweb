@@ -27,6 +27,8 @@
 	export let headerLinkFont;
 	export let userBackendActive: boolean = false;
 	export let user: { name: string; email: string } | null = null;
+	/** Design-Vorlage «Animiertes Menü-Symbol (Mobile)»: two lines that turn into an X */
+	export let animatedMenuIcon: boolean = false;
 
 	// const { headerLinkFont } = get(theme);
 
@@ -138,7 +140,20 @@
 			aria-expanded={$isMenuOpen}
 			aria-controls="main-nav-menu"
 		>
-			{#if $isMenuOpen}
+			{#if animatedMenuIcon}
+				<svg
+					class="menu-duo"
+					class:open={$isMenuOpen}
+					viewBox="0 0 24 24"
+					width="1.5rem"
+					height="1.5rem"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path class="menu-duo-line menu-duo-top" d="M3 9H21" stroke={headerLinkColor} />
+					<path class="menu-duo-line menu-duo-bottom" d="M3 15H21" stroke={headerLinkColor} />
+				</svg>
+			{:else if $isMenuOpen}
 				<SvgIcon name="close" color={headerLinkColor} size="1.5rem" />
 			{:else}
 				<SvgIcon name="menu" color={headerLinkColor} size="1.5rem" />
@@ -164,13 +179,14 @@
                    lg:flex-row lg:items-center lg:text-center lg:gap-6 lg:w-auto"
 		>
 			{#each navigation.data?.links as item}
-				{#if item.dropdown_link === true}
+				{#if item.dropdown_link === true && !item.sub_link}
 					{@const subItems = getSubItems(item, navigation.data.links)}
 					{#if subItems.length > 0}
 						<li class="text-xl block mt-4 lg:inline-block lg:mt-0">
 							<Dropdown
 								{item}
 								{subItems}
+								allLinks={navigation.data.links}
 								{headerBgColor}
 								{headerLinkColor}
 								{headerLinkFontSize}
@@ -261,6 +277,25 @@
 </nav>
 
 <style>
+	/* Animated menu icon: two lines move to the centre and rotate into an X */
+	.menu-duo-line {
+		stroke-width: 2;
+		stroke-linecap: round;
+		transform-box: view-box;
+		transform-origin: 12px 12px;
+		transition: transform 0.3s ease;
+	}
+	.menu-duo.open .menu-duo-top {
+		transform: translateY(3px) rotate(45deg) scaleX(0.8);
+	}
+	.menu-duo.open .menu-duo-bottom {
+		transform: translateY(-3px) rotate(-45deg) scaleX(0.8);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.menu-duo-line {
+			transition: none;
+		}
+	}
 	/* Override global li { mb-4 } — nav li must have no bottom margin for correct flex centering */
 	nav :global(li) {
 		margin-bottom: 0;

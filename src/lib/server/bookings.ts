@@ -23,6 +23,24 @@ export interface BookingRecord {
 	arbeitstagId?: string;
 	angebotId?: string;
 	reminderSent?: boolean;
+	telefon?: string;
+	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
+	source?: 'online' | 'admin';
+	/** Invoice of the booking (offers with «Preis», setting «Rechnung bei Buchung senden») */
+	invoiceNumber?: string;
+	/** Snapshot at booking time (offer «Preis», cancellation terms) — later changes don't apply */
+	price?: number;
+	/** ISO time until which cancelling is free; missing = always free */
+	cancelFreeUntil?: string;
+	/** Fee after cancelFreeUntil in % of price; missing = no online cancellation after the deadline */
+	cancelFeePercent?: number;
+	/** Secret of the cancellation link; older bookings without it accept the id alone */
+	cancelToken?: string;
+	zeitzone?: string;
+	/** Invoice due after the appointment (setting «Rechnung nach dem Termin senden», offer with price) */
+	invoicePending?: boolean;
+	/** Billing address from the booking form (for the invoice / QR bill) */
+	invoiceAddress?: { adresse?: string; plz?: string; ort?: string; land?: string };
 }
 
 function toMinutes(value: string): number | null {
@@ -80,11 +98,24 @@ export async function hasOverlappingBooking(
 	endzeit: string,
 	excludeId?: string
 ): Promise<boolean> {
+	return overlapsBooking(await listBookings(), datum, startzeit, endzeit, excludeId);
+}
+
+/**
+ * Same check against already loaded bookings — for many slots at once (admin «Terminverwaltung»):
+ * one Blob listing instead of one per slot.
+ */
+export function overlapsBooking(
+	bookings: BookingRecord[],
+	datum: string,
+	startzeit: string,
+	endzeit: string,
+	excludeId?: string
+): boolean {
 	const start = toMinutes(startzeit);
 	const end = toMinutes(endzeit);
 	if (start === null || end === null || end <= start) return false;
 
-	const bookings = await listBookings();
 	return bookings.some((booking) => {
 		if (booking.terminId === excludeId || booking.datum !== datum) return false;
 		const existingStart = toMinutes(booking.uhrzeit);

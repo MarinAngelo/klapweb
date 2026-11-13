@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { linkify } from '$lib/utils/linkify';
 	import { consentServices } from '$lib/consent/services';
@@ -41,15 +41,23 @@
 	$: displayName = botName || $_('Assistent');
 	$: chatAllowed = $isServiceAllowed(SERVICE_ID);
 
-	// Opt-out consent: the chat sends messages to Anthropic → banner/settings must list it
-	onMount(() => registerServiceUsage(SERVICE_ID));
+	// Opt-out consent: the chat sends messages to Anthropic → banner/settings must list it.
+	// Registered only once the visitor opens the chat: the closed button transfers nothing,
+	// so pages don't show the cookie banner just because of the chat button
+	let unregisterUsage: (() => void) | null = null;
+	$: if (isOpen && !unregisterUsage) unregisterUsage = registerServiceUsage(SERVICE_ID);
+	onDestroy(() => unregisterUsage?.());
 
 	const errorKeys: Record<string, string> = {
 		rate_limit: 'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.',
 		invalid: 'Die Nachricht ist leer oder zu lang (max. 1000 Zeichen).',
 		unavailable: 'Der Chat ist zurzeit nicht verfügbar.',
-		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.'
+		failed: 'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.',
+		dev_forbidden: 'Der Entwickler-Modus ist nur nach der Anmeldung unter /agency verfügbar.'
 	};
+
+	// Developer mode (`@dev`, agency login): stays on for this chat window until `@exit`
+	let devMode = false;
 
 	async function send() {
 		const text = input.trim();
@@ -57,6 +65,12 @@
 
 		input = '';
 		messages = [...messages, { role: 'user', text }];
+		if (devMode && /^@exit\b/i.test(text)) {
+			devMode = false;
+			messages = [...messages, { role: 'bot', errorKey: 'Entwickler-Modus beendet.' }];
+			tick().then(scrollToBottom);
+			return;
+		}
 		loading = true;
 		tick().then(scrollToBottom);
 
@@ -69,12 +83,22 @@
 					messages: [{ role: 'user', content: text }],
 					lang,
 					conversationId,
-					page: location.pathname
+					page: location.pathname,
+					...(devMode ? { mode: 'dev' } : {})
 				})
 			});
 			const data = await res.json().catch(() => ({}));
+			if (data.mode === 'dev') devMode = true;
 			messages = data.reply
-				? [...messages, { role: 'bot', text: data.reply, entryId: data.entryId ?? undefined }]
+				? [
+						...messages,
+						// Developer answers are not rated
+						{
+							role: 'bot',
+							text: data.reply,
+							entryId: data.mode === 'dev' ? undefined : (data.entryId ?? undefined)
+						}
+					]
 				: [...messages, { role: 'bot', errorKey: errorKeys[data.error] ?? errorKeys.failed }];
 		} catch {
 			messages = [...messages, { role: 'bot', errorKey: 'Verbindungsfehler.' }];
@@ -127,7 +151,10 @@
 		<div class="chat-panel">
 			<!-- Header -->
 			<div class="chat-header">
-				<span class="text-[0.9375rem] font-semibold">{displayName}</span>
+				<span class="text-[0.9375rem] font-semibold"
+					>{displayName}{#if devMode}<span class="chat-dev-badge">{$_('Entwickler-Modus')}</span
+						>{/if}</span
+				>
 				<button
 					on:click={() => (isOpen = false)}
 					aria-label={$_('Chat schliessen')}
