@@ -72,8 +72,18 @@
 
 	// --- SEO & METADATEN ---
 	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
+	// Error pages (+error.svelte): own title, HTTP status stays unchanged
+	$: errorTitle = $page.error
+		? $page.status === 404
+			? $_('Seite nicht gefunden')
+			: $_('Ein Fehler ist aufgetreten')
+		: '';
 	$: pageTitle =
-		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
+		errorTitle ||
+		$page.data?.meta_title ||
+		$page.data?.title ||
+		settings?.data?.meta_title ||
+		siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
 	$: finalDesc = $page.data?.meta_description || asText(settings?.data?.meta_description) || '';
 	$: finalImage =
