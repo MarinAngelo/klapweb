@@ -130,19 +130,7 @@
 		},
 		"settings": {
 			"fields": {
-				"pwa_enabled": {
-					"feature": "pwa"
-				},
-				"pwa_name": {
-					"feature": "pwa"
-				},
-				"pwa_short_name": {
-					"feature": "pwa"
-				},
 				"pwa_theme_color": {
-					"feature": "pwa"
-				},
-				"pwa_icon": {
 					"feature": "pwa"
 				},
 				"chat_active": {

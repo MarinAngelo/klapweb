@@ -1343,28 +1343,14 @@
 					>
 					<tr><td><code>favicon</code></td><td>Bild (32×32)</td><td>Favicon</td></tr>
 					<tr
-						><td><code>pwa_enabled</code> <span class="field-gate">Individuell</span></td><td
-							>Toggle</td
-						><td>Als App installierbar (PWA)</td></tr
-					>
-					<tr
-						><td><code>pwa_name</code> <span class="field-gate">Individuell</span></td><td>Text</td
-						><td>App-Name</td></tr
-					>
-					<tr
-						><td><code>pwa_short_name</code> <span class="field-gate">Individuell</span></td><td
-							>Text</td
-						><td>App-Kurzname</td></tr
+						><td><code>app_icon</code></td><td>Bild (512×512)</td><td
+							>App-Icon (Home-Bildschirm, PWA)</td
+						></tr
 					>
 					<tr
 						><td><code>pwa_theme_color</code> <span class="field-gate">Individuell</span></td><td
 							>Farbe</td
-						><td>App Theme-Farbe (Browser-Chrome)</td></tr
-					>
-					<tr
-						><td><code>pwa_icon</code> <span class="field-gate">Individuell</span></td><td
-							>Bild (512×512)</td
-						><td>App-Icon (Thumbnail 192×192)</td></tr
+						><td>App &amp; Browser Statusleisten-Farbe</td></tr
 					>
 				</tbody>
 			</table>
