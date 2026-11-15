@@ -658,7 +658,7 @@
 					"label": "Chat-Anfragen per E-Mail melden",
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
-					"default_value": true
+					"default_value": false
 				}
 			},
 			"chat_bot_name": {
