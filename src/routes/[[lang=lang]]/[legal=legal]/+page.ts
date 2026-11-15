@@ -3,7 +3,8 @@ import { t } from '$lib/i18n/translations';
 import { loadSiteServices } from '$lib/consent/siteServices';
 import type { EntryGenerator, PageLoad } from './$types';
 
-// Page title per legal page (i18n key) → layout renders «Titel | Website-Name» like Prismic pages
+// Page title per legal page (i18n key) → layout renders «Titel | Website-Name» like Prismic pages.
+// As meta_title, not title: the layout shows `title` as a visible <h1>, the legal pages have their own
 const legalTitles: Record<string, string> = {
 	impressum: 'Impressum',
 	datenschutz: 'Datenschutz',
@@ -17,7 +18,7 @@ export const load: PageLoad = async ({ params, fetch, parent }) => {
 	const { lang } = await parent();
 	return {
 		legalPage,
-		title: t(legalTitles[legalPage], lang ?? 'de-ch'),
+		meta_title: t(legalTitles[legalPage], lang ?? 'de-ch'),
 		// Privacy page lists the services used in CMS content automatically
 		...(legalPage === 'datenschutz' ? { siteServices: await loadSiteServices(fetch) } : {})
 	};
