@@ -215,6 +215,10 @@
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",
 		"en-us": "Your own additions and corrections for the chat bot, e.g. terms, special rules or current notices («Closed this week»). If something contradicts «Chat-Bot Wissensbasis», this field wins. This lets you replace the knowledge base completely without losing your additions. Empty in a language = the additions of the main language apply."
 	},
+	"settings.chat_notify_email": {
+		"de-ch": "Schickt dir zu jeder Frage an den Chat-Bot eine E-Mail mit Frage, Antwort und Seite. Empfänger ist «Benachrichtigungen an (intern)», sonst die «Verantwortliche E-Mail». Ausschalten, wenn dir die Gespräche im Admin-Bereich unter «Chat-Bot» genügen.",
+		"en-us": "Sends you an e-mail for every question to the chat bot, with question, answer and page. Recipient is «Benachrichtigungen an (intern)» (internal notifications), otherwise «Verantwortliche E-Mail» (responsible e-mail). Switch it off if the conversations in the admin area under «Chat-Bot» are enough for you."
+	},
 	"settings.company_identification_number": {
 		"de-ch": "Unternehmens-Identifikationsnummer, falls vorhanden, z. B. «CHE-123.456.789» oder mit Mehrwertsteuer «CHE-123.456.789 MWST». Erscheint im Impressum und auf Rechnungen. Für eingetragene Firmen und MWST-pflichtige Betriebe nötig; Einzelpersonen ohne Handelsregister-Eintrag lassen das Feld leer. Leer = wird weggelassen.",
 		"en-us": "Company identification number, if any, e.g. «CHE-123.456.789» or with VAT «CHE-123.456.789 MWST». Appears in the legal notice and on invoices. Needed for registered companies and VAT-registered businesses; individuals without a commercial register entry leave it empty. Empty = omitted."

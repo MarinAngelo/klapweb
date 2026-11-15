@@ -652,6 +652,15 @@
 					"default_value": false
 				}
 			},
+			"chat_notify_email": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Anfragen per E-Mail melden",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": true
+				}
+			},
 			"chat_bot_name": {
 				"type": "Text",
 				"config": {

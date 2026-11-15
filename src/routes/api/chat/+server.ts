@@ -17,6 +17,7 @@ import {
 } from '$lib/server/chatLog';
 import { isAgencyAuthenticated } from '$lib/server/agencyAuth';
 import { CHAT_KNOWLEDGE_FROM_CODE, codeKnowledgeBase } from '$lib/server/chatKnowledge';
+import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 // Developer knowledge base for `@dev` (scripts/chatbot-dev-wissensbasis.js, generated before
 // dev/build). Glob: a missing file must not break the build — dev mode then says so.
@@ -65,7 +66,12 @@ function richTextToMarkdown(field: unknown): string {
 }
 
 // Settings cache per language — 5 minutes TTL
-type ChatSettings = { active: boolean; knowledgeBase: string; knowledgeExtra: string };
+type ChatSettings = {
+	active: boolean;
+	notifyEmail: boolean;
+	knowledgeBase: string;
+	knowledgeExtra: string;
+};
 const settingsCache = new Map<string, { value: ChatSettings; at: number }>();
 const SETTINGS_TTL_MS = 5 * 60 * 1000;
 
@@ -88,6 +94,8 @@ async function getChatSettings(fetchFn: typeof fetch, lang: string): Promise<Cha
 		richTextToMarkdown(localizedData[field]) || richTextToMarkdown(masterData[field]);
 	const value: ChatSettings = {
 		active: masterData.chat_active === true,
+		// «Chat-Anfragen per E-Mail melden» (main language)
+		notifyEmail: masterData.chat_notify_email === true,
 		// klap-web-ch: generated from the code (docs/chatbot-wissensbasis.html), the Prismic field is ignored
 		knowledgeBase: CHAT_KNOWLEDGE_FROM_CODE
 			? await codeKnowledgeBase()
@@ -167,7 +175,46 @@ function devSystemPrompt(): string {
 		: `${rules}\n\nDie Entwickler-Wissensbasis fehlt (scripts/chatbot-dev-wissensbasis.js wurde nicht ausgeführt). Sag das bei jeder Frage.`;
 }
 
-export async function POST({ request, fetch, getClientAddress, cookies }) {
+/** Mail to the website operator for every answered question (question + answer). */
+async function sendChatNotifyMail(
+	fetchFn: typeof fetch,
+	origin: string,
+	question: string,
+	answer: string,
+	page: string,
+	lang: string
+): Promise<void> {
+	const resendKey = env.RESEND_API_KEY;
+	const from = await getMailFrom();
+	// «Benachrichtigungen an (intern)», else «Verantwortliche E-Mail» / «Korrespondenz E-Mail»
+	const to = await getNotifyTo(fetchFn);
+	if (!resendKey || !from || !to) {
+		console.warn(
+			'[chat] Benachrichtigung nicht gesendet: RESEND_API_KEY, Absender-E-Mail oder Benachrichtigungs-E-Mail (Einstellungen) fehlt'
+		);
+		return;
+	}
+	const text = [
+		'Neue Frage an den Chat-Bot.',
+		'',
+		`Frage: ${question}`,
+		'',
+		`Antwort des Bots: ${answer}`,
+		'',
+		`Seite: ${page ? origin + page : '–'} (${lang || '–'})`,
+		`Alle Gespräche: ${origin}/admin/chatbot?monat=${new Date().toISOString().slice(0, 7)}`
+	].join('\n');
+	const { Resend } = await import('resend');
+	const { error } = await new Resend(resendKey).emails.send({
+		from,
+		to,
+		subject: `Chat-Bot: ${question.replace(/\s+/g, ' ').slice(0, 60)}${question.length > 60 ? '…' : ''}`,
+		text
+	});
+	if (error) console.error('[chat] Benachrichtigung fehlgeschlagen:', error);
+}
+
+export async function POST({ request, fetch, getClientAddress, cookies, url }) {
 	if (!FEATURE_CHATBOT) return json({ error: 'unavailable' }, { status: 404 });
 	if (isRateLimited(getClientAddress())) return json({ error: 'rate_limit' }, { status: 429 });
 
@@ -292,14 +339,16 @@ export async function POST({ request, fetch, getClientAddress, cookies }) {
 	// The widget shows plain text: remove **bold** / __bold__ the model sometimes adds anyway
 	const reply = String(data.content?.[0]?.text ?? '').replace(/(\*\*|__)(.+?)\1/g, '$2');
 
+	const page =
+		typeof body?.page === 'string' && body.page.startsWith('/') ? body.page.slice(0, 200) : '';
+
 	// Chat log for the admin (question + answer, no IP; deleted after 90 days)
 	let entryId: string | null = null;
 	if (reply && conversationId) {
-		const page = typeof body?.page === 'string' && body.page.startsWith('/') ? body.page : '';
 		entryId = await recordChatExchange({
 			conversation: conversationId,
 			lang,
-			page: page.slice(0, 200),
+			page,
 			question,
 			answer: reply,
 			usd: data.usage ? usageToTotals(data.usage).usd : 0,
@@ -308,6 +357,14 @@ export async function POST({ request, fetch, getClientAddress, cookies }) {
 			console.error('[chat] Log konnte nicht gespeichert werden:', e);
 			return null;
 		});
+	}
+
+	// «Chat-Anfragen per E-Mail melden»: every visitor question by mail (not @dev); awaited, since
+	// serverless functions may stop after the response — a mail error must not block the answer
+	if (reply && !devMode && settings.notifyEmail) {
+		await sendChatNotifyMail(fetch, url.origin, question, reply, page, lang).catch((e) =>
+			console.error('[chat] Benachrichtigung fehlgeschlagen:', e)
+		);
 	}
 
 	// entryId: lets the visitor rate this answer (/api/chat/rating)

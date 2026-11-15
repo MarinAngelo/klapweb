@@ -136,6 +136,9 @@
 				"chat_active": {
 					"feature": "chatbot"
 				},
+				"chat_notify_email": {
+					"feature": "chatbot"
+				},
 				"chat_bot_name": {
 					"feature": "chatbot"
 				},
