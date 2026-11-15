@@ -66,6 +66,11 @@
 	});
 </script>
 
+<svelte:head>
+	<!-- Error pages (404 …) never belong in search results; the HTTP status stays unchanged -->
+	<meta name="robots" content="noindex, follow" />
+</svelte:head>
+
 {#if mounted && missingTranslation}
 	<MissingTranslationModal lang={pathLang} {mainLang} href={defaultHref} />
 {:else if mounted}

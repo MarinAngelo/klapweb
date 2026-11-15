@@ -63,7 +63,7 @@
 	{
 		"id": "einstellungen",
 		"title": "Einstellungen (Settings)",
-		"stand": "2026-11-11",
+		"stand": "2026-11-15",
 		"sources": ["customtypes/settings/base.json"]
 	},
 	{

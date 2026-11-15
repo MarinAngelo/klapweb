@@ -13,7 +13,7 @@ const localRedirectDisabled =
 	dev && (smConfig as { home_redirect_disabled?: boolean }).home_redirect_disabled === true;
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ params, parent, fetch, cookies }) {
+export async function load({ params, parent, fetch, cookies, url }) {
 	// 1. Wir holen die 'lang' vom Layout (Sicherheits-Feature von SvelteKit)
 	const { lang, mainLang, settings } = await parent();
 
@@ -24,7 +24,10 @@ export async function load({ params, parent, fetch, cookies }) {
 		| import('@prismicio/client').LinkField
 		| null
 		| undefined;
-	if (redirectActive && !localRedirectDisabled) {
+	// Prismic preview (/preview) always shows the real home page, so editors can check it
+	// while visitors are still redirected
+	const isPreview = url.pathname === '/preview' || url.pathname.startsWith('/preview/');
+	if (redirectActive && !localRedirectDisabled && !isPreview) {
 		// No target page chosen → default page «Website im Aufbau» in the visitor's language
 		const langPrefix = lang && mainLang && lang !== mainLang ? `/${lang}` : '';
 		const redirectUrl = isFilled.link(redirectLink)
