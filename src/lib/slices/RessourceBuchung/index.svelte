@@ -1,12 +1,17 @@
 <script lang="ts">
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import { page } from '$app/stores';
 	import type { Content } from '@prismicio/client';
-	import { PrismicRichText } from '@prismicio/svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import RessourceKalender from '$lib/components/RessourceKalender.svelte';
 	import Checkbox from '$lib/components/Checkbox.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import { theme } from '$lib/stores/theme';
 	import { _ } from '$lib/stores/i18n';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import { onMount } from 'svelte';
 
 	export let slice: Content.RessourceBuchungSlice;
@@ -20,14 +25,24 @@
 			preisProNacht: number;
 			zimmerEinzelbuchbar: boolean;
 			saisonpreise: Array<{ von: string; bis: string; preis_pro_nacht: number }>;
-			schlafzimmer: Array<{ zimmer_name: string; bett_typ: string; anzahl_betten: number; bild: { url: string; alt: string } | null }>;
+			schlafzimmer: Array<{
+				zimmer_name: string;
+				bett_typ: string;
+				anzahl_betten: number;
+				bild: { url: string; alt: string } | null;
+			}>;
 		};
 		bookedRanges?: Array<{ von: string; bis: string; zimmer: string[] }>;
 		lang?: string;
 	};
 	export const index: number = 0;
 
-	type ZimmerItem = { zimmer_name: string; bett_typ: string; anzahl_betten: number; bild: { url: string; alt: string } | null };
+	type ZimmerItem = {
+		zimmer_name: string;
+		bett_typ: string;
+		anzahl_betten: number;
+		bild: { url: string; alt: string } | null;
+	};
 	type RessourceData = {
 		uid: string;
 		name: string;
@@ -64,36 +79,47 @@
 		}
 	}
 
-	let bookedRanges: Array<{ von: string; bis: string; zimmer: string[] }> = context?.bookedRanges ?? [];
+	let bookedRanges: Array<{ von: string; bis: string; zimmer: string[] }> =
+		context?.bookedRanges ?? [];
 	let calendarLoading = !context?.bookedRanges;
 	let loading = false;
 	let success = false;
 	let errorMsg = '';
 	let priceError = '';
 
-	$: belegteZimmerNamen = (von && bis && buchungsart === 'zimmer')
-		? new Set(bookedRanges.filter((r) => von < r.bis && r.von < bis).flatMap((r) => r.zimmer))
-		: new Set<string>();
+	$: belegteZimmerNamen =
+		von && bis && buchungsart === 'zimmer'
+			? new Set(bookedRanges.filter((r) => von < r.bis && r.von < bis).flatMap((r) => r.zimmer))
+			: new Set<string>();
 
 	$: if ((von || bis) && buchungsart === 'zimmer') {
 		if (ressource?.schlafzimmer) {
 			zimmerSelected = ressource.schlafzimmer.map((z) => {
 				const zName = z.zimmer_name || z.bett_typ;
-				return belegteZimmerNamen.has(zName) ? false : zimmerSelected[ressource!.schlafzimmer.indexOf(z)] ?? true;
+				return belegteZimmerNamen.has(zName)
+					? false
+					: (zimmerSelected[ressource!.schlafzimmer.indexOf(z)] ?? true);
 			});
 		}
 	}
 
 	$: selectedZimmer = (ressource?.schlafzimmer ?? []).filter((_, i) => zimmerSelected[i]);
 	$: kapazitaetAusgewaehlterZimmer = selectedZimmer.reduce(
-		(sum, z) => sum + (z.bett_typ === 'Stockbett' ? z.anzahl_betten * 2 : z.bett_typ === 'Doppelbett' ? z.anzahl_betten * 2 : z.anzahl_betten),
+		(sum, z) =>
+			sum +
+			(z.bett_typ === 'Stockbett'
+				? z.anzahl_betten * 2
+				: z.bett_typ === 'Doppelbett'
+					? z.anzahl_betten * 2
+					: z.anzahl_betten),
 		0
 	);
 
 	// Im Wohnung-Modus alle Buchungen als voll belegt anzeigen (auch Teilbuchungen blockieren)
-	$: calendarBookedRanges = buchungsart === 'wohnung'
-		? bookedRanges.map((r) => ({ von: r.von, bis: r.bis, zimmer: [] as string[] }))
-		: bookedRanges;
+	$: calendarBookedRanges =
+		buchungsart === 'wohnung'
+			? bookedRanges.map((r) => ({ von: r.von, bis: r.bis, zimmer: [] as string[] }))
+			: bookedRanges;
 
 	onMount(() => {
 		const uid = ressource?.uid ?? linkedUid;
@@ -101,9 +127,13 @@
 
 		async function refreshVerfuegbarkeit() {
 			try {
-				const res = await fetch(`/api/ressource-verfuegbarkeit?uid=${uid}`);
+				const res = await fetch(
+					`/api/ressource-verfuegbarkeit?uid=${uid}&lang=${context?.lang ?? $page.data?.lang ?? ''}`
+				);
 				if (res.ok) bookedRanges = await res.json();
-			} catch { /* non-critical */ } finally {
+			} catch {
+				/* non-critical */
+			} finally {
 				calendarLoading = false;
 			}
 		}
@@ -114,7 +144,9 @@
 					const lang = context?.lang ?? 'de-ch';
 					const res = await fetch(`/api/ressource-info?uid=${linkedUid}&lang=${lang}`);
 					if (res.ok) ressource = await res.json();
-				} catch { /* non-critical */ }
+				} catch {
+					/* non-critical */
+				}
 			}
 			if (!context?.bookedRanges) await refreshVerfuegbarkeit();
 		}
@@ -159,17 +191,13 @@
 	$: anzahlNaechte = naechte(von, bis);
 	$: zimmerFaktor = buchungsart === 'zimmer' ? selectedZimmer.length : anzahlZimmer;
 	$: totalPreis = von && bis ? berechneTotal(von, bis) * Math.max(1, zimmerFaktor) : 0;
-	$: preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(totalPreis);
+	import { formatDateShort } from '$lib/utils/formatDate';
 
-	function formatDate(d: string): string {
-		if (!d) return '';
-		const date = new Date(d + 'T12:00:00Z');
-		if (isNaN(date.getTime())) return '';
-		const day = String(date.getUTCDate()).padStart(2, '0');
-		const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-		const year = date.getUTCFullYear();
-		return `${day}.${month}.${year}`;
-	}
+	$: preisFormatted = new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+		totalPreis
+	);
+
+	const formatDate = formatDateShort;
 
 	// ── Validation ───────────────────────────────────────────────────────────
 	$: {
@@ -183,16 +211,21 @@
 		}
 	}
 
-	$: showZimmerSelection = !!(ressource?.zimmerEinzelbuchbar) && buchungsart === 'zimmer' && (ressource?.schlafzimmer?.length ?? 0) > 0;
-	$: zimmerError = showZimmerSelection && selectedZimmer.length === 0
-		? $_('Bitte mindestens ein Zimmer auswählen')
-		: personen > kapazitaetAusgewaehlterZimmer && kapazitaetAusgewaehlterZimmer > 0 && showZimmerSelection
-		? `${$_('Ausgewählte Zimmer bieten Platz für maximal')} ${kapazitaetAusgewaehlterZimmer} ${$_('Personen')}`
-		: '';
+	$: showZimmerSelection =
+		!!ressource?.zimmerEinzelbuchbar &&
+		buchungsart === 'zimmer' &&
+		(ressource?.schlafzimmer?.length ?? 0) > 0;
+	$: zimmerError =
+		showZimmerSelection && selectedZimmer.length === 0
+			? $_('Bitte mindestens ein Zimmer auswählen')
+			: personen > kapazitaetAusgewaehlterZimmer &&
+				  kapazitaetAusgewaehlterZimmer > 0 &&
+				  showZimmerSelection
+				? `${$_('Ausgewählte Zimmer bieten Platz für maximal')} ${kapazitaetAusgewaehlterZimmer} ${$_('Personen')}`
+				: '';
 
 	$: today = new Date().toISOString().slice(0, 10);
 	$: bisMin = von || today;
-
 
 	$: step1Valid = !!(von && bis && !priceError && !zimmerError && personen > 0);
 	$: referenzEmailValid = !referenzEmail ? true : referenzEmailFound === true;
@@ -200,6 +233,15 @@
 
 	function goToStep2() {
 		if (step1Valid) step = 2;
+	}
+	// After the success modal: back to a fresh step 1 (calendar shows the new booking)
+	function closeSuccess() {
+		success = false;
+		step = 1;
+		von = '';
+		bis = '';
+		nachricht = '';
+		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => false);
 	}
 	function backToStep1() {
 		step = 1;
@@ -227,7 +269,8 @@
 					name,
 					email,
 					telefon,
-					nachricht
+					nachricht,
+					lang: context?.lang ?? $page.data?.lang
 				})
 			});
 			const data = await res.json();
@@ -240,7 +283,10 @@
 				}
 				return;
 			}
-			bookedRanges = [...bookedRanges, { von, bis, zimmer: zimmerToSubmit.map((z) => z.zimmer_name || z.bett_typ) }];
+			bookedRanges = [
+				...bookedRanges,
+				{ von, bis, zimmer: zimmerToSubmit.map((z) => z.zimmer_name || z.bett_typ) }
+			];
 			success = true;
 		} catch {
 			errorMsg = $_('Ein Fehler ist aufgetreten');
@@ -251,15 +297,16 @@
 
 	function switchBuchungsart(art: string) {
 		buchungsart = art;
-		von = ''; bis = '';
+		von = '';
+		bis = '';
 		zimmerSelected = (ressource?.schlafzimmer ?? []).map(() => false);
 	}
 
 	$: anzahlZimmer = ressource?.schlafzimmer?.length ?? 1;
 	$: preisProNachtAnzeige = ressource
-		? (buchungsart === 'wohnung' && anzahlZimmer > 1
+		? buchungsart === 'wohnung' && anzahlZimmer > 1
 			? ressource.preisProNacht * anzahlZimmer
-			: ressource.preisProNacht)
+			: ressource.preisProNacht
 		: 0;
 
 	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
@@ -278,7 +325,9 @@
 		referenzEmailChecking = true;
 		referenzEmailTimer = setTimeout(async () => {
 			try {
-				const res = await fetch(`/api/check-referenz-email?email=${encodeURIComponent(val.trim())}`);
+				const res = await fetch(
+					`/api/check-referenz-email?email=${encodeURIComponent(val.trim())}`
+				);
 				const data = await res.json();
 				referenzEmailFound = data.found as boolean;
 			} catch {
@@ -296,390 +345,421 @@
 	as="section"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
-	style="background-color: {bgColor}; color: {textColor};"
+	class="color-scope"
+	style="--scope-color: {textColor}; --scope-bg: {bgColor};"
 >
 	<div class="flex flex-col gap-8 w-full">
-
-	{#if slice.primary.heading?.length}
-		<PrismicRichText field={slice.primary.heading} />
-	{/if}
-
-	{#if slice.primary.intro?.length}
-		<div class="mb-0 max-w-2xl">
-			<PrismicRichText field={slice.primary.intro} />
-		</div>
-	{/if}
-
-	{#if calendarLoading}
-		<div class="flex items-center justify-center py-20 gap-3 text-sm opacity-60">
-			<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="color:{textColor};">
-				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
-			</svg>
-			{$_('Verfügbarkeit wird geladen…')}
-		</div>
-	{:else if success}
-		<div class="max-w-xl rounded p-6" style="border: 1px solid {textColor}44;">
-			<p class="text-lg font-semibold mb-2">
-				{slice.primary.success_heading || $_('Anfrage erhalten!')}
-			</p>
-			{#if slice.primary.success_text?.length}
-				<PrismicRichText field={slice.primary.success_text} />
-			{:else}
-				<p>{$_('Wir melden uns in Kürze bei Ihnen.')}</p>
-			{/if}
-		</div>
-	{:else if ressource}
-
-		<!-- Step indicator -->
-		<div class="flex items-center gap-3 text-sm">
-			<div class="flex items-center gap-2">
-				<span
-					class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-					style="background-color: {textColor}; color: {bgColor};"
-				>1</span>
-				<span class="font-medium">{$_('Verfügbarkeit')}</span>
-			</div>
-			<div class="flex-1 h-px opacity-30" style="background-color: {textColor};"></div>
-			<div class="flex items-center gap-2">
-				<span
-					class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all"
-					style="background-color: {step === 2 ? textColor : 'transparent'}; color: {step === 2 ? bgColor : textColor}; border: 2px solid {textColor}; opacity: {step === 2 ? 1 : 0.4};"
-				>2</span>
-				<span style="opacity: {step === 2 ? 1 : 0.4};">{$_('Kontakt')}</span>
-			</div>
-		</div>
-
-		<!-- ── STEP 1: Verfügbarkeit, Zeitraum, Zimmer ── -->
-		{#if step === 1}
-
-			<!-- Buchungsart-Toggle -->
-			{#if isWohnung}
-				<div class="flex gap-2">
-					<button
-						type="button"
-						on:click={() => switchBuchungsart('zimmer')}
-						class="px-4 py-2 rounded text-sm font-medium transition-all"
-						style="background-color: {buchungsart === 'zimmer' ? textColor : 'transparent'}; color: {buchungsart === 'zimmer' ? bgColor : textColor}; border: 1px solid {textColor}44;"
-					>{$_('Einzelzimmer')}</button>
-					<button
-						type="button"
-						on:click={() => switchBuchungsart('wohnung')}
-						class="px-4 py-2 rounded text-sm font-medium transition-all"
-						style="background-color: {buchungsart === 'wohnung' ? textColor : 'transparent'}; color: {buchungsart === 'wohnung' ? bgColor : textColor}; border: 1px solid {textColor}44;"
-					>{$_('Ganze Wohnung')}</button>
-				</div>
-			{/if}
-
-			<!-- Infoleiste -->
-		{#if ressource?.minNaechte > 1 || ressource?.preisProNacht}
-			<div class="flex flex-wrap gap-6 text-base">
-				{#if ressource?.preisProNacht}
-					<span>{$_('Preis pro Nacht ab')} <strong>{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisProNachtAnzeige)}</strong></span>
-				{/if}
-				{#if ressource?.minNaechte > 1}
-					<span>{$_('Mindestaufenthalt')}: <strong>{ressource.minNaechte} {$_('Nächte')}</strong></span>
-				{/if}
-			</div>
+		{#if slice.primary.heading?.length}
+			<PrismicRichText field={slice.primary.heading} components={{ embed: RichTextEmbed }} />
 		{/if}
 
-		<!-- Calendar -->
-			<div class="rounded p-5 relative" style="background: #83bd69; border: 1px solid {textColor}22;">
-				<RessourceKalender
-					bookedRanges={calendarBookedRanges}
-					allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
-					bind:von
-					bind:bis
-					{textColor}
-				/>
+		{#if calendarLoading}
+			<div class="flex items-center justify-center py-20 gap-3 text-sm text-muted">
+				<svg class="animate-spin w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
+					<circle
+						class="opacity-25"
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						stroke-width="4"
+					/>
+					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+				</svg>
+				{$_('Verfügbarkeit wird geladen…')}
 			</div>
-
-			<div class="grid md:grid-cols-2 gap-10">
-
-				<!-- Left: Zeitraum + Personen + Zimmerauswahl -->
-				<div class="flex flex-col gap-5">
-
-					<!-- Date range -->
-					<div class="grid grid-cols-2 gap-3">
-						<div>
-							<label for="von" class="block text-base font-bold">{$_('Anreise')} *</label>
-							<input
-								id="von"
-								type="date"
-								bind:value={von}
-								min={today}
-								required
-								class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
-							/>
-						</div>
-						<div>
-							<label for="bis" class="block text-base font-bold">{$_('Abreise')} *</label>
-							<input
-								id="bis"
-								type="date"
-								bind:value={bis}
-								min={bisMin}
-								required
-								class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-								style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
-							/>
-						</div>
-					</div>
-
-					{#if priceError}
-						<p class="text-sm" style="color: #e53e3e;">{priceError}</p>
-					{/if}
-
-					<!-- Personen -->
-					<div>
-						<InputField
-							field={{
-								field_name: $_('Anzahl Personen'),
-								field_type: 'Zahl',
-								required: true,
-								min: 1,
-								max: ressource?.maxPersonen || null
-							}}
-							bind:value={personen}
-						/>
-						{#if ressource?.maxPersonen}
-							<span class="opacity-60 text-xs">{$_('Maximal')} {ressource.maxPersonen} {$_('Personen')}</span>
-						{/if}
-					</div>
-
-					<!-- Zimmer-Auswahl (nur im Einzelzimmer-Modus) -->
-					{#if showZimmerSelection}
-						<fieldset class="flex flex-col gap-2">
-							<legend class="block text-base font-bold mb-1">{$_('Zimmerauswahl')}</legend>
-							{#each (ressource?.schlafzimmer ?? []) as zimmer, i}
-								{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
-								{@const belegt = belegteZimmerNamen.has(zimmerName)}
-								<label
-									for="zimmer-{i}"
-									class="flex items-center gap-3 text-sm"
-									style="{belegt ? 'opacity: 0.4; cursor: not-allowed;' : 'cursor: pointer;'}"
-								>
-									<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
-									<span class="flex-1" style="{belegt ? 'text-decoration: line-through;' : ''}">{zimmerName}</span>
-									<span class="opacity-60">{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
-									{#if belegt && (von || bis)}
-										<span class="text-xs" style="color: #991b1b;">{$_('Belegt')}</span>
-									{/if}
-								</label>
-							{/each}
-							{#if zimmerError}
-								<p class="text-sm mt-1" style="color: #e53e3e;">{zimmerError}</p>
-							{/if}
-						</fieldset>
-					{/if}
-
-					<!-- Weiter-Button -->
-					<button
-						type="button"
-						on:click={goToStep2}
-						disabled={!step1Valid}
-						class="mt-2 px-6 py-3 font-medium transition-opacity disabled:opacity-40"
-						style="background-color: {textColor}; color: {bgColor};"
+		{:else if ressource}
+			<!-- Step indicator -->
+			<div class="flex items-center gap-3 text-base md:text-lg">
+				<div class="flex items-center gap-2">
+					<span
+						class="scope-btn-solid w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+						>1</span
 					>
-						{$_('Weiter')} →
-					</button>
+					<span class="font-medium">{$_('Verfügbarkeit')}</span>
 				</div>
+				<div class="scope-fill flex-1 h-px opacity-30"></div>
+				<div class="flex items-center gap-2">
+					<span
+						class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all border-2 scope-border-solid {step ===
+						2
+							? 'scope-btn-solid'
+							: 'scope-text opacity-40'}">2</span
+					>
+					<span class:opacity-40={step !== 2}>{$_('Kontakt')}</span>
+				</div>
+			</div>
 
-				<!-- Right: Zimmer Akkordeon + Preisvorschau + Regeln -->
-				<div class="flex flex-col gap-6">
+			<!-- ── STEP 1: Verfügbarkeit, Zeitraum, Zimmer ── -->
+			{#if step === 1}
+				<!-- Buchungsart-Toggle -->
+				{#if isWohnung}
+					<div class="flex gap-2">
+						<button
+							type="button"
+							on:click={() => switchBuchungsart('zimmer')}
+							class="px-4 py-2 rounded text-sm font-medium transition-all {buchungsart === 'zimmer'
+								? 'scope-btn-solid'
+								: 'scope-btn-outline'}">{$_('Einzelzimmer')}</button
+						>
+						<button
+							type="button"
+							on:click={() => switchBuchungsart('wohnung')}
+							class="px-4 py-2 rounded text-sm font-medium transition-all {buchungsart === 'wohnung'
+								? 'scope-btn-solid'
+								: 'scope-btn-outline'}">{$_('Ganze Wohnung')}</button
+						>
+					</div>
+				{/if}
 
-					<!-- Price preview -->
-					{#if von && bis && !priceError}
-						<div class="rounded p-5" style="border: 1px solid {textColor}22; background: {textColor}08;">
-							<p class="text-sm opacity-60 mb-3">{$_('Preisvorschau')}</p>
-							<div class="flex justify-between text-sm mb-1">
-								<span>{anzahlNaechte} {anzahlNaechte === 1 ? $_('Nacht') : $_('Nächte')}</span>
-								<span>{preisFormatted}</span>
-							</div>
-							<div class="flex justify-between font-semibold border-t pt-2 mt-2" style="border-color: {textColor}22;">
-								<span>{$_('Total')}</span>
-								<span>{preisFormatted}</span>
-							</div>
-						</div>
-					{/if}
-
-					<!-- Zimmer Akkordeon -->
-					{#if (ressource?.schlafzimmer?.length ?? 0) > 0}
-						<div>
-							<p class="text-sm font-semibold mb-2">{$_('Zimmer')}</p>
-							<div class="flex flex-col gap-1">
-								{#each ressource?.schlafzimmer ?? [] as zimmer}
-									{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
-									<details class="rounded overflow-hidden" style="border: 1px solid {textColor}22;">
-										<summary class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer list-none">
-											<span>{zimmerName}</span>
-											<span class="flex items-center gap-2 opacity-60 shrink-0 ml-2">
-												<span>{zimmer.anzahl_betten}× {zimmer.bett_typ}</span>
-												<span class="text-xs">▾</span>
-											</span>
-										</summary>
-										<div class="px-3 pb-3 pt-2 flex flex-col gap-2" style="border-top: 1px solid {textColor}11;">
-											{#if zimmer.bild?.url}
-												<img src={zimmer.bild.url} alt={zimmer.bild.alt || zimmerName}
-													class="w-full rounded object-cover" style="max-height: 200px;" />
-											{/if}
-											<p class="text-xs opacity-60">{zimmer.anzahl_betten}× {zimmer.bett_typ}</p>
-										</div>
-									</details>
-								{/each}
-							</div>
-						</div>
-					{/if}
-
-					<!-- Rules -->
-					<div class="text-sm opacity-60 flex flex-col gap-1">
-						{#if (ressource?.minNaechte ?? 0) > 1}
-							<p>{$_('Mindestaufenthalt')}: {ressource?.minNaechte} {$_('Nächte')}</p>
-						{/if}
+				<!-- Infoleiste -->
+				{#if ressource?.minNaechte > 1 || ressource?.preisProNacht}
+					<div class="flex flex-wrap gap-6 text-base">
 						{#if ressource?.preisProNacht}
-							<p>{$_('Preis pro Nacht ab')} {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(preisProNachtAnzeige)}</p>
+							<span
+								>{$_('Preis pro Nacht ab')}
+								<strong
+									>{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+										preisProNachtAnzeige
+									)}</strong
+								></span
+							>
+						{/if}
+						{#if ressource?.minNaechte > 1}
+							<span
+								>{$_('Mindestaufenthalt')}:
+								<strong>{ressource.minNaechte} {$_('Nächte')}</strong></span
+							>
 						{/if}
 					</div>
-				</div>
-			</div>
-
-		<!-- ── STEP 2: Kontaktformular ── -->
-		{:else}
-
-			<!-- Buchungs-Zusammenfassung -->
-			<div class="rounded p-5 flex flex-col gap-2" style="border: 1px solid {textColor}22; background: {textColor}06;">
-				<p class="text-sm font-semibold mb-1">{$_('Ihre Auswahl')}</p>
-				<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-					<div>
-						<p class="opacity-60 text-xs">{$_('Anreise')}</p>
-						<p class="font-medium">{formatDate(von)}</p>
-					</div>
-					<div>
-						<p class="opacity-60 text-xs">{$_('Abreise')}</p>
-						<p class="font-medium">{formatDate(bis)}</p>
-					</div>
-					<div>
-						<p class="opacity-60 text-xs">{$_('Nächte')}</p>
-						<p class="font-medium">{anzahlNaechte}</p>
-					</div>
-					<div>
-						<p class="opacity-60 text-xs">{$_('Personen')}</p>
-						<p class="font-medium">{personen}</p>
-					</div>
-				</div>
-				{#if showZimmerSelection && selectedZimmer.length > 0}
-					<p class="text-xs opacity-60 mt-1">{$_('Zimmer')}: {selectedZimmer.map((z) => z.zimmer_name || z.bett_typ).join(', ')}</p>
 				{/if}
-				{#if totalPreis > 0}
-					<p class="text-sm font-semibold mt-1">{$_('Total')}: {preisFormatted}</p>
-				{/if}
-				<button type="button" on:click={backToStep1} class="text-xs underline opacity-60 hover:opacity-100 text-left mt-1 w-fit">
-					← {$_('Auswahl ändern')}
-				</button>
-			</div>
 
-			<!-- Kontaktformular -->
-			<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-5 max-w-lg">
-
-				<div>
-					<label for="name" class="block text-base font-bold">{$_('Name')} *</label>
-					<input
-						id="name"
-						type="text"
-						bind:value={name}
-						required
-						class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-						style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
-					/>
-				</div>
-
-				<div>
-					<label for="email" class="block text-base font-bold">{$_('E-Mail')} *</label>
-					<input
-						id="email"
-						type="email"
-						bind:value={email}
-						required
-						class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-						style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
-					/>
-				</div>
-
-				<InputField
-					field={{ field_name: $_('Telefon'), field_type: 'Telefon', required: true }}
-					bind:value={telefon}
-				/>
-
-				<div>
-					<label for="referenz-email" class="block text-base font-bold">{$_('Freundes-Referenz-E-Mail Adresse')}</label>
-					<input
-						id="referenz-email"
-						type="email"
-						bind:value={referenzEmail}
-						class="input mt-1 p-2 block w-full rounded-none border-b focus:border-b-2 focus:outline-none focus:ring-0 sm:text-sm"
-						style="background-color: var(--page-bg-color); color: var(--page-color); border-bottom-color: var(--page-color);"
-					/>
-					{#if referenzEmailChecking}
-						<p class="text-xs opacity-50 -mt-3">{$_('Wird geprüft…')}</p>
-					{:else if referenzEmail && referenzEmail.includes('@')}
-						{#if referenzEmailFound === true}
-							<p class="text-xs -mt-3" style="color: #16a34a;">✓ {$_('E-Mail gefunden')}</p>
-						{:else if referenzEmailFound === false}
-							<p class="text-xs -mt-3" style="color: #dc2626;">✗ {$_('E-Mail nicht gefunden')}</p>
-						{/if}
+				<!-- Calendar -->
+				<div class="scope-border scope-tint relative rounded border p-5">
+					<!-- Intro (e.g. "Please refer to the legend") belongs to the calendar → only in step 1 -->
+					{#if slice.primary.intro?.length}
+						<div class="mb-4 max-w-2xl">
+							<PrismicRichText field={slice.primary.intro} components={{ embed: RichTextEmbed }} />
+						</div>
 					{/if}
+					<RessourceKalender
+						bookedRanges={calendarBookedRanges}
+						allZimmerNamen={(ressource?.schlafzimmer ?? []).map((z) => z.zimmer_name || z.bett_typ)}
+						bind:von
+						bind:bis
+					/>
 				</div>
 
-				<div>
-					<label for="nachricht" class="block text-base font-bold">{$_('Nachricht')}</label>
-					<div class="border-b focus-within:border-b-2" style="border-bottom-color: var(--page-color);">
-						<textarea
-							id="nachricht"
-							bind:value={nachricht}
-							rows="4"
-							class="input mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 resize-none"
-							style="background-color: var(--page-bg-color); color: var(--page-color);"
-						></textarea>
+				<div class="grid md:grid-cols-2 gap-10">
+					<!-- Left: Zeitraum + Personen + Zimmerauswahl -->
+					<div class="flex flex-col gap-5">
+						<!-- Date range -->
+						<div class="grid grid-cols-2 gap-3">
+							<div>
+								<label for="von" class="block text-base font-bold">{$_('Anreise')} *</label>
+								<input
+									id="von"
+									type="date"
+									bind:value={von}
+									min={today}
+									required
+									class="form-input form-input-lg"
+								/>
+							</div>
+							<div>
+								<label for="bis" class="block text-base font-bold">{$_('Abreise')} *</label>
+								<input
+									id="bis"
+									type="date"
+									bind:value={bis}
+									min={bisMin}
+									required
+									class="form-input form-input-lg"
+								/>
+							</div>
+						</div>
+
+						{#if priceError}
+							<p class="text-sm text-red-600">{priceError}</p>
+						{/if}
+
+						<!-- Personen -->
+						<div>
+							<InputField
+								field={{
+									field_name: $_('Anzahl Personen'),
+									field_type: 'Zahl',
+									required: true,
+									min: 1,
+									max: ressource?.maxPersonen || null
+								}}
+								bind:value={personen}
+							/>
+							{#if ressource?.maxPersonen}
+								<span class="text-muted text-xs"
+									>{$_('Maximal')} {ressource.maxPersonen} {$_('Personen')}</span
+								>
+							{/if}
+						</div>
+
+						<!-- Zimmer-Auswahl (nur im Einzelzimmer-Modus) -->
+						{#if showZimmerSelection}
+							<fieldset class="flex flex-col gap-2">
+								<legend class="block text-base font-bold mb-1">{$_('Zimmerauswahl')}</legend>
+								{#each ressource?.schlafzimmer ?? [] as zimmer, i}
+									{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
+									{@const belegt = belegteZimmerNamen.has(zimmerName)}
+									<label
+										for="zimmer-{i}"
+										class="flex items-center gap-3 text-sm {belegt
+											? 'opacity-40 cursor-not-allowed'
+											: 'cursor-pointer'}"
+									>
+										<Checkbox id="zimmer-{i}" bind:checked={zimmerSelected[i]} disabled={belegt} />
+										<span class="flex-1" class:line-through={belegt}>{zimmerName}</span>
+										<span class="text-muted">{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
+										{#if belegt && (von || bis)}
+											<span class="text-xs text-red-800">{$_('Belegt')}</span>
+										{/if}
+									</label>
+								{/each}
+								{#if zimmerError}
+									<p class="text-sm mt-1 text-red-600">{zimmerError}</p>
+								{/if}
+							</fieldset>
+						{/if}
+
+						<!-- Weiter-Button -->
+						<button
+							type="button"
+							on:click={goToStep2}
+							disabled={!step1Valid}
+							class="scope-btn-solid mt-2 inline-flex items-center gap-2 self-start px-6 py-3 font-medium transition-opacity"
+						>
+							{$_('Weiter')}
+							<SvgIcons name="right" size="1em" />
+						</button>
+					</div>
+
+					<!-- Right: Zimmer Akkordeon + Preisvorschau + Regeln -->
+					<div class="flex flex-col gap-6">
+						<!-- Price preview -->
+						{#if von && bis && !priceError}
+							<div class="scope-border scope-tint rounded border p-5">
+								<p class="text-sm text-muted mb-3">{$_('Preisvorschau')}</p>
+								<div class="flex justify-between text-sm mb-1">
+									<span>{anzahlNaechte} {anzahlNaechte === 1 ? $_('Nacht') : $_('Nächte')}</span>
+									<span>{preisFormatted}</span>
+								</div>
+								<div class="scope-border flex justify-between font-semibold border-t pt-2 mt-2">
+									<span>{$_('Total')}</span>
+									<span>{preisFormatted}</span>
+								</div>
+							</div>
+						{/if}
+
+						<!-- Zimmer Akkordeon -->
+						{#if (ressource?.schlafzimmer?.length ?? 0) > 0}
+							<div>
+								<p class="text-sm font-semibold mb-2">{$_('Zimmer')}</p>
+								<div class="flex flex-col gap-1">
+									{#each ressource?.schlafzimmer ?? [] as zimmer}
+										{@const zimmerName = zimmer.zimmer_name || zimmer.bett_typ}
+										<details class="scope-border overflow-hidden rounded border">
+											<summary
+												class="flex items-center justify-between px-3 py-2 text-sm cursor-pointer list-none"
+											>
+												<span>{zimmerName}</span>
+												<span class="flex items-center gap-2 text-muted shrink-0 ml-2">
+													<span>{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}</span>
+													<span class="text-xs">▾</span>
+												</span>
+											</summary>
+											<div class="scope-border px-3 pb-3 pt-2 flex flex-col gap-2 border-t">
+												{#if zimmer.bild?.url}
+													<img
+														src={zimmer.bild.url}
+														alt={zimmer.bild.alt || zimmerName}
+														class="w-full max-h-[200px] rounded object-cover"
+													/>
+												{/if}
+												<p class="text-xs text-muted">
+													{zimmer.anzahl_betten}× {$_(zimmer.bett_typ)}
+												</p>
+											</div>
+										</details>
+									{/each}
+								</div>
+							</div>
+						{/if}
+
+						<!-- Rules -->
+						<div class="text-sm text-muted flex flex-col gap-1">
+							{#if (ressource?.minNaechte ?? 0) > 1}
+								<p>{$_('Mindestaufenthalt')}: {ressource?.minNaechte} {$_('Nächte')}</p>
+							{/if}
+							{#if ressource?.preisProNacht}
+								<p>
+									{$_('Preis pro Nacht ab')}
+									{new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+										preisProNachtAnzeige
+									)}
+								</p>
+							{/if}
+						</div>
 					</div>
 				</div>
 
-				{#if errorMsg}
-					<p class="text-sm" style="color: #e53e3e;">{errorMsg}</p>
-				{/if}
-
-				<div class="flex gap-3 flex-wrap pt-2">
+				<!-- ── STEP 2: Kontaktformular ── -->
+			{:else}
+				<!-- Buchungs-Zusammenfassung -->
+				<div class="scope-border scope-tint rounded border p-5 flex flex-col gap-2">
+					<p class="text-sm font-semibold mb-1">{$_('Ihre Auswahl')}</p>
+					<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+						<div>
+							<p class="text-muted text-xs">{$_('Anreise')}</p>
+							<p class="font-medium">{formatDate(von)}</p>
+						</div>
+						<div>
+							<p class="text-muted text-xs">{$_('Abreise')}</p>
+							<p class="font-medium">{formatDate(bis)}</p>
+						</div>
+						<div>
+							<p class="text-muted text-xs">{$_('Nächte')}</p>
+							<p class="font-medium">{anzahlNaechte}</p>
+						</div>
+						<div>
+							<p class="text-muted text-xs">{$_('Personen')}</p>
+							<p class="font-medium">{personen}</p>
+						</div>
+					</div>
+					{#if showZimmerSelection && selectedZimmer.length > 0}
+						<p class="text-xs text-muted mt-1">
+							{$_('Zimmer')}: {selectedZimmer.map((z) => z.zimmer_name || z.bett_typ).join(', ')}
+						</p>
+					{/if}
+					{#if totalPreis > 0}
+						<p class="text-sm font-semibold mt-1">{$_('Total')}: {preisFormatted}</p>
+					{/if}
 					<button
 						type="button"
 						on:click={backToStep1}
-						class="px-6 py-3 font-medium transition-opacity"
-						style="background-color: transparent; color: {textColor}; border: 1px solid {textColor}44;"
+						class="text-xs underline text-muted hover:opacity-100 text-left mt-1 w-fit inline-flex items-center gap-1"
 					>
-						← {$_('Zurück')}
-					</button>
-					<button
-						type="submit"
-						disabled={!formValid || loading}
-						class="px-6 py-3 font-medium transition-opacity disabled:opacity-40"
-						style="background-color: {textColor}; color: {bgColor};"
-					>
-						{loading ? $_('Wird gesendet…') : (slice.primary.submit_label || $_('Jetzt anfragen'))}
+						<SvgIcons name="left" size="1em" />
+						{$_('Auswahl ändern')}
 					</button>
 				</div>
-			</form>
 
+				<!-- Kontaktformular -->
+				<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-5 max-w-lg">
+					<div>
+						<label for="name" class="block text-base font-bold">{$_('Name')} *</label>
+						<input
+							id="name"
+							type="text"
+							bind:value={name}
+							required
+							class="form-input form-input-lg"
+						/>
+					</div>
+
+					<div>
+						<label for="email" class="block text-base font-bold">{$_('E-Mail')} *</label>
+						<input
+							id="email"
+							type="email"
+							bind:value={email}
+							required
+							class="form-input form-input-lg"
+						/>
+					</div>
+
+					<InputField
+						field={{ field_name: $_('Telefon'), field_type: 'Telefon', required: true }}
+						bind:value={telefon}
+					/>
+
+					<div>
+						<label for="referenz-email" class="block text-base font-bold"
+							>{$_('Freundes-Referenz-E-Mail Adresse')}</label
+						>
+						<!-- Check result behind the input (right edge), not below it -->
+						<div class="relative">
+							<input
+								id="referenz-email"
+								type="email"
+								bind:value={referenzEmail}
+								aria-describedby="referenz-email-status"
+								class="form-input form-input-lg pr-44"
+							/>
+							<span
+								id="referenz-email-status"
+								class="absolute right-2 top-[calc(50%+2px)] flex -translate-y-1/2 items-center gap-1.5 text-xs pointer-events-none"
+								aria-live="polite"
+							>
+								{#if referenzEmailChecking}
+									<span
+										class="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent text-muted"
+										aria-hidden="true"
+									></span>
+									<span class="text-muted">{$_('Wird geprüft…')}</span>
+								{:else if referenzEmail && referenzEmail.includes('@')}
+									{#if referenzEmailFound === true}
+										<span class="text-green-700">✓ {$_('E-Mail gefunden')}</span>
+									{:else if referenzEmailFound === false}
+										<span class="text-red-600">✗ {$_('E-Mail nicht gefunden')}</span>
+									{/if}
+								{/if}
+							</span>
+						</div>
+					</div>
+
+					<div>
+						<label for="nachricht" class="block text-base font-bold">{$_('Nachricht')}</label>
+						<div class="border-page border-b focus-within:border-b-2">
+							<textarea
+								id="nachricht"
+								bind:value={nachricht}
+								rows="4"
+								class="mt-1 p-2 block w-full rounded-md focus:outline-none focus:ring-0 resize-none bg-page-bg text-page form-input-lg"
+							></textarea>
+						</div>
+					</div>
+
+					{#if errorMsg}
+						<p class="text-sm text-red-600">{errorMsg}</p>
+					{/if}
+
+					<div class="flex gap-3 flex-wrap pt-2">
+						<button
+							type="button"
+							on:click={backToStep1}
+							class="scope-btn-outline inline-flex items-center gap-2 px-6 py-3 font-medium transition-opacity"
+						>
+							<SvgIcons name="left" size="1em" />
+							{$_('Zurück')}
+						</button>
+						<button
+							type="submit"
+							disabled={!formValid || loading}
+							class="scope-btn-solid px-6 py-3 font-medium transition-opacity"
+						>
+							{loading ? $_('Wird gesendet…') : slice.primary.submit_label || $_('Jetzt anfragen')}
+						</button>
+					</div>
+				</form>
+			{/if}
+		{:else}
+			<p class="text-muted text-sm">{$_('Keine Ressource verknüpft')}</p>
 		{/if}
-
-	{:else}
-		<p class="opacity-60 text-sm">{$_('Keine Ressource verknüpft')}</p>
-	{/if}
-
 	</div>
+	{#if success}
+		<Modal
+			title={slice.primary.success_heading || $_('Anfrage erhalten!')}
+			message={slice.primary.success_text}
+			text={$_('Wir melden uns in Kürze bei Ihnen.')}
+			onClose={closeSuccess}
+		/>
+	{/if}
 </Bounded>
-
-<style>
-	.input {
-		font-size: 18px;
-		line-height: 1.5;
-	}
-</style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { PrismicImage } from '@prismicio/svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -47,14 +48,22 @@
 	function inTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(1 - t) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
 	function outTransition(node: Element, { duration }: { duration: number }) {
 		const dir = direction;
 		if (transitionMode === 'Slide') {
-			return { duration, easing: cubicOut, css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)` };
+			return {
+				duration,
+				easing: cubicOut,
+				css: (t: number) => `transform: translateX(${(t - 1) * dir * 100}%)`
+			};
 		}
 		return { duration, css: (t: number) => `opacity: ${t}` };
 	}
@@ -171,10 +180,9 @@
 {#if len() > 0}
 	<div class={outerClass}>
 		<div
-			class="carousel-inner relative w-full h-full overflow-hidden select-none"
+			class="carousel-inner relative w-full h-full overflow-hidden select-none [touch-action:pan-y]"
 			role="region"
-			aria-label="Image carousel"
-			style="touch-action: pan-y;"
+			aria-label={$_('Bildkarussell')}
 		>
 			{#key currentKey}
 				<div
@@ -214,7 +222,7 @@
 		</div>
 	</div>
 {:else}
-	<p class="sr-only">Keine Bilder vorhanden</p>
+	<p class="sr-only">{$_('Keine Bilder vorhanden')}</p>
 {/if}
 
 <style>

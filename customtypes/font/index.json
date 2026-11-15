@@ -25,7 +25,7 @@
 				"config": {
 					"label": "Anbieter",
 					"placeholder": "",
-					"options": ["Google", "Adobe", "Lokal"],
+					"options": ["Google", "Lokal"],
 					"default_value": "Google"
 				}
 			},
@@ -34,6 +34,41 @@
 				"config": {
 					"label": "Varianten (Google)",
 					"placeholder": "z.B. \"ital,wght@0,100..900;1,100..900\""
+				}
+			},
+			"files": {
+				"type": "Group",
+				"config": {
+					"label": "Schriftdateien (Lokal)",
+					"repeat": true,
+					"fields": {
+						"file": {
+							"type": "Link",
+							"config": {
+								"label": "Datei (.woff2, .woff, .ttf, .otf)",
+								"select": "media",
+								"placeholder": "Datei aus der Mediathek"
+							}
+						},
+						"weight": {
+							"type": "Select",
+							"config": {
+								"label": "Gewicht",
+								"placeholder": "",
+								"options": ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+								"default_value": "400"
+							}
+						},
+						"style": {
+							"type": "Select",
+							"config": {
+								"label": "Stil",
+								"placeholder": "",
+								"options": ["normal", "kursiv"],
+								"default_value": "normal"
+							}
+						}
+					}
 				}
 			}
 		}

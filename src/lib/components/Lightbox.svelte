@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	export let src: string;
 	export let alt: string = '';
 
@@ -33,7 +34,8 @@
 	<div class="content" on:click|stopPropagation>
 		<img {src} {alt} class="img" />
 	</div>
-	<button type="button" class="close" on:click={closeDialog} aria-label="Schliessen">×</button>
+	<button type="button" class="close" on:click={closeDialog} aria-label={$_('Schliessen')}>×</button
+	>
 </dialog>
 
 <style>
@@ -85,12 +87,22 @@
 	}
 
 	@keyframes lb-in {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	@keyframes lb-zoom {
-		from { transform: scale(0.92); opacity: 0; }
-		to { transform: scale(1); opacity: 1; }
+		from {
+			transform: scale(0.92);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 </style>

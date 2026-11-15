@@ -67,10 +67,7 @@ export async function createUser(
 		expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 	};
 
-	await Promise.all([
-		store.setJSON(key, user),
-		tokenStore.setJSON(verifyToken, tokenRecord)
-	]);
+	await Promise.all([store.setJSON(key, user), tokenStore.setJSON(verifyToken, tokenRecord)]);
 
 	return { user, verifyToken };
 }

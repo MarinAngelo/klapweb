@@ -1,10 +1,7 @@
 {
 	"_meta": {
 		"insertBefore": "SEO & Metadata",
-		"sliceChoices": [
-			"preisvergleich",
-			"preisaufstellung"
-		]
+		"sliceChoices": ["preisvergleich", "preisaufstellung"]
 	},
 	"Online-Handel": {
 		"ecommerce_active": {
@@ -41,21 +38,8 @@
 			"type": "Select",
 			"config": {
 				"label": "Abrechnungsart",
-				"options": [
-					"Einmalig",
-					"Jährlich",
-					"Monatlich"
-				],
+				"options": ["Einmalig", "Jährlich", "Monatlich"],
 				"default_value": "Einmalig"
-			}
-		},
-		"ecommerce_stripe_url": {
-			"type": "Link",
-			"config": {
-				"label": "Stripe Payment Link",
-				"placeholder": "https://buy.stripe.com/...",
-				"select": null,
-				"allowTargetBlank": true
 			}
 		}
 	},
@@ -70,9 +54,7 @@
 						"config": {
 							"label": "Seite",
 							"select": "document",
-							"customtypes": [
-								"page"
-							]
+							"customtypes": ["page"]
 						}
 					}
 				}
@@ -88,9 +70,7 @@
 						"config": {
 							"label": "Leistung",
 							"select": "document",
-							"customtypes": [
-								"leistung"
-							]
+							"customtypes": ["leistung"]
 						}
 					},
 					"wert": {

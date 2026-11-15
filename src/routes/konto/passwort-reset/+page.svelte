@@ -1,63 +1,69 @@
 <script lang="ts">
 	export let data: { token: string };
-	export let form: { step?: string; error?: string; sent?: boolean; success?: boolean } | null = null;
+	export let form: { step?: string; error?: string; sent?: boolean; success?: boolean } | null =
+		null;
 
 	$: isResetStep = !!data.token;
 </script>
 
 <svelte:head><title>Passwort zurücksetzen</title></svelte:head>
 
-<div style="font-family: sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f9fafb;">
-	<div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 1rem;">
-
+<div class="admin-container-narrow flex min-h-[70vh] items-center justify-center">
+	<div class="admin-card mb-0 flex w-full max-w-sm flex-col gap-4">
 		{#if form?.success}
-			<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Passwort geändert</h1>
-			<p style="font-size: 0.875rem; color: #374151;">Du kannst dich jetzt mit deinem neuen Passwort anmelden.</p>
-			<a href="/konto/anmelden" style="background: #111827; color: white; border-radius: 0.375rem; padding: 0.625rem 1rem; font-size: 1rem; text-align: center; text-decoration: none;">Zur Anmeldung</a>
-
+			<h1>Passwort geändert</h1>
+			<p class="admin-muted text-sm">Du kannst dich jetzt mit deinem neuen Passwort anmelden.</p>
+			<a href="/konto/anmelden" class="admin-btn admin-btn-dark py-2">Zur Anmeldung</a>
 		{:else if form?.sent}
-			<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">E-Mail gesendet</h1>
-			<p style="font-size: 0.875rem; color: #374151;">Falls ein Konto mit dieser E-Mail existiert, erhältst du einen Link zum Zurücksetzen.</p>
-
+			<h1>E-Mail gesendet</h1>
+			<p class="admin-muted text-sm">
+				Falls ein Konto mit dieser E-Mail existiert, erhältst du einen Link zum Zurücksetzen.
+			</p>
 		{:else if isResetStep}
-			<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Neues Passwort</h1>
-			<form method="POST" action="?/reset" style="display: flex; flex-direction: column; gap: 0.75rem;">
+			<h1>Neues Passwort</h1>
+			<form method="POST" action="?/reset" class="flex flex-col gap-3">
 				<input type="hidden" name="token" value={data.token} />
-				<div style="display: flex; flex-direction: column; gap: 0.25rem;">
-					<label for="password" style="font-size: 0.875rem;">Neues Passwort</label>
-					<input id="password" name="password" type="password" minlength="8" required
-						style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 1rem;" />
+				<div>
+					<label for="password" class="admin-label">Neues Passwort</label>
+					<input
+						id="password"
+						name="password"
+						type="password"
+						minlength="8"
+						required
+						class="admin-input"
+					/>
 				</div>
-				<div style="display: flex; flex-direction: column; gap: 0.25rem;">
-					<label for="password_confirm" style="font-size: 0.875rem;">Bestätigen</label>
-					<input id="password_confirm" name="password_confirm" type="password" required
-						style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 1rem;" />
+				<div>
+					<label for="password_confirm" class="admin-label">Bestätigen</label>
+					<input
+						id="password_confirm"
+						name="password_confirm"
+						type="password"
+						required
+						class="admin-input"
+					/>
 				</div>
 				{#if form?.error}
-					<p style="color: #dc2626; font-size: 0.875rem; margin: 0;">{form.error}</p>
+					<p class="admin-error-text">{form.error}</p>
 				{/if}
-				<button type="submit" style="background: #111827; color: white; border: none; border-radius: 0.375rem; padding: 0.625rem 1rem; font-size: 1rem; cursor: pointer;">
+				<button type="submit" class="admin-btn admin-btn-dark mt-1 py-2">
 					Passwort speichern
 				</button>
 			</form>
-
 		{:else}
-			<h1 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Passwort vergessen?</h1>
-			<form method="POST" action="?/request" style="display: flex; flex-direction: column; gap: 0.75rem;">
-				<div style="display: flex; flex-direction: column; gap: 0.25rem;">
-					<label for="email" style="font-size: 0.875rem;">E-Mail</label>
-					<input id="email" name="email" type="email" required
-						style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; font-size: 1rem;" />
+			<h1>Passwort vergessen?</h1>
+			<form method="POST" action="?/request" class="flex flex-col gap-3">
+				<div>
+					<label for="email" class="admin-label">E-Mail</label>
+					<input id="email" name="email" type="email" required class="admin-input" />
 				</div>
 				{#if form?.error}
-					<p style="color: #dc2626; font-size: 0.875rem; margin: 0;">{form.error}</p>
+					<p class="admin-error-text">{form.error}</p>
 				{/if}
-				<button type="submit" style="background: #111827; color: white; border: none; border-radius: 0.375rem; padding: 0.625rem 1rem; font-size: 1rem; cursor: pointer;">
-					Link senden
-				</button>
+				<button type="submit" class="admin-btn admin-btn-dark mt-1 py-2"> Link senden </button>
 			</form>
-			<a href="/konto/anmelden" style="font-size: 0.875rem; color: #4b5563;">Zurück zur Anmeldung</a>
+			<a href="/konto/anmelden" class="admin-link text-sm font-normal">Zurück zur Anmeldung</a>
 		{/if}
-
 	</div>
 </div>

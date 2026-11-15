@@ -4,23 +4,23 @@
 </script>
 
 {#if node.data.label === 'h1'}
-	<span class="h1-style" style={color ? `color: ${color};` : undefined}>
+	<span class="h1-style" style:color={color || undefined}>
 		<slot />
 	</span>
 {:else if node.data.label === 'h2'}
-	<span class="h2-style" style={color ? `color: ${color};` : undefined}>
+	<span class="h2-style" style:color={color || undefined}>
 		<slot />
 	</span>
 {:else if node.data.label === 'h3'}
-	<span class="h3-style" style={color ? `color: ${color};` : undefined}>
+	<span class="h3-style" style:color={color || undefined}>
 		<slot />
 	</span>
 {:else if node.data.label === 'h4'}
-	<span class="h4-style" style={color ? `color: ${color};` : undefined}>
+	<span class="h4-style" style:color={color || undefined}>
 		<slot />
 	</span>
 {:else}
-	<span class="label-{node.data.label}" style={color ? `color: ${color};` : undefined}>
+	<span class="label-{node.data.label}" style:color={color || undefined}>
 		<slot />
 	</span>
 {/if}

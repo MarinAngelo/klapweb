@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from '$lib/stores/i18n';
 	import { onDestroy } from 'svelte';
 	import { isFilled } from '@prismicio/client';
 	import type { ImageField } from '@prismicio/client';
@@ -140,8 +141,8 @@
 	tag="section"
 	fullWidth={fullBleed || bannerOverlap}
 	yPadding={bannerOverlap ? 'none' : 'base-top'}
-	class={fullBleed || bannerOverlap ? '!px-0' : ''}
-	style="background-color: {bgColor}; color: {color}; --page-color: {color};"
+	class="color-scope {fullBleed || bannerOverlap ? '!px-0' : ''}"
+	style="--scope-bg: {bgColor}; --scope-color: {color}; --page-color: {color};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
 >
@@ -151,7 +152,7 @@
 
 	{#if isMasonry}
 		<!-- ── Masonry (CSS columns) ── -->
-		<div class={masonryClass} style="column-gap: {gapPx};">
+		<div class={masonryClass} style:column-gap={gapPx}>
 			{#each items as item, i}
 				{#if item.image && isFilled.image(item.image)}
 					<button
@@ -159,7 +160,7 @@
 							? { ...itemFadeIn, delay: (itemFadeIn.delay ?? 0) + i * 60 }
 							: itemNoAnim}
 						class="group relative cursor-zoom-in text-left w-full block {roundedClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 break-inside-avoid"
-						style="margin-bottom: {gapPx};"
+						style:margin-bottom={gapPx}
 						on:click={() => open(i)}
 						aria-label="Bild {i + 1} vergrössern{item.caption ? ': ' + item.caption : ''}"
 					>
@@ -178,8 +179,9 @@
 							<span
 								class="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-medium
 								       translate-y-full group-hover:translate-y-0 transition-transform duration-300
-								       {rounded ? 'rounded-b-lg' : ''}"
-								style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff;"
+								       {rounded
+									? 'rounded-b-lg'
+									: ''} [background:linear-gradient(to_top,_rgba(0,0,0,0.7),_transparent)] [color:#fff]"
 							>
 								{item.caption}
 							</span>
@@ -189,7 +191,13 @@
 							       opacity-0 group-hover:opacity-100 transition-opacity duration-200"
 							aria-hidden="true"
 						>
-							<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" class="w-8 h-8 drop-shadow-lg">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="white"
+								stroke-width="1.5"
+								class="w-8 h-8 drop-shadow-lg"
+							>
 								<circle cx="11" cy="11" r="7" />
 								<path d="M16.5 16.5L21 21" stroke-linecap="round" />
 								<path d="M11 8v6M8 11h6" stroke-linecap="round" />
@@ -230,8 +238,9 @@
 							<span
 								class="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-medium
 								       translate-y-full group-hover:translate-y-0 transition-transform duration-300
-								       {rounded ? 'rounded-b-lg' : ''}"
-								style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff;"
+								       {rounded
+									? 'rounded-b-lg'
+									: ''} [background:linear-gradient(to_top,_rgba(0,0,0,0.7),_transparent)] [color:#fff]"
 							>
 								{item.caption}
 							</span>
@@ -266,9 +275,8 @@
 {#if lightboxIndex !== null && lightboxImg && isFilled.image(lightboxImg)}
 	<!-- Backdrop als button (schliesst bei Klick) -->
 	<button
-		class="fixed inset-0 z-50 w-full h-full"
-		style="background: rgba(0,0,0,0.92);"
-		aria-label="Lightbox schließen"
+		class="fixed inset-0 z-50 w-full h-full [background:rgba(0,0,0,0.92)]"
+		aria-label={$_('Lightbox schliessen')}
 		on:click={close}
 	>
 	</button>
@@ -278,7 +286,7 @@
 		class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
 		role="dialog"
 		aria-modal="true"
-		aria-label="Bildvorschau"
+		aria-label={$_('Bildvorschau')}
 	>
 		<!-- Bild-Container: pointer-events-auto damit Klick nicht durchgeht -->
 		<div
@@ -305,7 +313,7 @@
 		<button
 			on:click={close}
 			class="pointer-events-auto absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition"
-			aria-label="Schließen"
+			aria-label={$_('Schliessen')}
 		>
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
 				<path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
@@ -317,7 +325,7 @@
 			<button
 				on:click={navPrev}
 				class="pointer-events-auto absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition"
-				aria-label="Vorheriges Bild"
+				aria-label={$_('Vorheriges Bild')}
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
 					<path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
@@ -327,7 +335,7 @@
 			<button
 				on:click={navNext}
 				class="pointer-events-auto absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition"
-				aria-label="Nächstes Bild"
+				aria-label={$_('Nächstes Bild')}
 			>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
 					<path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />

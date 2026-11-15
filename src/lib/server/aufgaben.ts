@@ -1,7 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
 
-export type AufgabeAnnahmeStatus = 'angenommen' | 'annahme_bestaetigt' | 'eingereicht' | 'erledigt';
+export type AufgabeAnnahmeStatus = 'angenommen' | 'annahme_bestaetigt' | 'abgegeben' | 'erledigt';
 
 export interface AufgabeAnnahme {
 	id: string;
@@ -19,6 +19,11 @@ export interface AufgabeAnnahme {
 	credits?: number;
 	kommentar?: string;
 	betreiberAntwort?: string;
+	fotoVorher?: string; // URL /api/aufgabe-foto?...&art=vorher
+	fotoNachher?: string; // URL /api/aufgabe-foto?...&art=nachher
+	hauptaufgabeUid?: string; // set when the task is a subtask
+	hauptaufgabeTitel?: string;
+	bonus?: boolean; // automatic bonus record (all subtasks done)
 	angenommenAt: string;
 	bestaetgtAt?: string;
 	eingereichtAt?: string;
@@ -63,9 +68,20 @@ export async function createAnnahme(data: Omit<AufgabeAnnahme, 'id'>): Promise<A
 	return record;
 }
 
-export async function updateAnnahme(id: string, patch: Partial<AufgabeAnnahme>): Promise<AufgabeAnnahme> {
+/** Stores a record under a fixed id; returns false if the id already exists. */
+export async function createAnnahmeMitId(record: AufgabeAnnahme): Promise<boolean> {
 	const store = getStore_();
-	const existing = await store.get(id, { type: 'json' }) as AufgabeAnnahme | null;
+	if (await store.get(record.id)) return false;
+	await store.setJSON(record.id, record);
+	return true;
+}
+
+export async function updateAnnahme(
+	id: string,
+	patch: Partial<AufgabeAnnahme>
+): Promise<AufgabeAnnahme> {
+	const store = getStore_();
+	const existing = (await store.get(id, { type: 'json' })) as AufgabeAnnahme | null;
 	if (!existing) throw new Error('Annahme nicht gefunden');
 	const updated = { ...existing, ...patch };
 	await store.setJSON(id, updated);
@@ -78,7 +94,9 @@ export async function deleteAnnahme(id: string): Promise<void> {
 }
 
 /** Berechnet Credits: offen = (minuten / 60) × preisProNacht; fest = creditBetrag */
-export function berechneCredits(annahme: Pick<AufgabeAnnahme, 'creditTyp' | 'creditBetrag' | 'preisProNacht' | 'minuten'>): number {
+export function berechneCredits(
+	annahme: Pick<AufgabeAnnahme, 'creditTyp' | 'creditBetrag' | 'preisProNacht' | 'minuten'>
+): number {
 	if (annahme.creditTyp === 'fest') return annahme.creditBetrag ?? 0;
 	if (!annahme.minuten || !annahme.preisProNacht) return 0;
 	return Math.round((annahme.minuten / 60) * annahme.preisProNacht * 100) / 100;

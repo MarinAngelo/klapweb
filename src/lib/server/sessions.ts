@@ -19,10 +19,12 @@ function getSessionStore() {
 	return getStore({ name: 'user_sessions', siteID, token });
 }
 
+/** ttlDays: server-side lifetime (login form: REMEMBER_DAYS or 1 day) */
 export async function createSession(
 	userId: string,
 	email: string,
-	name: string
+	name: string,
+	ttlDays: number = SESSION_TTL_DAYS
 ): Promise<string> {
 	const store = getSessionStore();
 	const token = crypto.randomUUID();
@@ -32,7 +34,7 @@ export async function createSession(
 		email,
 		name,
 		createdAt: new Date().toISOString(),
-		expiresAt: new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString()
+		expiresAt: new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000).toISOString()
 	};
 	await store.setJSON(token, record);
 	return token;
