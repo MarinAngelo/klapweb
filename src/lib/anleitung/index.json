@@ -228,7 +228,7 @@
 		"id": "pwa",
 		"title": "Progressive Web App (PWA)",
 		"feature": "pwa",
-		"stand": "2026-11-11",
+		"stand": "2026-11-15",
 		"sources": ["src/service-worker.ts", "src/routes/manifest.webmanifest"]
 	},
 	{
