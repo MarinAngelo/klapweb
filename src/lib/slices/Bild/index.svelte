@@ -38,7 +38,7 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+	<div class={mobileVollbreite ? '-mx-6 md:mx-0' : ''}>
 		{#if isVorherNachher}
 			<VorherNachher
 				bildLinks={primaryVN.bild_links}
