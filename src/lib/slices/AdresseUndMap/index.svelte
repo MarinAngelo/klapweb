@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import ConsentGate from '$lib/components/ConsentGate.svelte';
@@ -24,8 +26,8 @@
 	$: textCenterH = p.text_center_h ?? false;
 	$: textZoomDesktop = (p.text_zoom_desktop ?? 100) / 100;
 	$: textZoomMobile = (p.text_zoom_mobile ?? 100) / 100;
-	$: textColor = p.color || $theme.pageColor;
-	$: bgColor = p.bg_color || $theme.pageBgColor;
+	$: textColor = p.color || $pageColorsStore.pageColor;
+	$: bgColor = p.bg_color || $pageColorsStore.pageBgColor;
 	const mapOpacity = convertNumber(p.opacity ?? 100);
 
 	let embedUrl = '';

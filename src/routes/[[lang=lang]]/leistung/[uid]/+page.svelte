@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { SliceZone } from '@prismicio/svelte';
+	import SliceZone from '$lib/components/SliceZone.svelte';
 	import { isFilled } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';

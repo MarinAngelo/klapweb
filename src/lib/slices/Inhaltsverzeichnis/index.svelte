@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { theme } from '$lib/stores/theme';
@@ -13,8 +15,10 @@
 	export let context: unknown = undefined;
 	export let index: number | undefined = undefined;
 
-	$: bgColor = slice.primary.bg_color || (linksMode ? $theme.headerBgColor : $theme.pageBgColor);
-	$: textColor = slice.primary.color || (linksMode ? $theme.headerColor : $theme.pageColor);
+	$: bgColor =
+		slice.primary.bg_color || (linksMode ? $theme.headerBgColor : $pageColorsStore.pageBgColor);
+	$: textColor =
+		slice.primary.color || (linksMode ? $theme.headerColor : $pageColorsStore.pageColor);
 	$: linkColor =
 		slice.primary.link_color || (linksMode ? $theme.headerLinkColor : 'var(--page-link-color)');
 	$: linkHoverColor =
@@ -242,12 +246,12 @@
 				class:header-scrolled-away={headerScrolledAway}
 				class:at-footer={sidebarAtFooter}
 				style:--toc-color={textColor}
-				style:--toc-bg={bgColor || $theme.pageBgColor}
+				style:--toc-bg={bgColor || $pageColorsStore.pageBgColor}
 				style:--toc-link-color={linkColor}
 				style:--toc-link-hover-color={linkHoverColor}
 				style:--toc-top="{headerScrolledAway ? 0 : $headerHeight || 80}px"
 				style:--toc-sidebar-max-height={sidebarMaxHeight ? `${sidebarMaxHeight}px` : 'none'}
-				style:--toc-track-color={$theme.pageBgColor || '#f8fafc'}
+				style:--toc-track-color={$pageColorsStore.pageBgColor || '#f8fafc'}
 				style:--toc-thumb-color={$theme.footerBgColor || '#d1d5db'}
 				class:visible={!dismissed}
 				aria-label={tocTitle}

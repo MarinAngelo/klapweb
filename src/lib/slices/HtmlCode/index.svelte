@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -54,7 +56,7 @@
 	:global(.html-code-container hr) {
 		border: none; /* Standard-Browser-Rahmen entfernen */
 		height: 1px; /* Dicke der Linie über Höhe steuern */
-		background-color: var(--hr-color); /* Farbe der Linie (oder {$theme.pageColor}) */
+		background-color: var(--hr-color); /* Farbe der Linie (oder {$pageColorsStore.pageColor}) */
 		color: transparent; /* Verhindert ggf. Darstellung durch Browser-Theme-Farbe */
 	}
 </style>

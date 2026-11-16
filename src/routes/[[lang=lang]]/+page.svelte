@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { renderableSlices } from '$lib/utils/renderableSlices';
-	import { SliceZone } from '@prismicio/svelte';
+	import SliceZone from '$lib/components/SliceZone.svelte';
 
 	import { components } from '$lib/slices';
 

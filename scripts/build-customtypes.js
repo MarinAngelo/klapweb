@@ -189,8 +189,51 @@ function applyFilters(model, sliceGating) {
 		...model,
 		variations: (model.variations ?? [])
 			.filter(({ id, _meta }) => isActive(varGating[id] ?? _meta)) // gating.json hat Vorrang, _meta als Fallback
-			.map(({ _meta: _, ...v }) => ({ ...v, primary: filterPrimary(v.primary, fieldGating) }))
+			.map(({ _meta: _, ...v }) => ({
+				...v,
+				primary: withCommonSliceFields(filterPrimary(v.primary, fieldGating))
+			}))
 	};
+}
+
+/**
+ * Fields every slice gets (not in base.json, so new slices have them too). Rendered by
+ * $lib/components/SliceZone.svelte. Placed directly after the slice's text/background color
+ * fields; without those before the first group / animation field.
+ */
+const COMMON_SLICE_FIELDS = {
+	invert_colors: {
+		type: 'Boolean',
+		config: {
+			label: 'Seitenfarben umkehren',
+			placeholder_false: 'Nein',
+			placeholder_true: 'Ja',
+			default_value: false
+		}
+	}
+};
+const SLICE_COLOR_FIELDS = [
+	'color',
+	'text_color',
+	'body_color',
+	'bg_color',
+	'hintergrundfarbe',
+	'body_bg_color'
+];
+
+function withCommonSliceFields(primary) {
+	const entries = Object.entries(primary ?? {});
+	const missing = Object.entries(COMMON_SLICE_FIELDS).filter(([key]) => !(key in (primary ?? {})));
+	if (!missing.length) return primary;
+	const lastColor = entries.reduce(
+		(last, [key], i) => (SLICE_COLOR_FIELDS.includes(key) ? i : last),
+		-1
+	);
+	const tailStart = entries.findIndex(
+		([key, field]) => field?.type === 'Group' || animationFields.includes(key)
+	);
+	const at = lastColor !== -1 ? lastColor + 1 : tailStart === -1 ? entries.length : tailStart;
+	return Object.fromEntries([...entries.slice(0, at), ...missing, ...entries.slice(at)]);
 }
 
 /**

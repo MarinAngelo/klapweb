@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { isFilled, type Content } from '@prismicio/client';
 	import { PrismicImage } from '@prismicio/svelte';
@@ -36,8 +38,8 @@
 	class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners
 		? 'rounded-2xl'
 		: ''}"
-	style:background-color={bodyBgColor || $theme.pageBgColor}
-	style:--custom-card-color={bodyColor || $theme.pageColor}
+	style:background-color={bodyBgColor || $pageColorsStore.pageBgColor}
+	style:--custom-card-color={bodyColor || $pageColorsStore.pageColor}
 	style:border-color={actualBorderColor || undefined}
 >
 	{#if isFilled.image(card.image)}
@@ -61,7 +63,7 @@
 			{/if}
 			{#if card.image_overlay_opacity}
 				<ImageOverlay
-					color={card.image_overlay_color || $theme.pageBgColor}
+					color={card.image_overlay_color || $pageColorsStore.pageBgColor}
 					opacity={convertNumber(card.image_overlay_opacity)}
 					{roundCorners}
 				/>
