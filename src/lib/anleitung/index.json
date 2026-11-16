@@ -75,14 +75,14 @@
 	{
 		"id": "inhalts-elemente",
 		"title": "Inhalts-Elemente im Überblick",
-		"stand": "2026-11-11",
+		"stand": "2026-11-16",
 		"sources": ["customtypes/page/base.json"]
 	},
 	{
 		"id": "seitensuche",
 		"title": "Suche auf einer Seite",
 		"feature": "suche",
-		"stand": "2026-11-11",
+		"stand": "2026-11-16",
 		"sources": ["src/lib/utils/pageSearch.ts", "src/lib/components/SearchDialog.svelte"]
 	},
 	{
