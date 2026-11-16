@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { _ } from '$lib/stores/i18n';
-	import { onMount, tick } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import { planFilter } from '$lib/stores/planFilter';
 	import { headerHeight } from '$lib/stores/headerHeight';
@@ -40,6 +40,9 @@
 	let topOpen = '';
 	let mobileSheetEl: HTMLElement | null = null;
 	let mobileBarEl: HTMLElement | null = null;
+	// Mobile: bar moved to the top of <main>, directly below the header (wherever the slice sits)
+	let mobileWrapEl: HTMLElement | null = null;
+	let mobileMoved = false;
 	let mounted = false;
 	let sectionEl: HTMLElement | null = null;
 	let mobileNaturalTop = 0;
@@ -120,6 +123,21 @@
 
 	$: if (mounted) ($headerHeight, desktopTopHeight, tocEntries, updateScrollOffset());
 
+	// Moved out of the slice → Svelte would not remove it on navigation
+	onDestroy(() => mobileWrapEl?.remove());
+
+	// The bar only exists once headings are found (after mount) → move it as soon as it is there.
+	// Header overlapping the content (banner) → keep the bar where the slice is
+	function moveMobileBar(el: HTMLElement) {
+		const main = document.getElementById('main-content');
+		const header = document.querySelector('header[data-design-element="header"]');
+		if (!main || (header && getComputedStyle(header).position === 'absolute')) return;
+		main.prepend(el);
+		mobileMoved = true;
+		tick().then(() => window.dispatchEvent(new Event('resize')));
+	}
+	$: if (mobileWrapEl && !mobileMoved) moveMobileBar(mobileWrapEl);
+
 	onMount(() => {
 		scanHeadings();
 		const headings = Array.from(
@@ -128,7 +146,7 @@
 		setActiveFromHash();
 		const onHashChange = () => setActiveFromHash();
 		const measureMobileSheet = () => {
-			const ref = sectionEl ?? mobileSheetEl;
+			const ref = mobileWrapEl ?? mobileSheetEl;
 			if (!ref) return;
 			const wasPinned = mobilePinned;
 			if (wasPinned) mobilePinned = false;
@@ -146,7 +164,9 @@
 		};
 		const onScroll = () => {
 			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
-			mobilePinned = window.scrollY >= mobileNaturalTop;
+			mobilePinned =
+				window.scrollY >=
+				mobileNaturalTop - (document.querySelector('main.header-is-sticky') ? $headerHeight : 0);
 			desktopTopPinned =
 				desktopTopSticky &&
 				window.scrollY >=
@@ -208,7 +228,7 @@
 	yPadding="base-top"
 	class="color-scope font-[var(--page-font)] toc-slice {linksMode
 		? 'toc-links-mode'
-		: 'toc-top-mode'}"
+		: 'toc-top-mode'} {mobileMoved ? 'max-md:hidden' : ''}"
 	style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-bg: {bgColor}; --scope-color: {textColor};"
 	data-slice-type={slice.slice_type}
 	data-slice-variation={slice.variation}
@@ -335,89 +355,91 @@
 			</div>
 		{/if}
 
-		{#if mobilePinned}
-			<div
-				class="md:hidden"
-				style:height="{mobileSheetHeight}px"
-				style:background-color={mobileBg}
-				style:color={mobileActiveColor}
-			></div>
-		{/if}
+		<div class="md:hidden" bind:this={mobileWrapEl}>
+			{#if mobilePinned}
+				<div
+					class="md:hidden"
+					style:height="{mobileSheetHeight}px"
+					style:background-color={mobileBg}
+					style:color={mobileActiveColor}
+				></div>
+			{/if}
 
-		<div
-			class="md:hidden toc-mobile-sheet links-mobile"
-			class:open={mobileOpen}
-			class:pinned={mobilePinned}
-			bind:this={mobileSheetEl}
-			style:--toc-color={mobileActiveColor}
-			style:--toc-bg={mobileBg}
-			style:--toc-dim={mobileDimColor}
-			style:--toc-mobile-top="{$headerHeight}px"
-			style:--toc-link-color={linkColor}
-			style:--toc-link-hover-color={linkHoverColor}
-			style:--page-color={mobileActiveColor}
-			style:--page-bg-color={mobileBg}
-			style:color={mobileActiveColor}
-			style:background-color={mobileBg}
-		>
-			<button
-				class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
-				bind:this={mobileBarEl}
-				on:click={() => (mobileOpen = !mobileOpen)}
-				aria-expanded={mobileOpen}
-				><span class="text-base font-medium">{tocTitle}</span><span
-					><SvgIcons name={mobileOpen ? 'down-square' : 'up-square'} size="1.1em" /></span
-				></button
+			<div
+				class="md:hidden toc-mobile-sheet links-mobile"
+				class:open={mobileOpen}
+				class:pinned={mobilePinned}
+				bind:this={mobileSheetEl}
+				style:--toc-color={mobileActiveColor}
+				style:--toc-bg={mobileBg}
+				style:--toc-dim={mobileDimColor}
+				style:--toc-mobile-top="{$headerHeight}px"
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--page-color={mobileActiveColor}
+				style:--page-bg-color={mobileBg}
+				style:color={mobileActiveColor}
+				style:background-color={mobileBg}
 			>
-			{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
-					<ul class="space-y-3 text-sm">
-						{#each tocGroups as group}<li>
-								<div class="toc-row">
-									<a
-										href="#{group.h2.id}"
-										on:click={() => {
-											mobileOpen = false;
-											activate(group.h2.id);
-										}}
-										class="toc-link"
-										class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
-									>{#if group.h3s.length}<button
-											type="button"
-											class="toc-toggle"
-											aria-expanded={openGroups.has(group.h2.id)}
-											aria-label={openGroups.has(group.h2.id)
-												? $_('Unterpunkte zuklappen')
-												: $_('Unterpunkte aufklappen')}
-											on:click={() => toggleGroup(group.h2.id)}
-											><svg
-												class="toc-chevron"
-												class:rotate-180={openGroups.has(group.h2.id)}
-												viewBox="0 0 20 20"
-												aria-hidden="true"
-												><path
-													d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-												/></svg
-											></button
-										>{/if}
-								</div>
-								{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
-										class="toc-sub mt-1.5 space-y-1.5 pl-3 border-l"
-									>
-										{#each group.h3s as sub}<li>
-												<a
-													href="#{sub.id}"
-													on:click={() => {
-														mobileOpen = false;
-														activate(sub.id);
-													}}
-													class="toc-link"
-													class:toc-active={sub.id === activeId}>{sub.text}</a
-												>
-											</li>{/each}
-									</ul>{/if}
-							</li>{/each}
-					</ul>
-				</div>{/if}
+				<button
+					class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
+					bind:this={mobileBarEl}
+					on:click={() => (mobileOpen = !mobileOpen)}
+					aria-expanded={mobileOpen}
+					><span class="text-base font-medium">{tocTitle}</span><span
+						><SvgIcons name={mobileOpen ? 'down-square' : 'up-square'} size="1.1em" /></span
+					></button
+				>
+				{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
+						<ul class="space-y-3 text-sm">
+							{#each tocGroups as group}<li>
+									<div class="toc-row">
+										<a
+											href="#{group.h2.id}"
+											on:click={() => {
+												mobileOpen = false;
+												activate(group.h2.id);
+											}}
+											class="toc-link"
+											class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+										>{#if group.h3s.length}<button
+												type="button"
+												class="toc-toggle"
+												aria-expanded={openGroups.has(group.h2.id)}
+												aria-label={openGroups.has(group.h2.id)
+													? $_('Unterpunkte zuklappen')
+													: $_('Unterpunkte aufklappen')}
+												on:click={() => toggleGroup(group.h2.id)}
+												><svg
+													class="toc-chevron"
+													class:rotate-180={openGroups.has(group.h2.id)}
+													viewBox="0 0 20 20"
+													aria-hidden="true"
+													><path
+														d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+													/></svg
+												></button
+											>{/if}
+									</div>
+									{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
+											class="toc-sub mt-1.5 space-y-1.5 pl-3 border-l"
+										>
+											{#each group.h3s as sub}<li>
+													<a
+														href="#{sub.id}"
+														on:click={() => {
+															mobileOpen = false;
+															activate(sub.id);
+														}}
+														class="toc-link"
+														class:toc-active={sub.id === activeId}>{sub.text}</a
+													>
+												</li>{/each}
+										</ul>{/if}
+								</li>{/each}
+						</ul>
+					</div>{/if}
+			</div>
 		</div>
 	{/if}
 </Bounded>
