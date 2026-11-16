@@ -1650,6 +1650,11 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	'Bild vergrössern': { 'de-ch': 'Bild vergrössern', 'en-us': 'Enlarge image' },
+	'Mit zwei Fingern oder Doppeltipp zoomen': {
+		'de-ch': 'Mit zwei Fingern oder Doppeltipp zoomen',
+		'en-us': 'Pinch or double-tap to zoom'
+	},
 	Link: { 'de-ch': 'Link', 'en-us': 'Link' },
 	// Event Status
 	Geplant: { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },

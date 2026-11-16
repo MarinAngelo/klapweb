@@ -135,17 +135,10 @@
 			{:else if image}
 				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div
-							on:click={() => {
-								if (window.innerWidth < 768) openLightbox();
-							}}
-						>
-							<BildLupe imageUrl={image?.url ?? ''}>
-								<PrismicImage field={image} sizes="100vw" class={imgClass} />
-							</BildLupe>
-						</div>
+						<!-- Touch: tap opens the zoom viewer (BildLupe) -->
+						<BildLupe imageUrl={image?.url ?? ''} alt={image?.alt ?? ''}>
+							<PrismicImage field={image} sizes="100vw" class={imgClass} />
+						</BildLupe>
 					{:else if lightbox}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -236,17 +229,10 @@
 			{:else if image}
 				<div class="relative {fullscreen ? 'md:h-full' : ''}" style:background-color={imageBgColor}>
 					{#if lupe}
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div
-							on:click={() => {
-								if (window.innerWidth < 768) openLightbox();
-							}}
-						>
-							<BildLupe imageUrl={image?.url ?? ''}>
-								<PrismicImage field={image} sizes="100vw" class={imgClass} />
-							</BildLupe>
-						</div>
+						<!-- Touch: tap opens the zoom viewer (BildLupe) -->
+						<BildLupe imageUrl={image?.url ?? ''} alt={image?.alt ?? ''}>
+							<PrismicImage field={image} sizes="100vw" class={imgClass} />
+						</BildLupe>
 					{:else if lightbox}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
