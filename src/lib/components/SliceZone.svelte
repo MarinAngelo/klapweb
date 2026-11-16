@@ -1,12 +1,11 @@
 <script lang="ts">
 	/**
 	 * Renders the slices of a page (instead of SliceZone from @prismicio/svelte).
-	 * Common slice fields (scripts/build-customtypes.js › COMMON_SLICE_FIELDS):
-	 * - invert_colors «Seitenfarben umkehren»: wrapper swapping page text and background color
-	 * Slices without these options are rendered unwrapped (no extra DOM).
+	 * Common slice fields (scripts/build-customtypes.js › COMMON_SLICE_FIELDS) via SliceShell:
+	 * - invert_colors «Seitenfarben umkehren», y_padding «Vertikaler innerer Abstand»
 	 */
 	import type { ComponentType } from 'svelte';
-	import InvertScope from '$lib/components/InvertScope.svelte';
+	import SliceShell from '$lib/components/SliceShell.svelte';
 
 	export let slices: any[] = [];
 	export let components: Record<string, ComponentType>;
@@ -15,12 +14,8 @@
 
 {#each slices as slice, index (slice.id ?? index)}
 	{#if components[slice.slice_type]}
-		{#if slice.primary?.invert_colors === true}
-			<InvertScope>
-				<svelte:component this={components[slice.slice_type]} {slice} {slices} {index} {context} />
-			</InvertScope>
-		{:else}
+		<SliceShell {slice}>
 			<svelte:component this={components[slice.slice_type]} {slice} {slices} {index} {context} />
-		{/if}
+		</SliceShell>
 	{/if}
 {/each}
