@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { onDestroy } from 'svelte';
 	import { isFilled } from '@prismicio/client';
@@ -18,8 +20,8 @@
 
 	const p = slice.primary ?? {};
 
-	$: bgColor = (p.bg_color as string) || $theme.pageBgColor;
-	$: color = (p.color as string) || $theme.pageColor;
+	$: bgColor = (p.bg_color as string) || $pageColorsStore.pageBgColor;
+	$: color = (p.color as string) || $pageColorsStore.pageColor;
 	$: columns = Number(p.columns ?? 3);
 	$: hasGap = (p.gap as boolean) !== false;
 	$: rounded = (p.rounded as boolean) !== false;

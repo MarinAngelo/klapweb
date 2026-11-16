@@ -887,6 +887,16 @@ p {
 		color: var(--scope-color, var(--page-color));
 		background-color: var(--scope-bg, transparent);
 	}
+	/* «Seitenfarben umkehren» (field invert_colors on every slice, $lib/components/SliceZone.svelte):
+	   page text and background color swapped; links in the (new) text color */
+	.invert-colors {
+		--page-color: var(--theme-page-bg-color);
+		--page-bg-color: var(--theme-page-color);
+		--page-link-color: var(--theme-page-bg-color);
+		--page-link-hover-color: var(--theme-page-bg-color);
+		background-color: var(--page-bg-color);
+		color: var(--page-color);
+	}
 	.scope-text {
 		color: var(--scope-color, var(--page-color));
 	}

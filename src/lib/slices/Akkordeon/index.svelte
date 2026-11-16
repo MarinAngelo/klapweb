@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -65,8 +67,8 @@
 	 *
 	 * contrast_amount → Offset für itemTextColor im geöffneten Panel (siehe unten).
 	 */
-	$: effectiveBgColor = p.bg_color || $theme.pageBgColor;
-	$: effectiveTextColor = p.text_color || $theme.pageColor;
+	$: effectiveBgColor = p.bg_color || $pageColorsStore.pageBgColor;
+	$: effectiveTextColor = p.text_color || $pageColorsStore.pageColor;
 	$: effectiveLinkColor = p.link_color || $theme.pageLinkColor;
 	$: effectiveBorderColor = p.border_color || effectiveTextColor;
 

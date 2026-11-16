@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { theme } from '$lib/stores/theme';
 	export let html: string;
 
-	$: bg = $theme.pageColor || '#1a1a1a';
-	$: color = $theme.pageBgColor || '#fff';
+	$: bg = $pageColorsStore.pageColor || '#1a1a1a';
+	$: color = $pageColorsStore.pageBgColor || '#fff';
 
 	const id = `tooltip-${Math.random().toString(36).slice(2, 8)}`;
 </script>
