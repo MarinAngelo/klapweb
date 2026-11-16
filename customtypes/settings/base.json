@@ -567,6 +567,15 @@
 					"placeholder": "Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung."
 				}
 			},
+			"no_index_site": {
+				"type": "Boolean",
+				"config": {
+					"label": "Ganze Website nicht indexieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"site_name": {
 				"type": "Text",
 				"config": {

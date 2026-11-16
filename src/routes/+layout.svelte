@@ -96,7 +96,10 @@
 		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	// Prismic field «Keine Indexierung» (no_index) of the page document; routes can also set data.no_index
-	$: noIndex = $page.data?.no_index === true || $page.data?.page?.data?.no_index === true;
+	$: noIndex =
+		data?.siteNoIndex === true ||
+		$page.data?.no_index === true ||
+		$page.data?.page?.data?.no_index === true;
 
 	// --- DOMAIN & URL ---
 	$: rawDomain = settings?.data?.domain || 'klap-web.ch';
