@@ -253,6 +253,8 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			isMultilangActive,
 			userBackendActive,
 			chatActive,
+			// «Ganze Website nicht indexieren» (Settings › SEO, main language): noindex on every page
+			siteNoIndex: (baseSettings.data as any)?.no_index_site === true,
 			// Web app manifest only with feature pwa (otherwise browsers offer to install the site)
 			pwaActive: FEATURE_PWA,
 			chatBotName,
