@@ -182,7 +182,7 @@ function filterPrimary(primary, fieldGating) {
  * - Felder:      gefiltert nach gating.slices[name].fields
  * - _meta:       aus Variationen und Feldern entfernt
  */
-function applyFilters(model, sliceGating) {
+function applyFilters(model, sliceGating, sliceName) {
 	const varGating = sliceGating?.variations ?? {};
 	const fieldGating = sliceGating?.fields ?? {};
 	return {
@@ -191,24 +191,40 @@ function applyFilters(model, sliceGating) {
 			.filter(({ id, _meta }) => isActive(varGating[id] ?? _meta)) // gating.json hat Vorrang, _meta als Fallback
 			.map(({ _meta: _, ...v }) => ({
 				...v,
-				primary: withCommonSliceFields(filterPrimary(v.primary, fieldGating))
+				primary: withCommonSliceFields(filterPrimary(v.primary, fieldGating), sliceName)
 			}))
 	};
 }
 
 /**
  * Fields every slice gets (not in base.json, so new slices have them too). Rendered by
- * $lib/components/SliceZone.svelte. Placed directly after the slice's text/background color
- * fields; without those before the first group / animation field.
+ * $lib/components/SliceZone.svelte. A slice that already has the field keeps its own.
+ * place 'afterColors': directly after the slice's text/background color fields (else like 'tail');
+ * place 'tail': before the first group / animation field. exclude: slice folders without it.
  */
 const COMMON_SLICE_FIELDS = {
 	invert_colors: {
-		type: 'Boolean',
-		config: {
-			label: 'Seitenfarben umkehren',
-			placeholder_false: 'Nein',
-			placeholder_true: 'Ja',
-			default_value: false
+		place: 'afterColors',
+		field: {
+			type: 'Boolean',
+			config: {
+				label: 'Seitenfarben umkehren',
+				placeholder_false: 'Nein',
+				placeholder_true: 'Ja',
+				default_value: false
+			}
+		}
+	},
+	// Replaces the slice's inner spacing (Bounded); fullscreen slices have none
+	y_padding: {
+		place: 'tail',
+		exclude: ['P5Grafik', 'Titelbereich'],
+		field: {
+			type: 'Select',
+			config: {
+				label: 'Vertikaler innerer Abstand',
+				options: ['kein Abstand', 'wenig', 'mittel', 'gross']
+			}
 		}
 	}
 };
@@ -221,19 +237,22 @@ const SLICE_COLOR_FIELDS = [
 	'body_bg_color'
 ];
 
-function withCommonSliceFields(primary) {
-	const entries = Object.entries(primary ?? {});
-	const missing = Object.entries(COMMON_SLICE_FIELDS).filter(([key]) => !(key in (primary ?? {})));
-	if (!missing.length) return primary;
-	const lastColor = entries.reduce(
-		(last, [key], i) => (SLICE_COLOR_FIELDS.includes(key) ? i : last),
-		-1
-	);
-	const tailStart = entries.findIndex(
-		([key, field]) => field?.type === 'Group' || animationFields.includes(key)
-	);
-	const at = lastColor !== -1 ? lastColor + 1 : tailStart === -1 ? entries.length : tailStart;
-	return Object.fromEntries([...entries.slice(0, at), ...missing, ...entries.slice(at)]);
+function withCommonSliceFields(primary, sliceName) {
+	let entries = Object.entries(primary ?? {});
+	for (const [key, { place, exclude, field }] of Object.entries(COMMON_SLICE_FIELDS)) {
+		if (exclude?.includes(sliceName) || entries.some(([k]) => k === key)) continue;
+		const lastColor = entries.reduce(
+			(last, [k], i) => (SLICE_COLOR_FIELDS.includes(k) ? i : last),
+			-1
+		);
+		const tailStart = entries.findIndex(
+			([k, f]) => f?.type === 'Group' || animationFields.includes(k)
+		);
+		const tail = tailStart === -1 ? entries.length : tailStart;
+		const at = place === 'afterColors' && lastColor !== -1 ? lastColor + 1 : tail;
+		entries = [...entries.slice(0, at), [key, field], ...entries.slice(at)];
+	}
+	return Object.fromEntries(entries);
 }
 
 /**
@@ -658,7 +677,7 @@ for (const sliceName of allSlices) {
 
 	let model;
 	if (activeExtraIds.size === 0) {
-		model = applyFilters(base, sliceGating);
+		model = applyFilters(base, sliceGating, sliceName);
 		console.log(`✓ slices/${sliceName}/model.json (base only)`);
 	} else {
 		if (!fullExists) {
@@ -668,7 +687,7 @@ for (const sliceName of allSlices) {
 		const full = read(fullPath);
 		const variationsToAdd = full.variations.filter((v) => activeExtraIds.has(v.id));
 		const merged = { ...base, variations: [...base.variations, ...variationsToAdd] };
-		model = applyFilters(merged, sliceGating);
+		model = applyFilters(merged, sliceGating, sliceName);
 		console.log(`✓ slices/${sliceName}/model.json (+${[...activeExtraIds].join(', ')})`);
 	}
 
