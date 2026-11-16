@@ -16,6 +16,10 @@
 
 	$: heading = slice.primary?.heading || $_('Inhalte filtern nach Plan:');
 
+	// Default: smallest plan «Basis» — set during init (also SSR/prerender), so the page
+	// is already filtered on first paint
+	planFilter.set('basis');
+
 	onDestroy(() => planFilter.set(null));
 </script>
 
