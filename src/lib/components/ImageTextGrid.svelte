@@ -111,9 +111,11 @@
 </script>
 
 <div
-	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} {stacked
-		? ''
-		: 'md:grid-cols-2'} {fullscreen ? 'md:h-full md:min-h-0 md:grid-rows-1' : ''}"
+	class="grid grid-cols-1 items-stretch {stacked
+		? 'gap-0'
+		: (gapClass[columnGap] ?? 'gap-8')} {stacked ? '' : 'md:grid-cols-2'} {fullscreen
+		? 'md:h-full md:min-h-0 md:grid-rows-1'
+		: ''}"
 	style:width={fullscreen ? '100vw' : '100%'}
 >
 	{#if imageLeft || stacked}
@@ -168,11 +170,11 @@
 		</div>
 		<div
 			bind:this={textColumn}
-			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {fullscreen
-				? 'md:h-full md:min-h-0 fullscreen-text-col'
-				: ''} {textCenterV ? 'justify-center mobile-vertical-center' : ''} {textCenterH
-				? 'text-center'
-				: ''}"
+			class="{mobileTextFirst ? 'order-1 md:order-none' : ''} text-col flex flex-col {stacked
+				? 'stacked-text'
+				: ''} {fullscreen ? 'md:h-full md:min-h-0 fullscreen-text-col' : ''} {textCenterV
+				? 'justify-center mobile-vertical-center'
+				: ''} {textCenterH ? 'text-center' : ''}"
 			style:--mob-pad={mobilePadding}
 			style:--mob-pad-top={mobilePaddingTop}
 			style:--desk-pad={desktopPadding}
@@ -364,6 +366,22 @@
 			padding-top: var(--desk-pad-y, 0);
 			padding-bottom: var(--desk-pad-y, 0);
 		}
+		.text-col.stacked-text {
+			padding-top: var(--desk-pad-y, 1.5rem);
+			padding-bottom: var(--desk-pad-y, 1.5rem);
+		}
+	}
+
+	/* «Bild oben, Text unten»: same space above and below the text (no column gap, no trailing margin) */
+	@media (max-width: 767px) {
+		.text-col.stacked-text {
+			padding-top: var(--mob-pad-top, var(--mob-pad, 1.5rem));
+			padding-bottom: var(--mob-pad-top, var(--mob-pad, 1.5rem));
+			min-height: auto;
+		}
+	}
+	.stacked-text .text-content > :global(:last-child) {
+		margin-bottom: 0 !important;
 	}
 
 	@keyframes lb-in {
