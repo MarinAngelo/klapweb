@@ -102,12 +102,20 @@ git push -u origin <kunde>
    mit dieser URL, Auslöser «A document is published / unpublished».
    Ohne Webhook erscheinen veröffentlichte Inhalte erst nach dem nächsten Deploy (Seiten sind
    vorgerendert).
+3. **Live-Ansicht im Page Builder** (Inhalts-Elemente werden beim Bearbeiten live angezeigt):
+   beliebiges Dokument öffnen › oben rechts **⋮ › «Live preview settings»** › URL
+   **`https://<domain>/slice-simulator`** (z.B. `https://klap-web.ch/slice-simulator`) › Save.
+   - Route `src/routes/slice-simulator` ist im Kern vorhanden, nichts einzurichten
+   - Tippfehler in der Domain (z.B. `klap-web-ch` statt `klap-web.ch`) → jedes Element zeigt «Error»
+   - Neue Felder/Varianten erscheinen erst nach dem Deploy des Codes; vorher «Error» bei
+     betroffenen Elementen
 
 ## 8. Domain und Start
 
 1. Netlify › Domain management › Kunden-Domain hinzufügen, DNS beim Anbieter setzen.
 2. Prismic › Einstellungen › «Website Domain» auf die Kunden-Domain setzen (Sitemap, robots.txt).
-3. Vorschau-Domain in Prismic (Schritt 7.1) auf die Kunden-Domain ändern.
+3. Vorschau-Domain (Schritt 7.1) und Live-Ansicht-URL (Schritt 7.3) in Prismic auf die
+   Kunden-Domain ändern.
 4. Zum Start: «Startseite umleiten» = Nein und «Ganze Website nicht indexieren» = Nein
    (in allen Sprachen der Einstellungen), veröffentlichen.
 
