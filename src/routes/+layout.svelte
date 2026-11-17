@@ -450,7 +450,10 @@
 	// Default page «Website im Aufbau» (home redirect) is always a landing page
 	$: isUnderConstruction = $page.route.id === '/[[lang=lang]]/im-aufbau';
 	$: isLandingPage =
-		$page.data?.page?.data?.landing_page === true || $errorPageLanding || isUnderConstruction;
+		$page.data?.page?.data?.landing_page === true ||
+		$errorPageLanding ||
+		!!$page.error ||
+		isUnderConstruction;
 	$: isFullscreenP5LandingPage =
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&

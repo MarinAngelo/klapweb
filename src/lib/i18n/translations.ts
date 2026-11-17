@@ -305,6 +305,24 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
 	},
 	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
+	'Etwas ist schiefgelaufen': {
+		'de-ch': 'Etwas ist schiefgelaufen',
+		'en-us': 'Something went wrong'
+	},
+	'Diese Seite gibt es nicht oder sie wurde verschoben.': {
+		'de-ch': 'Diese Seite gibt es nicht oder sie wurde verschoben.',
+		'en-us': 'This page does not exist or has been moved.'
+	},
+	'Bitte versuche es später noch einmal.': {
+		'de-ch': 'Bitte versuche es später noch einmal.',
+		'en-us': 'Please try again later.'
+	},
+	'Hier geht es zurück zur Startseite oder direkt zum Kontakt.': {
+		'de-ch': 'Hier geht es zurück zur Startseite oder direkt zum Kontakt.',
+		'en-us': 'Go back to the home page or get in touch directly.'
+	},
+	'Zur Startseite': { 'de-ch': 'Zur Startseite', 'en-us': 'Go to home page' },
+	'Kontakt aufnehmen': { 'de-ch': 'Kontakt aufnehmen', 'en-us': 'Get in touch' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
