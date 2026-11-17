@@ -25,6 +25,20 @@
 	let openSub = '';
 
 	const labelOf = (navItem: any): string => navItem?.label?.[0]?.text ?? '';
+
+	const overflowsRight = (node: HTMLElement) =>
+		window.innerWidth >= 1024 &&
+		node.getBoundingClientRect().right > document.documentElement.clientWidth - 8;
+
+	/** Desktop dropdown (2nd level): aligned to the right of its entry if it would overflow */
+	function fitMenu(node: HTMLElement) {
+		if (overflowsRight(node)) node.classList.add('menu-align-right');
+	}
+
+	/** Desktop flyout (3rd level): opens to the left if it would overflow the right screen edge */
+	function fitFlyout(node: HTMLElement) {
+		if (overflowsRight(node)) node.classList.add('flyout-left');
+	}
 	function childrenOf(navItem: any): any[] {
 		const label = labelOf(navItem);
 		if (!navItem?.dropdown_link || !label) return [];
@@ -141,6 +155,7 @@
 
 		{#if isOpen}
 			<ul
+				use:fitMenu
 				class="dropdown-menu left-0 shadow-lg z-40 rounded pt-4 pb-4 [min-width:14rem]"
 				style:background-color={dropdownBg || headerBgColor}
 				style:--dropdown-top="{dropdownTop}px"
@@ -172,6 +187,7 @@
 							</button>
 							{#if openSub === labelOf(dropdownItem)}
 								<ul
+									use:fitFlyout
 									class="dropdown-submenu shadow-lg rounded pt-3 pb-3 [min-width:14rem]"
 									style:background-color={dropdownBg || headerBgColor}
 								>
@@ -240,6 +256,12 @@
 			top: calc(100% + var(--dropdown-top, 0px));
 		}
 
+		/* Not enough room on the right (last menu items): right-aligned to the entry */
+		.dropdown-menu:global(.menu-align-right) {
+			left: auto;
+			right: 0;
+		}
+
 		/* Unsichtbarer Bereich der die Lücke zwischen Button und Dropdown überbrückt */
 		.dropdown-menu::before {
 			content: '';
@@ -278,6 +300,11 @@
 			box-shadow:
 				0 10px 15px -3px rgb(0 0 0 / 0.1),
 				0 4px 6px -4px rgb(0 0 0 / 0.1);
+		}
+		/* Not enough room on the right (e.g. last menu item): flyout to the left */
+		.dropdown-submenu:global(.flyout-left) {
+			left: auto;
+			right: 100%;
 		}
 	}
 
