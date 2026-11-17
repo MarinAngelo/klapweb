@@ -476,6 +476,15 @@
 						"default_value": false
 					}
 				},
+				"no_rounded_corners": {
+					"type": "Boolean",
+					"config": {
+						"label": "Runde Ecken ausschalten",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
 				"title_level": {
 					"type": "Select",
 					"config": {

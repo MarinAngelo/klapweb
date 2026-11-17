@@ -91,6 +91,8 @@
 	$: isBildUndText = slice.variation === 'bildUndText';
 	// Bild und Text: heading level of the item titles (CMS field "Titel-Ebene", default H2)
 	$: titleLevel = String((p as any).title_level ?? '');
+	// «Runde Ecken ausschalten» (Bild und Text): images, open content and section box square
+	$: noRoundedCorners = (p as any).no_rounded_corners === true;
 	$: titleTag = /^H[2-6]$/.test(titleLevel) ? titleLevel.toLowerCase() : 'h2';
 </script>
 
@@ -112,12 +114,13 @@
 				: p.sektion_rahmen
 					? '-mx-[1.3rem] md:mx-0'
 					: '-mx-6 md:mx-0'
-			: ''} {p.bg_color
+			: ''} {p.bg_color && !noRoundedCorners
 			? p.mobile_full_width
 				? 'md:rounded-lg'
 				: 'rounded-lg'
 			: ''} {p.sektion_rahmen
-			? 'sektion-rahmen ' + (p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
+			? 'sektion-rahmen ' +
+				(noRoundedCorners ? '' : p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
 			: ''}"
 		class:p-6={p.bg_color || p.sektion_rahmen}
 		class:acc-border={p.sektion_rahmen}
@@ -208,7 +211,8 @@
 						: { direction: 'none' }}
 					class="acc-row border-b {slice.variation === 'bildUndText'
 						? 'pb-0 md:pb-4'
-						: 'pb-4'} md:rounded-t min-w-0 {p.bg_color || p.sektion_rahmen
+						: 'pb-4'} {noRoundedCorners ? '' : 'md:rounded-t'} min-w-0 {p.bg_color ||
+					p.sektion_rahmen
 						? 'px-3'
 						: p.mobile_full_width
 							? 'px-0 md:px-3'
@@ -216,7 +220,11 @@
 				>
 					<!-- Bild und Text: Titel als h2–h6 je nach „Titel-Ebene“ (Heading enthält den Button → zugängliches Akkordeon-Muster);
 					     Grösse/Schrift kommen global aus app.css -->
-					<svelte:element this={isBildUndText ? titleTag : 'div'} class="accordion-title">
+					<svelte:element
+						this={isBildUndText ? titleTag : 'div'}
+						class="accordion-title"
+						class:accordion-title-h3={isBildUndText && titleTag === 'h3'}
+					>
 						<button
 							class="acc-item-text {isBildUndText
 								? ''
@@ -250,7 +258,9 @@
 								class="acc-bg mt-2 {slice.variation === 'bildUndText'
 									? 'pt-2 md:pt-0'
 									: 'py-2'} {slice.variation === 'bildUndText'
-									? 'rounded md:rounded-3xl'
+									? noRoundedCorners
+										? ''
+										: 'rounded md:rounded-3xl'
 									: 'rounded'} {slice.variation === 'bildUndText' ? 'md:px-0' : 'px-3'}"
 							>
 								{#if slice.variation === 'bildUndText'}
@@ -268,6 +278,7 @@
 										desktopPadding={p.mobile_full_width ? '1.5rem' : ''}
 										desktopPaddingY="1.5rem"
 										noRoundMobile={p.mobile_full_width}
+										noRound={noRoundedCorners}
 										noObjectCover
 										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
 									/>
@@ -287,6 +298,17 @@
 	/* h2–h6 keep their global size/font (app.css), but no heading margins inside the accordion */
 	.accordion-title {
 		margin: 0;
+	}
+	/* «Titel-Ebene» H3: deliberately one step smaller than the global h3 (accordion lists are dense) */
+	.accordion-title-h3 {
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+	}
+	@media (min-width: 768px) {
+		.accordion-title-h3 {
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
 	}
 	button {
 		text-align: left;
