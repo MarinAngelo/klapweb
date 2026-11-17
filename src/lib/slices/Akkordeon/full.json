@@ -576,6 +576,15 @@
 									"default_value": false
 								}
 							},
+							"image_on_top": {
+								"type": "Boolean",
+								"config": {
+									"label": "Bild oben, Text unten",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
+								}
+							},
 							"bild_hintergrund": {
 								"type": "Color",
 								"config": {

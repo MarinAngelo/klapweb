@@ -13,6 +13,8 @@
 	$: activeImages = images?.filter((img) => isFilled.image(img)) ?? [];
 	export let text: any;
 	export let imageLeft: boolean = false;
+	/** Image above text, one column on all screen sizes (Akkordeon «Bild oben, Text unten») */
+	export let stacked: boolean = false;
 	export let imageBgColor: string = '';
 	export let imageRound: boolean = false;
 	export let overlayColor: string = '';
@@ -109,13 +111,13 @@
 </script>
 
 <div
-	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} md:grid-cols-2 {fullscreen
-		? 'md:h-full md:min-h-0 md:grid-rows-1'
-		: ''}"
+	class="grid grid-cols-1 items-stretch {gapClass[columnGap] ?? 'gap-8'} {stacked
+		? ''
+		: 'md:grid-cols-2'} {fullscreen ? 'md:h-full md:min-h-0 md:grid-rows-1' : ''}"
 	style:width={fullscreen ? '100vw' : '100%'}
 >
-	{#if imageLeft}
-		<!-- Bild links, Text rechts -->
+	{#if imageLeft || stacked}
+		<!-- Bild links, Text rechts (stacked: Bild oben, Text unten) -->
 		<div
 			bind:this={imageColumn}
 			class="{mobileTextFirst ? 'order-2 md:order-none' : ''} {fullscreen

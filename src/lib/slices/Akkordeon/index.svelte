@@ -268,6 +268,7 @@
 										image={'image' in item ? item.image : null}
 										text={item.content}
 										imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
+										stacked={'image_on_top' in item ? item.image_on_top === true : false}
 										imageBgColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 										overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
 										overlayTransparency={'bild_overlay_transparenz' in item
