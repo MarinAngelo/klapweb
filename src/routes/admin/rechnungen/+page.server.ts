@@ -51,7 +51,12 @@ export const actions: Actions = {
 		const companyInfo = await loadInvoiceSettings(fetch);
 
 		const invoiceNumber = `MAN-${Date.now()}`;
-		const pdfBytes = await manualPdf(invoiceNumber, invoiceData, companyInfo);
+		const pdfBytes = await manualPdf(
+			invoiceNumber,
+			invoiceData,
+			companyInfo,
+			invoiceDateFrom(formData)
+		);
 
 		return {
 			success: true,
@@ -85,6 +90,7 @@ export const actions: Actions = {
 		const created = await createInvoice({
 			source: 'admin',
 			invoiceNumber,
+			date: invoiceDateFrom(formData),
 			recipient,
 			items,
 			notes,
@@ -205,7 +211,10 @@ export const actions: Actions = {
 
 		const companyInfo = await loadInvoiceSettings(fetch);
 
-		const pdfBytes = await manualPdf(invoiceNumber, invoiceData, companyInfo);
+		// Date of the stored invoice (not today), read on the server
+		const invoiceId = formData.get('invoice-id') as string;
+		const stored = invoiceId ? await getManualInvoice(invoiceId).catch(() => null) : null;
+		const pdfBytes = await manualPdf(invoiceNumber, invoiceData, companyInfo, stored?.date);
 		return {
 			pdfBase64: Buffer.from(pdfBytes).toString('base64')
 		};
@@ -252,10 +261,42 @@ function splitInvoiceData({ items, notes, ...recipient }: InvoiceFormData) {
 }
 
 /** PDF of the admin form (manual invoice, column «Menge») */
-function manualPdf(invoiceNumber: string, data: InvoiceFormData, settings: InvoiceSettings) {
+function manualPdf(
+	invoiceNumber: string,
+	data: InvoiceFormData,
+	settings: InvoiceSettings,
+	date?: string
+) {
 	const { recipient, items, notes } = splitInvoiceData(data);
 	return renderInvoicePdf(
-		{ invoiceNumber, currency: settings.currency, recipient, items, notes, showQuantity: true },
+		{
+			invoiceNumber,
+			date,
+			currency: settings.currency,
+			recipient,
+			items,
+			notes,
+			showQuantity: true
+		},
 		settings
 	);
+}
+
+/** Today as YYYY-MM-DD in Swiss time */
+const todaySwiss = () =>
+	new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(new Date());
+
+/**
+ * «Rechnungsdatum» of the form (YYYY-MM-DD): may be in the past, never in the future.
+ * Today/empty → now; earlier day → noon UTC of that day (same calendar day in every time zone
+ * used for display). Invalid or future → error.
+ */
+function invoiceDateFrom(formData: FormData): string | undefined {
+	const value = String(formData.get('invoice-date') ?? '').trim();
+	if (!value || value === todaySwiss()) return undefined;
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value))) {
+		throw error(400, 'Ungültiges Rechnungsdatum');
+	}
+	if (value > todaySwiss()) throw error(400, 'Das Rechnungsdatum darf nicht in der Zukunft liegen');
+	return `${value}T12:00:00.000Z`;
 }
