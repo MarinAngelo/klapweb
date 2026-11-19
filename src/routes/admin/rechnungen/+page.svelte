@@ -61,6 +61,27 @@
 		items = [...items, { description: '', quantity: 1, unitPrice: 0 }];
 	}
 
+	// «Leistung wählen»: fills description and price of a line item (stays editable)
+	function serviceByUid(uid: string) {
+		return data.services.find((s) => s.uid === uid);
+	}
+	function pickService(idx: number, select: HTMLSelectElement) {
+		const service = serviceByUid(select.value);
+		select.value = '';
+		if (!service) return;
+		items[idx].description = service.label;
+		if (service.price !== null) items[idx].unitPrice = service.price;
+		items = items;
+	}
+	function pickEditService(idx: number, select: HTMLSelectElement) {
+		const service = serviceByUid(select.value);
+		select.value = '';
+		if (!service || !editingInvoice) return;
+		editingInvoice.items[idx].description = service.label;
+		if (service.price !== null) editingInvoice.items[idx].unitPrice = service.price;
+		editingInvoice = editingInvoice;
+	}
+
 	function removeItem(idx: number) {
 		items = items.filter((_, i) => i !== idx);
 	}
@@ -567,6 +588,22 @@
 					<div class="space-y-3 mt-4">
 						{#each items as item, idx (idx)}
 							<div class="flex gap-2 items-end">
+								{#if data.services.length}
+									<select
+										class="admin-input admin-input-sm w-44"
+										aria-label="Leistung wählen"
+										on:change={(e) => pickService(idx, e.currentTarget)}
+									>
+										<option value="">Leistung wählen …</option>
+										{#each data.services as service}
+											<option value={service.uid}>
+												{service.label}{service.price !== null
+													? ` (${service.price.toFixed(2)})`
+													: ''}
+											</option>
+										{/each}
+									</select>
+								{/if}
 								<input
 									type="text"
 									placeholder="Beschreibung"
@@ -855,6 +892,22 @@
 								<div class="space-y-3 mt-4">
 									{#each editingInvoice.items as item, idx (idx)}
 										<div class="flex gap-2 items-end">
+											{#if data.services.length}
+												<select
+													class="admin-input admin-input-sm w-44"
+													aria-label="Leistung wählen"
+													on:change={(e) => pickEditService(idx, e.currentTarget)}
+												>
+													<option value="">Leistung wählen …</option>
+													{#each data.services as service}
+														<option value={service.uid}>
+															{service.label}{service.price !== null
+																? ` (${service.price.toFixed(2)})`
+																: ''}
+														</option>
+													{/each}
+												</select>
+											{/if}
 											<input
 												type="text"
 												placeholder="Beschreibung"

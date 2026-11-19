@@ -7,6 +7,8 @@ import {
 	updateManualInvoice
 } from '$lib/server/invoices';
 import { listCustomers } from '$lib/server/customers';
+import { createClient } from '$lib/prismicio';
+import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import {
 	createInvoice,
 	documentFromRecord,
@@ -20,14 +22,39 @@ import {
 
 // Zugriff: /admin/* ist zentral in hooks.server.ts geschützt (Admin-Session)
 
+/** Leistungen (feature ecommerce) for the line items: label + price excl. VAT, main language */
+async function loadServices(fetchFn: typeof fetch) {
+	if (!FEATURE_ECOMMERCE) return [];
+	try {
+		const docs = await createClient({ fetch: fetchFn }).getAllByType('leistung');
+		return docs
+			.map((doc) => {
+				const d = doc.data as Record<string, unknown>;
+				return {
+					uid: doc.uid ?? doc.id,
+					label: (d.label as string) || doc.uid || '',
+					price: typeof d.price_chf === 'number' ? d.price_chf : null
+				};
+			})
+			.sort((a, b) => a.label.localeCompare(b.label, 'de'));
+	} catch (e) {
+		console.error('[rechnungen] Leistungen konnten nicht geladen werden:', e);
+		return [];
+	}
+}
+
 export const load: PageServerLoad = async ({ fetch }) => {
-	const [invoices, customers] = await Promise.all([listManualInvoices(), listCustomers()]);
+	const [invoices, customers, services] = await Promise.all([
+		listManualInvoices(),
+		listCustomers(),
+		loadServices(fetch)
+	]);
 
 	const settings = await loadInvoiceSettings(fetch);
 	// Only what the page shows (no raw settings to the browser)
 	const companyInfo = { currency: settings.currency };
 
-	return { invoices, customers, companyInfo };
+	return { invoices, customers, companyInfo, services };
 };
 
 export const actions: Actions = {
