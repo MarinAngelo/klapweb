@@ -323,6 +323,15 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	'Zur Startseite': { 'de-ch': 'Zur Startseite', 'en-us': 'Go to home page' },
 	'Kontakt aufnehmen': { 'de-ch': 'Kontakt aufnehmen', 'en-us': 'Get in touch' },
+	'Keine Verbindung': { 'de-ch': 'Keine Verbindung', 'en-us': 'No connection' },
+	'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.':
+		{
+			'de-ch':
+				'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.',
+			'en-us':
+				'This page is not available offline. Pages you have already visited can still be opened.'
+		},
+	'Erneut versuchen': { 'de-ch': 'Erneut versuchen', 'en-us': 'Try again' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
