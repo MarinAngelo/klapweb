@@ -33,6 +33,18 @@
 	// Edit view «Wiederholung»
 	let editRecurring = false;
 	let editRecurringNext = '';
+	// «Bezahlt am» (date of payment, income date in «Buchhaltung»)
+	let editPaidDate = '';
+	let paidLoadedFor = '';
+	$: if (editingInvoice && editingInvoiceId && paidLoadedFor !== editingInvoiceId) {
+		paidLoadedFor = editingInvoiceId;
+		editPaidDate = editingInvoice.paidAt
+			? new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(
+					new Date(editingInvoice.paidAt)
+				)
+			: '';
+	}
+	$: if (editingInvoice?.paymentStatus === 'bezahlt' && !editPaidDate) editPaidDate = todaySwiss();
 	let recurrenceLoadedFor = '';
 	$: if (editingInvoice && editingInvoiceId && recurrenceLoadedFor !== editingInvoiceId) {
 		recurrenceLoadedFor = editingInvoiceId;
@@ -376,6 +388,7 @@
 		formData.set('land', editingInvoice.land || '');
 		formData.set('notes', editingInvoice.notes || '');
 		formData.set('payment-status', editingInvoice.paymentStatus || 'offen');
+		formData.set('paid-date', editPaidDate);
 		formData.set('recurring-active', String(editRecurring));
 		formData.set('recurring-next', editRecurringNext);
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
@@ -1038,6 +1051,16 @@
 										<option value="bezahlt">✓ bezahlt</option>
 										<option value="storniert">✕ storniert</option>
 									</select>
+									{#if editingInvoice.paymentStatus === 'bezahlt'}
+										<label class="admin-label mt-2" for="paid-date">Bezahlt am</label>
+										<input
+											id="paid-date"
+											type="date"
+											bind:value={editPaidDate}
+											max={todaySwiss()}
+											class="admin-input admin-input-sm w-auto"
+										/>
+									{/if}
 								</div>
 							</fieldset>
 

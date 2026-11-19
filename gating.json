@@ -69,6 +69,11 @@
 			"plans": ["individuell"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
+		"buchhaltung": {
+			"label": "Buchhaltung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
+		},
 		"suche": {
 			"label": "Website-Suche",
 			"plans": ["professional"]
@@ -340,6 +345,10 @@
 		"stunden": {
 			"label": "Stunden",
 			"feature": "stundenabrechnung"
+		},
+		"buchhaltung": {
+			"label": "Buchhaltung",
+			"feature": "buchhaltung"
 		}
 	}
 }

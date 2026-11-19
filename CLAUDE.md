@@ -493,6 +493,12 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 
 Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
+## Buchhaltung (`/admin/buchhaltung`)
+
+- Feature `buchhaltung` (gating.json, Paket Individuell), Admin-Bereich `buchhaltung`: nur Einnahmen/Ausgaben, Übersicht pro Jahr + Monat, CSV-Export `/admin/buchhaltung/buchhaltung.csv?jahr=`
+- **Bezahlte Rechnungen = Einnahmen**, nie kopiert, sondern bei jedem Aufruf aus `manuelle_rechnungen` abgeleitet (`invoiceIncome()` in `src/lib/server/buchhaltung.ts`), Datum = `paidAt`. `paidAt` setzt `updateManualInvoice()` zentral beim Wechsel auf «bezahlt» (entfernt bei anderem Status), `createInvoice()` speichert `total` inkl. MwSt.
+- Manuelle Einträge: Blob-Store `buchhaltung` (Typ, Datum, Text, Betrag CHF inkl. MwSt., Kategorie aus `KATEGORIEN`), Beleg (PDF/Bild, max. 10 MB) im Store `buchhaltung_belege`, Abruf `/admin/buchhaltung/beleg/<id>`
+
 ## Stundenabrechnung (`/admin/stunden`)
 
 - Feature `stundenabrechnung` (gating.json, Paket Individuell), Formular-Variante `stunden` («Stundenabrechnung», `StundenErfassung.svelte`), Admin-Bereich `stunden`

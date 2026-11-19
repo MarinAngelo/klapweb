@@ -1677,6 +1677,88 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	// Buchhaltung (admin)
+	Buchhaltung: { 'de-ch': 'Buchhaltung', 'en-us': 'Accounting' },
+	'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).':
+		{
+			'de-ch':
+				'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).',
+			'en-us':
+				'Income and expenses. Paid invoices appear automatically as income (date = payment date).'
+		},
+	Einnahmen: { 'de-ch': 'Einnahmen', 'en-us': 'Income' },
+	Ausgaben: { 'de-ch': 'Ausgaben', 'en-us': 'Expenses' },
+	Ergebnis: { 'de-ch': 'Ergebnis', 'en-us': 'Result' },
+	'Neuer Eintrag': { 'de-ch': 'Neuer Eintrag', 'en-us': 'New entry' },
+	Ausgabe: { 'de-ch': 'Ausgabe', 'en-us': 'Expense' },
+	Einnahme: { 'de-ch': 'Einnahme', 'en-us': 'Income' },
+	'Betrag (CHF, inkl. MwSt.)': {
+		'de-ch': 'Betrag (CHF, inkl. MwSt.)',
+		'en-us': 'Amount (CHF, incl. VAT)'
+	},
+	Kategorie: { 'de-ch': 'Kategorie', 'en-us': 'Category' },
+	'Kategorie wählen …': { 'de-ch': 'Kategorie wählen …', 'en-us': 'Choose category …' },
+	'Beleg (PDF oder Bild, optional, max. 10 MB)': {
+		'de-ch': 'Beleg (PDF oder Bild, optional, max. 10 MB)',
+		'en-us': 'Receipt (PDF or image, optional, max. 10 MB)'
+	},
+	Buchungen: { 'de-ch': 'Buchungen', 'en-us': 'Bookings' },
+	'Keine Buchungen in diesem Jahr.': {
+		'de-ch': 'Keine Buchungen in diesem Jahr.',
+		'en-us': 'No bookings this year.'
+	},
+	Beleg: { 'de-ch': 'Beleg', 'en-us': 'Receipt' },
+	Anzeigen: { 'de-ch': 'Anzeigen', 'en-us': 'Show' },
+	Rechnung: { 'de-ch': 'Rechnung', 'en-us': 'Invoice' },
+	'Eintrag löschen?': { 'de-ch': 'Eintrag löschen?', 'en-us': 'Delete entry?' },
+	Januar: { 'de-ch': 'Januar', 'en-us': 'January' },
+	Februar: { 'de-ch': 'Februar', 'en-us': 'February' },
+	März: { 'de-ch': 'März', 'en-us': 'March' },
+	April: { 'de-ch': 'April', 'en-us': 'April' },
+	Mai: { 'de-ch': 'Mai', 'en-us': 'May' },
+	Juni: { 'de-ch': 'Juni', 'en-us': 'June' },
+	Juli: { 'de-ch': 'Juli', 'en-us': 'July' },
+	August: { 'de-ch': 'August', 'en-us': 'August' },
+	September: { 'de-ch': 'September', 'en-us': 'September' },
+	Oktober: { 'de-ch': 'Oktober', 'en-us': 'October' },
+	November: { 'de-ch': 'November', 'en-us': 'November' },
+	Dezember: { 'de-ch': 'Dezember', 'en-us': 'December' },
+	Verkauf: { 'de-ch': 'Verkauf', 'en-us': 'Sales' },
+	Dienstleistung: { 'de-ch': 'Dienstleistung', 'en-us': 'Service' },
+	Zinsen: { 'de-ch': 'Zinsen', 'en-us': 'Interest' },
+	Diverses: { 'de-ch': 'Diverses', 'en-us': 'Miscellaneous' },
+	Material: { 'de-ch': 'Material', 'en-us': 'Material' },
+	Miete: { 'de-ch': 'Miete', 'en-us': 'Rent' },
+	Software: { 'de-ch': 'Software', 'en-us': 'Software' },
+	Werbung: { 'de-ch': 'Werbung', 'en-us': 'Advertising' },
+	Reise: { 'de-ch': 'Reise', 'en-us': 'Travel' },
+	Versicherung: { 'de-ch': 'Versicherung', 'en-us': 'Insurance' },
+	Gebühren: { 'de-ch': 'Gebühren', 'en-us': 'Fees' },
+	'Bitte Einnahme oder Ausgabe wählen': {
+		'de-ch': 'Bitte Einnahme oder Ausgabe wählen',
+		'en-us': 'Please choose income or expense'
+	},
+	'Ungültiges Datum': { 'de-ch': 'Ungültiges Datum', 'en-us': 'Invalid date' },
+	'Bitte einen Text eingeben': {
+		'de-ch': 'Bitte einen Text eingeben',
+		'en-us': 'Please enter a text'
+	},
+	'Bitte einen Betrag grösser als 0 eingeben': {
+		'de-ch': 'Bitte einen Betrag grösser als 0 eingeben',
+		'en-us': 'Please enter an amount greater than 0'
+	},
+	'Bitte eine Kategorie wählen': {
+		'de-ch': 'Bitte eine Kategorie wählen',
+		'en-us': 'Please choose a category'
+	},
+	'Der Beleg ist grösser als 10 MB': {
+		'de-ch': 'Der Beleg ist grösser als 10 MB',
+		'en-us': 'The receipt is larger than 10 MB'
+	},
+	'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)': {
+		'de-ch': 'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)',
+		'en-us': 'Receipt only as PDF or image (JPG, PNG, WebP, HEIC)'
+	},
 	ausgewählt: { 'de-ch': 'ausgewählt', 'en-us': 'selected' },
 	Aktion: { 'de-ch': 'Aktion', 'en-us': 'Action' },
 	'Aktion wählen …': { 'de-ch': 'Aktion wählen …', 'en-us': 'Choose action …' },
