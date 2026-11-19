@@ -446,11 +446,12 @@
 
 <div class="admin-container">
 	<AdminHeader title="Rechnungen" count={data.invoices.length}>
+		<!-- In the background (use:enhance): list reloads, URL stays without ?/deleteAll -->
 		<form
 			method="POST"
 			action="?/deleteAll"
-			on:submit={(e) => {
-				if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
+			use:enhance={({ cancel }) => {
+				if (!confirm('Alle Rechnungen löschen?')) cancel();
 			}}
 		>
 			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
