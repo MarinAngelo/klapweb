@@ -7,9 +7,63 @@ import { build, files, version } from '$service-worker';
 
 const CACHE_NAME = `cache-${version}`;
 const ASSETS = new Set([...build, ...files]);
+/** Shown for page requests without network and without a cached copy (src/routes/offline) */
+const OFFLINE_PAGE = '/offline';
+/** Stored on install so they also work offline on a first-time-offline visit */
+const PRECACHE_PAGES = [OFFLINE_PAGE, '/', '/kontakt'];
+/** Slow network: after this time a cached copy is shown (the network keeps updating the cache) */
+const NETWORK_TIMEOUT_MS = 3000;
+
+/** Store pages that exist and are not redirects (home may redirect, «Kontakt» may not exist) */
+async function precachePages(cache: Cache) {
+	await Promise.all(
+		PRECACHE_PAGES.map(async (path) => {
+			try {
+				const response = await fetch(path);
+				if (response.ok && !response.redirected) await cache.put(path, response);
+			} catch {
+				// offline during install: try again with the next service worker version
+			}
+		})
+	);
+}
+
+/** Network first; after NETWORK_TIMEOUT_MS the cached copy, offline the cache or the offline page */
+async function networkFirst(event: FetchEvent, request: Request): Promise<Response> {
+	const cache = await caches.open(CACHE_NAME);
+	const network = fetch(request).then((response) => {
+		if (response.ok && !response.redirected) cache.put(request, response.clone());
+		return response;
+	});
+	try {
+		const timeout = new Promise<'timeout'>((resolve) =>
+			setTimeout(() => resolve('timeout'), NETWORK_TIMEOUT_MS)
+		);
+		const winner = await Promise.race([network, timeout]);
+		if (winner !== 'timeout') return winner;
+		const cached = await cache.match(request);
+		if (cached) {
+			event.waitUntil(network.catch(() => undefined));
+			return cached;
+		}
+		return await network;
+	} catch {
+		const cached = await cache.match(request);
+		if (cached) return cached;
+		if (request.mode === 'navigate') {
+			const offline = await cache.match(OFFLINE_PAGE);
+			if (offline) return offline;
+		}
+		return new Response('Offline', { status: 503 });
+	}
+}
 
 self.addEventListener('install', (event) => {
-	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([...ASSETS])));
+	event.waitUntil(
+		caches
+			.open(CACHE_NAME)
+			.then((cache) => Promise.all([cache.addAll([...ASSETS]), precachePages(cache)]))
+	);
 	// Neuer SW übernimmt sofort, ohne auf Tab-Schließen zu warten
 	self.skipWaiting();
 });
@@ -58,19 +112,6 @@ self.addEventListener('fetch', (event) => {
 		return;
 	}
 
-	// Alles andere: Network-First mit Cache-Fallback
-	event.respondWith(
-		fetch(request)
-			.then((response) => {
-				if (response.ok) {
-					const clone = response.clone();
-					caches.open(CACHE_NAME).then((c) => c.put(request, clone));
-				}
-				return response;
-			})
-			.catch(async () => {
-				const cached = await caches.match(request);
-				return cached ?? new Response('Offline', { status: 503 });
-			})
-	);
+	// Alles andere (Seiten, Daten): Network-First mit Zeitlimit, Cache und Offline-Seite
+	event.respondWith(networkFirst(event, request));
 });
