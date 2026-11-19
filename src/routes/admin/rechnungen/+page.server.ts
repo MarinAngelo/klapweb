@@ -171,10 +171,24 @@ export const actions: Actions = {
 		}
 	},
 
-	deleteAll: async () => {
-		const all = await listManualInvoices();
-		await Promise.all(all.map((inv) => deleteManualInvoice(inv.id)));
-		return { success: true };
+	/** Bulk actions of the invoice list (AdminBulkActions): action + ids (JSON) */
+	bulk: async ({ request }) => {
+		const formData = await request.formData();
+		const action = String(formData.get('action') ?? '');
+		let ids: string[] = [];
+		try {
+			ids = JSON.parse(String(formData.get('ids') ?? '[]'));
+		} catch {
+			throw error(400, 'Ungültige Auswahl');
+		}
+		if (!Array.isArray(ids) || !ids.length) throw error(400, 'Keine Rechnungen ausgewählt');
+		switch (action) {
+			case 'delete':
+				await Promise.all(ids.map((id) => deleteManualInvoice(String(id))));
+				return { success: true, count: ids.length };
+			default:
+				throw error(400, 'Unbekannte Aktion');
+		}
 	},
 
 	edit: async ({ request, fetch }) => {
