@@ -1307,6 +1307,11 @@ p {
 		@apply flex cursor-pointer items-center gap-3 border-b border-gray-100 py-2 last:border-b-0;
 	}
 
+	/* Bulk actions above a table (AdminBulkActions.svelte) */
+	.admin-bulk {
+		@apply mb-3 flex flex-wrap items-center gap-2;
+	}
+
 	/* Tables */
 	.admin-table-wrap {
 		@apply overflow-x-auto;

@@ -1677,6 +1677,10 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	ausgewählt: { 'de-ch': 'ausgewählt', 'en-us': 'selected' },
+	Aktion: { 'de-ch': 'Aktion', 'en-us': 'Action' },
+	'Aktion wählen …': { 'de-ch': 'Aktion wählen …', 'en-us': 'Choose action …' },
+	Ausführen: { 'de-ch': 'Ausführen', 'en-us': 'Apply' },
 	'Bild vergrössern': { 'de-ch': 'Bild vergrössern', 'en-us': 'Enlarge image' },
 	'Mit zwei Fingern oder Doppeltipp zoomen': {
 		'de-ch': 'Mit zwei Fingern oder Doppeltipp zoomen',

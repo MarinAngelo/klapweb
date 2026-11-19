@@ -3,6 +3,7 @@
 	import type { PageData, SubmitFunction } from './$types';
 	import { formatDateShort } from '$lib/utils/formatDate';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import AdminBulkActions from '$lib/components/admin/AdminBulkActions.svelte';
 
 	export let data: PageData;
 
@@ -44,6 +45,16 @@
 		const [y, m, d] = date.slice(0, 10).split('-').map(Number);
 		const last = new Date(Date.UTC(y + 1, m, 0)).getUTCDate();
 		return `${y + 1}-${String(m).padStart(2, '0')}-${String(Math.min(d, last)).padStart(2, '0')}`;
+	}
+
+	// Selection for bulk actions (AdminBulkActions); more actions: add here + in the bulk action
+	let selectedIds: string[] = [];
+	const BULK_ACTIONS = [{ value: 'delete', label: 'Löschen', confirm: '{n} Rechnungen löschen?' }];
+	$: selectedIds = selectedIds.filter((id) => data.invoices.some((inv) => inv.id === id));
+	$: allSelected = data.invoices.length > 0 && selectedIds.length === data.invoices.length;
+	$: someSelected = selectedIds.length > 0 && !allSelected;
+	function toggleAll(checked: boolean) {
+		selectedIds = checked ? data.invoices.map((inv) => inv.id) : [];
 	}
 
 	let isFormOpen = false;
@@ -445,18 +456,7 @@
 <svelte:head><title>Rechnungen</title></svelte:head>
 
 <div class="admin-container">
-	<AdminHeader title="Rechnungen" count={data.invoices.length}>
-		<!-- In the background (use:enhance): list reloads, URL stays without ?/deleteAll -->
-		<form
-			method="POST"
-			action="?/deleteAll"
-			use:enhance={({ cancel }) => {
-				if (!confirm('Alle Rechnungen löschen?')) cancel();
-			}}
-		>
-			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
-		</form>
-	</AdminHeader>
+	<AdminHeader title="Rechnungen" count={data.invoices.length}></AdminHeader>
 
 	<!-- Übersicht Rechnungen -->
 	<section class="admin-card">
@@ -465,10 +465,26 @@
 		{#if data.invoices.length === 0}
 			<p class="admin-empty">Noch keine Rechnungen vorhanden.</p>
 		{:else}
+			<AdminBulkActions
+				{selectedIds}
+				actions={BULK_ACTIONS}
+				formAction="?/bulk"
+				on:done={() => (selectedIds = [])}
+			/>
 			<div class="admin-table-wrap">
 				<table class="admin-table">
 					<thead>
 						<tr>
+							<th class="w-8">
+								<input
+									type="checkbox"
+									class="admin-checkbox"
+									aria-label="Alle auswählen"
+									checked={allSelected}
+									indeterminate={someSelected}
+									on:change={(e) => toggleAll(e.currentTarget.checked)}
+								/>
+							</th>
 							<th>Nummer</th>
 							<th>Datum</th>
 							<th>Kunde</th>
@@ -482,6 +498,15 @@
 					<tbody>
 						{#each data.invoices as inv}
 							<tr>
+								<td>
+									<input
+										type="checkbox"
+										class="admin-checkbox"
+										aria-label="Rechnung {inv.invoiceNumber} auswählen"
+										bind:group={selectedIds}
+										value={inv.id}
+									/>
+								</td>
 								<td class="admin-mono nowrap">{inv.invoiceNumber}</td>
 								<td>{formatDateShort(inv.date?.slice(0, 10))}</td>
 								<td>{inv.vorname} {inv.nachname}</td>
