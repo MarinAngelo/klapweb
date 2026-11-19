@@ -3163,11 +3163,11 @@ type GalerieSliceVariation = GalerieSliceDefault;
 export type GalerieSlice = prismic.SharedSlice<'galerie', GalerieSliceVariation>;
 
 /**
- * Primary content in *Globale Events → Standard → Primary*
+ * Primary content in *Eventmanagement → Standard → Primary*
  */
 export interface GlobaleEventsSliceDefaultPrimary {
 	/**
-	 * Serie / Eltern-Event field in *Globale Events → Standard → Primary*
+	 * Serie / Eltern-Event field in *Eventmanagement → Standard → Primary*
 	 *
 	 * - **Field Type**: Content Relationship
 	 * - **Placeholder**: Serien-Dokument auswählen
@@ -3177,7 +3177,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 	events: prismic.ContentRelationshipField<'event'>;
 
 	/**
-	 * Animation aktivieren field in *Globale Events → Standard → Primary*
+	 * Animation aktivieren field in *Eventmanagement → Standard → Primary*
 	 *
 	 * - **Field Type**: Boolean
 	 * - **Placeholder**: *None*
@@ -3188,7 +3188,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 	animate: prismic.BooleanField;
 
 	/**
-	 * Animations-Richtung field in *Globale Events → Standard → Primary*
+	 * Animations-Richtung field in *Eventmanagement → Standard → Primary*
 	 *
 	 * - **Field Type**: Select
 	 * - **Placeholder**: *None*
@@ -3199,7 +3199,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 	anim_direction: prismic.SelectField<'Oben' | 'Unten' | 'Links' | 'Rechts' | 'Keine', 'filled'>;
 
 	/**
-	 * Verzögerung (ms) field in *Globale Events → Standard → Primary*
+	 * Verzögerung (ms) field in *Eventmanagement → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 500
@@ -3209,7 +3209,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 	anim_delay: prismic.NumberField;
 
 	/**
-	 * Animationsdauer (ms) field in *Globale Events → Standard → Primary*
+	 * Animationsdauer (ms) field in *Eventmanagement → Standard → Primary*
 	 *
 	 * - **Field Type**: Number
 	 * - **Placeholder**: 2000
@@ -3220,7 +3220,7 @@ export interface GlobaleEventsSliceDefaultPrimary {
 }
 
 /**
- * Standard variation for Globale Events Slice
+ * Standard variation for Eventmanagement Slice
  *
  * - **API ID**: `default`
  * - **Description**: Standard
@@ -3233,12 +3233,12 @@ export type GlobaleEventsSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
- * Slice variation for *Globale Events*
+ * Slice variation for *Eventmanagement*
  */
 type GlobaleEventsSliceVariation = GlobaleEventsSliceDefault;
 
 /**
- * Globale Events Shared Slice
+ * Eventmanagement Shared Slice
  *
  * - **API ID**: `globale_events`
  * - **Description**: Zeigt Inhalte eines verknüpften Event-Dokuments an.
