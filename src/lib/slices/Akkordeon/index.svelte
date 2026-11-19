@@ -357,4 +357,15 @@
 	:global([data-slice-type='accordion'] li) {
 		padding-left: 0.5rem;
 	}
+
+	/* Mobile: no extra indent — bullet inside the line, list flush with the text (narrow column) */
+	@media (max-width: 767px) {
+		:global([data-slice-type='accordion'] :is(ul, ol)) {
+			list-style-position: inside;
+			padding-left: 0 !important;
+		}
+		:global([data-slice-type='accordion'] li) {
+			padding-left: 0;
+		}
+	}
 </style>
