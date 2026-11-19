@@ -93,6 +93,9 @@
 	$: titleLevel = String((p as any).title_level ?? '');
 	// «Runde Ecken ausschalten» (Bild und Text): images, open content and section box square
 	$: noRoundedCorners = (p as any).no_rounded_corners === true;
+	// Image background / overlay for all entries (element level, Bild und Text)
+	$: imageBgColor = ((p as any).image_bg_color as string | null) ?? '';
+	$: overlayTransparency = ((p as any).image_overlay_transparency as number | null) ?? 100;
 	$: titleTag = /^H[2-6]$/.test(titleLevel) ? titleLevel.toLowerCase() : 'h2';
 </script>
 
@@ -269,11 +272,9 @@
 										text={item.content}
 										imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
 										stacked={'image_on_top' in item ? item.image_on_top === true : false}
-										imageBgColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
-										overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
-										overlayTransparency={'bild_overlay_transparenz' in item
-											? (item.bild_overlay_transparenz ?? 100)
-											: 100}
+										{imageBgColor}
+										overlayColor={imageBgColor}
+										{overlayTransparency}
 										mobilePadding={p.mobile_full_width ? '2rem' : ''}
 										mobilePaddingTop={p.mobile_full_width ? '1.5rem' : ''}
 										desktopPadding={p.mobile_full_width ? '1.5rem' : ''}
