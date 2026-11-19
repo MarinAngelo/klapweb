@@ -17,6 +17,10 @@
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
+	// «Rechnungsdatum»: default today (Swiss time), backdating possible, not in the future
+	const todaySwiss = () =>
+		new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(new Date());
+	let invoiceDate = todaySwiss();
 
 	let items: Array<{ description: string; quantity: number; unitPrice: number }> = [
 		{ description: '', quantity: 1, unitPrice: 0 }
@@ -83,9 +87,15 @@
 			return;
 		}
 
+		if (!invoiceDate || invoiceDate > todaySwiss()) {
+			alert('Das Rechnungsdatum darf nicht in der Zukunft liegen');
+			return;
+		}
+
 		isLoading = true;
 		const itemsJson = JSON.stringify(items);
 		formData.set('items-json', itemsJson);
+		formData.set('invoice-date', invoiceDate);
 		formData.set('vorname', customer.vorname);
 		formData.set('nachname', customer.nachname);
 		formData.set('firma', customer.firma || '');
@@ -112,6 +122,7 @@
 		const itemsJson = JSON.stringify(items);
 		formData.set('items-json', itemsJson);
 		formData.set('invoice-number', currentInvoiceNumber);
+		formData.set('invoice-date', invoiceDate);
 		formData.set('send-email', String(sendEmail));
 
 		const customer = getSelectedCustomer();
@@ -214,6 +225,7 @@
 		editPdfLoading = true;
 		const formData = new FormData();
 		formData.set('invoice-number', editingInvoice.invoiceNumber);
+		formData.set('invoice-id', editingInvoiceId);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
 		formData.set('firma', editingInvoice.firma || '');
@@ -600,6 +612,19 @@
 						Total: {data.companyInfo.currency}
 						{total.toFixed(2)}
 					</div>
+				</fieldset>
+
+				<!-- Rechnungsdatum -->
+				<fieldset class="admin-fieldset">
+					<legend>Rechnungsdatum</legend>
+					<input
+						type="date"
+						bind:value={invoiceDate}
+						max={todaySwiss()}
+						required
+						class="admin-input mt-2 w-auto"
+					/>
+					<p class="admin-hint mt-1">Heute oder früher (rückdatieren möglich).</p>
 				</fieldset>
 
 				<!-- Notizen -->

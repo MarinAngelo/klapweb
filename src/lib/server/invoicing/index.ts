@@ -36,6 +36,8 @@ export interface CreateInvoiceInput {
 	currency?: string;
 	notes?: string;
 	invoiceNumber?: string;
+	/** Invoice date (ISO); default now. Admin: backdating possible, never in the future */
+	date?: string;
 	paymentMethod?: 'rechnung' | 'bar';
 	paymentStatus?: 'offen' | 'bezahlt' | 'storniert';
 	showQuantity?: boolean;
@@ -84,7 +86,7 @@ export async function createInvoice(input: CreateInvoiceInput): Promise<CreatedI
 	const settings = input.settings ?? (await loadInvoiceSettings(input.fetch));
 	const invoiceNumber = input.invoiceNumber || newInvoiceNumber();
 	const currency = input.currency || settings.currency;
-	const date = new Date().toISOString();
+	const date = input.date || new Date().toISOString();
 	const document: InvoiceDocument = {
 		invoiceNumber,
 		date,
