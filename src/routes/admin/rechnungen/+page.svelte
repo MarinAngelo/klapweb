@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { deserialize, enhance } from '$app/forms';
 	import type { PageData, SubmitFunction } from './$types';
 	import { formatDateShort } from '$lib/utils/formatDate';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
@@ -7,6 +7,20 @@
 	export let data: PageData;
 
 	// Feature that issued the invoice (src/lib/server/invoicing)
+	/**
+	 * Calls a form action with fetch: the header makes SvelteKit answer with the action result
+	 * (otherwise it returns the HTML page), deserialize() unpacks its data (devalue string).
+	 */
+	async function postAction(url: string, body: FormData) {
+		const res = await fetch(url, {
+			method: 'POST',
+			body,
+			headers: { 'x-sveltekit-action': 'true' }
+		});
+		const result = deserialize(await res.text());
+		return { ok: res.ok && (result.type === 'success' || result.type === 'redirect'), result };
+	}
+
 	const SOURCE_LABELS: Record<string, string> = {
 		checkout: 'Bestellung',
 		event: 'Event',
@@ -225,10 +239,7 @@
 		formData.set('invoice-id', invoiceId);
 
 		try {
-			const res = await fetch('?/delete', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('?/delete', formData);
 
 			if (res.ok) {
 				alert('Rechnung gelöscht');
@@ -278,14 +289,10 @@
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
 
 		try {
-			const res = await fetch('?/previewEditPdf', {
-				method: 'POST',
-				body: formData
-			});
+			const { ok, result } = await postAction('?/previewEditPdf', formData);
 
-			if (res.ok) {
-				const result = await res.json();
-				editPdfBase64 = result.data?.pdfBase64 || result.pdfBase64 || '';
+			if (ok && result.type === 'success') {
+				editPdfBase64 = String(result.data?.pdfBase64 ?? '');
 				editModalTab = 'pdf';
 			} else {
 				alert('PDF konnte nicht generiert werden');
@@ -310,10 +317,7 @@
 		formData.set('invoice-id', editingInvoiceId);
 
 		try {
-			const res = await fetch('?/sendInvoiceEmail', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('?/sendInvoiceEmail', formData);
 
 			isLoading = false;
 
@@ -357,10 +361,7 @@
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
 
 		try {
-			const res = await fetch('?/updateInvoice', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('?/updateInvoice', formData);
 
 			isLoading = false;
 
@@ -416,14 +417,11 @@
 		formData.set('land', newCustomerForm.land);
 
 		try {
-			const res = await fetch('/admin/kunden?/create', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('/admin/kunden?/create', formData);
 
 			if (res.ok) {
-				const result = await res.json();
-				if (result.type === 'success' || result.status === 'success') {
+				const result = res.result;
+				if (result.type === 'success') {
 					alert('Kunde erfasst');
 					// Neuen Kunden laden
 					location.reload();
@@ -431,7 +429,7 @@
 					alert('Fehler beim Erfassen');
 				}
 			} else {
-				alert('Fehler beim Erfassen: ' + res.statusText);
+				alert('Fehler beim Erfassen');
 			}
 		} catch (e) {
 			alert('Fehler: ' + (e as Error).message);
