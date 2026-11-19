@@ -84,6 +84,10 @@
 		openSub = '';
 	}
 
+	// Hover opens only with a real mouse: on touch devices a tap fires an emulated mouseenter
+	// right before the click, so the click (toggle) closed the menu again → needed two taps
+	const isMouse = (e: PointerEvent) => e.pointerType === 'mouse';
+
 	function handleGlobalClose() {
 		isOpen = false;
 	}
@@ -142,8 +146,8 @@
 		role="navigation"
 		style:--header-link-hover-color={headerLinkHoverColor}
 		style:--normal-text-color={headerLinkColor}
-		on:mouseenter={openDropdown}
-		on:mouseleave={closeDropdown}
+		on:pointerenter={(e) => isMouse(e) && openDropdown()}
+		on:pointerleave={(e) => isMouse(e) && closeDropdown()}
 	>
 		<DropdownButton
 			{item}
@@ -167,8 +171,8 @@
 						<li
 							class="submenu-item px-5 py-0 font-semibold tracking-tight block text-left [min-width:14rem]"
 							style:font-size="{headerLinkFontSize}rem"
-							on:mouseenter={() => (openSub = labelOf(dropdownItem))}
-							on:mouseleave={() => (openSub = '')}
+							on:pointerenter={(e) => isMouse(e) && (openSub = labelOf(dropdownItem))}
+							on:pointerleave={(e) => isMouse(e) && (openSub = '')}
 						>
 							<button
 								type="button"
