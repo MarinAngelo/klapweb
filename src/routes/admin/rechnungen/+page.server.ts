@@ -182,6 +182,13 @@ export const actions: Actions = {
 			throw error(400, 'Ungültige Auswahl');
 		}
 		if (!Array.isArray(ids) || !ids.length) throw error(400, 'Keine Rechnungen ausgewählt');
+		const paymentStatus = ({ paid: 'bezahlt', open: 'offen', cancelled: 'storniert' } as const)[
+			action as 'paid' | 'open' | 'cancelled'
+		];
+		if (paymentStatus) {
+			await Promise.all(ids.map((id) => updateManualInvoice(String(id), { paymentStatus })));
+			return { success: true, count: ids.length };
+		}
 		switch (action) {
 			case 'delete':
 				await Promise.all(ids.map((id) => deleteManualInvoice(String(id))));

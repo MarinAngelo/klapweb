@@ -49,7 +49,16 @@
 
 	// Selection for bulk actions (AdminBulkActions); more actions: add here + in the bulk action
 	let selectedIds: string[] = [];
-	const BULK_ACTIONS = [{ value: 'delete', label: 'Löschen', confirm: '{n} Rechnungen löschen?' }];
+	const BULK_ACTIONS = [
+		{ value: 'paid', label: 'Als bezahlt markieren' },
+		{ value: 'open', label: 'Als offen markieren' },
+		{
+			value: 'cancelled',
+			label: 'Als storniert markieren',
+			confirm: '{n} Rechnungen als storniert markieren?'
+		},
+		{ value: 'delete', label: 'Löschen', confirm: '{n} Rechnungen löschen?' }
+	];
 	$: selectedIds = selectedIds.filter((id) => data.invoices.some((inv) => inv.id === id));
 	$: allSelected = data.invoices.length > 0 && selectedIds.length === data.invoices.length;
 	$: someSelected = selectedIds.length > 0 && !allSelected;
