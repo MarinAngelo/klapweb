@@ -163,6 +163,13 @@
 		]
 	},
 	{
+		"id": "buchhaltung",
+		"title": "Buchhaltung",
+		"feature": "buchhaltung",
+		"stand": "2026-11-19",
+		"sources": ["src/lib/server/buchhaltung.ts", "src/routes/admin/buchhaltung"]
+	},
+	{
 		"id": "stundenabrechnung",
 		"title": "Stundenabrechnung",
 		"feature": "stundenabrechnung",

@@ -20,6 +20,13 @@
 			icon: '👥'
 		},
 		{
+			id: 'buchhaltung',
+			title: 'Buchhaltung',
+			description: 'Einnahmen und Ausgaben mit Belegen, bezahlte Rechnungen automatisch',
+			href: `/admin/buchhaltung`,
+			icon: '📒'
+		},
+		{
 			id: 'stunden',
 			title: 'Stunden',
 			description: 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',

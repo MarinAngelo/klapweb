@@ -72,6 +72,10 @@ export interface ManualInvoiceRecord {
 	emailSentAt?: string | null;
 	currency?: string;
 	recurrence?: InvoiceRecurrence;
+	/** Total incl. VAT at creation (older records: recalculated, see buchhaltung.ts) */
+	total?: number;
+	/** When the invoice was paid (set when paymentStatus becomes 'bezahlt'); income date in «Buchhaltung» */
+	paidAt?: string;
 }
 
 function getInvoiceStore() {
@@ -120,5 +124,9 @@ export async function updateManualInvoice(
 	const store = getInvoiceStore();
 	const existing = await getManualInvoice(id);
 	if (!existing) throw new Error('Rechnung nicht gefunden');
-	await store.setJSON(id, { ...existing, ...record });
+	const next = { ...existing, ...record };
+	// Payment date for «Buchhaltung»: set when it becomes paid, removed when it is no longer paid
+	if (next.paymentStatus === 'bezahlt' && !next.paidAt) next.paidAt = new Date().toISOString();
+	if (next.paymentStatus !== 'bezahlt') delete next.paidAt;
+	await store.setJSON(id, next);
 }

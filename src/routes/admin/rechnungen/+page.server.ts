@@ -239,6 +239,7 @@ export const actions: Actions = {
 				notes: (formData.get('notes') as string) || undefined,
 				paymentStatus:
 					(formData.get('payment-status') as 'offen' | 'bezahlt' | 'storniert') || 'offen',
+				...paidAtFrom(formData),
 				...recurrenceFrom(formData)
 			});
 
@@ -340,6 +341,14 @@ function manualPdf(
 		},
 		settings
 	);
+}
+
+/** «Bezahlt am» of the edit form (YYYY-MM-DD); empty → set automatically when it becomes paid */
+function paidAtFrom(formData: FormData) {
+	const value = String(formData.get('paid-date') ?? '');
+	if (formData.get('payment-status') !== 'bezahlt' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return {};
+	if (value > todaySwiss()) throw error(400, 'Das Zahlungsdatum darf nicht in der Zukunft liegen');
+	return { paidAt: `${value}T12:00:00.000Z` };
 }
 
 /** «Wiederholung» of the edit form: active + date of the next invoice (YYYY-MM-DD) */
