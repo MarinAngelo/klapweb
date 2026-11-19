@@ -11,8 +11,26 @@
 		checkout: 'Bestellung',
 		event: 'Event',
 		terminbuchung: 'Terminbuchung',
-		admin: 'Manuell'
+		admin: 'Manuell',
+		wiederkehrend: 'Wiederkehrend'
 	};
+	let recurring = false;
+	// Edit view «Wiederholung»
+	let editRecurring = false;
+	let editRecurringNext = '';
+	let recurrenceLoadedFor = '';
+	$: if (editingInvoice && editingInvoiceId && recurrenceLoadedFor !== editingInvoiceId) {
+		recurrenceLoadedFor = editingInvoiceId;
+		editRecurring = !!editingInvoice.recurrence?.active;
+		editRecurringNext =
+			editingInvoice.recurrence?.nextDate ??
+			addYearIso(editingInvoice.date ?? new Date().toISOString());
+	}
+	function addYearIso(date: string) {
+		const [y, m, d] = date.slice(0, 10).split('-').map(Number);
+		const last = new Date(Date.UTC(y + 1, m, 0)).getUTCDate();
+		return `${y + 1}-${String(m).padStart(2, '0')}-${String(Math.min(d, last)).padStart(2, '0')}`;
+	}
 
 	let isFormOpen = false;
 	let selectedCustomerId = '';
@@ -145,6 +163,7 @@
 		formData.set('invoice-number', currentInvoiceNumber);
 		formData.set('invoice-date', invoiceDate);
 		formData.set('send-email', String(sendEmail));
+		formData.set('recurring', String(recurring));
 
 		const customer = getSelectedCustomer();
 		if (!customer) {
@@ -333,6 +352,8 @@
 		formData.set('land', editingInvoice.land || '');
 		formData.set('notes', editingInvoice.notes || '');
 		formData.set('payment-status', editingInvoice.paymentStatus || 'offen');
+		formData.set('recurring-active', String(editRecurring));
+		formData.set('recurring-next', editRecurringNext);
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
 
 		try {
@@ -492,6 +513,11 @@
 									<span class="text-xs">{inv.paymentMethod === 'bar' ? 'Bar' : 'Rechnung'}</span>
 									{#if inv.source && SOURCE_LABELS[inv.source]}
 										<span class="admin-muted block text-xs">{SOURCE_LABELS[inv.source]}</span>
+									{/if}
+									{#if inv.recurrence?.active}
+										<span class="admin-muted block text-xs"
+											>↻ jährlich, nächste {formatDateShort(inv.recurrence.nextDate)}</span
+										>
 									{/if}
 								</td>
 								<td class="nowrap space-x-3">
@@ -979,6 +1005,28 @@
 									</select>
 								</div>
 							</fieldset>
+
+							<fieldset class="admin-fieldset">
+								<legend>Wiederholung</legend>
+								<label class="mt-2 flex items-center gap-2">
+									<input type="checkbox" bind:checked={editRecurring} class="admin-checkbox" />
+									<span>Jährlich wiederholen</span>
+								</label>
+								{#if editRecurring}
+									<label class="admin-label mt-2" for="recurring-next">Nächste Rechnung am</label>
+									<input
+										id="recurring-next"
+										type="date"
+										bind:value={editRecurringNext}
+										required
+										class="admin-input admin-input-sm w-auto"
+									/>
+									<p class="admin-hint mt-1">
+										An diesem Tag wird eine Kopie mit neuer Nummer erstellt und an den Kunden
+										gemailt, danach jedes Jahr.
+									</p>
+								{/if}
+							</fieldset>
 						</div>
 					{:else if editModalTab === 'view'}
 						<!-- View Mode -->
@@ -1105,6 +1153,14 @@
 						<label class="flex items-center gap-2">
 							<input type="checkbox" bind:checked={sendEmail} class="admin-checkbox" />
 							<span>E-Mail an Kunde senden</span>
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="checkbox" bind:checked={recurring} class="admin-checkbox" />
+							<span
+								>Jährlich wiederholen (nächste Rechnung am {invoiceDate
+									? formatDateShort(addYearIso(invoiceDate))
+									: '—'}, automatisch gemailt)</span
+							>
 						</label>
 
 						<div class="flex gap-2 justify-end">

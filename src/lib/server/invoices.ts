@@ -26,7 +26,21 @@ export interface InvoiceLineItem {
 }
 
 /** Feature that issued the invoice; missing = older invoice (checkout or admin) */
-export type InvoiceSource = 'checkout' | 'admin' | 'terminbuchung' | 'event' | 'bar';
+export type InvoiceSource =
+	| 'checkout'
+	| 'admin'
+	| 'terminbuchung'
+	| 'event'
+	| 'bar'
+	| 'wiederkehrend';
+
+/** Recurring invoice (template): a copy is created and mailed on nextDate (src/lib/server/recurringInvoices.ts) */
+export interface InvoiceRecurrence {
+	interval: 'jaehrlich';
+	/** YYYY-MM-DD (Swiss time) */
+	nextDate: string;
+	active: boolean;
+}
 
 export interface ManualInvoiceRecord {
 	id: string;
@@ -57,6 +71,7 @@ export interface ManualInvoiceRecord {
 	// Delivery metadata
 	emailSentAt?: string | null;
 	currency?: string;
+	recurrence?: InvoiceRecurrence;
 }
 
 function getInvoiceStore() {

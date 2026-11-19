@@ -9,6 +9,7 @@ import {
 import { listCustomers } from '$lib/server/customers';
 import { createClient } from '$lib/prismicio';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
+import { addYear, sendDueRecurringInvoices } from '$lib/server/recurringInvoices';
 import {
 	createInvoice,
 	documentFromRecord,
@@ -44,6 +45,8 @@ async function loadServices(fetchFn: typeof fetch) {
 }
 
 export const load: PageServerLoad = async ({ fetch }) => {
+	// Due recurring invoices are also created when the admin opens the page (besides the daily cron)
+	await sendDueRecurringInvoices().catch((e) => console.error('Wiederkehrende Rechnungen:', e));
 	const [invoices, customers, services] = await Promise.all([
 		listManualInvoices(),
 		listCustomers(),
@@ -127,6 +130,14 @@ export const actions: Actions = {
 		if (!created.id) throw error(500, 'Rechnung konnte nicht gespeichert werden');
 		const invoiceId = created.id;
 
+		// «Jährlich wiederholen»: next invoice one year after the invoice date
+		if (formData.get('recurring') === 'true') {
+			const invoiceDay = (invoiceDateFrom(formData) ?? '').slice(0, 10) || todaySwiss();
+			await updateManualInvoice(invoiceId, {
+				recurrence: { interval: 'jaehrlich', nextDate: addYear(invoiceDay), active: true }
+			});
+		}
+
 		// E-Mail versenden wenn gewünscht
 		if (sendEmail && invoiceData.email) {
 			await sendInvoiceMail({
@@ -206,7 +217,8 @@ export const actions: Actions = {
 				items,
 				notes: (formData.get('notes') as string) || undefined,
 				paymentStatus:
-					(formData.get('payment-status') as 'offen' | 'bezahlt' | 'storniert') || 'offen'
+					(formData.get('payment-status') as 'offen' | 'bezahlt' | 'storniert') || 'offen',
+				...recurrenceFrom(formData)
 			});
 
 			return { success: true };
@@ -307,6 +319,16 @@ function manualPdf(
 		},
 		settings
 	);
+}
+
+/** «Wiederholung» of the edit form: active + date of the next invoice (YYYY-MM-DD) */
+function recurrenceFrom(formData: FormData) {
+	if (!formData.has('recurring-active')) return {};
+	const active = formData.get('recurring-active') === 'true';
+	const nextDate = String(formData.get('recurring-next') ?? '');
+	if (!active) return { recurrence: undefined };
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(nextDate)) throw error(400, 'Datum der nächsten Rechnung fehlt');
+	return { recurrence: { interval: 'jaehrlich' as const, nextDate, active: true } };
 }
 
 /** Today as YYYY-MM-DD in Swiss time */
