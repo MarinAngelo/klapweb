@@ -442,6 +442,8 @@
 	$: total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 </script>
 
+<svelte:head><title>Rechnungen</title></svelte:head>
+
 <div class="admin-container">
 	<AdminHeader title="Rechnungen" count={data.invoices.length}>
 		<form
