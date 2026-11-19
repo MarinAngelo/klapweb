@@ -140,9 +140,9 @@
 	},
 	{
 		"id": "globale-events",
-		"title": "Globale Events (Veranstaltungen)",
+		"title": "Eventmanagement (Veranstaltungen)",
 		"feature": "global_events",
-		"stand": "2026-11-11",
+		"stand": "2026-11-19",
 		"sources": [
 			"customtypes/_features/global_events",
 			"src/lib/slices/GlobaleEvents",

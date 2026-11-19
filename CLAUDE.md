@@ -151,7 +151,7 @@ Regeln:
 - **Website-Suche** (`scope="site"`, vorgesehen für eine Lupe in der Navigation, noch nicht eingebaut): **Pagefind** komplett im Browser (Open Source, kein Dienst, kein Consent)
 - Index: `scripts/build-search-index.js` nach `vite build` → `build/pagefind/` (nur wenn die Variante im generierten Button-Modell aktiv ist). Lokal: `vite.config.js` liefert in `npm run dev` und `vite preview` den Index des letzten `npm run build` unter `/pagefind/` aus; ohne Build → Hinweis im Dialog
 - Indexiert wird nur `<main data-pagefind-body>` auf Routen unter `[[lang=lang]]`, nie passwortgeschützte Seiten; ein Index pro `<html lang>` (wird serverseitig via `locals.htmlLang` → `hooks.server.ts` gesetzt)
-- Inhalte, die erst im Browser laden (Globale Events, Termine …), sind nicht durchsuchbar; Teile ausschliessen mit `data-pagefind-ignore`
+- Inhalte, die erst im Browser laden (Eventmanagement, Termine …), sind nicht durchsuchbar; Teile ausschliessen mit `data-pagefind-ignore`
 
 ## Kartenpunkt (Karten-Felder)
 
