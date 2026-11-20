@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import AdminBulkActions from '$lib/components/admin/AdminBulkActions.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import { formatDateShort } from '$lib/utils/formatDate';
 
@@ -14,16 +15,56 @@
 	const today = () =>
 		new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(new Date());
 
-	// New entry
+	// Form: new entry, or edit an existing manual entry
+	type Entry = PageData['entries'][number];
+	let editing: Entry | null = null;
 	let typ: 'einnahme' | 'ausgabe' = 'ausgabe';
 	let kategorie = '';
+	let datum = today();
+	let text = '';
+	let betrag = '';
+	let removeBeleg = false;
+	let formCard: HTMLElement;
+
+	function startEdit(entry: Entry) {
+		editing = entry;
+		typ = entry.typ;
+		datum = entry.datum;
+		text = entry.text;
+		betrag = entry.betrag.toFixed(2);
+		removeBeleg = false;
+		// after typ so the category list matches
+		setTimeout(() => (kategorie = entry.kategorie));
+		formCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+	function resetForm() {
+		editing = null;
+		typ = 'ausgabe';
+		kategorie = '';
+		datum = today();
+		text = '';
+		betrag = '';
+		removeBeleg = false;
+	}
 	$: kategorien = data.kategorien[typ];
 	$: if (!kategorien.includes(kategorie)) kategorie = '';
 	let saving = false;
+
+	// Selection for bulk actions; only manual entries (paid invoices are changed in «Rechnungen»)
+	let selectedIds: string[] = [];
+	$: selectable = data.entries.filter((b) => !b.rechnungId).map((b) => b.id);
+	$: selectedIds = selectedIds.filter((id) => selectable.includes(id));
+	$: allSelected = selectable.length > 0 && selectedIds.length === selectable.length;
+	$: someSelected = selectedIds.length > 0 && !allSelected;
+	$: bulkActions = [
+		{ value: 'delete', label: $_('Löschen'), confirm: $_('{n} Einträge löschen?') }
+	];
 	function resetAfterSave(formElement: HTMLFormElement) {
-		kategorie = '';
-		const datum = formElement.querySelector('input[name=datum]') as HTMLInputElement | null;
-		if (datum) datum.value = today();
+		// Only the file input needs clearing; all other fields are bound (form.reset() would
+		// empty them in the DOM while the variables keep their value)
+		const file = formElement.querySelector('input[name=beleg]') as HTMLInputElement | null;
+		if (file) file.value = '';
+		resetForm();
 	}
 
 	$: einnahmen = data.entries.filter((b) => b.typ === 'einnahme');
@@ -133,23 +174,24 @@
 		{/if}
 	</section>
 
-	<!-- New entry -->
-	<section class="admin-card">
-		<h2 class="admin-card-title">{$_('Neuer Eintrag')}</h2>
+	<!-- New entry / edit entry -->
+	<section class="admin-card" bind:this={formCard}>
+		<h2 class="admin-card-title">{editing ? $_('Eintrag bearbeiten') : $_('Neuer Eintrag')}</h2>
 		<form
 			method="POST"
-			action="?/create"
+			action={editing ? '?/update' : '?/create'}
 			enctype="multipart/form-data"
 			class="grid gap-3 sm:grid-cols-2"
 			use:enhance={() => {
 				saving = true;
 				return async ({ result, update, formElement }) => {
 					saving = false;
-					await update({ reset: result.type === 'success' });
+					await update({ reset: false });
 					if (result.type === 'success') resetAfterSave(formElement);
 				};
 			}}
 		>
+			{#if editing}<input type="hidden" name="id" value={editing.id} />{/if}
 			<label class="admin-label">
 				{$_('Typ')}
 				<select name="typ" bind:value={typ} class="admin-input">
@@ -159,15 +201,29 @@
 			</label>
 			<label class="admin-label">
 				{$_('Datum')}
-				<input type="date" name="datum" value={today()} required class="admin-input" />
+				<input type="date" name="datum" bind:value={datum} required class="admin-input" />
 			</label>
 			<label class="admin-label sm:col-span-2">
 				{$_('Text')}
-				<input type="text" name="text" required maxlength="300" class="admin-input" />
+				<input
+					type="text"
+					name="text"
+					bind:value={text}
+					required
+					maxlength="300"
+					class="admin-input"
+				/>
 			</label>
 			<label class="admin-label">
 				{$_('Betrag (CHF, inkl. MwSt.)')}
-				<input type="text" name="betrag" inputmode="decimal" required class="admin-input" />
+				<input
+					type="text"
+					name="betrag"
+					bind:value={betrag}
+					inputmode="decimal"
+					required
+					class="admin-input"
+				/>
 			</label>
 			<label class="admin-label">
 				{$_('Kategorie')}
@@ -187,10 +243,32 @@
 					class="admin-input"
 				/>
 			</label>
-			<div class="sm:col-span-2">
+			{#if editing?.beleg}
+				<div class="admin-muted flex sm:col-span-2 flex-wrap items-center gap-3">
+					<a
+						href="/admin/buchhaltung/beleg/{editing.id}"
+						target="_blank"
+						rel="noopener"
+						class="admin-link">{editing.beleg.name}</a
+					>
+					<label class="flex items-center gap-1">
+						<input
+							type="checkbox"
+							name="beleg-entfernen"
+							bind:checked={removeBeleg}
+							class="admin-checkbox"
+						/>
+						{$_('Beleg entfernen')}
+					</label>
+				</div>
+			{/if}
+			<div class="flex gap-2 sm:col-span-2">
 				<button type="submit" class="admin-btn admin-btn-primary" disabled={saving}>
 					{saving ? $_('Wird gespeichert …') : $_('Speichern')}
 				</button>
+				{#if editing}
+					<button type="button" class="admin-btn" on:click={resetForm}>{$_('Abbrechen')}</button>
+				{/if}
 			</div>
 		</form>
 	</section>
@@ -201,10 +279,27 @@
 		{#if !data.entries.length}
 			<p class="admin-empty">{$_('Keine Buchungen in diesem Jahr.')}</p>
 		{:else}
+			<AdminBulkActions
+				{selectedIds}
+				actions={bulkActions}
+				formAction="?/bulk"
+				on:done={() => (selectedIds = [])}
+			/>
 			<div class="admin-table-wrap">
 				<table class="admin-table">
 					<thead>
 						<tr>
+							<th class="w-8">
+								<input
+									type="checkbox"
+									class="admin-checkbox"
+									aria-label={$_('Alle auswählen')}
+									checked={allSelected}
+									indeterminate={someSelected}
+									disabled={!selectable.length}
+									on:change={(e) => (selectedIds = e.currentTarget.checked ? [...selectable] : [])}
+								/>
+							</th>
 							<th>{$_('Datum')}</th>
 							<th>{$_('Kategorie')}</th>
 							<th>{$_('Text')}</th>
@@ -217,6 +312,17 @@
 					<tbody>
 						{#each data.entries as b (b.id)}
 							<tr>
+								<td>
+									{#if !b.rechnungId}
+										<input
+											type="checkbox"
+											class="admin-checkbox"
+											aria-label={$_('Auswählen')}
+											bind:group={selectedIds}
+											value={b.id}
+										/>
+									{/if}
+								</td>
 								<td class="nowrap">{formatDateShort(b.datum)}</td>
 								<td>{$_(b.kategorie)}</td>
 								<td>{b.text}</td>
@@ -236,16 +342,9 @@
 									{#if b.rechnungId}
 										<a href="/admin/rechnungen" class="admin-link">{$_('Rechnung')}</a>
 									{:else}
-										<form
-											method="POST"
-											action="?/delete"
-											use:enhance={({ cancel }) => {
-												if (!confirm($_('Eintrag löschen?'))) cancel();
-											}}
-										>
-											<input type="hidden" name="id" value={b.id} />
-											<button type="submit" class="admin-link-danger">{$_('Löschen')}</button>
-										</form>
+										<button type="button" class="admin-link" on:click={() => startEdit(b)}>
+											{$_('Bearbeiten')}
+										</button>
 									{/if}
 								</td>
 							</tr>
