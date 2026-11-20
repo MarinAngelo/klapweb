@@ -48,7 +48,8 @@ export interface ManualInvoiceRecord {
 	date: string;
 	status: 'gespeichert' | 'gesendet';
 	/** 'storniert' = no longer payable (e.g. booking cancelled) */
-	paymentStatus: 'offen' | 'bezahlt' | 'storniert';
+	/** 'gemahnt' = still unpaid, at least one reminder sent (dunning) */
+	paymentStatus: 'offen' | 'gemahnt' | 'bezahlt' | 'storniert';
 	paymentMethod?: 'rechnung' | 'bar';
 	source?: InvoiceSource;
 	/** Id in the source feature, e.g. booking terminId */
@@ -74,6 +75,10 @@ export interface ManualInvoiceRecord {
 	recurrence?: InvoiceRecurrence;
 	/** Total incl. VAT at creation (older records: recalculated, see buchhaltung.ts) */
 	total?: number;
+	/** Reminders sent (src/lib/server/dunning.ts): level 1/2, when, new due date (YYYY-MM-DD), mailed */
+	dunning?: { level: number; at: string; dueDate: string; sent: boolean }[];
+	/** Operator notified that the invoice is still unpaid after the last reminder */
+	dunningDone?: boolean;
 	/** When the invoice was paid (set when paymentStatus becomes 'bezahlt'); income date in «Buchhaltung» */
 	paidAt?: string;
 }

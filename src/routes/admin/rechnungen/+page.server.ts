@@ -10,6 +10,7 @@ import { listCustomers } from '$lib/server/customers';
 import { createClient } from '$lib/prismicio';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import { addYear, sendDueRecurringInvoices } from '$lib/server/recurringInvoices';
+import { sendDueReminders } from '$lib/server/dunning';
 import {
 	createInvoice,
 	documentFromRecord,
@@ -47,6 +48,8 @@ async function loadServices(fetchFn: typeof fetch) {
 export const load: PageServerLoad = async ({ fetch }) => {
 	// Due recurring invoices are also created when the admin opens the page (besides the daily cron)
 	await sendDueRecurringInvoices().catch((e) => console.error('Wiederkehrende Rechnungen:', e));
+	// Same for due reminders («Automatisch mahnen»)
+	await sendDueReminders().catch((e) => console.error('Mahnungen:', e));
 	const [invoices, customers, services] = await Promise.all([
 		listManualInvoices(),
 		listCustomers(),
@@ -221,7 +224,8 @@ export const actions: Actions = {
 				items,
 				notes: (formData.get('notes') as string) || undefined,
 				paymentStatus:
-					(formData.get('payment-status') as 'offen' | 'bezahlt' | 'storniert') || 'offen',
+					(formData.get('payment-status') as 'offen' | 'gemahnt' | 'bezahlt' | 'storniert') ||
+					'offen',
 				...paidAtFrom(formData),
 				...recurrenceFrom(formData)
 			});

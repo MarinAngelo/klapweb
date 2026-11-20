@@ -39,7 +39,7 @@ export interface CreateInvoiceInput {
 	/** Invoice date (ISO); default now. Admin: backdating possible, never in the future */
 	date?: string;
 	paymentMethod?: 'rechnung' | 'bar';
-	paymentStatus?: 'offen' | 'bezahlt' | 'storniert';
+	paymentStatus?: 'offen' | 'gemahnt' | 'bezahlt' | 'storniert';
 	showQuantity?: boolean;
 	/** Already loaded settings (saves a Prismic request) */
 	settings?: InvoiceSettings;

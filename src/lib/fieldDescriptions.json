@@ -243,6 +243,18 @@
 		"de-ch": "Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.",
 		"en-us": "Page the home page redirects to when «Startseite umleiten» (redirect home page) is on. Empty = default page «Website im Aufbau» (website under construction) with default text."
 	},
+	"settings.invoice_dunning_active": {
+		"de-ch": "Schickt offene Rechnungen nach Ablauf der Zahlungsfrist automatisch als Mahnung an den Kunden (höchstens 2 Mahnungen) und setzt den Zahlungsstatus auf «gemahnt». Du erhältst zu jeder Mahnung eine kurze Info-Mail. Barzahlungen und stornierte Rechnungen werden nie gemahnt.",
+		"en-us": "Automatically sends unpaid invoices to the customer as a payment reminder after the payment period (at most 2 reminders) and sets the payment status to «gemahnt» (reminded). You get a short notice for every reminder. Cash payments and cancelled invoices are never reminded."
+	},
+	"settings.invoice_dunning_days": {
+		"de-ch": "Wie viele Tage nach Ablauf der Zahlungsfrist die Mahnung verschickt wird. Gilt auch für die 2. Mahnung nach Ablauf der neuen Frist. Leer = 10 Tage. Beispiel: Rechnung vom 1.10., Zahlungsfrist 30 Tage, hier 10 → 1. Mahnung am 10.11.",
+		"en-us": "How many days after the payment period the reminder is sent. Also applies to the 2nd reminder after the new deadline. Empty = 10 days. Example: invoice of 1 Oct, payment period 30 days, 10 here → 1st reminder on 10 Nov."
+	},
+	"settings.invoice_dunning_terms_days": {
+		"de-ch": "Neue Zahlungsfrist, die in der Mahnung genannt wird, ab dem Tag der Mahnung. Leer = 10 Tage.",
+		"en-us": "New payment deadline stated in the reminder, counted from the day of the reminder. Empty = 10 days."
+	},
 	"settings.invoice_iban": {
 		"de-ch": "Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.",
 		"en-us": "Account your invoices are paid to. Shown on every invoice and in the QR payment part, e.g. «CH93 0076 2011 6238 5295 7». For the QR payment part it must be a Swiss or Liechtenstein IBAN. A QR-IBAN from your bank works too; the matching reference is created automatically."

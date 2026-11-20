@@ -1178,6 +1178,20 @@
 </ul>
 <p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
 
+<h3>Mahnungen</h3>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li><strong>Automatisch mahnen</strong></li>
+	<li><strong>Mahnung nach Ablauf der Zahlungsfrist (Tage)</strong></li>
+	<li><strong>Neue Zahlungsfrist in der Mahnung (Tage)</strong></li>
+</ul>
+<ul>
+	<li>Ist eine Rechnung nach Ablauf der Zahlungsfrist plus dieser Tage noch offen, geht automatisch die 1. Mahnung an den Kunden: dieselbe Rechnung mit QR-Zahlteil und einer neuen Frist. Der Zahlungsstatus wechselt auf «gemahnt».</li>
+	<li>Ist auch die neue Frist abgelaufen, folgt die 2. Mahnung. Danach mahnt die Website nicht mehr, sondern meldet dir die Rechnung.</li>
+	<li>Über jede Mahnung erhältst du eine kurze Info-Mail. Hat ein Kunde keine E-Mail-Adresse, wird nichts gemailt, und die Info-Mail weist dich darauf hin.</li>
+	<li>Barzahlungen und stornierte Rechnungen werden nie gemahnt. Beim Bearbeiten einer Rechnung siehst du unter «Mahnungen», wann welche Mahnung verschickt wurde.</li>
+</ul>
+
 <h3>Zahlungseingänge</h3>
 <p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt». Mehrere Rechnungen auf einmal: in der Liste ankreuzen und die Aktion «Als bezahlt markieren» wählen. Das Zahlungsdatum («Bezahlt am») wird gespeichert und lässt sich beim Bearbeiten ändern.</p>
 <p>Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>
@@ -1456,7 +1470,7 @@
 	<li>Video Einbettungs-Code (alternativ) (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Claude Anleitung Titel (Text)</li>
-	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Eventmanagement (Veranstaltungen), Newsletter / Info-Mails, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
+	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Eventmanagement (Veranstaltungen), Newsletter / Info-Mails, Buchhaltung, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
 	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Schritte (Liste)</li>
@@ -2130,6 +2144,9 @@
 	<li>Zahlungsfrist (Tage) (Zahl)</li>
 	<li>MWST-Satz (%) (Zahl)</li>
 	<li>QR-Zahlteil auf Rechnungen (Ein/Aus): Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.</li>
+	<li>Automatisch mahnen (Ein/Aus): Schickt offene Rechnungen nach Ablauf der Zahlungsfrist automatisch als Mahnung an den Kunden (höchstens 2 Mahnungen) und setzt den Zahlungsstatus auf «gemahnt». Du erhältst zu jeder Mahnung eine kurze Info-Mail. Barzahlungen und stornierte Rechnungen werden nie gemahnt.</li>
+	<li>Mahnung nach Ablauf der Zahlungsfrist (Tage) (Zahl): Wie viele Tage nach Ablauf der Zahlungsfrist die Mahnung verschickt wird. Gilt auch für die 2. Mahnung nach Ablauf der neuen Frist. Leer = 10 Tage. Beispiel: Rechnung vom 1.10., Zahlungsfrist 30 Tage, hier 10 → 1. Mahnung am 10.11.</li>
+	<li>Neue Zahlungsfrist in der Mahnung (Tage) (Zahl): Neue Zahlungsfrist, die in der Mahnung genannt wird, ab dem Tag der Mahnung. Leer = 10 Tage.</li>
 	<li>Kunden-E-Mail: Betreff (Text)</li>
 	<li>Kunden-E-Mail: Text (formatierter Text)</li>
 	<li>Buchungsbestätigung: Titel (Text)</li>
