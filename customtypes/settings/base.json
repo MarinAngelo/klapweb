@@ -1002,6 +1002,29 @@
 					"placeholder_true": "Ja",
 					"default_value": true
 				}
+			},
+			"invoice_dunning_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Automatisch mahnen",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"invoice_dunning_days": {
+				"type": "Number",
+				"config": {
+					"label": "Mahnung nach Ablauf der Zahlungsfrist (Tage)",
+					"placeholder": "10"
+				}
+			},
+			"invoice_dunning_terms_days": {
+				"type": "Number",
+				"config": {
+					"label": "Neue Zahlungsfrist in der Mahnung (Tage)",
+					"placeholder": "10"
+				}
 			}
 		}
 	}

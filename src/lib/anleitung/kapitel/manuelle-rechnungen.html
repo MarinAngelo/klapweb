@@ -36,6 +36,20 @@
 </ul>
 <p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
 
+<h3>Mahnungen</h3>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li data-field="settings.invoice_dunning_active"></li>
+	<li data-field="settings.invoice_dunning_days"></li>
+	<li data-field="settings.invoice_dunning_terms_days"></li>
+</ul>
+<ul>
+	<li>Ist eine Rechnung nach Ablauf der Zahlungsfrist plus dieser Tage noch offen, geht automatisch die 1. Mahnung an den Kunden: dieselbe Rechnung mit QR-Zahlteil und einer neuen Frist. Der Zahlungsstatus wechselt auf «gemahnt».</li>
+	<li>Ist auch die neue Frist abgelaufen, folgt die 2. Mahnung. Danach mahnt die Website nicht mehr, sondern meldet dir die Rechnung.</li>
+	<li>Über jede Mahnung erhältst du eine kurze Info-Mail. Hat ein Kunde keine E-Mail-Adresse, wird nichts gemailt, und die Info-Mail weist dich darauf hin.</li>
+	<li>Barzahlungen und stornierte Rechnungen werden nie gemahnt. Beim Bearbeiten einer Rechnung siehst du unter «Mahnungen», wann welche Mahnung verschickt wurde.</li>
+</ul>
+
 <h3>Zahlungseingänge</h3>
 <p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt». Mehrere Rechnungen auf einmal: in der Liste ankreuzen und die Aktion «Als bezahlt markieren» wählen. Das Zahlungsdatum («Bezahlt am») wird gespeichert und lässt sich beim Bearbeiten ändern.</p>
 <p>Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>

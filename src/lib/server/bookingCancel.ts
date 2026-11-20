@@ -121,7 +121,7 @@ export async function cancelBooking(
 			const invoice = (await listManualInvoices()).find(
 				(inv) => inv.invoiceNumber === booking.invoiceNumber
 			);
-			if (invoice?.paymentStatus === 'offen') {
+			if (invoice?.paymentStatus === 'offen' || invoice?.paymentStatus === 'gemahnt') {
 				await updateManualInvoice(invoice.id, {
 					paymentStatus: 'storniert',
 					notes: [invoice.notes, `Termin storniert am ${new Date().toLocaleDateString('de-CH')}`]

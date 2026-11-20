@@ -538,7 +538,9 @@
 											? '✓ bezahlt'
 											: inv.paymentStatus === 'storniert'
 												? '✕ storniert'
-												: '⏱ offen'}
+												: inv.paymentStatus === 'gemahnt'
+													? `! ${inv.dunning?.length ?? 1}. Mahnung`
+													: '⏱ offen'}
 									</span>
 								</td>
 								<td>
@@ -1031,6 +1033,7 @@
 										class="admin-input admin-input-sm"
 									>
 										<option value="offen">⏱ offen</option>
+										<option value="gemahnt">! gemahnt</option>
 										<option value="bezahlt">✓ bezahlt</option>
 										<option value="storniert">✕ storniert</option>
 									</select>
@@ -1046,6 +1049,22 @@
 									{/if}
 								</div>
 							</fieldset>
+
+							{#if editingInvoice.dunning?.length}
+								<fieldset class="admin-fieldset">
+									<legend>Mahnungen</legend>
+									<ul class="mt-2 space-y-1 text-sm">
+										{#each editingInvoice.dunning as d}
+											<li>
+												{d.level}. Mahnung am {formatDateShort(d.at.slice(0, 10))}, neue Frist {formatDateShort(
+													d.dueDate
+												)}
+												{d.sent ? '(gemailt)' : '(nicht gemailt)'}
+											</li>
+										{/each}
+									</ul>
+								</fieldset>
+							{/if}
 
 							<fieldset class="admin-fieldset">
 								<legend>Wiederholung</legend>

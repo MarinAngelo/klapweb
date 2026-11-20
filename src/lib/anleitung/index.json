@@ -211,11 +211,12 @@
 		"id": "manuelle-rechnungen",
 		"title": "Manuelle Rechnungen",
 		"feature": "manuelle_rechnungen",
-		"stand": "2026-11-19",
+		"stand": "2026-11-20",
 		"sources": [
 			"src/routes/admin/rechnungen",
 			"src/lib/server/invoices.ts",
 			"src/lib/server/recurringInvoices.ts",
+			"src/lib/server/dunning.ts",
 			"src/lib/server/invoicing",
 			"src/lib/qrBill.js"
 		]
