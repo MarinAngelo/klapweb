@@ -78,6 +78,48 @@
 		selectedIds = checked ? data.invoices.map((inv) => inv.id) : [];
 	}
 
+	// Zahlungsabgleich (bank export CSV)
+	type MatchResult = {
+		reference: string;
+		status: 'bezahlt' | 'betrag' | 'schon-bezahlt' | 'unbekannt';
+		invoiceNumber?: string;
+		customer?: string;
+		expected?: number;
+		amounts: number[];
+		date?: string;
+		row: number;
+	};
+	let matchResults: MatchResult[] | null = null;
+	let matchDryRun = false;
+	let matchError = '';
+	let matching = false;
+	const MATCH_LABELS: Record<MatchResult['status'], string> = {
+		bezahlt: '✓ auf bezahlt gesetzt',
+		betrag: '⚠ Betrag stimmt nicht',
+		'schon-bezahlt': 'bereits bezahlt',
+		unbekannt: '? Referenz unbekannt'
+	};
+
+	const reconcileEnhance: SubmitFunction = () => {
+		matching = true;
+		matchError = '';
+		return async ({ result, update }) => {
+			matching = false;
+			if (result.type === 'success') {
+				const d = (result.data ?? {}) as { matchResults?: MatchResult[]; dryRun?: boolean };
+				matchResults = d.matchResults ?? [];
+				matchDryRun = !!d.dryRun;
+				await update({ reset: false });
+			} else if (result.type === 'failure') {
+				matchError = String(
+					(result.data as { reconcileError?: string })?.reconcileError ?? 'Abgleich fehlgeschlagen'
+				);
+			} else if (result.type === 'error') {
+				matchError = result.error?.message ?? 'Abgleich fehlgeschlagen';
+			}
+		};
+	};
+
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
@@ -568,6 +610,78 @@
 					</tbody>
 				</table>
 			</div>
+		{/if}
+	</section>
+
+	<!-- Zahlungsabgleich -->
+	<section class="admin-card">
+		<h2 class="admin-card-title">Zahlungsabgleich</h2>
+		<p class="admin-muted mb-3">
+			Bank-Export (CSV) hochladen: Offene und gemahnte Rechnungen, deren Referenz im Export steht
+			und deren Betrag in derselben Zeile stimmt, werden auf «bezahlt» gesetzt (Zahlungsdatum aus
+			der Zeile).
+		</p>
+		<form
+			method="POST"
+			action="?/reconcile"
+			enctype="multipart/form-data"
+			class="flex flex-wrap items-center gap-3"
+			use:enhance={reconcileEnhance}
+		>
+			<input type="file" name="csv" accept=".csv,text/csv" required class="admin-input w-auto" />
+			<label class="flex items-center gap-2">
+				<input type="checkbox" name="dry-run" class="admin-checkbox" />
+				<span>Nur prüfen (nichts verbuchen)</span>
+			</label>
+			<button type="submit" class="admin-btn admin-btn-primary" disabled={matching}>
+				{matching ? 'Wird abgeglichen …' : 'Abgleichen'}
+			</button>
+		</form>
+		{#if matchError}
+			<p class="admin-notice admin-notice-error mt-3">{matchError}</p>
+		{/if}
+		{#if matchResults}
+			{#if !matchResults.length}
+				<p class="admin-empty mt-3">Keine Referenzen von Rechnungen im Export gefunden.</p>
+			{:else}
+				<p class="admin-muted mt-3">
+					{matchResults.filter((r) => r.status === 'bezahlt').length}
+					{matchDryRun ? 'würden auf bezahlt gesetzt (nur geprüft)' : 'auf bezahlt gesetzt'}
+				</p>
+				<div class="admin-table-wrap mt-2">
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Zeile</th>
+								<th>Rechnung</th>
+								<th>Kunde</th>
+								<th class="text-right">Betrag Rechnung</th>
+								<th class="text-right">Betrag Export</th>
+								<th>Datum</th>
+								<th>Ergebnis</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each matchResults as r}
+								<tr>
+									<td>{r.row}</td>
+									<td class="admin-mono nowrap">{r.invoiceNumber ?? r.reference}</td>
+									<td>{r.customer ?? '—'}</td>
+									<td class="text-right">{r.expected?.toFixed(2) ?? '—'}</td>
+									<td class="text-right">{r.amounts.map((a) => a.toFixed(2)).join(' / ') || '—'}</td
+									>
+									<td class="nowrap">{r.date ? formatDateShort(r.date) : '—'}</td>
+									<td class="nowrap">
+										{r.status === 'bezahlt' && matchDryRun
+											? '✓ würde auf bezahlt gesetzt'
+											: MATCH_LABELS[r.status]}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
 		{/if}
 	</section>
 

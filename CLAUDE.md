@@ -426,7 +426,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - Positionen: `{ description, quantity, unitPrice, billingType? }`, Rabatt = Position mit negativem Preis. Total inkl. MWST = Betrag im QR-Code
 - Einstellungen: Tab «Rechnungen» (`invoice_*` + `invoice_qr_bill`, in `customtypes/settings/base.json`, Feld-Gate `features: [...]` = aktiv bei einem der Rechnungs-Features); Laden nur über `loadInvoiceSettings()` / `invoiceSettingsFrom()`
 - **QR-Rechnung** (`src/lib/qrBill.js`, Standard 2.3, nur strukturierte Adressen): IBAN CH/LI, Absender-Adresse aus «Verantwortliche Adresse» (Zeile «Strasse Nr.» + Zeile «PLZ Ort»), nur CHF/EUR. Referenz: normale IBAN → Creditor Reference `RF…`, QR-IBAN → 27-stellige QR-Referenz, beides aus der Rechnungsnummer. Fehlt etwas → PDF ohne QR-Teil, «Inhalte prüfen» meldet `invoice_qr`
-- Zahlungseingang wird **nicht** automatisch erkannt (keine Bankanbindung) → «bezahlt» von Hand; Referenz erleichtert den Abgleich
+- **Zahlungsabgleich** (keine Bankanbindung): Bank-Export als CSV in `/admin/rechnungen` hochladen → `reconcilePayments()` (`src/lib/server/paymentMatching.ts`) sucht pro Zeile Referenz (RF/QR, auch nachgerechnet aus der Rechnungsnummer) oder Rechnungsnummer im Text (ZKB: «Zahlungszweck»), Betrag nur aus Gutschrift-Spalte (falls vorhanden), bei exaktem Betrag → «bezahlt» mit Buchungsdatum; «Nur prüfen» = ohne Verbuchen. Sonst «bezahlt» von Hand / Mehrfachauswahl
 
 ### Terminbuchung: Stornierung (`/termin-stornieren`)
 

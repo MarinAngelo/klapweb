@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import {
 	listManualInvoices,
@@ -11,6 +11,7 @@ import { createClient } from '$lib/prismicio';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import { addYear, sendDueRecurringInvoices } from '$lib/server/recurringInvoices';
 import { sendDueReminders } from '$lib/server/dunning';
+import { reconcilePayments } from '$lib/server/paymentMatching';
 import {
 	createInvoice,
 	documentFromRecord,
@@ -155,6 +156,24 @@ export const actions: Actions = {
 
 		const savedInvoice = await getManualInvoice(invoiceId);
 		return { success: true, invoiceNumber, invoice: savedInvoice };
+	},
+
+	/** Zahlungsabgleich: bank export (CSV) → mark matching invoices as paid (or only check) */
+	reconcile: async ({ request }) => {
+		const form = await request.formData();
+		const file = form.get('csv');
+		if (!(file instanceof File) || file.size === 0) {
+			return fail(400, { reconcileError: 'Bitte eine CSV-Datei wählen' });
+		}
+		if (file.size > 5 * 1024 * 1024)
+			return fail(400, { reconcileError: 'Die Datei ist grösser als 5 MB' });
+		const buffer = new Uint8Array(await file.arrayBuffer());
+		// Bank exports are UTF-8 or Windows-1252 (Latin-1)
+		let text = new TextDecoder('utf-8').decode(buffer);
+		if (text.includes('\uFFFD')) text = new TextDecoder('windows-1252').decode(buffer);
+		const dryRun = form.get('dry-run') === 'on';
+		const matchResults = await reconcilePayments(text, dryRun);
+		return { matchResults, dryRun, fileName: file.name };
 	},
 
 	/** Bulk actions of the invoice list (AdminBulkActions): action + ids (JSON) */
