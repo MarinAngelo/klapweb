@@ -264,26 +264,6 @@
 		link.click();
 	}
 
-	async function deleteInvoice(invoiceId: string, invoiceNumber: string) {
-		if (!confirm(`Wirklich löschen: ${invoiceNumber}?`)) return;
-
-		const formData = new FormData();
-		formData.set('invoice-id', invoiceId);
-
-		try {
-			const res = await postAction('?/delete', formData);
-
-			if (res.ok) {
-				alert('Rechnung gelöscht');
-				location.reload();
-			} else {
-				alert('Fehler beim Löschen');
-			}
-		} catch (e) {
-			alert('Fehler: ' + (e as Error).message);
-		}
-	}
-
 	function openEdit(invoiceId: string) {
 		const invoice = data.invoices.find((inv) => inv.id === invoiceId);
 
@@ -568,14 +548,8 @@
 										>
 									{/if}
 								</td>
-								<td class="nowrap space-x-3">
+								<td class="nowrap">
 									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>
-									<button
-										on:click={() => deleteInvoice(inv.id, inv.invoiceNumber)}
-										class="admin-link-danger"
-									>
-										Löschen
-									</button>
 								</td>
 							</tr>
 						{/each}

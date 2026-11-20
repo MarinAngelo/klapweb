@@ -154,23 +154,6 @@ export const actions: Actions = {
 		return { success: true, invoiceNumber, invoice: savedInvoice };
 	},
 
-	delete: async ({ request, fetch }) => {
-		const formData = await request.formData();
-
-		const invoiceId = formData.get('invoice-id') as string;
-		if (!invoiceId) {
-			throw error(400, 'Rechnung-ID fehlt');
-		}
-
-		try {
-			await deleteManualInvoice(invoiceId);
-			return { success: true };
-		} catch (e) {
-			console.error('Rechnung löschen fehlgeschlagen:', e);
-			throw error(500, 'Rechnung konnte nicht gelöscht werden');
-		}
-	},
-
 	/** Bulk actions of the invoice list (AdminBulkActions): action + ids (JSON) */
 	bulk: async ({ request }) => {
 		const formData = await request.formData();
