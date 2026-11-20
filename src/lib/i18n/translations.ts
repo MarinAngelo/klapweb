@@ -1678,6 +1678,16 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
 	// Buchhaltung (admin)
+	'Eintrag bearbeiten': { 'de-ch': 'Eintrag bearbeiten', 'en-us': 'Edit entry' },
+	'Beleg entfernen': { 'de-ch': 'Beleg entfernen', 'en-us': 'Remove receipt' },
+	'{n} Einträge löschen?': { 'de-ch': '{n} Einträge löschen?', 'en-us': 'Delete {n} entries?' },
+	Auswählen: { 'de-ch': 'Auswählen', 'en-us': 'Select' },
+	'Ungültige Auswahl': { 'de-ch': 'Ungültige Auswahl', 'en-us': 'Invalid selection' },
+	'Keine Einträge ausgewählt': {
+		'de-ch': 'Keine Einträge ausgewählt',
+		'en-us': 'No entries selected'
+	},
+	'Unbekannte Aktion': { 'de-ch': 'Unbekannte Aktion', 'en-us': 'Unknown action' },
 	Buchhaltung: { 'de-ch': 'Buchhaltung', 'en-us': 'Accounting' },
 	'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).':
 		{

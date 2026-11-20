@@ -8,7 +8,8 @@ import {
 	isValidBuchungId,
 	KATEGORIEN,
 	listBuchungen,
-	parseBuchung
+	parseBuchung,
+	updateBuchung
 } from '$lib/server/buchhaltung';
 
 export const prerender = false;
@@ -56,11 +57,40 @@ export const actions: Actions = {
 		return { created: true };
 	},
 
-	delete: async ({ request }) => {
+	/** Bulk actions (AdminBulkActions): action + ids (JSON), only manual entries */
+	bulk: async ({ request }) => {
 		if (!FEATURE_BUCHHALTUNG) throw error(404, 'Nicht gefunden');
-		const id = (await request.formData()).get('id');
+		const form = await request.formData();
+		let ids: unknown[] = [];
+		try {
+			ids = JSON.parse(String(form.get('ids') ?? '[]'));
+		} catch {
+			return fail(400, { error: 'Ungültige Auswahl' });
+		}
+		const valid = Array.isArray(ids) ? ids.filter(isValidBuchungId) : [];
+		if (!valid.length) return fail(400, { error: 'Keine Einträge ausgewählt' });
+		switch (form.get('action')) {
+			case 'delete':
+				await Promise.all(valid.map((id) => deleteBuchung(id)));
+				return { deleted: valid.length };
+			default:
+				return fail(400, { error: 'Unbekannte Aktion' });
+		}
+	},
+
+	update: async ({ request }) => {
+		if (!FEATURE_BUCHHALTUNG) throw error(404, 'Nicht gefunden');
+		const form = await request.formData();
+		const id = form.get('id');
 		if (!isValidBuchungId(id)) return fail(400, { error: 'Ungültiger Eintrag' });
-		await deleteBuchung(id);
-		return { deleted: id };
+		const data = parseBuchung(form);
+		if ('error' in data) return fail(400, { error: data.error });
+		const file = form.get('beleg');
+		const beleg = file instanceof File ? file : null;
+		const fileError = belegError(beleg);
+		if (fileError) return fail(400, { error: fileError });
+		const updated = await updateBuchung(id, data, beleg, form.get('beleg-entfernen') === 'on');
+		if (!updated) return fail(404, { error: 'Eintrag nicht gefunden' });
+		return { updated: id };
 	}
 };

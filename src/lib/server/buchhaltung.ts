@@ -148,6 +148,29 @@ export async function createBuchung(
 	return entry;
 }
 
+/** Changes a manual entry; a new receipt replaces the old one, removeBeleg deletes it */
+export async function updateBuchung(
+	id: string,
+	data: Omit<Buchung, 'id' | 'createdAt' | 'beleg'>,
+	beleg?: File | null,
+	removeBeleg = false
+): Promise<Buchung | null> {
+	const existing = (await store('buchhaltung').get(id, { type: 'json' })) as Buchung | null;
+	if (!existing) return null;
+	const entry: Buchung = { ...existing, ...data, id, createdAt: existing.createdAt };
+	if (beleg && beleg.size > 0) {
+		await store('buchhaltung_belege').set(id, await beleg.arrayBuffer(), {
+			metadata: { contentType: beleg.type, name: beleg.name }
+		});
+		entry.beleg = { name: beleg.name, contentType: beleg.type, size: beleg.size };
+	} else if (removeBeleg) {
+		await store('buchhaltung_belege').delete(id);
+		delete entry.beleg;
+	}
+	await store('buchhaltung').setJSON(id, entry);
+	return entry;
+}
+
 export async function deleteBuchung(id: string): Promise<void> {
 	await Promise.all([store('buchhaltung').delete(id), store('buchhaltung_belege').delete(id)]);
 }
