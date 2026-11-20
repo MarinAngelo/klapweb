@@ -99,8 +99,7 @@
 	let isEditModalOpen = false;
 	let editingInvoiceId = '';
 	let editingInvoice: any = null;
-	let editModalTab: 'view' | 'edit' | 'pdf' = 'view';
-	let editPdfBase64 = '';
+	let editModalTab: 'view' | 'edit' = 'view';
 	let editPdfLoading = false;
 
 	// Neuer Kunde Modal
@@ -278,7 +277,6 @@
 		};
 		editingInvoiceId = invoiceId;
 		editModalTab = 'view';
-		editPdfBase64 = '';
 		isEditModalOpen = true;
 	}
 
@@ -286,6 +284,8 @@
 		if (!editingInvoice) return;
 
 		editPdfLoading = true;
+		// Open the tab right away (in the click) so popup blockers allow it, fill it when ready
+		const tab = window.open('', '_blank');
 		const formData = new FormData();
 		formData.set('invoice-number', editingInvoice.invoiceNumber);
 		formData.set('invoice-id', editingInvoiceId);
@@ -304,9 +304,13 @@
 			const { ok, result } = await postAction('?/previewEditPdf', formData);
 
 			if (ok && result.type === 'success') {
-				editPdfBase64 = String(result.data?.pdfBase64 ?? '');
-				editModalTab = 'pdf';
+				const base64 = String(result.data?.pdfBase64 ?? '');
+				const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+				const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+				if (tab) tab.location.href = url;
+				else window.open(url, '_blank');
 			} else {
+				tab?.close();
 				alert('PDF konnte nicht generiert werden');
 			}
 		} catch (e) {
@@ -550,6 +554,12 @@
 								</td>
 								<td class="nowrap">
 									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>
+									<a
+										href="/admin/rechnungen/pdf/{inv.id}"
+										target="_blank"
+										rel="noopener"
+										class="admin-link ml-3">PDF</a
+									>
 								</td>
 							</tr>
 						{/each}
@@ -872,7 +882,6 @@
 							on:click={generateEditPdf}
 							disabled={editPdfLoading}
 							class="admin-tab"
-							class:is-active={editModalTab === 'pdf'}
 						>
 							📄 PDF {editPdfLoading ? '(wird geladen...)' : ''}
 						</button>
@@ -1119,15 +1128,6 @@
 									<p class="admin-muted">{editingInvoice.notes}</p>
 								</div>
 							{/if}
-						</div>
-					{:else if editModalTab === 'pdf' && editPdfBase64}
-						<!-- PDF View -->
-						<div class="h-96 rounded-md border border-gray-200 bg-gray-50 p-4">
-							<iframe
-								title="PDF Preview"
-								src="data:application/pdf;base64,{editPdfBase64}"
-								class="w-full h-full border-0"
-							/>
 						</div>
 					{/if}
 
