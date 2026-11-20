@@ -1,16 +1,17 @@
 <script lang="ts">
-	import { reveal } from '$lib/actions/reveal'; // Action direkt importieren
+	import { _ } from '$lib/stores/i18n';
+	import { reveal } from '$lib/actions/reveal';
+	import { onMount, onDestroy } from 'svelte';
+
 	export let images: Array<{ url: string; alt?: string }>;
 	export let animate: boolean = false;
 	export let animationOptions: { duration: number; delay: number } = { duration: 500, delay: 0 };
 
 	let currentIndex = 0;
-
-	// Variablen für Swipe-Logik
 	let startX = 0;
 	let endX = 0;
+	let autoplayInterval: ReturnType<typeof setInterval> | null = null;
 
-	// Funktion zum Wechseln des Bildes
 	function nextImage() {
 		currentIndex = (currentIndex + 1) % images.length;
 	}
@@ -19,7 +20,6 @@
 		currentIndex = (currentIndex - 1 + images.length) % images.length;
 	}
 
-	// Swipe-Logik
 	function handleTouchStart(event: TouchEvent) {
 		startX = event.touches[0].clientX;
 	}
@@ -30,13 +30,22 @@
 
 	function handleTouchEnd() {
 		if (startX - endX > 50) {
-			// Swipe nach links
 			nextImage();
 		} else if (endX - startX > 50) {
-			// Swipe nach rechts
 			prevImage();
 		}
 	}
+
+	onMount(() => {
+		const isDesktop = window.matchMedia('(min-width: 768px)');
+		if (isDesktop.matches) {
+			autoplayInterval = setInterval(nextImage, 4000);
+		}
+	});
+
+	onDestroy(() => {
+		if (autoplayInterval) clearInterval(autoplayInterval);
+	});
 </script>
 
 <div
@@ -48,15 +57,11 @@
 >
 	<div
 		class="carousel-images flex transition-transform duration-500"
-		style="transform: translateX(-{currentIndex * 100}%);"
+		style:transform="translateX(-{currentIndex * 100}%)"
 	>
 		{#each images as image, index}
 			<div class="carousel-item flex-shrink-0 w-full">
-				<img
-					src={image.url}
-					alt={image.alt || 'Carousel Image'}
-					class="w-full h-auto object-cover"
-				/>
+				<img src={image.url} alt={image.alt || $_('Bild')} class="w-full h-auto object-cover" />
 			</div>
 		{/each}
 	</div>
@@ -64,14 +69,14 @@
 	<button
 		class="prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block"
 		on:click={prevImage}
-		aria-label="Vorheriges Bild"
+		aria-label={$_('Vorheriges Bild')}
 	>
 		&#10094;
 	</button>
 	<button
 		class="next absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hidden md:block"
 		on:click={nextImage}
-		aria-label="Nächstes Bild"
+		aria-label={$_('Nächstes Bild')}
 	>
 		&#10095;
 	</button>

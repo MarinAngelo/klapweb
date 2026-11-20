@@ -1,0 +1,188 @@
+/**
+ * Booking storage via Netlify Blobs.
+ *
+ * Each booking occupies one blob keyed by the generated workday slot ID.
+ * Using the UID as key means a slot can only be booked once (atomic write).
+ *
+ * Required Netlify environment variables: NETLIFY_SITE_ID, NETLIFY_TOKEN
+ */
+import { getStore } from '@netlify/blobs';
+import { env } from '$env/dynamic/private';
+
+export interface BookingRecord {
+	terminId: string;
+	datum: string;
+	uhrzeit: string;
+	endzeit?: string;
+	/** End incl. buffer (Puffer danach); missing in older bookings → endzeit */
+	blockedUntil?: string;
+	titel: string;
+	bookedAt: string;
+	name?: string;
+	email?: string;
+	arbeitstagId?: string;
+	angebotId?: string;
+	reminderSent?: boolean;
+	telefon?: string;
+	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
+	source?: 'online' | 'admin';
+	/** Invoice of the booking (offers with «Preis», setting «Rechnung bei Buchung senden») */
+	invoiceNumber?: string;
+	/** Snapshot at booking time (offer «Preis», cancellation terms) — later changes don't apply */
+	price?: number;
+	/** ISO time until which cancelling is free; missing = always free */
+	cancelFreeUntil?: string;
+	/** Fee after cancelFreeUntil in % of price; missing = no online cancellation after the deadline */
+	cancelFeePercent?: number;
+	/** Secret of the cancellation link; older bookings without it accept the id alone */
+	cancelToken?: string;
+	zeitzone?: string;
+	/** Invoice due after the appointment (setting «Rechnung nach dem Termin senden», offer with price) */
+	invoicePending?: boolean;
+	/** Billing address from the booking form (for the invoice / QR bill) */
+	invoiceAddress?: { adresse?: string; plz?: string; ort?: string; land?: string };
+}
+
+function toMinutes(value: string): number | null {
+	const match = /^(\d{1,2}):(\d{2})$/.exec(value ?? '');
+	if (!match) return null;
+	return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function getBookingStore() {
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'buchungen', siteID, token });
+}
+
+export async function bookSlot(record: BookingRecord): Promise<void> {
+	const store = getBookingStore();
+	// setJSON with onlyIfNew via etag approach is unavailable in @netlify/blobs v10,
+	// but concurrent bookings at this scale are negligible.
+	await store.setJSON(record.terminId, record);
+}
+
+export async function isBooked(terminId: string): Promise<boolean> {
+	const store = getBookingStore();
+	const existing = await store.get(terminId, { type: 'json' });
+	return existing !== null;
+}
+
+export async function getBooking(terminId: string): Promise<BookingRecord | null> {
+	const store = getBookingStore();
+	return (await store.get(terminId, { type: 'json' })) as BookingRecord | null;
+}
+
+export async function updateBooking(
+	terminId: string,
+	patch: Partial<BookingRecord>
+): Promise<void> {
+	const store = getBookingStore();
+	const existing = await getBooking(terminId);
+	if (!existing) return;
+	await store.setJSON(terminId, { ...existing, ...patch });
+}
+
+/**
+ * Time range overlaps a booking on the same day. Both sides include their buffer:
+ * `endzeit` = end incl. buffer of the new appointment, existing bookings use blockedUntil.
+ */
+export async function hasOverlappingBooking(
+	datum: string,
+	startzeit: string,
+	endzeit: string,
+	excludeId?: string
+): Promise<boolean> {
+	return overlapsBooking(await listBookings(), datum, startzeit, endzeit, excludeId);
+}
+
+/**
+ * Same check against already loaded bookings — for many slots at once (admin «Terminverwaltung»):
+ * one Blob listing instead of one per slot.
+ */
+export function overlapsBooking(
+	bookings: BookingRecord[],
+	datum: string,
+	startzeit: string,
+	endzeit: string,
+	excludeId?: string
+): boolean {
+	const start = toMinutes(startzeit);
+	const end = toMinutes(endzeit);
+	if (start === null || end === null || end <= start) return false;
+
+	return bookings.some((booking) => {
+		if (booking.terminId === excludeId || booking.datum !== datum) return false;
+		const existingStart = toMinutes(booking.uhrzeit);
+		const existingEnd = toMinutes(booking.blockedUntil ?? booking.endzeit ?? booking.uhrzeit);
+		if (existingStart === null || existingEnd === null || existingEnd <= existingStart)
+			return false;
+		return start < existingEnd && end > existingStart;
+	});
+}
+
+export async function listBookings(): Promise<BookingRecord[]> {
+	const store = getBookingStore();
+	const { blobs } = await store.list();
+	const records = await Promise.all(
+		blobs.map((b) => store.get(b.key, { type: 'json' }) as Promise<BookingRecord>)
+	);
+	return records
+		.filter(Boolean)
+		.sort(
+			(a, b) =>
+				new Date(a.datum + 'T' + a.uhrzeit).getTime() -
+				new Date(b.datum + 'T' + b.uhrzeit).getTime()
+		);
+}
+
+export async function listBookingsByEmail(email: string): Promise<BookingRecord[]> {
+	const all = await listBookings();
+	const normalized = email.trim().toLowerCase();
+	return all.filter((b) => b.email?.trim().toLowerCase() === normalized);
+}
+
+export async function deleteBooking(terminId: string): Promise<void> {
+	const store = getBookingStore();
+	await store.delete(terminId);
+}
+
+// ── Cancelled (gesperrte) free slots ────────────────────────────────────────
+
+function getCancelledStore() {
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'cancelled_termine', siteID, token });
+}
+
+export async function cancelSlot(terminId: string): Promise<void> {
+	const store = getCancelledStore();
+	await store.setJSON(terminId, { cancelledAt: new Date().toISOString() });
+}
+
+export async function uncancelSlot(terminId: string): Promise<void> {
+	const store = getCancelledStore();
+	await store.delete(terminId);
+}
+
+export async function isCancelled(terminId: string): Promise<boolean> {
+	const store = getCancelledStore();
+	const existing = await store.get(terminId, { type: 'json' });
+	return existing !== null;
+}
+
+export async function listCancelled(): Promise<string[]> {
+	const store = getCancelledStore();
+	const { blobs } = await store.list();
+	return blobs.map((b) => b.key);
+}

@@ -1,0 +1,14 @@
+{
+	"_meta": {
+		"insertBefore": null
+	},
+	"Ressourcenbuchung": {
+		"whatsapp_tel": {
+			"type": "Text",
+			"config": {
+				"label": "Messenger-Nummer (Signal, Telegram, WhatsApp)",
+				"placeholder": "+41 79 123 45 67"
+			}
+		}
+	}
+}

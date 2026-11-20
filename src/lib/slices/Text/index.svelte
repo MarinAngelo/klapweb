@@ -1,45 +1,66 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
-	import { useOpenIndex } from '$lib/utils/useOpenIndex';
+	import { planFilter, isVisibleForPlan } from '$lib/stores/planFilter';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
 
 	export let slice: Content.TextSlice;
-	export let slices;
-	export let context;
-	export let index;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
 
-	const { pageColor, pageBgColor } = get(theme);
+	$: anim = mapAnimationFromPrimary(slice.primary);
+	$: bgColor = (slice.primary as any).bg_color || $pageColorsStore.pageBgColor;
+	$: textColor = (slice.primary as any).color || $pageColorsStore.pageColor;
+	$: innerApply = ((slice.primary as any).inner_apply as boolean | undefined) ?? false;
+	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
+	$: centered =
+		(slice.variation === 'default' || slice.variation === 'ueberschrift') &&
+		!!(slice.primary as any).centered;
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: yPaddingSame = ((slice.primary as any).y_padding_same as boolean | undefined) ?? false;
+	$: yPaddingSize = (slice.primary as any).y_padding as string | undefined;
+	$: marginTopSize = (slice.primary as any).margin_top as string | undefined;
 </script>
 
-<Bounded
-	as="section"
-	class="leading-relaxed"
-	style="color: {pageColor}; background-color: {pageBgColor};"
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
-	animate={anim.animate}
-	animationOptions={anim.options}
->
-	<div class={clsx(slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-6')}>
-		<PrismicRichText field={slice.primary.text} />
-	</div>
-</Bounded>
+{#if visible}
+	<Bounded
+		as="section"
+		class="color-scope leading-relaxed font-[var(--page-font)]"
+		{yPaddingSame}
+		{yPaddingSize}
+		{marginTopSize}
+		innerBackgroundColor={innerApply ? bgColor : undefined}
+		style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-color: {textColor}; --scope-bg: {innerApply
+			? $pageColorsStore.pageBgColor
+			: bgColor};"
+		data-slice-type={slice.slice_type}
+		data-slice-variation={slice.variation}
+		animate={anim.animate}
+		animationOptions={anim.options}
+	>
+		<div
+			class={clsx(
+				slice.variation === 'twoColumns' && 'two-col md:columns-2 md:gap-16',
+				centered && 'text-center'
+			)}
+		>
+			<PrismicRichText field={slice.primary.text} />
+		</div>
+	</Bounded>
+{/if}
 
 <style>
 	:global(.two-col > *:first-child) {
 		margin-top: 0;
+	}
+	:global(.rt-invisible) {
+		color: var(--page-bg-color) !important;
 	}
 </style>

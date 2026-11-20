@@ -1,0 +1,46 @@
+<script lang="ts">
+	import { renderableSlices } from '$lib/utils/renderableSlices';
+	// Own wrapper: replaces {{Variables}}, theme headings/links
+	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
+	import SliceZone from '$lib/components/SliceZone.svelte';
+	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
+	import Bounded from '$lib/components/Bounded.svelte';
+	import { components } from '$lib/slices';
+
+	export let data: {
+		doc: any;
+		title: string;
+		ressource: {
+			uid: string;
+			name: string;
+			beschreibung: any[];
+			maxPersonen: number;
+			minNaechte: number;
+			preisProNacht: number;
+			zimmerEinzelbuchbar: boolean;
+			saisonpreise: Array<{ von: string; bis: string; preis_pro_nacht: number }>;
+			schlafzimmer: Array<{
+				zimmer_name: string;
+				bett_typ: string;
+				anzahl_betten: number;
+				bild: { url: string; alt: string } | null;
+			}>;
+		};
+	};
+
+	const safeComponents = components as any;
+	$: beschreibung = data.doc.data.beschreibung as any;
+</script>
+
+{#if beschreibung?.length}
+	<!-- No bottom padding: the booking slice below brings its own top spacing -->
+	<Bounded yPadding="sm-top">
+		<PrismicRichText field={beschreibung} components={{ embed: RichTextEmbed }} />
+	</Bounded>
+{/if}
+
+<SliceZone
+	slices={renderableSlices(data.doc.data.slices)}
+	components={safeComponents}
+	context={{ ressource: data.ressource }}
+/>

@@ -1,0 +1,86 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"heading": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "heading2",
+						"content": {
+							"text": "Consist"
+						}
+					}
+				]
+			},
+			"intro": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Duis ex amet aliqua in id irure do est mollit culpa. Minim velit elit quis irure proident."
+						}
+					}
+				]
+			},
+			"submit_label": {
+				"__TYPE__": "FieldContent",
+				"value": "such",
+				"type": "Text"
+			},
+			"success_heading": {
+				"__TYPE__": "FieldContent",
+				"value": "however",
+				"type": "Text"
+			},
+			"success_text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Non excepteur sit enim elit nostrud pariatur labore. Laboris id occaecat et veniam quis irure enim non. Enim cillum nisi Lorem."
+						}
+					}
+				]
+			},
+			"animate": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"anim_direction": {
+				"__TYPE__": "FieldContent",
+				"value": "Links",
+				"type": "Select"
+			},
+			"anim_delay": {
+				"__TYPE__": "FieldContent",
+				"value": "17",
+				"type": "Number"
+			},
+			"anim_duration": {
+				"__TYPE__": "FieldContent",
+				"value": "47",
+				"type": "Number"
+			},
+			"bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#04a9e2",
+				"type": "Color"
+			},
+			"text_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#613412",
+				"type": "Color"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
+]

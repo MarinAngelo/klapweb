@@ -1,0 +1,66 @@
+<h4>1. Rechnungen öffnen</h4>
+<p>Öffne im Admin-Bereich <strong>Rechnungen</strong>.</p>
+
+<h4>2. Kunde wählen</h4>
+<p>Neue Rechnung: Wähle den Kunden aus der Liste oder erfasse ihn direkt als neuen Kunden.</p>
+
+<h4>3. Leistungsposten</h4>
+<p>Füge Leistungsposten mit Beschreibung, Menge und Preis hinzu, optional Notizen.</p>
+
+<h4>4. Vorschau</h4>
+<p>Prüfe die PDF-Vorschau.</p>
+
+<h4>5. Speichern und senden</h4>
+<p>Speichere und sende die Rechnung optional direkt per E-Mail an den Kunden. Das Versanddatum wird festgehalten.</p>
+
+<h4>6. Zahlung vermerken</h4>
+<p>Ist die Rechnung bezahlt, wähle beim Zahlungsstatus «bezahlt».</p>
+
+<h3>Jährlich wiederkehrende Rechnungen</h3>
+<ul>
+	<li><strong>Beim Speichern einer neuen Rechnung:</strong> «Jährlich wiederholen» ankreuzen. Die nächste Rechnung ist ein Jahr nach dem Rechnungsdatum fällig.</li>
+	<li><strong>Bei einer bestehenden Rechnung:</strong> «Bearbeiten», Abschnitt «Wiederholung», «Jährlich wiederholen» einschalten und das Datum der nächsten Rechnung wählen.</li>
+	<li>Am Fälligkeitstag erstellt die Website automatisch eine Kopie mit neuer Rechnungsnummer, heutigem Datum und QR-Zahlteil und mailt sie an den Kunden. Du erhältst eine kurze Info-Mail.</li>
+	<li>Danach ist die nächste Rechnung wieder ein Jahr später fällig. In der Liste steht bei der Vorlage «jährlich» mit dem nächsten Termin, die erstellten Rechnungen tragen die Quelle «Wiederkehrend».</li>
+	<li>Zum Beenden «Jährlich wiederholen» in der Vorlage ausschalten.</li>
+</ul>
+
+<h3>Rechnungen nachträglich bearbeiten</h3>
+<p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden.</p>
+<p>Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
+
+<h3>QR-Zahlteil</h3>
+<p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong> dieses Feld ein:</p>
+<ul>
+	<li data-field="settings.invoice_qr_bill"></li>
+</ul>
+<p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
+
+<h3>Mahnungen</h3>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li data-field="settings.invoice_dunning_active"></li>
+	<li data-field="settings.invoice_dunning_days"></li>
+	<li data-field="settings.invoice_dunning_terms_days"></li>
+</ul>
+<ul>
+	<li>Ist eine Rechnung nach Ablauf der Zahlungsfrist plus dieser Tage noch offen, geht automatisch die 1. Mahnung an den Kunden: dieselbe Rechnung mit QR-Zahlteil und einer neuen Frist. Der Zahlungsstatus wechselt auf «gemahnt».</li>
+	<li>Ist auch die neue Frist abgelaufen, folgt die 2. Mahnung. Danach mahnt die Website nicht mehr, sondern meldet dir die Rechnung.</li>
+	<li>Über jede Mahnung erhältst du eine kurze Info-Mail. Hat ein Kunde keine E-Mail-Adresse, wird nichts gemailt, und die Info-Mail weist dich darauf hin.</li>
+	<li>Barzahlungen und stornierte Rechnungen werden nie gemahnt. Beim Bearbeiten einer Rechnung siehst du unter «Mahnungen», wann welche Mahnung verschickt wurde.</li>
+</ul>
+
+<h3>Zahlungseingänge</h3>
+<p>Zahlungen gleichst du mit dem Kontoauszug deiner Bank ab:</p>
+<ol>
+	<li>Lade im E-Banking die Buchungen als <strong>CSV</strong> herunter.</li>
+	<li>Im Admin-Bereich unter <strong>Rechnungen</strong>, Abschnitt <strong>Zahlungsabgleich</strong>, die Datei wählen.</li>
+	<li>Mit «Nur prüfen» siehst du zuerst, was passieren würde. Ohne Haken werden die Treffer verbucht.</li>
+	<li><strong>Abgleichen</strong> klicken.</li>
+</ol>
+<ul>
+	<li>Gefunden wird eine offene oder gemahnte Rechnung, wenn ihre Referenz (vom QR-Zahlteil) oder ihre Rechnungsnummer in einer Zeile steht, z. B. im Zahlungszweck.</li>
+	<li>Stimmt der gutgeschriebene Betrag dieser Zeile mit dem Rechnungsbetrag überein, wird die Rechnung auf «bezahlt» gesetzt. Zahlungsdatum ist das Datum der Buchung. Sie erscheint damit auch in der Buchhaltung.</li>
+	<li>Stimmt der Betrag nicht (z. B. Teilzahlung), wird nichts verbucht. Die Liste zeigt «Betrag stimmt nicht», und du entscheidest selbst.</li>
+	<li>Einzelne Zahlungen kannst du weiterhin von Hand auf «bezahlt» setzen, auch mehrere auf einmal mit der Aktion «Als bezahlt markieren».</li>
+</ul>

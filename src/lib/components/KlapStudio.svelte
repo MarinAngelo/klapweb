@@ -1,0 +1,1392 @@
+<script lang="ts">
+	import { _ } from '$lib/stores/i18n';
+	import { onMount, onDestroy } from 'svelte';
+	import P5Canvas from '$lib/components/P5Canvas.svelte';
+	import { textBgColorSketch } from '$lib/sketches/text-bg-color';
+	import { theme } from '$lib/stores/theme';
+	import { hexToRgba } from '$lib/utils/hexToRgba';
+	import { presetFontNames, presetFontUrls } from '$lib/utils/presetFonts';
+
+	export let open = false;
+
+	function getCssVar(key: string): string {
+		return getComputedStyle(document.documentElement).getPropertyValue(key).trim() || '#000000';
+	}
+
+	// ── Page-level colors ──────────────────────────────────────────────────────
+	let bgColor = '#000000';
+	let textColor = '#000000';
+	let sectionBgActive = false;
+	let sketchActive = false;
+	let sketchMode: 'dark' | 'light' = 'light';
+
+	const sketch = textBgColorSketch(
+		(bg, text) => {
+			if (activeSlice) {
+				// Slice-Modus: Sketch-Farben gehen auf das ausgewählte Element,
+				// Seiten-CSS-Variablen werden sofort zurückgesetzt
+				document.documentElement.style.setProperty('--page-bg-color', bgColor);
+				document.documentElement.style.setProperty('--page-color', textColor);
+				sliceBgColor = bg;
+				sliceTextColor = text;
+				const bgTarget = activeSlice.innerEl ?? activeSlice.el;
+				bgTarget.style.setProperty('background-color', bg, 'important');
+				activeSlice.el.style.setProperty('color', text, 'important');
+				activeSlice.el.style.setProperty('--page-color', text, 'important');
+				if (activeSlice.innerEl) {
+					activeSlice.innerEl.style.setProperty('color', text, 'important');
+					activeSlice.innerEl.style.setProperty('--page-color', text, 'important');
+				}
+				for (const { el } of activeSlice.pageColorEls) {
+					el.style.setProperty('--page-color', text, 'important');
+				}
+			} else {
+				// Seiten-Modus: wie bisher
+				bgColor = bg;
+				textColor = text;
+				theme.update((t) => ({ ...t, pageBgColor: bg, pageColor: text }));
+				if (sectionBgActive) setSectionBgStyle(bg);
+			}
+		},
+		() => sketchMode
+	);
+
+	onMount(() => {
+		bgColor = $theme.pageBgColor || getCssVar('--page-bg-color');
+		textColor = $theme.pageColor || getCssVar('--page-color');
+	});
+
+	$: if (open) {
+		bgColor = $theme.pageBgColor || getCssVar('--page-bg-color');
+		textColor = $theme.pageColor || getCssVar('--page-color');
+		buildSliceList();
+	}
+
+	const savedBgColors = new Map<HTMLElement, string>();
+
+	function setSectionBgStyle(color: string) {
+		document.querySelectorAll<HTMLElement>('[data-collapsible]').forEach((el) => {
+			if (!savedBgColors.has(el)) {
+				savedBgColors.set(el, el.style.getPropertyValue('background-color'));
+			}
+			el.style.setProperty('background-color', color, 'important');
+		});
+	}
+
+	function clearSectionBgStyle() {
+		savedBgColors.forEach((original, el) => {
+			el.style.removeProperty('background-color');
+			if (original) el.style.setProperty('background-color', original);
+		});
+		savedBgColors.clear();
+	}
+
+	function setBg(e: Event) {
+		bgColor = (e.target as HTMLInputElement).value;
+		document.documentElement.style.setProperty('--page-bg-color', bgColor);
+		theme.update((t) => ({ ...t, pageBgColor: bgColor }));
+		if (sectionBgActive) setSectionBgStyle(bgColor);
+	}
+
+	function setText(e: Event) {
+		textColor = (e.target as HTMLInputElement).value;
+		document.documentElement.style.setProperty('--page-color', textColor);
+		theme.update((t) => ({ ...t, pageColor: textColor }));
+	}
+
+	function toggleSectionBg() {
+		sectionBgActive = !sectionBgActive;
+		if (sectionBgActive) setSectionBgStyle(bgColor);
+		else clearSectionBgStyle();
+	}
+
+	// ── Slice-level colors ─────────────────────────────────────────────────────
+	type SliceEntry = {
+		el: HTMLElement;
+		label: string;
+		origStyle: string;
+		origGradientStyle: string;
+		innerEl: HTMLElement | null;
+		origInnerStyle: string;
+		btnEl: HTMLElement | null;
+		origBtnStyle: string;
+		pageColorEls: Array<{ el: HTMLElement; origCss: string }>;
+		textColEl: HTMLElement | null;
+		origTextColStyle: string;
+		blobPathEl: SVGPathElement | null;
+		origBlobTransform: string;
+	};
+
+	let sliceList: SliceEntry[] = [];
+	let activeSlice: SliceEntry | null = null;
+	let headerElement: HTMLElement | null = null;
+	let activeHeader = false;
+	let headerCurveEnabled = false;
+	let headerCurveColor = '#000000';
+	let headerCurveHeight = 32;
+	let headerCurveAmplitude = 16;
+	let headerCurveWaves = 1;
+	let headerCurveStart = '0';
+	let headerSaveState: 'idle' | 'saving' | 'saved' | 'auth' | 'error' = 'idle';
+	let headerCurveOriginal: {
+		svgStyle: string;
+		pathD: string;
+		pathFill: string;
+		viewBox: string;
+		dataset: Record<string, string | undefined>;
+	} | null = null;
+	let sliceBgColor = '#000000';
+	let sliceTextColor = '#000000';
+	let btnColor = '#000000';
+	let btnBgColor = '#000000';
+	let btnHoverColor = '#000000';
+	let btnHoverBgColor = '#000000';
+
+	// Gradient-State (nur Titelbereich / hero)
+	let gradientEl: HTMLElement | null = null;
+	let gradColor1 = '#ffffff';
+	let gradColor2 = '#000000';
+	let gradOpacity1 = 1;
+	let gradOpacity2 = 1;
+	let gradStop1 = 0;
+	let gradStop2 = 100;
+	let gradType = 'Linear';
+	let gradAngle = '180deg';
+
+	// Schriftart-Cycle (nur Titelbereich / hero)
+	let currentFontIndex = -1;
+
+	$: isHeroSlice = activeSlice?.el.dataset.sliceType === 'hero';
+	$: hasPresetFont = ['hero', 'p5_grafik'].includes(activeSlice?.el.dataset.sliceType ?? '');
+	$: isAdresseUndMap = activeSlice?.el.dataset.sliceType === 'adresse_und_map';
+
+	// Zoom-State (nur AdresseUndMap)
+	let zoomDesktop = 100;
+	let zoomMobile = 100;
+	let blobScale = 100;
+	let blobPositionX = 50;
+	let blobPositionY = 50;
+	let blobRotation = 0;
+
+	function parseRgba(str: string): { hex: string; opacity: number } | null {
+		const m = str.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
+		if (!m) return null;
+		const hex =
+			'#' + [m[1], m[2], m[3]].map((n) => parseInt(n).toString(16).padStart(2, '0')).join('');
+		return { hex, opacity: m[4] !== undefined ? parseFloat(m[4]) : 1 };
+	}
+
+	function initGradientFromEl(el: HTMLElement) {
+		gradientEl = el.querySelector<HTMLElement>('[data-gradient-bg]');
+		if (!gradientEl) return;
+		const bg = gradientEl.style.background || '';
+		const linM = bg.match(
+			/linear-gradient\(\s*([\d.]+)deg,\s*(rgba?\([^)]+\))\s+([\d.]+)%,\s*(rgba?\([^)]+\))\s+([\d.]+)%/
+		);
+		const radM = bg.match(
+			/radial-gradient\(circle,\s*(rgba?\([^)]+\))\s+([\d.]+)%,\s*(rgba?\([^)]+\))\s+([\d.]+)%/
+		);
+		if (linM) {
+			gradType = 'Linear';
+			gradAngle = `${linM[1]}deg`;
+			const c1 = parseRgba(linM[2]);
+			if (c1) {
+				gradColor1 = c1.hex;
+				gradOpacity1 = c1.opacity;
+			}
+			gradStop1 = parseFloat(linM[3]);
+			const c2 = parseRgba(linM[4]);
+			if (c2) {
+				gradColor2 = c2.hex;
+				gradOpacity2 = c2.opacity;
+			}
+			gradStop2 = parseFloat(linM[5]);
+		} else if (radM) {
+			gradType = 'Radial';
+			const c1 = parseRgba(radM[1]);
+			if (c1) {
+				gradColor1 = c1.hex;
+				gradOpacity1 = c1.opacity;
+			}
+			gradStop1 = parseFloat(radM[2]);
+			const c2 = parseRgba(radM[3]);
+			if (c2) {
+				gradColor2 = c2.hex;
+				gradOpacity2 = c2.opacity;
+			}
+			gradStop2 = parseFloat(radM[4]);
+		}
+	}
+
+	function reapplyGradient() {
+		if (!gradientEl) return;
+		const r1 = hexToRgba(gradColor1, gradOpacity1);
+		const r2 = hexToRgba(gradColor2, gradOpacity2);
+		gradientEl.style.background =
+			gradType === 'Radial'
+				? `radial-gradient(circle, ${r1} ${gradStop1}%, ${r2} ${gradStop2}%)`
+				: `linear-gradient(${gradAngle}, ${r1} ${gradStop1}%, ${r2} ${gradStop2}%)`;
+	}
+
+	function cycleFont(dir: number) {
+		currentFontIndex = (currentFontIndex + dir + presetFontNames.length) % presetFontNames.length;
+		const name = presetFontNames[currentFontIndex];
+		const url = presetFontUrls[name];
+		if (url && !document.querySelector(`link[href="${url}"]`)) {
+			const link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = url;
+			document.head.appendChild(link);
+		}
+		if (activeSlice && ['hero', 'p5_grafik'].includes(activeSlice.el.dataset.sliceType ?? '')) {
+			activeSlice.el.style.fontFamily = `'${name}'`;
+		}
+		document.documentElement.style.setProperty('--page-font', `'${name}', sans-serif`);
+		// Erzwinge Schriftwechsel auch im Header (überschreibt CMS-Font temporär)
+		// Header-Container überschreiben (Navigation etc.)
+		const headerEl = document.querySelector('.smart-header');
+		if (headerEl) {
+			headerEl.setAttribute(
+				'style',
+				(headerEl.getAttribute('style') || '') +
+					`; font-family: var(--page-font), sans-serif !important;`
+			);
+		}
+		// Logo-Titel und Untertitel explizit überschreiben (span mit font-family aus CMS)
+		document.querySelectorAll('.logo span').forEach((el) => {
+			el.setAttribute(
+				'style',
+				(el.getAttribute('style') || '').replace(/font-family:[^;]+;?/g, '') +
+					'font-family: var(--page-font), sans-serif !important;'
+			);
+		});
+	}
+
+	function formatSliceType(type: string): string {
+		return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
+	function buildSliceList() {
+		headerElement = document.querySelector<HTMLElement>('[data-design-element="header"]');
+		const els = Array.from(document.querySelectorAll<HTMLElement>('[data-slice-type]'));
+		const counts: Record<string, number> = {};
+		sliceList = els.map((el) => {
+			const type = el.dataset.sliceType ?? '?';
+			counts[type] = (counts[type] ?? 0) + 1;
+			const suffix = counts[type] > 1 ? ` #${counts[type]}` : '';
+			return {
+				el,
+				label: formatSliceType(type) + suffix,
+				origStyle: '',
+				origGradientStyle: '',
+				innerEl: null,
+				origInnerStyle: '',
+				btnEl: el.querySelector<HTMLElement>('.button-prismic-link'),
+				origBtnStyle: '',
+				pageColorEls: [],
+				textColEl: null,
+				origTextColStyle: '',
+				blobPathEl: null,
+				origBlobTransform: ''
+			};
+		});
+		// If the previously active slice is no longer in DOM, reset
+		if (activeSlice && !sliceList.find((s) => s.el === activeSlice!.el)) {
+			activeSlice = null;
+		}
+		if (!headerElement) {
+			activeHeader = false;
+		}
+	}
+
+	function rgbToHex(rgb: string): string | null {
+		if (!rgb || rgb === 'transparent') return null;
+		const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+		if (!m) return null;
+		return '#' + [m[1], m[2], m[3]].map((n) => parseInt(n).toString(16).padStart(2, '0')).join('');
+	}
+
+	function selectSlice(entry: SliceEntry) {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = entry;
+		sketchActive = false;
+		entry.origStyle = entry.el.style.cssText;
+
+		// Nur dann ein inneres Element suchen, wenn die Section selbst keine background-color hat.
+		// (z.B. TextMitBild hat background-color direkt auf <section> – ImageTextGrid-Kinder dürfen nicht überschrieben werden)
+		const selfHasBg = entry.el.getAttribute('style')?.includes('background-color') ?? false;
+		const innerStyled = selfHasBg
+			? null
+			: entry.el.querySelector<HTMLElement>('[style*="background-color"]');
+		entry.innerEl = innerStyled ?? null;
+		entry.origInnerStyle = entry.innerEl?.style.cssText ?? '';
+		entry.pageColorEls = Array.from(
+			entry.el.querySelectorAll<HTMLElement>('[style*="--page-color"]')
+		).map((el) => ({ el, origCss: el.style.cssText }));
+		const computed = getComputedStyle(innerStyled ?? entry.el);
+		sliceBgColor = rgbToHex(computed.backgroundColor) ?? bgColor;
+		sliceTextColor = rgbToHex(computed.color) ?? textColor;
+
+		if (['hero', 'p5_grafik'].includes(entry.el.dataset.sliceType ?? '')) {
+			const cf = entry.el.style.fontFamily.replace(/['"]/g, '').trim();
+			currentFontIndex = presetFontNames.indexOf(cf);
+		}
+		if (entry.el.dataset.sliceType === 'hero') {
+			const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
+			entry.origGradientStyle = gEl?.style.cssText ?? '';
+			initGradientFromEl(entry.el);
+			entry.blobPathEl = entry.el.querySelector<SVGPathElement>('.titelbereich-blob-surface path');
+			entry.origBlobTransform = entry.blobPathEl?.getAttribute('transform') ?? '';
+			if (entry.blobPathEl) {
+				const transform = entry.origBlobTransform.match(
+					/translate\(([-\d.]+)\s+([-\d.]+)\).*rotate\(([-\d.]+)\).*scale\(([-\d.]+)\)/
+				);
+				blobPositionX = transform ? Number(transform[1]) / 2 : 50;
+				blobPositionY = transform ? Number(transform[2]) / 2 : 50;
+				blobRotation = transform ? Number(transform[3]) : 0;
+				blobScale = transform ? Number(transform[4]) * 100 : 100;
+			}
+		}
+
+		if (entry.el.dataset.sliceType === 'adresse_und_map') {
+			entry.textColEl = entry.el.querySelector<HTMLElement>('.text-col');
+			entry.origTextColStyle = entry.textColEl?.style.cssText ?? '';
+			const d = parseFloat(entry.textColEl?.style.getPropertyValue('--text-zoom-desktop') ?? '1');
+			const m = parseFloat(entry.textColEl?.style.getPropertyValue('--text-zoom-mobile') ?? '1');
+			zoomDesktop = Math.round((isNaN(d) ? 1 : d) * 100);
+			zoomMobile = Math.round((isNaN(m) ? 1 : m) * 100);
+		}
+
+		if (entry.btnEl) {
+			entry.origBtnStyle = entry.btnEl.style.cssText;
+			const bc = getComputedStyle(entry.btnEl);
+			btnColor = rgbToHex(bc.color) ?? '#000000';
+			btnBgColor = rgbToHex(bc.backgroundColor) ?? '#000000';
+			// CSS vars are not readable via getComputedStyle — read from inline style directly
+			const rawHoverColor = entry.btnEl.style.getPropertyValue('--hover-text-color').trim();
+			const rawHoverBg = entry.btnEl.style.getPropertyValue('--hover-bg-color').trim();
+			btnHoverColor = rawHoverColor || btnColor;
+			btnHoverBgColor = rawHoverBg || btnBgColor;
+		}
+	}
+
+	function curvePath(height: number, amplitude: number, waves: number, start: string): string {
+		const points = 32;
+		const values = Array.from({ length: points + 1 }, (_, index) => {
+			const x = (index / points) * 100;
+			const curve = (amplitude / 2) * (1 - Math.cos((index / points) * waves * Math.PI * 2));
+			const y = start === 'Maximale Höhe' ? height - curve : curve;
+			return `${x},${y}`;
+		});
+		return `M 0,0 L 100,0 L ${values.reverse().join(' L ')} Z`;
+	}
+
+	function updateHeaderCurve() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path) return;
+		headerCurveAmplitude = Math.min(headerCurveHeight, Math.max(0, headerCurveAmplitude));
+		headerCurveWaves = Math.min(8, Math.max(1, headerCurveWaves));
+		path.setAttribute(
+			'd',
+			curvePath(headerCurveHeight, headerCurveAmplitude, headerCurveWaves, headerCurveStart)
+		);
+		path.setAttribute('fill', headerCurveColor);
+		svg.setAttribute('viewBox', `0 0 100 ${headerCurveHeight}`);
+		svg.dataset.curveEnabled = String(headerCurveEnabled);
+		svg.dataset.curveColor = headerCurveColor;
+		svg.dataset.curveHeight = String(headerCurveHeight);
+		svg.dataset.curveAmplitude = String(headerCurveAmplitude);
+		svg.dataset.curveWaves = String(headerCurveWaves);
+		svg.dataset.curveStart = headerCurveStart;
+		svg.style.height = `${headerCurveHeight}px`;
+		svg.style.bottom = `-${headerCurveHeight}px`;
+		svg.style.display = headerCurveEnabled ? 'block' : 'none';
+	}
+
+	function selectHeader() {
+		if (!headerElement) return;
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+		activeHeader = true;
+		const svg = headerElement.querySelector<SVGSVGElement>('.header-bottom-curve');
+		if (!svg) return;
+		headerCurveOriginal = {
+			svgStyle: svg.style.cssText,
+			pathD: svg.querySelector('path')?.getAttribute('d') ?? '',
+			pathFill: svg.querySelector('path')?.getAttribute('fill') ?? '',
+			viewBox: svg.getAttribute('viewBox') ?? '',
+			dataset: {
+				curveEnabled: svg.dataset.curveEnabled,
+				curveColor: svg.dataset.curveColor,
+				curveHeight: svg.dataset.curveHeight,
+				curveAmplitude: svg.dataset.curveAmplitude,
+				curveWaves: svg.dataset.curveWaves,
+				curveStart: svg.dataset.curveStart
+			}
+		};
+		headerCurveEnabled = svg.dataset.curveEnabled === 'true';
+		headerCurveColor = svg.dataset.curveColor || getCssVar('--header-bg-color');
+		headerCurveHeight = Number(svg.dataset.curveHeight) || 32;
+		headerCurveAmplitude = Number(svg.dataset.curveAmplitude) || 16;
+		headerCurveWaves = Number(svg.dataset.curveWaves) || 1;
+		headerCurveStart = svg.dataset.curveStart || '0';
+	}
+
+	function restoreHeader() {
+		const svg = headerElement?.querySelector<SVGSVGElement>('.header-bottom-curve');
+		const path = svg?.querySelector<SVGPathElement>('path');
+		if (!svg || !path || !headerCurveOriginal) return;
+		svg.style.cssText = headerCurveOriginal.svgStyle;
+		path.setAttribute('d', headerCurveOriginal.pathD);
+		path.setAttribute('fill', headerCurveOriginal.pathFill);
+		svg.setAttribute('viewBox', headerCurveOriginal.viewBox);
+		for (const [key, value] of Object.entries(headerCurveOriginal.dataset)) {
+			if (value === undefined) delete svg.dataset[key as keyof DOMStringMap];
+			else svg.dataset[key as keyof DOMStringMap] = value;
+		}
+		headerCurveOriginal = null;
+	}
+
+	function deselectHeader() {
+		restoreHeader();
+		activeHeader = false;
+	}
+
+	function setHeaderCurveEnabled(event: Event) {
+		headerCurveEnabled = (event.target as HTMLInputElement).checked;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveColor(event: Event) {
+		headerCurveColor = (event.target as HTMLInputElement).value;
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveHeight(event: Event) {
+		headerCurveHeight = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveAmplitude(event: Event) {
+		headerCurveAmplitude = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveWaves(event: Event) {
+		headerCurveWaves = Number((event.target as HTMLInputElement).value);
+		updateHeaderCurve();
+	}
+
+	function setHeaderCurveStart(event: Event) {
+		headerCurveStart = (event.target as HTMLSelectElement).value;
+		updateHeaderCurve();
+	}
+
+	async function saveHeaderTheme() {
+		headerSaveState = 'saving';
+		try {
+			// Authorised by the admin session cookie (log in under /admin first)
+			const response = await fetch('/api/design-theme', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					header_bottom_curve: headerCurveEnabled,
+					header_bottom_curve_color: headerCurveColor,
+					header_bottom_curve_height: headerCurveHeight,
+					header_bottom_curve_amplitude: headerCurveAmplitude,
+					header_bottom_curve_waves: headerCurveWaves,
+					header_bottom_curve_start: headerCurveStart
+				})
+			});
+			if (response.status === 401) {
+				headerSaveState = 'auth';
+				return;
+			}
+			if (!response.ok) throw new Error('save failed');
+			headerSaveState = 'saved';
+		} catch {
+			headerSaveState = 'error';
+		}
+	}
+
+	function deselectSlice() {
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+	}
+
+	function restoreSlice(entry: SliceEntry) {
+		entry.el.style.cssText = entry.origStyle;
+		if (entry.innerEl) entry.innerEl.style.cssText = entry.origInnerStyle;
+		if (entry.btnEl) entry.btnEl.style.cssText = entry.origBtnStyle;
+		if (entry.textColEl) entry.textColEl.style.cssText = entry.origTextColStyle;
+		if (entry.blobPathEl) entry.blobPathEl.setAttribute('transform', entry.origBlobTransform);
+		for (const { el, origCss } of entry.pageColorEls) {
+			el.style.cssText = origCss;
+		}
+		const gEl = entry.el.querySelector<HTMLElement>('[data-gradient-bg]');
+		if (gEl) gEl.style.cssText = entry.origGradientStyle;
+		gradientEl = null;
+		currentFontIndex = -1;
+	}
+
+	$: isBlobStudioSlice = activeSlice?.blobPathEl !== null && activeSlice?.blobPathEl !== undefined;
+
+	function updateBlobStudio() {
+		if (!activeSlice?.blobPathEl) return;
+		activeSlice.blobPathEl.setAttribute(
+			'transform',
+			`translate(${blobPositionX * 2} ${blobPositionY * 2}) rotate(${blobRotation}) scale(${2 * (blobScale / 100)})`
+		);
+	}
+
+	function setBlobScale(e: Event) {
+		blobScale = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionX(e: Event) {
+		blobPositionX = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobPositionY(e: Event) {
+		blobPositionY = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setBlobRotation(e: Event) {
+		blobRotation = Number((e.target as HTMLInputElement).value);
+		updateBlobStudio();
+	}
+
+	function setSliceBg(e: Event) {
+		sliceBgColor = (e.target as HTMLInputElement).value;
+		if (!activeSlice) return;
+		const bgTarget = activeSlice.innerEl ?? activeSlice.el;
+		bgTarget.style.setProperty('background-color', sliceBgColor, 'important');
+	}
+
+	function setSliceText(e: Event) {
+		sliceTextColor = (e.target as HTMLInputElement).value;
+		if (!activeSlice) return;
+		activeSlice.el.style.setProperty('color', sliceTextColor, 'important');
+		activeSlice.el.style.setProperty('--page-color', sliceTextColor, 'important');
+		if (activeSlice.innerEl) {
+			activeSlice.innerEl.style.setProperty('color', sliceTextColor, 'important');
+			activeSlice.innerEl.style.setProperty('--page-color', sliceTextColor, 'important');
+		}
+		for (const { el } of activeSlice.pageColorEls) {
+			el.style.setProperty('--page-color', sliceTextColor, 'important');
+		}
+	}
+
+	function setZoomDesktop(e: Event) {
+		zoomDesktop = parseInt((e.target as HTMLInputElement).value);
+		if (activeSlice?.textColEl)
+			activeSlice.textColEl.style.setProperty('--text-zoom-desktop', String(zoomDesktop / 100));
+	}
+
+	function setZoomMobile(e: Event) {
+		zoomMobile = parseInt((e.target as HTMLInputElement).value);
+		if (activeSlice?.textColEl)
+			activeSlice.textColEl.style.setProperty('--text-zoom-mobile', String(zoomMobile / 100));
+	}
+
+	function setBtnColor(e: Event) {
+		btnColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('color', btnColor, 'important');
+			activeSlice.btnEl.style.setProperty('border-color', btnColor, 'important');
+			activeSlice.btnEl.style.setProperty('--focus-ring-color', btnColor, 'important');
+		}
+	}
+
+	function setBtnBgColor(e: Event) {
+		btnBgColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('background-color', btnBgColor, 'important');
+		}
+	}
+
+	function setBtnHoverColor(e: Event) {
+		btnHoverColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('--hover-text-color', btnHoverColor);
+		}
+	}
+
+	function setBtnHoverBgColor(e: Event) {
+		btnHoverBgColor = (e.target as HTMLInputElement).value;
+		if (activeSlice?.btnEl) {
+			activeSlice.btnEl.style.setProperty('--hover-bg-color', btnHoverBgColor);
+		}
+	}
+
+	function clearSliceStyles() {
+		if (activeHeader) restoreHeader();
+		activeHeader = false;
+		if (activeSlice) restoreSlice(activeSlice);
+		activeSlice = null;
+	}
+
+	// ── Copy helper ────────────────────────────────────────────────────────────
+	let copiedField: string | null = null;
+	function copy(value: string, field: string) {
+		navigator.clipboard.writeText(value);
+		copiedField = field;
+		setTimeout(() => (copiedField = null), 1200);
+	}
+
+	// ── Cleanup ────────────────────────────────────────────────────────────────
+	$: if (!open) {
+		clearSectionBgStyle();
+		clearSliceStyles();
+	}
+	onDestroy(() => {
+		clearSectionBgStyle();
+		clearSliceStyles();
+	});
+</script>
+
+{#if open}
+	<aside class="panel">
+		<div class="header">
+			<span class="title">{$_('Design Panel')}</span>
+			<div class="header-actions">
+				<button
+					class="toggle"
+					class:on={sketchActive}
+					on:click={() => (sketchActive = !sketchActive)}
+					title={$_('Farbsketch ein/aus')}>⬡</button
+				>
+				<button
+					class="close"
+					on:click={() => (open = false)}
+					title={$_('Schliessen (Ctrl+Shift+K)')}>✕</button
+				>
+			</div>
+		</div>
+
+		{#if sketchActive}
+			<div class="row-header">
+				<button
+					class="mode-btn"
+					class:on={sketchMode === 'dark'}
+					on:click={() => (sketchMode = 'dark')}>◼ {$_('Dunkel')}</button
+				>
+				<button
+					class="mode-btn"
+					class:on={sketchMode === 'light'}
+					on:click={() => (sketchMode = 'light')}>◻ {$_('Hell')}</button
+				>
+			</div>
+			<div class="sketch-wrap">
+				<P5Canvas {sketch} width="100%" height="100%" />
+			</div>
+			<p class="hint-sketch">{$_('Maus X = Hintergrund · Maus Y = Schrift')}</p>
+		{/if}
+
+		<!-- Page-level colors -->
+
+		<div class="divider"></div>
+		<div class="section-label">{$_('Standard-Schriftart')}</div>
+		<label class="row">
+			<span>{$_('Schriftwechsel')}</span>
+			<div class="flex items-center [gap:0.5rem]">
+				<button
+					class="font-cycle-btn [min-width:8rem]"
+					style:font-family={currentFontIndex >= 0
+						? `'${presetFontNames[currentFontIndex]}', sans-serif`
+						: 'inherit'}
+					on:click={() => cycleFont(1)}
+					title={$_('Nächste Schriftart wählen')}
+				>
+					{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}
+				</button>
+				<button
+					class="copy-btn"
+					on:click={() =>
+						copy(currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '', 'fontname')}
+					title={$_('Fontnamen kopieren')}
+				>
+					{copiedField === 'fontname' ? '✓' : '⧉'}
+				</button>
+			</div>
+		</label>
+		<label class="row">
+			<span>{$_('Hintergrundfarbe (Page)')}</span>
+			<div class="color-wrap">
+				<input type="color" value={bgColor} on:input={setBg} />
+				<code>{bgColor}</code>
+				<button class="copy-btn" on:click={() => copy(bgColor, 'bg')} title={$_('Kopieren')}>
+					{copiedField === 'bg' ? '✓' : '⧉'}
+				</button>
+			</div>
+		</label>
+
+		<label class="row">
+			<span>{$_('Schriftfarbe')}</span>
+			<div class="color-wrap">
+				<input type="color" value={textColor} on:input={setText} />
+				<code>{textColor}</code>
+				<button class="copy-btn" on:click={() => copy(textColor, 'text')} title={$_('Kopieren')}>
+					{copiedField === 'text' ? '✓' : '⧉'}
+				</button>
+			</div>
+		</label>
+
+		<div class="row">
+			<div class="row-header">
+				<span>{$_('Hintergrundfarbe (Slices+)')}</span>
+				<button class="toggle" class:on={sectionBgActive} on:click={toggleSectionBg}>
+					{sectionBgActive ? $_('AN') : $_('AUS')}
+				</button>
+			</div>
+		</div>
+
+		<!-- Divider -->
+		<div class="divider"></div>
+
+		<div class="section-label">{$_('Kopfzeile')}</div>
+		<div class="slice-list">
+			{#if headerElement}
+				<button
+					class="slice-btn"
+					class:active={activeHeader}
+					on:click={() => (activeHeader ? deselectHeader() : selectHeader())}
+				>
+					{$_('Kopfzeile')}
+				</button>
+			{:else}
+				<span class="hint-sketch">{$_('Keine Kopfzeile gefunden')}</span>
+			{/if}
+		</div>
+
+		{#if activeHeader}
+			<label class="row">
+				<span>{$_('Untere Kante kurvig')}</span>
+				<input type="checkbox" checked={headerCurveEnabled} on:change={setHeaderCurveEnabled} />
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenfarbe')}</span>
+				<div class="color-wrap">
+					<input type="color" value={headerCurveColor} on:input={setHeaderCurveColor} />
+					<code>{headerCurveColor}</code>
+				</div>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenhöhe')} ({headerCurveHeight}px)</span>
+				<input
+					type="range"
+					min="8"
+					max="160"
+					step="1"
+					value={headerCurveHeight}
+					on:input={setHeaderCurveHeight}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenamplitude')} ({headerCurveAmplitude}px)</span>
+				<input
+					type="range"
+					min="0"
+					max={headerCurveHeight}
+					step="1"
+					value={headerCurveAmplitude}
+					on:input={setHeaderCurveAmplitude}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Anzahl Kurven')} ({headerCurveWaves})</span>
+				<input
+					type="range"
+					min="1"
+					max="8"
+					step="1"
+					value={headerCurveWaves}
+					on:input={setHeaderCurveWaves}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Kurvenstart links')}</span>
+				<select class="studio-select" value={headerCurveStart} on:change={setHeaderCurveStart}>
+					<option value="0">0</option>
+					<option value="Maximale Höhe">{$_('Maximale Höhe')}</option>
+				</select>
+			</label>
+			<button
+				class="save-theme-btn"
+				on:click={saveHeaderTheme}
+				disabled={headerSaveState === 'saving'}
+			>
+				{headerSaveState === 'saving'
+					? $_('Speichert …')
+					: headerSaveState === 'saved'
+						? $_('In Prismic gespeichert')
+						: headerSaveState === 'auth'
+							? $_('Bitte zuerst unter /admin anmelden')
+							: headerSaveState === 'error'
+								? $_('Speichern fehlgeschlagen')
+								: $_('In Prismic speichern')}
+			</button>
+		{/if}
+
+		<!-- Slice-level colors -->
+		<div class="section-label">{$_('Slice-Farben')}</div>
+
+		<div class="slice-list">
+			{#each sliceList as entry}
+				<button
+					class="slice-btn"
+					class:active={activeSlice === entry}
+					on:click={() => (activeSlice === entry ? deselectSlice() : selectSlice(entry))}
+				>
+					{entry.label}
+				</button>
+			{/each}
+			{#if sliceList.length === 0}
+				<span class="hint-sketch">{$_('Keine Slices gefunden')}</span>
+			{/if}
+		</div>
+
+		{#if activeSlice}
+			{#if isBlobStudioSlice}
+				<div class="section-label">{$_('Blob-Parameter')}</div>
+				<label class="row">
+					<span>{$_('Blob-Grösse (%)')} <code>{blobScale}</code></span>
+					<input
+						type="range"
+						min="50"
+						max="150"
+						step="1"
+						value={blobScale}
+						on:input={setBlobScale}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Position horizontal (%)')} <code>{blobPositionX}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionX}
+						on:input={setBlobPositionX}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Position vertikal (%)')} <code>{blobPositionY}</code></span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						value={blobPositionY}
+						on:input={setBlobPositionY}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Drehung (Grad)')} <code>{blobRotation}</code></span>
+					<input
+						type="range"
+						min="-180"
+						max="180"
+						step="1"
+						value={blobRotation}
+						on:input={setBlobRotation}
+					/>
+				</label>
+			{/if}
+			<label class="row">
+				<span>{$_('Hintergrundfarbe')}</span>
+				<div class="color-wrap">
+					<input type="color" value={sliceBgColor} on:input={setSliceBg} />
+					<code>{sliceBgColor}</code>
+					<button
+						class="copy-btn"
+						on:click={() => copy(sliceBgColor, 'slice-bg')}
+						title={$_('Kopieren')}
+					>
+						{copiedField === 'slice-bg' ? '✓' : '⧉'}
+					</button>
+				</div>
+			</label>
+
+			<label class="row">
+				<span>{$_('Schriftfarbe')}</span>
+				<div class="color-wrap">
+					<input type="color" value={sliceTextColor} on:input={setSliceText} />
+					<code>{sliceTextColor}</code>
+					<button
+						class="copy-btn"
+						on:click={() => copy(sliceTextColor, 'slice-text')}
+						title={$_('Kopieren')}
+					>
+						{copiedField === 'slice-text' ? '✓' : '⧉'}
+					</button>
+				</div>
+			</label>
+
+			{#if activeSlice.btnEl}
+				<label class="row">
+					<span>{$_('Schaltfläche Farbe')}</span>
+					<div class="color-wrap">
+						<input type="color" value={btnColor} on:input={setBtnColor} />
+						<code>{btnColor}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnColor, 'btn-color')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'btn-color' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>{$_('Schaltfläche Hintergrund')}</span>
+					<div class="color-wrap">
+						<input type="color" value={btnBgColor} on:input={setBtnBgColor} />
+						<code>{btnBgColor}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnBgColor, 'btn-bg')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'btn-bg' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>{$_('Schaltfläche Hover Farbe')}</span>
+					<div class="color-wrap">
+						<input type="color" value={btnHoverColor} on:input={setBtnHoverColor} />
+						<code>{btnHoverColor}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnHoverColor, 'btn-hover-color')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'btn-hover-color' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+
+				<label class="row">
+					<span>{$_('Schaltfläche Hover Hintergrund')}</span>
+					<div class="color-wrap">
+						<input type="color" value={btnHoverBgColor} on:input={setBtnHoverBgColor} />
+						<code>{btnHoverBgColor}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(btnHoverBgColor, 'btn-hover-bg')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'btn-hover-bg' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+			{/if}
+
+			{#if hasPresetFont}
+				<div class="divider"></div>
+				<div class="section-label">{$_('Schriftart')}</div>
+				<div class="row font-cycle-row">
+					<button class="font-cycle-btn" on:click={() => cycleFont(-1)}>&#8592;</button>
+					<span class="font-cycle-name"
+						>{currentFontIndex >= 0 ? presetFontNames[currentFontIndex] : '—'}</span
+					>
+					<button class="font-cycle-btn" on:click={() => cycleFont(1)}>&#8594;</button>
+				</div>
+			{/if}
+
+			{#if isHeroSlice}
+				<div class="divider"></div>
+				<div class="section-label">{$_('Verlauf')}</div>
+
+				<label class="row">
+					<span>{$_('Form')}</span>
+					<select class="studio-select" bind:value={gradType} on:change={reapplyGradient}>
+						<option value="Linear">{$_('Linear')}</option>
+						<option value="Radial">{$_('Radial')}</option>
+					</select>
+				</label>
+
+				{#if gradType === 'Linear'}
+					<label class="row">
+						<span>{$_('Richtung')}</span>
+						<select class="studio-select" bind:value={gradAngle} on:change={reapplyGradient}>
+							{#each ['0deg', '45deg', '90deg', '135deg', '180deg', '225deg', '270deg', '315deg'] as a}
+								<option value={a}>{a.replace('deg', '°')}</option>
+							{/each}
+						</select>
+					</label>
+				{/if}
+
+				<label class="row">
+					<span>{$_('Startfarbe')}</span>
+					<div class="color-wrap">
+						<input type="color" bind:value={gradColor1} on:input={reapplyGradient} />
+						<code>{gradColor1}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor1, 'gc1')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'gc1' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+				<label class="row">
+					<span>{$_('Startfarbe Deckkraft')} ({gradOpacity1.toFixed(2)})</span>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.01"
+						bind:value={gradOpacity1}
+						on:input={reapplyGradient}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Startfarbe Position')} ({gradStop1}%)</span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						bind:value={gradStop1}
+						on:input={reapplyGradient}
+					/>
+				</label>
+
+				<label class="row">
+					<span>{$_('Endfarbe')}</span>
+					<div class="color-wrap">
+						<input type="color" bind:value={gradColor2} on:input={reapplyGradient} />
+						<code>{gradColor2}</code>
+						<button
+							class="copy-btn"
+							on:click={() => copy(gradColor2, 'gc2')}
+							title={$_('Kopieren')}
+						>
+							{copiedField === 'gc2' ? '✓' : '⧉'}
+						</button>
+					</div>
+				</label>
+				<label class="row">
+					<span>{$_('Endfarbe Deckkraft')} ({gradOpacity2.toFixed(2)})</span>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.01"
+						bind:value={gradOpacity2}
+						on:input={reapplyGradient}
+					/>
+				</label>
+				<label class="row">
+					<span>{$_('Endfarbe Position')} ({gradStop2}%)</span>
+					<input
+						type="range"
+						min="0"
+						max="100"
+						step="1"
+						bind:value={gradStop2}
+						on:input={reapplyGradient}
+					/>
+				</label>
+			{/if}
+		{/if}
+
+		{#if isAdresseUndMap}
+			<div class="divider"></div>
+			<div class="section-label">{$_('Schriftgrösse')}</div>
+			<label class="row">
+				<span>{$_('Desktop')} ({zoomDesktop}%)</span>
+				<input
+					type="range"
+					min="50"
+					max="300"
+					step="5"
+					value={zoomDesktop}
+					on:input={setZoomDesktop}
+				/>
+			</label>
+			<label class="row">
+				<span>{$_('Mobile')} ({zoomMobile}%)</span>
+				<input
+					type="range"
+					min="50"
+					max="300"
+					step="5"
+					value={zoomMobile}
+					on:input={setZoomMobile}
+				/>
+			</label>
+		{/if}
+	</aside>
+{/if}
+
+<style>
+	.panel {
+		position: fixed;
+		bottom: 1.5rem;
+		right: 1.5rem;
+		z-index: 9900;
+		width: 260px;
+		background: rgba(20, 20, 25, 0.95);
+		color: #fff;
+		border-radius: 0.625rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+		font-family: ui-monospace, monospace;
+		padding: 0.875rem 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.875rem;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.sketch-wrap {
+		width: 100%;
+		height: 220px;
+		flex-shrink: 0;
+		border-radius: 0.375rem;
+		overflow: hidden;
+	}
+
+	.hint-sketch {
+		font-size: 0.6rem;
+		opacity: 0.35;
+		text-align: center;
+		margin: 0;
+	}
+
+	.title {
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		opacity: 0.45;
+	}
+
+	.close {
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.35);
+		cursor: pointer;
+		font-size: 0.875rem;
+		padding: 0;
+		line-height: 1;
+	}
+
+	.close:hover {
+		color: #fff;
+	}
+
+	.row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		font-size: 0.75rem;
+		opacity: 0.9;
+		cursor: default;
+	}
+
+	.color-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	input[type='color'] {
+		width: 2.5rem;
+		height: 2rem;
+		border: none;
+		border-radius: 0.3rem;
+		cursor: pointer;
+		padding: 0.1rem;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	code {
+		font-size: 0.75rem;
+		opacity: 0.6;
+		flex: 1;
+	}
+
+	.copy-btn {
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.3);
+		cursor: pointer;
+		font-size: 0.8rem;
+		padding: 0;
+		line-height: 1;
+		transition: color 0.15s;
+	}
+
+	.copy-btn:hover {
+		color: #fff;
+	}
+
+	.row-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.toggle {
+		font-family: inherit;
+		font-size: 0.6rem;
+		font-weight: 700;
+		padding: 0.15rem 0.4rem;
+		border-radius: 0.25rem;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.05);
+		color: rgba(255, 255, 255, 0.4);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+
+	.toggle.on {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
+		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+	.mode-btn {
+		flex: 1;
+		font-family: inherit;
+		font-size: 0.6rem;
+		font-weight: 700;
+		padding: 0.2rem 0;
+		border-radius: 0.25rem;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.05);
+		color: rgba(255, 255, 255, 0.35);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+
+	.mode-btn.on {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
+		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+	.divider {
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		margin: -0.25rem 0;
+	}
+
+	.section-label {
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		opacity: 0.45;
+	}
+
+	.slice-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.slice-btn {
+		font-family: inherit;
+		font-size: 0.7rem;
+		text-align: left;
+		padding: 0.3rem 0.5rem;
+		border-radius: 0.3rem;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: rgba(255, 255, 255, 0.04);
+		color: rgba(255, 255, 255, 0.5);
+		cursor: pointer;
+		transition: all 0.15s;
+	}
+
+	.slice-btn:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	.slice-btn.active {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+		border-color: rgba(255, 255, 255, 0.4);
+	}
+
+	input[type='range'] {
+		width: 100%;
+		accent-color: rgba(255, 255, 255, 0.6);
+		cursor: pointer;
+	}
+
+	.studio-select {
+		width: 100%;
+		font-family: inherit;
+		font-size: 0.75rem;
+		padding: 0.25rem 0.4rem;
+		border-radius: 0.3rem;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.07);
+		color: #fff;
+		cursor: pointer;
+	}
+
+	.studio-select option {
+		background: #1a1a20;
+		color: #fff;
+	}
+
+	.font-cycle-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 6px;
+	}
+	.font-cycle-btn {
+		background: #2a2a32;
+		border: 1px solid #444;
+		color: #e0e0e0;
+		border-radius: 4px;
+		padding: 2px 8px;
+		cursor: pointer;
+		font-size: 14px;
+		line-height: 1.6;
+		flex-shrink: 0;
+	}
+	.font-cycle-btn:hover {
+		background: #3a3a44;
+	}
+	.font-cycle-name {
+		flex: 1;
+		text-align: center;
+		color: #fff;
+		font-size: 12px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+</style>

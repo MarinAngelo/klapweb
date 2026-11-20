@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { hexToRgba } from '../utils/color';
-    
+
 	export let color: string;
 	export let opacity: number;
 	export let roundCorners = false;
@@ -8,6 +8,6 @@
 
 <div
 	class="absolute inset-0 pointer-events-none {roundCorners ? 'rounded-t-2xl' : ''}"
-	style="background: {hexToRgba(color, opacity)};"
+	style:background={hexToRgba(color, opacity)}
 	aria-hidden="true"
 ></div>

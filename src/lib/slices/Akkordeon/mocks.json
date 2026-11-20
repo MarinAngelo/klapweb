@@ -41,7 +41,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Elit mollit irure non adipisicing proident. Do eu laboris voluptate mollit sunt ullamco nostrud sit. Consectetur velit dolor excepteur eiusmod adipisicing exercitation officia est non magna."
+							"text": "Adipisicing officia quis ullamco proident voluptate esse reprehenderit ut minim tempor."
 						}
 					}
 				]
@@ -52,7 +52,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Sit in incididunt ullamco dolore sunt deserunt nisi pariatur ut voluptate. Voluptate sit enim officia anim commodo exercitation non qui sit dolore. Sit eiusmod non id est veniam ut fugiat ex laboris."
+							"text": "Ullamco velit officia duis ex sunt fugiat. Nisi voluptate dolore minim nulla duis. Sit quis cupidatat minim ea pariatur laboris exercitation irure nisi quis excepteur esse do exercitation cillum."
 						}
 					}
 				]
@@ -75,7 +75,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Officia consectetur Lorem labore adipisicing veniam in ipsum nisi voluptate consectetur."
+							"text": "Minim excepteur do reprehenderit do ea ipsum dolore id sunt ut dolor mollit velit. Consectetur qui quis sint non sint consequat aute minim adipisicing anim adipisicing laborum nisi. Ullamco fugiat anim id pariatur culpa dolore aliquip dolor aliquip qui irure non nostrud labore."
 						}
 					}
 				]
@@ -86,7 +86,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Non Lorem Lorem fugiat ut minim aliquip sunt ex pariatur esse excepteur velit."
+							"text": "Ad quis occaecat incididunt voluptate nisi cupidatat aute. Occaecat in fugiat duis minim ad."
 						}
 					}
 				]
@@ -155,6 +155,63 @@
 						]
 					}
 				]
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "leistungen",
+		"primary": {
+			"heading": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Sunt dolor est incididunt. Adipisicing dolor culpa id reprehenderit quis officia excepteur aliquip pariatur. Id incididunt ipsum dolor ad labore ea sint labore eiusmod occaecat ut minim voluptate id."
+						}
+					}
+				]
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Commodo magna minim minim excepteur incididunt esse duis excepteur elit. Incididunt amet aliquip eiusmod consequat fugiat magna laborum cupidatat qui cillum."
+						}
+					}
+				]
+			},
+			"erstes_item_ausgeklappt": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"animate": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"anim_direction": {
+				"__TYPE__": "FieldContent",
+				"value": "Oben",
+				"type": "Select"
+			},
+			"anim_delay": {
+				"__TYPE__": "FieldContent",
+				"value": "14",
+				"type": "Number"
+			},
+			"anim_duration": {
+				"__TYPE__": "FieldContent",
+				"value": "79",
+				"type": "Number"
 			}
 		},
 		"items": [

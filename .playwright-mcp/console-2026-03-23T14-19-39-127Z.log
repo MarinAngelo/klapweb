@@ -1,0 +1,5 @@
+[     425ms] [WARNING] <Layout> was created with unknown prop 'params' @ http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=eab89bfd:3207
+[     431ms] [WARNING] <Page> was created with unknown prop 'params' @ http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=eab89bfd:3207
+[     436ms] [WARNING] <Titelbereich> was created with unknown prop 'slices' @ http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=eab89bfd:3207
+[     436ms] [WARNING] <Titelbereich> was created with unknown prop 'context' @ http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=eab89bfd:3207
+[     436ms] [WARNING] <Titelbereich> was created with unknown prop 'index' @ http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=eab89bfd:3207

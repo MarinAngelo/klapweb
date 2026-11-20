@@ -1,0 +1,679 @@
+<script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
+	import { _ } from '$lib/stores/i18n';
+	import { onDestroy, onMount, tick } from 'svelte';
+	import { theme } from '$lib/stores/theme';
+	import { planFilter } from '$lib/stores/planFilter';
+	import { headerHeight } from '$lib/stores/headerHeight';
+	import Bounded from '$lib/components/Bounded.svelte';
+	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import { hexLuminance, shadeColor } from '$lib/utils/color';
+
+	export let slice: any;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
+
+	$: bgColor =
+		slice.primary.bg_color || (linksMode ? $theme.headerBgColor : $pageColorsStore.pageBgColor);
+	$: textColor =
+		slice.primary.color || (linksMode ? $theme.headerColor : $pageColorsStore.pageColor);
+	$: linkColor =
+		slice.primary.link_color || (linksMode ? $theme.headerLinkColor : 'var(--page-link-color)');
+	$: linkHoverColor =
+		slice.primary.link_hover_color ||
+		(linksMode ? $theme.headerLinkHoverColor : 'var(--page-link-hover-color)');
+	$: tocTitle = slice.primary.title || $_('Inhalt');
+	$: tiefe = slice.primary.tiefe || 'H2 und H3';
+	$: linksMode = (slice.primary.ausrichtung || 'Oben') === 'Links';
+	$: desktopTopSticky = !linksMode && slice.primary.sticky === true;
+	$: mobileBg = bgColor;
+	$: mobileActiveColor = textColor;
+	$: mobileDimColor = shadeColor(mobileBg, hexLuminance(mobileBg) > 0.5 ? -110 : 110);
+
+	type TocEntry = { id: string; text: string; level: 2 | 3 };
+	let tocEntries: TocEntry[] = [];
+	let activeId = '';
+	let dismissed = false;
+	let dismissedAtY = 0;
+	let mobileOpen = false;
+	// H2 entries with H3s are dropdowns, all closed by default: sidebar/mobile expand inline
+	// (several at once), the horizontal desktop bar opens one overlay at a time
+	let openGroups = new Set<string>();
+	let topOpen = '';
+	let mobileSheetEl: HTMLElement | null = null;
+	let mobileBarEl: HTMLElement | null = null;
+	// Mobile: bar moved to the top of <main>, directly below the header (wherever the slice sits)
+	let mobileWrapEl: HTMLElement | null = null;
+	let mobileMoved = false;
+	let mounted = false;
+	let sectionEl: HTMLElement | null = null;
+	let mobileNaturalTop = 0;
+	let mobileSheetHeight = 0;
+	let mobilePinned = false;
+	let headerScrolledAway = false;
+	let sidebarMaxHeight: number | null = null;
+	let sidebarAtFooter = false;
+	let desktopTopEl: HTMLElement | null = null;
+	let desktopTopPinned = false;
+	let desktopTopNaturalTop = 0;
+	let desktopTopHeight = 0;
+
+	$: tocGroups = tocEntries.reduce<{ h2: TocEntry; h3s: TocEntry[] }[]>((groups, entry) => {
+		if (entry.level === 2) groups.push({ h2: entry, h3s: [] });
+		else if (groups.length) groups[groups.length - 1].h3s.push(entry);
+		return groups;
+	}, []);
+
+	function toggleGroup(id: string) {
+		const next = new Set(openGroups);
+		if (next.has(id)) next.delete(id);
+		else next.add(id);
+		openGroups = next;
+	}
+
+	function closeTopOnOutside(event: MouseEvent) {
+		if (topOpen && !(event.target as Element | null)?.closest?.('.toc-top-item')) topOpen = '';
+	}
+
+	const toSlug = (value: string) =>
+		value
+			.toLowerCase()
+			.replace(/ä/g, 'ae')
+			.replace(/ö/g, 'oe')
+			.replace(/ü/g, 'ue')
+			.replace(/ß/g, 'ss')
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '');
+
+	function scanHeadings() {
+		if (typeof document === 'undefined') return;
+		const selector = tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3';
+		const headings = Array.from(document.querySelectorAll<HTMLElement>(selector));
+		headings.forEach((heading) => {
+			if (!heading.id) heading.id = toSlug(heading.textContent ?? '');
+		});
+		tocEntries = headings
+			.filter((heading) => heading.id)
+			.map((heading) => ({
+				id: heading.id,
+				text: heading.textContent ?? '',
+				level: heading.tagName === 'H2' ? 2 : 3
+			}));
+	}
+
+	$: if (typeof $planFilter !== 'undefined') tick().then(scanHeadings);
+
+	function setActiveFromHash() {
+		const hashId = decodeURIComponent(window.location.hash.slice(1));
+		activeId = tocEntries.some((entry) => entry.id === hashId) ? hashId : '';
+	}
+
+	function activate(id: string) {
+		activeId = id;
+	}
+
+	// Anchor jumps must clear sticky header + pinned TOC bar (via html scroll-padding-top)
+	function updateScrollOffset() {
+		if (!mounted) return;
+		const stickyHeader = document.querySelector('main.header-is-sticky') ? $headerHeight : 0;
+		const isMobile = window.matchMedia('(max-width: 767px)').matches;
+		let tocHeight = 0;
+		if (isMobile) tocHeight = mobileBarEl?.getBoundingClientRect().height ?? 0;
+		else if (desktopTopSticky) tocHeight = desktopTopHeight;
+		document.documentElement.style.setProperty('--scroll-offset', `${stickyHeader + tocHeight}px`);
+	}
+
+	$: if (mounted) ($headerHeight, desktopTopHeight, tocEntries, updateScrollOffset());
+
+	// Moved out of the slice → Svelte would not remove it on navigation
+	onDestroy(() => mobileWrapEl?.remove());
+
+	// The bar only exists once headings are found (after mount) → move it as soon as it is there.
+	// Header overlapping the content (banner) → keep the bar where the slice is
+	function moveMobileBar(el: HTMLElement) {
+		const main = document.getElementById('main-content');
+		const header = document.querySelector('header[data-design-element="header"]');
+		if (!main || (header && getComputedStyle(header).position === 'absolute')) return;
+		main.prepend(el);
+		mobileMoved = true;
+		tick().then(() => window.dispatchEvent(new Event('resize')));
+	}
+	$: if (mobileWrapEl && !mobileMoved) moveMobileBar(mobileWrapEl);
+
+	onMount(() => {
+		scanHeadings();
+		const headings = Array.from(
+			document.querySelectorAll<HTMLElement>(tiefe === 'Nur H2' ? 'main h2' : 'main h2, main h3')
+		).filter((heading) => heading.id);
+		setActiveFromHash();
+		const onHashChange = () => setActiveFromHash();
+		const measureMobileSheet = () => {
+			const ref = mobileWrapEl ?? mobileSheetEl;
+			if (!ref) return;
+			const wasPinned = mobilePinned;
+			if (wasPinned) mobilePinned = false;
+			mobileNaturalTop = ref.getBoundingClientRect().top + window.scrollY;
+			mobileSheetHeight = mobileSheetEl?.getBoundingClientRect().height ?? 0;
+			if (wasPinned) mobilePinned = true;
+		};
+		const measureDesktopTop = () => {
+			if (!desktopTopSticky || !desktopTopEl) return;
+			const wasPinned = desktopTopPinned;
+			if (wasPinned) desktopTopPinned = false;
+			desktopTopNaturalTop = desktopTopEl.getBoundingClientRect().top + window.scrollY;
+			desktopTopHeight = desktopTopEl.getBoundingClientRect().height;
+			if (wasPinned) desktopTopPinned = true;
+		};
+		const onScroll = () => {
+			if (dismissed && Math.abs(window.scrollY - dismissedAtY) > 80) dismissed = false;
+			mobilePinned =
+				window.scrollY >=
+				mobileNaturalTop - (document.querySelector('main.header-is-sticky') ? $headerHeight : 0);
+			desktopTopPinned =
+				desktopTopSticky &&
+				window.scrollY >=
+					desktopTopNaturalTop -
+						(document.querySelector('main.header-is-sticky') ? $headerHeight : 0);
+			headerScrolledAway =
+				linksMode &&
+				!document.querySelector('main.header-is-sticky') &&
+				window.scrollY >= $headerHeight;
+			updateSidebarHeight();
+		};
+		const updateSidebarHeight = () => {
+			if (!linksMode) return;
+			const footer = document.querySelector<HTMLElement>('footer');
+			if (!footer) return;
+			const top = headerScrolledAway ? 0 : $headerHeight;
+			const viewportHeight = window.innerHeight;
+			const footerViewportTop = footer.getBoundingClientRect().top;
+			sidebarAtFooter = footerViewportTop < viewportHeight;
+			sidebarMaxHeight = Math.max(192, Math.min(viewportHeight - top, footerViewportTop - top));
+		};
+		window.addEventListener('hashchange', onHashChange);
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', measureMobileSheet);
+		window.addEventListener('resize', measureDesktopTop);
+		window.addEventListener('resize', updateSidebarHeight);
+		window.addEventListener('resize', updateScrollOffset);
+		mounted = true;
+		tick().then(() => {
+			measureMobileSheet();
+			measureDesktopTop();
+			onScroll();
+			updateSidebarHeight();
+			updateScrollOffset();
+		});
+		if (linksMode) {
+			document.documentElement.style.setProperty('--toc-sidebar-offset', '16rem');
+		}
+		return () => {
+			window.removeEventListener('hashchange', onHashChange);
+			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', measureMobileSheet);
+			window.removeEventListener('resize', measureDesktopTop);
+			window.removeEventListener('resize', updateSidebarHeight);
+			window.removeEventListener('resize', updateScrollOffset);
+			document.documentElement.style.removeProperty('--toc-sidebar-offset');
+			document.documentElement.style.removeProperty('--scroll-offset');
+		};
+	});
+</script>
+
+<svelte:window
+	on:click={closeTopOnOutside}
+	on:keydown={(e) => e.key === 'Escape' && (topOpen = '')}
+/>
+
+<Bounded
+	as="nav"
+	yPadding="base-top"
+	class="color-scope font-[var(--page-font)] toc-slice {linksMode
+		? 'toc-links-mode'
+		: 'toc-top-mode'} {mobileMoved ? 'max-md:hidden' : ''}"
+	style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-bg: {bgColor}; --scope-color: {textColor};"
+	data-slice-type={slice.slice_type}
+	data-slice-variation={slice.variation}
+	aria-label={tocTitle}
+	bind:elementRef={sectionEl}
+>
+	{#if tocEntries.length > 0}
+		{#if linksMode}
+			<nav
+				class="toc-sidebar hidden md:block"
+				class:header-scrolled-away={headerScrolledAway}
+				class:at-footer={sidebarAtFooter}
+				style:--toc-color={textColor}
+				style:--toc-bg={bgColor || $pageColorsStore.pageBgColor}
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--toc-top="{headerScrolledAway ? 0 : $headerHeight || 80}px"
+				style:--toc-sidebar-max-height={sidebarMaxHeight ? `${sidebarMaxHeight}px` : 'none'}
+				style:--toc-track-color={$pageColorsStore.pageBgColor || '#f8fafc'}
+				style:--toc-thumb-color={$theme.footerBgColor || '#d1d5db'}
+				class:visible={!dismissed}
+				aria-label={tocTitle}
+			>
+				<div class="flex items-center justify-between mb-4">
+					<h5>{tocTitle}</h5>
+				</div>
+				<ul class="space-y-2 text-sm">
+					{#each tocGroups as group}<li>
+							<div class="toc-row">
+								<a
+									href="#{group.h2.id}"
+									class="toc-link"
+									on:click={() => activate(group.h2.id)}
+									class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+								>{#if group.h3s.length}<button
+										type="button"
+										class="toc-toggle"
+										aria-expanded={openGroups.has(group.h2.id)}
+										aria-label={openGroups.has(group.h2.id)
+											? $_('Unterpunkte zuklappen')
+											: $_('Unterpunkte aufklappen')}
+										on:click={() => toggleGroup(group.h2.id)}
+										><svg
+											class="toc-chevron"
+											class:rotate-180={openGroups.has(group.h2.id)}
+											viewBox="0 0 20 20"
+											aria-hidden="true"
+											><path
+												d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+											/></svg
+										></button
+									>{/if}
+							</div>
+							{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
+									class="toc-sub mt-1.5 space-y-1.5 pl-3"
+								>
+									{#each group.h3s as sub}<li>
+											<a
+												href="#{sub.id}"
+												class="toc-link block"
+												on:click={() => activate(sub.id)}
+												class:toc-active={sub.id === activeId}>{sub.text}</a
+											>
+										</li>{/each}
+								</ul>{/if}
+						</li>{/each}
+				</ul>
+			</nav>
+		{:else}
+			{#if desktopTopPinned}
+				<div class="hidden md:block" style:height="{desktopTopHeight}px"></div>
+			{/if}
+			<div
+				class="hidden md:block toc-top-sheet"
+				class:pinned={desktopTopPinned}
+				bind:this={desktopTopEl}
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--toc-desktop-top="{$headerHeight}px"
+			>
+				<h5 class="toc-top-title">{tocTitle}</h5>
+				<ul class="toc-items flex flex-wrap gap-y-4 text-sm items-start">
+					{#each tocGroups as group}<li class="toc-top-item">
+							<a
+								href="#{group.h2.id}"
+								class="toc-link"
+								on:click={() => {
+									topOpen = '';
+									activate(group.h2.id);
+								}}
+								class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+							>{#if group.h3s.length}<button
+									type="button"
+									class="toc-toggle"
+									aria-expanded={topOpen === group.h2.id}
+									aria-label={topOpen === group.h2.id
+										? $_('Unterpunkte zuklappen')
+										: $_('Unterpunkte aufklappen')}
+									on:click={() => (topOpen = topOpen === group.h2.id ? '' : group.h2.id)}
+									><svg
+										class="toc-chevron"
+										class:rotate-180={topOpen === group.h2.id}
+										viewBox="0 0 20 20"
+										aria-hidden="true"
+										><path
+											d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+										/></svg
+									></button
+								>{#if topOpen === group.h2.id}<ul class="toc-dropdown">
+										{#each group.h3s as sub}<li>
+												<a
+													href="#{sub.id}"
+													class="toc-link block"
+													on:click={() => {
+														topOpen = '';
+														activate(sub.id);
+													}}
+													class:toc-active={sub.id === activeId}>{sub.text}</a
+												>
+											</li>{/each}
+									</ul>{/if}{/if}
+						</li>{/each}
+				</ul>
+			</div>
+		{/if}
+
+		<div class="md:hidden" bind:this={mobileWrapEl}>
+			{#if mobilePinned}
+				<div
+					class="md:hidden"
+					style:height="{mobileSheetHeight}px"
+					style:background-color={mobileBg}
+					style:color={mobileActiveColor}
+				></div>
+			{/if}
+
+			<div
+				class="md:hidden toc-mobile-sheet links-mobile"
+				class:open={mobileOpen}
+				class:pinned={mobilePinned}
+				bind:this={mobileSheetEl}
+				style:--toc-color={mobileActiveColor}
+				style:--toc-bg={mobileBg}
+				style:--toc-dim={mobileDimColor}
+				style:--toc-mobile-top="{$headerHeight}px"
+				style:--toc-link-color={linkColor}
+				style:--toc-link-hover-color={linkHoverColor}
+				style:--page-color={mobileActiveColor}
+				style:--page-bg-color={mobileBg}
+				style:color={mobileActiveColor}
+				style:background-color={mobileBg}
+			>
+				<button
+					class="toc-mobile-bar w-full flex items-center justify-between px-4 py-3 text-sm"
+					bind:this={mobileBarEl}
+					on:click={() => (mobileOpen = !mobileOpen)}
+					aria-expanded={mobileOpen}
+					><span class="text-base font-medium">{tocTitle}</span><span
+						><SvgIcons name={mobileOpen ? 'down-square' : 'up-square'} size="1.1em" /></span
+					></button
+				>
+				{#if mobileOpen}<div class="toc-mobile-list px-4 pb-4 pt-1">
+						<ul class="space-y-3 text-sm">
+							{#each tocGroups as group}<li>
+									<div class="toc-row">
+										<a
+											href="#{group.h2.id}"
+											on:click={() => {
+												mobileOpen = false;
+												activate(group.h2.id);
+											}}
+											class="toc-link"
+											class:toc-active={group.h2.id === activeId}>{group.h2.text}</a
+										>{#if group.h3s.length}<button
+												type="button"
+												class="toc-toggle"
+												aria-expanded={openGroups.has(group.h2.id)}
+												aria-label={openGroups.has(group.h2.id)
+													? $_('Unterpunkte zuklappen')
+													: $_('Unterpunkte aufklappen')}
+												on:click={() => toggleGroup(group.h2.id)}
+												><svg
+													class="toc-chevron"
+													class:rotate-180={openGroups.has(group.h2.id)}
+													viewBox="0 0 20 20"
+													aria-hidden="true"
+													><path
+														d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+													/></svg
+												></button
+											>{/if}
+									</div>
+									{#if group.h3s.length && openGroups.has(group.h2.id)}<ul
+											class="toc-sub mt-1.5 space-y-1.5 pl-3 border-l"
+										>
+											{#each group.h3s as sub}<li>
+													<a
+														href="#{sub.id}"
+														on:click={() => {
+															mobileOpen = false;
+															activate(sub.id);
+														}}
+														class="toc-link"
+														class:toc-active={sub.id === activeId}>{sub.text}</a
+													>
+												</li>{/each}
+										</ul>{/if}
+								</li>{/each}
+						</ul>
+					</div>{/if}
+			</div>
+		</div>
+	{/if}
+</Bounded>
+
+<style>
+	.toc-link {
+		color: var(--toc-link-color, inherit) !important;
+		text-decoration: none !important;
+		font-weight: 500;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+	.toc-link:hover {
+		color: var(--toc-link-hover-color, var(--toc-link-color, inherit)) !important;
+	}
+	.toc-link.toc-active {
+		font-weight: 700;
+		text-decoration: underline !important;
+		text-underline-offset: 0.15em;
+	}
+	/* Global li margin (app.css) would make the sub entries uneven */
+	.toc-sub > li,
+	.toc-dropdown > li {
+		margin-bottom: 0;
+	}
+	.toc-row {
+		display: flex;
+		align-items: stretch;
+		justify-content: space-between;
+		gap: 0.25rem;
+	}
+	.toc-row > .toc-link {
+		align-self: center;
+	}
+	/* As tall as its entry, background slightly darker than the TOC */
+	.toc-toggle {
+		flex-shrink: 0;
+		align-self: stretch;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0 0.35rem;
+		border: none;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		color: var(--toc-link-color, inherit);
+		background-color: color-mix(
+			in srgb,
+			var(--toc-bg, var(--scope-bg, var(--page-bg-color))) 88%,
+			#000
+		);
+	}
+	.toc-toggle:hover {
+		background-color: color-mix(
+			in srgb,
+			var(--toc-bg, var(--scope-bg, var(--page-bg-color))) 80%,
+			#000
+		);
+	}
+	.toc-chevron {
+		width: 1.1em;
+		height: 1.1em;
+		fill: currentColor;
+		transition: transform 0.2s ease;
+	}
+	.toc-top-item {
+		position: relative;
+		display: inline-flex;
+		align-items: stretch;
+		gap: 0.15rem;
+	}
+	.toc-dropdown {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 50;
+		min-width: 14rem;
+		max-width: 22rem;
+		margin-top: 0.4rem;
+		padding: 0.75rem 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		background-color: var(--scope-bg, var(--page-bg-color));
+		color: var(--scope-color, var(--page-color));
+		border-radius: 0.375rem;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	}
+	.toc-top-item > .toc-link {
+		align-self: center;
+	}
+	.toc-items > li:not(:last-child)::after {
+		align-self: center;
+		content: '|';
+		display: inline-block;
+		padding-inline: 0.75rem;
+		opacity: 0.5;
+		text-decoration: none !important;
+	}
+	.toc-mobile-sheet {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100vw;
+		margin-left: calc(50% - 50vw);
+		box-sizing: border-box;
+		background-color: var(--toc-bg);
+		color: var(--toc-color);
+		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+		z-index: 40;
+	}
+	.toc-mobile-sheet.links-mobile {
+		position: static;
+		bottom: auto;
+		box-shadow: none;
+	}
+	.toc-mobile-sheet.links-mobile.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		margin-left: 0;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	}
+	:global(.header-is-sticky) .toc-mobile-sheet.links-mobile.pinned {
+		top: var(--toc-mobile-top);
+	}
+	.toc-mobile-bar {
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: inherit;
+		text-align: left;
+	}
+	.toc-mobile-list {
+		max-height: 50vh;
+		overflow-y: auto;
+	}
+	.toc-top-sheet.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 40;
+		padding-inline: 1.5rem;
+		background-color: var(--page-bg-color);
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+	}
+	:global(.header-is-sticky) .toc-top-sheet.pinned {
+		top: var(--toc-desktop-top, 80px);
+	}
+	.toc-sidebar {
+		position: fixed;
+		left: 0;
+		top: var(--toc-top, 80px);
+		width: 16rem;
+		height: calc(100dvh - var(--toc-top, 80px));
+		min-height: 12rem;
+		max-height: min(calc(100dvh - var(--toc-top, 80px)), var(--toc-sidebar-max-height, 100dvh));
+		overflow-y: auto;
+		overflow-x: hidden;
+		scrollbar-width: thin;
+		scrollbar-color: var(--toc-thumb-color) var(--toc-track-color);
+		padding: 1.75rem 1rem 1rem;
+		border-radius: 0;
+		background-color: var(--toc-bg);
+		color: var(--toc-color);
+		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(-0.5rem);
+		transition:
+			opacity 0.25s ease,
+			transform 0.25s ease;
+		z-index: 40;
+	}
+	.toc-sidebar.at-footer {
+		position: absolute;
+		top: auto;
+		bottom: 0;
+		height: var(--toc-sidebar-max-height);
+	}
+	.toc-sidebar.visible {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateX(0);
+	}
+	.toc-sidebar::-webkit-scrollbar {
+		width: 8px;
+	}
+	.toc-sidebar::-webkit-scrollbar-track {
+		background: var(--toc-track-color);
+	}
+	.toc-sidebar::-webkit-scrollbar-thumb {
+		background: var(--toc-thumb-color);
+		border-radius: 4px;
+	}
+	.toc-sidebar::-webkit-scrollbar-button {
+		display: none;
+		height: 0;
+	}
+	.toc-close-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1.25rem;
+		line-height: 1;
+		color: inherit;
+		padding: 0 0.15rem;
+	}
+	/* Links-Modus: Inhalt ist normalerweise position:fixed; am Seitenende wird sie absolut am Slice geparkt */
+	:global(.toc-links-mode) {
+		position: relative;
+		background-color: transparent !important;
+	}
+	@media (max-width: 767px) {
+		/* Mobile: "Oben"-Balken verhält sich identisch wie "Links" (in-flow → pinned) → Sektion ohne eigenen Hintergrund */
+		:global(.toc-slice:not(.toc-links-mode)) {
+			background-color: transparent !important;
+		}
+	}
+	@media (min-width: 768px) {
+		:global(.toc-top-title) {
+			margin-top: 1.75rem;
+		}
+		/* Links-Modus: Desktop-Sidebar ist immer position:fixed (out-of-flow) → Sektion darf kein Padding reservieren */
+		:global(.toc-links-mode) {
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+		}
+	}
+</style>

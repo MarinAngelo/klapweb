@@ -1,0 +1,167 @@
+/**
+ * POST /api/aufgabe-annehmen
+ *
+ * Body: { buchungId, aufgabeUid } — title and credits are read from Prismic
+ */
+import type { RequestHandler } from '@sveltejs/kit';
+import { plainTextMail } from '$lib/server/mailText';
+import { createAnnahme, listAlleAnnahmen } from '$lib/server/aufgaben';
+import { annahmeFehler, loadKatalog } from '$lib/server/aufgabenKatalog';
+import { getBuchungByReferenz } from '$lib/server/ressourceBuchungen';
+import { createClient } from '$lib/prismicio';
+import { env } from '$env/dynamic/private';
+import { adminActionToken } from '$lib/server/adminAuth';
+import { getMailFrom } from '$lib/server/mailFrom';
+
+export const POST: RequestHandler = async ({ request, fetch }) => {
+	let body: any;
+	try {
+		body = await request.json();
+	} catch {
+		return new Response(JSON.stringify({ error: 'Ungültige Anfrage' }), { status: 400 });
+	}
+
+	const { buchungId, aufgabeUid } = body;
+
+	if (!buchungId || !aufgabeUid) {
+		return new Response(JSON.stringify({ error: 'Pflichtfelder fehlen' }), { status: 400 });
+	}
+
+	// Buchung per Referenz-Code oder vollständiger ID suchen
+	let ressourceUid = '';
+	let guestEmail = '';
+	let guestName = '';
+	let preisProNacht: number | undefined;
+	try {
+		const buchung = await getBuchungByReferenz(buchungId);
+		if (!buchung)
+			return new Response(JSON.stringify({ error: 'Buchung nicht gefunden' }), { status: 404 });
+
+		// Aufgaben nur während des Aufenthalts (Anreisetag bis Abreisetag, exkl.)
+		const heute = new Date().toISOString().slice(0, 10);
+		if (heute < buchung.von) {
+			return new Response(
+				JSON.stringify({ error: 'Aufgaben können erst ab dem Anreisetag angenommen werden' }),
+				{ status: 409 }
+			);
+		}
+		if (heute >= buchung.bis) {
+			return new Response(
+				JSON.stringify({ error: 'Der Aufenthalt ist beendet — keine Aufgaben mehr möglich' }),
+				{ status: 409 }
+			);
+		}
+
+		ressourceUid = buchung.ressourceUid ?? '';
+		guestEmail = buchung.email ?? '';
+		guestName = buchung.name ?? buchung.email ?? buchungId;
+	} catch {
+		return new Response(JSON.stringify({ error: 'Buchung konnte nicht geladen werden' }), {
+			status: 500
+		});
+	}
+
+	// Task data from Prismic (not from the browser) + rules: main task, max. acceptances, order
+	let katalog;
+	try {
+		katalog = await loadKatalog(fetch);
+		const fehler = annahmeFehler(aufgabeUid, buchungId, katalog, await listAlleAnnahmen());
+		if (fehler) return new Response(JSON.stringify({ error: fehler }), { status: 409 });
+	} catch {
+		return new Response(JSON.stringify({ error: 'Aufgabe konnte nicht geprüft werden' }), {
+			status: 500
+		});
+	}
+	const aufgabe = katalog.find((a) => a.uid === aufgabeUid)!;
+	const hauptaufgabe = aufgabe.parentUid
+		? katalog.find((a) => a.uid === aufgabe.parentUid)
+		: undefined;
+	const aufgabeTitel = aufgabe.titel;
+	const creditTyp: 'fest' | 'offen' =
+		aufgabe.creditTyp === 'Offen (Zeitbasiert)' ? 'offen' : 'fest';
+	const creditBetrag = aufgabe.creditBetrag ?? undefined;
+	const anzeigeTitel = hauptaufgabe ? `${hauptaufgabe.titel} › ${aufgabeTitel}` : aufgabeTitel;
+
+	// Preis aus Prismic laden (nur für zeitbasierte Credits)
+	if (creditTyp === 'offen' && ressourceUid) {
+		try {
+			const client = createClient({ fetch });
+			const doc = await client.getByUID('ressource', ressourceUid, { lang: 'de-ch' });
+			preisProNacht = (doc.data as any).preis_pro_nacht ?? undefined;
+		} catch {
+			/* non-critical */
+		}
+	}
+
+	try {
+		const annahme = await createAnnahme({
+			aufgabeUid,
+			aufgabeTitel,
+			buchungId,
+			ressourceUid: ressourceUid ?? '',
+			name: guestName,
+			email: guestEmail,
+			status: 'angenommen',
+			creditTyp,
+			creditBetrag: creditTyp === 'fest' ? (creditBetrag ?? 0) : undefined,
+			preisProNacht: creditTyp === 'offen' ? preisProNacht : undefined,
+			hauptaufgabeUid: hauptaufgabe?.uid,
+			hauptaufgabeTitel: hauptaufgabe?.titel,
+			angenommenAt: new Date().toISOString()
+		});
+		// Operator-Benachrichtigung mit Freigabe-Link
+		const resendKey = env.RESEND_API_KEY;
+		const adminSecret = env.ADMIN_SECRET;
+
+		const emailFrom = await getMailFrom();
+		let adminEmail = '';
+		try {
+			const client = createClient({ fetch });
+			const settings = await client.getSingle('settings').catch(() => null);
+			if (settings) {
+				const s = settings.data as any;
+				adminEmail = (s.responsible_email as string) ?? (s.e_mail as string) ?? '';
+			}
+		} catch {
+			/* non-critical */
+		}
+
+		if (resendKey && emailFrom && adminEmail && adminSecret) {
+			// Token only authorises this approval — the admin password is never sent by mail
+			const freigabeLink = `${new URL(request.url).origin}/api/freigabe-aufgabe?id=${encodeURIComponent(annahme.id)}&token=${adminActionToken('freigabe-aufgabe', annahme.id)}`;
+			try {
+				const { Resend } = await import('resend');
+				const resend = new Resend(resendKey);
+				const { error: e } = await resend.emails.send({
+					from: emailFrom,
+					to: adminEmail,
+					subject: `Aufgabe angenommen: ${anzeigeTitel}`,
+					...plainTextMail(
+						[
+							`Eine Aufgabe wurde angenommen und wartet auf Ihre Freigabe.`,
+							``,
+							`Aufgabe: ${anzeigeTitel}`,
+							`Name:    ${guestName}`,
+							`E-Mail:  ${guestEmail}`,
+							`Buchung: ${buchungId}`,
+							``,
+							`─────────────────────────────────────`,
+							`Annahme freigeben (Nutzer erhält dann die Bestätigungsmail):`,
+							freigabeLink
+						].join('\n')
+					)
+				});
+				if (e) console.error('Aufgabe Operator-Mail fehlgeschlagen:', e);
+			} catch (e) {
+				console.error('E-Mail-Versand fehlgeschlagen:', e);
+			}
+		}
+
+		return new Response(JSON.stringify({ ok: true, annahmeId: annahme.id }), { status: 200 });
+	} catch (e: any) {
+		console.error('POST /api/aufgabe-annehmen Fehler:', e);
+		return new Response(JSON.stringify({ error: 'Annahme konnte nicht gespeichert werden' }), {
+			status: 500
+		});
+	}
+};

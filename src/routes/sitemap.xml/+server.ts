@@ -11,11 +11,33 @@ export async function GET({ fetch }) {
 	const settings = await client.getSingle('settings', { lang: masterLang }).catch(() => null);
 	const isMultilang = settings?.data?.show_language_switcher ?? false;
 	const rawDomain = settings?.data?.domain ?? '';
-	const baseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(/\/$/, '');
+	const rawBaseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(
+		/\/$/,
+		''
+	);
 
-	const allPages = await client.getAllByType('page', { lang: '*' }).catch(() => []);
+	// Validierung: Domain muss eine gültige URL mit Hostname sein.
+	// parsed.origin konvertiert Umlaute automatisch zu Punycode (z.B. ü → xn--).
+	let baseUrl: string;
+	try {
+		const parsed = new URL(rawBaseUrl);
+		if (!parsed.hostname) throw new Error('no hostname');
+		baseUrl = parsed.origin;
+	} catch {
+		// Domain nicht konfiguriert → leere aber gültige Sitemap zurückgeben
+		return new Response(
+			'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>',
+			{ headers: { 'Content-Type': 'application/xml' } }
+		);
+	}
+
+	// «Ganze Website nicht indexieren»: no URLs at all
+	const allPages = (settings?.data as Record<string, unknown> | undefined)?.no_index_site
+		? []
+		: await client.getAllByType('page', { lang: '*' }).catch(() => []);
 
 	const urls = allPages
+		.filter((page) => page.uid != null)
 		.filter((page) => !page.data?.no_index)
 		.filter((page) => isMultilang || page.lang === masterLang)
 		.map((page) => {

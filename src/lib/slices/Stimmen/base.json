@@ -1,0 +1,75 @@
+{
+	"id": "stimmen",
+	"type": "SharedSlice",
+	"name": "Stimmen",
+	"description": "Horizontal scrollbare Kunden-Testimonials",
+	"variations": [
+		{
+			"id": "default",
+			"name": "Standard",
+			"docURL": "...",
+			"version": "initial",
+			"description": "Testimonials horizontal scrollbar",
+			"primary": {
+				"title": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Titel",
+						"placeholder": "Was unsere Kunden sagen",
+						"single": "heading2"
+					}
+				},
+				"bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Hintergrundfarbe"
+					}
+				},
+				"color": {
+					"type": "Color",
+					"config": {
+						"label": "Textfarbe"
+					}
+				},
+				"card_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Karten Hintergrundfarbe"
+					}
+				}
+			},
+			"items": {
+				"quote": {
+					"type": "StructuredText",
+					"config": {
+						"label": "Zitat",
+						"placeholder": "Das Kundenzitat...",
+						"multi": "paragraph"
+					}
+				},
+				"author": {
+					"type": "Text",
+					"config": {
+						"label": "Name",
+						"placeholder": "Max Muster"
+					}
+				},
+				"role": {
+					"type": "Text",
+					"config": {
+						"label": "Rolle / Unternehmen",
+						"placeholder": "CEO, Muster GmbH"
+					}
+				},
+				"avatar": {
+					"type": "Image",
+					"config": {
+						"label": "Foto (optional)",
+						"constraint": {},
+						"thumbnails": []
+					}
+				}
+			}
+		}
+	]
+}

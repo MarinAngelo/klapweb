@@ -1,0 +1,74 @@
+<h4>1. Ressource anlegen</h4>
+<p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Ressource</strong>. Tab <strong>Main</strong>:</p>
+<ul>
+	<li data-field="ressource.uid"></li>
+	<li data-field="ressource.name"></li>
+	<li data-field="ressource.beschreibung"></li>
+	<li data-field="ressource.bilder"></li>
+	<li data-field="ressource.untergeordnete_ressourcen">Bei einem Haus mit mehreren Wohnungen verknüpfen.</li>
+	<li data-field="ressource.zimmer_einzelbuchbar">bei Bedarf einschalten</li>
+</ul>
+
+<h4>2. Tab «Kapazität»</h4>
+<ul>
+	<li data-field="ressource.max_personen">0 = unbegrenzt</li>
+	<li data-field="ressource.schlafzimmer">optional, mit Betttyp, Anzahl Betten und Bild</li>
+</ul>
+<p>Sind Schlafzimmer erfasst, können Gäste einzelne Zimmer buchen.</p>
+<p><strong>Achtung:</strong> Bei mehreren Sprachen die Reihenfolge der Schlafzimmer überall gleich lassen und Zimmernamen in der Hauptsprache nicht mehr umbenennen, sobald es Buchungen gibt.</p>
+
+<h4>3. Tab «Preise &amp; Regeln»</h4>
+<ul>
+	<li data-field="ressource.preis_pro_nacht"></li>
+	<li data-field="ressource.min_naechte"></li>
+	<li data-field="ressource.checkin_tage"></li>
+	<li data-field="ressource.saisonpreise">Bezeichnung, von, bis, Preis pro Nacht</li>
+</ul>
+<p>Es gilt die erste passende Saison, sonst der Basispreis.</p>
+
+<h4>4. Tabs «Buchungsbestätigung» und «Erinnerungen»</h4>
+<p>E-Mail-Texte für:</p>
+<ul>
+	<li>Bestätigung</li>
+	<li>vor Ankunft</li>
+	<li>nach Ankunft</li>
+	<li>vor Abreise</li>
+</ul>
+<p>Titel (Überschrift 1–3), Listen und Links sind möglich.</p>
+
+<h4>5. Veröffentlichen</h4>
+<p>Veröffentliche die Ressource.</p>
+
+<h4>6. Buchungs-Element einfügen</h4>
+<p>Füge auf einer Seite (oder im Tab «Inhalt» der Ressource) das Element <strong>RessourceBuchung</strong> ein und verknüpfe die Ressource. Optional:</p>
+<ul>
+	<li data-field="RessourceBuchung.heading"></li>
+	<li data-field="RessourceBuchung.intro">Erscheint im Kalender.</li>
+	<li data-field="RessourceBuchung.submit_label"></li>
+	<li><strong>Erfolgsmeldung:</strong> erscheint nach dem Absenden als Fenster</li>
+</ul>
+
+<h4>7. Check-in und Check-out</h4>
+<p>Für Check-in und Check-out vor Ort gibt es die Formular-Varianten <strong>Check-in</strong> und <strong>Check-out</strong> mit Buchungsreferenz.</p>
+
+<h3>Platzhalter in den E-Mail-Texten</h3>
+<p>In Betreff und Text:</p>
+<ul>
+	<li>{{Name}}, {{Ressource}}, {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}</li>
+	<li>{{Türcode}}: Den Türcode richtet Angelo auf dem Hosting ein.</li>
+	<li>{{Messenger-Apps}}: fügt Knöpfe für Signal, Telegram und WhatsApp mit der Messenger-Nummer aus den Einstellungen ein</li>
+</ul>
+
+<h3>Gleiche Texte für mehrere Ressourcen</h3>
+<p>Textblöcke, die in mehreren Ressourcen vorkommen (z. B. Anfahrt, Schlüsseltresor, WLAN), erfasst du einmal im Dokument <strong>Variablen</strong> als mehrzeiligen Text.</p>
+<p>In den E-Mail-Texten schreibst du nur den Platzhalter in einen eigenen Absatz, z. B. {{Anfahrt}}.</p>
+<p>Im Variablentext dürfen auch {{Name}} oder {{Anreise}} stehen.</p>
+
+<h3>Ablauf für Gäste</h3>
+<ul>
+	<li>Gäste wählen An- und Abreise im Kalender, sehen den Gesamtpreis und senden die Anfrage.</li>
+	<li>Gast und Anbieter erhalten automatisch eine E-Mail, der Gast in der Sprache, in der er gebucht hat.</li>
+	<li>Die Anbieter-Mail enthält einen Knopf zum Bestätigen.</li>
+	<li>Doppelbuchungen werden verhindert.</li>
+	<li>Alle Buchungen siehst du im Admin-Bereich unter «Ressource-Buchungen».</li>
+</ul>

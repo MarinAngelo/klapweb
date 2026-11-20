@@ -1,0 +1,19 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"map_url": {
+				"__TYPE__": "FieldContent",
+				"value": "https://maps.google.com/maps?q=Zurich&output=embed",
+				"type": "Text"
+			},
+			"opacity": {
+				"__TYPE__": "FieldContent",
+				"value": 100,
+				"type": "Number"
+			}
+		},
+		"items": []
+	}
+]

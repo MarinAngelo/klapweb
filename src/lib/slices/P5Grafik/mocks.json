@@ -1,0 +1,187 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"sketch_name": {
+				"__TYPE__": "FieldContent",
+				"value": "Orbital Circles",
+				"type": "Select"
+			},
+			"hintergrundfarbe": {
+				"__TYPE__": "FieldContent",
+				"value": "#762d56",
+				"type": "Color"
+			},
+			"color": {
+				"__TYPE__": "FieldContent",
+				"value": "#97c07a",
+				"type": "Color"
+			},
+			"image": {
+				"__TYPE__": "ImageContent",
+				"origin": {
+					"id": "main",
+					"url": "https://images.unsplash.com/photo-1537498425277-c283d32ef9db",
+					"width": 4380,
+					"height": 2895
+				},
+				"url": "https://images.unsplash.com/photo-1537498425277-c283d32ef9db",
+				"width": 4380,
+				"height": 2895,
+				"edit": {
+					"zoom": 1,
+					"crop": {
+						"x": 0,
+						"y": 0
+					},
+					"background": "transparent"
+				},
+				"alt": "develop",
+				"thumbnails": {}
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "mitTitelbereich",
+		"primary": {
+			"sketch_name": {
+				"__TYPE__": "FieldContent",
+				"value": "Particle Flow",
+				"type": "Select"
+			},
+			"banner_overlap": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"header_bg_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "64",
+				"type": "Number"
+			},
+			"hide_header_on_load": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"banner_height": {
+				"__TYPE__": "FieldContent",
+				"value": "100 %",
+				"type": "Select"
+			},
+			"hintergrundfarbe": {
+				"__TYPE__": "FieldContent",
+				"value": "#025c66",
+				"type": "Color"
+			},
+			"overlay_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#fdbd64",
+				"type": "Color"
+			},
+			"overlay_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "64",
+				"type": "Number"
+			},
+			"text": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Cillum incididunt duis occaecat nostrud irure consectetur velit Lorem nulla Lorem ex labore enim velit qui. Aute tempor sint cillum esse anim excepteur sit ut."
+						}
+					}
+				]
+			},
+			"color": {
+				"__TYPE__": "FieldContent",
+				"value": "#a7544f",
+				"type": "Color"
+			},
+			"preset_font": {
+				"__TYPE__": "FieldContent",
+				"value": "Inter",
+				"type": "Select"
+			},
+			"font": {
+				"key": "84956797-4aca-4ee6-b707-d941cff3a8fd",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "DocumentLink",
+					"id": "mock_document_id"
+				}
+			},
+			"button_link": {
+				"key": "5fd0869f-e23e-42bb-8471-eae2e7461221",
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "https://prismic.io"
+				}
+			},
+			"button_text": {
+				"__TYPE__": "FieldContent",
+				"value": "quietly",
+				"type": "Text"
+			},
+			"button_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#ad6573",
+				"type": "Color"
+			},
+			"button_hover_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#7064c3",
+				"type": "Color"
+			},
+			"button_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#b93c2d",
+				"type": "Color"
+			},
+			"button_hover_bg_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#cfc44d",
+				"type": "Color"
+			},
+			"text_overlay_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#9317be",
+				"type": "Color"
+			},
+			"text_overlay_opacity": {
+				"__TYPE__": "FieldContent",
+				"value": "83",
+				"type": "Number"
+			},
+			"switch_off_text_overlay": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"text_overlay_padding": {
+				"__TYPE__": "FieldContent",
+				"value": "mittel",
+				"type": "Select"
+			},
+			"mobile_text_scale": {
+				"__TYPE__": "FieldContent",
+				"value": "Kleiner",
+				"type": "Select"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
+]

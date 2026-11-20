@@ -1,66 +1,279 @@
 <script lang="ts">
 	import { isFilled, type Content } from '@prismicio/client';
-	import { theme } from '$lib/stores/theme';
-	import { get } from 'svelte/store';
+	import { headerHeight } from '$lib/stores/headerHeight';
+	import { planFilter, isVisibleForPlan } from '$lib/stores/planFilter';
 
 	import Bounded from '$lib/components/Bounded.svelte';
 	import ImageTextGrid from '$lib/components/ImageTextGrid.svelte';
-	import { mapAnimation } from '$lib/utils/animationMapper';
+	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
+	import { headingAnchor } from '$lib/actions/headingAnchor';
+	import Button from '$lib/components/Button.svelte';
+	import BannerThemeSync from '$lib/components/BannerThemeSync.svelte';
 
 	export let slice: Content.TextWithImageSlice;
+	export let slices: any[] | undefined = undefined;
+	export let context: unknown = undefined;
+	export let index: number | undefined = undefined;
+	const p: any = slice.primary ?? {};
 
-	// Um Fehler zu vermeiden, Probs hinzufügen, die in der Slice-Definition erwartet werden
-	export let slices; // Diese Zeile hinzufügen
-	export let context; // Diese Zeile hinzufügen
-	export let index; // Diese Zeile hinzufügen
+	let yPadding: 'base' | 'base-top' | 'none' | 'sm' | 'sm-top' | 'lg' | 'lg-top' = p.y_padding_same
+		? 'base'
+		: 'base-top';
 
-	// Setze den Standardwert von yPadding basierend auf y_padding_same
-	let yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
-
-	// Überschreibe den Standardwert von yPadding mit dem Wert aus der Slice-Definition
-	if (slice.primary.y_padding) {
-		switch (slice.primary.y_padding) {
+	if (p.y_padding) {
+		switch (p.y_padding) {
 			case 'kein Abstand':
 				yPadding = 'none';
 				break;
 			case 'wenig':
-				yPadding = slice.primary.y_padding_same ? 'sm' : 'sm-top';
+				yPadding = p.y_padding_same ? 'sm' : 'sm-top';
 				break;
 			case 'mittel':
-				yPadding = slice.primary.y_padding_same ? 'base' : 'base-top';
+				yPadding = p.y_padding_same ? 'base' : 'base-top';
 				break;
 			case 'gross':
-				yPadding = slice.primary.y_padding_same ? 'lg' : 'lg-top';
+				yPadding = p.y_padding_same ? 'lg' : 'lg-top';
 				break;
 		}
 	}
 
-	const isBildLinks = slice.variation === 'standardBildLinks';
+	const variation = slice.variation as string;
+	$: isBildLinks = p.image_left ?? false;
+	const isMulti = variation === 'multi';
 
-	$: anim = mapAnimation(
-		slice.primary.animate,
-		slice.primary.anim_direction,
-		slice.primary.anim_delay,
-		slice.primary.anim_duration
-	);
+	$: anim = mapAnimationFromPrimary(p);
+	$: mobileVollbreite = p.mobile_full_width ?? true;
+	$: mobileImageFirst = p.mobile_image_first ?? false;
+	$: textCenterV = p.text_center_v ?? false;
+	$: textCenterH = p.text_center_h ?? false;
+	// «Vollbild (100vh)»: not in «Standard» (moved to «Titelbereich»); header overlap only in «Titelbereich»
+	const isTitelbereich = variation === 'titelbereich';
+	$: fullscreen = variation !== 'default' && ((p as any).fullscreen ?? false);
+	$: bannerOverlap = isTitelbereich && ((p as any).banner_overlap ?? false);
+	$: headerBgOpacityRaw = isTitelbereich ? ((p as any).header_bg_opacity ?? null) : null;
+	$: visible = isVisibleForPlan(p.feature_gate, $planFilter);
+
+	const rowGapMap: Record<string, string> = {
+		'kein Abstand': '0',
+		wenig: '1rem',
+		mittel: '3rem',
+		gross: '6rem'
+	};
+	$: columnGapVal = (p as any).column_gap ?? 'mittel';
+	$: rowGap = isMulti
+		? columnGapVal === 'kein'
+			? '0'
+			: (rowGapMap[(p as any).row_gap ?? 'mittel'] ?? '3rem')
+		: '0';
+	$: multiItems = isMulti ? ((slice as any).items ?? []) : [];
+	$: multiItemsWithImages = multiItems.map((item: any) => ({
+		...item,
+		sliderImages: [item.image, item.image_2, item.image_3, item.image_4].filter((img: any) =>
+			isFilled.image(img)
+		)
+	}));
+	$: imageRound = !!p.image_round;
+	$: lightbox = !!p.lightbox;
+	$: isFullWidth = !!p.full_width;
+	// Overlapping the header: the section starts behind it and fills the whole viewport
+	$: fullscreenHeight = bannerOverlap ? '100dvh' : `calc(100dvh - ${$headerHeight}px)`;
+
+	$: defaultSliderImages = (() => {
+		const imgs: any[] = [];
+		if (isFilled.image(p.image)) imgs.push(p.image);
+		for (const item of (slice as any).items ?? []) {
+			if (isFilled.image(item.image)) imgs.push(item.image);
+		}
+		return imgs;
+	})();
+
+	const textPadMap: Record<string, string> = {
+		kein: '0',
+		klein: '1rem',
+		mittel: '2rem',
+		gross: '4rem'
+	};
+	$: textPad = textPadMap[(p as any).text_padding ?? 'mittel'] ?? '2rem';
+
+	const ptMobMap: Record<string, string> = {
+		'kein Abstand': 'pt-0',
+		wenig: 'pt-8',
+		mittel: 'pt-20',
+		gross: 'pt-32'
+	};
+	const ptDeskMap: Record<string, string> = {
+		'kein Abstand': 'md:pt-0',
+		wenig: 'md:pt-10',
+		mittel: 'md:pt-28',
+		gross: 'md:pt-48'
+	};
+	const pbMobMap: Record<string, string> = {
+		'kein Abstand': 'pb-0',
+		wenig: 'pb-0',
+		mittel: 'pb-0',
+		gross: 'pb-0'
+	};
+	const pbDeskMap: Record<string, string> = {
+		'kein Abstand': 'md:pb-0',
+		wenig: 'md:pb-10',
+		mittel: 'md:pb-28',
+		gross: 'md:pb-48'
+	};
+
+	$: yPaddingMobileVal = (p as any).y_padding_mobile as string | null | undefined;
+	$: marginTopSize = p.margin_top as string | undefined;
+	$: innerApply = p.inner_apply ?? false;
+	$: computedPaddingTopClass = yPaddingMobileVal
+		? [ptMobMap[yPaddingMobileVal], p.y_padding ? ptDeskMap[p.y_padding as string] : '']
+				.filter(Boolean)
+				.join(' ')
+		: undefined;
+	$: computedPaddingBottomClass = yPaddingMobileVal
+		? p.y_padding_same
+			? [pbMobMap[yPaddingMobileVal], p.y_padding ? pbDeskMap[p.y_padding as string] : '']
+					.filter(Boolean)
+					.join(' ')
+			: ''
+		: undefined;
+
+	// CMS colors as CSS variables only (app.css › .color-scope)
+	$: sectionStyle = [
+		`--scope-bg: ${innerApply ? 'var(--page-bg-color)' : p.bg_color || 'var(--page-bg-color)'}`,
+		`--scope-color: ${p.color || 'var(--page-color)'}`,
+		p.color && `--page-color: ${p.color}`,
+		fullscreen && `--fullscreen-height: ${fullscreenHeight}`
+	]
+		.filter(Boolean)
+		.join('; ');
 </script>
 
-<Bounded
-	as="section"
-	{yPadding}
-	style="background-color: {slice.primary.bg_color || get(theme).pageBgColor}; color: {slice.primary
-		.color || get(theme).pageColor};"
-	data-slice-type={slice.slice_type}
-	data-slice-variation={slice.variation}
-	animate={anim.animate}
-	animationOptions={anim.options}
->
-	<ImageTextGrid
-		image={isFilled.image(slice.primary.image) ? slice.primary.image : null}
-		text={slice.primary.text}
-		imageLeft={isBildLinks}
-		imageBgColor={slice.primary.bg_color || get(theme).pageBgColor}
-		imageRound={slice.primary.image_round}
-		{theme}
-	/>
-</Bounded>
+{#if isTitelbereich}
+	<BannerThemeSync {bannerOverlap} {headerBgOpacityRaw} />
+{/if}
+
+{#if visible}
+	{#if isMulti}
+		<Bounded
+			as="section"
+			{yPadding}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+			fullWidth={isFullWidth}
+			noPadding={isFullWidth}
+			data-slice-type={slice.slice_type}
+			data-slice-variation={slice.variation}
+			animate={anim.animate}
+			animationOptions={anim.options}
+			class="color-scope"
+			style={sectionStyle}
+		>
+			{#if p.section_title}
+				<h2 use:headingAnchor class="text-center mb-16">{p.section_title}</h2>
+			{/if}
+			<div class="flex flex-col" style:gap={rowGap}>
+				{#each multiItemsWithImages as item, i}
+					<ImageTextGrid
+						image={isFilled.image(item.image) ? item.image : null}
+						images={item.sliderImages.length > 1 ? item.sliderImages : undefined}
+						text={item.text}
+						imageLeft={item.bild_links ?? false}
+						imageBgColor={p.bg_color || 'var(--page-bg-color)'}
+						{imageRound}
+						noRound={!imageRound}
+						mobileTextFirst={true}
+						columnGap={columnGapVal}
+						mobilePadding={textPad}
+						mobilePaddingTop={textPad}
+						desktopPadding={textPad}
+						desktopPaddingY={i === 0 ? '0' : textPad}
+						{textCenterV}
+						{textCenterH}
+						{lightbox}
+						fullscreen={false}
+					>
+						{#if item.button_text && isFilled.link(item.button_link)}
+							<Button
+								link={item.button_link}
+								text={item.button_text}
+								styleName={item.button_style?.uid || undefined}
+								mb={false}
+							/>
+						{/if}
+					</ImageTextGrid>
+				{/each}
+			</div>
+		</Bounded>
+	{:else}
+		<Bounded
+			as="section"
+			yPadding={fullscreen ? 'none' : yPadding}
+			fullHeight={fullscreen}
+			fullWidth={fullscreen || isFullWidth}
+			noPadding={fullscreen || mobileVollbreite}
+			paddingTopClass={fullscreen ? undefined : computedPaddingTopClass}
+			paddingBottomClass={fullscreen ? undefined : computedPaddingBottomClass}
+			{marginTopSize}
+			innerBackgroundColor={innerApply ? p.bg_color || 'var(--page-bg-color)' : undefined}
+			style={sectionStyle}
+			data-slice-type={slice.slice_type}
+			data-slice-variation={slice.variation}
+			animate={anim.animate}
+			animationOptions={anim.options}
+			class={`color-scope ${fullscreen ? 'fullscreen-text-image' : ''} ${!fullscreen && mobileVollbreite ? 'md:px-6' : ''}`}
+		>
+			<!-- «Hintergrund als Kasten» + «Vollbreite auf Mobile»: Bounded drops the inner padding
+			     (noPadding, edge-to-edge on mobile) → give the box its side padding on desktop -->
+			<div class={fullscreen ? 'h-full flex-1' : innerApply && mobileVollbreite ? 'md:px-14' : ''}>
+				<ImageTextGrid
+					image={isFilled.image(p.image) ? p.image : null}
+					images={defaultSliderImages.length > 1 ? defaultSliderImages : undefined}
+					text={p.text}
+					imageLeft={isBildLinks}
+					imageBgColor={p.bg_color || 'var(--page-bg-color)'}
+					imageRound={fullscreen ? false : p.image_round}
+					mobilePadding={mobileVollbreite ? '1.5rem' : ''}
+					desktopPadding={fullscreen ? 'clamp(2rem, 5vw, 5rem)' : ''}
+					noRoundMobile={fullscreen || mobileVollbreite}
+					noRound={fullscreen}
+					mobileTextFirst={mobileImageFirst ? false : !isBildLinks && mobileVollbreite}
+					columnGap={fullscreen ? 'kein' : 'mittel'}
+					{lightbox}
+					textCenterV={fullscreen || textCenterV}
+					textCenterH={fullscreen || textCenterH}
+					{fullscreen}
+					headerOverlap={bannerOverlap}
+				>
+					{#if p.buttonText && isFilled.link(p.buttonLink)}
+						<Button
+							link={p.buttonLink}
+							text={p.buttonText}
+							styleName={p.button_style?.uid || undefined}
+							mb={false}
+						/>
+					{/if}
+				</ImageTextGrid>
+			</div>
+		</Bounded>
+	{/if}
+{/if}
+
+<style>
+	:global(.fullscreen-text-image) {
+		height: auto;
+		min-height: 0;
+		overflow: visible;
+	}
+
+	@media (max-width: 767px) {
+		:global(.fullscreen-text-image > div) {
+			flex: none;
+		}
+	}
+
+	@media (min-width: 768px) {
+		:global(.fullscreen-text-image) {
+			height: var(--fullscreen-height);
+			min-height: var(--fullscreen-height);
+			overflow: hidden;
+		}
+	}
+</style>

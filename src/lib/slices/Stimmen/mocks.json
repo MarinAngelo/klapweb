@@ -1,0 +1,70 @@
+{
+	"__TYPE__": "SharedSliceContent",
+	"variation": "default",
+	"primary": {
+		"title": [{ "type": "heading2", "text": "Was unsere Kunden sagen", "spans": [] }],
+		"bg_color": null,
+		"color": null,
+		"card_bg_color": null
+	},
+	"items": [
+		{
+			"quote": [
+				{
+					"type": "paragraph",
+					"text": "Die Zusammenarbeit war absolut reibungslos. Das Ergebnis hat unsere Erwartungen weit übertroffen – modern, klar und genau auf uns zugeschnitten.",
+					"spans": []
+				}
+			],
+			"author": "Anna Berger",
+			"role": "Inhaberin, Berger Atelier",
+			"avatar": {
+				"dimensions": { "width": 80, "height": 80 },
+				"alt": "Anna Berger",
+				"copyright": null,
+				"url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop"
+			}
+		},
+		{
+			"quote": [
+				{
+					"type": "paragraph",
+					"text": "Endlich eine Website, die wirklich zu uns passt. Schnell, ansprechend und einfach zu pflegen. Wir bekommen täglich Komplimente dafür.",
+					"spans": []
+				}
+			],
+			"author": "Thomas Meier",
+			"role": "Geschäftsführer, Meier & Partner GmbH",
+			"avatar": {
+				"dimensions": { "width": 80, "height": 80 },
+				"alt": "Thomas Meier",
+				"copyright": null,
+				"url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop"
+			}
+		},
+		{
+			"quote": [
+				{
+					"type": "paragraph",
+					"text": "Professionell von A bis Z. Die Kommunikation war immer klar, Termine wurden eingehalten und das Resultat spricht für sich.",
+					"spans": []
+				}
+			],
+			"author": "Lisa Hoffmann",
+			"role": "Marketing Leiterin, Tech Startup",
+			"avatar": null
+		},
+		{
+			"quote": [
+				{
+					"type": "paragraph",
+					"text": "Ich hätte nie gedacht, dass eine neue Website so viel ausmachen kann. Unsere Anfragen haben sich innerhalb von zwei Monaten verdoppelt.",
+					"spans": []
+				}
+			],
+			"author": "Michael Wagner",
+			"role": "Selbstständiger Architekt",
+			"avatar": null
+		}
+	]
+}

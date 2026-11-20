@@ -3,7 +3,17 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			themeColorsCss?: string;
+			/** Page language (Prismic locale, e.g. de-ch) → <html lang> in hooks.server.ts */
+			htmlLang?: string;
+			user?: {
+				id: string;
+				email: string;
+				name: string;
+				verified: boolean;
+			};
+		}
 		// interface PageData {}
 		// interface Platform {}
 	}

@@ -1,0 +1,89 @@
+/**
+ * Customer storage via Netlify Blobs.
+ *
+ * Each purchase creates one blob (key = `${Date.now()}_${uuid}`).
+ * Never store all customers in a single blob — race conditions on concurrent writes.
+ *
+ * Required Netlify environment variables:
+ *   NETLIFY_SITE_ID  — Site Settings → General → Site ID
+ *   NETLIFY_TOKEN    — User Settings → Applications → Personal access tokens (expiry: never)
+ *
+ * NOTE: @netlify/blobs auto-detection does NOT work with adapter-auto on Netlify.
+ * siteID + token must always be passed explicitly via $env/dynamic/private.
+ *
+ * Admin view: /admin/kunden (Login unter /admin)
+ *
+ * Called from:
+ *   - src/routes/api/invoice/+server.ts      (Rechnung, fire-and-forget after email)
+ *   - src/routes/api/save-customer/+server.ts (Bar, called from zusammenfassung page)
+ */
+import { getStore } from '@netlify/blobs';
+import { env } from '$env/dynamic/private';
+
+export interface CustomerRecord {
+	id: string;
+	date: string;
+	paymentMethod: 'rechnung' | 'bar' | 'manuell' | 'terminbuchung';
+	service: string;
+	amount: number | null;
+	currency: string;
+	discountCode?: string;
+	// Billing address / contact
+	vorname?: string;
+	nachname?: string;
+	firma?: string;
+	email?: string;
+	adresse?: string;
+	plz?: string;
+	ort?: string;
+	land?: string;
+	/** Preferred language = Prismic locale id (e.g. 'de-ch'); used for info mails */
+	lang?: string;
+	// Extra form fields (key → value)
+	extra?: Record<string, string>;
+}
+
+function getCustomerStore() {
+	const siteID = env.NETLIFY_SITE_ID;
+	const token = env.NETLIFY_TOKEN;
+	if (!siteID || !token) {
+		throw new Error(
+			`Netlify Blobs: NETLIFY_SITE_ID=${siteID ? 'gesetzt' : 'fehlt'}, NETLIFY_TOKEN=${token ? 'gesetzt' : 'fehlt'}`
+		);
+	}
+	return getStore({ name: 'kunden', siteID, token });
+}
+
+export async function saveCustomer(record: Omit<CustomerRecord, 'id'>): Promise<string> {
+	const store = getCustomerStore();
+	const id = `${Date.now()}_${crypto.randomUUID()}`;
+	await store.setJSON(id, { id, ...record });
+	return id;
+}
+
+/** Merges the given fields into an existing customer (one blob per customer → no race with others) */
+export async function updateCustomer(
+	id: string,
+	patch: Partial<Omit<CustomerRecord, 'id'>>
+): Promise<void> {
+	const store = getCustomerStore();
+	const existing = (await store.get(id, { type: 'json' })) as CustomerRecord | null;
+	if (!existing) throw new Error(`Kunde ${id} nicht gefunden`);
+	await store.setJSON(id, { ...existing, ...patch, id });
+}
+
+export async function deleteCustomer(id: string): Promise<void> {
+	const store = getCustomerStore();
+	await store.delete(id);
+}
+
+export async function listCustomers(): Promise<CustomerRecord[]> {
+	const store = getCustomerStore();
+	const { blobs } = await store.list();
+	const records = await Promise.all(
+		blobs.map((b) => store.get(b.key, { type: 'json' }) as Promise<CustomerRecord>)
+	);
+	return records
+		.filter(Boolean)
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}

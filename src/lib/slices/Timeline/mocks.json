@@ -1,0 +1,82 @@
+{
+	"__TYPE__": "SharedSliceContent",
+	"variation": "default",
+	"primary": {
+		"title": {
+			"__TYPE__": "StructuredTextContent",
+			"value": [{ "type": "heading2", "content": { "text": "Lebenslauf", "spans": [] } }]
+		},
+		"bg_color": { "__TYPE__": "FieldContent", "value": "", "type": "Color" },
+		"color": { "__TYPE__": "FieldContent", "value": "", "type": "Color" },
+		"line_color": { "__TYPE__": "FieldContent", "value": "#8888cc", "type": "Color" },
+		"animate": { "__TYPE__": "BooleanContent", "value": true }
+	},
+	"items": [
+		{
+			"__TYPE__": "GroupItemContent",
+			"value": [
+				["date", { "__TYPE__": "FieldContent", "value": "2018 – 2021", "type": "Text" }],
+				["title", { "__TYPE__": "FieldContent", "value": "Senior Designer", "type": "Text" }],
+				["subtitle", { "__TYPE__": "FieldContent", "value": "Muster AG, Zürich", "type": "Text" }],
+				[
+					"description",
+					{
+						"__TYPE__": "StructuredTextContent",
+						"value": [
+							{
+								"type": "paragraph",
+								"content": {
+									"text": "Verantwortlich für Corporate Design und digitale Produkte.",
+									"spans": []
+								}
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"__TYPE__": "GroupItemContent",
+			"value": [
+				["date", { "__TYPE__": "FieldContent", "value": "2015 – 2018", "type": "Text" }],
+				["title", { "__TYPE__": "FieldContent", "value": "Junior Designer", "type": "Text" }],
+				["subtitle", { "__TYPE__": "FieldContent", "value": "Agentur XY, Basel", "type": "Text" }],
+				[
+					"description",
+					{
+						"__TYPE__": "StructuredTextContent",
+						"value": [
+							{
+								"type": "paragraph",
+								"content": { "text": "Mitarbeit in verschiedenen Kundenprojekten.", "spans": [] }
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"__TYPE__": "GroupItemContent",
+			"value": [
+				["date", { "__TYPE__": "FieldContent", "value": "2012 – 2015", "type": "Text" }],
+				[
+					"title",
+					{ "__TYPE__": "FieldContent", "value": "Studium Interaction Design", "type": "Text" }
+				],
+				["subtitle", { "__TYPE__": "FieldContent", "value": "FHNW, Aarau", "type": "Text" }],
+				[
+					"description",
+					{
+						"__TYPE__": "StructuredTextContent",
+						"value": [
+							{
+								"type": "paragraph",
+								"content": { "text": "Bachelor of Arts in Interaction Design.", "spans": [] }
+							}
+						]
+					}
+				]
+			]
+		}
+	]
+}

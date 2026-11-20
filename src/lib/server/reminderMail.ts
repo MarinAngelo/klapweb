@@ -1,0 +1,213 @@
+/**
+ * Sofort-Ankunftserinnerung bei Bestätigung.
+ *
+ * Wird aufgerufen wenn eine Buchung bestätigt wird. Falls die Ankunft
+ * innerhalb von 48 Stunden liegt (und der Reminder noch nicht gesendet wurde),
+ * wird die Ankunftserinnerung sofort geschickt statt auf den Scheduler zu warten.
+ */
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
+import {
+	loadVariablesData,
+	mailVariables,
+	renderMailHtml,
+	renderMailText
+} from '$lib/variables.js';
+import { messengerButtonsHtml } from '$lib/messengerLinks.js';
+import * as prismic from '@prismicio/client';
+import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchungen';
+import { env } from '$env/dynamic/private';
+import { t } from '$lib/i18n/translations';
+import { fallbackSubject, getRessourceDocForBooking, mailLang } from './ressourceMail';
+import { getMailFrom } from '$lib/server/mailFrom';
+
+function fmtDate(dateStr: string): string {
+	const [y, m, d] = dateStr.split('-');
+	return `${d}.${m}.${y}`;
+}
+
+function doorCode(uid: string): string {
+	const key = uid.toUpperCase().replace(/-/g, '_');
+	// $env (not process.env): in dev only $env contains the values from .env
+	return env[`DOOR_CODE_${key}`] || env.DOOR_CODE || '';
+}
+
+/** {{Messenger-Apps}} (Signal, Telegram, WhatsApp); {{WhatsApp}} = old name, same buttons */
+function messengerTokens(tel: string | undefined): Record<string, string> {
+	const html = messengerButtonsHtml(tel);
+	return { 'Messenger-Apps': html, WhatsApp: html };
+}
+
+function dateInDays(n: number): string {
+	const d = new Date();
+	d.setUTCDate(d.getUTCDate() + n);
+	return d.toISOString().slice(0, 10);
+}
+
+export async function maybeSendAnkunftsErinnerung(
+	buchung: RessourceBuchung,
+	fetch: typeof globalThis.fetch,
+	force = false
+): Promise<void> {
+	console.log(
+		`[reminderMail] Start — buchungId=${buchung.id}, von=${buchung.von}, reminderSent=${buchung.reminderSent}, force=${force}`
+	);
+
+	if (!force && buchung.reminderSent) {
+		console.log('[reminderMail] Übersprungen: reminderSent=true');
+		return;
+	}
+
+	if (!force) {
+		const grenze = dateInDays(2);
+		if (buchung.von > grenze) {
+			console.log(`[reminderMail] Übersprungen: von=${buchung.von} > grenze=${grenze}`);
+			return;
+		}
+	}
+
+	const resendKey = env.RESEND_API_KEY;
+	const emailFrom = await getMailFrom();
+	if (!resendKey || !emailFrom || !buchung.email) {
+		console.log(
+			`[reminderMail] Übersprungen: resendKey=${!!resendKey}, emailFrom=${!!emailFrom}, email=${buchung.email}`
+		);
+		return;
+	}
+
+	try {
+		const client = createClient({ fetch });
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			client.getSingle('settings').catch(() => null),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
+		]);
+		const d = doc.data as any;
+		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
+		const vars = mailVariables(variablesData, buchung.lang);
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+
+		const textField = d.reminder_text as prismic.RichTextField | undefined;
+		const tokens: Record<string, string> = {
+			Türcode: doorCode(buchung.ressourceUid),
+			Name: buchung.name || '',
+			Anreise: fmtDate(buchung.von),
+			Abreise: fmtDate(buchung.bis),
+			Buchungsreferenz: buchung.referenz ?? buchung.id,
+			...messengerTokens(waTel)
+		};
+
+		const betreff =
+			renderMailText((d.reminder_betreff as string)?.trim() ?? '', tokens, vars) ||
+			fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name);
+
+		let html: string;
+		if (textField?.length) {
+			html = renderMailHtml(textField ?? [], tokens, vars, mailTheme);
+		} else {
+			// Fallback wenn reminder_text in Prismic nicht gesetzt
+			console.log(
+				`[reminderMail] reminder_text leer für ${buchung.ressourceUid} — sende Fallback-Mail`
+			);
+			const lang = mailLang(buchung);
+			const intro = t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).', lang)
+				.replace('{anreise}', `<strong>${tokens.Anreise}</strong>`)
+				.replace('{abreise}', tokens.Abreise);
+			html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
+<p>${intro}</p>
+${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
+${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
+<p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
+		}
+		// Layout in the page colours
+		html = wrapMail(html, mailTheme, { lang: buchung.lang, subject: betreff });
+
+		const { Resend } = await import('resend');
+		const { error } = await new Resend(resendKey).emails.send({
+			from: emailFrom,
+			to: buchung.email,
+			subject: betreff,
+			html
+		});
+
+		if (error) {
+			console.error('[reminderMail] Ankunftserinnerung fehlgeschlagen:', error);
+			return;
+		}
+
+		await updateRessourceBuchung(buchung.id, { reminderSent: true });
+		console.log(`[reminderMail] Ankunftserinnerung sofort gesendet an ${buchung.email}`);
+	} catch (err) {
+		console.error('[reminderMail] Fehler:', err);
+	}
+}
+
+/** Sendet die Abreise-Erinnerung manuell für eine Buchung. */
+export async function sendAbreiseErinnerung(
+	buchung: RessourceBuchung,
+	fetch: typeof globalThis.fetch,
+	force = false
+): Promise<{ sent: boolean; reason?: string }> {
+	if (!force && buchung.abreiseReminderSent) return { sent: false, reason: 'already_sent' };
+
+	const resendKey = env.RESEND_API_KEY;
+	const emailFrom = await getMailFrom();
+	if (!resendKey || !emailFrom || !buchung.email) {
+		return { sent: false, reason: 'missing_config' };
+	}
+
+	try {
+		const client = createClient({ fetch });
+		const [doc, settings, variablesData, mailTheme] = await Promise.all([
+			getRessourceDocForBooking(client, buchung),
+			client.getSingle('settings').catch(() => null),
+			loadVariablesData(client),
+			loadMailTheme(client, buchung.lang)
+		]);
+		const d = doc.data as any;
+		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
+		const vars = mailVariables(variablesData, buchung.lang);
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+
+		const textField = d.abreise_text as prismic.RichTextField | undefined;
+		if (!textField?.length) return { sent: false, reason: 'missing_abreise_text' };
+
+		const tokens: Record<string, string> = {
+			Türcode: doorCode(buchung.ressourceUid),
+			Name: buchung.name || '',
+			Anreise: fmtDate(buchung.von),
+			Abreise: fmtDate(buchung.bis),
+			Buchungsreferenz: buchung.referenz ?? buchung.id,
+			...messengerTokens(waTel)
+		};
+
+		const betreff =
+			renderMailText((d.abreise_betreff as string)?.trim() ?? '', tokens, vars) ||
+			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
+		const html = wrapMail(renderMailHtml(textField ?? [], tokens, vars, mailTheme), mailTheme, {
+			lang: buchung.lang,
+			subject: betreff
+		});
+
+		const { Resend } = await import('resend');
+		const { error } = await new Resend(resendKey).emails.send({
+			from: emailFrom,
+			to: buchung.email,
+			subject: betreff,
+			html
+		});
+
+		if (error) {
+			console.error('[reminderMail] Abreiseerinnerung fehlgeschlagen:', error);
+			return { sent: false, reason: 'send_error' };
+		}
+
+		await updateRessourceBuchung(buchung.id, { abreiseReminderSent: true });
+		console.log(`[reminderMail] Abreiseerinnerung gesendet an ${buchung.email}`);
+		return { sent: true };
+	} catch (err) {
+		console.error('[reminderMail] Abreiseerinnerung Fehler:', err);
+		return { sent: false, reason: 'exception' };
+	}
+}
