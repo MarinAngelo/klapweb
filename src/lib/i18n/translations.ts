@@ -2912,7 +2912,117 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.',
 		'en-us': 'Rates for this month already exist — please edit them.'
 	},
-	'Ungültiger Monat.': { 'de-ch': 'Ungültiger Monat.', 'en-us': 'Invalid month.' }
+	'Ungültiger Monat.': { 'de-ch': 'Ungültiger Monat.', 'en-us': 'Invalid month.' },
+	Import: { 'de-ch': 'Import', 'en-us': 'Import' },
+	'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.': {
+		'de-ch': 'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.',
+		'en-us': 'Import now? People, rates and hours will be saved.'
+	},
+	'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.':
+		{
+			'de-ch':
+				'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.',
+			'en-us':
+				'Take over an existing spreadsheet so nothing has to be entered twice. Recognised are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden» — as in the former monthly overview and in the CSV export of this page.'
+		},
+	Datei: { 'de-ch': 'Datei', 'en-us': 'File' },
+	'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.': {
+		'de-ch': 'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.',
+		'en-us': 'LibreOffice (.ods) or CSV. Save Excel files as CSV first.'
+	},
+	'Monate mit bereits erfassten Stunden überschreiben': {
+		'de-ch': 'Monate mit bereits erfassten Stunden überschreiben',
+		'en-us': 'Overwrite months that already have hours'
+	},
+	'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.':
+		{
+			'de-ch':
+				'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.',
+			'en-us':
+				'Unchecked, months that already have hours stay unchanged. People are matched by name, new ones are created. Hourly rates from the file are only taken over if none exist yet.'
+		},
+	Prüfen: { 'de-ch': 'Prüfen', 'en-us': 'Check' },
+	Importieren: { 'de-ch': 'Importieren', 'en-us': 'Import' },
+	Importiert: { 'de-ch': 'Importiert', 'en-us': 'Imported' },
+	'Vorschau — noch nichts gespeichert': {
+		'de-ch': 'Vorschau — noch nichts gespeichert',
+		'en-us': 'Preview — nothing saved yet'
+	},
+	'Import abgeschlossen.': { 'de-ch': 'Import abgeschlossen.', 'en-us': 'Import completed.' },
+	'Zur Jahresübersicht': { 'de-ch': 'Zur Jahresübersicht', 'en-us': 'Go to year overview' },
+	'Personen mit Stunden': { 'de-ch': 'Personen mit Stunden', 'en-us': 'People with hours' },
+	'Neu angelegt': { 'de-ch': 'Neu angelegt', 'en-us': 'Newly created' },
+	'Alle Personen sind schon erfasst.': {
+		'de-ch': 'Alle Personen sind schon erfasst.',
+		'en-us': 'All people already exist.'
+	},
+	Stundensätze: { 'de-ch': 'Stundensätze', 'en-us': 'Hourly rates' },
+	'In der Datei wurden keine Stundensätze gefunden.': {
+		'de-ch': 'In der Datei wurden keine Stundensätze gefunden.',
+		'en-us': 'No hourly rates were found in the file.'
+	},
+	'Werden übernommen.': { 'de-ch': 'Werden übernommen.', 'en-us': 'Will be taken over.' },
+	'Nicht übernommen, weil schon Stundensätze erfasst sind.': {
+		'de-ch': 'Nicht übernommen, weil schon Stundensätze erfasst sind.',
+		'en-us': 'Not taken over because hourly rates already exist.'
+	},
+	Hinweise: { 'de-ch': 'Hinweise', 'en-us': 'Notes' },
+	Neu: { 'de-ch': 'Neu', 'en-us': 'New' },
+	Überschrieben: { 'de-ch': 'Überschrieben', 'en-us': 'Overwritten' },
+	'Schon erfasst — übersprungen': {
+		'de-ch': 'Schon erfasst — übersprungen',
+		'en-us': 'Already entered — skipped'
+	},
+	'Keine Stunden': { 'de-ch': 'Keine Stunden', 'en-us': 'No hours' },
+	'Bitte eine Datei auswählen.': {
+		'de-ch': 'Bitte eine Datei auswählen.',
+		'en-us': 'Please choose a file.'
+	},
+	'Die Datei ist zu gross (höchstens 5 MB).': {
+		'de-ch': 'Die Datei ist zu gross (höchstens 5 MB).',
+		'en-us': 'The file is too large (max. 5 MB).'
+	},
+	'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.':
+		{
+			'de-ch':
+				'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.',
+			'en-us':
+				'Please save Excel files (.xlsx) as CSV first (File › Save as › CSV) or as .ods in LibreOffice.'
+		},
+	'Die Datei konnte nicht gelesen werden.': {
+		'de-ch': 'Die Datei konnte nicht gelesen werden.',
+		'en-us': 'The file could not be read.'
+	},
+	'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.':
+		{
+			'de-ch':
+				'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.',
+			'en-us':
+				'This format is not supported. Please save the spreadsheet as .ods (LibreOffice) or CSV.'
+		},
+	'Zeile {zeile}: {monat} kommt mehrfach vor.': {
+		'de-ch': 'Zeile {zeile}: {monat} kommt mehrfach vor.',
+		'en-us': 'Row {zeile}: {monat} appears more than once.'
+	},
+	'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.': {
+		'de-ch': 'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.',
+		'en-us': 'Row {zeile}: «{wert}» is not a valid number of hours and was skipped.'
+	},
+	'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.': {
+		'de-ch': 'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.',
+		'en-us': 'Row {zeile}: {name} appears more than once in the same month — the last row applies.'
+	},
+	'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».':
+		{
+			'de-ch':
+				'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».',
+			'en-us':
+				'No months found. Expected are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden».'
+		},
+	'Stunden von {name} im {monat} löschen?': {
+		'de-ch': 'Stunden von {name} im {monat} löschen?',
+		'en-us': 'Delete the hours of {name} in {monat}?'
+	}
 };
 
 /**

@@ -30,6 +30,7 @@
 				>↓ {$_('CSV-Export')}</a
 			>
 			<a href="/admin/assistenz/einstellungen" class="admin-btn">{$_('Personen & Sätze')}</a>
+			<a href="/admin/assistenz/import" class="admin-btn">↑ {$_('Import')}</a>
 		{/if}
 	</AdminHeader>
 

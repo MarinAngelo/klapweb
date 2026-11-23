@@ -513,6 +513,7 @@ Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet n
 - Feature `assistenz` (gating.json, Paket Individuell), Admin-Bereich `assistenz`: Monatsstunden (Tag/Nacht) von Assistenzpersonen → Lohn, Abzüge, Netto, Monats- und Jahrestotal; nur Admin erfasst (kein Formular auf der Website)
 - Rechnung nur in `src/lib/assistenz.ts` (rein, Server + Browser für Live-Totale), Speicher `src/lib/server/assistenz.ts`: Blob-Store `assistenz`, Schlüssel `config` (Personen, Sätze, Jahresbeginn) + `monat-YYYY-MM`
 - Sätze/Abzüge versioniert mit «Gültig ab» (spätere Änderung rechnet frühere Monate nie neu), Abzüge = Prozent vom Brutto, pro Person und Monat auf Rappen gerundet; Personen mit «Aktiv ab/bis», Löschen nur ohne erfasste Stunden
+- Import `/admin/assistenz/import` (`src/lib/server/assistenzImport.ts`): .ods (ZIP/XML ohne Bibliothek) oder CSV, erkennt Monatsblöcke (Titel «September 2026» + Kopfzeile Person/Tagstunden/Nachtstunden), auch den eigenen CSV-Export; «Prüfen» = Trockenlauf mit demselben Code; Personen per Name, Sätze nur wenn noch keine; bestehende Monate nur mit «überschreiben»
 - Assistenzjahr frei wählbar (Standard September–August), CSV-Export `/admin/assistenz/assistenz.csv?jahr=` bzw. `?monat=` (Block pro Monat + Jahrestotal pro Person)
 
 ## Chat-Bot (`/api/chat`, `/admin/chatbot`)
