@@ -181,6 +181,13 @@
 		]
 	},
 	{
+		"id": "assistenz",
+		"title": "Assistenz",
+		"feature": "assistenz",
+		"stand": "2026-11-23",
+		"sources": ["src/lib/assistenz.ts", "src/lib/server/assistenz.ts", "src/routes/admin/assistenz"]
+	},
+	{
 		"id": "kundenverwaltung",
 		"title": "Kundenverwaltung",
 		"feature": "kundenverwaltung",

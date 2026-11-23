@@ -39,6 +39,7 @@ export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
 export const FEATURE_RESSOURCENBUCHUNG = _check('ressourcenbuchung');
 export const FEATURE_STUNDENABRECHNUNG = _check('stundenabrechnung');
 export const FEATURE_BUCHHALTUNG = _check('buchhaltung');
+export const FEATURE_ASSISTENZ = _check('assistenz');
 export const FEATURE_PWA = _check('pwa');
 
 type Gate = { plan?: string; feature?: string; features?: string[] };

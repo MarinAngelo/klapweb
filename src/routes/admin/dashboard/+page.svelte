@@ -34,6 +34,13 @@
 			icon: '⏱️'
 		},
 		{
+			id: 'assistenz',
+			title: 'Assistenz',
+			description: 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+			href: `/admin/assistenz`,
+			icon: '🧾'
+		},
+		{
 			id: 'buchungen',
 			title: 'Terminverwaltung',
 			description: 'Buchungen anzeigen, löschen, Termine sperren',
