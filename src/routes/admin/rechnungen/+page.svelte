@@ -1,22 +1,132 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { deserialize, enhance } from '$app/forms';
 	import type { PageData, SubmitFunction } from './$types';
 	import { formatDateShort } from '$lib/utils/formatDate';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import AdminBulkActions from '$lib/components/admin/AdminBulkActions.svelte';
 
 	export let data: PageData;
 
 	// Feature that issued the invoice (src/lib/server/invoicing)
+	/**
+	 * Calls a form action with fetch: the header makes SvelteKit answer with the action result
+	 * (otherwise it returns the HTML page), deserialize() unpacks its data (devalue string).
+	 */
+	async function postAction(url: string, body: FormData) {
+		const res = await fetch(url, {
+			method: 'POST',
+			body,
+			headers: { 'x-sveltekit-action': 'true' }
+		});
+		const result = deserialize(await res.text());
+		return { ok: res.ok && (result.type === 'success' || result.type === 'redirect'), result };
+	}
+
 	const SOURCE_LABELS: Record<string, string> = {
 		checkout: 'Bestellung',
 		event: 'Event',
 		terminbuchung: 'Terminbuchung',
-		admin: 'Manuell'
+		admin: 'Manuell',
+		wiederkehrend: 'Wiederkehrend'
+	};
+	let recurring = false;
+	// Edit view «Wiederholung»
+	let editRecurring = false;
+	let editRecurringNext = '';
+	// «Bezahlt am» (date of payment, income date in «Buchhaltung»)
+	let editPaidDate = '';
+	let paidLoadedFor = '';
+	$: if (editingInvoice && editingInvoiceId && paidLoadedFor !== editingInvoiceId) {
+		paidLoadedFor = editingInvoiceId;
+		editPaidDate = editingInvoice.paidAt
+			? new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(
+					new Date(editingInvoice.paidAt)
+				)
+			: '';
+	}
+	$: if (editingInvoice?.paymentStatus === 'bezahlt' && !editPaidDate) editPaidDate = todaySwiss();
+	let recurrenceLoadedFor = '';
+	$: if (editingInvoice && editingInvoiceId && recurrenceLoadedFor !== editingInvoiceId) {
+		recurrenceLoadedFor = editingInvoiceId;
+		editRecurring = !!editingInvoice.recurrence?.active;
+		editRecurringNext =
+			editingInvoice.recurrence?.nextDate ??
+			addYearIso(editingInvoice.date ?? new Date().toISOString());
+	}
+	function addYearIso(date: string) {
+		const [y, m, d] = date.slice(0, 10).split('-').map(Number);
+		const last = new Date(Date.UTC(y + 1, m, 0)).getUTCDate();
+		return `${y + 1}-${String(m).padStart(2, '0')}-${String(Math.min(d, last)).padStart(2, '0')}`;
+	}
+
+	// Selection for bulk actions (AdminBulkActions); more actions: add here + in the bulk action
+	let selectedIds: string[] = [];
+	const BULK_ACTIONS = [
+		{ value: 'paid', label: 'Als bezahlt markieren' },
+		{ value: 'open', label: 'Als offen markieren' },
+		{
+			value: 'cancelled',
+			label: 'Als storniert markieren',
+			confirm: '{n} Rechnungen als storniert markieren?'
+		},
+		{ value: 'delete', label: 'Löschen', confirm: '{n} Rechnungen löschen?' }
+	];
+	$: selectedIds = selectedIds.filter((id) => data.invoices.some((inv) => inv.id === id));
+	$: allSelected = data.invoices.length > 0 && selectedIds.length === data.invoices.length;
+	$: someSelected = selectedIds.length > 0 && !allSelected;
+	function toggleAll(checked: boolean) {
+		selectedIds = checked ? data.invoices.map((inv) => inv.id) : [];
+	}
+
+	// Zahlungsabgleich (bank export CSV)
+	type MatchResult = {
+		reference: string;
+		status: 'bezahlt' | 'betrag' | 'schon-bezahlt' | 'unbekannt';
+		invoiceNumber?: string;
+		customer?: string;
+		expected?: number;
+		amounts: number[];
+		date?: string;
+		row: number;
+	};
+	let matchResults: MatchResult[] | null = null;
+	let matchDryRun = false;
+	let matchError = '';
+	let matching = false;
+	const MATCH_LABELS: Record<MatchResult['status'], string> = {
+		bezahlt: '✓ auf bezahlt gesetzt',
+		betrag: '⚠ Betrag stimmt nicht',
+		'schon-bezahlt': 'bereits bezahlt',
+		unbekannt: '? Referenz unbekannt'
+	};
+
+	const reconcileEnhance: SubmitFunction = () => {
+		matching = true;
+		matchError = '';
+		return async ({ result, update }) => {
+			matching = false;
+			if (result.type === 'success') {
+				const d = (result.data ?? {}) as { matchResults?: MatchResult[]; dryRun?: boolean };
+				matchResults = d.matchResults ?? [];
+				matchDryRun = !!d.dryRun;
+				await update({ reset: false });
+			} else if (result.type === 'failure') {
+				matchError = String(
+					(result.data as { reconcileError?: string })?.reconcileError ?? 'Abgleich fehlgeschlagen'
+				);
+			} else if (result.type === 'error') {
+				matchError = result.error?.message ?? 'Abgleich fehlgeschlagen';
+			}
+		};
 	};
 
 	let isFormOpen = false;
 	let selectedCustomerId = '';
 	let notes = '';
+	// «Rechnungsdatum»: default today (Swiss time), backdating possible, not in the future
+	const todaySwiss = () =>
+		new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Zurich' }).format(new Date());
+	let invoiceDate = todaySwiss();
 
 	let items: Array<{ description: string; quantity: number; unitPrice: number }> = [
 		{ description: '', quantity: 1, unitPrice: 0 }
@@ -31,8 +141,7 @@
 	let isEditModalOpen = false;
 	let editingInvoiceId = '';
 	let editingInvoice: any = null;
-	let editModalTab: 'view' | 'edit' | 'pdf' = 'view';
-	let editPdfBase64 = '';
+	let editModalTab: 'view' | 'edit' = 'view';
 	let editPdfLoading = false;
 
 	// Neuer Kunde Modal
@@ -55,6 +164,27 @@
 
 	function addItem() {
 		items = [...items, { description: '', quantity: 1, unitPrice: 0 }];
+	}
+
+	// «Leistung wählen»: fills description and price of a line item (stays editable)
+	function serviceByUid(uid: string) {
+		return data.services.find((s) => s.uid === uid);
+	}
+	function pickService(idx: number, select: HTMLSelectElement) {
+		const service = serviceByUid(select.value);
+		select.value = '';
+		if (!service) return;
+		items[idx].description = service.label;
+		if (service.price !== null) items[idx].unitPrice = service.price;
+		items = items;
+	}
+	function pickEditService(idx: number, select: HTMLSelectElement) {
+		const service = serviceByUid(select.value);
+		select.value = '';
+		if (!service || !editingInvoice) return;
+		editingInvoice.items[idx].description = service.label;
+		if (service.price !== null) editingInvoice.items[idx].unitPrice = service.price;
+		editingInvoice = editingInvoice;
 	}
 
 	function removeItem(idx: number) {
@@ -83,9 +213,15 @@
 			return;
 		}
 
+		if (!invoiceDate || invoiceDate > todaySwiss()) {
+			alert('Das Rechnungsdatum darf nicht in der Zukunft liegen');
+			return;
+		}
+
 		isLoading = true;
 		const itemsJson = JSON.stringify(items);
 		formData.set('items-json', itemsJson);
+		formData.set('invoice-date', invoiceDate);
 		formData.set('vorname', customer.vorname);
 		formData.set('nachname', customer.nachname);
 		formData.set('firma', customer.firma || '');
@@ -112,7 +248,9 @@
 		const itemsJson = JSON.stringify(items);
 		formData.set('items-json', itemsJson);
 		formData.set('invoice-number', currentInvoiceNumber);
+		formData.set('invoice-date', invoiceDate);
 		formData.set('send-email', String(sendEmail));
+		formData.set('recurring', String(recurring));
 
 		const customer = getSelectedCustomer();
 		if (!customer) {
@@ -167,29 +305,6 @@
 		link.click();
 	}
 
-	async function deleteInvoice(invoiceId: string, invoiceNumber: string) {
-		if (!confirm(`Wirklich löschen: ${invoiceNumber}?`)) return;
-
-		const formData = new FormData();
-		formData.set('invoice-id', invoiceId);
-
-		try {
-			const res = await fetch('?/delete', {
-				method: 'POST',
-				body: formData
-			});
-
-			if (res.ok) {
-				alert('Rechnung gelöscht');
-				location.reload();
-			} else {
-				alert('Fehler beim Löschen');
-			}
-		} catch (e) {
-			alert('Fehler: ' + (e as Error).message);
-		}
-	}
-
 	function openEdit(invoiceId: string) {
 		const invoice = data.invoices.find((inv) => inv.id === invoiceId);
 
@@ -204,7 +319,6 @@
 		};
 		editingInvoiceId = invoiceId;
 		editModalTab = 'view';
-		editPdfBase64 = '';
 		isEditModalOpen = true;
 	}
 
@@ -212,8 +326,11 @@
 		if (!editingInvoice) return;
 
 		editPdfLoading = true;
+		// Open the tab right away (in the click) so popup blockers allow it, fill it when ready
+		const tab = window.open('', '_blank');
 		const formData = new FormData();
 		formData.set('invoice-number', editingInvoice.invoiceNumber);
+		formData.set('invoice-id', editingInvoiceId);
 		formData.set('vorname', editingInvoice.vorname);
 		formData.set('nachname', editingInvoice.nachname);
 		formData.set('firma', editingInvoice.firma || '');
@@ -226,16 +343,16 @@
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
 
 		try {
-			const res = await fetch('?/previewEditPdf', {
-				method: 'POST',
-				body: formData
-			});
+			const { ok, result } = await postAction('?/previewEditPdf', formData);
 
-			if (res.ok) {
-				const result = await res.json();
-				editPdfBase64 = result.data?.pdfBase64 || result.pdfBase64 || '';
-				editModalTab = 'pdf';
+			if (ok && result.type === 'success') {
+				const base64 = String(result.data?.pdfBase64 ?? '');
+				const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+				const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+				if (tab) tab.location.href = url;
+				else window.open(url, '_blank');
 			} else {
+				tab?.close();
 				alert('PDF konnte nicht generiert werden');
 			}
 		} catch (e) {
@@ -258,10 +375,7 @@
 		formData.set('invoice-id', editingInvoiceId);
 
 		try {
-			const res = await fetch('?/sendInvoiceEmail', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('?/sendInvoiceEmail', formData);
 
 			isLoading = false;
 
@@ -300,13 +414,13 @@
 		formData.set('land', editingInvoice.land || '');
 		formData.set('notes', editingInvoice.notes || '');
 		formData.set('payment-status', editingInvoice.paymentStatus || 'offen');
+		formData.set('paid-date', editPaidDate);
+		formData.set('recurring-active', String(editRecurring));
+		formData.set('recurring-next', editRecurringNext);
 		formData.set('items-json', JSON.stringify(editingInvoice.items));
 
 		try {
-			const res = await fetch('?/updateInvoice', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('?/updateInvoice', formData);
 
 			isLoading = false;
 
@@ -362,14 +476,11 @@
 		formData.set('land', newCustomerForm.land);
 
 		try {
-			const res = await fetch('/admin/kunden?/create', {
-				method: 'POST',
-				body: formData
-			});
+			const res = await postAction('/admin/kunden?/create', formData);
 
 			if (res.ok) {
-				const result = await res.json();
-				if (result.type === 'success' || result.status === 'success') {
+				const result = res.result;
+				if (result.type === 'success') {
 					alert('Kunde erfasst');
 					// Neuen Kunden laden
 					location.reload();
@@ -377,7 +488,7 @@
 					alert('Fehler beim Erfassen');
 				}
 			} else {
-				alert('Fehler beim Erfassen: ' + res.statusText);
+				alert('Fehler beim Erfassen');
 			}
 		} catch (e) {
 			alert('Fehler: ' + (e as Error).message);
@@ -390,18 +501,10 @@
 	$: total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 </script>
 
+<svelte:head><title>Rechnungen</title></svelte:head>
+
 <div class="admin-container">
-	<AdminHeader title="Rechnungen" count={data.invoices.length}>
-		<form
-			method="POST"
-			action="?/deleteAll"
-			on:submit={(e) => {
-				if (!confirm('Alle Rechnungen löschen?')) e.preventDefault();
-			}}
-		>
-			<button type="submit" class="admin-btn admin-btn-danger-outline">Alle löschen</button>
-		</form>
-	</AdminHeader>
+	<AdminHeader title="Rechnungen" count={data.invoices.length}></AdminHeader>
 
 	<!-- Übersicht Rechnungen -->
 	<section class="admin-card">
@@ -410,10 +513,26 @@
 		{#if data.invoices.length === 0}
 			<p class="admin-empty">Noch keine Rechnungen vorhanden.</p>
 		{:else}
+			<AdminBulkActions
+				{selectedIds}
+				actions={BULK_ACTIONS}
+				formAction="?/bulk"
+				on:done={() => (selectedIds = [])}
+			/>
 			<div class="admin-table-wrap">
 				<table class="admin-table">
 					<thead>
 						<tr>
+							<th class="w-8">
+								<input
+									type="checkbox"
+									class="admin-checkbox"
+									aria-label="Alle auswählen"
+									checked={allSelected}
+									indeterminate={someSelected}
+									on:change={(e) => toggleAll(e.currentTarget.checked)}
+								/>
+							</th>
 							<th>Nummer</th>
 							<th>Datum</th>
 							<th>Kunde</th>
@@ -427,6 +546,15 @@
 					<tbody>
 						{#each data.invoices as inv}
 							<tr>
+								<td>
+									<input
+										type="checkbox"
+										class="admin-checkbox"
+										aria-label="Rechnung {inv.invoiceNumber} auswählen"
+										bind:group={selectedIds}
+										value={inv.id}
+									/>
+								</td>
 								<td class="admin-mono nowrap">{inv.invoiceNumber}</td>
 								<td>{formatDateShort(inv.date?.slice(0, 10))}</td>
 								<td>{inv.vorname} {inv.nachname}</td>
@@ -452,7 +580,9 @@
 											? '✓ bezahlt'
 											: inv.paymentStatus === 'storniert'
 												? '✕ storniert'
-												: '⏱ offen'}
+												: inv.paymentStatus === 'gemahnt'
+													? `! ${inv.dunning?.length ?? 1}. Mahnung`
+													: '⏱ offen'}
 									</span>
 								</td>
 								<td>
@@ -460,21 +590,98 @@
 									{#if inv.source && SOURCE_LABELS[inv.source]}
 										<span class="admin-muted block text-xs">{SOURCE_LABELS[inv.source]}</span>
 									{/if}
+									{#if inv.recurrence?.active}
+										<span class="admin-muted block text-xs"
+											>↻ jährlich, nächste {formatDateShort(inv.recurrence.nextDate)}</span
+										>
+									{/if}
 								</td>
-								<td class="nowrap space-x-3">
+								<td class="nowrap">
 									<button on:click={() => openEdit(inv.id)} class="admin-link"> Bearbeiten </button>
-									<button
-										on:click={() => deleteInvoice(inv.id, inv.invoiceNumber)}
-										class="admin-link-danger"
+									<a
+										href="/admin/rechnungen/pdf/{inv.id}"
+										target="_blank"
+										rel="noopener"
+										class="admin-link ml-3">PDF</a
 									>
-										Löschen
-									</button>
 								</td>
 							</tr>
 						{/each}
 					</tbody>
 				</table>
 			</div>
+		{/if}
+	</section>
+
+	<!-- Zahlungsabgleich -->
+	<section class="admin-card">
+		<h2 class="admin-card-title">Zahlungsabgleich</h2>
+		<p class="admin-muted mb-3">
+			Bank-Export (CSV) hochladen: Offene und gemahnte Rechnungen, deren Referenz im Export steht
+			und deren Betrag in derselben Zeile stimmt, werden auf «bezahlt» gesetzt (Zahlungsdatum aus
+			der Zeile).
+		</p>
+		<form
+			method="POST"
+			action="?/reconcile"
+			enctype="multipart/form-data"
+			class="flex flex-wrap items-center gap-3"
+			use:enhance={reconcileEnhance}
+		>
+			<input type="file" name="csv" accept=".csv,text/csv" required class="admin-input w-auto" />
+			<label class="flex items-center gap-2">
+				<input type="checkbox" name="dry-run" class="admin-checkbox" />
+				<span>Nur prüfen (nichts verbuchen)</span>
+			</label>
+			<button type="submit" class="admin-btn admin-btn-primary" disabled={matching}>
+				{matching ? 'Wird abgeglichen …' : 'Abgleichen'}
+			</button>
+		</form>
+		{#if matchError}
+			<p class="admin-notice admin-notice-error mt-3">{matchError}</p>
+		{/if}
+		{#if matchResults}
+			{#if !matchResults.length}
+				<p class="admin-empty mt-3">Keine Referenzen von Rechnungen im Export gefunden.</p>
+			{:else}
+				<p class="admin-muted mt-3">
+					{matchResults.filter((r) => r.status === 'bezahlt').length}
+					{matchDryRun ? 'würden auf bezahlt gesetzt (nur geprüft)' : 'auf bezahlt gesetzt'}
+				</p>
+				<div class="admin-table-wrap mt-2">
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Zeile</th>
+								<th>Rechnung</th>
+								<th>Kunde</th>
+								<th class="text-right">Betrag Rechnung</th>
+								<th class="text-right">Betrag Export</th>
+								<th>Datum</th>
+								<th>Ergebnis</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each matchResults as r}
+								<tr>
+									<td>{r.row}</td>
+									<td class="admin-mono nowrap">{r.invoiceNumber ?? r.reference}</td>
+									<td>{r.customer ?? '—'}</td>
+									<td class="text-right">{r.expected?.toFixed(2) ?? '—'}</td>
+									<td class="text-right">{r.amounts.map((a) => a.toFixed(2)).join(' / ') || '—'}</td
+									>
+									<td class="nowrap">{r.date ? formatDateShort(r.date) : '—'}</td>
+									<td class="nowrap">
+										{r.status === 'bezahlt' && matchDryRun
+											? '✓ würde auf bezahlt gesetzt'
+											: MATCH_LABELS[r.status]}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
 		{/if}
 	</section>
 
@@ -555,6 +762,22 @@
 					<div class="space-y-3 mt-4">
 						{#each items as item, idx (idx)}
 							<div class="flex gap-2 items-end">
+								{#if data.services.length}
+									<select
+										class="admin-input admin-input-sm w-44"
+										aria-label="Leistung wählen"
+										on:change={(e) => pickService(idx, e.currentTarget)}
+									>
+										<option value="">Leistung wählen …</option>
+										{#each data.services as service}
+											<option value={service.uid}>
+												{service.label}{service.price !== null
+													? ` (${service.price.toFixed(2)})`
+													: ''}
+											</option>
+										{/each}
+									</select>
+								{/if}
 								<input
 									type="text"
 									placeholder="Beschreibung"
@@ -600,6 +823,19 @@
 						Total: {data.companyInfo.currency}
 						{total.toFixed(2)}
 					</div>
+				</fieldset>
+
+				<!-- Rechnungsdatum -->
+				<fieldset class="admin-fieldset">
+					<legend>Rechnungsdatum</legend>
+					<input
+						type="date"
+						bind:value={invoiceDate}
+						max={todaySwiss()}
+						required
+						class="admin-input mt-2 w-auto"
+					/>
+					<p class="admin-hint mt-1">Heute oder früher (rückdatieren möglich).</p>
 				</fieldset>
 
 				<!-- Notizen -->
@@ -762,7 +998,6 @@
 							on:click={generateEditPdf}
 							disabled={editPdfLoading}
 							class="admin-tab"
-							class:is-active={editModalTab === 'pdf'}
 						>
 							📄 PDF {editPdfLoading ? '(wird geladen...)' : ''}
 						</button>
@@ -830,6 +1065,22 @@
 								<div class="space-y-3 mt-4">
 									{#each editingInvoice.items as item, idx (idx)}
 										<div class="flex gap-2 items-end">
+											{#if data.services.length}
+												<select
+													class="admin-input admin-input-sm w-44"
+													aria-label="Leistung wählen"
+													on:change={(e) => pickEditService(idx, e.currentTarget)}
+												>
+													<option value="">Leistung wählen …</option>
+													{#each data.services as service}
+														<option value={service.uid}>
+															{service.label}{service.price !== null
+																? ` (${service.price.toFixed(2)})`
+																: ''}
+														</option>
+													{/each}
+												</select>
+											{/if}
 											<input
 												type="text"
 												placeholder="Beschreibung"
@@ -896,10 +1147,59 @@
 										class="admin-input admin-input-sm"
 									>
 										<option value="offen">⏱ offen</option>
+										<option value="gemahnt">! gemahnt</option>
 										<option value="bezahlt">✓ bezahlt</option>
 										<option value="storniert">✕ storniert</option>
 									</select>
+									{#if editingInvoice.paymentStatus === 'bezahlt'}
+										<label class="admin-label mt-2" for="paid-date">Bezahlt am</label>
+										<input
+											id="paid-date"
+											type="date"
+											bind:value={editPaidDate}
+											max={todaySwiss()}
+											class="admin-input admin-input-sm w-auto"
+										/>
+									{/if}
 								</div>
+							</fieldset>
+
+							{#if editingInvoice.dunning?.length}
+								<fieldset class="admin-fieldset">
+									<legend>Mahnungen</legend>
+									<ul class="mt-2 space-y-1 text-sm">
+										{#each editingInvoice.dunning as d}
+											<li>
+												{d.level}. Mahnung am {formatDateShort(d.at.slice(0, 10))}, neue Frist {formatDateShort(
+													d.dueDate
+												)}
+												{d.sent ? '(gemailt)' : '(nicht gemailt)'}
+											</li>
+										{/each}
+									</ul>
+								</fieldset>
+							{/if}
+
+							<fieldset class="admin-fieldset">
+								<legend>Wiederholung</legend>
+								<label class="mt-2 flex items-center gap-2">
+									<input type="checkbox" bind:checked={editRecurring} class="admin-checkbox" />
+									<span>Jährlich wiederholen</span>
+								</label>
+								{#if editRecurring}
+									<label class="admin-label mt-2" for="recurring-next">Nächste Rechnung am</label>
+									<input
+										id="recurring-next"
+										type="date"
+										bind:value={editRecurringNext}
+										required
+										class="admin-input admin-input-sm w-auto"
+									/>
+									<p class="admin-hint mt-1">
+										An diesem Tag wird eine Kopie mit neuer Nummer erstellt und an den Kunden
+										gemailt, danach jedes Jahr.
+									</p>
+								{/if}
 							</fieldset>
 						</div>
 					{:else if editModalTab === 'view'}
@@ -962,15 +1262,6 @@
 								</div>
 							{/if}
 						</div>
-					{:else if editModalTab === 'pdf' && editPdfBase64}
-						<!-- PDF View -->
-						<div class="h-96 rounded-md border border-gray-200 bg-gray-50 p-4">
-							<iframe
-								title="PDF Preview"
-								src="data:application/pdf;base64,{editPdfBase64}"
-								class="w-full h-full border-0"
-							/>
-						</div>
 					{/if}
 
 					<div class="flex gap-2 justify-between mt-6">
@@ -1027,6 +1318,14 @@
 						<label class="flex items-center gap-2">
 							<input type="checkbox" bind:checked={sendEmail} class="admin-checkbox" />
 							<span>E-Mail an Kunde senden</span>
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="checkbox" bind:checked={recurring} class="admin-checkbox" />
+							<span
+								>Jährlich wiederholen (nächste Rechnung am {invoiceDate
+									? formatDateShort(addYearIso(invoiceDate))
+									: '—'}, automatisch gemailt)</span
+							>
 						</label>
 
 						<div class="flex gap-2 justify-end">

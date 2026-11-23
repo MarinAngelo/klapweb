@@ -58,12 +58,12 @@
 	{
 		"id": "seo",
 		"title": "SEO (Google und Social Media)",
-		"stand": "2026-11-11"
+		"stand": "2026-11-16"
 	},
 	{
 		"id": "einstellungen",
 		"title": "Einstellungen (Settings)",
-		"stand": "2026-11-11",
+		"stand": "2026-11-15",
 		"sources": ["customtypes/settings/base.json"]
 	},
 	{
@@ -75,14 +75,14 @@
 	{
 		"id": "inhalts-elemente",
 		"title": "Inhalts-Elemente im Überblick",
-		"stand": "2026-11-11",
+		"stand": "2026-11-16",
 		"sources": ["customtypes/page/base.json"]
 	},
 	{
 		"id": "seitensuche",
 		"title": "Suche auf einer Seite",
 		"feature": "suche",
-		"stand": "2026-11-11",
+		"stand": "2026-11-16",
 		"sources": ["src/lib/utils/pageSearch.ts", "src/lib/components/SearchDialog.svelte"]
 	},
 	{
@@ -140,9 +140,9 @@
 	},
 	{
 		"id": "globale-events",
-		"title": "Globale Events (Veranstaltungen)",
+		"title": "Eventmanagement (Veranstaltungen)",
 		"feature": "global_events",
-		"stand": "2026-11-11",
+		"stand": "2026-11-19",
 		"sources": [
 			"customtypes/_features/global_events",
 			"src/lib/slices/GlobaleEvents",
@@ -161,6 +161,13 @@
 			"src/routes/admin/newsletter",
 			"src/routes/api/newsletter"
 		]
+	},
+	{
+		"id": "buchhaltung",
+		"title": "Buchhaltung",
+		"feature": "buchhaltung",
+		"stand": "2026-11-19",
+		"sources": ["src/lib/server/buchhaltung.ts", "src/routes/admin/buchhaltung"]
 	},
 	{
 		"id": "stundenabrechnung",
@@ -204,10 +211,13 @@
 		"id": "manuelle-rechnungen",
 		"title": "Manuelle Rechnungen",
 		"feature": "manuelle_rechnungen",
-		"stand": "2026-11-11",
+		"stand": "2026-11-20",
 		"sources": [
 			"src/routes/admin/rechnungen",
 			"src/lib/server/invoices.ts",
+			"src/lib/server/recurringInvoices.ts",
+			"src/lib/server/dunning.ts",
+			"src/lib/server/paymentMatching.ts",
 			"src/lib/server/invoicing",
 			"src/lib/qrBill.js"
 		]
@@ -228,14 +238,14 @@
 		"id": "pwa",
 		"title": "Progressive Web App (PWA)",
 		"feature": "pwa",
-		"stand": "2026-11-11",
+		"stand": "2026-11-19",
 		"sources": ["src/service-worker.ts", "src/routes/manifest.webmanifest"]
 	},
 	{
 		"id": "chat-bot",
 		"title": "Chat-Bot",
 		"feature": "chatbot",
-		"stand": "2026-11-11",
+		"stand": "2026-11-15",
 		"sources": [
 			"src/routes/api/chat",
 			"src/routes/admin/chatbot",

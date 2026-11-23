@@ -11,7 +11,10 @@ export async function GET({ fetch }) {
 	const settings = await client.getSingle('settings', { lang: masterLang }).catch(() => null);
 	const isMultilang = settings?.data?.show_language_switcher ?? false;
 	const rawDomain = settings?.data?.domain ?? '';
-	const rawBaseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(/\/$/, '');
+	const rawBaseUrl = (rawDomain.startsWith('http') ? rawDomain : `https://${rawDomain}`).replace(
+		/\/$/,
+		''
+	);
 
 	// Validierung: Domain muss eine gültige URL mit Hostname sein.
 	// parsed.origin konvertiert Umlaute automatisch zu Punycode (z.B. ü → xn--).
@@ -28,7 +31,10 @@ export async function GET({ fetch }) {
 		);
 	}
 
-	const allPages = await client.getAllByType('page', { lang: '*' }).catch(() => []);
+	// «Ganze Website nicht indexieren»: no URLs at all
+	const allPages = (settings?.data as Record<string, unknown> | undefined)?.no_index_site
+		? []
+		: await client.getAllByType('page', { lang: '*' }).catch(() => []);
 
 	const urls = allPages
 		.filter((page) => page.uid != null)

@@ -215,6 +215,10 @@
 		"de-ch": "Eigene Ergänzungen und Korrekturen für den Chat-Bot, z. B. Begriffe, Sonderregeln oder aktuelle Hinweise («Diese Woche geschlossen»). Widerspricht etwas der «Chat-Bot Wissensbasis», gilt dieses Feld. So kannst du die Wissensbasis komplett ersetzen, ohne deine Ergänzungen zu verlieren. Leer in einer Sprache = die Ergänzungen der Hauptsprache gelten.",
 		"en-us": "Your own additions and corrections for the chat bot, e.g. terms, special rules or current notices («Closed this week»). If something contradicts «Chat-Bot Wissensbasis», this field wins. This lets you replace the knowledge base completely without losing your additions. Empty in a language = the additions of the main language apply."
 	},
+	"settings.chat_notify_email": {
+		"de-ch": "Schickt dir zu jeder Frage an den Chat-Bot eine E-Mail mit Frage, Antwort und Seite. Empfänger ist «Benachrichtigungen an (intern)», sonst die «Verantwortliche E-Mail». Ausschalten, wenn dir die Gespräche im Admin-Bereich unter «Chat-Bot» genügen.",
+		"en-us": "Sends you an e-mail for every question to the chat bot, with question, answer and page. Recipient is «Benachrichtigungen an (intern)» (internal notifications), otherwise «Verantwortliche E-Mail» (responsible e-mail). Switch it off if the conversations in the admin area under «Chat-Bot» are enough for you."
+	},
 	"settings.company_identification_number": {
 		"de-ch": "Unternehmens-Identifikationsnummer, falls vorhanden, z. B. «CHE-123.456.789» oder mit Mehrwertsteuer «CHE-123.456.789 MWST». Erscheint im Impressum und auf Rechnungen. Für eingetragene Firmen und MWST-pflichtige Betriebe nötig; Einzelpersonen ohne Handelsregister-Eintrag lassen das Feld leer. Leer = wird weggelassen.",
 		"en-us": "Company identification number, if any, e.g. «CHE-123.456.789» or with VAT «CHE-123.456.789 MWST». Appears in the legal notice and on invoices. Needed for registered companies and VAT-registered businesses; individuals without a commercial register entry leave it empty. Empty = omitted."
@@ -239,6 +243,18 @@
 		"de-ch": "Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.",
 		"en-us": "Page the home page redirects to when «Startseite umleiten» (redirect home page) is on. Empty = default page «Website im Aufbau» (website under construction) with default text."
 	},
+	"settings.invoice_dunning_active": {
+		"de-ch": "Schickt offene Rechnungen nach Ablauf der Zahlungsfrist automatisch als Mahnung an den Kunden (höchstens 2 Mahnungen) und setzt den Zahlungsstatus auf «gemahnt». Du erhältst zu jeder Mahnung eine kurze Info-Mail. Barzahlungen und stornierte Rechnungen werden nie gemahnt.",
+		"en-us": "Automatically sends unpaid invoices to the customer as a payment reminder after the payment period (at most 2 reminders) and sets the payment status to «gemahnt» (reminded). You get a short notice for every reminder. Cash payments and cancelled invoices are never reminded."
+	},
+	"settings.invoice_dunning_days": {
+		"de-ch": "Wie viele Tage nach Ablauf der Zahlungsfrist die Mahnung verschickt wird. Gilt auch für die 2. Mahnung nach Ablauf der neuen Frist. Leer = 10 Tage. Beispiel: Rechnung vom 1.10., Zahlungsfrist 30 Tage, hier 10 → 1. Mahnung am 10.11.",
+		"en-us": "How many days after the payment period the reminder is sent. Also applies to the 2nd reminder after the new deadline. Empty = 10 days. Example: invoice of 1 Oct, payment period 30 days, 10 here → 1st reminder on 10 Nov."
+	},
+	"settings.invoice_dunning_terms_days": {
+		"de-ch": "Neue Zahlungsfrist, die in der Mahnung genannt wird, ab dem Tag der Mahnung. Leer = 10 Tage.",
+		"en-us": "New payment deadline stated in the reminder, counted from the day of the reminder. Empty = 10 days."
+	},
 	"settings.invoice_iban": {
 		"de-ch": "Konto, auf das deine Rechnungen bezahlt werden. Erscheint auf jeder Rechnung und im QR-Zahlteil, z.B. «CH93 0076 2011 6238 5295 7». Für den QR-Zahlteil muss es eine Schweizer oder Liechtensteiner IBAN sein. Eine QR-IBAN deiner Bank funktioniert ebenfalls; die Referenz wird dann automatisch passend erzeugt.",
 		"en-us": "Account your invoices are paid to. Shown on every invoice and in the QR payment part, e.g. «CH93 0076 2011 6238 5295 7». For the QR payment part it must be a Swiss or Liechtenstein IBAN. A QR-IBAN from your bank works too; the matching reference is created automatically."
@@ -246,6 +262,10 @@
 	"settings.invoice_qr_bill": {
 		"de-ch": "Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.",
 		"en-us": "Prints a Swiss QR payment part at the bottom of every invoice. Customers scan it with their banking app; amount, account and reference are filled in. Requirements: a valid Swiss or Liechtenstein «IBAN», invoice in CHF or EUR, and in «Verantwortliche Adresse» (address) street + number and «postcode city» each on its own line (e.g. «Musterstrasse 12» / «8000 Zürich»). If something is missing, the invoice is issued without the QR part and «Inhalte prüfen» reports it."
+	},
+	"settings.no_index_site": {
+		"de-ch": "Verhindert, dass Suchmaschinen die Website aufnehmen, z.B. solange sie im Aufbau ist oder nur zum Testen dient. Gilt für alle Seiten und Sprachen; die Sitemap ist dann leer. Bereits aufgenommene Seiten verschwinden erst nach dem nächsten Besuch der Suchmaschine. Vor dem Start der Website wieder ausschalten.",
+		"en-us": "Prevents search engines from indexing the website, e.g. while it is under construction or only used for testing. Applies to all pages and languages; the sitemap is then empty. Pages already indexed disappear only after the search engine's next visit. Switch it off again before the website goes live."
 	},
 	"settings.notification_email": {
 		"de-ch": "An diese Adresse schickt die Website interne Meldungen: neue Buchungen, Formular-Nachrichten, Bestellungen, Check-in und Abrechnung, Rückmeldungen zum Chat-Bot. Besucher sehen sie nie. Leer = «Verantwortliche E-Mail», sonst «Korrespondenz E-Mail». Praktisch, wenn Meldungen an ein anderes Postfach gehen sollen, z. B. buchungen@deine-domain.ch.",

@@ -242,6 +242,9 @@ export function updateTheme(data: ThemeUpdateData): void {
 		};
 		set('--page-color', pageColor);
 		set('--page-bg-color', pageBgColor);
+		// Fixed copies for «Seitenfarben umkehren» (.invert-colors swaps --page-color/--page-bg-color)
+		set('--theme-page-color', pageColor);
+		set('--theme-page-bg-color', pageBgColor);
 		set('--page-font', pageFont);
 		set('--page-link-color', pageLinkColor);
 		set('--page-link-hover-color', pageLinkHoverColor);

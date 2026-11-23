@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
 	import { _ } from '$lib/stores/i18n';
 	import { errorPageLanding } from '$lib/stores/errorPageLanding';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -35,131 +34,60 @@
 	// url.search is not available while prerendering → only in the browser
 	$: defaultHref = '/' + segments.slice(1).join('/') + (browser ? $page.url.search : '');
 
-	let countdown = 15;
-	let timer: any;
 	let mounted = false;
 
 	onMount(() => {
 		mounted = true;
 		errorPageLanding.set(true);
-
-		// Missing translation: MissingTranslationModal redirects itself
-		if (missingTranslation) return () => errorPageLanding.set(false);
-
-		countdown = 15;
-		const target = homeHref;
-		timer = setInterval(() => {
-			if (countdown > 1) {
-				countdown -= 1;
-			} else {
-				clearInterval(timer);
-				if (window.location.pathname !== target) {
-					goto(target, { replaceState: true });
-				}
-			}
-		}, 1000);
-
-		return () => {
-			clearInterval(timer);
-			errorPageLanding.set(false);
-		};
+		return () => errorPageLanding.set(false);
 	});
 </script>
 
+<svelte:head>
+	<!-- Error pages (404 …) never belong in search results; the HTTP status stays unchanged -->
+	<meta name="robots" content="noindex, follow" />
+</svelte:head>
+
+<!-- Missing translation: the modal redirects to the default language (browser only).
+	 All other errors: content already in the server HTML -->
 {#if mounted && missingTranslation}
 	<MissingTranslationModal lang={pathLang} {mainLang} href={defaultHref} />
-{:else if mounted}
-	<div class="error-container">
-		<Bounded as="section" class="text-center">
-			<div class="content-wrapper">
-				<span class="status-code">Status {$page.status}</span>
-
-				<h1 class="error-title">{$_('Seite nicht gefunden')}</h1>
-
-				<p class="error-text">
-					{$_('Diese Seite existiert in der gewählten Sprache leider noch nicht.')}
-				</p>
-
-				<div class="actions">
-					<Button link={{ url: homeHref }} text={$_('Zurück zur Hauptseite')} />
-
-					<div class="countdown-wrapper">
-						<div class="spinner"></div>
-						<span>{$_('Automatische Weiterleitung in')} <strong>{countdown}s</strong></span>
-					</div>
-				</div>
+{:else if !missingTranslation}
+	<Bounded as="section" class="text-center">
+		<div class="error-content">
+			<h1>
+				{$page.status === 404 ? $_('Seite nicht gefunden') : $_('Etwas ist schiefgelaufen')}
+			</h1>
+			<p class="error-text">
+				{$page.status === 404
+					? $_('Diese Seite gibt es nicht oder sie wurde verschoben.')
+					: $_('Bitte versuche es später noch einmal.')}
+				{$_('Hier geht es zurück zur Startseite oder direkt zum Kontakt.')}
+			</p>
+			<div class="error-actions">
+				<Button href={homeHref} text={$_('Zur Startseite')} mb={false} />
+				<Button href="/kontakt" text={$_('Kontakt aufnehmen')} mb={false} />
 			</div>
-		</Bounded>
-	</div>
+		</div>
+	</Bounded>
 {/if}
 
 <style>
-	.error-container {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 70vh;
-		background: transparent;
-		color: var(--page-color);
-		font-family: var(--page-font);
-	}
-
-	.content-wrapper {
-		max-width: 32rem;
+	.error-content {
+		max-width: 36rem;
 		margin: 0 auto;
-	}
-
-	.status-code {
-		display: block;
-		font-size: 0.875rem;
-		font-weight: 700;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: #ef4444;
-		margin-bottom: 0.5rem;
-	}
-
-	.error-title {
-		font-size: clamp(2rem, 8vw, 3rem);
-		font-weight: 900;
-		line-height: 1.1;
-		margin-bottom: 1.5rem;
-	}
-
-	.error-text {
-		font-size: 1.125rem;
-		line-height: 1.6;
-		margin-bottom: 2rem;
-		opacity: 0.8;
-	}
-
-	.actions {
+		min-height: 50vh;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 1.5rem;
+		justify-content: center;
 	}
-
-	.countdown-wrapper {
+	.error-text {
+		margin: 1.5rem 0 2rem;
+	}
+	.error-actions {
 		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		font-size: 0.875rem;
-		opacity: 0.7;
-	}
-
-	.spinner {
-		width: 1rem;
-		height: 1rem;
-		border: 2px solid currentColor;
-		border-top-color: transparent;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem;
 	}
 </style>

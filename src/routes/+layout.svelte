@@ -72,8 +72,18 @@
 
 	// --- SEO & METADATEN ---
 	$: siteName = settings?.data?.site_name || asText(settings?.data?.site_title) || '';
+	// Error pages (+error.svelte): own title, HTTP status stays unchanged
+	$: errorTitle = $page.error
+		? $page.status === 404
+			? $_('Seite nicht gefunden')
+			: $_('Ein Fehler ist aufgetreten')
+		: '';
 	$: pageTitle =
-		$page.data?.meta_title || $page.data?.title || settings?.data?.meta_title || siteName;
+		errorTitle ||
+		$page.data?.meta_title ||
+		$page.data?.title ||
+		settings?.data?.meta_title ||
+		siteName;
 	$: finalTitle = pageTitle === siteName ? siteName : `${pageTitle} | ${siteName}`;
 	$: finalDesc = $page.data?.meta_description || asText(settings?.data?.meta_description) || '';
 	$: finalImage =
@@ -86,7 +96,10 @@
 		settings?.data?.app_icon?.['180']?.url || settings?.data?.app_icon?.url || null;
 	$: pwaThemeColor = settings?.data?.pwa_theme_color || null;
 	// Prismic field «Keine Indexierung» (no_index) of the page document; routes can also set data.no_index
-	$: noIndex = $page.data?.no_index === true || $page.data?.page?.data?.no_index === true;
+	$: noIndex =
+		data?.siteNoIndex === true ||
+		$page.data?.no_index === true ||
+		$page.data?.page?.data?.no_index === true;
 
 	// --- DOMAIN & URL ---
 	$: rawDomain = settings?.data?.domain || 'klap-web.ch';
@@ -437,7 +450,10 @@
 	// Default page «Website im Aufbau» (home redirect) is always a landing page
 	$: isUnderConstruction = $page.route.id === '/[[lang=lang]]/im-aufbau';
 	$: isLandingPage =
-		$page.data?.page?.data?.landing_page === true || $errorPageLanding || isUnderConstruction;
+		$page.data?.page?.data?.landing_page === true ||
+		$errorPageLanding ||
+		!!$page.error ||
+		isUnderConstruction;
 	$: isFullscreenP5LandingPage =
 		isLandingPage &&
 		$page.data?.page?.data?.slices?.length === 1 &&

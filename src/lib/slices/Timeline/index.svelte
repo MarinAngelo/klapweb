@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import Bounded from '$lib/components/Bounded.svelte';
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { theme } from '$lib/stores/theme';
@@ -12,8 +14,8 @@
 	};
 	const p = slice.primary ?? {};
 
-	$: bgColor = (p.bg_color as string) || $theme.pageBgColor;
-	$: color = (p.color as string) || $theme.pageColor;
+	$: bgColor = (p.bg_color as string) || $pageColorsStore.pageBgColor;
+	$: color = (p.color as string) || $pageColorsStore.pageColor;
 	$: lineColor = (p.line_color as string) || color;
 	$: animate = (p.animate as boolean) !== false;
 

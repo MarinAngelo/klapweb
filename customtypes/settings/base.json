@@ -567,6 +567,15 @@
 					"placeholder": "Die Hauptdomain (z.B. klap-web.ch). Wichtig für absolute URL-Generierung."
 				}
 			},
+			"no_index_site": {
+				"type": "Boolean",
+				"config": {
+					"label": "Ganze Website nicht indexieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
 			"site_name": {
 				"type": "Text",
 				"config": {
@@ -647,6 +656,15 @@
 				"type": "Boolean",
 				"config": {
 					"label": "Chat-Bot aktivieren",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"chat_notify_email": {
+				"type": "Boolean",
+				"config": {
+					"label": "Chat-Anfragen per E-Mail melden",
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": false
@@ -983,6 +1001,29 @@
 					"placeholder_false": "Nein",
 					"placeholder_true": "Ja",
 					"default_value": true
+				}
+			},
+			"invoice_dunning_active": {
+				"type": "Boolean",
+				"config": {
+					"label": "Automatisch mahnen",
+					"placeholder_false": "Nein",
+					"placeholder_true": "Ja",
+					"default_value": false
+				}
+			},
+			"invoice_dunning_days": {
+				"type": "Number",
+				"config": {
+					"label": "Mahnung nach Ablauf der Zahlungsfrist (Tage)",
+					"placeholder": "10"
+				}
+			},
+			"invoice_dunning_terms_days": {
+				"type": "Number",
+				"config": {
+					"label": "Neue Zahlungsfrist in der Mahnung (Tage)",
+					"placeholder": "10"
 				}
 			}
 		}

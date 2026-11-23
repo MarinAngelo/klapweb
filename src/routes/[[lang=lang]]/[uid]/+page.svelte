@@ -2,7 +2,7 @@
 	import { renderableSlices } from '$lib/utils/renderableSlices';
 	import { tick } from 'svelte';
 	import { _ } from '$lib/stores/i18n';
-	import { SliceZone } from '@prismicio/svelte';
+	import SliceZone from '$lib/components/SliceZone.svelte';
 	import { components } from '$lib/slices';
 	import { currencySelection } from '$lib/stores/currency';
 	import Bounded from '$lib/components/Bounded.svelte';

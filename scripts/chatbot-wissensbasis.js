@@ -3,7 +3,10 @@
  *
  *   <!-- AUTO:ANLEITUNGEN:START --> … <!-- AUTO:ANLEITUNGEN:END -->
  *     the guide chapters from src/lib/anleitung/ (same source as the website /anleitung) —
- *     edit the chapters there, never between the markers; parts marked NUR-WEBSITE are left out
+ *     edit the chapters there, never between the markers; parts marked NUR-WEBSITE are left out.
+ *     Plus the own parts of the «Anleitung» elements on the Prismic page `anleitung`
+ *     (klap-web-ch, published): title, description, steps — placed before the text of the chosen
+ *     chapter, like on the website. Prismic not reachable → the guide section stays as it was.
  *
  *   <!-- AUTO:FELDREFERENZ:START --> … <!-- AUTO:FELDREFERENZ:END -->
  *     «Prismic-Feldreferenz» from the generated field reference
@@ -17,6 +20,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { readChapterHtml, readChapterIndex } from '../src/lib/anleitung/load.js';
 import { expandFieldRefs, fieldLookup } from '../src/lib/anleitung/fields.js';
+import { ALL_CHAPTERS } from '../src/lib/anleitung/options.js';
+import { asHTML, asText } from '@prismicio/client';
 
 const KB = 'docs/chatbot-wissensbasis.html';
 const REFERENCE = 'src/lib/generated/prismic-field-reference.json';
@@ -117,14 +122,71 @@ const forBot = (source) => {
 		.replace(/\n{3,}/g, '\n\n')
 		.trim();
 };
+// Own parts of the «Anleitung» elements on the Prismic page (edited by KLAP WEB in Prismic)
+const GUIDE_PAGE = { repo: 'klap-web-ch', uid: 'anleitung', lang: 'de-ch' };
+
+/** «Anleitung» slice → HTML of its own parts (without the chapter text from the code) */
+function ownPartHtml(primary) {
+	const parts = [];
+	if (primary.title) parts.push(`<h3>${escapeHtml(primary.title)}</h3>`);
+	if (asText(primary.description ?? []).trim()) parts.push(asHTML(primary.description));
+	for (const step of primary.steps ?? []) {
+		if (step.step_title) parts.push(`<h4>${escapeHtml(step.step_title)}</h4>`);
+		if (asText(step.step_description ?? []).trim()) parts.push(asHTML(step.step_description));
+	}
+	if (parts.length && primary.chapter_title)
+		parts.push(`<h3>${escapeHtml(primary.chapter_title)}</h3>`);
+	return parts.join('\n');
+}
+
+/** Map chapter title → own HTML; null if Prismic could not be read */
+async function loadOwnParts() {
+	try {
+		const base = `https://${GUIDE_PAGE.repo}.cdn.prismic.io/api/v2`;
+		const api = await (await fetch(base, { signal: AbortSignal.timeout(15000) })).json();
+		const ref = api.refs.find((r) => r.isMasterRef).ref;
+		const query = encodeURIComponent(`[[at(my.page.uid,"${GUIDE_PAGE.uid}")]]`);
+		const { results } = await (
+			await fetch(`${base}/documents/search?ref=${ref}&lang=${GUIDE_PAGE.lang}&q=${query}`, {
+				signal: AbortSignal.timeout(15000)
+			})
+		).json();
+		const byChapter = new Map();
+		for (const slice of results?.[0]?.data?.slices ?? []) {
+			if (slice.slice_type !== 'anleitung') continue;
+			const html = ownPartHtml(slice.primary ?? {});
+			if (!html) continue;
+			const chapter = slice.primary.chapter || ALL_CHAPTERS;
+			byChapter.set(chapter, [byChapter.get(chapter), html].filter(Boolean).join('\n'));
+		}
+		return byChapter;
+	} catch (e) {
+		console.warn(
+			`⚠ Prismic-Seite «${GUIDE_PAGE.uid}» nicht erreichbar (${e.message}) — Anleitungs-Teil bleibt unverändert`
+		);
+		return null;
+	}
+}
+
 const chapters = readChapterIndex();
-const guidesHtml = [
-	GUIDES_START,
-	...chapters.map(
-		(c) => `<h2>${escapeHtml(c.title)}</h2>\n${forBot(readChapterHtml(c.id) ?? '')}\n`
-	),
-	GUIDES_END
-].join('\n');
+const ownParts = await loadOwnParts();
+const guidesHtml =
+	ownParts &&
+	[
+		GUIDES_START,
+		...chapters.map(
+			(c) =>
+				`<h2>${escapeHtml(c.title)}</h2>\n${[ownParts.get(c.title), forBot(readChapterHtml(c.id) ?? '')].filter(Boolean).join('\n')}\n`
+		),
+		// «Alle übrigen Kapitel» or a chapter that no longer exists: own section
+		...[...ownParts]
+			.filter(([title]) => !chapters.some((c) => c.title === title))
+			.map(
+				([title, html]) =>
+					`<h2>${escapeHtml(title === ALL_CHAPTERS ? 'Anleitung' : title)}</h2>\n${html}\n`
+			),
+		GUIDES_END
+	].join('\n');
 
 if (unknownFields.size) {
 	console.warn(
@@ -133,7 +195,9 @@ if (unknownFields.size) {
 }
 
 let kb = readFileSync(KB, 'utf8');
-if (kb.includes(GUIDES_START) && kb.includes(GUIDES_END)) {
+if (!guidesHtml) {
+	// Prismic not reachable: keep the current guide section
+} else if (kb.includes(GUIDES_START) && kb.includes(GUIDES_END)) {
 	kb =
 		kb.slice(0, kb.indexOf(GUIDES_START)) +
 		guidesHtml +

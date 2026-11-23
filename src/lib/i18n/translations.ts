@@ -160,8 +160,8 @@ export const translations: Record<string, Record<string, string>> = {
 	Schaltfläche: { 'de-ch': 'Schaltfläche', 'en-us': 'Button' },
 	Event: { 'de-ch': 'Event', 'en-us': 'Event' },
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
-	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
-	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
+	GlobaleEvents: { 'de-ch': 'Eventmanagement', 'en-us': 'Event management' },
+	Eventmanagement: { 'de-ch': 'Eventmanagement', 'en-us': 'Event management' },
 	MapEinbetten: { 'de-ch': 'MapEinbetten', 'en-us': 'Embed map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
@@ -305,6 +305,33 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
 	},
 	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
+	'Etwas ist schiefgelaufen': {
+		'de-ch': 'Etwas ist schiefgelaufen',
+		'en-us': 'Something went wrong'
+	},
+	'Diese Seite gibt es nicht oder sie wurde verschoben.': {
+		'de-ch': 'Diese Seite gibt es nicht oder sie wurde verschoben.',
+		'en-us': 'This page does not exist or has been moved.'
+	},
+	'Bitte versuche es später noch einmal.': {
+		'de-ch': 'Bitte versuche es später noch einmal.',
+		'en-us': 'Please try again later.'
+	},
+	'Hier geht es zurück zur Startseite oder direkt zum Kontakt.': {
+		'de-ch': 'Hier geht es zurück zur Startseite oder direkt zum Kontakt.',
+		'en-us': 'Go back to the home page or get in touch directly.'
+	},
+	'Zur Startseite': { 'de-ch': 'Zur Startseite', 'en-us': 'Go to home page' },
+	'Kontakt aufnehmen': { 'de-ch': 'Kontakt aufnehmen', 'en-us': 'Get in touch' },
+	'Keine Verbindung': { 'de-ch': 'Keine Verbindung', 'en-us': 'No connection' },
+	'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.':
+		{
+			'de-ch':
+				'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.',
+			'en-us':
+				'This page is not available offline. Pages you have already visited can still be opened.'
+		},
+	'Erneut versuchen': { 'de-ch': 'Erneut versuchen', 'en-us': 'Try again' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
@@ -1612,6 +1639,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'and accept it.'
 	},
 	Haftungsausschluss: { 'de-ch': 'Haftungsausschluss', 'en-us': 'Disclaimer' },
+	'Allgemeine Geschäftsbedingungen (AGB)': {
+		'de-ch': 'Allgemeine Geschäftsbedingungen (AGB)',
+		'en-us': 'General Terms and Conditions (T&C)'
+	},
 	'Wird geladen…': { 'de-ch': 'Wird geladen…', 'en-us': 'Loading…' },
 
 	// GlobaleEvents
@@ -1646,6 +1677,107 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	// Buchhaltung (admin)
+	'Eintrag bearbeiten': { 'de-ch': 'Eintrag bearbeiten', 'en-us': 'Edit entry' },
+	'Beleg entfernen': { 'de-ch': 'Beleg entfernen', 'en-us': 'Remove receipt' },
+	'{n} Einträge löschen?': { 'de-ch': '{n} Einträge löschen?', 'en-us': 'Delete {n} entries?' },
+	Auswählen: { 'de-ch': 'Auswählen', 'en-us': 'Select' },
+	'Ungültige Auswahl': { 'de-ch': 'Ungültige Auswahl', 'en-us': 'Invalid selection' },
+	'Keine Einträge ausgewählt': {
+		'de-ch': 'Keine Einträge ausgewählt',
+		'en-us': 'No entries selected'
+	},
+	'Unbekannte Aktion': { 'de-ch': 'Unbekannte Aktion', 'en-us': 'Unknown action' },
+	Buchhaltung: { 'de-ch': 'Buchhaltung', 'en-us': 'Accounting' },
+	'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).':
+		{
+			'de-ch':
+				'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).',
+			'en-us':
+				'Income and expenses. Paid invoices appear automatically as income (date = payment date).'
+		},
+	Einnahmen: { 'de-ch': 'Einnahmen', 'en-us': 'Income' },
+	Ausgaben: { 'de-ch': 'Ausgaben', 'en-us': 'Expenses' },
+	Ergebnis: { 'de-ch': 'Ergebnis', 'en-us': 'Result' },
+	'Neuer Eintrag': { 'de-ch': 'Neuer Eintrag', 'en-us': 'New entry' },
+	Ausgabe: { 'de-ch': 'Ausgabe', 'en-us': 'Expense' },
+	Einnahme: { 'de-ch': 'Einnahme', 'en-us': 'Income' },
+	'Betrag (CHF, inkl. MwSt.)': {
+		'de-ch': 'Betrag (CHF, inkl. MwSt.)',
+		'en-us': 'Amount (CHF, incl. VAT)'
+	},
+	Kategorie: { 'de-ch': 'Kategorie', 'en-us': 'Category' },
+	'Kategorie wählen …': { 'de-ch': 'Kategorie wählen …', 'en-us': 'Choose category …' },
+	'Beleg (PDF oder Bild, optional, max. 10 MB)': {
+		'de-ch': 'Beleg (PDF oder Bild, optional, max. 10 MB)',
+		'en-us': 'Receipt (PDF or image, optional, max. 10 MB)'
+	},
+	Buchungen: { 'de-ch': 'Buchungen', 'en-us': 'Bookings' },
+	'Keine Buchungen in diesem Jahr.': {
+		'de-ch': 'Keine Buchungen in diesem Jahr.',
+		'en-us': 'No bookings this year.'
+	},
+	Beleg: { 'de-ch': 'Beleg', 'en-us': 'Receipt' },
+	Anzeigen: { 'de-ch': 'Anzeigen', 'en-us': 'Show' },
+	Rechnung: { 'de-ch': 'Rechnung', 'en-us': 'Invoice' },
+	'Eintrag löschen?': { 'de-ch': 'Eintrag löschen?', 'en-us': 'Delete entry?' },
+	Januar: { 'de-ch': 'Januar', 'en-us': 'January' },
+	Februar: { 'de-ch': 'Februar', 'en-us': 'February' },
+	März: { 'de-ch': 'März', 'en-us': 'March' },
+	April: { 'de-ch': 'April', 'en-us': 'April' },
+	Mai: { 'de-ch': 'Mai', 'en-us': 'May' },
+	Juni: { 'de-ch': 'Juni', 'en-us': 'June' },
+	Juli: { 'de-ch': 'Juli', 'en-us': 'July' },
+	August: { 'de-ch': 'August', 'en-us': 'August' },
+	September: { 'de-ch': 'September', 'en-us': 'September' },
+	Oktober: { 'de-ch': 'Oktober', 'en-us': 'October' },
+	November: { 'de-ch': 'November', 'en-us': 'November' },
+	Dezember: { 'de-ch': 'Dezember', 'en-us': 'December' },
+	Verkauf: { 'de-ch': 'Verkauf', 'en-us': 'Sales' },
+	Dienstleistung: { 'de-ch': 'Dienstleistung', 'en-us': 'Service' },
+	Zinsen: { 'de-ch': 'Zinsen', 'en-us': 'Interest' },
+	Diverses: { 'de-ch': 'Diverses', 'en-us': 'Miscellaneous' },
+	Material: { 'de-ch': 'Material', 'en-us': 'Material' },
+	Miete: { 'de-ch': 'Miete', 'en-us': 'Rent' },
+	Software: { 'de-ch': 'Software', 'en-us': 'Software' },
+	Werbung: { 'de-ch': 'Werbung', 'en-us': 'Advertising' },
+	Reise: { 'de-ch': 'Reise', 'en-us': 'Travel' },
+	Versicherung: { 'de-ch': 'Versicherung', 'en-us': 'Insurance' },
+	Gebühren: { 'de-ch': 'Gebühren', 'en-us': 'Fees' },
+	'Bitte Einnahme oder Ausgabe wählen': {
+		'de-ch': 'Bitte Einnahme oder Ausgabe wählen',
+		'en-us': 'Please choose income or expense'
+	},
+	'Ungültiges Datum': { 'de-ch': 'Ungültiges Datum', 'en-us': 'Invalid date' },
+	'Bitte einen Text eingeben': {
+		'de-ch': 'Bitte einen Text eingeben',
+		'en-us': 'Please enter a text'
+	},
+	'Bitte einen Betrag grösser als 0 eingeben': {
+		'de-ch': 'Bitte einen Betrag grösser als 0 eingeben',
+		'en-us': 'Please enter an amount greater than 0'
+	},
+	'Bitte eine Kategorie wählen': {
+		'de-ch': 'Bitte eine Kategorie wählen',
+		'en-us': 'Please choose a category'
+	},
+	'Der Beleg ist grösser als 10 MB': {
+		'de-ch': 'Der Beleg ist grösser als 10 MB',
+		'en-us': 'The receipt is larger than 10 MB'
+	},
+	'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)': {
+		'de-ch': 'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)',
+		'en-us': 'Receipt only as PDF or image (JPG, PNG, WebP, HEIC)'
+	},
+	ausgewählt: { 'de-ch': 'ausgewählt', 'en-us': 'selected' },
+	Aktion: { 'de-ch': 'Aktion', 'en-us': 'Action' },
+	'Aktion wählen …': { 'de-ch': 'Aktion wählen …', 'en-us': 'Choose action …' },
+	Ausführen: { 'de-ch': 'Ausführen', 'en-us': 'Apply' },
+	'Bild vergrössern': { 'de-ch': 'Bild vergrössern', 'en-us': 'Enlarge image' },
+	'Mit zwei Fingern oder Doppeltipp zoomen': {
+		'de-ch': 'Mit zwei Fingern oder Doppeltipp zoomen',
+		'en-us': 'Pinch or double-tap to zoom'
+	},
 	Link: { 'de-ch': 'Link', 'en-us': 'Link' },
 	// Event Status
 	Geplant: { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },

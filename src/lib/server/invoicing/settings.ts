@@ -20,6 +20,10 @@ export interface InvoiceSettings {
 	currency: string;
 	/** «QR-Zahlteil auf Rechnungen» (on by default) */
 	qrBillEnabled: boolean;
+	/** Dunning (src/lib/server/dunning.ts): «Automatisch mahnen», days after the due date, new terms */
+	dunningActive: boolean;
+	dunningDays: number;
+	dunningTermsDays: number;
 	/** Structured issuer address for the QR bill; null = not recognisable */
 	creditor: QrAddress | null;
 	/** Raw settings data for feature-specific fields (e-mail templates, discount codes …) */
@@ -46,6 +50,9 @@ export function invoiceSettingsFrom(d: Record<string, unknown>): InvoiceSettings
 		vatRate: (d.invoice_vat_rate as number) ?? null,
 		currency: parseCurrencyCode(d.invoice_currency as string) || 'CHF',
 		qrBillEnabled: d.invoice_qr_bill !== false,
+		dunningActive: d.invoice_dunning_active === true,
+		dunningDays: (d.invoice_dunning_days as number) ?? 10,
+		dunningTermsDays: (d.invoice_dunning_terms_days as number) ?? 10,
 		creditor: parseAddress(name, addressLines),
 		data: d
 	};

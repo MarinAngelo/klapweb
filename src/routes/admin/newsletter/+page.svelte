@@ -90,6 +90,8 @@
 	}
 </script>
 
+<svelte:head><title>{$_('Newsletter')}</title></svelte:head>
+
 <div class="admin-container">
 	<AdminHeader title={$_('Newsletter')} />
 	<p class="admin-intro">

@@ -26,7 +26,21 @@ export interface InvoiceLineItem {
 }
 
 /** Feature that issued the invoice; missing = older invoice (checkout or admin) */
-export type InvoiceSource = 'checkout' | 'admin' | 'terminbuchung' | 'event' | 'bar';
+export type InvoiceSource =
+	| 'checkout'
+	| 'admin'
+	| 'terminbuchung'
+	| 'event'
+	| 'bar'
+	| 'wiederkehrend';
+
+/** Recurring invoice (template): a copy is created and mailed on nextDate (src/lib/server/recurringInvoices.ts) */
+export interface InvoiceRecurrence {
+	interval: 'jaehrlich';
+	/** YYYY-MM-DD (Swiss time) */
+	nextDate: string;
+	active: boolean;
+}
 
 export interface ManualInvoiceRecord {
 	id: string;
@@ -34,7 +48,8 @@ export interface ManualInvoiceRecord {
 	date: string;
 	status: 'gespeichert' | 'gesendet';
 	/** 'storniert' = no longer payable (e.g. booking cancelled) */
-	paymentStatus: 'offen' | 'bezahlt' | 'storniert';
+	/** 'gemahnt' = still unpaid, at least one reminder sent (dunning) */
+	paymentStatus: 'offen' | 'gemahnt' | 'bezahlt' | 'storniert';
 	paymentMethod?: 'rechnung' | 'bar';
 	source?: InvoiceSource;
 	/** Id in the source feature, e.g. booking terminId */
@@ -57,6 +72,15 @@ export interface ManualInvoiceRecord {
 	// Delivery metadata
 	emailSentAt?: string | null;
 	currency?: string;
+	recurrence?: InvoiceRecurrence;
+	/** Total incl. VAT at creation (older records: recalculated, see buchhaltung.ts) */
+	total?: number;
+	/** Reminders sent (src/lib/server/dunning.ts): level 1/2, when, new due date (YYYY-MM-DD), mailed */
+	dunning?: { level: number; at: string; dueDate: string; sent: boolean }[];
+	/** Operator notified that the invoice is still unpaid after the last reminder */
+	dunningDone?: boolean;
+	/** When the invoice was paid (set when paymentStatus becomes 'bezahlt'); income date in «Buchhaltung» */
+	paidAt?: string;
 }
 
 function getInvoiceStore() {
@@ -105,5 +129,9 @@ export async function updateManualInvoice(
 	const store = getInvoiceStore();
 	const existing = await getManualInvoice(id);
 	if (!existing) throw new Error('Rechnung nicht gefunden');
-	await store.setJSON(id, { ...existing, ...record });
+	const next = { ...existing, ...record };
+	// Payment date for «Buchhaltung»: set when it becomes paid, removed when it is no longer paid
+	if (next.paymentStatus === 'bezahlt' && !next.paidAt) next.paidAt = new Date().toISOString();
+	if (next.paymentStatus !== 'bezahlt') delete next.paidAt;
+	await store.setJSON(id, next);
 }

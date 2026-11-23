@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { theme } from '$lib/stores/theme';
 	import { hexLuminance, shadeColor } from '$lib/utils/color';
@@ -7,8 +9,8 @@
 	let codeEl: HTMLElement;
 
 	$: bg = shadeColor(
-		$theme.pageBgColor || '#ffffff',
-		hexLuminance($theme.pageBgColor || '#ffffff') > 0.5 ? -10 : 10
+		$pageColorsStore.pageBgColor || '#ffffff',
+		hexLuminance($pageColorsStore.pageBgColor || '#ffffff') > 0.5 ? -10 : 10
 	);
 
 	function copy() {

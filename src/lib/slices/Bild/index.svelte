@@ -38,7 +38,7 @@
 	animate={anim.animate}
 	animationOptions={anim.options}
 >
-	<div class={mobileVollbreite ? '-mx-6 md:mx-0 px-6 md:px-0' : ''}>
+	<div class={mobileVollbreite ? '-mx-6 md:mx-0' : ''}>
 		{#if isVorherNachher}
 			<VorherNachher
 				bildLinks={primaryVN.bild_links}
@@ -52,12 +52,12 @@
 			<div>
 				{#if lupe && lightbox}
 					<Lightbox src={p.image.url ?? ''} alt={p.image.alt ?? ''}>
-						<BildLupe imageUrl={p.image.url ?? ''}>
+						<BildLupe imageUrl={p.image.url ?? ''} alt={p.image.alt ?? ''}>
 							<PrismicImage field={p.image} sizes="100vw" class="w-full" />
 						</BildLupe>
 					</Lightbox>
 				{:else if lupe}
-					<BildLupe imageUrl={p.image.url ?? ''}>
+					<BildLupe imageUrl={p.image.url ?? ''} alt={p.image.alt ?? ''}>
 						<PrismicImage field={p.image} sizes="100vw" class="w-full" />
 					</BildLupe>
 				{:else if lightbox}

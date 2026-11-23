@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { isFilled } from '@prismicio/client';
@@ -171,8 +173,8 @@
 				class="flex flex-col gap-8 {hasBorderColor ? 'border-2' : 'shadow-lg'} {roundCorners
 					? 'rounded-2xl'
 					: ''}"
-				style:background-color={primary?.body_bg_color || $theme.pageBgColor}
-				style:--custom-card-color={primary?.body_color || $theme.pageColor}
+				style:background-color={primary?.body_bg_color || $pageColorsStore.pageBgColor}
+				style:--custom-card-color={primary?.body_color || $pageColorsStore.pageColor}
 				style:border-color={primary?.border_color || undefined}
 			>
 				{#if isFilled.image(offer.bild)}

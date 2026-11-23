@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { TIMEZONES } from '$lib/utils/timezones';
 	import { theme } from '$lib/stores/theme';
 	import { shadeColor } from '$lib/utils/color';
@@ -398,7 +400,7 @@
 	$: if (htmlType === 'number') value = numberValue ?? '';
 	$: if (htmlType === 'tel') value = localNumber ? `${prefix} ${localNumber}` : '';
 
-	$: selectOptionBg = shadeColor($theme.pageBgColor || '#ffffff', -30);
+	$: selectOptionBg = shadeColor($pageColorsStore.pageBgColor || '#ffffff', -30);
 
 	function handleCodeInput(e: Event) {
 		textValue = (e.target as HTMLInputElement).value.toUpperCase();
