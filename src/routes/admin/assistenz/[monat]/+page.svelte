@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
+	import { tick } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -13,7 +14,8 @@
 		jahrVonMonat,
 		monatName,
 		parseStunden,
-		type MonatsStunden
+		type MonatsStunden,
+		type Person
 	} from '$lib/assistenz';
 
 	export let data: PageData;
@@ -73,6 +75,20 @@
 
 	const ungueltig = (v: string) => Number.isNaN(parseStunden(v));
 
+	let formular: HTMLFormElement;
+
+	/** Removes the hours of one person in this month: empty the row and save right away */
+	async function zeileLoeschen(person: Person) {
+		const text = $_('Stunden von {name} im {monat} löschen?')
+			.replace('{name}', person.name)
+			.replace('{monat}', monatName(data.monat));
+		if (!confirm(text)) return;
+		eingaben[person.id] = { tag: '', nacht: '' };
+		dirty = true;
+		await tick();
+		formular.requestSubmit();
+	}
+
 	// Unsaved input: ask before leaving (closing the tab / reloading → browser's own dialog)
 	beforeNavigate(({ cancel, type }) => {
 		if (!dirty || type === 'form') return;
@@ -123,9 +139,7 @@
 		<p class="admin-muted mb-3 text-sm">
 			{$_('Tag')} CHF {fmtChf(resultat.saetze.tag)} / {$_('Std.')} · {$_('Nacht')} CHF
 			{fmtChf(resultat.saetze.nacht)} / {$_('Std.')}
-			{#each abzuege as a}
-				· {a.name} {fmtStunden(a.prozent)} %
-			{/each}
+			{#each abzuege as a}{` · ${a.name} ${fmtStunden(a.prozent)} %`}{/each}
 			· {$_('gültig ab')}
 			{monatName(resultat.saetze.gueltigAb)}
 		</p>
@@ -146,7 +160,13 @@
 			</p>
 		</section>
 	{:else}
-		<form method="POST" action="?/save" use:enhance={speichern} on:input={() => (dirty = true)}>
+		<form
+			bind:this={formular}
+			method="POST"
+			action="?/save"
+			use:enhance={speichern}
+			on:input={() => (dirty = true)}
+		>
 			<section class="admin-card">
 				<div class="admin-table-wrap">
 					<table class="admin-table">
@@ -165,6 +185,7 @@
 								{/each}
 								<th class="text-right">{$_('Abzüge total CHF')}</th>
 								<th class="text-right">{$_('Lohn netto CHF')}</th>
+								<th><span class="sr-only">{$_('Löschen')}</span></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -209,6 +230,16 @@
 											<td colspan={5 + abzuege.length}></td>
 										{/if}
 									{/if}
+									<td class="nowrap text-right">
+										{#if !z.leer || eingaben[z.person.id].tag || eingaben[z.person.id].nacht}
+											<button
+												type="button"
+												class="admin-btn admin-btn-danger admin-btn-sm"
+												on:click={() => zeileLoeschen(z.person)}
+												aria-label="{z.person.name} · {$_('Löschen')}">{$_('Löschen')}</button
+											>
+										{/if}
+									</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -230,6 +261,7 @@
 								{:else}
 									<td colspan={5 + abzuege.length}></td>
 								{/if}
+								<td></td>
 							</tr>
 						</tfoot>
 					</table>

@@ -46,7 +46,7 @@ export async function loadConfig(): Promise<AssistenzConfig> {
 	};
 }
 
-async function saveConfig(config: AssistenzConfig) {
+export async function saveConfig(config: AssistenzConfig) {
 	await getAssistenzStore().setJSON(CONFIG_KEY, config);
 }
 
@@ -114,6 +114,12 @@ export async function saveMonatAusFormular(
 			};
 		}
 	}
+	await saveMonat(monat, stunden);
+	return null;
+}
+
+/** Stores the hours of a month (no hours → the month is removed) */
+export async function saveMonat(monat: Monat, stunden: Record<string, StundenEintrag>) {
 	const store = getAssistenzStore();
 	if (Object.keys(stunden).length === 0) {
 		await store.delete(monatKey(monat));
@@ -124,8 +130,10 @@ export async function saveMonatAusFormular(
 			updatedAt: new Date().toISOString()
 		} satisfies MonatsStunden);
 	}
-	return null;
 }
+
+/** New person id (8 hex characters, see isValidPersonId) */
+export const neuePersonId = () => randomUUID().slice(0, 8);
 
 // ── Persons ──────────────────────────────────────────────────────────────────
 
@@ -152,7 +160,7 @@ export async function addPerson(form: Record<string, unknown>): Promise<string |
 	const input = parsePerson(form);
 	if ('error' in input) return input.error;
 	const config = await loadConfig();
-	config.personen.push({ id: randomUUID().slice(0, 8), ...input });
+	config.personen.push({ id: neuePersonId(), ...input });
 	await saveConfig(config);
 	return null;
 }
