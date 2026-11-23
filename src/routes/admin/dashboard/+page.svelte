@@ -33,6 +33,14 @@
 			href: `/admin/stunden`,
 			icon: '⏱️'
 		},
+		// Customer branch nadja
+		{
+			id: 'assistenz',
+			title: 'Assistenz',
+			description: 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+			href: `/admin/assistenz`,
+			icon: '🧾'
+		},
 		{
 			id: 'buchungen',
 			title: 'Terminverwaltung',

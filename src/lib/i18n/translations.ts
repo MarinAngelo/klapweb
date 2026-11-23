@@ -2759,7 +2759,160 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Kostenpflichtig stornieren',
 		'en-us': 'Cancel with fee'
 	},
-	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' },
+	// ── Kunde nadja: Assistenz (/admin/assistenz, nur Branch nadja) ──
+	Assistenz: { 'de-ch': 'Assistenz', 'en-us': 'Assistance' },
+	'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal': {
+		'de-ch': 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+		'en-us': 'Monthly hours of the assistants, wages, deductions and yearly totals'
+	},
+	'Personen & Sätze': { 'de-ch': 'Personen & Sätze', 'en-us': 'People & rates' },
+	'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.':
+		{
+			'de-ch':
+				'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.',
+			'en-us':
+				'Monthly day and night hours of the assistants, with wages, deductions and totals. Open a month to enter hours.'
+		},
+	'Noch keine Personen erfasst.': {
+		'de-ch': 'Noch keine Personen erfasst.',
+		'en-us': 'No people added yet.'
+	},
+	'Noch keine Stundensätze erfasst.': {
+		'de-ch': 'Noch keine Stundensätze erfasst.',
+		'en-us': 'No hourly rates added yet.'
+	},
+	'Vorheriges Jahr': { 'de-ch': 'Vorheriges Jahr', 'en-us': 'Previous year' },
+	'Nächstes Jahr': { 'de-ch': 'Nächstes Jahr', 'en-us': 'Next year' },
+	Monate: { 'de-ch': 'Monate', 'en-us': 'Months' },
+	Tagstunden: { 'de-ch': 'Tagstunden', 'en-us': 'Day hours' },
+	Nachtstunden: { 'de-ch': 'Nachtstunden', 'en-us': 'Night hours' },
+	'Stunden total': { 'de-ch': 'Stunden total', 'en-us': 'Total hours' },
+	'Lohn brutto CHF': { 'de-ch': 'Lohn brutto CHF', 'en-us': 'Gross wage CHF' },
+	'Abzüge total CHF': { 'de-ch': 'Abzüge total CHF', 'en-us': 'Total deductions CHF' },
+	'Lohn netto CHF': { 'de-ch': 'Lohn netto CHF', 'en-us': 'Net wage CHF' },
+	aktuell: { 'de-ch': 'aktuell', 'en-us': 'current' },
+	'Noch nichts erfasst': { 'de-ch': 'Noch nichts erfasst', 'en-us': 'Nothing entered yet' },
+	Erfassen: { 'de-ch': 'Erfassen', 'en-us': 'Enter' },
+	Jahrestotal: { 'de-ch': 'Jahrestotal', 'en-us': 'Year total' },
+	'Jahrestotal pro Person': { 'de-ch': 'Jahrestotal pro Person', 'en-us': 'Year total per person' },
+	Person: { 'de-ch': 'Person', 'en-us': 'Person' },
+	Anstellung: { 'de-ch': 'Anstellung', 'en-us': 'Employment' },
+	'Taglohn CHF': { 'de-ch': 'Taglohn CHF', 'en-us': 'Day wage CHF' },
+	'Nachtlohn CHF': { 'de-ch': 'Nachtlohn CHF', 'en-us': 'Night wage CHF' },
+	'Änderungen nicht gespeichert. Trotzdem verlassen?': {
+		'de-ch': 'Änderungen nicht gespeichert. Trotzdem verlassen?',
+		'en-us': 'Changes not saved. Leave anyway?'
+	},
+	'Vorheriger Monat': { 'de-ch': 'Vorheriger Monat', 'en-us': 'Previous month' },
+	'Nächster Monat': { 'de-ch': 'Nächster Monat', 'en-us': 'Next month' },
+	Jahresübersicht: { 'de-ch': 'Jahresübersicht', 'en-us': 'Year overview' },
+	Gespeichert: { 'de-ch': 'Gespeichert', 'en-us': 'Saved' },
+	Tag: { 'de-ch': 'Tag', 'en-us': 'Day' },
+	'gültig ab': { 'de-ch': 'gültig ab', 'en-us': 'valid from' },
+	'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.': {
+		'de-ch':
+			'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.',
+		'en-us': 'No hourly rates are set for this month — amounts are calculated once they are.'
+	},
+	'In diesem Monat ist keine Person aktiv.': {
+		'de-ch': 'In diesem Monat ist keine Person aktiv.',
+		'en-us': 'Nobody is active in this month.'
+	},
+	Monatstotal: { 'de-ch': 'Monatstotal', 'en-us': 'Month total' },
+	'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.': {
+		'de-ch': 'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.',
+		'en-us': 'Hours as a number, e.g. 8 or 8.5. Empty fields are ignored.'
+	},
+	'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.':
+		{
+			'de-ch':
+				'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.',
+			'en-us':
+				'For people who have left, set «Active until» instead of deleting them, so earlier months stay complete. Deleting is only possible without recorded hours.'
+		},
+	'Aktiv ab': { 'de-ch': 'Aktiv ab', 'en-us': 'Active from' },
+	'Aktiv bis': { 'de-ch': 'Aktiv bis', 'en-us': 'Active until' },
+	'Nach unten': { 'de-ch': 'Nach unten', 'en-us': 'Move down' },
+	'Diese Person löschen?': { 'de-ch': 'Diese Person löschen?', 'en-us': 'Delete this person?' },
+	'Person hinzufügen': { 'de-ch': 'Person hinzufügen', 'en-us': 'Add person' },
+	'«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.': {
+		'de-ch': '«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.',
+		'en-us': 'Leave «Active from» and «Active until» empty for no limit.'
+	},
+	'Stundensätze und Abzüge': {
+		'de-ch': 'Stundensätze und Abzüge',
+		'en-us': 'Hourly rates and deductions'
+	},
+	'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.':
+		{
+			'de-ch':
+				'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.',
+			'en-us':
+				'Apply from the chosen month until the next change. For an increase, add new rates with «Valid from» — earlier months stay unchanged. Deductions as a percentage of the gross wage.'
+		},
+	'Neue Sätze ab Monat': { 'de-ch': 'Neue Sätze ab Monat', 'en-us': 'New rates from month' },
+	'Gültig ab': { 'de-ch': 'Gültig ab', 'en-us': 'Valid from' },
+	'Tag CHF / Stunde': { 'de-ch': 'Tag CHF / Stunde', 'en-us': 'Day CHF / hour' },
+	'Nacht CHF / Stunde': { 'de-ch': 'Nacht CHF / Stunde', 'en-us': 'Night CHF / hour' },
+	Abzüge: { 'de-ch': 'Abzüge', 'en-us': 'Deductions' },
+	'z.B. AHV/IV/EO': { 'de-ch': 'z.B. AHV/IV/EO', 'en-us': 'e.g. AHV/IV/EO' },
+	Bezeichnung: { 'de-ch': 'Bezeichnung', 'en-us': 'Name' },
+	Prozent: { 'de-ch': 'Prozent', 'en-us': 'Percent' },
+	Abzug: { 'de-ch': 'Abzug', 'en-us': 'Deduction' },
+	'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.':
+		{
+			'de-ch':
+				'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.',
+			'en-us':
+				'Please check the social insurance percentages with the compensation office or insurer.'
+		},
+	'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.': {
+		'de-ch': 'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.',
+		'en-us': 'Delete these rates? Affected months will then use the previous rates.'
+	},
+	Assistenzjahr: { 'de-ch': 'Assistenzjahr', 'en-us': 'Assistance year' },
+	'Jahr beginnt im': { 'de-ch': 'Jahr beginnt im', 'en-us': 'Year starts in' },
+	'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.': {
+		'de-ch': 'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.',
+		'en-us': 'Hours: please enter numbers like 8 or 8.5.'
+	},
+	'Bitte einen Namen eintragen.': {
+		'de-ch': 'Bitte einen Namen eintragen.',
+		'en-us': 'Please enter a name.'
+	},
+	'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.': {
+		'de-ch': 'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.',
+		'en-us': 'Please enter the month as YYYY-MM, e.g. 2026-09.'
+	},
+	'«Aktiv bis» muss nach «Aktiv ab» liegen.': {
+		'de-ch': '«Aktiv bis» muss nach «Aktiv ab» liegen.',
+		'en-us': '«Active until» must be after «Active from».'
+	},
+	'Person nicht gefunden.': { 'de-ch': 'Person nicht gefunden.', 'en-us': 'Person not found.' },
+	'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.':
+		{
+			'de-ch':
+				'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.',
+			'en-us': 'This person has recorded hours and cannot be deleted. Set «Active until» instead.'
+		},
+	'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.': {
+		'de-ch': 'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.',
+		'en-us': 'Please enter the hourly rates for day and night, e.g. 35.30.'
+	},
+	'Jeder Abzug braucht eine Bezeichnung.': {
+		'de-ch': 'Jeder Abzug braucht eine Bezeichnung.',
+		'en-us': 'Every deduction needs a name.'
+	},
+	'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.': {
+		'de-ch': 'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.',
+		'en-us': 'Deductions: please enter the percentage as a number between 0 and 100, e.g. 5.3.'
+	},
+	'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.': {
+		'de-ch': 'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.',
+		'en-us': 'Rates for this month already exist — please edit them.'
+	},
+	'Ungültiger Monat.': { 'de-ch': 'Ungültiger Monat.', 'en-us': 'Invalid month.' }
 };
 
 /**
