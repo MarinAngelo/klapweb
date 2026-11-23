@@ -10,6 +10,7 @@ import {
 	type MonatsResultat
 } from '$lib/assistenz';
 import { loadConfig, loadMonat, loadMonate } from '$lib/server/assistenz';
+import { FEATURE_ASSISTENZ } from '$lib/server/features';
 
 export const prerender = false;
 
@@ -19,6 +20,7 @@ export const prerender = false;
  * ?monat=2026-09 → one month
  */
 export async function GET({ url }) {
+	if (!FEATURE_ASSISTENZ) throw error(404, 'Nicht gefunden');
 	const config = await loadConfig();
 	const monatParam = url.searchParams.get('monat');
 	const jahrParam = Number(url.searchParams.get('jahr'));

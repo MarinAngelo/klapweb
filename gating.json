@@ -74,6 +74,11 @@
 			"plans": ["individuell"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
+		"assistenz": {
+			"label": "Assistenz",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
+		},
 		"suche": {
 			"label": "Website-Suche",
 			"plans": ["professional"]
@@ -358,6 +363,7 @@
 		"buchhaltung": {
 			"label": "Buchhaltung",
 			"feature": "buchhaltung"
-		}
+		},
+		"assistenz": { "label": "Assistenz", "feature": "assistenz" }
 	}
 }

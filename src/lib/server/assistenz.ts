@@ -1,5 +1,5 @@
 /**
- * Assistenz (customer branch nadja): storage in Netlify Blobs, store `assistenz`.
+ * Assistenz (feature `assistenz`): storage in Netlify Blobs, store `assistenz`.
  *   `config`         → persons, rates/deductions, start month of the year (AssistenzConfig)
  *   `monat-YYYY-MM`  → hours of all persons in that month (MonatsStunden)
  * Calculation: $lib/assistenz.ts. Admin pages: /admin/assistenz (protected in hooks.server.ts).

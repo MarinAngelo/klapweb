@@ -1,5 +1,5 @@
 /**
- * Assistenz (customer branch nadja): monthly hours of the assistants → wages and deductions.
+ * Assistenz (feature `assistenz`): monthly hours of the assistants → wages and deductions.
  *
  * Pure calculation, shared by server (CSV export) and browser (live totals while typing).
  * Storage: $lib/server/assistenz.ts, admin pages: /admin/assistenz.

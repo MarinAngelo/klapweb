@@ -33,7 +33,6 @@
 			href: `/admin/stunden`,
 			icon: '⏱️'
 		},
-		// Customer branch nadja
 		{
 			id: 'assistenz',
 			title: 'Assistenz',

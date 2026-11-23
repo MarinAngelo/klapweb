@@ -2760,7 +2760,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Cancel with fee'
 	},
 	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' },
-	// ── Kunde nadja: Assistenz (/admin/assistenz, nur Branch nadja) ──
+	// ── Assistenz (/admin/assistenz, Feature `assistenz`) ──
 	Assistenz: { 'de-ch': 'Assistenz', 'en-us': 'Assistance' },
 	'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal': {
 		'de-ch': 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',

@@ -1,4 +1,6 @@
 import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
+import { FEATURE_ASSISTENZ } from '$lib/server/features';
 import { jahrVonMonat, monateDesJahres, type AssistenzConfig } from '$lib/assistenz';
 import { loadConfig, loadMonate } from '$lib/server/assistenz';
 
@@ -10,6 +12,7 @@ const aktuellerMonat = () =>
 
 // Access: /admin/* is protected centrally in hooks.server.ts (admin session)
 export const load: PageServerLoad = async ({ url }) => {
+	if (!FEATURE_ASSISTENZ) throw error(404, 'Nicht gefunden');
 	try {
 		const config: AssistenzConfig = await loadConfig();
 		const param = Number(url.searchParams.get('jahr'));
