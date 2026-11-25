@@ -3022,7 +3022,33 @@ export const translations: Record<string, Record<string, string>> = {
 	'Stunden von {name} im {monat} löschen?': {
 		'de-ch': 'Stunden von {name} im {monat} löschen?',
 		'en-us': 'Delete the hours of {name} in {monat}?'
-	}
+	},
+	'AHV/IV/EO': { 'de-ch': 'AHV/IV/EO', 'en-us': 'AHV/IV/EO' },
+	ALV: { 'de-ch': 'ALV', 'en-us': 'Unemployment insurance (ALV)' },
+	Quellensteuer: { 'de-ch': 'Quellensteuer', 'en-us': 'Withholding tax' },
+	'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.':
+		{
+			'de-ch':
+				'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.',
+			'en-us':
+				"The assistant's share as a percentage of the gross wage, empty = no deduction. AHV/IV/EO and ALV: check the rates with the compensation office. Withholding tax: 5 % for everyone in the simplified settlement procedure of the SVA."
+		},
+	Ferienentschädigung: { 'de-ch': 'Ferienentschädigung', 'en-us': 'Holiday pay' },
+	'Ferienentschädigung (%)': { 'de-ch': 'Ferienentschädigung (%)', 'en-us': 'Holiday pay (%)' },
+	'Ferienentschädigung CHF': { 'de-ch': 'Ferienentschädigung CHF', 'en-us': 'Holiday pay CHF' },
+	'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.':
+		{
+			'de-ch':
+				'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.',
+			'en-us':
+				'Holiday pay: surcharge in percent on day and night wage, part of the gross wage (8.33 % for 4 weeks of holiday). Empty = none.'
+		},
+	'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.': {
+		'de-ch': 'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.',
+		'en-us': 'Holiday pay: please enter the percentage as a number between 0 and 100, e.g. 8.33.'
+	},
+	'Sozialabzüge CHF': { 'de-ch': 'Sozialabzüge CHF', 'en-us': 'Social insurance deductions CHF' },
+	'Quellensteuer CHF': { 'de-ch': 'Quellensteuer CHF', 'en-us': 'Withholding tax CHF' }
 };
 
 /**

@@ -5,12 +5,14 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import Totale from '../Totale.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import {
 		addMonate,
 		berechneMonat,
 		fmtChf,
 		fmtStunden,
+		istSozialabzug,
 		jahrVonMonat,
 		monatName,
 		parseStunden,
@@ -68,6 +70,10 @@
 		stunden: { ...(data.daten?.stunden ?? {}), ...vorschau.stunden }
 	});
 	$: abzuege = resultat.saetze?.abzuege ?? [];
+	// Column order: social insurance deductions, their subtotal, then the rest (withholding tax)
+	$: sozial = abzuege.filter((a) => istSozialabzug(a.name));
+	$: uebrige = abzuege.filter((a) => !istSozialabzug(a.name));
+	$: abzugSpalten = abzuege.length + (sozial.length ? 1 : 0);
 	$: jahr = jahrVonMonat(data.monat, data.config.jahresbeginn);
 
 	// Saved (also when the month became empty and nothing else changed)
@@ -106,7 +112,8 @@
 
 <svelte:head><title>{$_('Assistenz')} · {monatName(data.monat)}</title></svelte:head>
 
-<div class="admin-container">
+<!-- Full width: the table has many columns -->
+<div class="admin-container max-w-none">
 	<AdminHeader title={$_('Assistenz')}>
 		<a href="/admin/assistenz/assistenz.csv?monat={data.monat}" class="admin-btn" download
 			>↓ {$_('CSV-Export')}</a
@@ -139,6 +146,7 @@
 		<p class="admin-muted mb-3 text-sm">
 			{$_('Tag')} CHF {fmtChf(resultat.saetze.tag)} / {$_('Std.')} · {$_('Nacht')} CHF
 			{fmtChf(resultat.saetze.nacht)} / {$_('Std.')}
+			{#if resultat.saetze.ferien}{` · ${$_('Ferienentschädigung')} ${fmtStunden(resultat.saetze.ferien)} %`}{/if}
 			{#each abzuege as a}{` · ${a.name} ${fmtStunden(a.prozent)} %`}{/each}
 			· {$_('gültig ab')}
 			{monatName(resultat.saetze.gueltigAb)}
@@ -150,6 +158,10 @@
 			)}
 			<a href="/admin/assistenz/einstellungen" class="admin-link">{$_('Personen & Sätze')} →</a>
 		</p>
+	{/if}
+
+	{#if resultat.saetze && resultat.erfasst}
+		<Totale total={resultat.total} titel={$_('Monatstotal')} />
 	{/if}
 
 	{#if resultat.zeilen.length === 0}
@@ -179,9 +191,16 @@
 								<th class="text-right">{$_('Stunden total')}</th>
 								<th class="text-right">{$_('Taglohn CHF')}</th>
 								<th class="text-right">{$_('Nachtlohn CHF')}</th>
+								<th class="text-right">{$_('Ferienentschädigung CHF')}</th>
 								<th class="text-right">{$_('Lohn brutto CHF')}</th>
-								{#each abzuege as a}
+								{#each sozial as a}
 									<th class="text-right">{a.name} CHF</th>
+								{/each}
+								{#if sozial.length}
+									<th class="text-right">{$_('Sozialabzüge CHF')}</th>
+								{/if}
+								{#each uebrige as a}
+									<th class="text-right">{$_(a.name)} CHF</th>
 								{/each}
 								<th class="text-right">{$_('Abzüge total CHF')}</th>
 								<th class="text-right">{$_('Lohn netto CHF')}</th>
@@ -214,20 +233,27 @@
 										/>
 									</td>
 									{#if z.leer}
-										<td colspan={6 + abzuege.length}></td>
+										<td colspan={7 + abzugSpalten}></td>
 									{:else}
 										<td class="nowrap text-right">{fmtStunden(z.stunden)}</td>
 										{#if resultat.saetze}
 											<td class="nowrap text-right">{z.tag ? fmtChf(z.taglohn) : ''}</td>
 											<td class="nowrap text-right">{z.nacht ? fmtChf(z.nachtlohn) : ''}</td>
+											<td class="nowrap text-right">{z.ferien ? fmtChf(z.ferien) : ''}</td>
 											<td class="nowrap text-right">{fmtChf(z.brutto)}</td>
-											{#each abzuege as a}
+											{#each sozial as a}
+												<td class="nowrap text-right">{fmtChf(z.abzuege[a.name] ?? 0)}</td>
+											{/each}
+											{#if sozial.length}
+												<td class="nowrap text-right font-semibold">{fmtChf(z.sozialabzuege)}</td>
+											{/if}
+											{#each uebrige as a}
 												<td class="nowrap text-right">{fmtChf(z.abzuege[a.name] ?? 0)}</td>
 											{/each}
 											<td class="nowrap text-right">{fmtChf(z.abzuegeTotal)}</td>
 											<td class="nowrap text-right">{fmtChf(z.netto)}</td>
 										{:else}
-											<td colspan={5 + abzuege.length}></td>
+											<td colspan={6 + abzugSpalten}></td>
 										{/if}
 									{/if}
 									<td class="nowrap text-right">
@@ -252,14 +278,21 @@
 								{#if resultat.saetze}
 									<td class="nowrap text-right">{fmtChf(resultat.total.taglohn)}</td>
 									<td class="nowrap text-right">{fmtChf(resultat.total.nachtlohn)}</td>
+									<td class="nowrap text-right">{fmtChf(resultat.total.ferien)}</td>
 									<td class="nowrap text-right">{fmtChf(resultat.total.brutto)}</td>
-									{#each abzuege as a}
+									{#each sozial as a}
+										<td class="nowrap text-right">{fmtChf(resultat.total.abzuege[a.name] ?? 0)}</td>
+									{/each}
+									{#if sozial.length}
+										<td class="nowrap text-right">{fmtChf(resultat.total.sozialabzuege)}</td>
+									{/if}
+									{#each uebrige as a}
 										<td class="nowrap text-right">{fmtChf(resultat.total.abzuege[a.name] ?? 0)}</td>
 									{/each}
 									<td class="nowrap text-right">{fmtChf(resultat.total.abzuegeTotal)}</td>
 									<td class="nowrap text-right">{fmtChf(resultat.total.netto)}</td>
 								{:else}
-									<td colspan={5 + abzuege.length}></td>
+									<td colspan={6 + abzugSpalten}></td>
 								{/if}
 								<td></td>
 							</tr>
