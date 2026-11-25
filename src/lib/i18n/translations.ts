@@ -3048,7 +3048,9 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Holiday pay: please enter the percentage as a number between 0 and 100, e.g. 8.33.'
 	},
 	'Sozialabzüge CHF': { 'de-ch': 'Sozialabzüge CHF', 'en-us': 'Social insurance deductions CHF' },
-	'Quellensteuer CHF': { 'de-ch': 'Quellensteuer CHF', 'en-us': 'Withholding tax CHF' }
+	'Quellensteuer CHF': { 'de-ch': 'Quellensteuer CHF', 'en-us': 'Withholding tax CHF' },
+	'Helles Design': { 'de-ch': 'Helles Design', 'en-us': 'Light theme' },
+	'Dunkles Design': { 'de-ch': 'Dunkles Design', 'en-us': 'Dark theme' }
 };
 
 /**
