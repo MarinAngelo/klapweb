@@ -5,14 +5,25 @@
 	"localSliceSimulatorURL": "http://localhost:5173/slice-simulator",
 	"home_redirect_disabled": true,
 	"plan": "individuell",
-	"features": ["stundenabrechnung"],
+	"featuresDisabled": [
+		"buchhaltung",
+		"ecommerce",
+		"global_events",
+		"kundenkonto",
+		"manuelle_rechnungen",
+		"newsletter",
+		"p5js",
+		"pwa",
+		"ressourcenbuchung",
+		"suche",
+		"variablen"
+	],
 	"adminSectionsDisabled": [
 		"aufgaben",
 		"buchhaltung",
-		"ressource-buchungen",
 		"event-anmeldungen",
-		"kunden",
 		"newsletter",
-		"rechnungen"
+		"rechnungen",
+		"ressource-buchungen"
 	]
 }
