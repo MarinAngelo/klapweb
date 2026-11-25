@@ -2,7 +2,7 @@
 	import type { ActionData, PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
 	import { _ } from '$lib/stores/i18n';
-	import { fmtChf, fmtStunden, monatName, type Abzug, type Saetze } from '$lib/assistenz';
+	import { ABZUG_FELDER, fmtChf, fmtStunden, monatName, type Saetze } from '$lib/assistenz';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -15,6 +15,8 @@
 	/** Rate version in edit mode («gültig ab»), '' = new version, null = none */
 	let editingSaetze: string | null = null;
 	let entwurf: Saetze = { gueltigAb: '', tag: 0, nacht: 0, abzuege: [] };
+	/** Percent per deduction field (key → input value) */
+	let prozente: Record<string, string> = {};
 	$: if (form && 'saved' in form && form.saved === 'saetze') editingSaetze = null;
 
 	$: saetzeNeuZuerst = [...data.config.saetze].sort((a, b) =>
@@ -30,19 +32,29 @@
 		const vorlage = s ?? saetzeNeuZuerst[0];
 		entwurf = {
 			gueltigAb: s?.gueltigAb ?? '',
-			tag: vorlage?.tag ?? 0,
-			nacht: vorlage?.nacht ?? 0,
-			// Copy, so «Abbrechen» leaves the list untouched; one empty row to start with
-			abzuege: vorlage?.abzuege.length
-				? vorlage.abzuege.map((a) => ({ ...a }))
-				: [{ name: '', prozent: '' as unknown as number }]
+			// Empty fields (not «0») when there is nothing to copy yet
+			tag: vorlage?.tag ?? ('' as unknown as number),
+			nacht: vorlage?.nacht ?? ('' as unknown as number),
+			// First version: usual 8.33 % (4 weeks holiday); otherwise copied
+			ferien: vorlage ? vorlage.ferien : 8.33,
+			abzuege: []
 		};
+		// Fixed fields by name; deductions with other names (older versions) go into the first field
+		const bekannt: readonly string[] = ABZUG_FELDER.map((f) => f.name);
+		const runden = (n: number) => (n ? String(Math.round(n * 1000) / 1000) : '');
+		const abzuege = vorlage?.abzuege ?? [];
+		prozente = Object.fromEntries(
+			ABZUG_FELDER.map((f, i) => [
+				f.key,
+				runden(
+					abzuege
+						.filter((a) => a.name === f.name || (i === 0 && !bekannt.includes(a.name)))
+						.reduce((sum, a) => sum + a.prozent, 0)
+				)
+			])
+		);
 		editingSaetze = s?.gueltigAb ?? '';
 	}
-
-	const neueZeile = () =>
-		(entwurf.abzuege = [...entwurf.abzuege, { name: '', prozent: '' as unknown as number }]);
-	const entferneZeile = (a: Abzug) => (entwurf.abzuege = entwurf.abzuege.filter((x) => x !== a));
 
 	const confirmSubmit = (text: string) => (ev: SubmitEvent) => {
 		if (!confirm(text)) ev.preventDefault();
@@ -271,7 +283,7 @@
 		{#if editingSaetze !== null}
 			<form method="POST" action="?/saveSaetze" class="admin-fieldset">
 				<input type="hidden" name="original" value={editingSaetze} />
-				<div class="grid gap-3 sm:grid-cols-3">
+				<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 					<label>
 						<span class="admin-label">{$_('Gültig ab')}</span>
 						<input
@@ -304,43 +316,41 @@
 							class="admin-input"
 						/>
 					</label>
+					<label>
+						<span class="admin-label">{$_('Ferienentschädigung (%)')}</span>
+						<input
+							name="ferien"
+							bind:value={entwurf.ferien}
+							inputmode="decimal"
+							placeholder="8.33"
+							class="admin-input"
+						/>
+					</label>
 				</div>
-
-				<h3 class="mb-2 mt-4 text-sm font-semibold">{$_('Abzüge')}</h3>
-				<div class="flex flex-col gap-2">
-					{#each entwurf.abzuege as a}
-						<div class="flex flex-wrap items-center gap-2">
-							<input
-								name="abzug_name"
-								bind:value={a.name}
-								placeholder={$_('z.B. AHV/IV/EO')}
-								class="admin-input w-56"
-								aria-label={$_('Bezeichnung')}
-							/>
-							<input
-								name="abzug_prozent"
-								bind:value={a.prozent}
-								inputmode="decimal"
-								placeholder="5.3"
-								class="admin-input w-24 text-right"
-								aria-label={$_('Prozent')}
-							/>
-							<span>%</span>
-							<button
-								type="button"
-								class="admin-btn admin-btn-sm"
-								on:click={() => entferneZeile(a)}
-								aria-label={$_('Entfernen')}>✕</button
-							>
-						</div>
-					{/each}
-				</div>
-				<button type="button" class="admin-btn admin-btn-sm mt-2" on:click={neueZeile}
-					>+ {$_('Abzug')}</button
-				>
 				<p class="admin-hint">
 					{$_(
-						'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.'
+						'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.'
+					)}
+				</p>
+
+				<h3 class="mb-2 mt-4 text-sm font-semibold">{$_('Abzüge')}</h3>
+				<div class="grid gap-3 sm:grid-cols-3">
+					{#each ABZUG_FELDER as feld (feld.key)}
+						<label>
+							<span class="admin-label">{$_(feld.name)} (%)</span>
+							<input
+								name={feld.key}
+								bind:value={prozente[feld.key]}
+								inputmode="decimal"
+								placeholder={feld.placeholder}
+								class="admin-input"
+							/>
+						</label>
+					{/each}
+				</div>
+				<p class="admin-hint">
+					{$_(
+						'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.'
 					)}
 				</p>
 
@@ -363,6 +373,7 @@
 							<th>{$_('Gültig ab')}</th>
 							<th class="text-right">{$_('Tag CHF / Stunde')}</th>
 							<th class="text-right">{$_('Nacht CHF / Stunde')}</th>
+							<th class="text-right">{$_('Ferienentschädigung')}</th>
 							<th>{$_('Abzüge')}</th>
 							<th></th>
 						</tr>
@@ -373,6 +384,7 @@
 								<td class="nowrap">{monatName(s.gueltigAb)}</td>
 								<td class="nowrap text-right">{fmtChf(s.tag)}</td>
 								<td class="nowrap text-right">{fmtChf(s.nacht)}</td>
+								<td class="nowrap text-right">{s.ferien ? `${fmtStunden(s.ferien)} %` : '–'}</td>
 								<td>
 									{#if s.abzuege.length}
 										{s.abzuege.map((a) => `${a.name} ${fmtStunden(a.prozent)} %`).join(' · ')}

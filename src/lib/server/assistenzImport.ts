@@ -237,7 +237,7 @@ function zahl(raw: string | undefined): number | undefined {
 }
 
 const satzSchluessel = (s: Omit<Saetze, 'gueltigAb'>) =>
-	`${s.tag}|${s.nacht}|${JSON.stringify(s.abzuege)}`;
+	`${s.tag}|${s.nacht}|${s.ferien ?? 0}|${JSON.stringify(s.abzuege)}`;
 
 const istTotalZeile = (text: string) => /^(monatstotal|jahrestotal|total)\b/i.test(text.trim());
 
@@ -290,13 +290,17 @@ export function parseImport(rows: string[][]): ImportPlan {
 		// Rates line of our CSV export, right below the month title
 		const satzZeile = first.match(/^Tag CHF ([\d'.,]+) \/ Std\. · Nacht CHF ([\d'.,]+) \/ Std\./);
 		if (satzZeile && aktuell) {
-			const abzuege: Abzug[] = [...first.matchAll(/·\s*([^·]+?)\s+([\d.,]+)\s*%/g)].map((m) => ({
+			const prozente = [...first.matchAll(/·\s*([^·]+?)\s+([\d.,]+)\s*%/g)].map((m) => ({
 				name: m[1].trim(),
 				prozent: zahl(m[2]) ?? 0
 			}));
+			// «Ferienentschädigung x %» is holiday pay (part of the gross wage), not a deduction
+			const ferien = prozente.find((p) => /^ferien/i.test(p.name))?.prozent;
+			const abzuege: Abzug[] = prozente.filter((p) => !/^ferien/i.test(p.name));
 			monatsSaetze.set(aktuell.monat, {
 				tag: zahl(satzZeile[1]) ?? 0,
 				nacht: zahl(satzZeile[2]) ?? 0,
+				...(ferien && { ferien }),
 				abzuege
 			});
 			return;

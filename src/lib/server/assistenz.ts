@@ -8,6 +8,7 @@ import { getStore } from '@netlify/blobs';
 import { env } from '$env/dynamic/private';
 import { randomUUID } from 'crypto';
 import {
+	ABZUG_FELDER,
 	DEFAULT_CONFIG,
 	isMonat,
 	parseStunden,
@@ -203,7 +204,7 @@ export async function deletePerson(id: string): Promise<string | null> {
 
 // ── Rates and deductions ─────────────────────────────────────────────────────
 
-/** Form: gueltigAb, tag, nacht, abzug_name (multiple), abzug_prozent (multiple) */
+/** Form: gueltigAb, tag, nacht, ferien (percent, optional) + one percent field per ABZUG_FELDER key */
 function parseSaetze(form: FormData): Saetze | { error: string } {
 	const gueltigAb = text(form.get('gueltigAb'));
 	if (!isMonat(gueltigAb)) {
@@ -214,20 +215,29 @@ function parseSaetze(form: FormData): Saetze | { error: string } {
 	if (tag === undefined || nacht === undefined || Number.isNaN(tag) || Number.isNaN(nacht)) {
 		return { error: 'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.' };
 	}
-	const names = form.getAll('abzug_name');
-	const prozente = form.getAll('abzug_prozent');
+	// Holiday pay in percent (e.g. 8.33), empty = none
+	const ferien = parseBetrag(form.get('ferien'));
+	if (ferien !== undefined && (Number.isNaN(ferien) || ferien > 100)) {
+		return {
+			error: 'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.'
+		};
+	}
+	// Fixed deduction fields (AHV/IV/EO, ALV, Quellensteuer), empty or 0 = no deduction
 	const abzuege: Abzug[] = [];
-	for (let i = 0; i < names.length; i++) {
-		const name = text(names[i]);
-		const prozent = parseBetrag(prozente[i]);
-		if (!name && prozent === undefined) continue;
-		if (!name) return { error: 'Jeder Abzug braucht eine Bezeichnung.' };
-		if (prozent === undefined || Number.isNaN(prozent) || prozent > 100) {
+	for (const feld of ABZUG_FELDER) {
+		const prozent = parseBetrag(form.get(feld.key));
+		if (prozent !== undefined && (Number.isNaN(prozent) || prozent > 100)) {
 			return { error: 'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.' };
 		}
-		abzuege.push({ name, prozent: Math.round(prozent * 10000) / 10000 });
+		if (prozent) abzuege.push({ name: feld.name, prozent: Math.round(prozent * 10000) / 10000 });
 	}
-	return { gueltigAb, tag: rappen(tag), nacht: rappen(nacht), abzuege };
+	return {
+		gueltigAb,
+		tag: rappen(tag),
+		nacht: rappen(nacht),
+		...(ferien && { ferien: Math.round(ferien * 10000) / 10000 }),
+		abzuege
+	};
 }
 
 /**

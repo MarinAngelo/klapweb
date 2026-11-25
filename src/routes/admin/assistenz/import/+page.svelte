@@ -158,7 +158,7 @@
 							{monatName(s.gueltigAb)}: {$_('Tag')} CHF {fmtChf(s.tag)} · {$_('Nacht')} CHF
 							{fmtChf(
 								s.nacht
-							)}{#each s.abzuege as a}{` · ${a.name} ${fmtStunden(a.prozent)} %`}{/each}
+							)}{#if s.ferien}{` · ${$_('Ferienentschädigung')} ${fmtStunden(s.ferien)} %`}{/if}{#each s.abzuege as a}{` · ${a.name} ${fmtStunden(a.prozent)} %`}{/each}
 						</li>
 					{/each}
 				</ul>

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import Totale from './Totale.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import {
 		abzugNamen,
 		berechneJahr,
 		fmtChf,
 		fmtStunden,
+		istSozialabzug,
 		monatName,
 		monateDesJahres
 	} from '$lib/assistenz';
@@ -15,6 +17,9 @@
 
 	$: resultat = data.config ? berechneJahr(data.config, data.jahr, data.daten) : null;
 	$: abzuege = resultat ? abzugNamen(resultat.monate) : [];
+	// Column order: social insurance deductions, their subtotal, then the rest (withholding tax)
+	$: sozial = abzuege.filter(istSozialabzug);
+	$: uebrige = abzuege.filter((name) => !istSozialabzug(name));
 	$: monate = data.config ? monateDesJahres(data.jahr, data.config.jahresbeginn) : [];
 	$: zeitraum = monate.length ? `${monatName(monate[0])} – ${monatName(monate[11])}` : '';
 	$: ohnePersonen = !!data.config && data.config.personen.length === 0;
@@ -23,7 +28,8 @@
 
 <svelte:head><title>{$_('Assistenz')}</title></svelte:head>
 
-<div class="admin-container">
+<!-- Full width: the per-person table has many columns -->
+<div class="admin-container max-w-none">
 	<AdminHeader title={$_('Assistenz')}>
 		{#if data.config}
 			<a href="/admin/assistenz/assistenz.csv?jahr={data.jahr}" class="admin-btn" download
@@ -68,6 +74,10 @@
 			>
 		</div>
 
+		{#if resultat.total.brutto}
+			<Totale total={resultat.total} titel={$_('Jahrestotal')} />
+		{/if}
+
 		<!-- ── Months ──────────────────────────────────────────────────── -->
 		<section class="admin-card">
 			<h2 class="admin-card-title">{$_('Monate')}</h2>
@@ -80,6 +90,7 @@
 							<th class="text-right">{$_('Nachtstunden')}</th>
 							<th class="text-right">{$_('Stunden total')}</th>
 							<th class="text-right">{$_('Lohn brutto CHF')}</th>
+							<th class="text-right">{$_('Sozialabzüge CHF')}</th>
 							<th class="text-right">{$_('Abzüge total CHF')}</th>
 							<th class="text-right">{$_('Lohn netto CHF')}</th>
 							<th></th>
@@ -99,10 +110,12 @@
 									<td class="nowrap text-right">{fmtStunden(m.total.nacht)}</td>
 									<td class="nowrap text-right">{fmtStunden(m.total.stunden)}</td>
 									<td class="nowrap text-right">{m.saetze ? fmtChf(m.total.brutto) : '–'}</td>
+									<td class="nowrap text-right">{m.saetze ? fmtChf(m.total.sozialabzuege) : '–'}</td
+									>
 									<td class="nowrap text-right">{m.saetze ? fmtChf(m.total.abzuegeTotal) : '–'}</td>
 									<td class="nowrap text-right">{m.saetze ? fmtChf(m.total.netto) : '–'}</td>
 								{:else}
-									<td colspan="6" class="admin-muted">{$_('Noch nichts erfasst')}</td>
+									<td colspan="7" class="admin-muted">{$_('Noch nichts erfasst')}</td>
 								{/if}
 								<td class="nowrap text-right">
 									<a href="/admin/assistenz/{m.monat}" class="admin-btn admin-btn-sm"
@@ -119,6 +132,7 @@
 							<td class="nowrap text-right">{fmtStunden(resultat.total.nacht)}</td>
 							<td class="nowrap text-right">{fmtStunden(resultat.total.stunden)}</td>
 							<td class="nowrap text-right">{fmtChf(resultat.total.brutto)}</td>
+							<td class="nowrap text-right">{fmtChf(resultat.total.sozialabzuege)}</td>
 							<td class="nowrap text-right">{fmtChf(resultat.total.abzuegeTotal)}</td>
 							<td class="nowrap text-right">{fmtChf(resultat.total.netto)}</td>
 							<td></td>
@@ -145,9 +159,16 @@
 								<th class="text-right">{$_('Stunden total')}</th>
 								<th class="text-right">{$_('Taglohn CHF')}</th>
 								<th class="text-right">{$_('Nachtlohn CHF')}</th>
+								<th class="text-right">{$_('Ferienentschädigung CHF')}</th>
 								<th class="text-right">{$_('Lohn brutto CHF')}</th>
-								{#each abzuege as name}
+								{#each sozial as name}
 									<th class="text-right">{name} CHF</th>
+								{/each}
+								{#if sozial.length}
+									<th class="text-right">{$_('Sozialabzüge CHF')}</th>
+								{/if}
+								{#each uebrige as name}
+									<th class="text-right">{$_(name)} CHF</th>
 								{/each}
 								<th class="text-right">{$_('Abzüge total CHF')}</th>
 								<th class="text-right">{$_('Lohn netto CHF')}</th>
@@ -163,8 +184,15 @@
 									<td class="nowrap text-right">{fmtStunden(total.stunden)}</td>
 									<td class="nowrap text-right">{fmtChf(total.taglohn)}</td>
 									<td class="nowrap text-right">{fmtChf(total.nachtlohn)}</td>
+									<td class="nowrap text-right">{fmtChf(total.ferien)}</td>
 									<td class="nowrap text-right">{fmtChf(total.brutto)}</td>
-									{#each abzuege as name}
+									{#each sozial as name}
+										<td class="nowrap text-right">{fmtChf(total.abzuege[name] ?? 0)}</td>
+									{/each}
+									{#if sozial.length}
+										<td class="nowrap text-right font-semibold">{fmtChf(total.sozialabzuege)}</td>
+									{/if}
+									{#each uebrige as name}
 										<td class="nowrap text-right">{fmtChf(total.abzuege[name] ?? 0)}</td>
 									{/each}
 									<td class="nowrap text-right">{fmtChf(total.abzuegeTotal)}</td>
@@ -180,8 +208,15 @@
 								<td class="nowrap text-right">{fmtStunden(resultat.total.stunden)}</td>
 								<td class="nowrap text-right">{fmtChf(resultat.total.taglohn)}</td>
 								<td class="nowrap text-right">{fmtChf(resultat.total.nachtlohn)}</td>
+								<td class="nowrap text-right">{fmtChf(resultat.total.ferien)}</td>
 								<td class="nowrap text-right">{fmtChf(resultat.total.brutto)}</td>
-								{#each abzuege as name}
+								{#each sozial as name}
+									<td class="nowrap text-right">{fmtChf(resultat.total.abzuege[name] ?? 0)}</td>
+								{/each}
+								{#if sozial.length}
+									<td class="nowrap text-right">{fmtChf(resultat.total.sozialabzuege)}</td>
+								{/if}
+								{#each uebrige as name}
 									<td class="nowrap text-right">{fmtChf(resultat.total.abzuege[name] ?? 0)}</td>
 								{/each}
 								<td class="nowrap text-right">{fmtChf(resultat.total.abzuegeTotal)}</td>

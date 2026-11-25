@@ -4,8 +4,8 @@
  * Pure calculation, shared by server (CSV export) and browser (live totals while typing).
  * Storage: $lib/server/assistenz.ts, admin pages: /admin/assistenz.
  *
- * Per person and month: day hours × day rate + night hours × night rate = gross wage,
- * deductions = gross × percentage (each rounded to Rappen), net = gross − deductions.
+ * Per person and month: day hours × day rate + night hours × night rate, plus holiday pay
+ * (percentage of it) = gross wage, deductions = gross × percentage (each rounded to 5 Rappen), net = gross − deductions.
  * Rates and deductions are versioned («gültig ab» month), so a rate change never
  * recalculates earlier months.
  */
@@ -25,12 +25,30 @@ export type Person = {
 
 export type Abzug = { name: string; prozent: number };
 
+/**
+ * The deductions entered in the admin (fixed fields, same for all persons).
+ * `name` is stored in the rates and shown as column title.
+ */
+export const ABZUG_FELDER = [
+	{ key: 'ahv', name: 'AHV/IV/EO', placeholder: '5.3' },
+	{ key: 'alv', name: 'ALV', placeholder: '1.1' },
+	{ key: 'quellensteuer', name: 'Quellensteuer', placeholder: '5' }
+] as const;
+
+/**
+ * Social insurance deductions (AHV/IV/EO, ALV …) as opposed to the withholding tax.
+ * Unknown names from older versions count as social insurance.
+ */
+export const istSozialabzug = (name: string) => !/quellensteuer/i.test(name);
+
 /** Rates and deductions valid from a month until the next version */
 export type Saetze = {
 	gueltigAb: Monat;
 	/** CHF per hour */
 	tag: number;
 	nacht: number;
+	/** Holiday pay in percent of day + night wage (e.g. 8.33), added to the gross wage */
+	ferien?: number;
 	abzuege: Abzug[];
 };
 
@@ -56,8 +74,14 @@ export const isMonat = (v: unknown): v is Monat => typeof v === 'string' && MONA
 
 export const DEFAULT_CONFIG: AssistenzConfig = { jahresbeginn: 9, personen: [], saetze: [] };
 
-/** Rounds to Rappen (avoids 0.1 + 0.2 artefacts) */
+/** Rounds to Rappen (avoids 0.1 + 0.2 artefacts); for sums of already rounded amounts */
 export const rappen = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+/**
+ * Rounds a computed CHF amount to 5 Rappen, .025 upwards (Swiss payroll practice,
+ * e.g. 84.966 → 84.95, 34.125 → 34.15). The small offset absorbs float artefacts.
+ */
+export const fuenfRappen = (n: number) => Math.round(n * 20 + 1e-7) / 20;
 
 export function addMonate(monat: Monat, delta: number): Monat {
 	const [y, m] = monat.split('-').map(Number);
@@ -97,9 +121,14 @@ export type Betraege = {
 	stunden: number;
 	taglohn: number;
 	nachtlohn: number;
+	/** Holiday pay (Ferienentschädigung) on day + night wage */
+	ferien: number;
+	/** Day + night wage + holiday pay; deductions are based on it */
 	brutto: number;
 	/** Per deduction name */
 	abzuege: Record<string, number>;
+	/** Sum of the social insurance deductions (without withholding tax) */
+	sozialabzuege: number;
 	abzuegeTotal: number;
 	netto: number;
 };
@@ -121,8 +150,10 @@ const leereBetraege = (): Betraege => ({
 	stunden: 0,
 	taglohn: 0,
 	nachtlohn: 0,
+	ferien: 0,
 	brutto: 0,
 	abzuege: {},
+	sozialabzuege: 0,
 	abzuegeTotal: 0,
 	netto: 0
 });
@@ -133,10 +164,12 @@ function addiere(ziel: Betraege, b: Betraege) {
 	ziel.stunden = rappen(ziel.stunden + b.stunden);
 	ziel.taglohn = rappen(ziel.taglohn + b.taglohn);
 	ziel.nachtlohn = rappen(ziel.nachtlohn + b.nachtlohn);
+	ziel.ferien = rappen(ziel.ferien + b.ferien);
 	ziel.brutto = rappen(ziel.brutto + b.brutto);
 	for (const [name, betrag] of Object.entries(b.abzuege)) {
 		ziel.abzuege[name] = rappen((ziel.abzuege[name] ?? 0) + betrag);
 	}
+	ziel.sozialabzuege = rappen(ziel.sozialabzuege + b.sozialabzuege);
 	ziel.abzuegeTotal = rappen(ziel.abzuegeTotal + b.abzuegeTotal);
 	ziel.netto = rappen(ziel.netto + b.netto);
 }
@@ -147,22 +180,31 @@ export function berechneBetraege(
 ): Betraege {
 	const tag = Math.max(0, eintrag?.tag ?? 0);
 	const nacht = Math.max(0, eintrag?.nacht ?? 0);
-	const taglohn = saetze ? rappen(tag * saetze.tag) : 0;
-	const nachtlohn = saetze ? rappen(nacht * saetze.nacht) : 0;
-	const brutto = rappen(taglohn + nachtlohn);
+	// Every computed amount on 5 Rappen, like the payslips; sums of them stay exact
+	const taglohn = saetze ? fuenfRappen(tag * saetze.tag) : 0;
+	const nachtlohn = saetze ? fuenfRappen(nacht * saetze.nacht) : 0;
+	const ferien = fuenfRappen(((taglohn + nachtlohn) * (saetze?.ferien ?? 0)) / 100);
+	const brutto = rappen(taglohn + nachtlohn + ferien);
 	const abzuege: Record<string, number> = {};
 	for (const a of saetze?.abzuege ?? []) {
-		abzuege[a.name] = rappen((abzuege[a.name] ?? 0) + (brutto * a.prozent) / 100);
+		abzuege[a.name] = rappen((abzuege[a.name] ?? 0) + fuenfRappen((brutto * a.prozent) / 100));
 	}
 	const abzuegeTotal = rappen(Object.values(abzuege).reduce((s, v) => s + v, 0));
+	const sozialabzuege = rappen(
+		Object.entries(abzuege)
+			.filter(([name]) => istSozialabzug(name))
+			.reduce((s, [, v]) => s + v, 0)
+	);
 	return {
 		tag,
 		nacht,
 		stunden: rappen(tag + nacht),
 		taglohn,
 		nachtlohn,
+		ferien,
 		brutto,
 		abzuege,
+		sozialabzuege,
 		abzuegeTotal,
 		netto: rappen(brutto - abzuegeTotal)
 	};

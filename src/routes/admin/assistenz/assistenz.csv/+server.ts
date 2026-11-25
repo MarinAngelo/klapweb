@@ -4,6 +4,7 @@ import {
 	berechneJahr,
 	berechneMonat,
 	isMonat,
+	istSozialabzug,
 	monatName,
 	monateDesJahres,
 	type Betraege,
@@ -42,6 +43,9 @@ export async function GET({ url }) {
 	}
 
 	const abzuege = abzugNamen(monate);
+	// Column order: social insurance deductions, their subtotal, then the rest (withholding tax)
+	const sozial = abzuege.filter(istSozialabzug);
+	const uebrige = abzuege.filter((a) => !istSozialabzug(a));
 	const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
 	const line = (cells: (string | number)[]) => cells.map(esc).join(';');
 	// Plain numbers (no thousands separator) so Excel can calculate with them
@@ -56,8 +60,11 @@ export async function GET({ url }) {
 		'Stunden total',
 		'Taglohn CHF',
 		'Nachtlohn CHF',
+		'Ferienentschädigung CHF',
 		'Lohn brutto CHF',
-		...abzuege.map((a) => `${a} CHF`),
+		...sozial.map((a) => `${a} CHF`),
+		...(sozial.length ? ['Sozialabzüge CHF'] : []),
+		...uebrige.map((a) => `${a} CHF`),
 		'Abzüge total CHF',
 		'Lohn netto CHF'
 	];
@@ -69,8 +76,11 @@ export async function GET({ url }) {
 			? [
 					chf(b.taglohn),
 					chf(b.nachtlohn),
+					chf(b.ferien),
 					chf(b.brutto),
-					...abzuege.map((a) => chf(b.abzuege[a] ?? 0)),
+					...sozial.map((a) => chf(b.abzuege[a] ?? 0)),
+					...(sozial.length ? [chf(b.sozialabzuege)] : []),
+					...uebrige.map((a) => chf(b.abzuege[a] ?? 0)),
 					chf(b.abzuegeTotal),
 					chf(b.netto)
 				]
@@ -92,6 +102,7 @@ export async function GET({ url }) {
 			const saetze = [
 				`Tag CHF ${chf(m.saetze.tag)} / Std.`,
 				`Nacht CHF ${chf(m.saetze.nacht)} / Std.`,
+				...(m.saetze.ferien ? [`Ferienentschädigung ${m.saetze.ferien} %`] : []),
 				...m.saetze.abzuege.map((a) => `${a.name} ${a.prozent} %`)
 			].join(' · ');
 			lines.push(line([saetze]));
