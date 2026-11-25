@@ -142,7 +142,7 @@
 				{/each}
 
 				{#if data.canEdit}
-					<div class="sticky bottom-0 bg-white py-3">
+					<div class="sticky bottom-0 bg-[var(--admin-surface)] py-3">
 						<button class="admin-btn admin-btn-dark" disabled={saving}
 							>{saving ? $_('Wird gespeichert…') : $_('Speichern')}</button
 						>

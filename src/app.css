@@ -1160,8 +1160,16 @@ p {
    Kunden-Website gleich lesbar). Wrapper: src/routes/admin/+layout.svelte (.admin).
    In @layer components → Tailwind-Utilities können im Einzelfall überschreiben. */
 @layer components {
+	/* Reduced contrast: no pure white, no pure black (also for admin-* outside .admin) */
+	:root {
+		--admin-page: #f1f2f4; /* page background */
+		--admin-surface: #fafafb; /* cards, inputs, buttons */
+		--admin-text: #1f2530; /* body text and headings */
+		--admin-dark: #2b313b; /* dark buttons, spinner, backdrop */
+		--admin-on-dark: #f4f5f7; /* text on dark and coloured buttons */
+	}
 	.admin {
-		@apply min-h-screen bg-gray-50 font-sans text-gray-900;
+		@apply min-h-screen bg-[var(--admin-page)] font-sans text-[var(--admin-text)];
 	}
 	.admin-container {
 		@apply mx-auto w-full max-w-6xl px-4 py-8 md:px-6;
@@ -1173,7 +1181,7 @@ p {
 	/* Element defaults via :where() → low specificity, utility/admin classes still win;
 	   still beats the global heading sizes/colors (h1 { … }) */
 	.admin :where(h1, h2, h3, h4) {
-		@apply m-0 font-sans leading-tight tracking-tight text-gray-900;
+		@apply m-0 font-sans leading-tight tracking-tight text-[var(--admin-text)];
 	}
 	.admin :where(h1) {
 		@apply text-2xl font-bold;
@@ -1209,7 +1217,7 @@ p {
 
 	/* Cards / sections */
 	.admin-card {
-		@apply mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm md:p-6;
+		@apply mb-6 rounded-lg border border-gray-200 bg-[var(--admin-surface)] p-5 shadow-sm md:p-6;
 	}
 	.admin-card-title {
 		@apply mb-4 flex flex-wrap items-center gap-2;
@@ -1220,36 +1228,36 @@ p {
 
 	/* Buttons */
 	.admin-btn {
-		@apply inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
+		@apply inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-gray-300 bg-[var(--admin-surface)] px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
 		text-decoration-line: none;
 	}
 	.admin-btn:disabled {
 		@apply cursor-not-allowed opacity-50;
 	}
 	.admin-btn-primary {
-		@apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700;
+		@apply border-blue-600 bg-blue-600 text-[var(--admin-on-dark)] hover:bg-blue-700;
 	}
 	.admin-btn-success {
-		@apply border-green-600 bg-green-600 text-white hover:bg-green-700;
+		@apply border-green-600 bg-green-600 text-[var(--admin-on-dark)] hover:bg-green-700;
 	}
 	.admin-btn-danger {
-		@apply border-red-600 bg-red-600 text-white hover:bg-red-700;
+		@apply border-red-600 bg-red-600 text-[var(--admin-on-dark)] hover:bg-red-700;
 	}
 	.admin-btn-danger-outline {
-		@apply border-red-300 bg-white text-red-700 hover:bg-red-50;
+		@apply border-red-300 bg-[var(--admin-surface)] text-red-700 hover:bg-red-50;
 	}
 	.admin-btn-warn {
-		@apply border-amber-600 bg-amber-600 text-white hover:bg-amber-700;
+		@apply border-amber-600 bg-amber-600 text-[var(--admin-on-dark)] hover:bg-amber-700;
 	}
 	.admin-btn-toggle-on {
-		@apply border-sky-700 bg-sky-700 text-white hover:bg-sky-800;
+		@apply border-sky-700 bg-sky-700 text-[var(--admin-on-dark)] hover:bg-sky-800;
 	}
 	/* Action still pending (e.g. reminder not yet sent) */
 	.admin-btn-highlight {
 		@apply border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-100;
 	}
 	.admin-btn-dark {
-		@apply border-gray-900 bg-gray-900 text-white hover:bg-gray-700;
+		@apply border-[var(--admin-dark)] bg-[var(--admin-dark)] text-[var(--admin-on-dark)] hover:bg-gray-700;
 	}
 	.admin-btn-sm {
 		@apply px-2 py-1 text-xs;
@@ -1272,7 +1280,7 @@ p {
 		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-green-700 underline-offset-2 hover:text-green-900 hover:underline;
 	}
 	.admin-back {
-		@apply mb-4 inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900;
+		@apply mb-4 inline-flex items-center gap-1 text-sm text-gray-600 hover:text-[var(--admin-text)];
 		text-decoration-line: none;
 	}
 
@@ -1284,7 +1292,7 @@ p {
 		@apply mt-1 text-xs text-gray-500;
 	}
 	.admin-input {
-		@apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
+		@apply block w-full rounded-md border border-gray-300 bg-[var(--admin-surface)] px-3 py-2 text-sm text-[var(--admin-text)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
 	}
 	.admin-input-sm {
 		@apply px-2 py-1 text-xs;
@@ -1301,7 +1309,7 @@ p {
 
 	/* Scrollable list of checkbox rows (e.g. recipients) */
 	.admin-checklist {
-		@apply max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-white px-3 py-1;
+		@apply max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-[var(--admin-surface)] px-3 py-1;
 	}
 	.admin-checklist-item {
 		@apply flex cursor-pointer items-center gap-3 border-b border-gray-100 py-2 last:border-b-0;
@@ -1394,10 +1402,10 @@ p {
 		@apply mb-6 grid grid-cols-2 gap-4 md:grid-cols-4;
 	}
 	.admin-stat {
-		@apply rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm;
+		@apply rounded-lg border border-gray-200 bg-[var(--admin-surface)] p-4 text-center shadow-sm;
 	}
 	.admin-stat-value {
-		@apply block text-2xl font-bold text-gray-900;
+		@apply block text-2xl font-bold text-[var(--admin-text)];
 	}
 	.admin-stat-label {
 		@apply text-xs text-gray-600;
@@ -1416,10 +1424,10 @@ p {
 
 	/* Full-screen loading overlay while a form action runs */
 	.admin-loading-overlay {
-		@apply fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm;
+		@apply fixed inset-0 z-[9999] flex items-center justify-center bg-[color-mix(in_srgb,var(--admin-surface)_70%,transparent)] backdrop-blur-sm;
 	}
 	.admin-loading-spinner {
-		@apply h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900;
+		@apply h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-[var(--admin-dark)];
 	}
 
 	/* Tabs (e.g. in modals) */
@@ -1427,7 +1435,7 @@ p {
 		@apply mb-4 flex gap-2 border-b border-gray-200;
 	}
 	.admin-tab {
-		@apply -mb-px cursor-pointer border-0 border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50;
+		@apply -mb-px cursor-pointer border-0 border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-600 hover:text-[var(--admin-text)] disabled:opacity-50;
 	}
 	.admin-tab.is-active {
 		@apply border-blue-600 text-blue-700;
@@ -1435,9 +1443,9 @@ p {
 
 	/* Modal */
 	.admin-modal-backdrop {
-		@apply fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4;
+		@apply fixed inset-0 z-[10000] flex items-center justify-center bg-[color-mix(in_srgb,var(--admin-dark)_40%,transparent)] p-4;
 	}
 	.admin-modal {
-		@apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-gray-900 shadow-xl;
+		@apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-[var(--admin-surface)] p-6 text-[var(--admin-text)] shadow-xl;
 	}
 }

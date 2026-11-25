@@ -734,7 +734,9 @@
 						{#if selectedCustomerId}
 							{@const customer = getSelectedCustomer()}
 							{#if customer}
-								<div class="rounded-md border border-gray-200 bg-white p-3 text-sm">
+								<div
+									class="rounded-md border border-gray-200 bg-[var(--admin-surface)] p-3 text-sm"
+								>
 									<strong>{customer.vorname} {customer.nachname}</strong>
 									{#if customer.firma}
 										<div>{customer.firma}</div>
