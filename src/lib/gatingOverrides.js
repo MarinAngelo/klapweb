@@ -41,6 +41,37 @@ export function overridesFromConfig(config) {
 	};
 }
 
+/**
+ * Is a feature active on this branch? Plan (incl. parent plans) + add-ons − switched off.
+ * Same rule as src/lib/server/features.ts.
+ * @param {any} gating gating.json
+ * @param {any} config slicemachine.config.json
+ * @param {string} feature
+ */
+export function featureActive(gating, config, feature) {
+	const def = gating?.features?.[feature];
+	if (!def) return false;
+	const { enabled, disabled } = overridesFromConfig(config);
+	if (enabled.includes(feature)) return true;
+	if (disabled.includes(feature)) return false;
+	/** @type {string[]} */
+	const chain = [];
+	for (let plan = config?.plan || 'basis'; plan; plan = gating.plans?.[plan]?.extends)
+		chain.push(plan);
+	return (def.plans ?? []).some((/** @type {string} */ p) => chain.includes(p));
+}
+
+/**
+ * Active features that create invoices (gate of the settings field «IBAN»)
+ * @param {any} gating
+ * @param {any} config
+ * @returns {string[]}
+ */
+export function activeInvoicingFeatures(gating, config) {
+	const gate = gating?.customTypes?.settings?.fields?.invoice_iban?.features ?? [];
+	return gate.filter((/** @type {string} */ f) => featureActive(gating, config, f));
+}
+
 /** @param {string} root */
 const readConfig = (root) => JSON.parse(readFileSync(join(root, CONFIG), 'utf-8'));
 
