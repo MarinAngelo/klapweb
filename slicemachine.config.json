@@ -6,5 +6,13 @@
 	"home_redirect_disabled": true,
 	"plan": "individuell",
 	"features": ["stundenabrechnung"],
-	"adminSectionsDisabled": ["event-anmeldungen", "kunden", "newsletter", "rechnungen"]
+	"adminSectionsDisabled": [
+		"aufgaben",
+		"buchhaltung",
+		"ressource-buchungen",
+		"event-anmeldungen",
+		"kunden",
+		"newsletter",
+		"rechnungen"
+	]
 }
