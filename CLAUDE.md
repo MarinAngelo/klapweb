@@ -501,6 +501,8 @@ Für E-Commerce/Admin Rechnungen erforderlich:
 
 Wenn Key oder Absender fehlt: Rechnung wird gespeichert, aber E-Mail versendet nicht → Status bleibt `'gespeichert'`
 
+**Lokal testen ohne echte Empfänger:** `MAIL_TEST_TO=<eigene Adresse>` in `.env` → im Dev-Server gehen **alle** Mails dorthin (Betreff «[TEST → echter Empfänger] …»), zentral in `src/lib/server/mailRedirect.ts` (Resend-SDK gepatcht, in `hooks.server.ts` installiert), nie in Production. Netlify Functions sind nicht abgedeckt
+
 ## Buchhaltung (`/admin/buchhaltung`)
 
 - Feature `buchhaltung` (gating.json, Paket Individuell), Admin-Bereich `buchhaltung`: nur Einnahmen/Ausgaben, Übersicht pro Jahr + Monat, CSV-Export `/admin/buchhaltung/buchhaltung.csv?jahr=`
