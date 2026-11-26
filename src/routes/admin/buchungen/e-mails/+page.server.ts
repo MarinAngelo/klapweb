@@ -4,7 +4,7 @@ import { FEATURE_TERMINBUCHUNG } from '$lib/server/features';
 import { createClient } from '$lib/prismicio';
 import { expandArbeitstag, type TerminSlot } from '$lib/server/terminSlots';
 import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingCancel';
-import { addressFormDu } from '$lib/addressForm';
+import { textStyleFrom } from '$lib/addressForm';
 import { invoiceSettingsFrom } from '$lib/server/invoicing/settings';
 import { getMailAddress, getNotifyTo } from '$lib/server/mailFrom';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
@@ -93,8 +93,8 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	const stornoFrist = freeUntil ? formatDeadline(freeUntil, zeitzone) : '';
 	const datumLabel = formatDateWithWeekday(datum, null, 'de-CH', 'long');
 	const dateLabel = formatDateWithWeekday(datum, uhrzeit || null, 'de-CH', 'long');
-	const du = addressFormDu(s);
-	const base = { titel, dateLabel, name: SAMPLE.name, du };
+	const style = textStyleFrom(s);
+	const base = { titel, dateLabel, name: SAMPLE.name, style };
 	const providerTo = invoiceSettings.email;
 	const notifyTo = await getNotifyTo();
 	const invoiceAfter = s.booking_invoice === true;
@@ -129,7 +129,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 					: null,
 				icsLink: `${url.origin}/api/termin-ics?id=…`,
 				stornoLink: cancelLink(url.origin, { terminId: '…', cancelToken: '…' }),
-				du
+				style
 			})
 		},
 		{
@@ -206,7 +206,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	return {
 		mails,
 		from: await getMailAddress(),
-		du,
+		style,
 		example: { titel, dateLabel, fromPrismic: !!slot }
 	};
 };
