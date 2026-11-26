@@ -2342,6 +2342,63 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent by the website for invoices. The preview uses your current settings and a sample invoice; customer name and email are examples.'
+		},
+	'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.': {
+		'de-ch':
+			'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.',
+		'en-us': 'When creating an invoice with «Send email» or when sending from the invoice list.'
+	},
+	'Bestellung gegen Rechnung': {
+		'de-ch': 'Bestellung gegen Rechnung',
+		'en-us': 'Order on invoice'
+	},
+	'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).':
+		{
+			'de-ch':
+				'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).',
+			'en-us':
+				'After an order or event registration on the website with payment «on invoice». Own text: settings (email for payment on invoice).'
+		},
+	'Neue Bestellung (an Sie)': {
+		'de-ch': 'Neue Bestellung (an Sie)',
+		'en-us': 'New order (to you)'
+	},
+	'Nach jeder Bestellung gegen Rechnung auf der Website.': {
+		'de-ch': 'Nach jeder Bestellung gegen Rechnung auf der Website.',
+		'en-us': 'After every order on invoice on the website.'
+	},
+	'Jährliche Rechnung': { 'de-ch': 'Jährliche Rechnung', 'en-us': 'Yearly invoice' },
+	'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».': {
+		'de-ch': 'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».',
+		'en-us': 'On the due date of an invoice with «Repeat yearly».'
+	},
+	'Jährliche Rechnung erstellt (an Sie)': {
+		'de-ch': 'Jährliche Rechnung erstellt (an Sie)',
+		'en-us': 'Yearly invoice created (to you)'
+	},
+	'Zusammen mit jeder jährlichen Rechnung.': {
+		'de-ch': 'Zusammen mit jeder jährlichen Rechnung.',
+		'en-us': 'Together with every yearly invoice.'
+	},
+	Mahnung: { 'de-ch': 'Mahnung', 'en-us': 'Payment reminder' },
+	'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.':
+		{
+			'de-ch':
+				'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.',
+			'en-us':
+				'If «Automatic reminders» is active: open invoice after the payment term plus «Reminder after … days». At most 2 reminders.'
+		},
+	'Mahnwesen (an Sie)': { 'de-ch': 'Mahnwesen (an Sie)', 'en-us': 'Reminders (to you)' },
+	'Nach jedem Mahnlauf mit mindestens einer Mahnung.': {
+		'de-ch': 'Nach jedem Mahnlauf mit mindestens einer Mahnung.',
+		'en-us': 'After every reminder run with at least one reminder.'
+	},
 	'E-Mail-Vorschau': { 'de-ch': 'E-Mail-Vorschau', 'en-us': 'Email preview' },
 	'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.':
 		{

@@ -14,25 +14,11 @@ import {
 	cancelFeeMail,
 	cancelProviderMail,
 	confirmationMail,
-	providerBookingMail,
-	type Mail
+	providerBookingMail
 } from '$lib/server/bookingMails';
+import { SAMPLE_CUSTOMER as SAMPLE, type PreviewMail } from '$lib/server/mailText';
 
 export const prerender = false;
-
-/** Neutral example customer (never real data in the preview) */
-const SAMPLE = { name: 'Anna Muster', email: 'anna.muster@example.com' };
-
-export type PreviewMail = Mail & {
-	id: string;
-	/** i18n keys */
-	label: string;
-	when: string;
-	to: string;
-	attachment?: string;
-	/** Sent with the current settings (otherwise shown greyed out) */
-	active: boolean;
-};
 
 // Access: /admin/* is protected centrally in hooks.server.ts (admin session)
 export const load: PageServerLoad = async ({ fetch, url }) => {

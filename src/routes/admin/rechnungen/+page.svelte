@@ -3,6 +3,7 @@
 	import type { PageData, SubmitFunction } from './$types';
 	import { formatDateShort } from '$lib/utils/formatDate';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import AdminBulkActions from '$lib/components/admin/AdminBulkActions.svelte';
 
 	export let data: PageData;
@@ -504,7 +505,9 @@
 <svelte:head><title>Rechnungen</title></svelte:head>
 
 <div class="admin-container">
-	<AdminHeader title="Rechnungen" count={data.invoices.length}></AdminHeader>
+	<AdminHeader title="Rechnungen" count={data.invoices.length}>
+		<a href="/admin/rechnungen/e-mails" class="admin-btn">{$_('E-Mail-Vorschau')}</a>
+	</AdminHeader>
 
 	<!-- Übersicht Rechnungen -->
 	<section class="admin-card">
