@@ -11,6 +11,8 @@ import { listManualInvoices, updateManualInvoice } from '$lib/server/invoices';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
 import { recurringInvoiceMail, recurringOperatorMail } from '$lib/server/invoiceMails';
 import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 
 /** Today as YYYY-MM-DD in Swiss time */
 export const todaySwiss = () =>
@@ -49,6 +51,8 @@ export async function sendDueRecurringInvoices(): Promise<string[]> {
 
 	const settings = await loadInvoiceSettings();
 	const style = await getTextStyle();
+	// Customer mails in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 	const created: string[] = [];
 	for (const template of due) {
 		try {
@@ -92,7 +96,8 @@ export async function sendDueRecurringInvoices(): Promise<string[]> {
 						invoiceNumber: invoice.invoiceNumber,
 						name,
 						companyName: settings.name,
-						style
+						style,
+						theme
 					})
 				}));
 			await notifyOperator(

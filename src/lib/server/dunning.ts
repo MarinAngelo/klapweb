@@ -24,6 +24,8 @@ import {
 } from '$lib/server/invoicing';
 import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 import { dunningMail, dunningOperatorMail } from '$lib/server/invoiceMails';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 
 export const MAX_DUNNING_LEVEL = 2;
 
@@ -49,6 +51,7 @@ async function sendMail(options: {
 	to: string;
 	subject: string;
 	text: string;
+	html?: string;
 	attachments?: { filename: string; content: string }[];
 }): Promise<boolean> {
 	const resendKey = env.RESEND_API_KEY;
@@ -75,6 +78,8 @@ export async function sendDueReminders(): Promise<string[]> {
 	if (!candidates.length) return [];
 
 	const style = await getTextStyle();
+	// Reminders in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 	const reminded: string[] = [];
 	const notes: string[] = [];
 	for (const inv of candidates) {
@@ -106,7 +111,8 @@ export async function sendDueReminders(): Promise<string[]> {
 						dueDate: formatDay(dueDate),
 						name,
 						companyName: settings.name,
-						style
+						style,
+						theme
 					}),
 					attachments: [invoiceAttachment(inv.invoiceNumber, pdf)]
 				}));

@@ -13,6 +13,7 @@ import { addYear, sendDueRecurringInvoices } from '$lib/server/recurringInvoices
 import { sendDueReminders } from '$lib/server/dunning';
 import { adminInvoiceMail } from '$lib/server/invoiceMails';
 import { getTextStyle } from '$lib/server/mailFrom';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { reconcilePayments } from '$lib/server/paymentMatching';
 import {
 	createInvoice,
@@ -155,7 +156,8 @@ export const actions: Actions = {
 					invoiceNumber,
 					name: [invoiceData.vorname, invoiceData.nachname].filter(Boolean).join(' '),
 					companyName: created.settings.name,
-					style: await getTextStyle()
+					style: await getTextStyle(),
+					theme: await loadMailTheme(createClient()).catch(() => null)
 				})
 			});
 		}
@@ -323,7 +325,8 @@ export const actions: Actions = {
 				invoiceNumber: invoice.invoiceNumber,
 				name: customerName,
 				companyName: companyInfo.name,
-				style: await getTextStyle()
+				style: await getTextStyle(),
+				theme: await loadMailTheme(createClient()).catch(() => null)
 			})
 		});
 		if (!sent) throw error(500, 'E-Mail konnte nicht versendet werden');

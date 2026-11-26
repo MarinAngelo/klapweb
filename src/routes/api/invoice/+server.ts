@@ -16,6 +16,7 @@ import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { parseCartSpec } from '$lib/utils/cartSpec';
 import { resolveCartLines, cartLabel } from '$lib/server/cartLines';
 import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { checkoutBusinessMail, checkoutInvoiceMail } from '$lib/server/invoiceMails';
 
 interface InvoiceRequest {
@@ -425,6 +426,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		name: customerName,
 		companyName: co.name,
 		style: await getTextStyle(),
+		theme: await loadMailTheme(createClient({ fetch })).catch(() => null),
 		template: co.emailTemplates.rechnung,
 		tokens
 	});
@@ -451,6 +453,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 				to: customerEmail,
 				subject: custMail.subject,
 				text: custMail.text,
+				...(custMail.html ? { html: custMail.html } : {}),
 				attachments: [attachment]
 			});
 			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);

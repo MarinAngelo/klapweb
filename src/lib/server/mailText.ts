@@ -5,6 +5,8 @@
  *   previews in the admin (component MailPreview.svelte)
  */
 
+import { textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
+
 /**
  * Plain text mail → { text, html }: the HTML part keeps the layout (monospace, line breaks)
  * and turns URLs into clickable links (mail clients do not reliably auto-link, e.g. localhost).
@@ -80,3 +82,9 @@ export async function previewLanguages(client: {
 		return [];
 	}
 }
+
+/** Text mail → additionally HTML in the page colours of the active theme (customer mails) */
+export const withHtml = (mail: Mail, theme: MailTheme | null | undefined): Mail => ({
+	...mail,
+	html: wrapMail(textToMailHtml(mail.text, theme), theme, { subject: mail.subject })
+});

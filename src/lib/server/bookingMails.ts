@@ -7,7 +7,7 @@
  */
 
 import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
-import { applyTokens, richTextToMail, type Mail } from '$lib/server/mailText';
+import { applyTokens, richTextToMail, withHtml, type Mail } from '$lib/server/mailText';
 import { mailButton, textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
 
 export type ConfirmationInput = {
@@ -160,12 +160,6 @@ type CancelBase = {
 	/** Page colours of the active theme (loadMailTheme); customer mails get an HTML part */
 	theme?: MailTheme | null;
 };
-
-/** Text mail → additionally HTML in the page colours (customer mails) */
-const withHtml = (mail: Mail, theme: MailTheme | null | undefined): Mail => ({
-	...mail,
-	html: wrapMail(textToMailHtml(mail.text, theme), theme, { subject: mail.subject })
-});
 
 /** Cancellation confirmation to the customer (free of charge) */
 export function cancelCustomerMail(c: CancelBase): Mail {
