@@ -652,7 +652,10 @@
 			</div>
 		{:else if htmlType === 'select-termin'}
 			{#if termineLoading}
-				<p class="text-sm opacity-60">{$_('Termine werden geladen…')}</p>
+				<div class="page-loading-overlay" role="status" aria-live="polite">
+					<div class="page-loading-spinner" aria-hidden="true"></div>
+					<span class="sr-only">{$_('Termine werden geladen…')}</span>
+				</div>
 			{:else if termineError}
 				<p class="text-sm text-red-500">{$_('Termine konnten nicht geladen werden.')}</p>
 			{:else if offerWithoutSlots}
