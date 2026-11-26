@@ -2342,6 +2342,8 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Angebot wählen': { 'de-ch': 'Angebot wählen', 'en-us': 'Choose a service' },
+	'Angebot ändern': { 'de-ch': 'Angebot ändern', 'en-us': 'Change service' },
 	'Ihre Abrechnung: {ressource}': {
 		'de-ch': 'Ihre Abrechnung: {ressource}',
 		'en-us': 'Your invoice: {ressource}'
