@@ -138,6 +138,13 @@
 					"default_value": "Sie"
 				}
 			},
+			"mail_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Begrüssung in Standardtexten",
+					"placeholder": "Leer = «Guten Tag», z.B. «Hallo»"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {

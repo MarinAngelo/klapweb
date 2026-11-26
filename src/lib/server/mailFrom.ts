@@ -4,7 +4,8 @@
  * - sender name «Absender-Name» (`email_from_name`; empty = website name, then company)
  * - internal notifications «Benachrichtigungen an (intern)» (`notification_email`;
  *   empty = «Verantwortliche E-Mail», then «Korrespondenz E-Mail»)
- * - form of address of the standard texts «Anrede in Standardtexten» (`address_form`, Sie/Du)
+ * - standard texts: «Anrede in Standardtexten» (`address_form`, Sie/Du) and
+ *   «Begrüssung in Standardtexten» (`mail_greeting`)
  *
  * Transition: while «Absender-E-Mail» is empty, the old env var EMAIL_FROM_ADDRESS is used
  * (warning in the log, «Inhalte prüfen» reports the empty field). Remove the fallback once all
@@ -14,12 +15,12 @@ import { env } from '$env/dynamic/private';
 import { asText } from '@prismicio/client';
 import { createClient } from '$lib/prismicio';
 
-import { addressFormDu } from '$lib/addressForm';
+import { textStyleFrom, type TextStyle } from '$lib/addressForm';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CACHE_MS = 5 * 60 * 1000;
 
-type MailSettings = { address: string; name: string; notifyTo: string; du: boolean };
+type MailSettings = { address: string; name: string; notifyTo: string; style: TextStyle };
 let cache: { value: MailSettings; at: number } | null = null;
 let warned = false;
 
@@ -50,7 +51,7 @@ function fromSettings(data: any): MailSettings {
 		.find(Boolean);
 	const notifyTo =
 		email(data?.notification_email) || email(data?.responsible_email) || email(data?.e_mail);
-	return { address, name: name ?? '', notifyTo, du: addressFormDu(data) };
+	return { address, name: name ?? '', notifyTo, style: textStyleFrom(data) };
 }
 
 async function loadMailSettings(fetchFn?: typeof fetch): Promise<MailSettings> {
@@ -91,7 +92,7 @@ export async function getNotifyTo(fetchFn?: typeof fetch): Promise<string> {
 	return (await loadMailSettings(fetchFn)).notifyTo;
 }
 
-/** Standard texts in the «Du» form (setting «Anrede in Standardtexten»); default «Sie» */
-export async function getAddressFormDu(fetchFn?: typeof fetch): Promise<boolean> {
-	return (await loadMailSettings(fetchFn)).du;
+/** Form of address (Sie/Du) and greeting of the standard texts */
+export async function getTextStyle(fetchFn?: typeof fetch): Promise<TextStyle> {
+	return (await loadMailSettings(fetchFn)).style;
 }

@@ -431,7 +431,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 ### Terminbuchung: E-Mails
 
 - **Alle Mail-Texte der Terminbuchung nur in `src/lib/server/bookingMails.ts`** (reine Funktionen: Bestätigung, Neue Buchung, Stornierungen, Rechnung nach dem Termin). Versand und Vorschau `/admin/buchungen/e-mails` nutzen dieselben Funktionen — neue Mail → dort ergänzen und in die Vorschau aufnehmen
-- **Anrede Du/Sie:** Einstellungen › Main «Anrede in Standardtexten» (`address_form`, Standard «Sie»). Server: `getAddressFormDu()` (`mailFrom.ts`) bzw. `addressFormDu(settingsData)`, Text mit `duSie(du, 'Ihre', 'Deine')` (`$lib/addressForm`). Umgesetzt für die Mails der Terminbuchung; neue Standardtexte an Kunden immer in beiden Formen
+- **Anrede Du/Sie + Begrüssung:** Einstellungen › Main «Anrede in Standardtexten» (`address_form`, Standard «Sie») und «Begrüssung in Standardtexten» (`mail_greeting`, leer = «Guten Tag»). Server: `getTextStyle()` (`mailFrom.ts`) bzw. `textStyleFrom(settingsData)` → `{ du, greeting }`, Text mit `duSie(style.du, 'Ihre', 'Deine')` und `greetingLine(style, name)` (`$lib/addressForm`). Umgesetzt für die Mails der Terminbuchung; neue Standardtexte an Kunden immer in beiden Formen
 
 ### Terminbuchung: Stornierung (`/termin-stornieren`)
 

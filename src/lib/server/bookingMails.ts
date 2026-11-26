@@ -3,10 +3,10 @@
  *
  * Pure builders, used by the senders (api/buche-termin, bookingCancel, bookingInvoices)
  * and by the preview in the admin (/admin/buchungen/e-mails) — so the preview always shows
- * exactly what is sent. `du` = setting «Anrede in Standardtexten» (getAddressFormDu()).
+ * exactly what is sent. `style` = settings «Anrede» / «Begrüssung in Standardtexten» (getTextStyle()).
  */
 
-import { duSie } from '$lib/addressForm';
+import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
 
 export type Mail = { subject: string; text: string; html?: string };
 
@@ -50,8 +50,8 @@ export type ConfirmationInput = {
 	convertedTime?: string;
 	icsLink: string;
 	stornoLink: string;
-	/** «Du» instead of «Sie» */
-	du?: boolean;
+	/** Form of address + greeting */
+	style?: TextStyle;
 };
 
 /** Confirmation to the customer (with .ics attachment) */
@@ -81,15 +81,15 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 	// .ics download works with every calendar app (no Google Calendar link)
 	const calendarLine = c.datumLabel ? `\nZum Kalender hinzufügen: ${c.icsLink}` : '';
 	const customerTzLine = c.convertedTime
-		? `\nDer Termin in ${duSie(c.du, 'Ihrer', 'deiner')} Zeitzone (${c.customerTimezone}): ${c.convertedTime}`
+		? `\nDer Termin in ${duSie(c.style?.du, 'Ihrer', 'deiner')} Zeitzone (${c.customerTimezone}): ${c.convertedTime}`
 		: '';
 
 	const bodyText =
 		richTextToPlain(c.customBody, tokens) ||
 		[
-			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			greetingLine(c.style, c.name),
 			``,
-			duSie(c.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
+			duSie(c.style?.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
 			``,
 			`Termin: ${terminLine}`,
 			// Location of the offer (if linked and active)
@@ -108,7 +108,7 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 						``
 					]
 				: []),
-			`Bei Fragen stehen wir ${duSie(c.du, 'Ihnen', 'dir')} gerne zur Verfügung.`,
+			`Bei Fragen stehen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} gerne zur Verfügung.`,
 			``,
 			`Freundliche Grüsse`,
 			c.companyName
@@ -165,16 +165,16 @@ export function providerBookingMail(p: ProviderBookingInput): Mail {
 	};
 }
 
-type CancelBase = { titel: string; dateLabel: string; name?: string; du?: boolean };
+type CancelBase = { titel: string; dateLabel: string; name?: string; style?: TextStyle };
 
 /** Cancellation confirmation to the customer (free of charge) */
 export function cancelCustomerMail(c: CancelBase): Mail {
 	return {
 		subject: `Stornierung bestätigt: ${c.titel}`,
 		text: [
-			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			greetingLine(c.style, c.name),
 			``,
-			`${duSie(c.du, 'Ihre', 'Deine')} Buchung wurde erfolgreich storniert.`,
+			`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde erfolgreich storniert.`,
 			``,
 			`Angebot: ${c.titel}`,
 			`Datum: ${c.dateLabel}`
@@ -189,15 +189,15 @@ export function cancelFeeMail(
 	return {
 		subject: `Stornierung bestätigt: ${c.titel}`,
 		text: [
-			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			greetingLine(c.style, c.name),
 			``,
-			`${duSie(c.du, 'Ihre', 'Deine')} Buchung wurde storniert.`,
+			`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde storniert.`,
 			``,
 			`Angebot: ${c.titel}`,
 			`Datum: ${c.dateLabel}`,
 			``,
 			`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
-				`stellen wir ${duSie(c.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
+				`stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
 			``,
 			`Freundliche Grüsse`,
 			c.companyName
@@ -239,12 +239,12 @@ export function bookingInvoiceMail(
 	c: CancelBase & { invoiceNumber: string; companyName: string }
 ): Mail {
 	return {
-		subject: `${duSie(c.du, 'Ihre', 'Deine')} Rechnung ${c.invoiceNumber}${c.companyName ? ` – ${c.companyName}` : ''}`,
+		subject: `${duSie(c.style?.du, 'Ihre', 'Deine')} Rechnung ${c.invoiceNumber}${c.companyName ? ` – ${c.companyName}` : ''}`,
 		text: [
-			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			greetingLine(c.style, c.name),
 			``,
 			duSie(
-				c.du,
+				c.style?.du,
 				'Vielen Dank für Ihren Besuch. Im Anhang finden Sie die Rechnung für:',
 				'Vielen Dank für deinen Besuch. Im Anhang findest du die Rechnung für:'
 			),

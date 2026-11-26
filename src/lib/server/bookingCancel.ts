@@ -9,7 +9,7 @@ import { env } from '$env/dynamic/private';
 import { deleteBooking, type BookingRecord } from '$lib/server/bookings';
 import { listManualInvoices, updateManualInvoice } from '$lib/server/invoices';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
-import { getAddressFormDu, getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { cancelCustomerMail, cancelFeeMail, cancelProviderMail } from '$lib/server/bookingMails';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
@@ -114,7 +114,7 @@ export async function cancelBooking(
 
 	const dateLabel = formatDateWithWeekday(booking.datum, booking.uhrzeit || null, 'de-CH', 'long');
 	const notes: string[] = [];
-	const du = await getAddressFormDu();
+	const style = await getTextStyle();
 
 	// Invoice of the booking: open → «storniert»; already paid → provider checks the refund
 	let paidInvoice = false;
@@ -175,7 +175,7 @@ export async function cancelBooking(
 						titel: booking.titel,
 						dateLabel,
 						name: booking.name,
-						du,
+						style,
 						freeUntilLabel: terms.freeUntilLabel,
 						feePercent: terms.feePercent,
 						companyName: settings.name
@@ -199,7 +199,7 @@ export async function cancelBooking(
 		const { error } = await resend.emails.send({
 			from,
 			to: booking.email,
-			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, du })
+			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, style })
 		});
 		if (error) console.error('Storno Kunden-E-Mail fehlgeschlagen:', error);
 	}
