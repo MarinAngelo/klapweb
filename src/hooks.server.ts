@@ -1,9 +1,14 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import { building } from '$app/environment';
+import { building, dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
+import { installMailRedirect } from '$lib/server/mailRedirect';
 import { isAdmin, isValidAdminPassword, startAdminSession } from '$lib/server/adminAuth';
 import { getSession } from '$lib/server/sessions';
 import { getUserByEmail } from '$lib/server/users';
 import { dropInvalidPreviewCookie } from '$lib/server/previewCookie';
+
+// Local tests: all e-mails to MAIL_TEST_TO instead of customers/operator (dev server only)
+if (dev && env.MAIL_TEST_TO) installMailRedirect(env.MAIL_TEST_TO.trim());
 
 // In-Memory-Cache für Session→User-Auflösung.
 // Ohne Cache kostet jeder Request mit Session-Cookie zwei serielle
