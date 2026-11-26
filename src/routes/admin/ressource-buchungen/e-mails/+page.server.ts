@@ -6,7 +6,11 @@ import { loadMailTheme } from '$lib/mailLayout.js';
 import { loadVariablesData, mailVariables } from '$lib/variables.js';
 import { messengerButtonsHtml } from '$lib/messengerLinks.js';
 import { getMailAddress, getNotifyTo } from '$lib/server/mailFrom';
-import { SAMPLE_CUSTOMER as SAMPLE, type PreviewMail } from '$lib/server/mailText';
+import {
+	SAMPLE_CUSTOMER as SAMPLE,
+	previewLanguages,
+	type PreviewMail
+} from '$lib/server/mailText';
 import type { RessourceBuchung } from '$lib/server/ressourceBuchungen';
 import {
 	arrivalReminderMail,
@@ -15,6 +19,7 @@ import {
 	cmsReminderMail,
 	confirmationGuestMail,
 	finalBillingMail,
+	getRessourceDocForBooking,
 	reminderTokens,
 	requestProviderMail,
 	type CmsMailContext
@@ -33,21 +38,29 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	if (!FEATURE_RESSOURCENBUCHUNG) throw error(404, 'Nicht gefunden');
 
 	const client = createClient({ fetch });
+	const languages = await previewLanguages(client);
+	// Language of the guest mails: ?mail_lang=, otherwise the main language
+	const lang =
+		languages.find((l) => l.id === url.searchParams.get('mail_lang'))?.id ?? languages[0]?.id;
 	const [ressourcen, settings, variablesData, theme] = await Promise.all([
 		(client as any).getAllByType('ressource').catch(() => []),
 		client.getSingle('settings').catch(() => null),
 		loadVariablesData(client).catch(() => null),
-		loadMailTheme(client, undefined).catch(() => null)
+		loadMailTheme(client, lang).catch(() => null)
 	]);
-	// Example: first resource (main language) with its own mail texts
-	const doc = (ressourcen[0]?.data ?? null) as Record<string, any> | null;
-	const cms: CmsMailContext = { doc, vars: mailVariables(variablesData, undefined), theme };
+	// Example: first resource with its own mail texts, in the chosen language (else main language)
+	const uid = ressourcen[0]?.uid as string | undefined;
+	const doc = uid
+		? (((await getRessourceDocForBooking(client, { ressourceUid: uid, lang }).catch(() => null))
+				?.data ?? null) as Record<string, any> | null)
+		: null;
+	const cms: CmsMailContext = { doc, vars: mailVariables(variablesData, lang), theme };
 	const ressourceName = doc?.name || 'Ferienwohnung';
 
 	const buchung: RessourceBuchung = {
 		id: 'beispiel',
 		referenz: 'AB12CD',
-		ressourceUid: ressourcen[0]?.uid ?? 'beispiel',
+		ressourceUid: uid ?? 'beispiel',
 		ressourceName,
 		von: day(14),
 		bis: day(17),
@@ -57,7 +70,8 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		bookedAt: new Date().toISOString(),
 		status: 'confirmed',
 		name: SAMPLE.name,
-		email: SAMPLE.email
+		email: SAMPLE.email,
+		lang
 	};
 	const notifyTo = await getNotifyTo();
 	const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
@@ -172,6 +186,9 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	return {
 		mails,
 		from: await getMailAddress(),
+		languages,
+		// not «lang»: $page.data.lang sets the language of the admin UI
+		mailLang: lang ?? '',
 		example: { ressourceName, fromPrismic: !!doc }
 	};
 };

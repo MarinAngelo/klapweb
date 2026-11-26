@@ -10,8 +10,10 @@
 	mails={data.mails}
 	backHref="/admin/ressource-buchungen"
 	backLabel="Ressource-Buchungen"
-	intro="Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele."
+	intro="Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch."
 	from={data.from}
+	languages={data.languages}
+	lang={data.mailLang}
 >
 	{$_('Beispiel-Ressource')}: {data.example.ressourceName}
 	{#if !data.example.fromPrismic}({$_('keine Ressource gefunden — erfundenes Beispiel')}){/if}

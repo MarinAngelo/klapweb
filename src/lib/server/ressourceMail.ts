@@ -130,8 +130,6 @@ export function bestaetigungFallbackText(
 
 const fmtChf = (chf: number) =>
 	new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
-const fmtEur = (eur: number) =>
-	new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'EUR' }).format(eur);
 /** «2026-11-26» → «26.11.2026» */
 export const fmtDatum = (iso: string) => iso.split('-').reverse().join('.');
 
@@ -358,11 +356,19 @@ export function checkoutBillingMail(
 	};
 }
 
-/** Final billing to the guest (after the operator's approval) */
+/** Final billing to the guest (after the operator's approval), in the booking language */
 export function finalBillingMail(
 	b: Pick<
 		RessourceBuchung,
-		'ressourceUid' | 'ressourceName' | 'name' | 'von' | 'bis' | 'referenz' | 'id' | 'preisCHF'
+		| 'ressourceUid'
+		| 'ressourceName'
+		| 'name'
+		| 'von'
+		| 'bis'
+		| 'referenz'
+		| 'id'
+		| 'preisCHF'
+		| 'lang'
 	> & {
 		creditsCHF: number;
 		aufgaben: { titel: string; credits: number }[];
@@ -371,41 +377,53 @@ export function finalBillingMail(
 		eurRate: number | null;
 	}
 ): Mail {
+	const lang = mailLang(b);
+	const locale = mailLocale(b);
+	const chf = (n: number) =>
+		new Intl.NumberFormat(locale, { style: 'currency', currency: 'CHF' }).format(n);
+	const eur = (n: number) =>
+		new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(n);
+	const label = (key: string, width = 20) => {
+		const text = `${t(key, lang)}:`;
+		return text.length >= width ? `${text} ` : text.padEnd(width);
+	};
+	const ressource = b.ressourceName ?? b.ressourceUid;
+	const line = '─────────────────────────────────────';
 	return {
-		subject: `Ihre Abrechnung: ${b.ressourceName ?? b.ressourceUid}`,
+		subject: t('Ihre Abrechnung: {ressource}', lang).replace('{ressource}', ressource),
 		text: [
-			`Guten Tag ${b.name ?? ''}`,
+			t('Guten Tag {name}', lang).replace('{name}', b.name ?? ''),
 			``,
-			`Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:`,
+			t('Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:', lang),
 			``,
-			`Ressource: ${b.ressourceName ?? b.ressourceUid}`,
-			`Anreise:   ${fmtDatum(b.von)}`,
-			`Abreise:   ${fmtDatum(b.bis)}`,
-			`Buchungs-Nr.: ${b.referenz ?? b.id}`,
+			`${label('Ressource', 11)}${ressource}`,
+			`${label('Anreise', 11)}${fmtDatum(b.von)}`,
+			`${label('Abreise', 11)}${fmtDatum(b.bis)}`,
+			`${label('Buchungs-Nr.', 11)}${b.referenz ?? b.id}`,
 			``,
-			`─────────────────────────────────────`,
-			`Mietpreis:          ${fmtChf(b.preisCHF)}`,
+			line,
+			`${label('Mietpreis')}${chf(b.preisCHF)}`,
 			...(b.creditsCHF > 0
 				? [
-						`Credits (Aufgaben): − ${fmtChf(b.creditsCHF)}`,
+						`${label('Credits (Aufgaben)')}− ${chf(b.creditsCHF)}`,
 						``,
-						`Erledigte Aufgaben:`,
+						`${t('Erledigte Aufgaben', lang)}:`,
 						b.aufgaben.length
-							? b.aufgaben.map((a) => `  · ${a.titel}: − ${fmtChf(a.credits)}`).join('\n')
-							: '  (keine)'
+							? b.aufgaben.map((a) => `  · ${a.titel}: − ${chf(a.credits)}`).join('\n')
+							: `  ${t('(keine)', lang)}`
 					]
 				: []),
-			`─────────────────────────────────────`,
-			`Total:              ${fmtChf(b.betrag)}`,
+			line,
+			`${label('Total')}${chf(b.betrag)}`,
 			...(b.betragEur !== null && b.eurRate
 				? [
-						`Entspricht ca.:    ${fmtEur(b.betragEur)}`,
-						`(Tageskurs: 1 CHF = ${b.eurRate.toFixed(4)} EUR)`
+						`${label('Entspricht ca.')}${eur(b.betragEur)}`,
+						`(${t('Tageskurs', lang)}: 1 CHF = ${b.eurRate.toFixed(4)} EUR)`
 					]
 				: []),
-			`─────────────────────────────────────`,
+			line,
 			``,
-			`Freundliche Grüsse`
+			t('Freundliche Grüsse', lang)
 		].join('\n')
 	};
 }

@@ -19,6 +19,9 @@
 	export let intro: string;
 	export let from = '';
 	export let style: TextStyle | null = null;
+	/** Language switch (more than one language): links with ?mail_lang= (not ?lang=, that switches the admin UI) */
+	export let languages: { id: string; name: string }[] = [];
+	export let lang = '';
 
 	/** HTML mails in an isolated frame (no scripts, no styles of the admin) */
 	// Tag name split: Svelte would otherwise read the string as the component's style block
@@ -35,6 +38,18 @@
 	<a href={backHref} class="admin-link mb-4 inline-block">← {$_(backLabel)}</a>
 
 	<p class="admin-intro">{$_(intro)}</p>
+	{#if languages.length > 1}
+		<nav class="mb-3 flex flex-wrap gap-2" aria-label={$_('Sprache')}>
+			{#each languages as l (l.id)}
+				<a
+					href="?mail_lang={l.id}"
+					class="admin-btn"
+					class:admin-btn-dark={l.id === lang}
+					aria-current={l.id === lang ? 'true' : undefined}>{l.name}</a
+				>
+			{/each}
+		</nav>
+	{/if}
 	<p class="admin-hint mb-4">
 		<slot />
 		{$_('Absender')}: {from || '–'}
