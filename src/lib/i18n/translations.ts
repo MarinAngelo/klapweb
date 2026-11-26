@@ -2351,6 +2351,7 @@ export const translations: Record<string, Record<string, string>> = {
 				'These emails are sent automatically by the appointment booking. The preview uses your current settings and a sample appointment; customer name and email are examples.'
 		},
 	'Beispiel-Termin': { 'de-ch': 'Beispiel-Termin', 'en-us': 'Sample appointment' },
+	Anrede: { 'de-ch': 'Anrede', 'en-us': 'Form of address' },
 	'kein freier Termin gefunden — erfundenes Beispiel': {
 		'de-ch': 'kein freier Termin gefunden — erfundenes Beispiel',
 		'en-us': 'no free slot found — made-up example'

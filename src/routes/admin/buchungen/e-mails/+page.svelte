@@ -25,6 +25,7 @@
 		{$_('Beispiel-Termin')}: {data.example.titel}, {data.example.dateLabel}
 		{#if !data.example.fromPrismic}({$_('kein freier Termin gefunden — erfundenes Beispiel')}){/if}
 		· {$_('Absender')}: {data.from || '–'}
+		· {$_('Anrede')}: {data.du ? 'Du' : 'Sie'}
 	</p>
 
 	{#each data.mails as mail (mail.id)}
