@@ -129,6 +129,15 @@
 					"placeholder": "E-Mail für Meldungen zu Buchungen, Formularen, Bestellungen – leer = Verantwortliche E-Mail"
 				}
 			},
+			"address_form": {
+				"type": "Select",
+				"config": {
+					"label": "Anrede in Standardtexten",
+					"placeholder": "Sie oder Du in automatischen E-Mails",
+					"options": ["Sie", "Du"],
+					"default_value": "Sie"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {

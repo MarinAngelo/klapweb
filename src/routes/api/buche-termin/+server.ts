@@ -15,6 +15,7 @@ import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
 import { isAdmin } from '$lib/server/adminAuth';
 import { confirmationMail, providerBookingMail } from '$lib/server/bookingMails';
+import { addressFormDu } from '$lib/addressForm';
 
 function buildDatetimeStr(datum: string, uhrzeit: string): string {
 	// Returns floating local datetime string: YYYYMMDDTHHMMSS
@@ -369,7 +370,8 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
 				: '',
 			icsLink: icsDownloadLink,
-			stornoLink
+			stornoLink,
+			du: addressFormDu(settingsData)
 		});
 
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
