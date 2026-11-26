@@ -2342,6 +2342,74 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'E-Mail-Vorschau': { 'de-ch': 'E-Mail-Vorschau', 'en-us': 'Email preview' },
+	'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent automatically by the appointment booking. The preview uses your current settings and a sample appointment; customer name and email are examples.'
+		},
+	'Beispiel-Termin': { 'de-ch': 'Beispiel-Termin', 'en-us': 'Sample appointment' },
+	'kein freier Termin gefunden — erfundenes Beispiel': {
+		'de-ch': 'kein freier Termin gefunden — erfundenes Beispiel',
+		'en-us': 'no free slot found — made-up example'
+	},
+	Absender: { 'de-ch': 'Absender', 'en-us': 'Sender' },
+	'wird verschickt': { 'de-ch': 'wird verschickt', 'en-us': 'is sent' },
+	'mit den aktuellen Einstellungen nicht verschickt': {
+		'de-ch': 'mit den aktuellen Einstellungen nicht verschickt',
+		'en-us': 'not sent with the current settings'
+	},
+	An: { 'de-ch': 'An', 'en-us': 'To' },
+	Anhang: { 'de-ch': 'Anhang', 'en-us': 'Attachment' },
+	'– (keine Adresse in den Einstellungen)': {
+		'de-ch': '– (keine Adresse in den Einstellungen)',
+		'en-us': '– (no address in the settings)'
+	},
+	Terminbestätigung: { 'de-ch': 'Terminbestätigung', 'en-us': 'Appointment confirmation' },
+	'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».': {
+		'de-ch': 'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».',
+		'en-us':
+			'After every online booking; for bookings made in the admin only with «Send confirmation».'
+	},
+	'Neue Buchung (an Sie)': { 'de-ch': 'Neue Buchung (an Sie)', 'en-us': 'New booking (to you)' },
+	'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.': {
+		'de-ch': 'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.',
+		'en-us': 'After every online booking, not for bookings made in the admin.'
+	},
+	'Stornierung bestätigt': { 'de-ch': 'Stornierung bestätigt', 'en-us': 'Cancellation confirmed' },
+	'Wenn die Kundin / der Kunde kostenlos storniert.': {
+		'de-ch': 'Wenn die Kundin / der Kunde kostenlos storniert.',
+		'en-us': 'When the customer cancels free of charge.'
+	},
+	'Stornierung mit Gebühr': { 'de-ch': 'Stornierung mit Gebühr', 'en-us': 'Cancellation with fee' },
+	'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.':
+		{
+			'de-ch':
+				'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.',
+			'en-us':
+				'Cancellation after the free period has expired, if the offer has a price and a cancellation fee.'
+		},
+	'Buchung storniert (an Sie)': {
+		'de-ch': 'Buchung storniert (an Sie)',
+		'en-us': 'Booking cancelled (to you)'
+	},
+	'Bei jeder Stornierung.': {
+		'de-ch': 'Bei jeder Stornierung.',
+		'en-us': 'On every cancellation.'
+	},
+	'Rechnung nach dem Termin': {
+		'de-ch': 'Rechnung nach dem Termin',
+		'en-us': 'Invoice after the appointment'
+	},
+	'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.':
+		{
+			'de-ch':
+				'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.',
+			'en-us':
+				'After the appointment has ended, if «Send invoice after the appointment» is active and the offer has a price.'
+		},
 	'Buchungen anzeigen, löschen, Termine sperren': {
 		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
 		'en-us': 'View and delete bookings, block time slots'

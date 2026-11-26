@@ -161,6 +161,7 @@
 
 <div class="admin-container">
 	<AdminHeader title="Terminverwaltung">
+		<a href="/admin/buchungen/e-mails" class="admin-btn">{$_('E-Mail-Vorschau')}</a>
 		<form
 			method="POST"
 			action="?/deleteAll"

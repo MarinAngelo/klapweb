@@ -1,0 +1,251 @@
+/**
+ * Texts of all e-mails of the appointment booking (feature `terminbuchung`).
+ *
+ * Pure builders, used by the senders (api/buche-termin, bookingCancel, bookingInvoices)
+ * and by the preview in the admin (/admin/buchungen/e-mails) — so the preview always shows
+ * exactly what is sent.
+ */
+
+export type Mail = { subject: string; text: string; html?: string };
+
+export function applyTokens(str: string, tokens: Record<string, string>): string {
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
+}
+
+function richTextToPlain(
+	blocks: Array<{ text?: string }> | null | undefined,
+	tokens: Record<string, string>
+): string {
+	if (!blocks?.length) return '';
+	return blocks
+		.filter((b) => b.text)
+		.map((b) => applyTokens(b.text!, tokens))
+		.join('\n\n');
+}
+
+export type ConfirmationInput = {
+	titel: string;
+	/** «Montag, 9. November 2026» (empty = no date) */
+	datumLabel: string;
+	uhrzeit: string;
+	sessionLaenge: number | null;
+	name?: string;
+	companyName: string;
+	ortName: string;
+	ortAdresse: string;
+	ortWegbeschreibung: string;
+	ortTelefon: string;
+	ortKarte: string;
+	/** «Kostenlos stornierbar bis …» ('' = no deadline) */
+	stornoFrist: string;
+	cancelFeePercent: number | null;
+	offerPrice: number | null;
+	/** Settings «Betreff» / «Text» of the confirmation (with {{tokens}}) */
+	customSubject: string | null;
+	customBody: Array<{ text?: string }> | null;
+	/** Appointment converted to the customer's time zone ('' = same zone) */
+	customerTimezone?: string;
+	convertedTime?: string;
+	icsLink: string;
+	stornoLink: string;
+};
+
+/** Confirmation to the customer (with .ics attachment) */
+export function confirmationMail(c: ConfirmationInput): Mail {
+	const dateLabel = c.uhrzeit ? `${c.datumLabel}, ${c.uhrzeit} Uhr` : c.datumLabel;
+	const durationLine = c.sessionLaenge ? ` (${c.sessionLaenge} min)` : '';
+	const terminLine = `${c.titel}${durationLine}\n${dateLabel}`;
+
+	const tokens: Record<string, string> = {
+		Titel: c.titel,
+		Datum: c.datumLabel || '–',
+		Uhrzeit: c.uhrzeit || '–',
+		Dauer: c.sessionLaenge ? `${c.sessionLaenge} min` : '–',
+		Name: c.name || '',
+		Firma: c.companyName,
+		Ort: c.ortAdresse || c.ortName,
+		Wegbeschreibung: c.ortWegbeschreibung,
+		'Ort-Telefon': c.ortTelefon,
+		'Ort-Karte': c.ortKarte,
+		Stornofrist: c.stornoFrist
+	};
+
+	const subject = c.customSubject
+		? applyTokens(c.customSubject, tokens)
+		: `Terminbestätigung: ${c.titel}`;
+
+	// .ics download works with every calendar app (no Google Calendar link)
+	const calendarLine = c.datumLabel ? `\nZum Kalender hinzufügen: ${c.icsLink}` : '';
+	const customerTzLine = c.convertedTime
+		? `\nDer Termin in Ihrer Zeitzone (${c.customerTimezone}): ${c.convertedTime}`
+		: '';
+
+	const bodyText =
+		richTextToPlain(c.customBody, tokens) ||
+		[
+			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			``,
+			`Ihr Termin wurde erfolgreich gebucht.`,
+			``,
+			`Termin: ${terminLine}`,
+			// Location of the offer (if linked and active)
+			...(c.ortName || c.ortAdresse
+				? [``, `Ort: ${[c.ortName, c.ortAdresse].filter(Boolean).join(', ')}`]
+				: []),
+			...(c.ortWegbeschreibung ? [``, `Wegbeschreibung:`, c.ortWegbeschreibung] : []),
+			...(c.ortTelefon ? [`Telefon: ${c.ortTelefon}`] : []),
+			...(c.ortKarte ? [`Karte: ${c.ortKarte}`] : []),
+			``,
+			...(c.stornoFrist
+				? [
+						c.cancelFeePercent && c.offerPrice
+							? `Kostenlos stornierbar bis ${c.stornoFrist} Uhr, danach mit einer Stornogebühr von ${c.cancelFeePercent}%.`
+							: `Online stornierbar bis ${c.stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
+						``
+					]
+				: []),
+			`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
+			``,
+			`Freundliche Grüsse`,
+			c.companyName
+		].join('\n');
+
+	const html =
+		bodyText
+			.split('\n')
+			.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
+			.join('') +
+		(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
+		(calendarLine ? `<p><a href="${c.icsLink}">Zum Kalender hinzufügen</a></p>` : '') +
+		`<p><a href="${c.stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+
+	return {
+		subject,
+		text: bodyText + customerTzLine + calendarLine + `\n\nStornieren: ${c.stornoLink}`,
+		html
+	};
+}
+
+export type ProviderBookingInput = {
+	titel: string;
+	datumLabel: string;
+	uhrzeit: string;
+	endzeit: string;
+	sessionLaenge: number | null;
+	ortName: string;
+	ortAdresse: string;
+	name?: string;
+	email?: string;
+	/** Further form fields «Label: Wert» */
+	extraLines: string[];
+};
+
+/** Notification to the provider about a new online booking (with .ics attachment) */
+export function providerBookingMail(p: ProviderBookingInput): Mail {
+	return {
+		subject: `Neue Buchung: ${p.titel}`,
+		text: [
+			`Neue Buchung eingegangen.`,
+			``,
+			`Angebot: ${p.titel}`,
+			`Datum: ${p.datumLabel || '–'}`,
+			`Zeit: ${p.uhrzeit || '–'}${p.endzeit ? ' – ' + p.endzeit : ''} Uhr`,
+			`Dauer: ${p.sessionLaenge ? p.sessionLaenge + ' Minuten' : '–'}`,
+			...(p.ortName ? [`Ort: ${p.ortName}`] : []),
+			...(p.ortAdresse ? [`Adresse: ${p.ortAdresse}`] : []),
+			``,
+			`Name: ${p.name || 'Kunde/Kundin'}`,
+			...(p.email ? [`E-Mail: ${p.email}`] : []),
+			...(p.extraLines.length ? [``, ...p.extraLines] : [])
+		].join('\n')
+	};
+}
+
+type CancelBase = { titel: string; dateLabel: string; name?: string };
+
+/** Cancellation confirmation to the customer (free of charge) */
+export function cancelCustomerMail(c: CancelBase): Mail {
+	return {
+		subject: `Stornierung bestätigt: ${c.titel}`,
+		text: [
+			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			``,
+			`Ihre Buchung wurde erfolgreich storniert.`,
+			``,
+			`Angebot: ${c.titel}`,
+			`Datum: ${c.dateLabel}`
+		].join('\n')
+	};
+}
+
+/** Cancellation confirmation to the customer with the fee invoice attached */
+export function cancelFeeMail(
+	c: CancelBase & { freeUntilLabel: string | null; feePercent: number | null; companyName: string }
+): Mail {
+	return {
+		subject: `Stornierung bestätigt: ${c.titel}`,
+		text: [
+			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			``,
+			`Ihre Buchung wurde storniert.`,
+			``,
+			`Angebot: ${c.titel}`,
+			`Datum: ${c.dateLabel}`,
+			``,
+			`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
+				`stellen wir Ihnen die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
+			``,
+			`Freundliche Grüsse`,
+			c.companyName
+		].join('\n')
+	};
+}
+
+/** Cancellation notice to the provider */
+export function cancelProviderMail(
+	c: CancelBase & {
+		email?: string;
+		feePercent: number | null;
+		feeInvoiceNumber: string | null;
+		notes: string[];
+	}
+): Mail {
+	return {
+		subject: `Buchung storniert: ${c.titel}`,
+		text: [
+			`Eine Buchung wurde storniert.`,
+			``,
+			`Angebot: ${c.titel}`,
+			`Datum: ${c.dateLabel}`,
+			``,
+			`Name: ${c.name ?? '–'}`,
+			...(c.email ? [`E-Mail: ${c.email}`] : []),
+			...(c.feeInvoiceNumber
+				? [``, `Stornogebühr ${c.feePercent}%: Rechnung ${c.feeInvoiceNumber}`]
+				: []),
+			...(c.notes.length ? [``, ...c.notes] : []),
+			``,
+			`Der Termin ist wieder verfügbar.`
+		].join('\n')
+	};
+}
+
+/** Invoice after the appointment (setting «Rechnung nach dem Termin senden») */
+export function bookingInvoiceMail(
+	c: CancelBase & { invoiceNumber: string; companyName: string }
+): Mail {
+	return {
+		subject: `Ihre Rechnung ${c.invoiceNumber}${c.companyName ? ` – ${c.companyName}` : ''}`,
+		text: [
+			`Guten Tag${c.name ? ' ' + c.name : ''}`,
+			``,
+			`Vielen Dank für Ihren Besuch. Im Anhang finden Sie die Rechnung für:`,
+			``,
+			`${c.titel}`,
+			c.dateLabel,
+			``,
+			`Freundliche Grüsse`,
+			c.companyName
+		].join('\n')
+	};
+}

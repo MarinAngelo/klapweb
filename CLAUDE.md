@@ -428,6 +428,10 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 - **QR-Rechnung** (`src/lib/qrBill.js`, Standard 2.3, nur strukturierte Adressen): IBAN CH/LI, Absender-Adresse aus «Verantwortliche Adresse» (Zeile «Strasse Nr.» + Zeile «PLZ Ort»), nur CHF/EUR. Referenz: normale IBAN → Creditor Reference `RF…`, QR-IBAN → 27-stellige QR-Referenz, beides aus der Rechnungsnummer. Fehlt etwas → PDF ohne QR-Teil, «Inhalte prüfen» meldet `invoice_qr` (nur wenn eine Rechnungs-Funktion aktiv ist, `activeInvoicingFeatures()` in `gatingOverrides.js`; Terminbuchung allein nur mit «Rechnung nach dem Termin senden»)
 - **Zahlungsabgleich** (keine Bankanbindung): Bank-Export als CSV in `/admin/rechnungen` hochladen → `reconcilePayments()` (`src/lib/server/paymentMatching.ts`) sucht pro Zeile Referenz (RF/QR, auch nachgerechnet aus der Rechnungsnummer) oder Rechnungsnummer im Text (ZKB: «Zahlungszweck»), Betrag nur aus Gutschrift-Spalte (falls vorhanden), bei exaktem Betrag → «bezahlt» mit Buchungsdatum; «Nur prüfen» = ohne Verbuchen. Sonst «bezahlt» von Hand / Mehrfachauswahl
 
+### Terminbuchung: E-Mails
+
+- **Alle Mail-Texte der Terminbuchung nur in `src/lib/server/bookingMails.ts`** (reine Funktionen: Bestätigung, Neue Buchung, Stornierungen, Rechnung nach dem Termin). Versand und Vorschau `/admin/buchungen/e-mails` nutzen dieselben Funktionen — neue Mail → dort ergänzen und in die Vorschau aufnehmen
+
 ### Terminbuchung: Stornierung (`/termin-stornieren`)
 
 - Link in der Bestätigungs-Mail: `cancelLink()` (`src/lib/server/bookingCancel.ts`) mit zufälligem `cancelToken` der Buchung. **Nie beim Aufruf stornieren** (Mail-Scanner öffnen Links) — Seite zeigt Bedingungen, Stornierung erst per Knopf (Form-Action). Alte Links `/api/storniere-termin` leiten dorthin um

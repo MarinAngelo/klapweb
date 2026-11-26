@@ -8,6 +8,7 @@
  */
 import { listBookings, updateBooking, type BookingRecord } from '$lib/server/bookings';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
+import { bookingInvoiceMail } from '$lib/server/bookingMails';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 /** End of the appointment (without buffer); start when there is no end time */
@@ -64,18 +65,13 @@ export async function sendDueBookingInvoices(now = Date.now()): Promise<string[]
 					invoiceNumber: invoice.invoiceNumber,
 					pdf: invoice.pdf,
 					to: booking.email,
-					subject: `Ihre Rechnung ${invoice.invoiceNumber}${settings.name ? ` – ${settings.name}` : ''}`,
-					text: [
-						`Guten Tag${booking.name ? ' ' + booking.name : ''}`,
-						``,
-						`Vielen Dank für Ihren Besuch. Im Anhang finden Sie die Rechnung für:`,
-						``,
-						`${booking.titel}`,
+					...bookingInvoiceMail({
+						titel: booking.titel,
 						dateLabel,
-						``,
-						`Freundliche Grüsse`,
-						settings.name
-					].join('\n')
+						name: booking.name,
+						invoiceNumber: invoice.invoiceNumber,
+						companyName: settings.name
+					})
 				});
 			}
 		} catch (e) {
