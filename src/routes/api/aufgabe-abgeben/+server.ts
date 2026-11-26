@@ -9,7 +9,13 @@ import { getAnnahme, updateAnnahme, berechneCredits } from '$lib/server/aufgaben
 import { getBuchungByReferenz, getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import {
+	taskSubmittedLines,
+	taskSubmittedMail,
+	taskSubmittedOperatorMail
+} from '$lib/server/aufgabenMails';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	let form: FormData;
@@ -122,37 +128,17 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			/* non-critical */
 		}
 
-		const creditsFormatted = new Intl.NumberFormat('de-CH', {
-			style: 'currency',
-			currency: 'CHF'
-		}).format(credits);
-		const preisFormatted =
-			buchungspreis != null
-				? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
-						buchungspreis
-					)
-				: null;
-		const restFormatted =
-			buchungspreis != null
-				? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
-						Math.max(0, buchungspreis - credits)
-					)
-				: null;
-
-		const abrechnungsZeilen = [
-			`Aufgabe:        ${annahme.aufgabeTitel}`,
-			...(minutenVal ? [`Geleistete Zeit: ${minutenVal} Minuten`] : []),
-			...(kommentar ? [`Kommentar:      ${kommentar}`] : []),
-			`Credits:        ${creditsFormatted}`,
-			...(preisFormatted
-				? [
-						``,
-						`Buchungspreis:  ${preisFormatted}`,
-						`Abzug Credits:  ${creditsFormatted}`,
-						`Restbetrag:     ${restFormatted}`
-					]
-				: [])
-		].join('\n');
+		const lines = taskSubmittedLines({
+			titel: annahme.aufgabeTitel,
+			minuten: minutenVal,
+			kommentar,
+			credits,
+			buchungspreis
+		});
+		const [style, theme] = await Promise.all([
+			getTextStyle(),
+			loadMailTheme(createClient({ fetch })).catch(() => null)
+		]);
 
 		try {
 			const { Resend } = await import('resend');
@@ -172,16 +158,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						.send({
 							from: emailFrom,
 							to: annahme.email,
-							subject: `Abrechnung: ${annahme.aufgabeTitel}`,
-							text: [
-								`Guten Tag ${annahme.name}`,
-								``,
-								`Vielen Dank – Ihre Aufgabe wurde erfasst und wird vom Betreiber geprüft.`,
-								``,
-								abrechnungsZeilen,
-								``,
-								`Freundliche Grüsse`
-							].join('\n')
+							...taskSubmittedMail({
+								titel: annahme.aufgabeTitel,
+								name: annahme.name,
+								lines,
+								style,
+								theme
+							})
 						})
 						.then(({ error: e }) => {
 							if (e) console.error('Abrechnung Nutzer-Mail fehlgeschlagen:', e);
@@ -195,16 +178,13 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						.send({
 							from: emailFrom,
 							to: adminEmail,
-							subject: `Aufgabe abgegeben: ${annahme.aufgabeTitel}`,
-							text: [
-								`Eine Aufgabe wurde abgegeben und wartet auf Prüfung.`,
-								``,
-								`Name:    ${annahme.name}`,
-								`E-Mail:  ${annahme.email}`,
-								`Buchung: ${annahme.buchungId}`,
-								``,
-								abrechnungsZeilen
-							].join('\n'),
+							...taskSubmittedOperatorMail({
+								titel: annahme.aufgabeTitel,
+								name: annahme.name,
+								email: annahme.email,
+								buchungId: annahme.buchungId,
+								lines
+							}),
 							...(attachments.length > 0 ? { attachments } : {})
 						})
 						.then(({ error: e }) => {

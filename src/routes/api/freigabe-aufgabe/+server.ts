@@ -8,9 +8,12 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getAnnahme, updateAnnahme } from '$lib/server/aufgaben';
 import { env } from '$env/dynamic/private';
 import { isAuthorizedAdminAction } from '$lib/server/adminAuth';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { taskConfirmedMail } from '$lib/server/aufgabenMails';
 
-export const GET: RequestHandler = async ({ url, cookies }) => {
+export const GET: RequestHandler = async ({ url, cookies, fetch }) => {
 	const id = url.searchParams.get('id');
 	if (!isAuthorizedAdminAction('freigabe-aufgabe', id ?? '', url, cookies))
 		return html(403, 'Kein Zugriff');
@@ -41,32 +44,22 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const emailFrom = await getMailFrom();
 
 	if (resendKey && emailFrom && annahme.email) {
+		const mail = taskConfirmedMail({
+			titel: annahme.aufgabeTitel,
+			name: annahme.name,
+			creditTyp: annahme.creditTyp,
+			creditBetrag: annahme.creditBetrag,
+			buchungId: annahme.buchungId,
+			style: await getTextStyle(),
+			theme: await loadMailTheme(createClient({ fetch })).catch(() => null)
+		});
+		const to = annahme.email;
 		import('resend')
-			.then(({ Resend }) => {
-				const resend = new Resend(resendKey);
-				resend.emails
-					.send({
-						from: emailFrom,
-						to: annahme!.email!,
-						subject: `Aufgabe bestätigt: ${annahme!.aufgabeTitel}`,
-						text: [
-							`Guten Tag ${annahme!.name}`,
-							``,
-							`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
-							``,
-							`Aufgabe: ${annahme!.aufgabeTitel}`,
-							`Credits: ${annahme!.creditTyp === 'fest' ? `${annahme!.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
-							``,
-							`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
-							`Buchungs-ID: ${annahme!.buchungId}`,
-							``,
-							`Freundliche Grüsse`
-						].join('\n')
-					})
-					.then(({ error: e }) => {
-						if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
-					});
-			})
+			.then(({ Resend }) =>
+				new Resend(resendKey).emails.send({ from: emailFrom, to, ...mail }).then(({ error: e }) => {
+					if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
+				})
+			)
 			.catch((e) => console.error('Resend import fehlgeschlagen:', e));
 	}
 

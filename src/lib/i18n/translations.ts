@@ -2342,6 +2342,45 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Aufgaben-Annahmen': { 'de-ch': 'Aufgaben-Annahmen', 'en-us': 'Task acceptances' },
+	'Diese E-Mails verschickt die Website zu den Aufgaben der Gäste. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Aufgabe; Name und E-Mail des Gastes sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Website zu den Aufgaben der Gäste. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Aufgabe; Name und E-Mail des Gastes sind Beispiele.',
+			'en-us':
+				'These emails are sent by the website for guest tasks. The preview uses your current settings and a sample task; guest name and email are examples.'
+		},
+	'Aufgabe angenommen (an Sie)': {
+		'de-ch': 'Aufgabe angenommen (an Sie)',
+		'en-us': 'Task accepted (to you)'
+	},
+	'Wenn ein Gast eine Aufgabe annimmt, mit Link zum Freigeben.': {
+		'de-ch': 'Wenn ein Gast eine Aufgabe annimmt, mit Link zum Freigeben.',
+		'en-us': 'When a guest accepts a task, with a link to approve.'
+	},
+	'Aufgabe bestätigt': { 'de-ch': 'Aufgabe bestätigt', 'en-us': 'Task confirmed' },
+	'Wenn Sie die Annahme freigeben (Link in der E-Mail oder in der Liste).': {
+		'de-ch': 'Wenn Sie die Annahme freigeben (Link in der E-Mail oder in der Liste).',
+		'en-us': 'When you approve the acceptance (link in the email or in the list).'
+	},
+	'Abrechnung der Aufgabe': { 'de-ch': 'Abrechnung der Aufgabe', 'en-us': 'Task statement' },
+	'Wenn der Gast die erledigte Aufgabe abgibt.': {
+		'de-ch': 'Wenn der Gast die erledigte Aufgabe abgibt.',
+		'en-us': 'When the guest submits the completed task.'
+	},
+	'Aufgabe abgegeben (an Sie)': {
+		'de-ch': 'Aufgabe abgegeben (an Sie)',
+		'en-us': 'Task submitted (to you)'
+	},
+	'Wenn der Gast die erledigte Aufgabe abgibt, mit einem allfälligen Foto im Anhang.': {
+		'de-ch': 'Wenn der Gast die erledigte Aufgabe abgibt, mit einem allfälligen Foto im Anhang.',
+		'en-us': 'When the guest submits the completed task, with a photo attached if any.'
+	},
+	'Aufgabe freigegeben': { 'de-ch': 'Aufgabe freigegeben', 'en-us': 'Task approved' },
+	'Wenn Sie die erledigte Aufgabe prüfen und freigeben.': {
+		'de-ch': 'Wenn Sie die erledigte Aufgabe prüfen und freigeben.',
+		'en-us': 'When you review and approve the completed task.'
+	},
 	'Angebot wählen': { 'de-ch': 'Angebot wählen', 'en-us': 'Choose a service' },
 	'Angebot ändern': { 'de-ch': 'Angebot ändern', 'en-us': 'Change service' },
 	'Ihre Abrechnung: {ressource}': {
