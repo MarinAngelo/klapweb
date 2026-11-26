@@ -1036,6 +1036,37 @@ p {
 		cursor: default;
 	}
 
+	/* Full-page loading overlay (e.g. appointments loading): page blurred, spinner in page colours */
+	.page-loading-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: color-mix(in srgb, var(--page-bg-color) 55%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+	}
+	.page-loading-spinner {
+		width: 4rem;
+		height: 4rem;
+		border-radius: 9999px;
+		border: 5px solid color-mix(in srgb, var(--page-color) 20%, transparent);
+		border-top-color: var(--page-color);
+		animation: page-loading-spin 0.9s linear infinite;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.page-loading-spinner {
+			animation-duration: 2.5s;
+		}
+	}
+	@keyframes page-loading-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
 	/* Collapsible body: toggle .is-open (animated via grid rows) */
 	.collapse-body {
 		display: grid;
