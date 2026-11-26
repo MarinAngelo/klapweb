@@ -699,12 +699,12 @@
 						</section>
 					{:else}
 						<div class="termin-step-heading">
-							<h4>
-								{activeOfferInfo?.titel ?? ''}{#if activeOfferInfo?.sessionLaenge}
+							<p class="termin-step-choice">
+								<strong>{activeOfferInfo?.titel ?? ''}</strong>{#if activeOfferInfo?.sessionLaenge}
 									<small class="termin-step-sub"
 										>{activeOfferInfo.sessionLaenge} {$_('Minuten')}</small
 									>{/if}
-							</h4>
+							</p>
 							{#if offers.length > 1 && !preselectedOffer}
 								<button type="button" class="termin-back" on:click={() => chooseOffer('')}
 									>{$_('Angebot ändern')}</button
@@ -713,7 +713,7 @@
 						</div>
 						{#if !selectedWorkday}
 							<section class="termin-step">
-								<h5 class="termin-step-title">{$_('Tag wählen')}</h5>
+								<h4 class="termin-step-title">{$_('Tag wählen')}</h4>
 								<div class="termin-day-options">
 									{#each Object.keys(termineByWorkday) as workday}
 										<button
@@ -729,12 +729,12 @@
 						{:else}
 							<section class="termin-step">
 								<div class="termin-step-heading">
-									<h5 class="termin-step-title">{selectedWorkday}</h5>
+									<p class="termin-step-choice"><strong>{selectedWorkday}</strong></p>
 									<button type="button" class="termin-back" on:click={() => chooseWorkday('')}
 										>{$_('Tag ändern')}</button
 									>
 								</div>
-								<h5 class="termin-step-title">{$_('Zeit wählen')}</h5>
+								<h4 class="termin-step-title">{$_('Zeit wählen')}</h4>
 								<div class="termin-options">
 									{#each Object.entries(selectedWorkdaySlots) as [time, t] (t.id)}
 										<label class:selected={selectedTermin === t.id} class="termin-option">
@@ -808,7 +808,8 @@
 	}
 
 	.termin-step-heading h4,
-	.termin-step-title {
+	.termin-step-title,
+	.termin-step-choice {
 		margin: 0;
 	}
 
