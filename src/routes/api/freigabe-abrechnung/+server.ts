@@ -13,6 +13,7 @@ import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
 import { getMailFrom } from '$lib/server/mailFrom';
+import { finalBillingMail } from '$lib/server/ressourceMail';
 
 function fmt(chf: number) {
 	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
@@ -176,49 +177,20 @@ export const POST: RequestHandler = async ({ url, request, cookies }) => {
 		const erledigt = annahmen.filter((a) => a.status === 'erledigt');
 		const creditsCHF = buchung.creditsCHF ?? erledigt.reduce((s, a) => s + berechneCredits(a), 0);
 
-		const aufgabenZeilen = erledigt.length
-			? erledigt.map((a) => `  · ${a.aufgabeTitel}: − ${fmt(berechneCredits(a))}`).join('\n')
-			: '  (keine)';
-
 		try {
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
 			const { error: e } = await resend.emails.send({
 				from: emailFrom,
 				to: buchung.email,
-				subject: `Ihre Abrechnung: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				text: [
-					`Guten Tag ${buchung.name ?? ''}`,
-					``,
-					`Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:`,
-					``,
-					`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-					`Anreise:   ${fmtDatum(buchung.von)}`,
-					`Abreise:   ${fmtDatum(buchung.bis)}`,
-					`Buchungs-Nr.: ${buchung.referenz ?? buchung.id}`,
-					``,
-					`─────────────────────────────────────`,
-					`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-					...(creditsCHF > 0
-						? [
-								`Credits (Aufgaben): − ${fmt(creditsCHF)}`,
-								``,
-								`Erledigte Aufgaben:`,
-								aufgabenZeilen
-							]
-						: []),
-					`─────────────────────────────────────`,
-					`Total:              ${fmt(betrag)}`,
-					...(betragEur !== null && eurRate
-						? [
-								`Entspricht ca.:    ${fmtEur(betragEur)}`,
-								`(Tageskurs: 1 CHF = ${eurRate.toFixed(4)} EUR)`
-							]
-						: []),
-					`─────────────────────────────────────`,
-					``,
-					`Freundliche Grüsse`
-				].join('\n')
+				...finalBillingMail({
+					...buchung,
+					creditsCHF,
+					aufgaben: erledigt.map((a) => ({ titel: a.aufgabeTitel, credits: berechneCredits(a) })),
+					betrag,
+					betragEur,
+					eurRate: eurRate ?? null
+				})
 			});
 			if (e) {
 				mailFehler = JSON.stringify(e);
