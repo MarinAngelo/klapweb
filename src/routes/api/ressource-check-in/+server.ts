@@ -3,6 +3,7 @@ import { checkInBuchung } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { checkInMail } from '$lib/server/ressourceMail';
 
 export async function POST({ request, fetch }) {
 	const { referenz, items, kommentar } = await request.json();
@@ -33,25 +34,13 @@ export async function POST({ request, fetch }) {
 		}
 	}
 	if (resendKey && toEmail && emailFrom && buchung) {
-		const [vonY, vonM, vonD] = buchung.von.split('-');
-		const [bisY, bisM, bisD] = buchung.bis.split('-');
 		try {
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
 			await resend.emails.send({
 				from: emailFrom,
 				to: toEmail,
-				subject: `Check-in: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				text: [
-					`${buchung.name ?? '–'} hat eingecheckt.`,
-					``,
-					`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-					`Anreise:   ${vonD}.${vonM}.${vonY}`,
-					`Abreise:   ${bisD}.${bisM}.${bisY}`,
-					`Personen:  ${buchung.personen}`,
-					...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : []),
-					...(kommentar ? [``, `Kommentar:`, kommentar] : [])
-				].join('\n')
+				...checkInMail({ ...buchung, items, kommentar })
 			});
 		} catch (e) {
 			console.error('Check-in E-Mail Fehler:', e);

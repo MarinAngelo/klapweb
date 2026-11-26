@@ -2342,6 +2342,89 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Ihre Abrechnung: {ressource}': {
+		'de-ch': 'Ihre Abrechnung: {ressource}',
+		'en-us': 'Your invoice: {ressource}'
+	},
+	'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:': {
+		'de-ch': 'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:',
+		'en-us': 'Thank you for your stay. Here is your final invoice:'
+	},
+	'Buchungs-Nr.': { 'de-ch': 'Buchungs-Nr.', 'en-us': 'Booking no.' },
+	Mietpreis: { 'de-ch': 'Mietpreis', 'en-us': 'Rental price' },
+	'Credits (Aufgaben)': { 'de-ch': 'Credits (Aufgaben)', 'en-us': 'Credits (tasks)' },
+	'Erledigte Aufgaben': { 'de-ch': 'Erledigte Aufgaben', 'en-us': 'Completed tasks' },
+	'(keine)': { 'de-ch': '(keine)', 'en-us': '(none)' },
+	'Entspricht ca.': { 'de-ch': 'Entspricht ca.', 'en-us': 'Approx.' },
+	Tageskurs: { 'de-ch': 'Tageskurs', 'en-us': 'Daily rate' },
+	'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.',
+			'en-us':
+				'These emails are sent by the resource booking. The preview uses the texts of the first resource and a sample booking; guest name and email are examples. Emails to guests are in the language of the booking, emails to you always in German.'
+		},
+	'Beispiel-Ressource': { 'de-ch': 'Beispiel-Ressource', 'en-us': 'Sample resource' },
+	'keine Ressource gefunden — erfundenes Beispiel': {
+		'de-ch': 'keine Ressource gefunden — erfundenes Beispiel',
+		'en-us': 'no resource found — made-up example'
+	},
+	'Neue Buchungsanfrage (an Sie)': {
+		'de-ch': 'Neue Buchungsanfrage (an Sie)',
+		'en-us': 'New booking request (to you)'
+	},
+	'Nach jeder Buchungsanfrage auf der Website, mit Link zum Bestätigen.': {
+		'de-ch': 'Nach jeder Buchungsanfrage auf der Website, mit Link zum Bestätigen.',
+		'en-us': 'After every booking request on the website, with a link to confirm.'
+	},
+	Buchungsbestätigung: { 'de-ch': 'Buchungsbestätigung', 'en-us': 'Booking confirmation' },
+	'Wenn Sie die Anfrage bestätigen. Text: Inhalts-Typ «Ressource» (Buchungsbestätigung), sonst Standardtext.':
+		{
+			'de-ch':
+				'Wenn Sie die Anfrage bestätigen. Text: Inhalts-Typ «Ressource» (Buchungsbestätigung), sonst Standardtext.',
+			'en-us':
+				'When you confirm the request. Text: content type «Resource» (booking confirmation), otherwise standard text.'
+		},
+	Ankunftserinnerung: { 'de-ch': 'Ankunftserinnerung', 'en-us': 'Arrival reminder' },
+	'48 Stunden vor der Anreise, bei kurzfristiger Bestätigung sofort. Text: Inhalts-Typ «Ressource» (Erinnerung).':
+		{
+			'de-ch':
+				'48 Stunden vor der Anreise, bei kurzfristiger Bestätigung sofort. Text: Inhalts-Typ «Ressource» (Erinnerung).',
+			'en-us':
+				'48 hours before arrival, immediately for short-notice confirmations. Text: content type «Resource» (reminder).'
+		},
+	'Nach der Ankunft': { 'de-ch': 'Nach der Ankunft', 'en-us': 'After arrival' },
+	'24 Stunden nach der Anreise, nur mit Text im Inhalts-Typ «Ressource».': {
+		'de-ch': '24 Stunden nach der Anreise, nur mit Text im Inhalts-Typ «Ressource».',
+		'en-us': '24 hours after arrival, only with a text in the content type «Resource».'
+	},
+	Abreiseerinnerung: { 'de-ch': 'Abreiseerinnerung', 'en-us': 'Departure reminder' },
+	'Am Vorabend der Abreise, nur mit Text im Inhalts-Typ «Ressource».': {
+		'de-ch': 'Am Vorabend der Abreise, nur mit Text im Inhalts-Typ «Ressource».',
+		'en-us': 'On the evening before departure, only with a text in the content type «Resource».'
+	},
+	'Check-in (an Sie)': { 'de-ch': 'Check-in (an Sie)', 'en-us': 'Check-in (to you)' },
+	'Wenn der Gast auf der Website eincheckt oder Sie den Check-in im Admin setzen.': {
+		'de-ch': 'Wenn der Gast auf der Website eincheckt oder Sie den Check-in im Admin setzen.',
+		'en-us': 'When the guest checks in on the website or you set the check-in in the admin.'
+	},
+	'Abrechnung freigeben (an Sie)': {
+		'de-ch': 'Abrechnung freigeben (an Sie)',
+		'en-us': 'Approve billing (to you)'
+	},
+	'Nach dem Check-out, mit Link zum Prüfen und Freigeben der Abrechnung.': {
+		'de-ch': 'Nach dem Check-out, mit Link zum Prüfen und Freigeben der Abrechnung.',
+		'en-us': 'After check-out, with a link to review and approve the billing.'
+	},
+	Abrechnung: { 'de-ch': 'Abrechnung', 'en-us': 'Billing' },
+	'Wenn Sie die Abrechnung freigeben.': {
+		'de-ch': 'Wenn Sie die Abrechnung freigeben.',
+		'en-us': 'When you approve the billing.'
+	},
+	'Willkommen: {ressource}': {
+		'de-ch': 'Willkommen: {ressource}',
+		'en-us': 'Welcome: {ressource}'
+	},
 	'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.':
 		{
 			'de-ch':

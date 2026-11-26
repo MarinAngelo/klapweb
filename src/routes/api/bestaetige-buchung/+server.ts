@@ -7,24 +7,17 @@
  *   {{Anreise}}, {{Abreise}}, {{Nächte}}, {{Personen}}, {{Zimmer}}, {{Total}}, {{Buchungsreferenz}}
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
-import {
-	loadVariablesData,
-	mailVariables,
-	renderMailHtml,
-	renderMailText
-} from '$lib/variables.js';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { loadVariablesData, mailVariables } from '$lib/variables.js';
 import { getRessourceBuchung, updateRessourceBuchungStatus } from '$lib/server/ressourceBuchungen';
 import { createClient } from '$lib/prismicio';
-import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
 import {
-	bestaetigungFallbackText,
-	bestaetigungTokens,
-	fallbackSubject,
-	getRessourceDocForBooking
+	confirmationGuestMail,
+	getRessourceDocForBooking,
+	type CmsMailContext
 } from '$lib/server/ressourceMail';
 import { getMailFrom } from '$lib/server/mailFrom';
 
@@ -68,16 +61,8 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	await maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 
 	// ── CMS-Template in der Buchungssprache laden (Fallback: Hauptsprache) ───
-	let ressourceName: string | undefined;
-	let mailHtml: string | null = null;
-	let cmsBetreff = '';
-	// Page colours (active theme) for the mail layout
-	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
-	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
-	let vars: ReturnType<typeof mailVariables> = {};
-	let cmsTextField: prismic.RichTextField | undefined;
+	const cms: CmsMailContext = { doc: null, vars: {}, theme: null };
 	let cmsDebug = '';
-
 	try {
 		const client = createClient({ fetch });
 		const [doc, variablesData, theme] = await Promise.all([
@@ -85,27 +70,14 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 			loadVariablesData(client),
 			loadMailTheme(client, buchung.lang)
 		]);
-		mailTheme = theme;
-		vars = mailVariables(variablesData, buchung.lang);
-		const d = doc.data as any;
-		ressourceName = d.name;
-		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
-		cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
-		cmsDebug = `Prismic OK — uid=${buchung.ressourceUid}, lang=${doc.lang}, betreff="${cmsBetreff || '(leer)'}", text.length=${cmsTextField?.length ?? 0}`;
+		cms.doc = doc.data as Record<string, any>;
+		cms.vars = mailVariables(variablesData, buchung.lang);
+		cms.theme = theme;
+		cmsDebug = `Prismic OK — uid=${buchung.ressourceUid}, lang=${doc.lang}, betreff="${cms.doc.buchungsbestaetigung_betreff?.trim() || '(leer)'}", text.length=${cms.doc.buchungsbestaetigung_text?.length ?? 0}`;
 	} catch (err) {
 		cmsDebug = `Prismic Fehler: ${err}`;
 	}
-
-	const tokenMap = bestaetigungTokens(buchung, ressourceName);
-	const betreff = cmsBetreff
-		? renderMailText(cmsBetreff, tokenMap, vars)
-		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
-	if (cmsTextField?.length) {
-		mailHtml = wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
-			lang: buchung.lang,
-			subject: betreff
-		});
-	}
+	const mail = confirmationGuestMail(buchung, cms);
 
 	// ── Mail senden ───────────────────────────────────────────────────────────
 	const resendKey = env.RESEND_API_KEY;
@@ -114,43 +86,21 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	let mailFehler = '';
 
 	if (resendKey && emailFrom && buchung.email) {
-		if (mailHtml) {
-			try {
-				const { Resend } = await import('resend');
-				const { error: e } = await new Resend(resendKey).emails.send({
-					from: emailFrom,
-					to: buchung.email,
-					subject: betreff,
-					html: mailHtml
-				});
-				if (e) {
-					mailFehler = JSON.stringify(e);
-				} else {
-					mailGesendet = true;
-				}
-			} catch (e) {
-				mailFehler = String(e);
+		try {
+			const { Resend } = await import('resend');
+			const { error: e } = await new Resend(resendKey).emails.send({
+				from: emailFrom,
+				to: buchung.email,
+				subject: mail.subject,
+				...(mail.html ? { html: mail.html } : { text: mail.text })
+			});
+			if (e) {
+				mailFehler = JSON.stringify(e);
+			} else {
+				mailGesendet = true;
 			}
-		} else {
-			// Fallback: plain text
-			const plainText = bestaetigungFallbackText(buchung, tokenMap);
-
-			try {
-				const { Resend } = await import('resend');
-				const { error: e } = await new Resend(resendKey).emails.send({
-					from: emailFrom,
-					to: buchung.email,
-					subject: betreff,
-					text: plainText
-				});
-				if (e) {
-					mailFehler = JSON.stringify(e);
-				} else {
-					mailGesendet = true;
-				}
-			} catch (e) {
-				mailFehler = String(e);
-			}
+		} catch (e) {
+			mailFehler = String(e);
 		}
 	}
 

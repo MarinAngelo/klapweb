@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import { _ } from '$lib/stores/i18n';
 	export let data: PageData;
 
 	function fmtDate(ds: string | null | undefined) {
@@ -109,6 +110,7 @@
 
 <div class="admin-container">
 	<AdminHeader title="Ressource-Buchungen" count={data.buchungen.length}>
+		<a href="/admin/ressource-buchungen/e-mails" class="admin-btn">{$_('E-Mail-Vorschau')}</a>
 		<button
 			type="button"
 			on:click={() => (showCreate = !showCreate)}

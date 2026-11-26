@@ -66,3 +66,17 @@ export function richTextToMail(
 		.map((b) => applyTokens(b.text!, tokens))
 		.join('\n\n');
 }
+
+/** Languages of the Prismic repository, main language first (language switch of a preview) */
+export async function previewLanguages(client: {
+	getRepository: () => Promise<{ languages: { id: string; name: string; is_master?: boolean }[] }>;
+}): Promise<{ id: string; name: string }[]> {
+	try {
+		const repo = await client.getRepository();
+		return [...repo.languages]
+			.sort((a, b) => Number(b.is_master === true) - Number(a.is_master === true))
+			.map((l) => ({ id: l.id, name: l.name }));
+	} catch {
+		return [];
+	}
+}
