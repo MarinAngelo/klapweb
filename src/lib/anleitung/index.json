@@ -240,10 +240,11 @@
 		"id": "ressourcen-buchung",
 		"title": "Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)",
 		"feature": "ressourcenbuchung",
-		"stand": "2026-11-11",
+		"stand": "2026-11-26",
 		"sources": [
 			"customtypes/_features/ressourcenbuchung",
 			"src/lib/server/ressourceBuchungen.ts",
+			"src/lib/server/ressourceMail.ts",
 			"src/lib/slices/RessourceBuchung",
 			"src/routes/admin/ressource-buchungen"
 		]

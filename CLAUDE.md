@@ -430,7 +430,7 @@ Aktiv wenn das Feature aktiv ist — keine Deklaration in `gating.json` nötig.
 
 ### E-Mail-Texte und Vorschau im Admin
 
-- **Mail-Texte pro Bereich als reine Funktionen** in `src/lib/server/<bereich>Mails.ts` (`bookingMails.ts` Terminbuchung, `invoiceMails.ts` Rechnungen/Bestellung/Mahnung). Versand und Vorschau nutzen dieselben Funktionen — nie Mail-Text direkt beim Versand schreiben
+- **Mail-Texte pro Bereich als reine Funktionen** in `src/lib/server/<bereich>Mails.ts` (`bookingMails.ts` Terminbuchung, `invoiceMails.ts` Rechnungen/Bestellung/Mahnung, `ressourceMail.ts` Ressourcen-Buchung; Ausnahme: `netlify/functions/send-reminders.ts` hat eigene Kopien, kein `$lib`). Versand und Vorschau nutzen dieselben Funktionen — nie Mail-Text direkt beim Versand schreiben
 - **Vorschau** pro Admin-Bereich unter `/admin/<bereich>/e-mails` mit `$lib/components/admin/MailPreview.svelte` + `PreviewMail[]` (`$lib/server/mailText.ts`, Beispielkunde `SAMPLE_CUSTOMER`), Schaltfläche «E-Mail-Vorschau» im Kopf des Bereichs. Neue Mail → Baustein + Eintrag in der Vorschau
 - **Anrede Du/Sie + Begrüssung:** Einstellungen › Main «Anrede in Standardtexten» (`address_form`, Standard «Sie») und «Begrüssung in Standardtexten» (`mail_greeting`, leer = «Guten Tag»). Server: `getTextStyle()` (`mailFrom.ts`) bzw. `textStyleFrom(settingsData)` → `{ du, greeting }`, Text mit `duSie(style.du, 'Ihre', 'Deine')` und `greetingLine(style, name)` (`$lib/addressForm`). Umgesetzt für die Mails der Terminbuchung und Rechnungen; neue Standardtexte an Kunden immer in beiden Formen
 

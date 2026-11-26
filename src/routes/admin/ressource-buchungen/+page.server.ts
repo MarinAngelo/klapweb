@@ -1,13 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
-import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
-import {
-	loadVariablesData,
-	mailVariables,
-	renderMailHtml,
-	renderMailText
-} from '$lib/variables.js';
-import { plainTextMail } from '$lib/server/mailText';
-import { formatDateWithWeekday } from '$lib/utils/formatDate';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { loadVariablesData, mailVariables } from '$lib/variables.js';
 import {
 	listAlleRessourceBuchungen,
 	deleteRessourceBuchung,
@@ -18,27 +11,19 @@ import {
 } from '$lib/server/ressourceBuchungen';
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
-import * as prismic from '@prismicio/client';
 import { maybeSendAnkunftsErinnerung, sendAbreiseErinnerung } from '$lib/server/reminderMail';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
 import {
-	bestaetigungFallbackText,
-	bestaetigungTokens,
-	fallbackSubject,
-	getRessourceDocForBooking
+	checkInMail,
+	checkoutBillingMail,
+	confirmationGuestMail,
+	getRessourceDocForBooking,
+	type CmsMailContext
 } from '$lib/server/ressourceMail';
 import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
 
 export const prerender = false;
-
-function fmt(chf: number) {
-	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
-}
-function fmtD(iso: string) {
-	const [y, m, d] = iso.split('-');
-	return `${d}.${m}.${y}`;
-}
 
 export const load: PageServerLoad = async () => {
 	let buchungen: RessourceBuchung[] = [];
@@ -71,13 +56,7 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
 	// CMS template in the booking language (fallback: main language)
-	let ressourceName: string | undefined;
-	let cmsBetreff = '';
-	// Page colours (active theme) for the mail layout
-	let mailTheme: Awaited<ReturnType<typeof loadMailTheme>> | null = null;
-	// Variablen (incl. multi-line text) in the booking language, replaced before the booking tokens
-	let vars: ReturnType<typeof mailVariables> = {};
-	let cmsTextField: prismic.RichTextField | undefined;
+	const cms: CmsMailContext = { doc: null, vars: {}, theme: null };
 	try {
 		const client = createClient({ fetch });
 		const [doc, variablesData, theme] = await Promise.all([
@@ -85,47 +64,22 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 			loadVariablesData(client),
 			loadMailTheme(client, buchung.lang)
 		]);
-		mailTheme = theme;
-		vars = mailVariables(variablesData, buchung.lang);
-		const d = doc.data as any;
-		ressourceName = d.name;
-		cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
-		cmsTextField = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
+		cms.doc = doc.data as Record<string, any>;
+		cms.vars = mailVariables(variablesData, buchung.lang);
+		cms.theme = theme;
 	} catch {
 		// Prismic unavailable — use fallback
 	}
-
-	const tokenMap = bestaetigungTokens(buchung, ressourceName);
-	const betreff = cmsBetreff
-		? renderMailText(cmsBetreff, tokenMap, vars)
-		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, ressourceName);
-	const mailHtml = cmsTextField?.length
-		? wrapMail(renderMailHtml(cmsTextField ?? [], tokenMap, vars, mailTheme), mailTheme, {
-				lang: buchung.lang,
-				subject: betreff
-			})
-		: null;
+	const mail = confirmationGuestMail(buchung, cms);
 
 	const { Resend } = await import('resend');
-	const resend = new Resend(resendKey);
-
-	if (mailHtml) {
-		const { error: e } = await resend.emails.send({
-			from: emailFrom,
-			to: buchung.email,
-			subject: betreff,
-			html: mailHtml
-		});
-		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
-	} else {
-		const { error: e } = await resend.emails.send({
-			from: emailFrom,
-			to: buchung.email,
-			subject: betreff,
-			text: bestaetigungFallbackText(buchung, tokenMap)
-		});
-		if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
-	}
+	const { error: e } = await new Resend(resendKey).emails.send({
+		from: emailFrom,
+		to: buchung.email,
+		subject: mail.subject,
+		...(mail.html ? { html: mail.html } : { text: mail.text })
+	});
+	if (e) console.error('Bestätigungsmail fehlgeschlagen:', e);
 }
 
 async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
@@ -137,15 +91,7 @@ async function mailCheckIn(buchung: RessourceBuchung, toEmail: string) {
 	await new Resend(resendKey).emails.send({
 		from: emailFrom,
 		to: toEmail,
-		subject: `Check-in: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-		text: [
-			`${buchung.name ?? '–'} hat eingecheckt.`,
-			``,
-			`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-			`Anreise:   ${fmtD(buchung.von)}`,
-			`Abreise:   ${fmtD(buchung.bis)}`,
-			`Personen:  ${buchung.personen}`
-		].join('\n')
+		...checkInMail(buchung)
 	});
 }
 
@@ -161,39 +107,17 @@ async function mailAbrechnung(buchung: RessourceBuchung, toEmail: string, freiga
 
 	await updateRessourceBuchung(buchung.id, { creditsCHF, abrechnungBetrag });
 
-	const aufgabenZeilen = erledigt.length
-		? erledigt.map((a) => `  · ${a.aufgabeTitel}: ${fmt(berechneCredits(a))}`)
-		: ['  (keine)'];
-
 	const { Resend } = await import('resend');
 	await new Resend(resendKey).emails.send({
 		from: emailFrom,
 		to: toEmail,
-		subject: `Abrechnung freigeben: ${buchung.ressourceName ?? buchung.ressourceUid} – ${buchung.name ?? '–'}`,
-		...plainTextMail(
-			[
-				`${buchung.name ?? '–'} hat ausgecheckt.`,
-				``,
-				`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-				`Anreise:   ${fmtD(buchung.von)}`,
-				`Abreise:   ${fmtD(buchung.bis)}`,
-				`Personen:  ${buchung.personen}`,
-				``,
-				`─────────────────────────────────────`,
-				`ABRECHNUNG`,
-				`─────────────────────────────────────`,
-				`Mietpreis:          ${fmt(buchung.preisCHF)}`,
-				`Credits (Aufgaben): ${fmt(creditsCHF)}`,
-				`─────────────────────────────────────`,
-				`Total:              ${fmt(abrechnungBetrag)}`,
-				``,
-				`Erledigte Aufgaben:`,
-				...aufgabenZeilen,
-				``,
-				`Abrechnung prüfen, korrigieren und freigeben:`,
-				freigabeUrl
-			].join('\n')
-		)
+		...checkoutBillingMail({
+			...buchung,
+			creditsCHF,
+			abrechnungBetrag,
+			aufgaben: erledigt.map((a) => ({ titel: a.aufgabeTitel, credits: berechneCredits(a) })),
+			freigabeLink: freigabeUrl
+		})
 	});
 }
 
