@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import type { Content } from '@prismicio/client';
 	import clsx from 'clsx';
 	import { theme } from '$lib/stores/theme';
@@ -14,8 +16,8 @@
 	export let index: number | undefined = undefined;
 
 	$: anim = mapAnimationFromPrimary(slice.primary);
-	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
-	$: textColor = (slice.primary as any).color || $theme.pageColor;
+	$: bgColor = (slice.primary as any).bg_color || $pageColorsStore.pageBgColor;
+	$: textColor = (slice.primary as any).color || $pageColorsStore.pageColor;
 	$: innerApply = ((slice.primary as any).inner_apply as boolean | undefined) ?? false;
 	$: visible = isVisibleForPlan((slice.primary as any).feature_gate, $planFilter);
 	$: centered =
@@ -36,7 +38,7 @@
 		{marginTopSize}
 		innerBackgroundColor={innerApply ? bgColor : undefined}
 		style="--page-color: {textColor}; --page-bg-color: {bgColor}; --scope-color: {textColor}; --scope-bg: {innerApply
-			? $theme.pageBgColor
+			? $pageColorsStore.pageBgColor
 			: bgColor};"
 		data-slice-type={slice.slice_type}
 		data-slice-variation={slice.variation}

@@ -36,8 +36,10 @@ export interface CreateInvoiceInput {
 	currency?: string;
 	notes?: string;
 	invoiceNumber?: string;
+	/** Invoice date (ISO); default now. Admin: backdating possible, never in the future */
+	date?: string;
 	paymentMethod?: 'rechnung' | 'bar';
-	paymentStatus?: 'offen' | 'bezahlt' | 'storniert';
+	paymentStatus?: 'offen' | 'gemahnt' | 'bezahlt' | 'storniert';
 	showQuantity?: boolean;
 	/** Already loaded settings (saves a Prismic request) */
 	settings?: InvoiceSettings;
@@ -84,7 +86,7 @@ export async function createInvoice(input: CreateInvoiceInput): Promise<CreatedI
 	const settings = input.settings ?? (await loadInvoiceSettings(input.fetch));
 	const invoiceNumber = input.invoiceNumber || newInvoiceNumber();
 	const currency = input.currency || settings.currency;
-	const date = new Date().toISOString();
+	const date = input.date || new Date().toISOString();
 	const document: InvoiceDocument = {
 		invoiceNumber,
 		date,
@@ -107,6 +109,7 @@ export async function createInvoice(input: CreateInvoiceInput): Promise<CreatedI
 				date,
 				status: 'gespeichert',
 				paymentStatus: input.paymentStatus ?? 'offen',
+				...(input.paymentStatus === 'bezahlt' ? { paidAt: date } : {}),
 				paymentMethod: input.paymentMethod ?? 'rechnung',
 				source: input.source,
 				relatedId: input.relatedId,
@@ -119,6 +122,7 @@ export async function createInvoice(input: CreateInvoiceInput): Promise<CreatedI
 				plz: r.plz || undefined,
 				ort: r.ort || undefined,
 				land: r.land || undefined,
+				total,
 				items: input.items,
 				notes: input.notes || undefined,
 				currency

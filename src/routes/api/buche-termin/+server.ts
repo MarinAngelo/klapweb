@@ -14,26 +14,8 @@ import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
 import { isAdmin } from '$lib/server/adminAuth';
-
-function fmtDate(datum: string, uhrzeit: string): string {
-	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
-	return uhrzeit ? `${formatted}, ${uhrzeit} Uhr` : formatted;
-}
-
-function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
-}
-
-function richTextToPlain(
-	blocks: Array<{ text?: string }> | null | undefined,
-	tokens: Record<string, string>
-): string {
-	if (!blocks?.length) return '';
-	return blocks
-		.filter((b) => b.text)
-		.map((b) => applyTokens(b.text!, tokens))
-		.join('\n\n');
-}
+import { confirmationMail, providerBookingMail } from '$lib/server/bookingMails';
+import { textStyleFrom } from '$lib/addressForm';
 
 function buildDatetimeStr(datum: string, uhrzeit: string): string {
 	// Returns floating local datetime string: YYYYMMDDTHHMMSS
@@ -365,71 +347,32 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
-		const dateLabel = fmtDate(datum, uhrzeit);
-		const durationLine = sessionLaenge ? ` (${sessionLaenge} min)` : '';
-		const terminLine = `${titel}${durationLine}\n${dateLabel}`;
-		const customerName = name || 'Kunde/Kundin';
-
-		const tokens: Record<string, string> = {
-			Titel: titel,
-			Datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–',
-			Uhrzeit: uhrzeit || '–',
-			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
-			Name: name || '',
-			Firma: companyName,
-			Ort: ortAdresse || ortName,
-			Wegbeschreibung: ortWegbeschreibung,
-			'Ort-Telefon': ortTelefon,
-			'Ort-Karte': ortKarte,
-			Stornofrist: stornoFrist
-		};
-
-		const subject = custEmailSubject
-			? applyTokens(custEmailSubject, tokens)
-			: `Terminbestätigung: ${titel}`;
-
-		// .ics download works with every calendar app (no Google Calendar link)
-		const calendarLine = datum ? `\nZum Kalender hinzufügen: ${icsDownloadLink}` : '';
-
-		const convertedTime = customerTimezone
-			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
-			: '';
-		const customerTzLine = convertedTime
-			? `\nDer Termin in Ihrer Zeitzone (${customerTimezone}): ${convertedTime}`
-			: '';
-
-		const bodyText =
-			richTextToPlain(custEmailBody, tokens) ||
-			[
-				`Guten Tag${name ? ' ' + name : ''}`,
-				``,
-				`Ihr Termin wurde erfolgreich gebucht.`,
-				``,
-				`Termin: ${terminLine}`,
-				// Location of the offer (if linked and active)
-				...(ortName || ortAdresse
-					? [``, `Ort: ${[ortName, ortAdresse].filter(Boolean).join(', ')}`]
-					: []),
-				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
-				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
-				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
-				``,
-				...(stornoFrist
-					? [
-							cancelFeePercent && offerPrice
-								? `Kostenlos stornierbar bis ${stornoFrist} Uhr, danach mit einer Stornogebühr von ${cancelFeePercent}%.`
-								: `Online stornierbar bis ${stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
-							``
-						]
-					: []),
-				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
-				``,
-				`Freundliche Grüsse`,
-				companyName
-			].join('\n');
-
-		const stornoLine = `\n\nStornieren: ${stornoLink}`;
-		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+		const datumLabel = datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '';
+		const confirmation = confirmationMail({
+			titel,
+			datumLabel,
+			uhrzeit,
+			sessionLaenge,
+			name,
+			companyName,
+			ortName,
+			ortAdresse,
+			ortWegbeschreibung,
+			ortTelefon,
+			ortKarte,
+			stornoFrist,
+			cancelFeePercent,
+			offerPrice,
+			customSubject: custEmailSubject,
+			customBody: custEmailBody,
+			customerTimezone,
+			convertedTime: customerTimezone
+				? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
+				: '',
+			icsLink: icsDownloadLink,
+			stornoLink,
+			style: textStyleFrom(settingsData)
+		});
 
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
@@ -449,24 +392,13 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 
 				// E-Mail an Kunden (admin booking: only if requested)
 				if (email && (!byAdmin || body.sendConfirmation)) {
-					const htmlBody =
-						bodyText
-							.split('\n')
-							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
-							.join('') +
-						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
-						(calendarLine
-							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
-							: '') +
-						stornoHtml;
-
 					resend.emails
 						.send({
 							from: fromEmail,
 							to: email,
-							subject,
-							text: bodyText + customerTzLine + calendarLine + stornoLine,
-							html: htmlBody,
+							subject: confirmation.subject,
+							text: confirmation.text,
+							html: confirmation.html,
 							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
@@ -492,25 +424,24 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 								.filter(Boolean)
 						: [];
 
+				const providerMail = providerBookingMail({
+					titel,
+					datumLabel,
+					uhrzeit,
+					endzeit,
+					sessionLaenge,
+					ortName,
+					ortAdresse,
+					name,
+					email,
+					extraLines
+				});
 				resend.emails
 					.send({
 						from: fromEmail,
 						to: toEmail,
-						subject: `Neue Buchung: ${titel}`,
-						text: [
-							`Neue Buchung eingegangen.`,
-							``,
-							`Angebot: ${titel}`,
-							`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
-							`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
-							`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
-							...(ortName ? [`Ort: ${ortName}`] : []),
-							...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
-							``,
-							`Name: ${customerName}`,
-							...(email ? [`E-Mail: ${email}`] : []),
-							...(extraLines.length ? [``, ...extraLines] : [])
-						].join('\n'),
+						subject: providerMail.subject,
+						text: providerMail.text,
 						attachments: providerIcsAttachment
 					})
 					.then(({ error: e }) => {

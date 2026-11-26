@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	// Own wrapper: replaces {{Variables}}, theme headings/links
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
 	import { page } from '$app/stores';
@@ -309,8 +311,8 @@
 			: ressource.preisProNacht
 		: 0;
 
-	$: bgColor = (slice.primary as any).bg_color || $theme.pageBgColor;
-	$: textColor = (slice.primary as any).text_color || $theme.pageColor;
+	$: bgColor = (slice.primary as any).bg_color || $pageColorsStore.pageBgColor;
+	$: textColor = (slice.primary as any).text_color || $pageColorsStore.pageColor;
 
 	let telefon = '';
 	let referenzEmail = '';

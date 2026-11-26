@@ -12,6 +12,8 @@
 
 	export let scope: 'page' | 'site' = 'page';
 	export let placeholder = '';
+	/** Search term typed before opening (Schaltfläche «Suche»: field + button) */
+	export let initialQuery = '';
 	export let onClose: () => void;
 
 	type SiteResult = { url: string; title: string; excerpt: string };
@@ -31,7 +33,7 @@
 	const MAX_RESULTS = 10;
 	let pagefind: Pagefind | null = null;
 
-	let query = '';
+	let query = initialQuery;
 	let pageHits: PageHit[] = [];
 	let siteResults: SiteResult[] = [];
 	let searching = false;
@@ -104,7 +106,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 <div
-	class="modal-backdrop fixed inset-0 z-50 flex items-start justify-center backdrop-blur-sm px-4 pt-[10vh]"
+	class="modal-backdrop fixed inset-0 z-[10000] flex items-center justify-center backdrop-blur-sm p-4"
 	data-page-search-ignore
 	on:click|self={onClose}
 >

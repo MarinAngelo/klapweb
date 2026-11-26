@@ -47,6 +47,7 @@ const UNLOCALIZED_ROUTES = new Set([
 	'manifest.webmanifest',
 	'mietvertrag',
 	'newsletter',
+	'offline',
 	'performance-report',
 	'preview',
 	'robots.txt',

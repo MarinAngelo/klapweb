@@ -34,8 +34,51 @@ function servePagefindIndex() {
 	};
 }
 
+const PRISMIC_POLL_MS = 5000;
+
+/**
+ * Dev only: reload the browser when something is published in Prismic. Polls the repository's
+ * master ref (changes with every publish); a webhook could not reach localhost. Drafts that are
+ * only saved do not change it — for those use the Prismic preview on localhost.
+ */
+function reloadOnPrismicPublish() {
+	return {
+		name: 'reload-on-prismic-publish',
+		apply: 'serve',
+		configureServer(server) {
+			let lastRef = null;
+			let lastRepo = null;
+			const poll = async () => {
+				try {
+					// Read every time: the branch (and with it the repository) may change while running
+					const repo = JSON.parse(readFileSync('slicemachine.config.json', 'utf8')).repositoryName;
+					const res = await fetch(`https://${repo}.cdn.prismic.io/api/v2`);
+					if (!res.ok) return;
+					const ref = (await res.json()).refs?.find((r) => r.isMasterRef)?.ref;
+					if (ref && repo === lastRepo && lastRef && ref !== lastRef) {
+						server.config.logger.info(
+							`Prismic: neue Veröffentlichung in «${repo}» → Seite neu laden`,
+							{
+								timestamp: true
+							}
+						);
+						server.ws.send({ type: 'full-reload' });
+					}
+					lastRef = ref ?? lastRef;
+					lastRepo = repo;
+				} catch {
+					// offline / VPN: try again with the next poll
+				}
+			};
+			poll();
+			const timer = setInterval(poll, PRISMIC_POLL_MS);
+			server.httpServer?.on('close', () => clearInterval(timer));
+		}
+	};
+}
+
 export default defineConfig({
-	plugins: [servePagefindIndex(), sveltekit()],
+	plugins: [servePagefindIndex(), reloadOnPrismicPublish(), sveltekit()],
 	server: {
 		host: '0.0.0.0',
 		port: 5173,

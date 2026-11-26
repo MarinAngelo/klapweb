@@ -204,6 +204,8 @@
 	}
 </script>
 
+<svelte:head><title>{$_('Agency Gating Editor')}</title></svelte:head>
+
 {#if !data.authenticated}
 	<!-- Login in the look of the site (same as /admin) -->
 	<LoginCard title={$_('Agency Gating Editor')} action="?/login">

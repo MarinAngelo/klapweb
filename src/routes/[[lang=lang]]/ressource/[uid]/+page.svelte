@@ -2,7 +2,7 @@
 	import { renderableSlices } from '$lib/utils/renderableSlices';
 	// Own wrapper: replaces {{Variables}}, theme headings/links
 	import PrismicRichText from '$lib/components/PrismicRichText.svelte';
-	import { SliceZone } from '@prismicio/svelte';
+	import SliceZone from '$lib/components/SliceZone.svelte';
 	import RichTextEmbed from '$lib/components/PrismicRichText/Embed.svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { components } from '$lib/slices';

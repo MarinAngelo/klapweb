@@ -484,6 +484,28 @@
 						"default_value": false
 					}
 				},
+				"no_rounded_corners": {
+					"type": "Boolean",
+					"config": {
+						"label": "Runde Ecken ausschalten",
+						"placeholder_false": "Nein",
+						"placeholder_true": "Ja",
+						"default_value": false
+					}
+				},
+				"image_bg_color": {
+					"type": "Color",
+					"config": {
+						"label": "Bild-Hintergrundfarbe"
+					}
+				},
+				"image_overlay_transparency": {
+					"type": "Number",
+					"config": {
+						"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
+						"placeholder": "100"
+					}
+				},
 				"title_level": {
 					"type": "Select",
 					"config": {
@@ -575,17 +597,13 @@
 									"default_value": false
 								}
 							},
-							"bild_hintergrund": {
-								"type": "Color",
+							"image_on_top": {
+								"type": "Boolean",
 								"config": {
-									"label": "Bild-Hintergrundfarbe"
-								}
-							},
-							"bild_overlay_transparenz": {
-								"type": "Number",
-								"config": {
-									"label": "Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar)",
-									"placeholder": "100"
+									"label": "Bild oben, Text unten",
+									"placeholder_false": "Nein",
+									"placeholder_true": "Ja",
+									"default_value": false
 								}
 							},
 							"bild_lupe": {

@@ -160,8 +160,8 @@ export const translations: Record<string, Record<string, string>> = {
 	Schaltfläche: { 'de-ch': 'Schaltfläche', 'en-us': 'Button' },
 	Event: { 'de-ch': 'Event', 'en-us': 'Event' },
 	Formular: { 'de-ch': 'Formular', 'en-us': 'Form' },
-	GlobaleEvents: { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
-	'Globale Events': { 'de-ch': 'Globale Events', 'en-us': 'Global Events' },
+	GlobaleEvents: { 'de-ch': 'Eventmanagement', 'en-us': 'Event management' },
+	Eventmanagement: { 'de-ch': 'Eventmanagement', 'en-us': 'Event management' },
 	MapEinbetten: { 'de-ch': 'MapEinbetten', 'en-us': 'Embed map' },
 	HtmlCode: { 'de-ch': 'HtmlCode', 'en-us': 'HTML Code' },
 	Inhaltsverzeichnis: { 'de-ch': 'Inhaltsverzeichnis', 'en-us': 'Table of Contents' },
@@ -305,6 +305,33 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'Redirecting to the {sprache} version in {n} seconds …'
 	},
 	'Jetzt wechseln': { 'de-ch': 'Jetzt wechseln', 'en-us': 'Switch now' },
+	'Etwas ist schiefgelaufen': {
+		'de-ch': 'Etwas ist schiefgelaufen',
+		'en-us': 'Something went wrong'
+	},
+	'Diese Seite gibt es nicht oder sie wurde verschoben.': {
+		'de-ch': 'Diese Seite gibt es nicht oder sie wurde verschoben.',
+		'en-us': 'This page does not exist or has been moved.'
+	},
+	'Bitte versuche es später noch einmal.': {
+		'de-ch': 'Bitte versuche es später noch einmal.',
+		'en-us': 'Please try again later.'
+	},
+	'Hier geht es zurück zur Startseite oder direkt zum Kontakt.': {
+		'de-ch': 'Hier geht es zurück zur Startseite oder direkt zum Kontakt.',
+		'en-us': 'Go back to the home page or get in touch directly.'
+	},
+	'Zur Startseite': { 'de-ch': 'Zur Startseite', 'en-us': 'Go to home page' },
+	'Kontakt aufnehmen': { 'de-ch': 'Kontakt aufnehmen', 'en-us': 'Get in touch' },
+	'Keine Verbindung': { 'de-ch': 'Keine Verbindung', 'en-us': 'No connection' },
+	'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.':
+		{
+			'de-ch':
+				'Diese Seite ist ohne Internet nicht verfügbar. Bereits besuchte Seiten kannst du weiterhin öffnen.',
+			'en-us':
+				'This page is not available offline. Pages you have already visited can still be opened.'
+		},
+	'Erneut versuchen': { 'de-ch': 'Erneut versuchen', 'en-us': 'Try again' },
 	'Seite nicht gefunden': {
 		'de-ch': 'Seite nicht gefunden',
 		'en-us': 'Page not found'
@@ -1612,6 +1639,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'and accept it.'
 	},
 	Haftungsausschluss: { 'de-ch': 'Haftungsausschluss', 'en-us': 'Disclaimer' },
+	'Allgemeine Geschäftsbedingungen (AGB)': {
+		'de-ch': 'Allgemeine Geschäftsbedingungen (AGB)',
+		'en-us': 'General Terms and Conditions (T&C)'
+	},
 	'Wird geladen…': { 'de-ch': 'Wird geladen…', 'en-us': 'Loading…' },
 
 	// GlobaleEvents
@@ -1646,6 +1677,107 @@ export const translations: Record<string, Record<string, string>> = {
 	'Per WhatsApp': { 'de-ch': 'Per WhatsApp', 'en-us': 'Via WhatsApp' },
 	'Per Telegram': { 'de-ch': 'Per Telegram', 'en-us': 'Via Telegram' },
 	Schliessen: { 'de-ch': 'Schliessen', 'en-us': 'Close' },
+	// Buchhaltung (admin)
+	'Eintrag bearbeiten': { 'de-ch': 'Eintrag bearbeiten', 'en-us': 'Edit entry' },
+	'Beleg entfernen': { 'de-ch': 'Beleg entfernen', 'en-us': 'Remove receipt' },
+	'{n} Einträge löschen?': { 'de-ch': '{n} Einträge löschen?', 'en-us': 'Delete {n} entries?' },
+	Auswählen: { 'de-ch': 'Auswählen', 'en-us': 'Select' },
+	'Ungültige Auswahl': { 'de-ch': 'Ungültige Auswahl', 'en-us': 'Invalid selection' },
+	'Keine Einträge ausgewählt': {
+		'de-ch': 'Keine Einträge ausgewählt',
+		'en-us': 'No entries selected'
+	},
+	'Unbekannte Aktion': { 'de-ch': 'Unbekannte Aktion', 'en-us': 'Unknown action' },
+	Buchhaltung: { 'de-ch': 'Buchhaltung', 'en-us': 'Accounting' },
+	'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).':
+		{
+			'de-ch':
+				'Einnahmen und Ausgaben. Bezahlte Rechnungen erscheinen automatisch als Einnahme (Datum = Zahlungsdatum).',
+			'en-us':
+				'Income and expenses. Paid invoices appear automatically as income (date = payment date).'
+		},
+	Einnahmen: { 'de-ch': 'Einnahmen', 'en-us': 'Income' },
+	Ausgaben: { 'de-ch': 'Ausgaben', 'en-us': 'Expenses' },
+	Ergebnis: { 'de-ch': 'Ergebnis', 'en-us': 'Result' },
+	'Neuer Eintrag': { 'de-ch': 'Neuer Eintrag', 'en-us': 'New entry' },
+	Ausgabe: { 'de-ch': 'Ausgabe', 'en-us': 'Expense' },
+	Einnahme: { 'de-ch': 'Einnahme', 'en-us': 'Income' },
+	'Betrag (CHF, inkl. MwSt.)': {
+		'de-ch': 'Betrag (CHF, inkl. MwSt.)',
+		'en-us': 'Amount (CHF, incl. VAT)'
+	},
+	Kategorie: { 'de-ch': 'Kategorie', 'en-us': 'Category' },
+	'Kategorie wählen …': { 'de-ch': 'Kategorie wählen …', 'en-us': 'Choose category …' },
+	'Beleg (PDF oder Bild, optional, max. 10 MB)': {
+		'de-ch': 'Beleg (PDF oder Bild, optional, max. 10 MB)',
+		'en-us': 'Receipt (PDF or image, optional, max. 10 MB)'
+	},
+	Buchungen: { 'de-ch': 'Buchungen', 'en-us': 'Bookings' },
+	'Keine Buchungen in diesem Jahr.': {
+		'de-ch': 'Keine Buchungen in diesem Jahr.',
+		'en-us': 'No bookings this year.'
+	},
+	Beleg: { 'de-ch': 'Beleg', 'en-us': 'Receipt' },
+	Anzeigen: { 'de-ch': 'Anzeigen', 'en-us': 'Show' },
+	Rechnung: { 'de-ch': 'Rechnung', 'en-us': 'Invoice' },
+	'Eintrag löschen?': { 'de-ch': 'Eintrag löschen?', 'en-us': 'Delete entry?' },
+	Januar: { 'de-ch': 'Januar', 'en-us': 'January' },
+	Februar: { 'de-ch': 'Februar', 'en-us': 'February' },
+	März: { 'de-ch': 'März', 'en-us': 'March' },
+	April: { 'de-ch': 'April', 'en-us': 'April' },
+	Mai: { 'de-ch': 'Mai', 'en-us': 'May' },
+	Juni: { 'de-ch': 'Juni', 'en-us': 'June' },
+	Juli: { 'de-ch': 'Juli', 'en-us': 'July' },
+	August: { 'de-ch': 'August', 'en-us': 'August' },
+	September: { 'de-ch': 'September', 'en-us': 'September' },
+	Oktober: { 'de-ch': 'Oktober', 'en-us': 'October' },
+	November: { 'de-ch': 'November', 'en-us': 'November' },
+	Dezember: { 'de-ch': 'Dezember', 'en-us': 'December' },
+	Verkauf: { 'de-ch': 'Verkauf', 'en-us': 'Sales' },
+	Dienstleistung: { 'de-ch': 'Dienstleistung', 'en-us': 'Service' },
+	Zinsen: { 'de-ch': 'Zinsen', 'en-us': 'Interest' },
+	Diverses: { 'de-ch': 'Diverses', 'en-us': 'Miscellaneous' },
+	Material: { 'de-ch': 'Material', 'en-us': 'Material' },
+	Miete: { 'de-ch': 'Miete', 'en-us': 'Rent' },
+	Software: { 'de-ch': 'Software', 'en-us': 'Software' },
+	Werbung: { 'de-ch': 'Werbung', 'en-us': 'Advertising' },
+	Reise: { 'de-ch': 'Reise', 'en-us': 'Travel' },
+	Versicherung: { 'de-ch': 'Versicherung', 'en-us': 'Insurance' },
+	Gebühren: { 'de-ch': 'Gebühren', 'en-us': 'Fees' },
+	'Bitte Einnahme oder Ausgabe wählen': {
+		'de-ch': 'Bitte Einnahme oder Ausgabe wählen',
+		'en-us': 'Please choose income or expense'
+	},
+	'Ungültiges Datum': { 'de-ch': 'Ungültiges Datum', 'en-us': 'Invalid date' },
+	'Bitte einen Text eingeben': {
+		'de-ch': 'Bitte einen Text eingeben',
+		'en-us': 'Please enter a text'
+	},
+	'Bitte einen Betrag grösser als 0 eingeben': {
+		'de-ch': 'Bitte einen Betrag grösser als 0 eingeben',
+		'en-us': 'Please enter an amount greater than 0'
+	},
+	'Bitte eine Kategorie wählen': {
+		'de-ch': 'Bitte eine Kategorie wählen',
+		'en-us': 'Please choose a category'
+	},
+	'Der Beleg ist grösser als 10 MB': {
+		'de-ch': 'Der Beleg ist grösser als 10 MB',
+		'en-us': 'The receipt is larger than 10 MB'
+	},
+	'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)': {
+		'de-ch': 'Beleg nur als PDF oder Bild (JPG, PNG, WebP, HEIC)',
+		'en-us': 'Receipt only as PDF or image (JPG, PNG, WebP, HEIC)'
+	},
+	ausgewählt: { 'de-ch': 'ausgewählt', 'en-us': 'selected' },
+	Aktion: { 'de-ch': 'Aktion', 'en-us': 'Action' },
+	'Aktion wählen …': { 'de-ch': 'Aktion wählen …', 'en-us': 'Choose action …' },
+	Ausführen: { 'de-ch': 'Ausführen', 'en-us': 'Apply' },
+	'Bild vergrössern': { 'de-ch': 'Bild vergrössern', 'en-us': 'Enlarge image' },
+	'Mit zwei Fingern oder Doppeltipp zoomen': {
+		'de-ch': 'Mit zwei Fingern oder Doppeltipp zoomen',
+		'en-us': 'Pinch or double-tap to zoom'
+	},
 	Link: { 'de-ch': 'Link', 'en-us': 'Link' },
 	// Event Status
 	Geplant: { 'de-ch': 'Geplant', 'en-us': 'Scheduled' },
@@ -2210,6 +2342,132 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent by the website for invoices. The preview uses your current settings and a sample invoice; customer name and email are examples.'
+		},
+	'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.': {
+		'de-ch':
+			'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.',
+		'en-us': 'When creating an invoice with «Send email» or when sending from the invoice list.'
+	},
+	'Bestellung gegen Rechnung': {
+		'de-ch': 'Bestellung gegen Rechnung',
+		'en-us': 'Order on invoice'
+	},
+	'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).':
+		{
+			'de-ch':
+				'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).',
+			'en-us':
+				'After an order or event registration on the website with payment «on invoice». Own text: settings (email for payment on invoice).'
+		},
+	'Neue Bestellung (an Sie)': {
+		'de-ch': 'Neue Bestellung (an Sie)',
+		'en-us': 'New order (to you)'
+	},
+	'Nach jeder Bestellung gegen Rechnung auf der Website.': {
+		'de-ch': 'Nach jeder Bestellung gegen Rechnung auf der Website.',
+		'en-us': 'After every order on invoice on the website.'
+	},
+	'Jährliche Rechnung': { 'de-ch': 'Jährliche Rechnung', 'en-us': 'Yearly invoice' },
+	'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».': {
+		'de-ch': 'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».',
+		'en-us': 'On the due date of an invoice with «Repeat yearly».'
+	},
+	'Jährliche Rechnung erstellt (an Sie)': {
+		'de-ch': 'Jährliche Rechnung erstellt (an Sie)',
+		'en-us': 'Yearly invoice created (to you)'
+	},
+	'Zusammen mit jeder jährlichen Rechnung.': {
+		'de-ch': 'Zusammen mit jeder jährlichen Rechnung.',
+		'en-us': 'Together with every yearly invoice.'
+	},
+	Mahnung: { 'de-ch': 'Mahnung', 'en-us': 'Payment reminder' },
+	'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.':
+		{
+			'de-ch':
+				'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.',
+			'en-us':
+				'If «Automatic reminders» is active: open invoice after the payment term plus «Reminder after … days». At most 2 reminders.'
+		},
+	'Mahnwesen (an Sie)': { 'de-ch': 'Mahnwesen (an Sie)', 'en-us': 'Reminders (to you)' },
+	'Nach jedem Mahnlauf mit mindestens einer Mahnung.': {
+		'de-ch': 'Nach jedem Mahnlauf mit mindestens einer Mahnung.',
+		'en-us': 'After every reminder run with at least one reminder.'
+	},
+	'E-Mail-Vorschau': { 'de-ch': 'E-Mail-Vorschau', 'en-us': 'Email preview' },
+	'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent automatically by the appointment booking. The preview uses your current settings and a sample appointment; customer name and email are examples.'
+		},
+	'Beispiel-Termin': { 'de-ch': 'Beispiel-Termin', 'en-us': 'Sample appointment' },
+	Anrede: { 'de-ch': 'Anrede', 'en-us': 'Form of address' },
+	'kein freier Termin gefunden — erfundenes Beispiel': {
+		'de-ch': 'kein freier Termin gefunden — erfundenes Beispiel',
+		'en-us': 'no free slot found — made-up example'
+	},
+	Absender: { 'de-ch': 'Absender', 'en-us': 'Sender' },
+	'wird verschickt': { 'de-ch': 'wird verschickt', 'en-us': 'is sent' },
+	'mit den aktuellen Einstellungen nicht verschickt': {
+		'de-ch': 'mit den aktuellen Einstellungen nicht verschickt',
+		'en-us': 'not sent with the current settings'
+	},
+	An: { 'de-ch': 'An', 'en-us': 'To' },
+	Anhang: { 'de-ch': 'Anhang', 'en-us': 'Attachment' },
+	'– (keine Adresse in den Einstellungen)': {
+		'de-ch': '– (keine Adresse in den Einstellungen)',
+		'en-us': '– (no address in the settings)'
+	},
+	Terminbestätigung: { 'de-ch': 'Terminbestätigung', 'en-us': 'Appointment confirmation' },
+	'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».': {
+		'de-ch': 'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».',
+		'en-us':
+			'After every online booking; for bookings made in the admin only with «Send confirmation».'
+	},
+	'Neue Buchung (an Sie)': { 'de-ch': 'Neue Buchung (an Sie)', 'en-us': 'New booking (to you)' },
+	'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.': {
+		'de-ch': 'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.',
+		'en-us': 'After every online booking, not for bookings made in the admin.'
+	},
+	'Stornierung bestätigt': { 'de-ch': 'Stornierung bestätigt', 'en-us': 'Cancellation confirmed' },
+	'Wenn die Kundin / der Kunde kostenlos storniert.': {
+		'de-ch': 'Wenn die Kundin / der Kunde kostenlos storniert.',
+		'en-us': 'When the customer cancels free of charge.'
+	},
+	'Stornierung mit Gebühr': { 'de-ch': 'Stornierung mit Gebühr', 'en-us': 'Cancellation with fee' },
+	'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.':
+		{
+			'de-ch':
+				'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.',
+			'en-us':
+				'Cancellation after the free period has expired, if the offer has a price and a cancellation fee.'
+		},
+	'Buchung storniert (an Sie)': {
+		'de-ch': 'Buchung storniert (an Sie)',
+		'en-us': 'Booking cancelled (to you)'
+	},
+	'Bei jeder Stornierung.': {
+		'de-ch': 'Bei jeder Stornierung.',
+		'en-us': 'On every cancellation.'
+	},
+	'Rechnung nach dem Termin': {
+		'de-ch': 'Rechnung nach dem Termin',
+		'en-us': 'Invoice after the appointment'
+	},
+	'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.':
+		{
+			'de-ch':
+				'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.',
+			'en-us':
+				'After the appointment has ended, if «Send invoice after the appointment» is active and the offer has a price.'
+		},
 	'Buchungen anzeigen, löschen, Termine sperren': {
 		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
 		'en-us': 'View and delete bookings, block time slots'
@@ -2627,7 +2885,298 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Kostenpflichtig stornieren',
 		'en-us': 'Cancel with fee'
 	},
-	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' },
+	// ── Assistenz (/admin/assistenz, Feature `assistenz`) ──
+	Assistenz: { 'de-ch': 'Assistenz', 'en-us': 'Assistance' },
+	'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal': {
+		'de-ch': 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+		'en-us': 'Monthly hours of the assistants, wages, deductions and yearly totals'
+	},
+	'Personen & Sätze': { 'de-ch': 'Personen & Sätze', 'en-us': 'People & rates' },
+	'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.':
+		{
+			'de-ch':
+				'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.',
+			'en-us':
+				'Monthly day and night hours of the assistants, with wages, deductions and totals. Open a month to enter hours.'
+		},
+	'Noch keine Personen erfasst.': {
+		'de-ch': 'Noch keine Personen erfasst.',
+		'en-us': 'No people added yet.'
+	},
+	'Noch keine Stundensätze erfasst.': {
+		'de-ch': 'Noch keine Stundensätze erfasst.',
+		'en-us': 'No hourly rates added yet.'
+	},
+	'Vorheriges Jahr': { 'de-ch': 'Vorheriges Jahr', 'en-us': 'Previous year' },
+	'Nächstes Jahr': { 'de-ch': 'Nächstes Jahr', 'en-us': 'Next year' },
+	Monate: { 'de-ch': 'Monate', 'en-us': 'Months' },
+	Tagstunden: { 'de-ch': 'Tagstunden', 'en-us': 'Day hours' },
+	Nachtstunden: { 'de-ch': 'Nachtstunden', 'en-us': 'Night hours' },
+	'Stunden total': { 'de-ch': 'Stunden total', 'en-us': 'Total hours' },
+	'Lohn brutto CHF': { 'de-ch': 'Lohn brutto CHF', 'en-us': 'Gross wage CHF' },
+	'Abzüge total CHF': { 'de-ch': 'Abzüge total CHF', 'en-us': 'Total deductions CHF' },
+	'Lohn netto CHF': { 'de-ch': 'Lohn netto CHF', 'en-us': 'Net wage CHF' },
+	aktuell: { 'de-ch': 'aktuell', 'en-us': 'current' },
+	'Noch nichts erfasst': { 'de-ch': 'Noch nichts erfasst', 'en-us': 'Nothing entered yet' },
+	Erfassen: { 'de-ch': 'Erfassen', 'en-us': 'Enter' },
+	Jahrestotal: { 'de-ch': 'Jahrestotal', 'en-us': 'Year total' },
+	'Jahrestotal pro Person': { 'de-ch': 'Jahrestotal pro Person', 'en-us': 'Year total per person' },
+	Person: { 'de-ch': 'Person', 'en-us': 'Person' },
+	Anstellung: { 'de-ch': 'Anstellung', 'en-us': 'Employment' },
+	'Taglohn CHF': { 'de-ch': 'Taglohn CHF', 'en-us': 'Day wage CHF' },
+	'Nachtlohn CHF': { 'de-ch': 'Nachtlohn CHF', 'en-us': 'Night wage CHF' },
+	'Änderungen nicht gespeichert. Trotzdem verlassen?': {
+		'de-ch': 'Änderungen nicht gespeichert. Trotzdem verlassen?',
+		'en-us': 'Changes not saved. Leave anyway?'
+	},
+	'Vorheriger Monat': { 'de-ch': 'Vorheriger Monat', 'en-us': 'Previous month' },
+	'Nächster Monat': { 'de-ch': 'Nächster Monat', 'en-us': 'Next month' },
+	Jahresübersicht: { 'de-ch': 'Jahresübersicht', 'en-us': 'Year overview' },
+	Gespeichert: { 'de-ch': 'Gespeichert', 'en-us': 'Saved' },
+	Tag: { 'de-ch': 'Tag', 'en-us': 'Day' },
+	'gültig ab': { 'de-ch': 'gültig ab', 'en-us': 'valid from' },
+	'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.': {
+		'de-ch':
+			'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.',
+		'en-us': 'No hourly rates are set for this month — amounts are calculated once they are.'
+	},
+	'In diesem Monat ist keine Person aktiv.': {
+		'de-ch': 'In diesem Monat ist keine Person aktiv.',
+		'en-us': 'Nobody is active in this month.'
+	},
+	Monatstotal: { 'de-ch': 'Monatstotal', 'en-us': 'Month total' },
+	'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.': {
+		'de-ch': 'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.',
+		'en-us': 'Hours as a number, e.g. 8 or 8.5. Empty fields are ignored.'
+	},
+	'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.':
+		{
+			'de-ch':
+				'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.',
+			'en-us':
+				'For people who have left, set «Active until» instead of deleting them, so earlier months stay complete. Deleting is only possible without recorded hours.'
+		},
+	'Aktiv ab': { 'de-ch': 'Aktiv ab', 'en-us': 'Active from' },
+	'Aktiv bis': { 'de-ch': 'Aktiv bis', 'en-us': 'Active until' },
+	'Nach unten': { 'de-ch': 'Nach unten', 'en-us': 'Move down' },
+	'Diese Person löschen?': { 'de-ch': 'Diese Person löschen?', 'en-us': 'Delete this person?' },
+	'Person hinzufügen': { 'de-ch': 'Person hinzufügen', 'en-us': 'Add person' },
+	'«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.': {
+		'de-ch': '«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.',
+		'en-us': 'Leave «Active from» and «Active until» empty for no limit.'
+	},
+	'Stundensätze und Abzüge': {
+		'de-ch': 'Stundensätze und Abzüge',
+		'en-us': 'Hourly rates and deductions'
+	},
+	'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.':
+		{
+			'de-ch':
+				'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.',
+			'en-us':
+				'Apply from the chosen month until the next change. For an increase, add new rates with «Valid from» — earlier months stay unchanged. Deductions as a percentage of the gross wage.'
+		},
+	'Neue Sätze ab Monat': { 'de-ch': 'Neue Sätze ab Monat', 'en-us': 'New rates from month' },
+	'Gültig ab': { 'de-ch': 'Gültig ab', 'en-us': 'Valid from' },
+	'Tag CHF / Stunde': { 'de-ch': 'Tag CHF / Stunde', 'en-us': 'Day CHF / hour' },
+	'Nacht CHF / Stunde': { 'de-ch': 'Nacht CHF / Stunde', 'en-us': 'Night CHF / hour' },
+	Abzüge: { 'de-ch': 'Abzüge', 'en-us': 'Deductions' },
+	'z.B. AHV/IV/EO': { 'de-ch': 'z.B. AHV/IV/EO', 'en-us': 'e.g. AHV/IV/EO' },
+	Bezeichnung: { 'de-ch': 'Bezeichnung', 'en-us': 'Name' },
+	Prozent: { 'de-ch': 'Prozent', 'en-us': 'Percent' },
+	Abzug: { 'de-ch': 'Abzug', 'en-us': 'Deduction' },
+	'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.':
+		{
+			'de-ch':
+				'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.',
+			'en-us':
+				'Please check the social insurance percentages with the compensation office or insurer.'
+		},
+	'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.': {
+		'de-ch': 'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.',
+		'en-us': 'Delete these rates? Affected months will then use the previous rates.'
+	},
+	Assistenzjahr: { 'de-ch': 'Assistenzjahr', 'en-us': 'Assistance year' },
+	'Jahr beginnt im': { 'de-ch': 'Jahr beginnt im', 'en-us': 'Year starts in' },
+	'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.': {
+		'de-ch': 'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.',
+		'en-us': 'Hours: please enter numbers like 8 or 8.5.'
+	},
+	'Bitte einen Namen eintragen.': {
+		'de-ch': 'Bitte einen Namen eintragen.',
+		'en-us': 'Please enter a name.'
+	},
+	'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.': {
+		'de-ch': 'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.',
+		'en-us': 'Please enter the month as YYYY-MM, e.g. 2026-09.'
+	},
+	'«Aktiv bis» muss nach «Aktiv ab» liegen.': {
+		'de-ch': '«Aktiv bis» muss nach «Aktiv ab» liegen.',
+		'en-us': '«Active until» must be after «Active from».'
+	},
+	'Person nicht gefunden.': { 'de-ch': 'Person nicht gefunden.', 'en-us': 'Person not found.' },
+	'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.':
+		{
+			'de-ch':
+				'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.',
+			'en-us': 'This person has recorded hours and cannot be deleted. Set «Active until» instead.'
+		},
+	'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.': {
+		'de-ch': 'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.',
+		'en-us': 'Please enter the hourly rates for day and night, e.g. 35.30.'
+	},
+	'Jeder Abzug braucht eine Bezeichnung.': {
+		'de-ch': 'Jeder Abzug braucht eine Bezeichnung.',
+		'en-us': 'Every deduction needs a name.'
+	},
+	'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.': {
+		'de-ch': 'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.',
+		'en-us': 'Deductions: please enter the percentage as a number between 0 and 100, e.g. 5.3.'
+	},
+	'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.': {
+		'de-ch': 'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.',
+		'en-us': 'Rates for this month already exist — please edit them.'
+	},
+	'Ungültiger Monat.': { 'de-ch': 'Ungültiger Monat.', 'en-us': 'Invalid month.' },
+	Import: { 'de-ch': 'Import', 'en-us': 'Import' },
+	'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.': {
+		'de-ch': 'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.',
+		'en-us': 'Import now? People, rates and hours will be saved.'
+	},
+	'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.':
+		{
+			'de-ch':
+				'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.',
+			'en-us':
+				'Take over an existing spreadsheet so nothing has to be entered twice. Recognised are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden» — as in the former monthly overview and in the CSV export of this page.'
+		},
+	Datei: { 'de-ch': 'Datei', 'en-us': 'File' },
+	'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.': {
+		'de-ch': 'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.',
+		'en-us': 'LibreOffice (.ods) or CSV. Save Excel files as CSV first.'
+	},
+	'Monate mit bereits erfassten Stunden überschreiben': {
+		'de-ch': 'Monate mit bereits erfassten Stunden überschreiben',
+		'en-us': 'Overwrite months that already have hours'
+	},
+	'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.':
+		{
+			'de-ch':
+				'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.',
+			'en-us':
+				'Unchecked, months that already have hours stay unchanged. People are matched by name, new ones are created. Hourly rates from the file are only taken over if none exist yet.'
+		},
+	Prüfen: { 'de-ch': 'Prüfen', 'en-us': 'Check' },
+	Importieren: { 'de-ch': 'Importieren', 'en-us': 'Import' },
+	Importiert: { 'de-ch': 'Importiert', 'en-us': 'Imported' },
+	'Vorschau — noch nichts gespeichert': {
+		'de-ch': 'Vorschau — noch nichts gespeichert',
+		'en-us': 'Preview — nothing saved yet'
+	},
+	'Import abgeschlossen.': { 'de-ch': 'Import abgeschlossen.', 'en-us': 'Import completed.' },
+	'Zur Jahresübersicht': { 'de-ch': 'Zur Jahresübersicht', 'en-us': 'Go to year overview' },
+	'Personen mit Stunden': { 'de-ch': 'Personen mit Stunden', 'en-us': 'People with hours' },
+	'Neu angelegt': { 'de-ch': 'Neu angelegt', 'en-us': 'Newly created' },
+	'Alle Personen sind schon erfasst.': {
+		'de-ch': 'Alle Personen sind schon erfasst.',
+		'en-us': 'All people already exist.'
+	},
+	Stundensätze: { 'de-ch': 'Stundensätze', 'en-us': 'Hourly rates' },
+	'In der Datei wurden keine Stundensätze gefunden.': {
+		'de-ch': 'In der Datei wurden keine Stundensätze gefunden.',
+		'en-us': 'No hourly rates were found in the file.'
+	},
+	'Werden übernommen.': { 'de-ch': 'Werden übernommen.', 'en-us': 'Will be taken over.' },
+	'Nicht übernommen, weil schon Stundensätze erfasst sind.': {
+		'de-ch': 'Nicht übernommen, weil schon Stundensätze erfasst sind.',
+		'en-us': 'Not taken over because hourly rates already exist.'
+	},
+	Hinweise: { 'de-ch': 'Hinweise', 'en-us': 'Notes' },
+	Neu: { 'de-ch': 'Neu', 'en-us': 'New' },
+	Überschrieben: { 'de-ch': 'Überschrieben', 'en-us': 'Overwritten' },
+	'Schon erfasst — übersprungen': {
+		'de-ch': 'Schon erfasst — übersprungen',
+		'en-us': 'Already entered — skipped'
+	},
+	'Keine Stunden': { 'de-ch': 'Keine Stunden', 'en-us': 'No hours' },
+	'Bitte eine Datei auswählen.': {
+		'de-ch': 'Bitte eine Datei auswählen.',
+		'en-us': 'Please choose a file.'
+	},
+	'Die Datei ist zu gross (höchstens 5 MB).': {
+		'de-ch': 'Die Datei ist zu gross (höchstens 5 MB).',
+		'en-us': 'The file is too large (max. 5 MB).'
+	},
+	'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.':
+		{
+			'de-ch':
+				'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.',
+			'en-us':
+				'Please save Excel files (.xlsx) as CSV first (File › Save as › CSV) or as .ods in LibreOffice.'
+		},
+	'Die Datei konnte nicht gelesen werden.': {
+		'de-ch': 'Die Datei konnte nicht gelesen werden.',
+		'en-us': 'The file could not be read.'
+	},
+	'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.':
+		{
+			'de-ch':
+				'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.',
+			'en-us':
+				'This format is not supported. Please save the spreadsheet as .ods (LibreOffice) or CSV.'
+		},
+	'Zeile {zeile}: {monat} kommt mehrfach vor.': {
+		'de-ch': 'Zeile {zeile}: {monat} kommt mehrfach vor.',
+		'en-us': 'Row {zeile}: {monat} appears more than once.'
+	},
+	'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.': {
+		'de-ch': 'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.',
+		'en-us': 'Row {zeile}: «{wert}» is not a valid number of hours and was skipped.'
+	},
+	'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.': {
+		'de-ch': 'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.',
+		'en-us': 'Row {zeile}: {name} appears more than once in the same month — the last row applies.'
+	},
+	'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».':
+		{
+			'de-ch':
+				'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».',
+			'en-us':
+				'No months found. Expected are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden».'
+		},
+	'Stunden von {name} im {monat} löschen?': {
+		'de-ch': 'Stunden von {name} im {monat} löschen?',
+		'en-us': 'Delete the hours of {name} in {monat}?'
+	},
+	'AHV/IV/EO': { 'de-ch': 'AHV/IV/EO', 'en-us': 'AHV/IV/EO' },
+	ALV: { 'de-ch': 'ALV', 'en-us': 'Unemployment insurance (ALV)' },
+	Quellensteuer: { 'de-ch': 'Quellensteuer', 'en-us': 'Withholding tax' },
+	'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.':
+		{
+			'de-ch':
+				'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.',
+			'en-us':
+				"The assistant's share as a percentage of the gross wage, empty = no deduction. AHV/IV/EO and ALV: check the rates with the compensation office. Withholding tax: 5 % for everyone in the simplified settlement procedure of the SVA."
+		},
+	Ferienentschädigung: { 'de-ch': 'Ferienentschädigung', 'en-us': 'Holiday pay' },
+	'Ferienentschädigung (%)': { 'de-ch': 'Ferienentschädigung (%)', 'en-us': 'Holiday pay (%)' },
+	'Ferienentschädigung CHF': { 'de-ch': 'Ferienentschädigung CHF', 'en-us': 'Holiday pay CHF' },
+	'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.':
+		{
+			'de-ch':
+				'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.',
+			'en-us':
+				'Holiday pay: surcharge in percent on day and night wage, part of the gross wage (8.33 % for 4 weeks of holiday). Empty = none.'
+		},
+	'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.': {
+		'de-ch': 'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.',
+		'en-us': 'Holiday pay: please enter the percentage as a number between 0 and 100, e.g. 8.33.'
+	},
+	'Sozialabzüge CHF': { 'de-ch': 'Sozialabzüge CHF', 'en-us': 'Social insurance deductions CHF' },
+	'Quellensteuer CHF': { 'de-ch': 'Quellensteuer CHF', 'en-us': 'Withholding tax CHF' },
+	'Helles Design': { 'de-ch': 'Helles Design', 'en-us': 'Light theme' },
+	'Dunkles Design': { 'de-ch': 'Dunkles Design', 'en-us': 'Dark theme' }
 };
 
 /**

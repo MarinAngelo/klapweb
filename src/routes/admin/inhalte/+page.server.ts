@@ -5,6 +5,9 @@ import { checkContent } from '$lib/contentCheck.js';
 import fieldReference from '$lib/generated/prismic-field-reference.json';
 import { env } from '$env/dynamic/private';
 import { getMailAddress } from '$lib/server/mailFrom';
+import gating from '../../../../gating.json';
+import config from '../../../../slicemachine.config.json';
+import { activeInvoicingFeatures } from '$lib/gatingOverrides.js';
 
 /**
  * Is the domain of the sender address verified in Resend? null = unknown (no key, the key has
@@ -31,7 +34,9 @@ export const prerender = false;
 // Same check as scripts/check-translations.js, for editors (live from Prismic)
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const result = await checkContent(createClient({ fetch }), fieldReference as any[]);
+		const result = await checkContent(createClient({ fetch }), fieldReference as any[], {
+			invoicingFeatures: activeInvoicingFeatures(gating, config)
+		});
 		// Sender domain in Resend (only if the address itself is set)
 		const settingsProblem = result.links.find((p) => p.kind === 'mail_from');
 		const mailFrom = settingsProblem ? '' : await getMailAddress(fetch);

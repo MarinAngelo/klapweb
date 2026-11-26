@@ -48,7 +48,7 @@
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "RESEND_API_KEY", "ADMIN_SECRET"]
 		},
 		"global_events": {
-			"label": "Globale Events",
+			"label": "Eventmanagement",
 			"plans": ["professional"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
@@ -66,6 +66,16 @@
 		},
 		"stundenabrechnung": {
 			"label": "Stundenabrechnung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
+		},
+		"buchhaltung": {
+			"label": "Buchhaltung",
+			"plans": ["individuell"],
+			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
+		},
+		"assistenz": {
+			"label": "Assistenz",
 			"plans": ["individuell"],
 			"env": ["NETLIFY_SITE_ID", "NETLIFY_TOKEN", "ADMIN_SECRET"]
 		},
@@ -130,22 +140,13 @@
 		},
 		"settings": {
 			"fields": {
-				"pwa_enabled": {
-					"feature": "pwa"
-				},
-				"pwa_name": {
-					"feature": "pwa"
-				},
-				"pwa_short_name": {
-					"feature": "pwa"
-				},
 				"pwa_theme_color": {
 					"feature": "pwa"
 				},
-				"pwa_icon": {
-					"feature": "pwa"
-				},
 				"chat_active": {
+					"feature": "chatbot"
+				},
+				"chat_notify_email": {
 					"feature": "chatbot"
 				},
 				"chat_bot_name": {
@@ -182,6 +183,15 @@
 					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 				},
 				"invoice_qr_bill": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_dunning_active": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_dunning_days": {
+					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
+				},
+				"invoice_dunning_terms_days": {
 					"features": ["manuelle_rechnungen", "ecommerce", "global_events", "terminbuchung"]
 				}
 			}
@@ -349,6 +359,11 @@
 		"stunden": {
 			"label": "Stunden",
 			"feature": "stundenabrechnung"
-		}
+		},
+		"buchhaltung": {
+			"label": "Buchhaltung",
+			"feature": "buchhaltung"
+		},
+		"assistenz": { "label": "Assistenz", "feature": "assistenz" }
 	}
 }

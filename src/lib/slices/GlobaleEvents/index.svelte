@@ -754,11 +754,11 @@
 		</div>
 	{:else if !isFilled.contentRelationship(p.events) && $page.url.hostname === 'localhost'}
 		<div class="p-4 border border-dashed border-gray-300 text-center opacity-40">
-			[Globale Events: Kein Serien-Dokument verknüpft]
+			[Eventmanagement: Kein Serien-Dokument verknüpft]
 		</div>
 	{:else if isFilled.contentRelationship(p.events) && $page.url.hostname === 'localhost'}
 		<div class="p-4 border border-dashed border-gray-300 text-center opacity-40">
-			[Globale Events: Keine kommenden Termine gefunden]
+			[Eventmanagement: Keine kommenden Termine gefunden]
 		</div>
 	{/if}
 

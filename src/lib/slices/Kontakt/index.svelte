@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { theme } from '$lib/stores/theme';
 	import Bounded from '$lib/components/Bounded.svelte';
 	import { mapAnimationFromPrimary } from '$lib/utils/animationMapper';
@@ -10,7 +12,7 @@
 
 	$: anim = mapAnimationFromPrimary(slice.primary as any);
 	$: primary = slice.primary as any;
-	$: bgColor = primary.bg_color || $theme.pageBgColor;
+	$: bgColor = primary.bg_color || $pageColorsStore.pageBgColor;
 	$: layout = primary.layout || 'Horizontal';
 	$: buttonSize = primary.button_size || 'Mittel';
 	$: align = primary.align || 'Mitte';

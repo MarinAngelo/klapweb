@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { claimSliceSpacing } from '$lib/utils/sliceSpacing';
 	import clsx from 'clsx';
 	import { isMobile } from '$lib/stores/isMobile';
 	import { reveal, type RevealOptions } from '$lib/actions/reveal';
@@ -95,10 +96,17 @@
 		}
 	}
 
+	// «Vertikaler innerer Abstand» from SliceShell (slices without own handling): replaces the
+	// default spacing and keeps its shape (top and bottom, or top only); never overrides a
+	// deliberate 'none' (fullscreen / banner overlap)
+	const sliceSpacing = claimSliceSpacing();
+
 	$: resolvedYPadding =
 		yPaddingSize !== undefined || yPaddingSame !== undefined
 			? resolveYPadding(yPaddingSize ?? '', yPaddingSame ?? false)
-			: yPadding;
+			: sliceSpacing && yPadding !== 'none'
+				? resolveYPadding(sliceSpacing, ['sm', 'base', 'lg'].includes(yPadding))
+				: yPadding;
 
 	$: topClass =
 		paddingTopClass !== undefined

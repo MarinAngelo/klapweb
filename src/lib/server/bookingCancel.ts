@@ -9,8 +9,9 @@ import { env } from '$env/dynamic/private';
 import { deleteBooking, type BookingRecord } from '$lib/server/bookings';
 import { listManualInvoices, updateManualInvoice } from '$lib/server/invoices';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { cancelCustomerMail, cancelFeeMail, cancelProviderMail } from '$lib/server/bookingMails';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 export type CancelStatus =
@@ -113,6 +114,7 @@ export async function cancelBooking(
 
 	const dateLabel = formatDateWithWeekday(booking.datum, booking.uhrzeit || null, 'de-CH', 'long');
 	const notes: string[] = [];
+	const style = await getTextStyle();
 
 	// Invoice of the booking: open → «storniert»; already paid → provider checks the refund
 	let paidInvoice = false;
@@ -121,7 +123,7 @@ export async function cancelBooking(
 			const invoice = (await listManualInvoices()).find(
 				(inv) => inv.invoiceNumber === booking.invoiceNumber
 			);
-			if (invoice?.paymentStatus === 'offen') {
+			if (invoice?.paymentStatus === 'offen' || invoice?.paymentStatus === 'gemahnt') {
 				await updateManualInvoice(invoice.id, {
 					paymentStatus: 'storniert',
 					notes: [invoice.notes, `Termin storniert am ${new Date().toLocaleDateString('de-CH')}`]
@@ -169,21 +171,15 @@ export async function cancelBooking(
 					invoiceNumber: fee.invoiceNumber,
 					pdf: fee.pdf,
 					to: booking.email,
-					subject: `Stornierung bestätigt: ${booking.titel}`,
-					text: [
-						`Guten Tag${booking.name ? ' ' + booking.name : ''}`,
-						``,
-						`Ihre Buchung wurde storniert.`,
-						``,
-						`Angebot: ${booking.titel}`,
-						`Datum: ${dateLabel}`,
-						``,
-						`Da die kostenlose Stornierungsfrist (bis ${terms.freeUntilLabel}) abgelaufen war, ` +
-							`stellen wir Ihnen die Stornogebühr von ${terms.feePercent}% in Rechnung (siehe Anhang).`,
-						``,
-						`Freundliche Grüsse`,
-						settings.name
-					].join('\n')
+					...cancelFeeMail({
+						titel: booking.titel,
+						dateLabel,
+						name: booking.name,
+						style,
+						freeUntilLabel: terms.freeUntilLabel,
+						feePercent: terms.feePercent,
+						companyName: settings.name
+					})
 				});
 			}
 		} catch (e) {
@@ -203,15 +199,7 @@ export async function cancelBooking(
 		const { error } = await resend.emails.send({
 			from,
 			to: booking.email,
-			subject: `Stornierung bestätigt: ${booking.titel}`,
-			text: [
-				`Guten Tag${booking.name ? ' ' + booking.name : ''}`,
-				``,
-				`Ihre Buchung wurde erfolgreich storniert.`,
-				``,
-				`Angebot: ${booking.titel}`,
-				`Datum: ${dateLabel}`
-			].join('\n')
+			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, style })
 		});
 		if (error) console.error('Storno Kunden-E-Mail fehlgeschlagen:', error);
 	}
@@ -221,22 +209,15 @@ export async function cancelBooking(
 		const { error } = await resend.emails.send({
 			from,
 			to: notifyTo,
-			subject: `Buchung storniert: ${booking.titel}`,
-			text: [
-				`Eine Buchung wurde storniert.`,
-				``,
-				`Angebot: ${booking.titel}`,
-				`Datum: ${dateLabel}`,
-				``,
-				`Name: ${booking.name ?? '–'}`,
-				...(booking.email ? [`E-Mail: ${booking.email}`] : []),
-				...(feeInvoiceNumber
-					? [``, `Stornogebühr ${terms.feePercent}%: Rechnung ${feeInvoiceNumber}`]
-					: []),
-				...(notes.length ? [``, ...notes] : []),
-				``,
-				`Der Termin ist wieder verfügbar.`
-			].join('\n')
+			...cancelProviderMail({
+				titel: booking.titel,
+				dateLabel,
+				name: booking.name,
+				email: booking.email,
+				feePercent: terms.feePercent,
+				feeInvoiceNumber,
+				notes
+			})
 		});
 		if (error) console.error('Storno Betreiber-E-Mail fehlgeschlagen:', error);
 	}

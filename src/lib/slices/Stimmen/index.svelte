@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import { onDestroy, onMount } from 'svelte';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -17,8 +19,8 @@
 
 	const p = slice.primary ?? {};
 
-	$: bgColor = (p.bg_color as string) || $theme.pageBgColor;
-	$: color = (p.color as string) || $theme.pageColor;
+	$: bgColor = (p.bg_color as string) || $pageColorsStore.pageBgColor;
+	$: color = (p.color as string) || $pageColorsStore.pageColor;
 	$: cardBgColor = (p.card_bg_color as string) || undefined;
 
 	$: titleText = (p.title as { text: string }[] | undefined)?.[0]?.text ?? '';

@@ -140,6 +140,8 @@ git checkout -b <kunde> main
 # slicemachine.config.json: repositoryName + plan setzen, committen
 ```
 
+Komplette Anleitung (Prismic-Repository, Slice Machine, Netlify, Vorschau, Webhook): `docs/neuer-kunde.md`.
+
 ## Schutz von `slicemachine.config.json`
 
 `.gitattributes` enthält `slicemachine.config.json merge=ours`. Dafür muss der Merge-Treiber lokal

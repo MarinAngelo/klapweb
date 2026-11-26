@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { _ } from '$lib/stores/i18n';
+	import AdminTheme from './AdminTheme.svelte';
+	import AdminThemeToggle from './AdminThemeToggle.svelte';
 
 	/** Page title (already translated) */
 	export let title: string;
@@ -13,6 +15,9 @@
 	export let home = true;
 </script>
 
+<!-- Also here for pages with their own .admin wrapper (agency) -->
+<AdminTheme />
+
 {#if back}
 	<a href={backHref} class="admin-back">← {$_('Dashboard')}</a>
 {/if}
@@ -22,6 +27,7 @@
 		{#if count != null}<span class="admin-count">({count})</span>{/if}
 	</h1>
 	<div class="admin-header-actions">
+		<AdminThemeToggle />
 		{#if home}
 			<a href="/" class="admin-btn">⌂ {$_('Zur Website')}</a>
 		{/if}

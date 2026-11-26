@@ -1,7 +1,7 @@
 {
 	"id": "globale_events",
 	"type": "SharedSlice",
-	"name": "Globale Events",
+	"name": "Eventmanagement",
 	"description": "Zeigt Inhalte eines verknüpften Event-Dokuments an.",
 	"variations": [
 		{

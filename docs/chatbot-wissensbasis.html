@@ -77,7 +77,7 @@
 <ul>
 	<li>Intensive Begleitung vom Projektstart bis zum Launch und darüber hinaus</li>
 	<li>Terminbuchungssystem (Online-Terminvergabe mit Arbeitstagen, Angeboten, Pufferzeiten und E-Mail-Bestätigung)</li>
-	<li>Globale Events (Veranstaltungen zentral erfassen und überall anzeigen, mit Anmeldung)</li>
+	<li>Eventmanagement (Veranstaltungen zentral erfassen und überall anzeigen, mit Anmeldung)</li>
 	<li>Newsletter / Info-Mails mit Abonnenten-Verwaltung</li>
 	<li>Kundenverwaltung (Kundenliste im Admin-Bereich)</li>
 	<li>Kundenkonto (Besucher können sich registrieren und ihre Buchungen sehen)</li>
@@ -337,6 +337,7 @@
 <p>Unter <strong>Einstellungen</strong> im Tab <strong>SEO</strong>. Sie gelten, wenn eine Seite keine eigenen Werte hat.</p>
 <ul>
 	<li><strong>Website Domain</strong></li>
+	<li><strong>Ganze Website nicht indexieren</strong></li>
 	<li><strong>Website Name (SEO)</strong></li>
 	<li><strong>Globaler SEO Titel</strong></li>
 	<li><strong>Globale Beschreibung</strong></li>
@@ -377,6 +378,7 @@
 	<li><strong>Umleitungs-Seite</strong></li>
 </ul>
 <p>Die Standardseite «Website im Aufbau» zeigt nur die rechtlichen Links, keine Navigation.</p>
+<p>Die Vorschau der Startseite in Prismic («Preview the page») zeigt trotz Umleitung die echte Startseite. So kannst du sie fertig gestalten, bevor du die Umleitung ausschaltest.</p>
 
 <h3>Tab «SEO»</h3>
 <ul>
@@ -457,7 +459,7 @@
 	<li><strong>Text &amp; Aktion:</strong> Text mit Handlungsaufforderung (Call to Action).</li>
 	<li><strong>Bild:</strong> Einzelbild, Banner, Karussell oder Vorher/Nachher-Vergleich.</li>
 	<li><strong>Galerie:</strong> mehrere Bilder als Galerie.</li>
-	<li><strong>Schaltfläche:</strong> Button mit Link. Variante «Suche» (ab Paket Professionell): öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle. Praktisch für lange Seiten wie Anleitungen oder häufige Fragen.</li>
+	<li><strong>Schaltfläche:</strong> Button mit Link. Variante «Suche» (ab Paket Professionell): Suchfeld mit Schaltfläche dahinter; öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge. Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle. Praktisch für lange Seiten wie Anleitungen oder häufige Fragen.</li>
 	<li><strong>Kacheln:</strong> Karten in Spalten, z. B. für Angebote. Variante «Buchbare Angebote» (mit Terminbuchung): zeigt automatisch alle buchbaren Angebote mit «Mehr erfahren» und «Buchen».</li>
 	<li><strong>Akkordeon:</strong> aufklappbare Einträge, z. B. für häufige Fragen; mit optionaler Suche. Variante «Bild und Text» mit Bildern; dort legt das Feld <strong>Titel-Ebene</strong> fest, ob die Titel als H2 bis H6 dargestellt werden. Titel mit H2 oder H3 erscheinen im Inhaltsverzeichnis.</li>
 	<li><strong>Inhaltsverzeichnis:</strong> listet automatisch alle Überschriften der Seite. <strong>Tiefe</strong> wählt «Nur H2» oder «H2 und H3».</li>
@@ -483,12 +485,18 @@
 <h3>Vollbreite auf Mobile</h3>
 <p>Das Element geht auf dem Smartphone bis an den Bildschirmrand.</p>
 
+<h3>Für alle Inhalts-Elemente</h3>
+<ul>
+	<li><strong>Vertikaler innerer Abstand:</strong> Abstand innerhalb des Elements («kein Abstand», «wenig», «mittel», «gross»), ersetzt den Standardabstand. Mit «wenig» oder «kein Abstand» rücken Elemente näher zusammen. Leer = Standard. Nicht bei Titelbereich und P5-Grafik.</li>
+	<li><strong>Seitenfarben umkehren:</strong> Bei «Ja» wird die Hintergrundfarbe der Seite zur Schriftfarbe und die Schriftfarbe zum Hintergrund, z. B. um einen Abschnitt hervorzuheben. Eigene Farben des Inhalts-Elements (Hintergrund- oder Schriftfarbe) haben Vorrang.</li>
+</ul>
+
 <h2>Suche auf einer Seite</h2>
 <p>Für lange Seiten wie Anleitungen oder häufige Fragen gibt es zwei Arten von Suche (ab Paket Professionell).</p>
 
 <h3>Suche auf der ganzen Seite</h3>
 <p>Füge das Element <strong>Schaltfläche</strong> in der Variante <strong>Suche</strong> ein.</p>
-<p>Die Schaltfläche öffnet ein Suchfenster, das den Inhalt dieser Seite durchsucht, auch zugeklappte Akkordeon-Einträge.</p>
+<p>Es zeigt ein Suchfeld mit der Schaltfläche dahinter. Nach Eingabe und Enter oder Klick öffnet sich ein Suchfenster mit den Treffern auf dieser Seite, auch in zugeklappten Akkordeon-Einträgen.</p>
 <p>Ein Klick auf einen Treffer öffnet den Eintrag und springt an die Stelle.</p>
 
 <h3>Suche in einem Akkordeon</h3>
@@ -659,6 +667,9 @@
 </ul>
 
 <h2>Terminbuchung einrichten</h2>
+<h3>Terminbuchungssystem</h3>
+<h4>Überblick</h4><p>Das Buchungssystem ermöglicht es Gästen, freie Zeitfenster flexibel über mehrere Angebote hinweg zu buchen. Du definierst im CMS einfach Arbeitstage, Angebote, Dauer, Pufferzeiten und Wiederholungen – das System berechnet automatisch die verfügbaren Termine und verwaltet Buchungen sowie gesperrte Zeiträume in Echtzeit.</p><p>Der aktuelle Aufbau besteht aus drei CMS-Typen:</p><ul><li><strong>Buchbares Angebot</strong>: die eigentliche Leistung, zum Beispiel „Massage 60 Minuten“</li><li><strong>Arbeitstag</strong>: der Zeitraum, an dem buchbare Angebote verfügbar sind</li><li><strong>Ort / Standort</strong>: der physische Ort, an dem das Angebot stattfindet (optional)</li></ul><p>Alle diese CMS-Typen müssen zuerst mit <strong>{{create}}</strong> erfasst werden, bevor sie verwendet werden können</p><p>Ein Termin im Buchungsformular entsteht aus:</p><p>Arbeitstag + buchbare Angebote + Dauer und Puffer des Angebots + Buchungsintervall des Arbeitstags </p><p>Ein Angebot kann optional einen <strong>Ort</strong> verknüpfen. Der Ort wird in den E-Mails und im Admin-Panel angezeigt.</p>
+<h3>Terminbuchung einrichten Schritt für Schritt</h3>
 <h4>1. Orte anlegen (optional)</h4>
 <p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Ort / Standort</strong>.</p>
 <ul>
@@ -820,7 +831,7 @@
 	<li><strong>Arbeitstag geändert:</strong> Bereits gebuchte Termine bleiben gespeichert. Serien deshalb möglichst nicht kurzfristig ändern.</li>
 </ul>
 
-<h2>Globale Events (Veranstaltungen)</h2>
+<h2>Eventmanagement (Veranstaltungen)</h2>
 <h4>1. Event anlegen</h4>
 <p>Klicke auf <strong>Create a new page</strong> und wähle <strong>Event</strong>.</p>
 
@@ -894,7 +905,7 @@
 <p>Veröffentliche das Event.</p>
 
 <h4>10. Events auf einer Seite zeigen</h4>
-<p>Füge auf der gewünschten Seite das Element <strong>Globale Events</strong> ein. Es zeigt die Events an.</p>
+<p>Füge auf der gewünschten Seite das Element <strong>Eventmanagement</strong> ein. Es zeigt die Events an.</p>
 <ul>
 	<li><strong>Serie / Eltern-Event:</strong> Damit lässt sich die Anzeige auf eine Serie beschränken.</li>
 </ul>
@@ -954,6 +965,38 @@
 	<li><strong>Entfernen:</strong> trägt die Adresse als abgemeldet ein</li>
 	<li><strong>Als CSV exportieren:</strong> lädt die Liste herunter</li>
 </ul>
+
+<h2>Buchhaltung</h2>
+<p>Eine einfache Buchhaltung mit Einnahmen und Ausgaben, im Admin-Bereich unter <strong>Buchhaltung</strong>.</p>
+
+<h4>1. Übersicht</h4>
+<p>Oben wählst du das Jahr. Die Übersicht zeigt die Summe der Einnahmen, der Ausgaben und das Ergebnis, darunter die Beträge pro Monat.</p>
+
+<h4>2. Bezahlte Rechnungen</h4>
+<p>Jede Rechnung erscheint automatisch als Einnahme, sobald ihr Zahlungsstatus «bezahlt» ist. Massgebend ist das Zahlungsdatum.</p>
+<ul>
+	<li>Das Zahlungsdatum wird beim Wechsel auf «bezahlt» gespeichert. Du kannst es beim Bearbeiten der Rechnung unter «Bezahlt am» anpassen.</li>
+	<li>Setzt du eine Rechnung wieder auf «offen» oder «storniert», verschwindet sie aus den Einnahmen.</li>
+	<li>Diese Einnahmen änderst du in den Rechnungen, nicht in der Buchhaltung.</li>
+</ul>
+
+<h4>3. Eintrag erfassen</h4>
+<p>Unter <strong>Neuer Eintrag</strong>:</p>
+<ul>
+	<li><strong>Typ:</strong> Ausgabe oder Einnahme (z. B. ein Barverkauf ohne Rechnung)</li>
+	<li><strong>Datum</strong></li>
+	<li><strong>Text:</strong> wofür</li>
+	<li><strong>Betrag:</strong> in CHF, inklusive MwSt.</li>
+	<li><strong>Kategorie:</strong> z. B. Material, Miete, Software, Werbung</li>
+	<li><strong>Beleg:</strong> optional ein PDF oder Foto der Quittung, höchstens 10 MB</li>
+</ul>
+<p>Mit «Anzeigen» öffnest du den Beleg später wieder.</p>
+
+<h4>4. Export</h4>
+<p>«CSV-Export» lädt alle Buchungen des gewählten Jahres als Tabelle für Excel oder deine Treuhand, mit Total und Ergebnis.</p>
+
+<h3>Hinweis</h3>
+<p>Die Buchhaltung ersetzt keine vollständige Buchhaltung mit Bilanz und MwSt.-Abrechnung. Sie gibt dir einen schnellen Überblick und sammelt Belege an einem Ort.</p>
 
 <h2>Stundenabrechnung</h2>
 <h4>1. Geschützte Seite erstellen</h4>
@@ -1115,6 +1158,15 @@
 <h4>6. Zahlung vermerken</h4>
 <p>Ist die Rechnung bezahlt, wähle beim Zahlungsstatus «bezahlt».</p>
 
+<h3>Jährlich wiederkehrende Rechnungen</h3>
+<ul>
+	<li><strong>Beim Speichern einer neuen Rechnung:</strong> «Jährlich wiederholen» ankreuzen. Die nächste Rechnung ist ein Jahr nach dem Rechnungsdatum fällig.</li>
+	<li><strong>Bei einer bestehenden Rechnung:</strong> «Bearbeiten», Abschnitt «Wiederholung», «Jährlich wiederholen» einschalten und das Datum der nächsten Rechnung wählen.</li>
+	<li>Am Fälligkeitstag erstellt die Website automatisch eine Kopie mit neuer Rechnungsnummer, heutigem Datum und QR-Zahlteil und mailt sie an den Kunden. Du erhältst eine kurze Info-Mail.</li>
+	<li>Danach ist die nächste Rechnung wieder ein Jahr später fällig. In der Liste steht bei der Vorlage «jährlich» mit dem nächsten Termin, die erstellten Rechnungen tragen die Quelle «Wiederkehrend».</li>
+	<li>Zum Beenden «Jährlich wiederholen» in der Vorlage ausschalten.</li>
+</ul>
+
 <h3>Rechnungen nachträglich bearbeiten</h3>
 <p>Gespeicherte Rechnungen lassen sich nachträglich bearbeiten (Tab «Bearbeiten»), ansehen und als PDF laden.</p>
 <p>Die Bankangaben auf der Rechnung kommen aus den Einstellungen (Tab «Rechnungen»).</p>
@@ -1126,9 +1178,34 @@
 </ul>
 <p>Das gilt für jede Rechnung der Website: manuell, Online-Handel und Terminbuchung. Als «IBAN» funktioniert auch eine QR-IBAN.</p>
 
+<h3>Mahnungen</h3>
+<p>In den <strong>Einstellungen</strong> im Tab <strong>Rechnungen</strong>:</p>
+<ul>
+	<li><strong>Automatisch mahnen</strong></li>
+	<li><strong>Mahnung nach Ablauf der Zahlungsfrist (Tage)</strong></li>
+	<li><strong>Neue Zahlungsfrist in der Mahnung (Tage)</strong></li>
+</ul>
+<ul>
+	<li>Ist eine Rechnung nach Ablauf der Zahlungsfrist plus dieser Tage noch offen, geht automatisch die 1. Mahnung an den Kunden: dieselbe Rechnung mit QR-Zahlteil und einer neuen Frist. Der Zahlungsstatus wechselt auf «gemahnt».</li>
+	<li>Ist auch die neue Frist abgelaufen, folgt die 2. Mahnung. Danach mahnt die Website nicht mehr, sondern meldet dir die Rechnung.</li>
+	<li>Über jede Mahnung erhältst du eine kurze Info-Mail. Hat ein Kunde keine E-Mail-Adresse, wird nichts gemailt, und die Info-Mail weist dich darauf hin.</li>
+	<li>Barzahlungen und stornierte Rechnungen werden nie gemahnt. Beim Bearbeiten einer Rechnung siehst du unter «Mahnungen», wann welche Mahnung verschickt wurde.</li>
+</ul>
+
 <h3>Zahlungseingänge</h3>
-<p>Zahlungseingänge erkennt die Website nicht automatisch: Setze den Zahlungsstatus von Hand auf «bezahlt».</p>
-<p>Die Referenz auf dem QR-Zahlteil enthält die Rechnungsnummer und erleichtert den Abgleich mit dem Kontoauszug.</p>
+<p>Zahlungen gleichst du mit dem Kontoauszug deiner Bank ab:</p>
+<ol>
+	<li>Lade im E-Banking die Buchungen als <strong>CSV</strong> herunter.</li>
+	<li>Im Admin-Bereich unter <strong>Rechnungen</strong>, Abschnitt <strong>Zahlungsabgleich</strong>, die Datei wählen.</li>
+	<li>Mit «Nur prüfen» siehst du zuerst, was passieren würde. Ohne Haken werden die Treffer verbucht.</li>
+	<li><strong>Abgleichen</strong> klicken.</li>
+</ol>
+<ul>
+	<li>Gefunden wird eine offene oder gemahnte Rechnung, wenn ihre Referenz (vom QR-Zahlteil) oder ihre Rechnungsnummer in einer Zeile steht, z. B. im Zahlungszweck.</li>
+	<li>Stimmt der gutgeschriebene Betrag dieser Zeile mit dem Rechnungsbetrag überein, wird die Rechnung auf «bezahlt» gesetzt. Zahlungsdatum ist das Datum der Buchung. Sie erscheint damit auch in der Buchhaltung.</li>
+	<li>Stimmt der Betrag nicht (z. B. Teilzahlung), wird nichts verbucht. Die Liste zeigt «Betrag stimmt nicht», und du entscheidest selbst.</li>
+	<li>Einzelne Zahlungen kannst du weiterhin von Hand auf «bezahlt» setzen, auch mehrere auf einmal mit der Aktion «Als bezahlt markieren».</li>
+</ul>
 
 <h2>Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)</h2>
 <h4>1. Ressource anlegen</h4>
@@ -1207,7 +1284,10 @@
 </ul>
 
 <h2>Progressive Web App (PWA)</h2>
-<h4>1. App-Icon und Farbe</h4>
+<p>Die PWA ist ab Paket Individuell automatisch aktiv. Es gibt keinen Schalter zum Einschalten.</p>
+<p>App-Icon und Farbe sind optional. Ohne App-Icon wird das «Social Image» verwendet, ohne Farbe die Hintergrundfarbe des Designs.</p>
+
+<h4>1. App-Icon und Farbe anpassen (optional)</h4>
 <p>Öffne die <strong>Einstellungen</strong> und den Tab <strong>SEO</strong>:</p>
 <ul>
 	<li><strong>App-Icon – quadratisch (mind. 512 × 512 px):</strong> Ein quadratisches Bild hochladen.</li>
@@ -1223,6 +1303,13 @@
 <ul>
 	<li><strong>iPhone:</strong> in Safari «Teilen» → «Zum Home-Bildschirm»</li>
 	<li><strong>Android:</strong> im Browser-Menü «App installieren» bzw. «Zum Startbildschirm hinzufügen»</li>
+</ul>
+
+<h3>Bei schlechtem oder fehlendem Internet</h3>
+<ul>
+	<li>Bereits besuchte Seiten, die Startseite und die Kontaktseite öffnen sich auch ohne Internet, mit dem zuletzt geladenen Stand.</li>
+	<li>Antwortet das Netz länger als 3 Sekunden nicht, erscheint sofort der gespeicherte Stand. Die neue Fassung wird im Hintergrund nachgeladen.</li>
+	<li>Noch nie besuchte Seiten zeigen ohne Internet die Seite «Keine Verbindung» mit den Knöpfen «Erneut versuchen» und «Zur Startseite».</li>
 </ul>
 
 <h2>Chat-Bot</h2>
@@ -1260,6 +1347,14 @@
 	<li>Er beantwortet Fragen nur anhand der Wissensbasis und verweist bei Unklarheiten auf die Kontaktseite.</li>
 	<li>Die Nachrichten werden zur Beantwortung an den KI-Anbieter Anthropic übertragen; das steht im Cookie-Banner und in der Datenschutzerklärung.</li>
 	<li>Pro Besucher sind 20 Nachrichten in 10 Minuten möglich.</li>
+</ul>
+
+<h3>E-Mail bei jeder Frage</h3>
+<ul>
+	<li><strong>Chat-Anfragen per E-Mail melden</strong></li>
+	<li>Ist es eingeschaltet, erhältst du zu jeder beantworteten Frage eine E-Mail mit Frage, Antwort des Bots und der Seite, auf der gefragt wurde.</li>
+	<li>Empfänger ist «Benachrichtigungen an (intern)» aus den Einstellungen, sonst die «Verantwortliche E-Mail».</li>
+	<li>So siehst du sofort, was Besucher wissen wollen, und kannst falsche Antworten in den Ergänzungen korrigieren.</li>
 </ul>
 
 <h3>Bewertungen</h3>
@@ -1339,11 +1434,13 @@
 	<li>Transparenz (Zahl)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Schrift horizontal zentrieren (Ein/Aus)</li>
 	<li>Schriftgrösse Desktop (%) (Zahl)</li>
 	<li>Schriftgrösse Mobile (%) (Zahl)</li>
 	<li>Karte links (Ein/Aus)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1359,15 +1456,20 @@
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
 	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Kontrast-Offset Balken-Text (-255 bis +255, leer = Seitenfarbe) (Zahl)</li>
 	<li>Link-Farbe (leer = Seitenfarbe) (Farbe)</li>
 	<li>Rahmen-Farbe (leer = Schriftfarbe) (Farbe)</li>
 	<li>Rahmen um die Sektion (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Akkordeon Elemente (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
 	<li>Animationsdauer (ms) (Zahl)</li>
+	<li>Runde Ecken ausschalten (Ein/Aus)</li>
+	<li>Bild-Hintergrundfarbe (Farbe)</li>
+	<li>Overlay-Transparenz % (100 = kein Overlay, 0 = Bild unsichtbar) (Zahl)</li>
 	<li>Titel-Ebene (Auswahl): Optionen: H2, H3, H4, H5, H6</li>
 </ul>
 <h3>Anleitung (Inhalts-Element)</h3>
@@ -1379,7 +1481,9 @@
 	<li>Video Einbettungs-Code (alternativ) (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
 	<li>Claude Anleitung Titel (Text)</li>
-	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Globale Events (Veranstaltungen), Newsletter / Info-Mails, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
+	<li>Kapitel aus der Anleitung (Auswahl): Optionen: Alle übrigen Kapitel, Prismic: Grundbegriffe, Prismic: Die Startseite (Übersicht), Prismic: Die Bearbeitungsseite (Editor), Bestehenden Inhalt bearbeiten, Neue Seite erstellen, Seite in der Navigation verlinken, Bilder und Dateien, Karten und Kartenpunkt, Eigene Videos, Vorschau vor dem Veröffentlichen, SEO (Google und Social Media), Einstellungen (Settings), Design anpassen (Design-Vorlage), Inhalts-Elemente im Überblick, Suche auf einer Seite, Kontaktformular, Cookie-Banner und Datenschutz, Passwortgeschützte Seiten, Mehrsprachigkeit, Der Admin-Bereich deiner Website, Inhalte prüfen, Terminbuchung einrichten, Eventmanagement (Veranstaltungen), Newsletter / Info-Mails, Buchhaltung, Stundenabrechnung, Kundenverwaltung, Kundenkonto, Online-Handel (Produkte und Dienstleistungen verkaufen), Manuelle Rechnungen, Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume), Progressive Web App (PWA), Chat-Bot, Design Panel und erweiterte Gestaltung, P5.js Grafik (animierte Grafiken)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Schritte (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -1392,6 +1496,8 @@
 	<li>Einleitung (formatierter Text)</li>
 	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
 	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 </ul>
 <h3>Bild (Inhalts-Element)</h3>
 <ul>
@@ -1401,6 +1507,8 @@
 	<li>Bild-Lupe aktivieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1420,7 +1528,19 @@
 	<li>Ort (formatierter Text)</li>
 	<li>Kartenpunkt (Text): Der Veranstaltungsort: unter dem Event erscheint der Link «Standort auf der Karte anzeigen»; leer = kein Link. Am einfachsten: auf openstreetmap.org den Ort suchen, «Teilen» wählen und den Kurzlink einfügen (beginnt mit https://osm.org/go/). Du kannst auch Koordinaten eingeben (Breite, Länge, z.B. 47.3769, 8.5417) oder einen Link von Google Maps, Apple Karten oder map.geo.admin.ch (swisstopo). Angezeigt wird immer eine OpenStreetMap-Karte. Ein Google-Link auf einen Ort ohne Koordinaten wird nicht erkannt — «Inhalte prüfen» im Admin zeigt solche Einträge an.</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Weitere Daten (Liste)</li>
+	<li>Animation aktivieren (Ein/Aus)</li>
+	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
+	<li>Verzögerung (ms) (Zahl)</li>
+	<li>Animationsdauer (ms) (Zahl)</li>
+</ul>
+<h3>Eventmanagement (Inhalts-Element)</h3>
+<ul>
+	<li>Serie / Eltern-Event (Link)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1436,6 +1556,8 @@
 	<li>Gesendet Titel (Text)</li>
 	<li>Gesendet Text (formatierter Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Formular Felder (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -1450,7 +1572,6 @@
 	<li>Fehler: bereits erledigt (Text)</li>
 	<li>Weiterleitung nach Check-in (URL) (Text)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
-	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
 	<li>Checklisten-Eintrag (Text)</li>
 	<li>Namensfelder anzeigen (Ein/Aus)</li>
@@ -1461,6 +1582,7 @@
 	<li>Titel (optional) (formatierter Text)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Spalten (Desktop) (Auswahl): Optionen: 2, 3, 4</li>
 	<li>Raster-Typ (Auswahl): Optionen: Uniform, Masonry</li>
 	<li>Abstände zwischen Bildern (Ein/Aus)</li>
@@ -1468,22 +1590,17 @@
 	<li>Überlappend mit Kopfzeile (Ein/Aus)</li>
 	<li>Transparenz der Kopfzeile (Zahl)</li>
 	<li>Vollbild-Raster (Randlos) (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Einblend-Animation (Ein/Aus)</li>
 	<li>Bild (Bild)</li>
 	<li>Bildunterschrift (optional) (Text)</li>
-</ul>
-<h3>Globale Events (Inhalts-Element)</h3>
-<ul>
-	<li>Serie / Eltern-Event (Link)</li>
-	<li>Animation aktivieren (Ein/Aus)</li>
-	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
-	<li>Verzögerung (ms) (Zahl)</li>
-	<li>Animationsdauer (ms) (Zahl)</li>
 </ul>
 <h3>HtmlCode (Inhalts-Element)</h3>
 <ul>
 	<li>HTML Code (formatierter Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1497,8 +1614,10 @@
 	<li>Fixiert (sticky) (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Linkfarbe (Farbe)</li>
 	<li>Linkfarbe wenn Maus darüber (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 </ul>
 <h3>Kacheln (Inhalts-Element)</h3>
 <ul>
@@ -1508,6 +1627,7 @@
 	<li>Hintergrundfarbe Bereich (Farbe)</li>
 	<li>Schriftfarbe Kacheln (Farbe)</li>
 	<li>Hintergrundfarbe Kacheln (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Schaltflächen Schriftfarbe (Farbe)</li>
 	<li>Schaltfl. Schriftfarbe Maus drüber (Farbe)</li>
 	<li>Schaltflächen Hintergrundfarbe (Farbe)</li>
@@ -1515,6 +1635,7 @@
 	<li>Farbe der Umrandung (Farbe)</li>
 	<li>Runde Ecken (Ein/Aus)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Kacheln (Liste)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -1537,6 +1658,7 @@
 	<li>Ausrichtung (horizontal) (Auswahl): Optionen: Links, Mitte, Rechts</li>
 	<li>Nummer/Adresse anzeigen (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
@@ -1555,6 +1677,7 @@
 	<li>Nach Gruppe gruppieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
@@ -1575,6 +1698,8 @@
 	<li>Kartenhöhe (px) (Zahl)</li>
 	<li>Transparenz (Zahl)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1585,6 +1710,7 @@
 	<li>Sketch (Auswahl): Optionen: Orbital Circles, Particle Flow, My Sketch, Generative Gestaltung P_1_0_01, Generative Gestaltung P_1_1_1_01, Generative Gestaltung P_1_2_1_01, Generative Gestaltung P_1_2_2_01, Generative Gestaltung P_2_2_2_01</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Akzentfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Bild (für bildbasierte Sketches) (Bild)</li>
 	<li>Einblendanimation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
@@ -1617,7 +1743,9 @@
 	<li>Beschriftung (Text)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Sticky Header (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 </ul>
 <h3>Preisaufstellung (Inhalts-Element)</h3>
 <ul>
@@ -1628,6 +1756,8 @@
 	<li>Label Abrechnungsart (Text)</li>
 	<li>Label Total (Text)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1643,6 +1773,8 @@
 	<li>CTA-Beschriftung (Text)</li>
 	<li>Button-Stil (Link)</li>
 	<li>Vollbreite auf Mobile (Ein/Aus)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1661,6 +1793,8 @@
 	<li>Erfolgsmeldung Text (formatierter Text)</li>
 	<li>Hintergrundfarbe (leer = Seitenfarbe) (Farbe)</li>
 	<li>Schriftfarbe (leer = Seitenfarbe) (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1680,6 +1814,7 @@
 	<li>Hintergrund wenn Maus drüber (Farbe)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1691,7 +1826,9 @@
 	<li>Titel (formatierter Text)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Karten Hintergrundfarbe (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Zitat (formatierter Text)</li>
 	<li>Name (Text)</li>
 	<li>Rolle / Unternehmen (Text)</li>
@@ -1703,11 +1840,12 @@
 	<li>Zentrieren (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Oberer äusserer Abstand (Auswahl): Optionen: wenig, mittel, gross</li>
-	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Globale Events</li>
+	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Eventmanagement</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1722,6 +1860,7 @@
 	<li>Scrollen einrasten (Ein/Aus)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Schriftgrösse Desktop (%) (Zahl)</li>
 	<li>Schriftgrösse Mobile (%) (Zahl)</li>
 	<li>Schaltfläche Link (Link)</li>
@@ -1733,6 +1872,7 @@
 	<li>Text &amp; Rahmen wenn Maus drüber (Farbe)</li>
 	<li>Schaltfläche Hintergrundfarbe (Farbe)</li>
 	<li>Hintergrund wenn Maus drüber (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 </ul>
 <h3>TextMitBild (Inhalts-Element)</h3>
 <ul>
@@ -1740,6 +1880,7 @@
 	<li>Bild (Bild)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Schriftfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Schriftfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
 	<li>Vertikaler Abstand Desktop (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
@@ -1752,7 +1893,7 @@
 	<li>Bild zuerst auf Mobile (Ein/Aus)</li>
 	<li>Schrift vertikal zentrieren (Ein/Aus)</li>
 	<li>Schrift horizontal zentrieren (Ein/Aus)</li>
-	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Globale Events</li>
+	<li>Sichtbar für Leistung (Plan) (Auswahl): Optionen: Terminbuchung, E-Commerce, P5.js, Variablen, Ressourcen-Buchung, Eventmanagement</li>
 	<li>Animation aktivieren (Ein/Aus)</li>
 	<li>Animations-Richtung (Auswahl): Optionen: Oben, Unten, Links, Rechts, Keine</li>
 	<li>Verzögerung (ms) (Zahl)</li>
@@ -1780,7 +1921,9 @@
 	<li>Titel (formatierter Text)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Linienfarbe (Farbe)</li>
+	<li>Vertikaler innerer Abstand (Auswahl): Optionen: kein Abstand, wenig, mittel, gross</li>
 	<li>Einblend-Animation (Ein/Aus)</li>
 	<li>Datum / Jahr (Text)</li>
 	<li>Untertitel (Text)</li>
@@ -1804,6 +1947,7 @@
 	<li>Hintergrund wenn Maus drüber (Farbe)</li>
 	<li>Hintergrundbild (Bild)</li>
 	<li>Hintergrundfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Bild Überlagerungsfarbe (Farbe)</li>
 	<li>Transparenz der Überlagerungsfarbe (Zahl)</li>
 	<li>Titelbild Höhe (Auswahl): Optionen: 100 %, 50 %, 33 %</li>
@@ -1846,6 +1990,7 @@
 	<li>Ausrichtung (Auswahl): Optionen: Links, Mitte, Rechts</li>
 	<li>Hintergrundfarbe (Farbe)</li>
 	<li>Textfarbe (Farbe)</li>
+	<li>Seitenfarben umkehren (Ein/Aus)</li>
 	<li>Akzentfarbe (Anführungszeichen, Sterne, Rahmen) (Farbe)</li>
 	<li>Hintergrund als Kasten (Ein/Aus): Legt fest, wo die «Hintergrundfarbe» gilt. «Nein» = über die ganze Bildschirmbreite, als Farbband von Rand zu Rand. «Ja» = nur im Inhaltsbereich (höchstens so breit wie die Seite) als farbiger Kasten mit Innenabstand: Links und rechts davon bleibt die Seitenfarbe, die Abstände oben und unten liegen innerhalb des Kastens, auf dem Smartphone reicht er bis an den Rand. Die «Textfarbe» gilt in beiden Fällen.</li>
 	<li>Innerer Abstand oben / unten gleich (Ein/Aus)</li>
@@ -1951,6 +2096,7 @@
 	<li>Anzahl Kurven (Zahl)</li>
 	<li>Kurvenstart am linken Rand (Auswahl): Optionen: 0, Maximale Höhe</li>
 	<li>Kopfzeile fixiert (Sticky) (Ein/Aus)</li>
+	<li>Animiertes Menü-Symbol (Mobile) (Ein/Aus): Menü-Symbol in der Kopfzeile auf dem Smartphone: «Ja» = zwei Striche, die sich beim Öffnen des Menüs zu einem X drehen (animiert). «Nein» = das bisherige Symbol mit drei Strichen, das beim Öffnen durch ein X ersetzt wird.</li>
 	<li>Obere Kante Kurvig (Ein/Aus)</li>
 	<li>Kurvenfarbe (Farbe)</li>
 	<li>Kurvenhöhe (px) (Zahl)</li>
@@ -1988,6 +2134,7 @@
 	<li>Startseite umleiten (Ein/Aus): Leitet Besucher der Startseite auf eine andere Seite um, z.B. solange die Website im Aufbau ist. Das Ziel bestimmt «Umleitungs-Seite»; ist sie leer, erscheint die Standardseite «Website im Aufbau» (mit Kontakt-E-Mail aus «Verantwortliche E-Mail»). Nur die Startseite wird umgeleitet, alle anderen Seiten bleiben erreichbar.</li>
 	<li>Umleitungs-Seite (Link): Seite, auf die die Startseite umleitet, wenn «Startseite umleiten» eingeschaltet ist. Leer = Standardseite «Website im Aufbau» mit Standardtext.</li>
 	<li>Website Domain (Text)</li>
+	<li>Ganze Website nicht indexieren (Ein/Aus): Verhindert, dass Suchmaschinen die Website aufnehmen, z.B. solange sie im Aufbau ist oder nur zum Testen dient. Gilt für alle Seiten und Sprachen; die Sitemap ist dann leer. Bereits aufgenommene Seiten verschwinden erst nach dem nächsten Besuch der Suchmaschine. Vor dem Start der Website wieder ausschalten.</li>
 	<li>Website Name (SEO) (Text)</li>
 	<li>Globaler SEO Titel (Text)</li>
 	<li>Globale Beschreibung (formatierter Text)</li>
@@ -1996,6 +2143,7 @@
 	<li>App-Icon – quadratisch (mind. 512 × 512 px) (Bild)</li>
 	<li>App &amp; Browser Statusleisten-Farbe (Farbe)</li>
 	<li>Chat-Bot aktivieren (Ein/Aus)</li>
+	<li>Chat-Anfragen per E-Mail melden (Ein/Aus): Schickt dir zu jeder Frage an den Chat-Bot eine E-Mail mit Frage, Antwort und Seite. Empfänger ist «Benachrichtigungen an (intern)», sonst die «Verantwortliche E-Mail». Ausschalten, wenn dir die Gespräche im Admin-Bereich unter «Chat-Bot» genügen.</li>
 	<li>Chat-Bot Name (Text)</li>
 	<li>Chat-Bot Begrüssung (Text)</li>
 	<li>Chat-Bot Wissensbasis (formatierter Text)</li>
@@ -2007,6 +2155,9 @@
 	<li>Zahlungsfrist (Tage) (Zahl)</li>
 	<li>MWST-Satz (%) (Zahl)</li>
 	<li>QR-Zahlteil auf Rechnungen (Ein/Aus): Druckt unten auf jede Rechnung einen Schweizer QR-Zahlteil. Deine Kundinnen und Kunden scannen ihn mit der Banking-App, Betrag, Konto und Referenz sind dann schon ausgefüllt. Voraussetzung: gültige Schweizer oder Liechtensteiner «IBAN», Rechnung in CHF oder EUR und in «Verantwortliche Adresse» Strasse mit Nummer und «PLZ Ort» je auf einer eigenen Zeile (z.B. «Musterstrasse 12» / «8000 Zürich»). Fehlt etwas, erscheint die Rechnung ohne QR-Teil und «Inhalte prüfen» meldet es.</li>
+	<li>Automatisch mahnen (Ein/Aus): Schickt offene Rechnungen nach Ablauf der Zahlungsfrist automatisch als Mahnung an den Kunden (höchstens 2 Mahnungen) und setzt den Zahlungsstatus auf «gemahnt». Du erhältst zu jeder Mahnung eine kurze Info-Mail. Barzahlungen und stornierte Rechnungen werden nie gemahnt.</li>
+	<li>Mahnung nach Ablauf der Zahlungsfrist (Tage) (Zahl): Wie viele Tage nach Ablauf der Zahlungsfrist die Mahnung verschickt wird. Gilt auch für die 2. Mahnung nach Ablauf der neuen Frist. Leer = 10 Tage. Beispiel: Rechnung vom 1.10., Zahlungsfrist 30 Tage, hier 10 → 1. Mahnung am 10.11.</li>
+	<li>Neue Zahlungsfrist in der Mahnung (Tage) (Zahl): Neue Zahlungsfrist, die in der Mahnung genannt wird, ab dem Tag der Mahnung. Leer = 10 Tage.</li>
 	<li>Kunden-E-Mail: Betreff (Text)</li>
 	<li>Kunden-E-Mail: Text (formatierter Text)</li>
 	<li>Buchungsbestätigung: Titel (Text)</li>

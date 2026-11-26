@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pageColors } from '$lib/stores/pageColors';
+	const pageColorsStore = pageColors();
 	import { _ } from '$lib/stores/i18n';
 	import type { Content } from '@prismicio/client';
 	import Bounded from '$lib/components/Bounded.svelte';
@@ -65,8 +67,8 @@
 	 *
 	 * contrast_amount → Offset für itemTextColor im geöffneten Panel (siehe unten).
 	 */
-	$: effectiveBgColor = p.bg_color || $theme.pageBgColor;
-	$: effectiveTextColor = p.text_color || $theme.pageColor;
+	$: effectiveBgColor = p.bg_color || $pageColorsStore.pageBgColor;
+	$: effectiveTextColor = p.text_color || $pageColorsStore.pageColor;
 	$: effectiveLinkColor = p.link_color || $theme.pageLinkColor;
 	$: effectiveBorderColor = p.border_color || effectiveTextColor;
 
@@ -89,6 +91,11 @@
 	$: isBildUndText = slice.variation === 'bildUndText';
 	// Bild und Text: heading level of the item titles (CMS field "Titel-Ebene", default H2)
 	$: titleLevel = String((p as any).title_level ?? '');
+	// «Runde Ecken ausschalten» (Bild und Text): images, open content and section box square
+	$: noRoundedCorners = (p as any).no_rounded_corners === true;
+	// Image background / overlay for all entries (element level, Bild und Text)
+	$: imageBgColor = ((p as any).image_bg_color as string | null) ?? '';
+	$: overlayTransparency = ((p as any).image_overlay_transparency as number | null) ?? 100;
 	$: titleTag = /^H[2-6]$/.test(titleLevel) ? titleLevel.toLowerCase() : 'h2';
 </script>
 
@@ -110,12 +117,13 @@
 				: p.sektion_rahmen
 					? '-mx-[1.3rem] md:mx-0'
 					: '-mx-6 md:mx-0'
-			: ''} {p.bg_color
+			: ''} {p.bg_color && !noRoundedCorners
 			? p.mobile_full_width
 				? 'md:rounded-lg'
 				: 'rounded-lg'
 			: ''} {p.sektion_rahmen
-			? 'sektion-rahmen ' + (p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
+			? 'sektion-rahmen ' +
+				(noRoundedCorners ? '' : p.mobile_full_width ? 'md:rounded-lg' : 'rounded-lg')
 			: ''}"
 		class:p-6={p.bg_color || p.sektion_rahmen}
 		class:acc-border={p.sektion_rahmen}
@@ -206,7 +214,8 @@
 						: { direction: 'none' }}
 					class="acc-row border-b {slice.variation === 'bildUndText'
 						? 'pb-0 md:pb-4'
-						: 'pb-4'} md:rounded-t min-w-0 {p.bg_color || p.sektion_rahmen
+						: 'pb-4'} {noRoundedCorners ? '' : 'md:rounded-t'} min-w-0 {p.bg_color ||
+					p.sektion_rahmen
 						? 'px-3'
 						: p.mobile_full_width
 							? 'px-0 md:px-3'
@@ -214,7 +223,11 @@
 				>
 					<!-- Bild und Text: Titel als h2–h6 je nach „Titel-Ebene“ (Heading enthält den Button → zugängliches Akkordeon-Muster);
 					     Grösse/Schrift kommen global aus app.css -->
-					<svelte:element this={isBildUndText ? titleTag : 'div'} class="accordion-title">
+					<svelte:element
+						this={isBildUndText ? titleTag : 'div'}
+						class="accordion-title"
+						class:accordion-title-h3={isBildUndText && titleTag === 'h3'}
+					>
 						<button
 							class="acc-item-text {isBildUndText
 								? ''
@@ -248,7 +261,9 @@
 								class="acc-bg mt-2 {slice.variation === 'bildUndText'
 									? 'pt-2 md:pt-0'
 									: 'py-2'} {slice.variation === 'bildUndText'
-									? 'rounded md:rounded-3xl'
+									? noRoundedCorners
+										? ''
+										: 'rounded md:rounded-3xl'
 									: 'rounded'} {slice.variation === 'bildUndText' ? 'md:px-0' : 'px-3'}"
 							>
 								{#if slice.variation === 'bildUndText'}
@@ -256,16 +271,16 @@
 										image={'image' in item ? item.image : null}
 										text={item.content}
 										imageLeft={'standardBildLinks' in item ? item.standardBildLinks : false}
-										imageBgColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
-										overlayColor={'bild_hintergrund' in item ? (item.bild_hintergrund ?? '') : ''}
-										overlayTransparency={'bild_overlay_transparenz' in item
-											? (item.bild_overlay_transparenz ?? 100)
-											: 100}
+										stacked={'image_on_top' in item ? item.image_on_top === true : false}
+										{imageBgColor}
+										overlayColor={imageBgColor}
+										{overlayTransparency}
 										mobilePadding={p.mobile_full_width ? '2rem' : ''}
 										mobilePaddingTop={p.mobile_full_width ? '1.5rem' : ''}
 										desktopPadding={p.mobile_full_width ? '1.5rem' : ''}
 										desktopPaddingY="1.5rem"
 										noRoundMobile={p.mobile_full_width}
+										noRound={noRoundedCorners}
 										noObjectCover
 										lupe={'bild_lupe' in item ? (item.bild_lupe ?? false) : false}
 									/>
@@ -285,6 +300,17 @@
 	/* h2–h6 keep their global size/font (app.css), but no heading margins inside the accordion */
 	.accordion-title {
 		margin: 0;
+	}
+	/* «Titel-Ebene» H3: deliberately one step smaller than the global h3 (accordion lists are dense) */
+	.accordion-title-h3 {
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+	}
+	@media (min-width: 768px) {
+		.accordion-title-h3 {
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
 	}
 	button {
 		text-align: left;
@@ -330,5 +356,16 @@
 
 	:global([data-slice-type='accordion'] li) {
 		padding-left: 0.5rem;
+	}
+
+	/* Mobile: no extra indent — bullet inside the line, list flush with the text (narrow column) */
+	@media (max-width: 767px) {
+		:global([data-slice-type='accordion'] :is(ul, ol)) {
+			list-style-position: inside;
+			padding-left: 0 !important;
+		}
+		:global([data-slice-type='accordion'] li) {
+			padding-left: 0;
+		}
 	}
 </style>

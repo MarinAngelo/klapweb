@@ -95,8 +95,16 @@
 		({ Klein: 'sm', Mittel: 'md', Gross: 'lg' } as Record<string, 'sm' | 'md' | 'lg'>)[
 			p.button_size
 		] ?? 'md';
-	// Variation «Suche»: searches the current page and jumps to the match
+	// Variation «Suche»: field + button in one element; submit opens the dialog with the term,
+	// which searches the current page and jumps to the match
 	let searchOpen = false;
+	let searchQuery = '';
+	const inputSizeMap: Record<string, string> = {
+		Klein: 'pl-4 pr-2 text-sm',
+		Mittel: 'pl-5 pr-3 text-base',
+		Gross: 'pl-6 pr-3 text-lg'
+	};
+	$: inputSizeClass = inputSizeMap[p.button_size] ?? inputSizeMap['Mittel'];
 	$: anim = mapAnimation(p.animate, p.anim_direction, p.anim_delay, p.anim_duration);
 </script>
 
@@ -116,38 +124,51 @@
 			: ''}"
 	>
 		{#if slice.variation === 'suche'}
-			<button
-				type="button"
+			<form
+				role="search"
 				data-page-search-ignore
-				on:click={() => (searchOpen = true)}
-				class="btn-dynamic button-prismic-link font-semibold rounded-full border transition duration-200 ease-in-out cursor-pointer {sizeClass} {mobileFullWidth
-					? 'flex w-full items-center justify-center sm:inline-flex sm:items-center sm:w-auto'
-					: 'inline-flex items-center gap-2'}"
+				on:submit|preventDefault={() => (searchOpen = true)}
+				class="search-combo flex items-stretch rounded-full border overflow-hidden {mobileFullWidth
+					? 'w-full sm:w-auto'
+					: ''}"
 				style:--btn-bg={buttonBgColor}
 				style:--btn-color={buttonColor}
 				style:--hover-text-color={buttonHoverColor}
 				style:--hover-bg-color={buttonHoverBgColor}
 				style:--focus-ring-color={buttonColor}
 			>
-				<svg
-					width="1em"
-					height="1em"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2.5"
-					stroke-linecap="round"
-					aria-hidden="true"
+				<input
+					type="search"
+					bind:value={searchQuery}
+					placeholder={p.search_placeholder || $_('Suchen …')}
+					aria-label={$_('Diese Seite durchsuchen')}
+					class="search-combo-input min-w-0 flex-1 border-0 bg-transparent text-page focus:outline-none focus:ring-0 {inputSizeClass}"
+				/>
+				<button
+					type="submit"
+					class="btn-dynamic button-prismic-link font-semibold rounded-full border-0 transition duration-200 ease-in-out cursor-pointer inline-flex shrink-0 items-center gap-2 {sizeClass}"
 				>
-					<circle cx="11" cy="11" r="7" />
-					<path d="M20 20l-3.5-3.5" />
-				</svg>
-				{p.button_text || $_('Suchen')}
-			</button>
+					<svg
+						width="1em"
+						height="1em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						aria-hidden="true"
+					>
+						<circle cx="11" cy="11" r="7" />
+						<path d="M20 20l-3.5-3.5" />
+					</svg>
+					{p.button_text || $_('Suchen')}
+				</button>
+			</form>
 			{#if searchOpen}
 				<SearchDialog
 					scope="page"
 					placeholder={p.search_placeholder}
+					initialQuery={searchQuery}
 					onClose={() => (searchOpen = false)}
 				/>
 			{/if}
@@ -211,3 +232,16 @@
 		{/if}
 	</div>
 </Bounded>
+
+<style>
+	/* Field + button as one pill: neutral frame (button may be filled or outlined), button flush right */
+	.search-combo {
+		border-color: color-mix(in srgb, var(--page-color) 30%, transparent);
+	}
+	.search-combo:focus-within {
+		box-shadow: 0 0 0 2px var(--focus-ring-color);
+	}
+	.search-combo-input::-webkit-search-cancel-button {
+		cursor: pointer;
+	}
+</style>

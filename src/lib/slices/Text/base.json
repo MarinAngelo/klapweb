@@ -130,7 +130,7 @@
 							"P5.js",
 							"Variablen",
 							"Ressourcen-Buchung",
-							"Globale Events"
+							"Eventmanagement"
 						]
 					}
 				},
@@ -286,7 +286,7 @@
 							"P5.js",
 							"Variablen",
 							"Ressourcen-Buchung",
-							"Globale Events"
+							"Eventmanagement"
 						]
 					}
 				},
@@ -369,7 +369,7 @@
 							"P5.js",
 							"Variablen",
 							"Ressourcen-Buchung",
-							"Globale Events"
+							"Eventmanagement"
 						]
 					}
 				}

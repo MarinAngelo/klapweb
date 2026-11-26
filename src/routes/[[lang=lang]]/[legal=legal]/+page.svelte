@@ -16,4 +16,9 @@
 	$: component = components[data.legalPage];
 </script>
 
+<svelte:head>
+	<!-- Legal pages (Impressum, Datenschutz, AGB, Haftungsausschluss): reachable, but not in search results -->
+	<meta name="robots" content="noindex, follow" />
+</svelte:head>
+
 <svelte:component this={component} {data} />

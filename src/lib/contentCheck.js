@@ -203,6 +203,9 @@ const ref = (doc) => ({
 
 /**
  * @param {import('@prismicio/client').Client} client
+ * @param {any[]} [fieldReference]
+ * @param {{ invoicingFeatures?: string[] }} [options] active features that create invoices
+ *   (gating.json › settings › invoice_iban); unknown → every invoicing field counts
  * @returns {Promise<{
  *   langs: string[];
  *   master: string;
@@ -210,7 +213,11 @@ const ref = (doc) => ({
  *   links: LinkProblem[];
  * }>}
  */
-export async function checkContent(client, fieldReference = /** @type {any[]} */ ([])) {
+export async function checkContent(
+	client,
+	fieldReference = /** @type {any[]} */ ([]),
+	options = {}
+) {
 	/** @param {any} doc @param {FieldCtx} ctx */
 	const where = (doc, ctx) => fieldName(fieldReference, doc.type, ctx);
 	const repo = await client.getRepository();
@@ -349,7 +356,13 @@ export async function checkContent(client, fieldReference = /** @type {any[]} */
 	);
 	const invoiceSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
 	const invoiceData = /** @type {any} */ (invoiceSettings?.data) ?? {};
-	if (invoicing && invoiceSettings && invoiceData.invoice_qr_bill !== false) {
+	// Appointment booking alone only sends invoices with «Rechnung nach dem Termin senden»
+	const features = options.invoicingFeatures;
+	const invoicesSent =
+		!features ||
+		features.some((f) => f !== 'terminbuchung') ||
+		(features.includes('terminbuchung') && invoiceData.booking_invoice === true);
+	if (invoicing && invoicesSent && invoiceSettings && invoiceData.invoice_qr_bill !== false) {
 		const lines = Array.isArray(invoiceData.responsible_address)
 			? invoiceData.responsible_address.map((/** @type {any} */ b) => b?.text ?? '')
 			: [];

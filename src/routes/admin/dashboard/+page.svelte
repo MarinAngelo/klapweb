@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SvgIcons from '$lib/components/SvgIcons.svelte';
+	import AdminThemeToggle from '$lib/components/admin/AdminThemeToggle.svelte';
 	import { _ } from '$lib/stores/i18n';
 	import type { PageData } from './$types';
 	export let data: PageData;
@@ -20,11 +21,25 @@
 			icon: '👥'
 		},
 		{
+			id: 'buchhaltung',
+			title: 'Buchhaltung',
+			description: 'Einnahmen und Ausgaben mit Belegen, bezahlte Rechnungen automatisch',
+			href: `/admin/buchhaltung`,
+			icon: '📒'
+		},
+		{
 			id: 'stunden',
 			title: 'Stunden',
 			description: 'Erfasste Arbeitszeiten und Spesen, Total und CSV-Export',
 			href: `/admin/stunden`,
 			icon: '⏱️'
+		},
+		{
+			id: 'assistenz',
+			title: 'Assistenz',
+			description: 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+			href: `/admin/assistenz`,
+			icon: '🧾'
 		},
 		{
 			id: 'buchungen',
@@ -103,6 +118,7 @@
 	<div class="admin-header">
 		<h1>{$_('Dashboard')}</h1>
 		<div class="admin-header-actions">
+			<AdminThemeToggle />
 			<a href="/" class="admin-btn">⌂ {$_('Zur Website')}</a>
 			<form method="POST" action="/admin?/logout">
 				<button type="submit" class="admin-btn">{$_('Abmelden')}</button>
