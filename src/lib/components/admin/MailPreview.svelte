@@ -27,8 +27,11 @@
 	// Tag name split: Svelte would otherwise read the string as the component's style block
 	const frameCss =
 		'body{font-family:sans-serif;font-size:14px;line-height:1.5;margin:12px;color:#222;background:#fafaf9}p{margin:0 0 .6em}';
+	// Complete mail documents (wrapMail) unchanged, fragments with a neutral frame
 	const srcdoc = (html: string) =>
-		`<!doctype html><meta charset="utf-8"><base target="_blank"><${'style'}>${frameCss}</${'style'}>${html}`;
+		/^\s*<!doctype/i.test(html)
+			? html
+			: `<!doctype html><meta charset="utf-8"><base target="_blank"><${'style'}>${frameCss}</${'style'}>${html}`;
 </script>
 
 <svelte:head><title>{$_('E-Mail-Vorschau')}</title></svelte:head>

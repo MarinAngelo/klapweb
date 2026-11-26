@@ -10,6 +10,8 @@ import { listBookings, updateBooking, type BookingRecord } from '$lib/server/boo
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
 import { bookingInvoiceMail } from '$lib/server/bookingMails';
 import { getTextStyle } from '$lib/server/mailFrom';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 /** End of the appointment (without buffer); start when there is no end time */
@@ -34,6 +36,8 @@ export async function sendDueBookingInvoices(now = Date.now()): Promise<string[]
 
 	const settings = await loadInvoiceSettings();
 	const style = await getTextStyle();
+	// Customer mail in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 	const created: string[] = [];
 	for (const booking of due) {
 		// Claim first: a parallel run (cron + admin page) must not invoice twice
@@ -72,6 +76,7 @@ export async function sendDueBookingInvoices(now = Date.now()): Promise<string[]
 						dateLabel,
 						name: booking.name,
 						style,
+						theme,
 						invoiceNumber: invoice.invoiceNumber,
 						companyName: settings.name
 					})

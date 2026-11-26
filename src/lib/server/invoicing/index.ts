@@ -151,6 +151,8 @@ export async function sendInvoiceMail(options: {
 	to: string;
 	subject: string;
 	text: string;
+	/** Optional HTML part (e.g. mail layout in the page colours); text stays as fallback */
+	html?: string;
 	replyTo?: string;
 }): Promise<boolean> {
 	const resendKey = env.RESEND_API_KEY;
@@ -163,6 +165,7 @@ export async function sendInvoiceMail(options: {
 			to: options.to,
 			subject: options.subject,
 			text: options.text,
+			...(options.html ? { html: options.html } : {}),
 			...(options.replyTo ? { replyTo: options.replyTo } : {}),
 			attachments: [invoiceAttachment(options.invoiceNumber, options.pdf)]
 		});

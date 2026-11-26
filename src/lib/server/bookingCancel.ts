@@ -12,6 +12,8 @@ import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server
 import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { cancelCustomerMail, cancelFeeMail, cancelProviderMail } from '$lib/server/bookingMails';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 export type CancelStatus =
@@ -115,6 +117,8 @@ export async function cancelBooking(
 	const dateLabel = formatDateWithWeekday(booking.datum, booking.uhrzeit || null, 'de-CH', 'long');
 	const notes: string[] = [];
 	const style = await getTextStyle();
+	// Customer mails in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 
 	// Invoice of the booking: open → «storniert»; already paid → provider checks the refund
 	let paidInvoice = false;
@@ -176,6 +180,7 @@ export async function cancelBooking(
 						dateLabel,
 						name: booking.name,
 						style,
+						theme,
 						freeUntilLabel: terms.freeUntilLabel,
 						feePercent: terms.feePercent,
 						companyName: settings.name
@@ -199,7 +204,7 @@ export async function cancelBooking(
 		const { error } = await resend.emails.send({
 			from,
 			to: booking.email,
-			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, style })
+			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, style, theme })
 		});
 		if (error) console.error('Storno Kunden-E-Mail fehlgeschlagen:', error);
 	}
