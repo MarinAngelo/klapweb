@@ -2342,12 +2342,27 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
-	'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele.':
+	'Ihre Abrechnung: {ressource}': {
+		'de-ch': 'Ihre Abrechnung: {ressource}',
+		'en-us': 'Your invoice: {ressource}'
+	},
+	'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:': {
+		'de-ch': 'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:',
+		'en-us': 'Thank you for your stay. Here is your final invoice:'
+	},
+	'Buchungs-Nr.': { 'de-ch': 'Buchungs-Nr.', 'en-us': 'Booking no.' },
+	Mietpreis: { 'de-ch': 'Mietpreis', 'en-us': 'Rental price' },
+	'Credits (Aufgaben)': { 'de-ch': 'Credits (Aufgaben)', 'en-us': 'Credits (tasks)' },
+	'Erledigte Aufgaben': { 'de-ch': 'Erledigte Aufgaben', 'en-us': 'Completed tasks' },
+	'(keine)': { 'de-ch': '(keine)', 'en-us': '(none)' },
+	'Entspricht ca.': { 'de-ch': 'Entspricht ca.', 'en-us': 'Approx.' },
+	Tageskurs: { 'de-ch': 'Tageskurs', 'en-us': 'Daily rate' },
+	'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.':
 		{
 			'de-ch':
-				'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele.',
+				'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.',
 			'en-us':
-				'These emails are sent by the resource booking. The preview uses the texts of the first resource and a sample booking; guest name and email are examples.'
+				'These emails are sent by the resource booking. The preview uses the texts of the first resource and a sample booking; guest name and email are examples. Emails to guests are in the language of the booking, emails to you always in German.'
 		},
 	'Beispiel-Ressource': { 'de-ch': 'Beispiel-Ressource', 'en-us': 'Sample resource' },
 	'keine Ressource gefunden — erfundenes Beispiel': {
