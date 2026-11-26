@@ -80,42 +80,51 @@
 	let termineLoading = false;
 	let termineError = false;
 	let selectedTermin = '';
+	// Steps from the customer's view: offer → day → time
+	let selectedOffer = '';
 	let selectedWorkday = '';
-	let selectedTime = '';
 
-	$: termineByWorkday = termine.reduce<Record<string, Record<string, AvailableTermin[]>>>(
-		(groups, termin) => {
+	type Offer = { id: string; titel: string; sessionLaenge?: number | null };
+	const offerKey = (t: AvailableTermin) => t.angebotId || t.titel || t.label;
+	$: offers = Object.values(
+		termine.reduce<Record<string, Offer>>((map, t) => {
+			map[offerKey(t)] ??= {
+				id: offerKey(t),
+				titel: t.titel ?? t.label,
+				sessionLaenge: t.sessionLaenge
+			};
+			return map;
+		}, {})
+	);
+	// Only one offer (or preselected) → no offer step
+	$: activeOffer = selectedOffer || (offers.length === 1 ? offers[0].id : '');
+	$: activeOfferInfo = offers.find((o) => o.id === activeOffer);
+	// Days → times of the chosen offer (one slot per time)
+	$: termineByWorkday = termine
+		.filter((t) => offerKey(t) === activeOffer)
+		.reduce<Record<string, Record<string, AvailableTermin>>>((groups, termin) => {
 			const workday = termin.arbeitstagLabel || termin.label.split(' – ')[0] || $_('Termin');
 			const time = termin.uhrzeit || $_('Ganztägig');
-			(groups[workday] ??= {})[time] ??= [];
-			groups[workday][time].push(termin);
+			(groups[workday] ??= {})[time] ??= termin;
 			return groups;
-		},
-		{}
-	);
+		}, {});
 	$: selectedWorkdaySlots = termineByWorkday[selectedWorkday] ?? {};
-	$: selectedTimeTermine = selectedWorkdaySlots[selectedTime] ?? [];
 
 	function showAllOffers() {
 		preselectedOffer = '';
 		offerWithoutSlots = false;
 		termine = allTermine;
-		selectedWorkday = '';
-		selectedTime = '';
-		selectedTermin = '';
+		chooseOffer('');
+	}
+
+	function chooseOffer(offer: string) {
+		selectedOffer = offer;
+		chooseWorkday('');
 	}
 
 	function chooseWorkday(workday: string) {
 		selectedWorkday = workday;
-		selectedTime = '';
 		selectedTermin = '';
-	}
-
-	function chooseTime(time: string) {
-		selectedTime = time;
-		// Offer already chosen (?angebot=) → one appointment per time, skip the offer step
-		const timeTermine = selectedWorkdaySlots[time] ?? [];
-		selectedTermin = preselectedOffer && timeTermine.length === 1 ? timeTermine[0].id : '';
 	}
 
 	const countries = [
@@ -325,7 +334,7 @@
 		termineError = false;
 		selectedTermin = '';
 		selectedWorkday = '';
-		selectedTime = '';
+		selectedOffer = '';
 		try {
 			const r = await fetch('/api/termine');
 			if (!r.ok) {
@@ -339,6 +348,7 @@
 				: [];
 			// No free slots for the chosen offer → hint (other offers on request)
 			preselectedOffer = offerTermine.length ? offerTermine[0].titel || offerUid : '';
+			selectedOffer = offerTermine.length ? offerKey(offerTermine[0]) : '';
 			offerWithoutSlots = !!offerUid && !offerTermine.length;
 			termine = offerUid ? offerTermine : allTermine;
 		} catch {
@@ -671,74 +681,62 @@
 					role="radiogroup"
 					aria-label={field.field_name ?? $_('Termin')}
 				>
-					{#if !selectedWorkday}
+					{#if !activeOffer}
 						<section class="termin-step">
-							<h4>{$_('Tag wählen')}</h4>
+							<h4>{$_('Angebot wählen')}</h4>
 							<div class="termin-day-options">
-								{#each Object.keys(termineByWorkday) as workday}
-									<button
-										type="button"
-										class="termin-day-option"
-										on:click={() => chooseWorkday(workday)}
-									>
-										{workday}
-									</button>
-								{/each}
-							</div>
-						</section>
-					{:else if !selectedTime}
-						<section class="termin-step">
-							<div class="termin-step-heading">
-								<h4>{selectedWorkday}</h4>
-								<button type="button" class="termin-back" on:click={() => chooseWorkday('')}
-									>{$_('Tag ändern')}</button
-								>
-							</div>
-							<h5 class="termin-step-title">{$_('Zeit wählen')}</h5>
-							<div class="termin-time-options">
-								{#each Object.entries(selectedWorkdaySlots) as [time, slotTermine]}
+								{#each offers as offer (offer.id)}
 									<button
 										type="button"
 										class="termin-time-option"
-										on:click={() => chooseTime(time)}
+										on:click={() => chooseOffer(offer.id)}
 									>
-										<strong
-											>{time}{slotTermine[0]?.endzeit ? `–${slotTermine[0].endzeit}` : ''}</strong
-										>
-										{#if !preselectedOffer}
-											<span>{slotTermine.length} {$_('Angebote')}</span>
-										{/if}
+										<strong>{offer.titel}</strong>
+										{#if offer.sessionLaenge}<span>{offer.sessionLaenge} {$_('Minuten')}</span>{/if}
 									</button>
 								{/each}
 							</div>
 						</section>
 					{:else}
-						<section class="termin-step">
-							<div class="termin-step-heading">
-								<h4>{selectedWorkday}</h4>
-								<button type="button" class="termin-back" on:click={() => chooseTime('')}
-									>{$_('Zeit ändern')}</button
+						<div class="termin-step-heading">
+							<h4>
+								{activeOfferInfo?.titel ?? ''}{#if activeOfferInfo?.sessionLaenge}
+									<small class="termin-step-sub"
+										>{activeOfferInfo.sessionLaenge} {$_('Minuten')}</small
+									>{/if}
+							</h4>
+							{#if offers.length > 1 && !preselectedOffer}
+								<button type="button" class="termin-back" on:click={() => chooseOffer('')}
+									>{$_('Angebot ändern')}</button
 								>
-							</div>
-							<h5 class="termin-step-title">
-								{selectedTime}{selectedTimeTermine[0]?.endzeit
-									? `–${selectedTimeTermine[0].endzeit}`
-									: ''}
-							</h5>
-							{#if preselectedOffer && selectedTermin && selectedTimeTermine.length === 1}
-								{@const t = selectedTimeTermine[0]}
-								<input type="hidden" name={key} value={t.id} />
-								<div class="termin-options">
-									<div class="termin-option termin-option-static selected">
-										<span class="termin-option-content">
-											<strong>{t.titel ?? t.label}</strong>
-											{#if t.sessionLaenge}<small>{t.sessionLaenge} {$_('Minuten')}</small>{/if}
-										</span>
-									</div>
+							{/if}
+						</div>
+						{#if !selectedWorkday}
+							<section class="termin-step">
+								<h5 class="termin-step-title">{$_('Tag wählen')}</h5>
+								<div class="termin-day-options">
+									{#each Object.keys(termineByWorkday) as workday}
+										<button
+											type="button"
+											class="termin-day-option"
+											on:click={() => chooseWorkday(workday)}
+										>
+											{workday}
+										</button>
+									{/each}
 								</div>
-							{:else}
+							</section>
+						{:else}
+							<section class="termin-step">
+								<div class="termin-step-heading">
+									<h5 class="termin-step-title">{selectedWorkday}</h5>
+									<button type="button" class="termin-back" on:click={() => chooseWorkday('')}
+										>{$_('Tag ändern')}</button
+									>
+								</div>
+								<h5 class="termin-step-title">{$_('Zeit wählen')}</h5>
 								<div class="termin-options">
-									{#each selectedTimeTermine as t}
+									{#each Object.entries(selectedWorkdaySlots) as [time, t] (t.id)}
 										<label class:selected={selectedTermin === t.id} class="termin-option">
 											<input
 												type="radio"
@@ -751,14 +749,13 @@
 												on:change
 											/>
 											<span class="termin-option-content">
-												<strong>{t.titel ?? t.label}</strong>
-												{#if t.sessionLaenge}<small>{t.sessionLaenge} {$_('Minuten')}</small>{/if}
+												<strong>{time}{t.endzeit ? `–${t.endzeit}` : ''}</strong>
 											</span>
 										</label>
 									{/each}
 								</div>
-							{/if}
-						</section>
+							</section>
+						{/if}
 					{/if}
 				</div>
 			{/if}
@@ -813,6 +810,12 @@
 	.termin-step-heading h4,
 	.termin-step-title {
 		margin: 0;
+	}
+
+	.termin-step-sub {
+		margin-left: 0.5rem;
+		font-size: 0.8rem;
+		font-weight: 400;
 	}
 
 	.termin-day-options,
