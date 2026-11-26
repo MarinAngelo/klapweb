@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { createClient } from '$lib/prismicio';
 import { FEATURE_ECOMMERCE, FEATURE_GLOBAL_EVENTS } from '$lib/server/features';
 import { textStyleFrom } from '$lib/addressForm';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { invoiceSettingsFrom } from '$lib/server/invoicing/settings';
 import { getMailAddress, getNotifyTo } from '$lib/server/mailFrom';
 import { SAMPLE_CUSTOMER as SAMPLE, type PreviewMail } from '$lib/server/mailText';
@@ -25,14 +26,16 @@ const day = (offset: number) => {
 
 // Access: /admin/* is protected centrally in hooks.server.ts (admin session)
 export const load: PageServerLoad = async ({ fetch }) => {
-	const settings = await createClient({ fetch })
-		.getSingle('settings')
-		.catch(() => null);
+	const client = createClient({ fetch });
+	const [settings, theme] = await Promise.all([
+		client.getSingle('settings').catch(() => null),
+		loadMailTheme(client).catch(() => null)
+	]);
 	const s = (settings?.data ?? {}) as Record<string, any>;
 	const co = invoiceSettingsFrom(s);
 	const style = textStyleFrom(s);
 	const notifyTo = await getNotifyTo();
-	const base = { name: SAMPLE.name, companyName: co.name, style };
+	const base = { name: SAMPLE.name, companyName: co.name, style, theme };
 	const nr = 'INV-1700000000000';
 	const pdf = `${nr}.pdf`;
 	const amount = `${co.currency} 250.00`;
