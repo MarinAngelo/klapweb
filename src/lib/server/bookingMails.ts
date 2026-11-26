@@ -7,23 +7,7 @@
  */
 
 import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
-
-export type Mail = { subject: string; text: string; html?: string };
-
-export function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
-}
-
-function richTextToPlain(
-	blocks: Array<{ text?: string }> | null | undefined,
-	tokens: Record<string, string>
-): string {
-	if (!blocks?.length) return '';
-	return blocks
-		.filter((b) => b.text)
-		.map((b) => applyTokens(b.text!, tokens))
-		.join('\n\n');
-}
+import { applyTokens, richTextToMail, type Mail } from '$lib/server/mailText';
 
 export type ConfirmationInput = {
 	titel: string;
@@ -85,7 +69,7 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 		: '';
 
 	const bodyText =
-		richTextToPlain(c.customBody, tokens) ||
+		richTextToMail(c.customBody, tokens) ||
 		[
 			greetingLine(c.style, c.name),
 			``,

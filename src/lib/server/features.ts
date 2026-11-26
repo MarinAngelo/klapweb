@@ -33,6 +33,7 @@ export const FEATURE_CHATBOT = _check('chatbot');
 export const FEATURE_KLAPSTUDIO = _check('klapstudio');
 export const FEATURE_TERMINBUCHUNG = _check('terminbuchung');
 export const FEATURE_ECOMMERCE = _check('ecommerce');
+export const FEATURE_GLOBAL_EVENTS = _check('global_events');
 export const FEATURE_NEWSLETTER = _check('newsletter');
 export const FEATURE_KUNDENKONTO = _check('kundenkonto');
 export const FEATURE_KUNDENVERWALTUNG = _check('kundenverwaltung');
