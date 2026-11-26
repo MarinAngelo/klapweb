@@ -8,6 +8,7 @@
 
 import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
 import { applyTokens, richTextToMail, type Mail } from '$lib/server/mailText';
+import { mailButton, textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
 
 export type ConfirmationInput = {
 	titel: string;
@@ -34,6 +35,8 @@ export type ConfirmationInput = {
 	convertedTime?: string;
 	icsLink: string;
 	stornoLink: string;
+	/** Page colours of the active theme (loadMailTheme); null = neutral */
+	theme?: MailTheme | null;
 	/** Form of address + greeting */
 	style?: TextStyle;
 };
@@ -41,8 +44,6 @@ export type ConfirmationInput = {
 /** Confirmation to the customer (with .ics attachment) */
 export function confirmationMail(c: ConfirmationInput): Mail {
 	const dateLabel = c.uhrzeit ? `${c.datumLabel}, ${c.uhrzeit} Uhr` : c.datumLabel;
-	const durationLine = c.sessionLaenge ? ` (${c.sessionLaenge} min)` : '';
-	const terminLine = `${c.titel}${durationLine}\n${dateLabel}`;
 
 	const tokens: Record<string, string> = {
 		Titel: c.titel,
@@ -75,7 +76,8 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 			``,
 			duSie(c.style?.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
 			``,
-			`Termin: ${terminLine}`,
+			`Angebot: ${c.titel}`,
+			`Datum: ${dateLabel}`,
 			// Location of the offer (if linked and active)
 			...(c.ortName || c.ortAdresse
 				? [``, `Ort: ${[c.ortName, c.ortAdresse].filter(Boolean).join(', ')}`]
@@ -98,14 +100,15 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 			c.companyName
 		].join('\n');
 
-	const html =
-		bodyText
-			.split('\n')
-			.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
-			.join('') +
-		(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
-		(calendarLine ? `<p><a href="${c.icsLink}">Zum Kalender hinzufügen</a></p>` : '') +
-		`<p><a href="${c.stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+	// HTML in the page colours (same layout as the guest mails of the resource booking)
+	const html = wrapMail(
+		textToMailHtml(bodyText + (customerTzLine ? `\n${customerTzLine}` : ''), c.theme) +
+			`<p style="margin:20px 0 0;">${
+				calendarLine ? mailButton(c.icsLink, 'Zum Kalender hinzufügen', c.theme) : ''
+			}${mailButton(c.stornoLink, 'Buchung stornieren', c.theme)}</p>`,
+		c.theme,
+		{ subject }
+	);
 
 	return {
 		subject,
@@ -149,44 +152,63 @@ export function providerBookingMail(p: ProviderBookingInput): Mail {
 	};
 }
 
-type CancelBase = { titel: string; dateLabel: string; name?: string; style?: TextStyle };
+type CancelBase = {
+	titel: string;
+	dateLabel: string;
+	name?: string;
+	style?: TextStyle;
+	/** Page colours of the active theme (loadMailTheme); customer mails get an HTML part */
+	theme?: MailTheme | null;
+};
+
+/** Text mail → additionally HTML in the page colours (customer mails) */
+const withHtml = (mail: Mail, theme: MailTheme | null | undefined): Mail => ({
+	...mail,
+	html: wrapMail(textToMailHtml(mail.text, theme), theme, { subject: mail.subject })
+});
 
 /** Cancellation confirmation to the customer (free of charge) */
 export function cancelCustomerMail(c: CancelBase): Mail {
-	return {
-		subject: `Stornierung bestätigt: ${c.titel}`,
-		text: [
-			greetingLine(c.style, c.name),
-			``,
-			`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde erfolgreich storniert.`,
-			``,
-			`Angebot: ${c.titel}`,
-			`Datum: ${c.dateLabel}`
-		].join('\n')
-	};
+	return withHtml(
+		{
+			subject: `Stornierung bestätigt: ${c.titel}`,
+			text: [
+				greetingLine(c.style, c.name),
+				``,
+				`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde erfolgreich storniert.`,
+				``,
+				`Angebot: ${c.titel}`,
+				`Datum: ${c.dateLabel}`
+			].join('\n')
+		},
+		c.theme
+	);
 }
 
 /** Cancellation confirmation to the customer with the fee invoice attached */
 export function cancelFeeMail(
 	c: CancelBase & { freeUntilLabel: string | null; feePercent: number | null; companyName: string }
 ): Mail {
-	return {
-		subject: `Stornierung bestätigt: ${c.titel}`,
-		text: [
-			greetingLine(c.style, c.name),
-			``,
-			`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde storniert.`,
-			``,
-			`Angebot: ${c.titel}`,
-			`Datum: ${c.dateLabel}`,
-			``,
-			`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
-				`stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
-			``,
-			`Freundliche Grüsse`,
-			c.companyName
-		].join('\n')
-	};
+	return withHtml(
+		{
+			subject: `Stornierung bestätigt: ${c.titel}`,
+			text: [
+				greetingLine(c.style, c.name),
+				``,
+				`${duSie(c.style?.du, 'Ihre', 'Deine')} Buchung wurde storniert.`,
+				``,
+				`Angebot: ${c.titel}`,
+				`Datum: ${c.dateLabel}`,
+				``,
+				`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
+					`stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
+				``,
+				`Freundliche Grüsse`,
+				c.companyName
+			].join('\n')
+		},
+		c.theme
+	);
 }
 
 /** Cancellation notice to the provider */
@@ -222,22 +244,25 @@ export function cancelProviderMail(
 export function bookingInvoiceMail(
 	c: CancelBase & { invoiceNumber: string; companyName: string }
 ): Mail {
-	return {
-		subject: `${duSie(c.style?.du, 'Ihre', 'Deine')} Rechnung ${c.invoiceNumber}${c.companyName ? ` – ${c.companyName}` : ''}`,
-		text: [
-			greetingLine(c.style, c.name),
-			``,
-			duSie(
-				c.style?.du,
-				'Vielen Dank für Ihren Besuch. Im Anhang finden Sie die Rechnung für:',
-				'Vielen Dank für deinen Besuch. Im Anhang findest du die Rechnung für:'
-			),
-			``,
-			`${c.titel}`,
-			c.dateLabel,
-			``,
-			`Freundliche Grüsse`,
-			c.companyName
-		].join('\n')
-	};
+	return withHtml(
+		{
+			subject: `${duSie(c.style?.du, 'Ihre', 'Deine')} Rechnung ${c.invoiceNumber}${c.companyName ? ` – ${c.companyName}` : ''}`,
+			text: [
+				greetingLine(c.style, c.name),
+				``,
+				duSie(
+					c.style?.du,
+					'Vielen Dank für Ihren Besuch. Im Anhang finden Sie die Rechnung für:',
+					'Vielen Dank für deinen Besuch. Im Anhang findest du die Rechnung für:'
+				),
+				``,
+				`${c.titel}`,
+				c.dateLabel,
+				``,
+				`Freundliche Grüsse`,
+				c.companyName
+			].join('\n')
+		},
+		c.theme
+	);
 }

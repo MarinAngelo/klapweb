@@ -111,15 +111,59 @@ export function wrapMail(content, theme, options = {}) {
 	};
 	const lang = (options.lang ?? 'de').slice(0, 2);
 	// bgcolor attributes in addition to CSS: Outlook & co. ignore CSS backgrounds on tables;
-	// no outer padding → the page colour reaches the edges (no white frame)
+	// no outer padding → the page colour reaches the edges (no white frame); header bar over the
+	// full width, its text aligned with the 600px content column
 	return `<!DOCTYPE html>
 <html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>${escapeHtml(options.subject ?? t.siteName)}</title>
 <style>html,body{margin:0!important;padding:0!important;background:${t.bg}!important;}</style></head>
 <body bgcolor="${t.bg}" style="margin:0;padding:0;background:${t.bg};">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${t.bg}" style="background:${t.bg};width:100%;"><tr><td align="center" bgcolor="${t.bg}" style="background:${t.bg};">
+${
+	t.siteName
+		? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${t.headerBg}" style="background:${t.headerBg};width:100%;"><tr><td align="center" bgcolor="${t.headerBg}" style="background:${t.headerBg};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;"><tr><td style="color:${t.headerColor};padding:18px 28px;font-family:${t.font};font-size:20px;font-weight:700;">${escapeHtml(t.siteName)}</td></tr></table>
+</td></tr></table>
+`
+		: ''
+}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${t.bg}" style="background:${t.bg};width:100%;"><tr><td align="center" bgcolor="${t.bg}" style="background:${t.bg};">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
-${t.siteName ? `<tr><td bgcolor="${t.headerBg}" style="background:${t.headerBg};color:${t.headerColor};padding:18px 28px;font-family:${t.font};font-size:20px;font-weight:700;">${escapeHtml(t.siteName)}</td></tr>` : ''}
 <tr><td bgcolor="${t.bg}" style="background:${t.bg};color:${t.color};padding:28px;font-family:${t.font};font-size:16px;line-height:1.6;">${content}</td></tr>
 </table></td></tr></table>
 </body></html>`;
+}
+
+/**
+ * Plain text → mail body HTML in the theme colours: blank line = new paragraph, line break
+ * = <br>, URLs become links. Text is escaped (customer input, CMS text).
+ * @param {string} text
+ * @param {MailTheme | null | undefined} theme
+ */
+export function textToMailHtml(text, theme) {
+	const link = theme?.link ?? theme?.color ?? NEUTRAL.color;
+	return text
+		.split(/\n{2,}/)
+		.map((block) => block.trim())
+		.filter(Boolean)
+		.map(
+			(block) =>
+				`<p style="margin:0 0 14px;line-height:1.6;">${escapeHtml(block)
+					.replace(
+						/https?:\/\/[^\s<]+/g,
+						(href) =>
+							`<a href="${href}" style="color:${link};text-decoration:underline;">${href}</a>`
+					)
+					.replace(/\n/g, '<br>')}</p>`
+		)
+		.join('');
+}
+
+/**
+ * Link styled as a button in the theme colours (header colours = good contrast)
+ * @param {string} href
+ * @param {string} label
+ * @param {MailTheme | null | undefined} theme
+ */
+export function mailButton(href, label, theme) {
+	const bg = theme?.headerBg ?? NEUTRAL.headerBg;
+	const color = theme?.headerColor ?? NEUTRAL.headerColor;
+	return `<a href="${escapeHtml(href)}" style="display:inline-block;margin:4px 8px 4px 0;padding:10px 18px;background:${bg};color:${color};text-decoration:none;border-radius:4px;font-weight:700;">${escapeHtml(label)}</a>`;
 }

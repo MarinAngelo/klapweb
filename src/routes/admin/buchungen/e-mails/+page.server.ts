@@ -5,6 +5,7 @@ import { createClient } from '$lib/prismicio';
 import { expandArbeitstag, type TerminSlot } from '$lib/server/terminSlots';
 import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingCancel';
 import { textStyleFrom } from '$lib/addressForm';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { invoiceSettingsFrom } from '$lib/server/invoicing/settings';
 import { getMailAddress, getNotifyTo } from '$lib/server/mailFrom';
 import { formatDateWithWeekday } from '$lib/utils/formatDate';
@@ -26,10 +27,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 	const client = createClient({ fetch });
 	const dynamicClient = client as any;
-	const [settings, workdays, offers] = await Promise.all([
+	const [settings, workdays, offers, theme] = await Promise.all([
 		client.getSingle('settings').catch(() => null),
 		dynamicClient.getAllByType('arbeitstag').catch(() => []),
-		dynamicClient.getAllByType('angebot').catch(() => [])
+		dynamicClient.getAllByType('angebot').catch(() => []),
+		loadMailTheme(client).catch(() => null)
 	]);
 	const s = (settings?.data ?? {}) as Record<string, any>;
 	const invoiceSettings = invoiceSettingsFrom(s);
@@ -80,7 +82,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	const datumLabel = formatDateWithWeekday(datum, null, 'de-CH', 'long');
 	const dateLabel = formatDateWithWeekday(datum, uhrzeit || null, 'de-CH', 'long');
 	const style = textStyleFrom(s);
-	const base = { titel, dateLabel, name: SAMPLE.name, style };
+	const base = { titel, dateLabel, name: SAMPLE.name, style, theme };
 	const providerTo = invoiceSettings.email;
 	const notifyTo = await getNotifyTo();
 	const invoiceAfter = s.booking_invoice === true;
@@ -115,6 +117,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 					: null,
 				icsLink: `${url.origin}/api/termin-ics?id=…`,
 				stornoLink: cancelLink(url.origin, { terminId: '…', cancelToken: '…' }),
+				theme,
 				style
 			})
 		},

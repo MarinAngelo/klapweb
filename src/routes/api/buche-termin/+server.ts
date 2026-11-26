@@ -16,6 +16,7 @@ import { getMailFrom } from '$lib/server/mailFrom';
 import { isAdmin } from '$lib/server/adminAuth';
 import { confirmationMail, providerBookingMail } from '$lib/server/bookingMails';
 import { textStyleFrom } from '$lib/addressForm';
+import { loadMailTheme, type MailTheme } from '$lib/mailLayout.js';
 
 function buildDatetimeStr(datum: string, uhrzeit: string): string {
 	// Returns floating local datetime string: YYYYMMDDTHHMMSS
@@ -183,6 +184,8 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	// Cancellation terms: offer, otherwise default of the settings
 	let cancelHours: number | null = null;
 	let cancelFeePercent: number | null = null;
+	// Page colours for the HTML confirmation
+	let mailTheme: MailTheme | null = null;
 
 	try {
 		const client = createClient({ fetch });
@@ -199,10 +202,12 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				: null;
 		}
 
-		const [workdays, offers] = await Promise.all([
+		const [workdays, offers, theme] = await Promise.all([
 			dynamicClient.getAllByType('arbeitstag'),
-			dynamicClient.getAllByType('angebot')
+			dynamicClient.getAllByType('angebot'),
+			loadMailTheme(client).catch(() => null)
 		]);
+		mailTheme = theme;
 		const today = new Date().toISOString().slice(0, 10);
 		const slot = workdays
 			.flatMap((doc) => expandArbeitstag(doc, offers, today))
@@ -371,6 +376,7 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				: '',
 			icsLink: icsDownloadLink,
 			stornoLink,
+			theme: mailTheme,
 			style: textStyleFrom(settingsData)
 		});
 
