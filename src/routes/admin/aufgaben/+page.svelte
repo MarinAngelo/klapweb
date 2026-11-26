@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import AdminHeader from '$lib/components/admin/AdminHeader.svelte';
+	import { _ } from '$lib/stores/i18n';
 	import { enhance } from '$app/forms';
 	import { formatDateTimeShort } from '$lib/utils/formatDate';
 	export let data: PageData;
@@ -49,6 +50,7 @@
 
 <div class="admin-container">
 	<AdminHeader title="Aufgaben-Annahmen" count={data.annahmen.length}>
+		<a href="/admin/aufgaben/e-mails" class="admin-btn">{$_('E-Mail-Vorschau')}</a>
 		<form
 			method="POST"
 			action="?/deleteAll"

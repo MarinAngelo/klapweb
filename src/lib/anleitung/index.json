@@ -245,6 +245,7 @@
 			"customtypes/_features/ressourcenbuchung",
 			"src/lib/server/ressourceBuchungen.ts",
 			"src/lib/server/ressourceMail.ts",
+			"src/lib/server/aufgabenMails.ts",
 			"src/lib/slices/RessourceBuchung",
 			"src/routes/admin/ressource-buchungen"
 		]

@@ -9,7 +9,10 @@ import {
 import { getRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { bonusEntfernen, bonusPruefen, loadKatalog } from '$lib/server/aufgabenKatalog';
 import { env } from '$env/dynamic/private';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { taskApprovedMail, taskConfirmedMail } from '$lib/server/aufgabenMails';
 
 export const prerender = false;
 
@@ -35,7 +38,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 };
 
 export const actions: Actions = {
-	bestaetigen: async ({ request }) => {
+	bestaetigen: async ({ request, fetch }) => {
 		const form = await request.formData();
 		const id = form.get('id');
 		if (typeof id !== 'string' || !id) return;
@@ -52,26 +55,25 @@ export const actions: Actions = {
 		const emailFrom = await getMailFrom();
 
 		if (resendKey && emailFrom && annahme.email) {
+			const [style, theme] = await Promise.all([
+				getTextStyle(),
+				loadMailTheme(createClient({ fetch })).catch(() => null)
+			]);
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
 			await resend.emails
 				.send({
 					from: emailFrom,
 					to: annahme.email,
-					subject: `Aufgabe bestätigt: ${annahme.aufgabeTitel}`,
-					text: [
-						`Guten Tag ${annahme.name}`,
-						``,
-						`Ihre Aufgabe wurde vom Betreiber bestätigt und kann nun erledigt werden.`,
-						``,
-						`Aufgabe: ${annahme.aufgabeTitel}`,
-						`Credits: ${annahme.creditTyp === 'fest' ? `${annahme.creditBetrag ?? 0} Credits (Fest)` : 'Zeitbasiert (Minuten × Preis/Nacht)'}`,
-						``,
-						`Bitte melden Sie sich nach Erledigung auf unserer Website an und geben Sie die Aufgabe ab.`,
-						`Buchungs-ID: ${annahme.buchungId}`,
-						``,
-						`Freundliche Grüsse`
-					].join('\n')
+					...taskConfirmedMail({
+						titel: annahme.aufgabeTitel,
+						name: annahme.name,
+						creditTyp: annahme.creditTyp,
+						creditBetrag: annahme.creditBetrag,
+						buchungId: annahme.buchungId,
+						style,
+						theme
+					})
 				})
 				.then(({ error: e }) => {
 					if (e) console.error('Aufgabe Bestätigungs-Mail fehlgeschlagen:', e);
@@ -106,9 +108,6 @@ export const actions: Actions = {
 
 		if (resendKey && emailFrom && annahme.email) {
 			try {
-				const fmt = (n: number) =>
-					new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(n);
-
 				let buchungspreis: number | null = null;
 				try {
 					const buchung = await getRessourceBuchung(annahme.buchungId);
@@ -117,46 +116,25 @@ export const actions: Actions = {
 					/* non-critical */
 				}
 
-				const finalCredits = updated.credits ?? 0;
-				const diff = adjustment;
-
-				const abrechnungsZeilen = [
-					`Aufgabe:             ${annahme.aufgabeTitel}`,
-					`Credit-Typ:          ${annahme.creditTyp === 'offen' ? 'Zeitbasiert' : 'Fest'}`,
-					...(annahme.minuten ? [`Geleistete Zeit:     ${annahme.minuten} Minuten`] : []),
-					...(annahme.kommentar ? [`Ihr Kommentar:       ${annahme.kommentar}`] : []),
-					``,
-					`Berechnete Credits:  ${fmt(baseCredits)}`,
-					...(diff !== 0 ? [`Anpassung:           ${diff > 0 ? '+' : ''}${fmt(diff)}`] : []),
-					`Credits total:       ${fmt(finalCredits)}`,
-					...(buchungspreis != null
-						? [
-								``,
-								`Buchungspreis:       ${fmt(buchungspreis)}`,
-								`Abzug Credits:       ${fmt(finalCredits)}`,
-								`Restbetrag:          ${fmt(Math.max(0, buchungspreis - finalCredits))}`
-							]
-						: [])
-				].join('\n');
-
 				const { Resend } = await import('resend');
 				const resend = new Resend(resendKey);
 				const { error: e } = await resend.emails.send({
 					from: emailFrom,
 					to: annahme.email,
-					subject: `Aufgabe freigegeben: ${annahme.aufgabeTitel}`,
-					text: [
-						`Guten Tag ${annahme.name}`,
-						``,
-						`Ihre Aufgabe wurde vom Betreiber geprüft und freigegeben.`,
-						``,
-						abrechnungsZeilen,
-						...(betreiberAntwort
-							? [``, `─────────────────────────────`, `Antwort des Betreibers:`, betreiberAntwort]
-							: []),
-						``,
-						`Freundliche Grüsse`
-					].join('\n')
+					...taskApprovedMail({
+						titel: annahme.aufgabeTitel,
+						name: annahme.name,
+						creditTyp: annahme.creditTyp,
+						minuten: annahme.minuten,
+						kommentar: annahme.kommentar,
+						baseCredits,
+						adjustment,
+						finalCredits: updated.credits ?? 0,
+						buchungspreis,
+						betreiberAntwort,
+						style: await getTextStyle(),
+						theme: await loadMailTheme(createClient({ fetch })).catch(() => null)
+					})
 				});
 				if (e) console.error('Freigabe-Mail fehlgeschlagen:', e);
 			} catch (e) {
