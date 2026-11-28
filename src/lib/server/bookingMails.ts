@@ -224,8 +224,18 @@ export function cancelCustomerMail(c: CancelBase): Mail {
 }
 
 /** Cancellation confirmation to the customer with the fee invoice attached */
+/** CHF amount «60.00» */
+const chf = (n: number | null | undefined) => `CHF ${(n ?? 0).toFixed(2)}`;
+
+/** `invoice` = with invoice attached (setting «Rechnungsstellung»), otherwise only stated */
 export function cancelFeeMail(
-	c: CancelBase & { freeUntilLabel: string | null; feePercent: number | null; companyName: string }
+	c: CancelBase & {
+		freeUntilLabel: string | null;
+		feePercent: number | null;
+		fee: number | null;
+		invoice: boolean;
+		companyName: string;
+	}
 ): Mail {
 	return withHtml(
 		{
@@ -239,7 +249,10 @@ export function cancelFeeMail(
 				`Datum: ${c.dateLabel}`,
 				``,
 				`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
-					`stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% in Rechnung (siehe Anhang).`,
+					(c.invoice
+						? `stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) in Rechnung (siehe Anhang).`
+						: `fällt eine Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) an. ` +
+							`Ich melde mich für die Bezahlung bei ${duSie(c.style?.du, 'Ihnen', 'dir')}.`),
 				``,
 				`Freundliche Grüsse`,
 				c.companyName
@@ -254,6 +267,7 @@ export function cancelProviderMail(
 	c: CancelBase & {
 		email?: string;
 		feePercent: number | null;
+		fee?: number | null;
 		feeInvoiceNumber: string | null;
 		notes: string[];
 	}
@@ -269,8 +283,13 @@ export function cancelProviderMail(
 			`Name: ${c.name ?? '–'}`,
 			...(c.email ? [`E-Mail: ${c.email}`] : []),
 			...(c.feeInvoiceNumber
-				? [``, `Stornogebühr ${c.feePercent}%: Rechnung ${c.feeInvoiceNumber}`]
-				: []),
+				? [``, `Stornogebühr ${c.feePercent}% (${chf(c.fee)}): Rechnung ${c.feeInvoiceNumber}`]
+				: c.feePercent && c.fee
+					? [
+							``,
+							`Stornogebühr ${c.feePercent}% (${chf(c.fee)}): keine Rechnung erstellt (Rechnungsstellung ausgeschaltet)`
+						]
+					: []),
 			...(c.notes.length ? [``, ...c.notes] : []),
 			``,
 			`Der Termin ist wieder verfügbar.`
@@ -278,7 +297,7 @@ export function cancelProviderMail(
 	};
 }
 
-/** Invoice after the appointment (setting «Rechnung nach dem Termin senden») */
+/** Invoice after the appointment (setting «Rechnungsstellung») */
 export function bookingInvoiceMail(
 	c: CancelBase & { invoiceNumber: string; companyName: string }
 ): Mail {

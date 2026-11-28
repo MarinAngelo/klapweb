@@ -19,32 +19,38 @@ async function findBooking(url: URL) {
 	return { state: 'ok' as const, booking };
 }
 
+/** Settings (contact, «Rechnungsstellung»); CMS unreachable → null */
+async function loadSettings(fetchFn: typeof fetch) {
+	try {
+		const settings = await createClient({ fetch: fetchFn }).getSingle('settings');
+		return settings.data as Record<string, unknown>;
+	} catch {
+		return null;
+	}
+}
+
 export const load: PageServerLoad = async ({ url, fetch }) => {
 	const found = await findBooking(url);
 	if (found.state !== 'ok') return { state: found.state };
 	const { booking } = found;
 
+	const s = await loadSettings(fetch);
 	// Contact for «nicht mehr online stornierbar»
-	let contactEmail = '';
-	try {
-		const settings = await createClient({ fetch }).getSingle('settings');
-		const s = settings.data as Record<string, unknown>;
-		contactEmail = ((s.responsible_email as string) || (s.e_mail as string) || '').trim();
-	} catch {
-		// CMS unreachable → no contact line
-	}
+	const contactEmail = ((s?.responsible_email as string) || (s?.e_mail as string) || '').trim();
 
 	return {
 		state: 'ok' as const,
 		titel: booking.titel,
 		datum: formatDateWithWeekday(booking.datum, booking.uhrzeit || null, 'de-CH', 'long'),
 		terms: cancelTerms(booking),
+		// «Rechnungsstellung» off → the fee is only stated, no invoice
+		invoicing: s?.booking_invoice === true,
 		contactEmail
 	};
 };
 
 export const actions: Actions = {
-	default: async ({ url, request }) => {
+	default: async ({ url, request, fetch }) => {
 		const found = await findBooking(url);
 		if (found.state !== 'ok')
 			return fail(found.state === 'gone' ? 410 : 400, { error: found.state });
@@ -57,7 +63,12 @@ export const actions: Actions = {
 		if (terms.status === 'fee' && form.get('acceptFee') !== 'on') {
 			return fail(400, { error: 'fee_not_accepted' });
 		}
-		const { feeInvoiceNumber } = await cancelBooking(found.booking, terms);
+		const s = await loadSettings(fetch);
+		const { feeInvoiceNumber } = await cancelBooking(
+			found.booking,
+			terms,
+			s?.booking_invoice === true
+		);
 		return { cancelled: true, withFee: !!feeInvoiceNumber };
 	}
 };

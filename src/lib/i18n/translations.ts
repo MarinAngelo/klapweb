@@ -2600,6 +2600,10 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Der Termin ist gebucht und kann nicht entfernt werden',
 		'en-us': 'The appointment is booked and cannot be removed'
 	},
+	'Ich akzeptiere die Stornogebühr.': {
+		'de-ch': 'Ich akzeptiere die Stornogebühr.',
+		'en-us': 'I accept the cancellation fee.'
+	},
 	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
 	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
 		{
@@ -2641,13 +2645,11 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Rechnung nach dem Termin',
 		'en-us': 'Invoice after the appointment'
 	},
-	'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.':
-		{
-			'de-ch':
-				'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.',
-			'en-us':
-				'After the appointment has ended, if «Send invoice after the appointment» is active and the offer has a price.'
-		},
+	'Nach Terminende, wenn «Rechnungsstellung» aktiv ist und das Angebot einen Preis hat.': {
+		'de-ch': 'Nach Terminende, wenn «Rechnungsstellung» aktiv ist und das Angebot einen Preis hat.',
+		'en-us':
+			'After the appointment has ended, if «Send invoice after the appointment» is active and the offer has a price.'
+	},
 	'Buchungen anzeigen, löschen, Termine sperren': {
 		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
 		'en-us': 'View and delete bookings, block time slots'

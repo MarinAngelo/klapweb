@@ -36,9 +36,9 @@
 		"booking_invoice": {
 			"type": "Boolean",
 			"config": {
-				"label": "Rechnung nach dem Termin senden (Angebote mit Preis)",
-				"placeholder_false": "Nein",
-				"placeholder_true": "Ja",
+				"label": "Rechnungsstellung (Angebote mit Preis)",
+				"placeholder_false": "Nein – keine Rechnungen (Stornogebühr nur in der E-Mail genannt)",
+				"placeholder_true": "Ja – Rechnung nach dem Termin und für die Stornogebühr",
 				"default_value": false
 			}
 		},

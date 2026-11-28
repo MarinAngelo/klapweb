@@ -1,6 +1,6 @@
 /**
  * Scheduled function: invoices of appointment bookings after the appointment
- * (setting «Rechnung nach dem Termin senden»). Runs hourly and calls the SvelteKit endpoint
+ * (setting «Rechnungsstellung»). Runs hourly and calls the SvelteKit endpoint
  * /api/cron/termin-rechnungen, which uses the shared invoice module (src/lib/server/invoicing).
  *
  * Required env vars: ADMIN_SECRET (key of the call), URL (set by Netlify).
