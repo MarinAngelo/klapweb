@@ -9,7 +9,8 @@ import {
 	FEATURE_KLAPSTUDIO,
 	FEATURE_KUNDENKONTO,
 	FEATURE_PWA,
-	FEATURE_RESSOURCENBUCHUNG
+	FEATURE_RESSOURCENBUCHUNG,
+	FEATURE_TERMINBUCHUNG
 } from '$lib/server/features';
 import type { ConsentRequirement } from '$lib/consent/services';
 
@@ -260,6 +261,13 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			addressDu: addressFormDu(baseSettings.data),
 			// «Absender in Standardtexten» (main language) → Ich form of the UI texts
 			senderIch: senderFormIch(baseSettings.data),
+			// Cancellation terms of the appointment booking (main language) → section in the AGB page
+			bookingCancelTerms: FEATURE_TERMINBUCHUNG
+				? {
+						hours: Number((baseSettings.data as any)?.booking_cancel_free_hours) || 0,
+						feePercent: Number((baseSettings.data as any)?.booking_cancel_fee_percent) || 0
+					}
+				: null,
 			// Web app manifest only with feature pwa (otherwise browsers offer to install the site)
 			pwaActive: FEATURE_PWA,
 			chatBotName,

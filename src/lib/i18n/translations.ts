@@ -2615,6 +2615,44 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Bitte die AGB akzeptieren.',
 		'en-us': 'Please accept the terms and conditions.'
 	},
+	'Stornierung von Terminbuchungen': {
+		'de-ch': 'Stornierung von Terminbuchungen',
+		'en-us': 'Cancellation of appointment bookings'
+	},
+	'Gebuchte Termine können bis zum Terminbeginn kostenlos storniert werden.': {
+		'de-ch': 'Gebuchte Termine können bis zum Terminbeginn kostenlos storniert werden.',
+		'en-us': 'Booked appointments can be cancelled free of charge until the appointment starts.'
+	},
+	'Gebuchte Termine können bis {stunden} Stunden vor Terminbeginn kostenlos storniert werden, online über den Link in der Buchungsbestätigung.':
+		{
+			'de-ch':
+				'Gebuchte Termine können bis {stunden} Stunden vor Terminbeginn kostenlos storniert werden, online über den Link in der Buchungsbestätigung.',
+			'en-us':
+				'Booked appointments can be cancelled free of charge up to {stunden} hours before the appointment starts, online via the link in the booking confirmation.'
+		},
+	'Bei einer Stornierung nach Ablauf dieser Frist wird eine Stornogebühr von {prozent} % des Preises des gebuchten Angebots fällig. Bei Angeboten ohne Preis fällt keine Gebühr an.':
+		{
+			'de-ch':
+				'Bei einer Stornierung nach Ablauf dieser Frist wird eine Stornogebühr von {prozent} % des Preises des gebuchten Angebots fällig. Bei Angeboten ohne Preis fällt keine Gebühr an.',
+			'en-us':
+				'If cancelled after this deadline, a cancellation fee of {prozent} % of the price of the booked offer is charged. No fee applies to offers without a price.'
+		},
+	'Nach Ablauf dieser Frist ist eine Stornierung nur noch nach direkter Rücksprache möglich.': {
+		'de-ch':
+			'Nach Ablauf dieser Frist ist eine Stornierung nur noch nach direkter Rücksprache möglich.',
+		'en-us': 'After this deadline, cancellation is only possible by contacting us directly.'
+	},
+	'Ab Terminbeginn ist keine Stornierung mehr möglich.': {
+		'de-ch': 'Ab Terminbeginn ist keine Stornierung mehr möglich.',
+		'en-us': 'Once the appointment has started, it can no longer be cancelled.'
+	},
+	'Abweichende Stornierungsbedingungen, die beim jeweiligen Angebot angegeben sind, gehen diesen Bestimmungen vor. Massgebend sind die Bedingungen zum Zeitpunkt der Buchung.':
+		{
+			'de-ch':
+				'Abweichende Stornierungsbedingungen, die beim jeweiligen Angebot angegeben sind, gehen diesen Bestimmungen vor. Massgebend sind die Bedingungen zum Zeitpunkt der Buchung.',
+			'en-us':
+				'Different cancellation terms stated for an individual offer take precedence over these provisions. The terms at the time of booking apply.'
+		},
 	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
 	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
 		{
