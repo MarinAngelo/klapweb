@@ -310,5 +310,9 @@
 	"settings.sender_form": {
 		"de-ch": "Ob die automatischen Texte im Namen eines Teams («Wir») oder einer einzelnen Person («Ich») sprechen, z. B. «Bei Fragen stehen wir dir gerne zur Verfügung» oder «Bei Fragen stehe ich dir gerne zur Verfügung». Gilt für die Meldungen auf der Website (z. B. nach einer Bestellung oder Stornierung) und für die E-Mails der Terminbuchung und der Rechnungen. Eigene Texte aus Prismic bleiben, wie du sie geschrieben hast.",
 		"en-us": "Whether the automatic texts speak on behalf of a team («Wir», we) or a single person («Ich», I), e.g. «Bei Fragen stehen wir dir gerne zur Verfügung» or «Bei Fragen stehe ich dir gerne zur Verfügung». Applies to the messages on the website (e.g. after an order or cancellation) and to the e-mails of the appointment booking and invoices. Your own texts from Prismic stay as you wrote them."
+	},
+	"settings.mail_closing": {
+		"de-ch": "Schlussformel der automatischen E-Mails, z. B. «Liebe Grüsse» oder «Herzliche Grüsse». Leer = «Freundliche Grüsse». Gilt für die E-Mails an Kundinnen und Kunden der Terminbuchung, der Rechnungen und der Aufgaben; darunter steht wie bisher der Firmenname. Eigene Texte aus Prismic bleiben, wie du sie geschrieben hast.",
+		"en-us": "Closing of the automatic e-mails, e.g. «Liebe Grüsse» or «Herzliche Grüsse». Empty = «Freundliche Grüsse». Applies to the customer e-mails of the appointment booking, invoices and tasks; the company name follows below as before. Your own texts from Prismic stay as you wrote them."
 	}
 }
