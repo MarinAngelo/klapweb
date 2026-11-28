@@ -14,6 +14,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { t } from '$lib/i18n/translations';
+	import { _ } from '$lib/stores/i18n';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
@@ -156,6 +157,11 @@
 				...cmsFormFields
 			]
 		: cmsFormFields;
+
+	// With an appointment picker: appointment section on top, personal details below (separated)
+	$: terminFields = formFields.filter((f) => (f as any)?.field_type === 'Termin');
+	$: detailFields = formFields.filter((f) => (f as any)?.field_type !== 'Termin');
+	$: fieldGroups = terminFields.length ? [terminFields, detailFields] : [formFields];
 
 	// Two-column layout: message and appointment picker take the full row
 	function spansFullRow(field: FormSliceDefaultPrimaryFormFieldsItem): boolean {
@@ -608,22 +614,34 @@
 						<input type="hidden" name="dienstleistung" value={urlParams.dienstleistung} />
 					{/if}
 					<p class="hidden" aria-hidden="true"><input name="bot-field" /></p>
-					<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
-						{#each formFields as field}
-							{#if field && effectiveKey(field)}
-								<div class={isDefaultZweiSpalten && spansFullRow(field) ? 'sm:col-span-2' : ''}>
-									<InputField
-										{field}
-										refreshKey={termineRefreshKey}
-										on:blur={(e) => onFieldBlur(e, field)}
-									/>
-									{#if fieldErrors[effectiveKey(field)]}
-										<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
-									{/if}
-								</div>
+					{#each fieldGroups as group, groupIndex}
+						<!-- Appointment form: 1st group = appointment, 2nd = personal details (separated) -->
+						<fieldset
+							class="m-0 min-w-0 border-0 p-0 {groupIndex > 0
+								? 'mt-10 border-t divider-page pt-10'
+								: ''}"
+						>
+							{#if groupIndex > 0}
+								<legend class="sr-only">{$_('Ihre Angaben')}</legend>
 							{/if}
-						{/each}
-					</div>
+							<div class={isDefaultZweiSpalten ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-8' : ''}>
+								{#each group as field}
+									{#if field && effectiveKey(field)}
+										<div class={isDefaultZweiSpalten && spansFullRow(field) ? 'sm:col-span-2' : ''}>
+											<InputField
+												{field}
+												refreshKey={termineRefreshKey}
+												on:blur={(e) => onFieldBlur(e, field)}
+											/>
+											{#if fieldErrors[effectiveKey(field)]}
+												<p class="text-red-600 text-sm mt-1">{fieldErrors[effectiveKey(field)]}</p>
+											{/if}
+										</div>
+									{/if}
+								{/each}
+							</div>
+						</fieldset>
+					{/each}
 					{#if linkError}
 						<p id="form-error" class="mt-3 text-sm text-red-600">
 							{linkError}
