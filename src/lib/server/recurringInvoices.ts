@@ -9,7 +9,10 @@
 import { env } from '$env/dynamic/private';
 import { listManualInvoices, updateManualInvoice } from '$lib/server/invoices';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { recurringInvoiceMail, recurringOperatorMail } from '$lib/server/invoiceMails';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 
 /** Today as YYYY-MM-DD in Swiss time */
 export const todaySwiss = () =>
@@ -29,7 +32,7 @@ function nextAfterToday(date: string, today: string): string {
 	return next;
 }
 
-async function notifyOperator(subject: string, text: string) {
+async function notifyOperator({ subject, text }: { subject: string; text: string }) {
 	const resendKey = env.RESEND_API_KEY;
 	const [from, to] = await Promise.all([getMailFrom(), getNotifyTo()]);
 	if (!resendKey || !from || !to) return;
@@ -47,6 +50,9 @@ export async function sendDueRecurringInvoices(): Promise<string[]> {
 	if (!due.length) return [];
 
 	const settings = await loadInvoiceSettings();
+	const style = await getTextStyle();
+	// Customer mails in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 	const created: string[] = [];
 	for (const template of due) {
 		try {
@@ -86,18 +92,22 @@ export async function sendDueRecurringInvoices(): Promise<string[]> {
 					invoiceNumber: invoice.invoiceNumber,
 					pdf: invoice.pdf,
 					to: template.email,
-					subject: `Ihre Rechnung ${invoice.invoiceNumber} – ${settings.name}`,
-					text: `Sehr geehrte/r ${name},\n\nim Anhang erhalten Sie die jährliche Rechnung ${invoice.invoiceNumber}.\n\nFreundliche Grüsse\n${settings.name}`
+					...recurringInvoiceMail({
+						invoiceNumber: invoice.invoiceNumber,
+						name,
+						companyName: settings.name,
+						style,
+						theme
+					})
 				}));
 			await notifyOperator(
-				`Wiederkehrende Rechnung ${invoice.invoiceNumber} – ${name || template.firma || ''}`,
-				[
-					`Die jährliche Rechnung ${invoice.invoiceNumber} wurde erstellt (Vorlage ${template.invoiceNumber}).`,
-					sent
-						? `Sie wurde an ${template.email} gesendet.`
-						: 'Sie wurde NICHT gemailt (keine E-Mail-Adresse oder Versand fehlgeschlagen) – bitte im Admin unter «Rechnungen» versenden.',
-					`Nächste Rechnung: ${nextAfterToday(template.recurrence!.nextDate, today)}`
-				].join('\n\n')
+				recurringOperatorMail({
+					invoiceNumber: invoice.invoiceNumber,
+					templateNumber: template.invoiceNumber,
+					name: name || template.firma || '',
+					sentTo: sent ? template.email! : null,
+					nextDate: nextAfterToday(template.recurrence!.nextDate, today)
+				})
 			).catch((e) => console.error('[wiederkehrende-rechnungen] Info-Mail:', e));
 		} catch (e) {
 			console.error(`[wiederkehrende-rechnungen] ${template.invoiceNumber} fehlgeschlagen:`, e);

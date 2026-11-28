@@ -14,6 +14,13 @@ import { diagnoseArbeitstag } from '$lib/terminDiagnose.js';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { sendDueBookingInvoices } from '$lib/server/bookingInvoices';
 import { createClient } from '$lib/prismicio';
+import {
+	ADMIN_SLOT_PREFIX,
+	addAdminSlot,
+	deleteAdminSlot,
+	listAdminSlots,
+	loadAllWorkdays
+} from '$lib/server/adminSlots';
 
 export const prerender = false;
 
@@ -28,10 +35,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		(async () => {
 			const client = createClient({ fetch });
 			const dynamicClient = client as any;
-			const [workdays, offers] = await Promise.all([
-				dynamicClient.getAllByType('arbeitstag').catch(() => []),
-				dynamicClient.getAllByType('angebot').catch(() => [])
-			]);
+			// Prismic working days + single appointments entered here
+			const { workdays, offers } = await loadAllWorkdays(dynamicClient);
 
 			// Orte laden und den Slots zuordnen
 			const orte = await dynamicClient.getAllByType('ort').catch(() => []);
@@ -42,7 +47,14 @@ export const load: PageServerLoad = async ({ fetch }) => {
 				const offerDoc = offers.find((o: any) => o.uid === slot.angebotId);
 				const ortLink = (offerDoc?.data as any)?.ort;
 				const ortDoc = ortLink?.uid ? ortByUid.get(ortLink.uid) : null;
-				return { ...slot, ortName: ortDoc ? ((ortDoc.data as any).name ?? '') : '' };
+				return {
+					...slot,
+					ortName: ortDoc ? ((ortDoc.data as any).name ?? '') : '',
+					// Entered in the admin → can be removed here
+					adminSlotId: slot.baseUid.startsWith(ADMIN_SLOT_PREFIX)
+						? slot.baseUid.slice(ADMIN_SLOT_PREFIX.length)
+						: undefined
+				};
 			});
 			// Sources too: no free slots → explain why (per working day)
 			return { slots: withOrt, workdays: workdays as any[], offers: offers as any[] };
@@ -121,7 +133,18 @@ export const load: PageServerLoad = async ({ fetch }) => {
 						.filter((h) => h.problems.length > 0);
 	}
 
+	// Offers for «Termin hinzufügen» (active, with duration)
+	const bookableOffers = (slotSources?.offers ?? [])
+		.filter((o: any) => o.data?.aktiv !== false && Number(o.data?.dauer) > 0)
+		.map((o: any) => ({
+			uid: o.uid as string,
+			titel: (o.data?.titel as string) || (o.uid as string),
+			dauer: Number(o.data.dauer)
+		}))
+		.sort((a: { titel: string }, b: { titel: string }) => a.titel.localeCompare(b.titel, 'de'));
+
 	return {
+		bookableOffers,
 		bookings: bookingsWithOrt,
 		freeSlots,
 		pastSlots,
@@ -132,6 +155,44 @@ export const load: PageServerLoad = async ({ fetch }) => {
 };
 
 export const actions: Actions = {
+	// Single free appointment without Prismic («Termin hinzufügen»)
+	addSlot: async ({ request, fetch }) => {
+		const form = await request.formData();
+		const datum = String(form.get('datum') ?? '');
+		const startzeit = String(form.get('startzeit') ?? '');
+		const angebote = form.getAll('angebot').map(String).filter(Boolean);
+		if (!/^\d{4}-\d{2}-\d{2}$/.test(datum) || !/^\d{2}:\d{2}$/.test(startzeit)) {
+			return fail(400, { addError: 'Datum und Startzeit angeben' });
+		}
+		if (!angebote.length) return fail(400, { addError: 'Mindestens ein Angebot wählen' });
+		if (zonedTimeToUtc(datum, startzeit, SITE_TIME_ZONE) < Date.now()) {
+			return fail(400, { addError: 'Der Termin liegt in der Vergangenheit' });
+		}
+		const offers = await (createClient({ fetch }) as any).getAllByType('angebot').catch(() => []);
+		const valid = angebote.filter((uid) =>
+			offers.some((o: any) => o.uid === uid && o.data?.aktiv !== false && Number(o.data?.dauer) > 0)
+		);
+		if (!valid.length) return fail(400, { addError: 'Angebot nicht gefunden oder ohne Dauer' });
+		await addAdminSlot({ datum, startzeit, angebote: valid, zeitzone: SITE_TIME_ZONE });
+		invalidateTermineCache();
+		return { added: true };
+	},
+
+	// Only admin entries, and only while none of their slots is booked
+	deleteSlot: async ({ request }) => {
+		const form = await request.formData();
+		const id = String(form.get('adminSlotId') ?? '');
+		if (!id || !(await listAdminSlots()).some((s) => s.id === id)) {
+			return fail(404, { addError: 'Termin nicht gefunden' });
+		}
+		const prefix = `${ADMIN_SLOT_PREFIX}${id}_`;
+		if ((await listBookings()).some((b) => b.terminId.startsWith(prefix))) {
+			return fail(409, { addError: 'Der Termin ist gebucht und kann nicht entfernt werden' });
+		}
+		await deleteAdminSlot(id);
+		invalidateTermineCache();
+	},
+
 	delete: async ({ request }) => {
 		const form = await request.formData();
 		const id = form.get('id');

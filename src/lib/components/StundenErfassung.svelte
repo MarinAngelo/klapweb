@@ -19,6 +19,8 @@
 	let name = '';
 	let von = '';
 	let bis = '';
+	/** Day or night hours */
+	let art: 'tag' | 'nacht' = 'tag';
 	let taetigkeit = '';
 	let spesen = '';
 	let spesenText = '';
@@ -48,7 +50,7 @@
 			const res = await fetch('/api/stunden', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name, von, bis, taetigkeit, spesen, spesenText })
+				body: JSON.stringify({ name, von, bis, art, taetigkeit, spesen, spesenText })
 			});
 			if (res.ok) {
 				state = 'done';
@@ -128,6 +130,19 @@
 			{#if durationLabel}
 				<p class="text-muted m-0 text-sm">{$_('Dauer')}: {durationLabel}</p>
 			{/if}
+
+			<div class="md:max-w-xs">
+				<label class="block text-base font-bold" for="{idPrefix}-art">{$_('Stundenart')} *</label>
+				<select
+					id="{idPrefix}-art"
+					required
+					bind:value={art}
+					class="input form-input rounded-md w-full"
+				>
+					<option value="tag">{$_('Tagstunden')}</option>
+					<option value="nacht">{$_('Nachtstunden')}</option>
+				</select>
+			</div>
 
 			<InputField
 				field={{ field_name: $_('Tätigkeit'), field_type: 'Textbereich', required: false }}

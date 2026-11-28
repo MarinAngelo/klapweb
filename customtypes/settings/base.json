@@ -129,6 +129,38 @@
 					"placeholder": "E-Mail für Meldungen zu Buchungen, Formularen, Bestellungen – leer = Verantwortliche E-Mail"
 				}
 			},
+			"address_form": {
+				"type": "Select",
+				"config": {
+					"label": "Anrede in Standardtexten",
+					"placeholder": "Sie oder Du auf der Website und in automatischen E-Mails",
+					"options": ["Sie", "Du"],
+					"default_value": "Sie"
+				}
+			},
+			"sender_form": {
+				"type": "Select",
+				"config": {
+					"label": "Absender in Standardtexten",
+					"placeholder": "Wir oder Ich auf der Website und in automatischen E-Mails",
+					"options": ["Wir", "Ich"],
+					"default_value": "Wir"
+				}
+			},
+			"mail_greeting": {
+				"type": "Text",
+				"config": {
+					"label": "Begrüssung in Standardtexten",
+					"placeholder": "Leer = «Guten Tag», z.B. «Hallo»"
+				}
+			},
+			"mail_closing": {
+				"type": "Text",
+				"config": {
+					"label": "Verabschiedung in Standardtexten",
+					"placeholder": "Leer = «Freundliche Grüsse», z.B. «Liebe Grüsse»"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {

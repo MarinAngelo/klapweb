@@ -2342,6 +2342,315 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'View orders and customer data, add new customers'
 	},
 	Terminverwaltung: { 'de-ch': 'Terminverwaltung', 'en-us': 'Appointments' },
+	'Aufgaben-Annahmen': { 'de-ch': 'Aufgaben-Annahmen', 'en-us': 'Task acceptances' },
+	'Diese E-Mails verschickt die Website zu den Aufgaben der Gäste. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Aufgabe; Name und E-Mail des Gastes sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Website zu den Aufgaben der Gäste. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Aufgabe; Name und E-Mail des Gastes sind Beispiele.',
+			'en-us':
+				'These emails are sent by the website for guest tasks. The preview uses your current settings and a sample task; guest name and email are examples.'
+		},
+	'Aufgabe angenommen (an Sie)': {
+		'de-ch': 'Aufgabe angenommen (an Sie)',
+		'en-us': 'Task accepted (to you)'
+	},
+	'Wenn ein Gast eine Aufgabe annimmt, mit Link zum Freigeben.': {
+		'de-ch': 'Wenn ein Gast eine Aufgabe annimmt, mit Link zum Freigeben.',
+		'en-us': 'When a guest accepts a task, with a link to approve.'
+	},
+	'Aufgabe bestätigt': { 'de-ch': 'Aufgabe bestätigt', 'en-us': 'Task confirmed' },
+	'Wenn Sie die Annahme freigeben (Link in der E-Mail oder in der Liste).': {
+		'de-ch': 'Wenn Sie die Annahme freigeben (Link in der E-Mail oder in der Liste).',
+		'en-us': 'When you approve the acceptance (link in the email or in the list).'
+	},
+	'Abrechnung der Aufgabe': { 'de-ch': 'Abrechnung der Aufgabe', 'en-us': 'Task statement' },
+	'Wenn der Gast die erledigte Aufgabe abgibt.': {
+		'de-ch': 'Wenn der Gast die erledigte Aufgabe abgibt.',
+		'en-us': 'When the guest submits the completed task.'
+	},
+	'Aufgabe abgegeben (an Sie)': {
+		'de-ch': 'Aufgabe abgegeben (an Sie)',
+		'en-us': 'Task submitted (to you)'
+	},
+	'Wenn der Gast die erledigte Aufgabe abgibt, mit einem allfälligen Foto im Anhang.': {
+		'de-ch': 'Wenn der Gast die erledigte Aufgabe abgibt, mit einem allfälligen Foto im Anhang.',
+		'en-us': 'When the guest submits the completed task, with a photo attached if any.'
+	},
+	'Aufgabe freigegeben': { 'de-ch': 'Aufgabe freigegeben', 'en-us': 'Task approved' },
+	'Wenn Sie die erledigte Aufgabe prüfen und freigeben.': {
+		'de-ch': 'Wenn Sie die erledigte Aufgabe prüfen und freigeben.',
+		'en-us': 'When you review and approve the completed task.'
+	},
+	'Angebot wählen': { 'de-ch': 'Angebot wählen', 'en-us': 'Choose a service' },
+	'Angebot ändern': { 'de-ch': 'Angebot ändern', 'en-us': 'Change service' },
+	'Ihre Abrechnung: {ressource}': {
+		'de-ch': 'Ihre Abrechnung: {ressource}',
+		'en-us': 'Your invoice: {ressource}'
+	},
+	'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:': {
+		'de-ch': 'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:',
+		'en-us': 'Thank you for your stay. Here is your final invoice:'
+	},
+	'Buchungs-Nr.': { 'de-ch': 'Buchungs-Nr.', 'en-us': 'Booking no.' },
+	Mietpreis: { 'de-ch': 'Mietpreis', 'en-us': 'Rental price' },
+	'Credits (Aufgaben)': { 'de-ch': 'Credits (Aufgaben)', 'en-us': 'Credits (tasks)' },
+	'Erledigte Aufgaben': { 'de-ch': 'Erledigte Aufgaben', 'en-us': 'Completed tasks' },
+	'(keine)': { 'de-ch': '(keine)', 'en-us': '(none)' },
+	'Entspricht ca.': { 'de-ch': 'Entspricht ca.', 'en-us': 'Approx.' },
+	Tageskurs: { 'de-ch': 'Tageskurs', 'en-us': 'Daily rate' },
+	'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Ressourcen-Buchung. Die Vorschau verwendet die Texte der ersten Ressource und eine Beispiel-Buchung; Name und E-Mail des Gastes sind Beispiele. Mails an Gäste kommen in der Sprache der Buchung, Mails an Sie immer auf Deutsch.',
+			'en-us':
+				'These emails are sent by the resource booking. The preview uses the texts of the first resource and a sample booking; guest name and email are examples. Emails to guests are in the language of the booking, emails to you always in German.'
+		},
+	'Beispiel-Ressource': { 'de-ch': 'Beispiel-Ressource', 'en-us': 'Sample resource' },
+	'keine Ressource gefunden — erfundenes Beispiel': {
+		'de-ch': 'keine Ressource gefunden — erfundenes Beispiel',
+		'en-us': 'no resource found — made-up example'
+	},
+	'Neue Buchungsanfrage (an Sie)': {
+		'de-ch': 'Neue Buchungsanfrage (an Sie)',
+		'en-us': 'New booking request (to you)'
+	},
+	'Nach jeder Buchungsanfrage auf der Website, mit Link zum Bestätigen.': {
+		'de-ch': 'Nach jeder Buchungsanfrage auf der Website, mit Link zum Bestätigen.',
+		'en-us': 'After every booking request on the website, with a link to confirm.'
+	},
+	Buchungsbestätigung: { 'de-ch': 'Buchungsbestätigung', 'en-us': 'Booking confirmation' },
+	'Wenn Sie die Anfrage bestätigen. Text: Inhalts-Typ «Ressource» (Buchungsbestätigung), sonst Standardtext.':
+		{
+			'de-ch':
+				'Wenn Sie die Anfrage bestätigen. Text: Inhalts-Typ «Ressource» (Buchungsbestätigung), sonst Standardtext.',
+			'en-us':
+				'When you confirm the request. Text: content type «Resource» (booking confirmation), otherwise standard text.'
+		},
+	Ankunftserinnerung: { 'de-ch': 'Ankunftserinnerung', 'en-us': 'Arrival reminder' },
+	'48 Stunden vor der Anreise, bei kurzfristiger Bestätigung sofort. Text: Inhalts-Typ «Ressource» (Erinnerung).':
+		{
+			'de-ch':
+				'48 Stunden vor der Anreise, bei kurzfristiger Bestätigung sofort. Text: Inhalts-Typ «Ressource» (Erinnerung).',
+			'en-us':
+				'48 hours before arrival, immediately for short-notice confirmations. Text: content type «Resource» (reminder).'
+		},
+	'Nach der Ankunft': { 'de-ch': 'Nach der Ankunft', 'en-us': 'After arrival' },
+	'24 Stunden nach der Anreise, nur mit Text im Inhalts-Typ «Ressource».': {
+		'de-ch': '24 Stunden nach der Anreise, nur mit Text im Inhalts-Typ «Ressource».',
+		'en-us': '24 hours after arrival, only with a text in the content type «Resource».'
+	},
+	Abreiseerinnerung: { 'de-ch': 'Abreiseerinnerung', 'en-us': 'Departure reminder' },
+	'Am Vorabend der Abreise, nur mit Text im Inhalts-Typ «Ressource».': {
+		'de-ch': 'Am Vorabend der Abreise, nur mit Text im Inhalts-Typ «Ressource».',
+		'en-us': 'On the evening before departure, only with a text in the content type «Resource».'
+	},
+	'Check-in (an Sie)': { 'de-ch': 'Check-in (an Sie)', 'en-us': 'Check-in (to you)' },
+	'Wenn der Gast auf der Website eincheckt oder Sie den Check-in im Admin setzen.': {
+		'de-ch': 'Wenn der Gast auf der Website eincheckt oder Sie den Check-in im Admin setzen.',
+		'en-us': 'When the guest checks in on the website or you set the check-in in the admin.'
+	},
+	'Abrechnung freigeben (an Sie)': {
+		'de-ch': 'Abrechnung freigeben (an Sie)',
+		'en-us': 'Approve billing (to you)'
+	},
+	'Nach dem Check-out, mit Link zum Prüfen und Freigeben der Abrechnung.': {
+		'de-ch': 'Nach dem Check-out, mit Link zum Prüfen und Freigeben der Abrechnung.',
+		'en-us': 'After check-out, with a link to review and approve the billing.'
+	},
+	Abrechnung: { 'de-ch': 'Abrechnung', 'en-us': 'Billing' },
+	'Wenn Sie die Abrechnung freigeben.': {
+		'de-ch': 'Wenn Sie die Abrechnung freigeben.',
+		'en-us': 'When you approve the billing.'
+	},
+	'Willkommen: {ressource}': {
+		'de-ch': 'Willkommen: {ressource}',
+		'en-us': 'Welcome: {ressource}'
+	},
+	'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Website zu Rechnungen. Die Vorschau verwendet Ihre aktuellen Einstellungen und eine Beispiel-Rechnung; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent by the website for invoices. The preview uses your current settings and a sample invoice; customer name and email are examples.'
+		},
+	'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.': {
+		'de-ch':
+			'Beim Erstellen einer Rechnung mit «E-Mail senden» oder beim Senden aus der Rechnungsliste.',
+		'en-us': 'When creating an invoice with «Send email» or when sending from the invoice list.'
+	},
+	'Bestellung gegen Rechnung': {
+		'de-ch': 'Bestellung gegen Rechnung',
+		'en-us': 'Order on invoice'
+	},
+	'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).':
+		{
+			'de-ch':
+				'Nach einer Bestellung oder Event-Anmeldung auf der Website mit Zahlung «gegen Rechnung». Eigener Text: Einstellungen (E-Mail bei Zahlung gegen Rechnung).',
+			'en-us':
+				'After an order or event registration on the website with payment «on invoice». Own text: settings (email for payment on invoice).'
+		},
+	'Neue Bestellung (an Sie)': {
+		'de-ch': 'Neue Bestellung (an Sie)',
+		'en-us': 'New order (to you)'
+	},
+	'Nach jeder Bestellung gegen Rechnung auf der Website.': {
+		'de-ch': 'Nach jeder Bestellung gegen Rechnung auf der Website.',
+		'en-us': 'After every order on invoice on the website.'
+	},
+	'Jährliche Rechnung': { 'de-ch': 'Jährliche Rechnung', 'en-us': 'Yearly invoice' },
+	'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».': {
+		'de-ch': 'Am Fälligkeitstag einer Rechnung mit «Jährlich wiederholen».',
+		'en-us': 'On the due date of an invoice with «Repeat yearly».'
+	},
+	'Jährliche Rechnung erstellt (an Sie)': {
+		'de-ch': 'Jährliche Rechnung erstellt (an Sie)',
+		'en-us': 'Yearly invoice created (to you)'
+	},
+	'Zusammen mit jeder jährlichen Rechnung.': {
+		'de-ch': 'Zusammen mit jeder jährlichen Rechnung.',
+		'en-us': 'Together with every yearly invoice.'
+	},
+	Mahnung: { 'de-ch': 'Mahnung', 'en-us': 'Payment reminder' },
+	'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.':
+		{
+			'de-ch':
+				'Wenn «Automatisch mahnen» aktiv ist: offene Rechnung nach Ablauf der Zahlungsfrist plus «Mahnung nach … Tagen». Höchstens 2 Mahnungen.',
+			'en-us':
+				'If «Automatic reminders» is active: open invoice after the payment term plus «Reminder after … days». At most 2 reminders.'
+		},
+	'Mahnwesen (an Sie)': { 'de-ch': 'Mahnwesen (an Sie)', 'en-us': 'Reminders (to you)' },
+	'Nach jedem Mahnlauf mit mindestens einer Mahnung.': {
+		'de-ch': 'Nach jedem Mahnlauf mit mindestens einer Mahnung.',
+		'en-us': 'After every reminder run with at least one reminder.'
+	},
+	'E-Mail-Vorschau': { 'de-ch': 'E-Mail-Vorschau', 'en-us': 'Email preview' },
+	'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.':
+		{
+			'de-ch':
+				'Diese E-Mails verschickt die Terminbuchung automatisch. Die Vorschau verwendet Ihre aktuellen Einstellungen und einen Beispiel-Termin; Name und E-Mail der Kundschaft sind Beispiele.',
+			'en-us':
+				'These emails are sent automatically by the appointment booking. The preview uses your current settings and a sample appointment; customer name and email are examples.'
+		},
+	'Beispiel-Termin': { 'de-ch': 'Beispiel-Termin', 'en-us': 'Sample appointment' },
+	Anrede: { 'de-ch': 'Anrede', 'en-us': 'Form of address' },
+	'kein freier Termin gefunden — erfundenes Beispiel': {
+		'de-ch': 'kein freier Termin gefunden — erfundenes Beispiel',
+		'en-us': 'no free slot found — made-up example'
+	},
+	Absender: { 'de-ch': 'Absender', 'en-us': 'Sender' },
+	'wird verschickt': { 'de-ch': 'wird verschickt', 'en-us': 'is sent' },
+	'mit den aktuellen Einstellungen nicht verschickt': {
+		'de-ch': 'mit den aktuellen Einstellungen nicht verschickt',
+		'en-us': 'not sent with the current settings'
+	},
+	An: { 'de-ch': 'An', 'en-us': 'To' },
+	Anhang: { 'de-ch': 'Anhang', 'en-us': 'Attachment' },
+	'– (keine Adresse in den Einstellungen)': {
+		'de-ch': '– (keine Adresse in den Einstellungen)',
+		'en-us': '– (no address in the settings)'
+	},
+	Terminbestätigung: { 'de-ch': 'Terminbestätigung', 'en-us': 'Appointment confirmation' },
+	'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».': {
+		'de-ch': 'Nach jeder Online-Buchung; bei Buchung im Admin nur mit «Bestätigung senden».',
+		'en-us':
+			'After every online booking; for bookings made in the admin only with «Send confirmation».'
+	},
+	'Neue Buchung (an Sie)': { 'de-ch': 'Neue Buchung (an Sie)', 'en-us': 'New booking (to you)' },
+	'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.': {
+		'de-ch': 'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.',
+		'en-us': 'After every online booking, not for bookings made in the admin.'
+	},
+	'Freien Termin «{titel}» entfernen?': {
+		'de-ch': 'Freien Termin «{titel}» entfernen?',
+		'en-us': 'Remove free appointment «{titel}»?'
+	},
+	'Termin hinzufügen': { 'de-ch': 'Termin hinzufügen', 'en-us': 'Add appointment' },
+	'Termin hinzugefügt.': { 'de-ch': 'Termin hinzugefügt.', 'en-us': 'Appointment added.' },
+	'Einzelner freier Termin ohne Arbeitstag in Prismic. Pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot.':
+		{
+			'de-ch':
+				'Einzelner freier Termin ohne Arbeitstag in Prismic. Pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot.',
+			'en-us':
+				'Single free appointment without a working day in Prismic. Each selected offer creates one bookable appointment at the start time; the duration comes from the offer.'
+		},
+	Startzeit: { 'de-ch': 'Startzeit', 'en-us': 'Start time' },
+	'Kein aktives Angebot mit Dauer – zuerst in Prismic ein «Angebot» erfassen.': {
+		'de-ch': 'Kein aktives Angebot mit Dauer – zuerst in Prismic ein «Angebot» erfassen.',
+		'en-us': 'No active offer with a duration – first create an «Angebot» in Prismic.'
+	},
+	Hinzufügen: { 'de-ch': 'Hinzufügen', 'en-us': 'Add' },
+	'Datum und Startzeit angeben': {
+		'de-ch': 'Datum und Startzeit angeben',
+		'en-us': 'Enter date and start time'
+	},
+	'Mindestens ein Angebot wählen': {
+		'de-ch': 'Mindestens ein Angebot wählen',
+		'en-us': 'Select at least one offer'
+	},
+	'Der Termin liegt in der Vergangenheit': {
+		'de-ch': 'Der Termin liegt in der Vergangenheit',
+		'en-us': 'The appointment is in the past'
+	},
+	'Angebot nicht gefunden oder ohne Dauer': {
+		'de-ch': 'Angebot nicht gefunden oder ohne Dauer',
+		'en-us': 'Offer not found or without duration'
+	},
+	'Termin nicht gefunden': { 'de-ch': 'Termin nicht gefunden', 'en-us': 'Appointment not found' },
+	'Der Termin ist gebucht und kann nicht entfernt werden': {
+		'de-ch': 'Der Termin ist gebucht und kann nicht entfernt werden',
+		'en-us': 'The appointment is booked and cannot be removed'
+	},
+	'Ich akzeptiere die Stornogebühr.': {
+		'de-ch': 'Ich akzeptiere die Stornogebühr.',
+		'en-us': 'I accept the cancellation fee.'
+	},
+	Stundenart: { 'de-ch': 'Stundenart', 'en-us': 'Type of hours' },
+	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
+	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
+		{
+			'de-ch':
+				'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).',
+			'en-us':
+				'Before the appointment, as many hours as set under «Erinnerung: Stunden vor Termin» (Settings › Terminbuchung).'
+		},
+	'Erinnerung gesendet (an Sie)': {
+		'de-ch': 'Erinnerung gesendet (an Sie)',
+		'en-us': 'Reminder sent (to you)'
+	},
+	'Nach jeder versendeten Termin-Erinnerung.': {
+		'de-ch': 'Nach jeder versendeten Termin-Erinnerung.',
+		'en-us': 'After every appointment reminder sent.'
+	},
+	'Stornierung bestätigt': { 'de-ch': 'Stornierung bestätigt', 'en-us': 'Cancellation confirmed' },
+	'Wenn die Kundin / der Kunde kostenlos storniert.': {
+		'de-ch': 'Wenn die Kundin / der Kunde kostenlos storniert.',
+		'en-us': 'When the customer cancels free of charge.'
+	},
+	'Stornierung mit Gebühr': { 'de-ch': 'Stornierung mit Gebühr', 'en-us': 'Cancellation with fee' },
+	'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.':
+		{
+			'de-ch':
+				'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.',
+			'en-us':
+				'Cancellation after the free period has expired, if the offer has a price and a cancellation fee.'
+		},
+	'Buchung storniert (an Sie)': {
+		'de-ch': 'Buchung storniert (an Sie)',
+		'en-us': 'Booking cancelled (to you)'
+	},
+	'Bei jeder Stornierung.': {
+		'de-ch': 'Bei jeder Stornierung.',
+		'en-us': 'On every cancellation.'
+	},
+	'Rechnung nach dem Termin': {
+		'de-ch': 'Rechnung nach dem Termin',
+		'en-us': 'Invoice after the appointment'
+	},
+	'Nach Terminende, wenn «Rechnungsstellung» aktiv ist und das Angebot einen Preis hat.': {
+		'de-ch': 'Nach Terminende, wenn «Rechnungsstellung» aktiv ist und das Angebot einen Preis hat.',
+		'en-us':
+			'After the appointment has ended, if «Send invoice after the appointment» is active and the offer has a price.'
+	},
 	'Buchungen anzeigen, löschen, Termine sperren': {
 		'de-ch': 'Buchungen anzeigen, löschen, Termine sperren',
 		'en-us': 'View and delete bookings, block time slots'
@@ -2759,14 +3068,497 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Kostenpflichtig stornieren',
 		'en-us': 'Cancel with fee'
 	},
-	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' }
+	'Alle Angebote anzeigen': { 'de-ch': 'Alle Angebote anzeigen', 'en-us': 'Show all offers' },
+	// ── Assistenz (/admin/assistenz, Feature `assistenz`) ──
+	Assistenz: { 'de-ch': 'Assistenz', 'en-us': 'Assistance' },
+	'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal': {
+		'de-ch': 'Monatsstunden der Assistenzpersonen, Lohn, Abzüge und Jahrestotal',
+		'en-us': 'Monthly hours of the assistants, wages, deductions and yearly totals'
+	},
+	'Personen & Sätze': { 'de-ch': 'Personen & Sätze', 'en-us': 'People & rates' },
+	'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.':
+		{
+			'de-ch':
+				'Monatliche Tag- und Nachtstunden der Assistenzpersonen, daraus Lohn, Abzüge und Totale. Zum Erfassen einen Monat öffnen.',
+			'en-us':
+				'Monthly day and night hours of the assistants, with wages, deductions and totals. Open a month to enter hours.'
+		},
+	'Noch keine Personen erfasst.': {
+		'de-ch': 'Noch keine Personen erfasst.',
+		'en-us': 'No people added yet.'
+	},
+	'Noch keine Stundensätze erfasst.': {
+		'de-ch': 'Noch keine Stundensätze erfasst.',
+		'en-us': 'No hourly rates added yet.'
+	},
+	'Vorheriges Jahr': { 'de-ch': 'Vorheriges Jahr', 'en-us': 'Previous year' },
+	'Nächstes Jahr': { 'de-ch': 'Nächstes Jahr', 'en-us': 'Next year' },
+	Monate: { 'de-ch': 'Monate', 'en-us': 'Months' },
+	Tagstunden: { 'de-ch': 'Tagstunden', 'en-us': 'Day hours' },
+	Nachtstunden: { 'de-ch': 'Nachtstunden', 'en-us': 'Night hours' },
+	'Stunden total': { 'de-ch': 'Stunden total', 'en-us': 'Total hours' },
+	'Lohn brutto CHF': { 'de-ch': 'Lohn brutto CHF', 'en-us': 'Gross wage CHF' },
+	'Abzüge total CHF': { 'de-ch': 'Abzüge total CHF', 'en-us': 'Total deductions CHF' },
+	'Lohn netto CHF': { 'de-ch': 'Lohn netto CHF', 'en-us': 'Net wage CHF' },
+	aktuell: { 'de-ch': 'aktuell', 'en-us': 'current' },
+	'Noch nichts erfasst': { 'de-ch': 'Noch nichts erfasst', 'en-us': 'Nothing entered yet' },
+	Erfassen: { 'de-ch': 'Erfassen', 'en-us': 'Enter' },
+	Jahrestotal: { 'de-ch': 'Jahrestotal', 'en-us': 'Year total' },
+	'Jahrestotal pro Person': { 'de-ch': 'Jahrestotal pro Person', 'en-us': 'Year total per person' },
+	Person: { 'de-ch': 'Person', 'en-us': 'Person' },
+	Anstellung: { 'de-ch': 'Anstellung', 'en-us': 'Employment' },
+	'Taglohn CHF': { 'de-ch': 'Taglohn CHF', 'en-us': 'Day wage CHF' },
+	'Nachtlohn CHF': { 'de-ch': 'Nachtlohn CHF', 'en-us': 'Night wage CHF' },
+	'Änderungen nicht gespeichert. Trotzdem verlassen?': {
+		'de-ch': 'Änderungen nicht gespeichert. Trotzdem verlassen?',
+		'en-us': 'Changes not saved. Leave anyway?'
+	},
+	'Vorheriger Monat': { 'de-ch': 'Vorheriger Monat', 'en-us': 'Previous month' },
+	'Nächster Monat': { 'de-ch': 'Nächster Monat', 'en-us': 'Next month' },
+	Jahresübersicht: { 'de-ch': 'Jahresübersicht', 'en-us': 'Year overview' },
+	Gespeichert: { 'de-ch': 'Gespeichert', 'en-us': 'Saved' },
+	Tag: { 'de-ch': 'Tag', 'en-us': 'Day' },
+	'gültig ab': { 'de-ch': 'gültig ab', 'en-us': 'valid from' },
+	'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.': {
+		'de-ch':
+			'Für diesen Monat sind keine Stundensätze erfasst — Beträge werden erst danach berechnet.',
+		'en-us': 'No hourly rates are set for this month — amounts are calculated once they are.'
+	},
+	'In diesem Monat ist keine Person aktiv.': {
+		'de-ch': 'In diesem Monat ist keine Person aktiv.',
+		'en-us': 'Nobody is active in this month.'
+	},
+	Monatstotal: { 'de-ch': 'Monatstotal', 'en-us': 'Month total' },
+	'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.': {
+		'de-ch': 'Stunden als Zahl, z.B. 8 oder 8.5. Leere Felder zählen nicht.',
+		'en-us': 'Hours as a number, e.g. 8 or 8.5. Empty fields are ignored.'
+	},
+	'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.':
+		{
+			'de-ch':
+				'Wer nicht mehr arbeitet: «Aktiv bis» setzen statt löschen — frühere Monate bleiben so vollständig. Löschen geht nur ohne erfasste Stunden.',
+			'en-us':
+				'For people who have left, set «Active until» instead of deleting them, so earlier months stay complete. Deleting is only possible without recorded hours.'
+		},
+	'Aktiv ab': { 'de-ch': 'Aktiv ab', 'en-us': 'Active from' },
+	'Aktiv bis': { 'de-ch': 'Aktiv bis', 'en-us': 'Active until' },
+	'Nach unten': { 'de-ch': 'Nach unten', 'en-us': 'Move down' },
+	'Diese Person löschen?': { 'de-ch': 'Diese Person löschen?', 'en-us': 'Delete this person?' },
+	'Person hinzufügen': { 'de-ch': 'Person hinzufügen', 'en-us': 'Add person' },
+	'«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.': {
+		'de-ch': '«Aktiv ab» und «Aktiv bis» leer lassen = unbefristet.',
+		'en-us': 'Leave «Active from» and «Active until» empty for no limit.'
+	},
+	'Stundensätze und Abzüge': {
+		'de-ch': 'Stundensätze und Abzüge',
+		'en-us': 'Hourly rates and deductions'
+	},
+	'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.':
+		{
+			'de-ch':
+				'Gelten ab dem gewählten Monat bis zur nächsten Änderung. Bei einer Erhöhung neue Sätze mit «Gültig ab» erfassen — frühere Monate bleiben unverändert. Abzüge in Prozent vom Bruttolohn.',
+			'en-us':
+				'Apply from the chosen month until the next change. For an increase, add new rates with «Valid from» — earlier months stay unchanged. Deductions as a percentage of the gross wage.'
+		},
+	'Neue Sätze ab Monat': { 'de-ch': 'Neue Sätze ab Monat', 'en-us': 'New rates from month' },
+	'Gültig ab': { 'de-ch': 'Gültig ab', 'en-us': 'Valid from' },
+	'Tag CHF / Stunde': { 'de-ch': 'Tag CHF / Stunde', 'en-us': 'Day CHF / hour' },
+	'Nacht CHF / Stunde': { 'de-ch': 'Nacht CHF / Stunde', 'en-us': 'Night CHF / hour' },
+	Abzüge: { 'de-ch': 'Abzüge', 'en-us': 'Deductions' },
+	'z.B. AHV/IV/EO': { 'de-ch': 'z.B. AHV/IV/EO', 'en-us': 'e.g. AHV/IV/EO' },
+	Bezeichnung: { 'de-ch': 'Bezeichnung', 'en-us': 'Name' },
+	Prozent: { 'de-ch': 'Prozent', 'en-us': 'Percent' },
+	Abzug: { 'de-ch': 'Abzug', 'en-us': 'Deduction' },
+	'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.':
+		{
+			'de-ch':
+				'Die Prozentsätze der Sozialversicherungen bitte bei der Ausgleichskasse bzw. Versicherung prüfen.',
+			'en-us':
+				'Please check the social insurance percentages with the compensation office or insurer.'
+		},
+	'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.': {
+		'de-ch': 'Diese Sätze löschen? Betroffene Monate rechnen danach mit den vorherigen Sätzen.',
+		'en-us': 'Delete these rates? Affected months will then use the previous rates.'
+	},
+	Assistenzjahr: { 'de-ch': 'Assistenzjahr', 'en-us': 'Assistance year' },
+	'Jahr beginnt im': { 'de-ch': 'Jahr beginnt im', 'en-us': 'Year starts in' },
+	'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.': {
+		'de-ch': 'Stunden: bitte Zahlen wie 8 oder 8.5 eingeben.',
+		'en-us': 'Hours: please enter numbers like 8 or 8.5.'
+	},
+	'Bitte einen Namen eintragen.': {
+		'de-ch': 'Bitte einen Namen eintragen.',
+		'en-us': 'Please enter a name.'
+	},
+	'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.': {
+		'de-ch': 'Monat bitte im Format JJJJ-MM eingeben, z.B. 2026-09.',
+		'en-us': 'Please enter the month as YYYY-MM, e.g. 2026-09.'
+	},
+	'«Aktiv bis» muss nach «Aktiv ab» liegen.': {
+		'de-ch': '«Aktiv bis» muss nach «Aktiv ab» liegen.',
+		'en-us': '«Active until» must be after «Active from».'
+	},
+	'Person nicht gefunden.': { 'de-ch': 'Person nicht gefunden.', 'en-us': 'Person not found.' },
+	'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.':
+		{
+			'de-ch':
+				'Diese Person hat erfasste Stunden und kann nicht gelöscht werden. Stattdessen «Aktiv bis» setzen.',
+			'en-us': 'This person has recorded hours and cannot be deleted. Set «Active until» instead.'
+		},
+	'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.': {
+		'de-ch': 'Bitte die Stundensätze für Tag und Nacht eintragen, z.B. 35.30.',
+		'en-us': 'Please enter the hourly rates for day and night, e.g. 35.30.'
+	},
+	'Jeder Abzug braucht eine Bezeichnung.': {
+		'de-ch': 'Jeder Abzug braucht eine Bezeichnung.',
+		'en-us': 'Every deduction needs a name.'
+	},
+	'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.': {
+		'de-ch': 'Abzüge: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 5.3.',
+		'en-us': 'Deductions: please enter the percentage as a number between 0 and 100, e.g. 5.3.'
+	},
+	'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.': {
+		'de-ch': 'Für diesen Monat gibt es schon Sätze — bitte diese bearbeiten.',
+		'en-us': 'Rates for this month already exist — please edit them.'
+	},
+	'Ungültiger Monat.': { 'de-ch': 'Ungültiger Monat.', 'en-us': 'Invalid month.' },
+	Import: { 'de-ch': 'Import', 'en-us': 'Import' },
+	'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.': {
+		'de-ch': 'Jetzt importieren? Personen, Sätze und Stunden werden gespeichert.',
+		'en-us': 'Import now? People, rates and hours will be saved.'
+	},
+	'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.':
+		{
+			'de-ch':
+				'Bisherige Tabelle übernehmen, damit nichts doppelt erfasst werden muss. Erkannt werden Blöcke mit Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden» — wie in der bisherigen Monatsübersicht und im CSV-Export dieser Seite.',
+			'en-us':
+				'Take over an existing spreadsheet so nothing has to be entered twice. Recognised are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden» — as in the former monthly overview and in the CSV export of this page.'
+		},
+	Datei: { 'de-ch': 'Datei', 'en-us': 'File' },
+	'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.': {
+		'de-ch': 'LibreOffice (.ods) oder CSV. Excel-Dateien zuerst als CSV speichern.',
+		'en-us': 'LibreOffice (.ods) or CSV. Save Excel files as CSV first.'
+	},
+	'Monate mit bereits erfassten Stunden überschreiben': {
+		'de-ch': 'Monate mit bereits erfassten Stunden überschreiben',
+		'en-us': 'Overwrite months that already have hours'
+	},
+	'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.':
+		{
+			'de-ch':
+				'Ohne Haken bleiben Monate, in denen schon Stunden erfasst sind, unverändert. Personen werden am Namen erkannt, neue angelegt. Stundensätze aus der Datei werden nur übernommen, wenn noch keine erfasst sind.',
+			'en-us':
+				'Unchecked, months that already have hours stay unchanged. People are matched by name, new ones are created. Hourly rates from the file are only taken over if none exist yet.'
+		},
+	Prüfen: { 'de-ch': 'Prüfen', 'en-us': 'Check' },
+	Importieren: { 'de-ch': 'Importieren', 'en-us': 'Import' },
+	Importiert: { 'de-ch': 'Importiert', 'en-us': 'Imported' },
+	'Vorschau — noch nichts gespeichert': {
+		'de-ch': 'Vorschau — noch nichts gespeichert',
+		'en-us': 'Preview — nothing saved yet'
+	},
+	'Import abgeschlossen.': { 'de-ch': 'Import abgeschlossen.', 'en-us': 'Import completed.' },
+	'Zur Jahresübersicht': { 'de-ch': 'Zur Jahresübersicht', 'en-us': 'Go to year overview' },
+	'Personen mit Stunden': { 'de-ch': 'Personen mit Stunden', 'en-us': 'People with hours' },
+	'Neu angelegt': { 'de-ch': 'Neu angelegt', 'en-us': 'Newly created' },
+	'Alle Personen sind schon erfasst.': {
+		'de-ch': 'Alle Personen sind schon erfasst.',
+		'en-us': 'All people already exist.'
+	},
+	Stundensätze: { 'de-ch': 'Stundensätze', 'en-us': 'Hourly rates' },
+	'In der Datei wurden keine Stundensätze gefunden.': {
+		'de-ch': 'In der Datei wurden keine Stundensätze gefunden.',
+		'en-us': 'No hourly rates were found in the file.'
+	},
+	'Werden übernommen.': { 'de-ch': 'Werden übernommen.', 'en-us': 'Will be taken over.' },
+	'Nicht übernommen, weil schon Stundensätze erfasst sind.': {
+		'de-ch': 'Nicht übernommen, weil schon Stundensätze erfasst sind.',
+		'en-us': 'Not taken over because hourly rates already exist.'
+	},
+	Hinweise: { 'de-ch': 'Hinweise', 'en-us': 'Notes' },
+	Neu: { 'de-ch': 'Neu', 'en-us': 'New' },
+	Überschrieben: { 'de-ch': 'Überschrieben', 'en-us': 'Overwritten' },
+	'Schon erfasst — übersprungen': {
+		'de-ch': 'Schon erfasst — übersprungen',
+		'en-us': 'Already entered — skipped'
+	},
+	'Keine Stunden': { 'de-ch': 'Keine Stunden', 'en-us': 'No hours' },
+	'Bitte eine Datei auswählen.': {
+		'de-ch': 'Bitte eine Datei auswählen.',
+		'en-us': 'Please choose a file.'
+	},
+	'Die Datei ist zu gross (höchstens 5 MB).': {
+		'de-ch': 'Die Datei ist zu gross (höchstens 5 MB).',
+		'en-us': 'The file is too large (max. 5 MB).'
+	},
+	'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.':
+		{
+			'de-ch':
+				'Excel-Dateien (.xlsx) bitte zuerst als CSV speichern (Datei › Speichern unter › CSV) oder in LibreOffice als .ods.',
+			'en-us':
+				'Please save Excel files (.xlsx) as CSV first (File › Save as › CSV) or as .ods in LibreOffice.'
+		},
+	'Die Datei konnte nicht gelesen werden.': {
+		'de-ch': 'Die Datei konnte nicht gelesen werden.',
+		'en-us': 'The file could not be read.'
+	},
+	'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.':
+		{
+			'de-ch':
+				'Dieses Format wird nicht unterstützt. Bitte die Tabelle als .ods (LibreOffice) oder CSV speichern.',
+			'en-us':
+				'This format is not supported. Please save the spreadsheet as .ods (LibreOffice) or CSV.'
+		},
+	'Zeile {zeile}: {monat} kommt mehrfach vor.': {
+		'de-ch': 'Zeile {zeile}: {monat} kommt mehrfach vor.',
+		'en-us': 'Row {zeile}: {monat} appears more than once.'
+	},
+	'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.': {
+		'de-ch': 'Zeile {zeile}: «{wert}» ist keine gültige Stundenzahl und wurde übersprungen.',
+		'en-us': 'Row {zeile}: «{wert}» is not a valid number of hours and was skipped.'
+	},
+	'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.': {
+		'de-ch': 'Zeile {zeile}: {name} steht im selben Monat mehrfach — die letzte Zeile gilt.',
+		'en-us': 'Row {zeile}: {name} appears more than once in the same month — the last row applies.'
+	},
+	'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».':
+		{
+			'de-ch':
+				'Keine Monate gefunden. Erwartet werden Blöcke mit einem Monatstitel (z.B. «September 2026») und der Kopfzeile «Person · Anstellung · Tagstunden · Nachtstunden».',
+			'en-us':
+				'No months found. Expected are blocks with a month title (e.g. «September 2026») and the header «Person · Anstellung · Tagstunden · Nachtstunden».'
+		},
+	'Stunden von {name} im {monat} löschen?': {
+		'de-ch': 'Stunden von {name} im {monat} löschen?',
+		'en-us': 'Delete the hours of {name} in {monat}?'
+	},
+	'AHV/IV/EO': { 'de-ch': 'AHV/IV/EO', 'en-us': 'AHV/IV/EO' },
+	ALV: { 'de-ch': 'ALV', 'en-us': 'Unemployment insurance (ALV)' },
+	Quellensteuer: { 'de-ch': 'Quellensteuer', 'en-us': 'Withholding tax' },
+	'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.':
+		{
+			'de-ch':
+				'Anteil der Assistenzperson in Prozent vom Bruttolohn, leer = kein Abzug. AHV/IV/EO und ALV: Sätze der Ausgleichskasse prüfen. Quellensteuer: im vereinfachten Abrechnungsverfahren der SVA 5 % für alle.',
+			'en-us':
+				"The assistant's share as a percentage of the gross wage, empty = no deduction. AHV/IV/EO and ALV: check the rates with the compensation office. Withholding tax: 5 % for everyone in the simplified settlement procedure of the SVA."
+		},
+	Ferienentschädigung: { 'de-ch': 'Ferienentschädigung', 'en-us': 'Holiday pay' },
+	'Ferienentschädigung (%)': { 'de-ch': 'Ferienentschädigung (%)', 'en-us': 'Holiday pay (%)' },
+	'Ferienentschädigung CHF': { 'de-ch': 'Ferienentschädigung CHF', 'en-us': 'Holiday pay CHF' },
+	'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.':
+		{
+			'de-ch':
+				'Ferienentschädigung: Zuschlag in Prozent auf Tag- und Nachtlohn, gehört zum Bruttolohn (8.33 % bei 4 Wochen Ferien). Leer = keine.',
+			'en-us':
+				'Holiday pay: surcharge in percent on day and night wage, part of the gross wage (8.33 % for 4 weeks of holiday). Empty = none.'
+		},
+	'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.': {
+		'de-ch': 'Ferienentschädigung: Prozent bitte als Zahl zwischen 0 und 100 eingeben, z.B. 8.33.',
+		'en-us': 'Holiday pay: please enter the percentage as a number between 0 and 100, e.g. 8.33.'
+	},
+	'Sozialabzüge CHF': { 'de-ch': 'Sozialabzüge CHF', 'en-us': 'Social insurance deductions CHF' },
+	'Quellensteuer CHF': { 'de-ch': 'Quellensteuer CHF', 'en-us': 'Withholding tax CHF' },
+	'Helles Design': { 'de-ch': 'Helles Design', 'en-us': 'Light theme' },
+	'Dunkles Design': { 'de-ch': 'Dunkles Design', 'en-us': 'Dark theme' }
 };
 
 /**
  * Die Helper-Funktion für Logik-Teile (Vorschlag 1)
  * Nutzt den Key als Fallback, falls keine Übersetzung existiert.
  */
-export function t(key: string, lang: string): string {
+
+/**
+ * «Du» form of German texts in Sie form — used when Settings › «Anrede in Standardtexten» = Du
+ * (layout data `addressDu`, $_ store). Key = German key in `translations`; new public text
+ * in Sie form → add the Du form here too.
+ */
+export const duForms: Record<string, string> = {
+	'Ihre Buchungsanfrage wurde bestätigt.': 'Deine Buchungsanfrage wurde bestätigt.',
+	'Ihre Buchungsreferenz': 'Deine Buchungsreferenz',
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese brauchst du für den Check-in und Check-out auf unserer Website.)',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'wir freuen uns auf deine Anreise am {anreise} (Abreise: {abreise}).',
+	'Ihre Anreise: {ressource}': 'Deine Anreise: {ressource}',
+	'Ihre Abreise morgen: {ressource}': 'Deine Abreise morgen: {ressource}',
+	'Ihre Abrechnung: {ressource}': 'Deine Abrechnung: {ressource}',
+	'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:':
+		'Vielen Dank für deinen Aufenthalt. Hier ist deine definitive Abrechnung:',
+	'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails':
+		'Bitte bestätige deine Anmeldung für die Info-Mails',
+	'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.':
+		'Du hast dich für die Info-Mails angemeldet. Bitte bestätige deine Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.',
+	'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.':
+		'Falls du dich nicht angemeldet hast, ignoriere diese E-Mail einfach.',
+	'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von':
+		'Du erhältst diese E-Mail, weil du die Info-Mails abonniert hast von',
+	'Sie erhalten diese E-Mail als Kundin oder Kunde von':
+		'Du erhältst diese E-Mail als Kundin oder Kunde von',
+	'Wir melden uns in Kürze bei Ihnen.': 'Wir melden uns in Kürze bei dir.',
+	'Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:':
+		'Links sind im Kontaktformular nicht erlaubt. Bitte entferne Links aus:',
+	'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Buchung fehlgeschlagen. Bitte versuche es erneut.',
+	'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Senden fehlgeschlagen. Bitte versuche es erneut.',
+	'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.':
+		'Ein Fehler ist aufgetreten. Bitte versuche es erneut.',
+	'Verbindungsfehler. Bitte versuchen Sie es erneut.':
+		'Verbindungsfehler. Bitte versuche es erneut.',
+	'Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Übermittlung fehlgeschlagen. Bitte versuche es erneut.',
+	'Ihre Bestellung': 'Deine Bestellung',
+	'Ihre Angaben': 'Deine Angaben',
+	'Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.':
+		'Du erhältst eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.',
+	'Vielen Dank für Ihre Bestellung!': 'Vielen Dank für deine Bestellung!',
+	'Ihre Rechnung wurde soeben per E-Mail versandt.':
+		'Deine Rechnung wurde soeben per E-Mail versandt.',
+	'Bitte überweisen Sie den Betrag innerhalb von 30 Tagen.':
+		'Bitte überweise den Betrag innerhalb von 30 Tagen.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Wir haben deine Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.',
+	'Sie erhalten in Kürze eine Bestätigungs-E-Mail.':
+		'Du erhältst in Kürze eine Bestätigungs-E-Mail.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehen wir dir gerne zur Verfügung.',
+	'Danke für Ihre Bewertung!': 'Danke für deine Bewertung!',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreib uns, was gefehlt hat – mit E-Mail melden wir uns bei dir.',
+	'Ihre Auswahl': 'Deine Auswahl',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecke unser Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Deine Bestellung ist bei uns eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Deine Bestellung {leistung} ist bei uns eingegangen.',
+	'Ihre Nachricht wurde erfolgreich gesendet.': 'Deine Nachricht wurde erfolgreich gesendet.',
+	'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.':
+		'Zu viele Nachrichten. Bitte versuche es in einigen Minuten erneut.',
+	'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.':
+		'Der Chat konnte nicht antworten. Bitte versuche es erneut.',
+	'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.':
+		'Du hast den KI-Chat in den Cookie-Einstellungen abgelehnt.',
+	'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.':
+		'Deine Nachrichten werden zur Beantwortung an Anthropic übertragen.',
+	'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen':
+		'Nicht-funktionale Dienste kannst du jederzeit ablehnen oder wieder zulassen',
+	'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.':
+		'Dabei können Cookies gesetzt und Daten wie deine IP-Adresse übertragen werden. Du kannst dies jederzeit ablehnen.',
+	'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.':
+		'Hier siehst du, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste kannst du ablehnen.',
+	'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.':
+		'Dieser Inhalt wird nicht geladen, weil du externe Inhalte abgelehnt hast.',
+	'Ihr Warenkorb ist leer.': 'Dein Warenkorb ist leer.',
+	'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.':
+		'Du wurdest abgemeldet und erhältst keine weiteren Info-Mails mehr.',
+	'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.':
+		'Dieser Abmelde-Link ist ungültig. Bitte verwende den Link aus der E-Mail.',
+	'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?':
+		'Möchtest du für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Wir haben dir eine E-Mail geschickt. Bitte bestätige deine Anmeldung über den Link darin.',
+	'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.':
+		'Bitte bestätige, dass du Info-Mails erhalten möchtest.',
+	'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.':
+		'Die Anmeldung ist fehlgeschlagen. Bitte versuche es später erneut.',
+	'Bitte geben Sie eine gültige E-Mail-Adresse ein.': 'Bitte gib eine gültige E-Mail-Adresse ein.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Deine Anmeldung ist bestätigt. Du erhältst ab jetzt unsere Info-Mails.',
+	'Bitte melden Sie sich erneut an.': 'Bitte melde dich erneut an.',
+	'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:':
+		'Bitte bestätige die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:',
+	'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.':
+		'Deine Buchung wurde storniert. Der Termin ist wieder verfügbar.',
+	'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.':
+		'Die Rechnung für die Stornogebühr erhältst du per E-Mail.',
+	'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.':
+		'Die Buchung konnte nicht geprüft werden. Bitte versuche es später erneut.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktiere uns direkt.',
+	'Bitte bestätigen Sie die Stornogebühr.': 'Bitte bestätige die Stornogebühr.',
+	'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.':
+		'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte lade die Seite neu.',
+	'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.':
+		'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, deine Cookie-Auswahl). Können nicht deaktiviert werden.',
+	'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.':
+		'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten deine IP-Adresse.',
+	'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.':
+		'Chat-Assistent, der deine Fragen mit künstlicher Intelligenz beantwortet. Deine Nachrichten werden dafür an einen externen Anbieter übertragen.',
+	'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.':
+		'Hält dich nach der Anmeldung in deinem Benutzerkonto angemeldet.',
+	'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.':
+		'Merkt sich die Leistungen in deinem Warenkorb bis zur Bestellung.',
+	'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).':
+		'Merkt sich deine Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
+	'Speichert Ihre Auswahl in diesem Cookie-Dialog.':
+		'Speichert deine Auswahl in diesem Cookie-Dialog.',
+	'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)':
+		'Übertragung deiner Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)'
+};
+
+/**
+ * «Ich» form of German texts in Wir form — Settings › «Absender in Standardtexten» = Ich
+ * (layout data `senderIch`). `ichForms` = with «Sie», `duIchForms` = with «Du» (needed for every
+ * key that also has a Du form). New public text with wir/uns/unser → add the Ich form here.
+ */
+export const ichForms: Record<string, string> = {
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese benötigen Sie für den Check-in und Check-out auf meiner Website.)',
+	'Wir melden uns in Kürze zur Zahlungsabwicklung.':
+		'Ich melde mich in Kürze zur Zahlungsabwicklung.',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'ich freue mich auf Ihre Anreise am {anreise} (Abreise: {abreise}).',
+	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei Ihnen.',
+	'Wir melden uns zur Terminvereinbarung.': 'Ich melde mich zur Terminvereinbarung.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Ich habe Ihre Bestellung erhalten und melde mich in Kürze zur Terminvereinbarung.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehe ich Ihnen gerne zur Verfügung.',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreiben Sie mir, was gefehlt hat – mit E-Mail melde ich mich bei Ihnen.',
+	'Übersicht unserer Leistungen und Services': 'Übersicht meiner Leistungen und Services',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecken Sie mein Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Ihre Bestellung ist bei mir eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Ihre Bestellung {leistung} ist bei mir eingegangen.',
+	'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.':
+		'Meine Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Ich habe Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt meine Info-Mails.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie mich direkt.'
+};
+
+export const duIchForms: Record<string, string> = {
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese brauchst du für den Check-in und Check-out auf meiner Website.)',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'ich freue mich auf deine Anreise am {anreise} (Abreise: {abreise}).',
+	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei dir.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Ich habe deine Bestellung erhalten und melde mich in Kürze zur Terminvereinbarung.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehe ich dir gerne zur Verfügung.',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreib mir, was gefehlt hat – mit E-Mail melde ich mich bei dir.',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecke mein Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Deine Bestellung ist bei mir eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Deine Bestellung {leistung} ist bei mir eingegangen.',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Ich habe dir eine E-Mail geschickt. Bitte bestätige deine Anmeldung über den Link darin.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Deine Anmeldung ist bestätigt. Du erhältst ab jetzt meine Info-Mails.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktiere mich direkt.'
+};
+
+/**
+ * `du` = Settings «Anrede in Standardtexten» is «Du», `ich` = «Absender in Standardtexten» is «Ich»
+ * → German variant (duForms / ichForms / duIchForms) where available
+ */
+export function t(key: string, lang: string, du = false, ich = false): string {
 	const entry = translations[key];
 	if (!entry) {
 		if (dev) console.warn(`[i18n] Fehlender Key: "${key}"`);
@@ -2775,6 +3567,16 @@ export function t(key: string, lang: string): string {
 
 	// Wir suchen eine passende Übersetzung (z.B. 'en' findet 'en-us')
 	const langBase = lang.split('-')[0]; // 'en' oder 'de'
+	if (langBase === 'de' && (du || ich)) {
+		// Du + Ich: combined form; key without Du form → Ich form; otherwise at least the Du form
+		const variant =
+			du && ich
+				? (duIchForms[key] ?? (duForms[key] ? duForms[key] : ichForms[key]))
+				: ich
+					? ichForms[key]
+					: duForms[key];
+		if (variant) return variant;
+	}
 	const foundKey = Object.keys(entry).find((k) => k.startsWith(langBase));
 
 	return entry[foundKey || ''] || entry['de-ch'] || key;

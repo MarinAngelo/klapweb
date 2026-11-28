@@ -11,6 +11,9 @@ import { createClient } from '$lib/prismicio';
 import { FEATURE_ECOMMERCE } from '$lib/server/features';
 import { addYear, sendDueRecurringInvoices } from '$lib/server/recurringInvoices';
 import { sendDueReminders } from '$lib/server/dunning';
+import { adminInvoiceMail } from '$lib/server/invoiceMails';
+import { getTextStyle } from '$lib/server/mailFrom';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { reconcilePayments } from '$lib/server/paymentMatching';
 import {
 	createInvoice,
@@ -149,8 +152,13 @@ export const actions: Actions = {
 				invoiceNumber,
 				pdf: created.pdf,
 				to: invoiceData.email,
-				subject: `Ihre Rechnung ${invoiceNumber} – ${created.settings.name}`,
-				text: `Sehr geehrte/r ${invoiceData.vorname} ${invoiceData.nachname},\n\nVielen Dank für Ihren Auftrag. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${created.settings.name}`
+				...adminInvoiceMail({
+					invoiceNumber,
+					name: [invoiceData.vorname, invoiceData.nachname].filter(Boolean).join(' '),
+					companyName: created.settings.name,
+					style: await getTextStyle(),
+					theme: await loadMailTheme(createClient()).catch(() => null)
+				})
 			});
 		}
 
@@ -313,8 +321,13 @@ export const actions: Actions = {
 			invoiceNumber: invoice.invoiceNumber,
 			pdf: pdfBytes,
 			to: invoice.email,
-			subject: `Ihre Rechnung ${invoice.invoiceNumber} – ${companyInfo.name}`,
-			text: `Sehr geehrte/r ${customerName},\n\nVielen Dank für Ihren Auftrag. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${companyInfo.name}`
+			...adminInvoiceMail({
+				invoiceNumber: invoice.invoiceNumber,
+				name: customerName,
+				companyName: companyInfo.name,
+				style: await getTextStyle(),
+				theme: await loadMailTheme(createClient()).catch(() => null)
+			})
 		});
 		if (!sent) throw error(500, 'E-Mail konnte nicht versendet werden');
 		return { success: true };

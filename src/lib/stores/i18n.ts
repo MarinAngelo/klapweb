@@ -12,5 +12,9 @@ import { uiLang } from '$lib/stores/preferredLang';
  */
 export const _ = derived([page, uiLang], ([$page, $uiLang]) => {
 	const lang = $uiLang || $page.data.lang || 'de-ch';
-	return (key: string) => t(key, lang);
+	// Settings «Anrede in Standardtexten» = Du → Du form of the German texts (duForms)
+	const du = $page.data.addressDu === true;
+	// «Absender in Standardtexten» = Ich → Ich form (ichForms / duIchForms)
+	const ich = $page.data.senderIch === true;
+	return (key: string) => t(key, lang, du, ich);
 });

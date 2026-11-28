@@ -1,4 +1,5 @@
 import { createClient } from '$lib/prismicio';
+import { addressFormDu, senderFormIch } from '$lib/addressForm';
 import { error } from '@sveltejs/kit';
 import { buildTokenMap } from '$lib/utils/buildTokenMap.server';
 import { loadVariablesData } from '$lib/variables.js';
@@ -255,6 +256,10 @@ export async function load({ params, fetch, cookies, url, locals }) {
 			chatActive,
 			// «Ganze Website nicht indexieren» (Settings › SEO, main language): noindex on every page
 			siteNoIndex: (baseSettings.data as any)?.no_index_site === true,
+			// «Anrede in Standardtexten» (main language) → Du form of the UI texts ($_ store)
+			addressDu: addressFormDu(baseSettings.data),
+			// «Absender in Standardtexten» (main language) → Ich form of the UI texts
+			senderIch: senderFormIch(baseSettings.data),
 			// Web app manifest only with feature pwa (otherwise browsers offer to install the site)
 			pwaActive: FEATURE_PWA,
 			chatBotName,

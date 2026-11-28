@@ -46,6 +46,7 @@
 	<li data-field="arbeitstag.wiederholung_anzahl"></li>
 </ul>
 <p>Veröffentliche den Arbeitstag. Wiederholte Tage werden automatisch erzeugt.</p>
+<p>Für einzelne Termine geht es einfacher im Admin, siehe «Einzelnen Termin hinzufügen».</p>
 
 <h4>4. Ergebnis kontrollieren</h4>
 <p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>.</p>
@@ -95,6 +96,7 @@
 	<li data-field="settings.booking_customer_email_body"></li>
 	<li data-field="settings.booking_reminder_hours"></li>
 </ul>
+<p>Die <strong>Erinnerung</strong> enthält denselben Text wie die Standard-Bestätigung (Angebot, Datum, Ort, Stornierungsbedingungen, Kalender- und Storno-Link), mit dem Betreff «Erinnerung: …». Ein eigener Bestätigungstext gilt nur für die Bestätigung. Wer kurzfristig bucht (weniger Stunden vor dem Termin als eingestellt), erhält keine Erinnerung, nur die Bestätigung.</p>
 <p><strong>Platzhalter:</strong></p>
 <ul>
 	<li>{{Titel}}, {{Datum}}, {{Uhrzeit}}, {{Dauer}}, {{Name}}, {{Firma}}</li>
@@ -120,6 +122,15 @@
 <p>Öffne im Admin-Bereich die <strong>Terminverwaltung</strong>. Dort siehst du gebuchte, freie und gesperrte Termine.</p>
 <p><strong>Achtung:</strong> Eine gelöschte Buchung gibt den Termin wieder frei. Der Kunde erhält dabei keine automatische Absage-Mail.</p>
 
+<h3>Einzelnen Termin hinzufügen</h3>
+<p>Ohne Arbeitstag in Prismic: Wähle in der Terminverwaltung bei den freien Terminen <strong>Termin hinzufügen</strong>.</p>
+<ul>
+	<li><strong>Datum</strong></li>
+	<li><strong>Startzeit</strong></li>
+	<li><strong>Angebote:</strong> pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot</li>
+</ul>
+<p>Der Termin ist sofort auf der Website buchbar. Solange er nicht gebucht ist, kannst du ihn mit <strong>Entfernen</strong> wieder löschen.</p>
+
 <h3>Für einen Kunden buchen</h3>
 <p>Z. B. bei einer telefonischen Anfrage: Wähle in der Terminverwaltung beim freien Termin <strong>Für Kunde buchen</strong>.</p>
 <ul>
@@ -137,18 +148,33 @@
 </ul>
 <ul>
 	<li><strong>Innerhalb der Frist (oder ohne Frist):</strong> kostenlos. Der Termin wird wieder frei.</li>
-	<li><strong>Nach der Frist mit Stornogebühr:</strong> Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil.</li>
+	<li><strong>Nach der Frist mit Stornogebühr:</strong> Der Kunde bestätigt die Gebühr und erhält dafür eine Rechnung mit QR-Zahlteil. Ist die «Rechnungsstellung» ausgeschaltet, nennt die E-Mail nur die Gebühr, ohne Rechnung, mit dem Satz «Ich melde mich für die Bezahlung bei dir».</li>
 	<li><strong>Nach der Frist ohne Stornogebühr oder ohne Preis:</strong> Online stornieren ist nicht mehr möglich; die Seite verweist auf den direkten Kontakt.</li>
 </ul>
 <p>Es gelten die Bedingungen vom Zeitpunkt der Buchung. Du und der Kunde erhalten eine E-Mail.</p>
 <p>Eine offene Rechnung zur Buchung wird als storniert markiert. War sie schon bezahlt, erhältst du den Hinweis, eine Rückerstattung zu prüfen.</p>
 
-<h3>Rechnung nach dem Termin</h3>
+<h3>Rechnungsstellung</h3>
 <p>Schalte in den <strong>Einstellungen</strong> im Tab <strong>Terminbuchung</strong> dieses Feld ein:</p>
 <ul>
 	<li data-field="settings.booking_invoice"></li>
 </ul>
+<p>Ausgeschaltet verschickt die Terminbuchung keine Rechnungen. Eine Stornogebühr gilt trotzdem; sie wird dem Kunden nur in der E-Mail genannt.</p>
 <p>Bankangaben: Einstellungen → Tab «Rechnungen».</p>
+
+<h3>E-Mails ansehen</h3>
+<p>Wähle in der Terminverwaltung <strong>E-Mail-Vorschau</strong>.</p>
+<p>Du siehst alle E-Mails, die die Terminbuchung verschickt: Terminbestätigung, Benachrichtigung an dich, Stornierungen und Rechnung nach dem Termin.</p>
+<p>Die Vorschau verwendet deine aktuellen Einstellungen und den nächsten freien Termin als Beispiel.</p>
+<p>E-Mails, die mit deinen Einstellungen nicht verschickt werden, sind entsprechend markiert.</p>
+<p>Ob die E-Mails und die Meldungen auf der Website (z. B. nach einer Stornierung) «Sie» oder «Du» verwenden, ob sie mit «Wir» oder «Ich» sprechen mit welcher Begrüssung die E-Mails beginnen (Standard «Guten Tag», z. B. «Hallo») und mit welcher Verabschiedung sie enden (Standard «Freundliche Grüsse», z. B. «Liebe Grüsse»), legst du in den <strong>Einstellungen</strong> im Tab <strong>Main</strong> fest:</p>
+<ul>
+	<li data-field="settings.address_form"></li>
+	<li data-field="settings.sender_form"></li>
+	<li data-field="settings.mail_greeting"></li>
+	<li data-field="settings.mail_closing"></li>
+</ul>
+<p>Eigene Texte (z. B. der Text der Terminbestätigung in den Einstellungen) bleiben, wie du sie geschrieben hast.</p>
 
 <h3>Häufige Probleme</h3>
 <ul>

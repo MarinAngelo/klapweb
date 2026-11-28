@@ -10,6 +10,10 @@
 
 	$: targetLang = $page.params.lang || $page.data.mainLang || 'de-ch';
 	$: homeHref = targetLang === 'de-ch' ? '/' : `/${targetLang}`;
+	// Contact: e-mail from the settings (a page «/kontakt» does not exist on every website)
+	$: contactEmail = String(
+		$page.data.settings?.data?.responsible_email || $page.data.settings?.data?.e_mail || ''
+	).trim();
 
 	// Page missing in a secondary language (no translation yet): show a modal in that language
 	// and redirect to the same page in the default language. Real 404s keep the error page.
@@ -66,7 +70,9 @@
 			</p>
 			<div class="error-actions">
 				<Button href={homeHref} text={$_('Zur Startseite')} mb={false} />
-				<Button href="/kontakt" text={$_('Kontakt aufnehmen')} mb={false} />
+				{#if contactEmail}
+					<Button href={`mailto:${contactEmail}`} text={$_('Kontakt aufnehmen')} mb={false} />
+				{/if}
 			</div>
 		</div>
 	</Bounded>

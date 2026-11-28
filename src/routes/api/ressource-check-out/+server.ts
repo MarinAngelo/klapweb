@@ -1,15 +1,11 @@
 import { json } from '@sveltejs/kit';
-import { plainTextMail } from '$lib/server/mailText';
+import { checkoutBillingMail } from '$lib/server/ressourceMail';
 import { checkOutBuchung, updateRessourceBuchung } from '$lib/server/ressourceBuchungen';
 import { listAnnahmenFuerBuchung, berechneCredits } from '$lib/server/aufgaben';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { adminActionToken } from '$lib/server/adminAuth';
 import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
-
-function fmt(chf: number) {
-	return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(chf);
-}
 
 export async function POST({ request, fetch, url }) {
 	const { referenz, items, kommentar } = await request.json();
@@ -52,46 +48,21 @@ export async function POST({ request, fetch, url }) {
 	if (resendKey && toEmail && emailFrom && env.ADMIN_SECRET) {
 		// Token only authorises this approval — the admin password is never sent by mail
 		const freigabeLink = `${url.origin}/api/freigabe-abrechnung?id=${encodeURIComponent(buchung.id)}&token=${adminActionToken('freigabe-abrechnung', buchung.id)}`;
-		const [vonY, vonM, vonD] = buchung.von.split('-');
-		const [bisY, bisM, bisD] = buchung.bis.split('-');
-
-		const aufgabenZeilen = erledigt.length
-			? erledigt.map((a) => `  · ${a.aufgabeTitel}: ${fmt(berechneCredits(a))}`)
-			: ['  (keine)'];
-
 		try {
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
 			await resend.emails.send({
 				from: emailFrom,
 				to: toEmail,
-				subject: `Abrechnung freigeben: ${buchung.ressourceName ?? buchung.ressourceUid} – ${buchung.name ?? '–'}`,
-				...plainTextMail(
-					[
-						`${buchung.name ?? '–'} hat ausgecheckt.`,
-						``,
-						`Ressource: ${buchung.ressourceName ?? buchung.ressourceUid}`,
-						`Anreise:   ${vonD}.${vonM}.${vonY}`,
-						`Abreise:   ${bisD}.${bisM}.${bisY}`,
-						`Personen:  ${buchung.personen}`,
-						...(items?.length ? [``, `Checkliste:`, ...items.map((i: string) => `  ${i}`)] : []),
-						...(kommentar ? [``, `Kommentar:`, kommentar] : []),
-						``,
-						`─────────────────────────────────────`,
-						`ABRECHNUNG`,
-						`─────────────────────────────────────`,
-						`Mietpreis:         ${fmt(buchung.preisCHF)}`,
-						`Credits (Aufgaben): ${fmt(creditsCHF)}`,
-						`─────────────────────────────────────`,
-						`Total:             ${fmt(abrechnungBetrag)}`,
-						``,
-						`Erledigte Aufgaben:`,
-						...aufgabenZeilen,
-						``,
-						`Abrechnung prüfen, korrigieren und freigeben:`,
-						freigabeLink
-					].join('\n')
-				)
+				...checkoutBillingMail({
+					...buchung,
+					items,
+					kommentar,
+					creditsCHF,
+					abrechnungBetrag,
+					aufgaben: erledigt.map((a) => ({ titel: a.aufgabeTitel, credits: berechneCredits(a) })),
+					freigabeLink
+				})
 			});
 		} catch (e) {
 			console.error('Check-out Abrechnungs-Mail Fehler:', e);

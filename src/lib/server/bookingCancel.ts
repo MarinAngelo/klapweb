@@ -9,8 +9,11 @@ import { env } from '$env/dynamic/private';
 import { deleteBooking, type BookingRecord } from '$lib/server/bookings';
 import { listManualInvoices, updateManualInvoice } from '$lib/server/invoices';
 import { createInvoice, loadInvoiceSettings, sendInvoiceMail } from '$lib/server/invoicing';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 import { invalidateTermineCache } from '$lib/server/termineCache';
+import { cancelCustomerMail, cancelFeeMail, cancelProviderMail } from '$lib/server/bookingMails';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
 export type CancelStatus =
@@ -103,16 +106,22 @@ const splitName = (name = '') => {
 /**
  * Cancels a booking: frees the slot, voids its open invoice, issues the fee invoice
  * (status «fee») and informs customer + provider. Returns the fee invoice number.
+ * `invoicing` = setting «Rechnungsstellung» (`booking_invoice`): off → the fee stays the same,
+ * but is only stated in the e-mail (no invoice).
  */
 export async function cancelBooking(
 	booking: BookingRecord,
-	terms: CancelTerms
+	terms: CancelTerms,
+	invoicing = true
 ): Promise<{ feeInvoiceNumber: string | null }> {
 	await deleteBooking(booking.terminId);
 	invalidateTermineCache();
 
 	const dateLabel = formatDateWithWeekday(booking.datum, booking.uhrzeit || null, 'de-CH', 'long');
 	const notes: string[] = [];
+	const style = await getTextStyle();
+	// Customer mails in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 
 	// Invoice of the booking: open → «storniert»; already paid → provider checks the refund
 	let paidInvoice = false;
@@ -143,7 +152,7 @@ export async function cancelBooking(
 
 	// Fee invoice incl. QR bill
 	let feeInvoiceNumber: string | null = null;
-	if (terms.status === 'fee' && terms.fee) {
+	if (terms.status === 'fee' && terms.fee && invoicing) {
 		try {
 			const settings = await loadInvoiceSettings();
 			const fee = await createInvoice({
@@ -169,21 +178,18 @@ export async function cancelBooking(
 					invoiceNumber: fee.invoiceNumber,
 					pdf: fee.pdf,
 					to: booking.email,
-					subject: `Stornierung bestätigt: ${booking.titel}`,
-					text: [
-						`Guten Tag${booking.name ? ' ' + booking.name : ''}`,
-						``,
-						`Ihre Buchung wurde storniert.`,
-						``,
-						`Angebot: ${booking.titel}`,
-						`Datum: ${dateLabel}`,
-						``,
-						`Da die kostenlose Stornierungsfrist (bis ${terms.freeUntilLabel}) abgelaufen war, ` +
-							`stellen wir Ihnen die Stornogebühr von ${terms.feePercent}% in Rechnung (siehe Anhang).`,
-						``,
-						`Freundliche Grüsse`,
-						settings.name
-					].join('\n')
+					...cancelFeeMail({
+						titel: booking.titel,
+						dateLabel,
+						name: booking.name,
+						style,
+						theme,
+						freeUntilLabel: terms.freeUntilLabel,
+						feePercent: terms.feePercent,
+						fee: terms.fee,
+						invoice: true,
+						companyName: settings.name
+					})
 				});
 			}
 		} catch (e) {
@@ -198,20 +204,33 @@ export async function cancelBooking(
 	const { Resend } = await import('resend');
 	const resend = new Resend(resendKey);
 
+	// Fee without invoicing: same fee, stated in the mail (no attachment)
+	if (booking.email && terms.status === 'fee' && !invoicing) {
+		const { error } = await resend.emails.send({
+			from,
+			to: booking.email,
+			...cancelFeeMail({
+				titel: booking.titel,
+				dateLabel,
+				name: booking.name,
+				style,
+				theme,
+				freeUntilLabel: terms.freeUntilLabel,
+				feePercent: terms.feePercent,
+				fee: terms.fee,
+				invoice: false,
+				companyName: (await loadInvoiceSettings()).name
+			})
+		});
+		if (error) console.error('Storno Kunden-E-Mail fehlgeschlagen:', error);
+	}
+
 	// Confirmation without fee (with fee: sent together with the invoice above)
 	if (booking.email && terms.status !== 'fee') {
 		const { error } = await resend.emails.send({
 			from,
 			to: booking.email,
-			subject: `Stornierung bestätigt: ${booking.titel}`,
-			text: [
-				`Guten Tag${booking.name ? ' ' + booking.name : ''}`,
-				``,
-				`Ihre Buchung wurde erfolgreich storniert.`,
-				``,
-				`Angebot: ${booking.titel}`,
-				`Datum: ${dateLabel}`
-			].join('\n')
+			...cancelCustomerMail({ titel: booking.titel, dateLabel, name: booking.name, style, theme })
 		});
 		if (error) console.error('Storno Kunden-E-Mail fehlgeschlagen:', error);
 	}
@@ -221,22 +240,16 @@ export async function cancelBooking(
 		const { error } = await resend.emails.send({
 			from,
 			to: notifyTo,
-			subject: `Buchung storniert: ${booking.titel}`,
-			text: [
-				`Eine Buchung wurde storniert.`,
-				``,
-				`Angebot: ${booking.titel}`,
-				`Datum: ${dateLabel}`,
-				``,
-				`Name: ${booking.name ?? '–'}`,
-				...(booking.email ? [`E-Mail: ${booking.email}`] : []),
-				...(feeInvoiceNumber
-					? [``, `Stornogebühr ${terms.feePercent}%: Rechnung ${feeInvoiceNumber}`]
-					: []),
-				...(notes.length ? [``, ...notes] : []),
-				``,
-				`Der Termin ist wieder verfügbar.`
-			].join('\n')
+			...cancelProviderMail({
+				titel: booking.titel,
+				dateLabel,
+				name: booking.name,
+				email: booking.email,
+				feePercent: terms.status === 'fee' ? terms.feePercent : null,
+				fee: terms.status === 'fee' ? terms.fee : null,
+				feeInvoiceNumber,
+				notes
+			})
 		});
 		if (error) console.error('Storno Betreiber-E-Mail fehlgeschlagen:', error);
 	}

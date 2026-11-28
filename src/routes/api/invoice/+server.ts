@@ -15,7 +15,9 @@ import {
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { parseCartSpec } from '$lib/utils/cartSpec';
 import { resolveCartLines, cartLabel } from '$lib/server/cartLines';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { checkoutBusinessMail, checkoutInvoiceMail } from '$lib/server/invoiceMails';
 
 interface InvoiceRequest {
 	data: Record<string, string>;
@@ -44,23 +46,6 @@ interface CompanyInfo extends InvoiceSettings {
 		rechnung: EmailTemplate;
 		bar: EmailTemplate;
 	};
-}
-
-/** Replaces {{TOKEN}} placeholders in a plain string. */
-function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
-}
-
-/** Converts Prismic StructuredText blocks to a plain-text string with token replacement. */
-function richTextToEmail(
-	blocks: Array<{ text?: string }> | null | undefined,
-	tokens: Record<string, string>
-): string {
-	if (!blocks?.length) return '';
-	return blocks
-		.filter((b) => b.text)
-		.map((b) => applyTokens(b.text!, tokens))
-		.join('\n\n');
 }
 
 async function fetchCompanyInfo(fetch: typeof globalThis.fetch): Promise<CompanyInfo> {
@@ -436,12 +421,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		Zahlungsfrist: String(co.paymentTermsDays)
 	};
 
-	const custSubject = co.emailTemplates.rechnung.subject
-		? applyTokens(co.emailTemplates.rechnung.subject, tokens)
-		: `Ihre Rechnung ${invoiceNumber}${co.name ? ` – ${co.name}` : ''}`;
-	const custText =
-		richTextToEmail(co.emailTemplates.rechnung.body, tokens) ||
-		`Sehr geehrte/r ${customerName}\n\nVielen Dank für Ihre Bestellung. Bitte finden Sie Ihre Rechnung im Anhang.\n\nFreundliche Grüsse\n${co.name}`;
+	const custMail = checkoutInvoiceMail({
+		invoiceNumber,
+		name: customerName,
+		companyName: co.name,
+		style: await getTextStyle(),
+		theme: await loadMailTheme(createClient({ fetch })).catch(() => null),
+		template: co.emailTemplates.rechnung,
+		tokens
+	});
+	const businessMail = checkoutBusinessMail({
+		invoiceNumber,
+		customerName,
+		customerEmail,
+		service: isCart ? orderLabel : serviceKey,
+		fieldLines: Object.entries(data)
+			.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
+			.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
+	});
 
 	try {
 		const { Resend } = await import('resend');
@@ -454,8 +451,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const { error: custErr } = await resend.emails.send({
 				from: fromWithName,
 				to: customerEmail,
-				subject: custSubject,
-				text: custText,
+				subject: custMail.subject,
+				text: custMail.text,
+				...(custMail.html ? { html: custMail.html } : {}),
 				attachments: [attachment]
 			});
 			if (custErr) console.error('Kunden-E-Mail fehlgeschlagen:', custErr);
@@ -466,13 +464,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			const { error: bizErr } = await resend.emails.send({
 				from: fromWithName,
 				to: businessEmail,
-				subject: `Neue Bestellung gegen Rechnung: ${invoiceNumber}`,
-				text: `Neue Bestellung eingegangen.\n\nRechnungsnummer: ${invoiceNumber}\nKunde: ${customerName} <${customerEmail}>\nDienstleistung: ${isCart ? orderLabel : serviceKey}\n\nAlle Angaben:\n${Object.entries(
-					data
-				)
-					.filter(([k]) => !['form-name', 'bot-field', 'subject'].includes(k))
-					.map(([k, v]) => `${labels[k] ?? k}: ${v}`)
-					.join('\n')}`,
+				subject: businessMail.subject,
+				text: businessMail.text,
 				attachments: [attachment]
 			});
 			if (bizErr) console.error('Geschäfts-E-Mail fehlgeschlagen:', bizErr);

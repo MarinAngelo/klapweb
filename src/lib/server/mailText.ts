@@ -1,4 +1,37 @@
 /**
+ * Shared helpers of the e-mail texts:
+ * - plainTextMail(): plain text → { text, html } (see below)
+ * - Mail / PreviewMail, applyTokens, richTextToMail: builders ($lib/server/*Mails.ts) and the
+ *   previews in the admin (component MailPreview.svelte)
+ */
+
+import { textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
+import { closingLine, greetingLine, type TextStyle } from '$lib/addressForm';
+import { t } from '$lib/i18n/translations';
+
+/**
+ * Texts of multilingual standard mails in the style of the settings (Du/Sie, Wir/Ich,
+ * «Begrüssung» / «Verabschiedung in Standardtexten»). The settings are German texts → they apply
+ * to German mails; other languages keep their translations («Hello …», «Kind regards»).
+ */
+export function styledText(lang: string, style?: TextStyle) {
+	const de = lang.startsWith('de');
+	return {
+		/** Translation incl. Du/Ich variant (duForms / ichForms in translations.ts) */
+		t: (key: string) => t(key, lang, style?.du, style?.ich),
+		/** «Guten Tag Anna» / «Hallo Anna» (German), «Hello Anna» (other languages) */
+		greeting: (name?: string) =>
+			de
+				? greetingLine(style, name)
+				: name
+					? t('Guten Tag {name}', lang).replace('{name}', name)
+					: t('Guten Tag', lang),
+		/** «Freundliche Grüsse» / «Liebe Grüsse» (German), translation otherwise */
+		closing: () => (de ? closingLine(style) : t('Freundliche Grüsse', lang))
+	};
+}
+
+/**
  * Plain text mail → { text, html }: the HTML part keeps the layout (monospace, line breaks)
  * and turns URLs into clickable links (mail clients do not reliably auto-link, e.g. localhost).
  */
@@ -20,3 +53,62 @@ export function plainTextMail(text: string): { text: string; html: string } {
 		html: `<pre style="font-family:Menlo,Consolas,monospace;font-size:13px;white-space:pre-wrap;">${linked}</pre>`
 	};
 }
+
+export type Mail = { subject: string; text: string; html?: string };
+
+/** One e-mail in an admin preview (/admin/<bereich>/e-mails) */
+export type PreviewMail = Mail & {
+	id: string;
+	/** i18n keys */
+	label: string;
+	when: string;
+	to: string;
+	attachment?: string;
+	/** Sent with the current settings (otherwise marked) */
+	active: boolean;
+};
+
+/** Neutral example customer (never real data in a preview) */
+export const SAMPLE_CUSTOMER = {
+	vorname: 'Anna',
+	nachname: 'Muster',
+	name: 'Anna Muster',
+	email: 'anna.muster@example.com'
+};
+
+/** Replaces {{Token}} placeholders; unknown tokens stay */
+export function applyTokens(str: string, tokens: Record<string, string>): string {
+	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
+}
+
+/** Prismic rich text → plain text with {{tokens}} replaced */
+export function richTextToMail(
+	blocks: Array<{ text?: string }> | null | undefined,
+	tokens: Record<string, string>
+): string {
+	if (!blocks?.length) return '';
+	return blocks
+		.filter((b) => b.text)
+		.map((b) => applyTokens(b.text!, tokens))
+		.join('\n\n');
+}
+
+/** Languages of the Prismic repository, main language first (language switch of a preview) */
+export async function previewLanguages(client: {
+	getRepository: () => Promise<{ languages: { id: string; name: string; is_master?: boolean }[] }>;
+}): Promise<{ id: string; name: string }[]> {
+	try {
+		const repo = await client.getRepository();
+		return [...repo.languages]
+			.sort((a, b) => Number(b.is_master === true) - Number(a.is_master === true))
+			.map((l) => ({ id: l.id, name: l.name }));
+	} catch {
+		return [];
+	}
+}
+
+/** Text mail → additionally HTML in the page colours of the active theme (customer mails) */
+export const withHtml = (mail: Mail, theme: MailTheme | null | undefined): Mail => ({
+	...mail,
+	html: wrapMail(textToMailHtml(mail.text, theme), theme, { subject: mail.subject })
+});

@@ -1036,6 +1036,37 @@ p {
 		cursor: default;
 	}
 
+	/* Full-page loading overlay (e.g. appointments loading): page blurred, spinner in page colours */
+	.page-loading-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: color-mix(in srgb, var(--page-bg-color) 55%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+	}
+	.page-loading-spinner {
+		width: 4rem;
+		height: 4rem;
+		border-radius: 9999px;
+		border: 5px solid color-mix(in srgb, var(--page-color) 20%, transparent);
+		border-top-color: var(--page-color);
+		animation: page-loading-spin 0.9s linear infinite;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.page-loading-spinner {
+			animation-duration: 2.5s;
+		}
+	}
+	@keyframes page-loading-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
 	/* Collapsible body: toggle .is-open (animated via grid rows) */
 	.collapse-body {
 		display: grid;
@@ -1160,8 +1191,47 @@ p {
    Kunden-Website gleich lesbar). Wrapper: src/routes/admin/+layout.svelte (.admin).
    In @layer components → Tailwind-Utilities können im Einzelfall überschreiben. */
 @layer components {
+	/* Reduced contrast: no pure white, no pure black (also for admin-* outside .admin) */
+	:root {
+		--admin-page: #f1f2f4; /* page background */
+		--admin-surface: #fafafb; /* cards, inputs, buttons */
+		--admin-subtle: #f5f6f7; /* fieldsets, table row hover */
+		--admin-hover: #eceef1; /* button hover, neutral badges/notices */
+		--admin-text: #1f2530; /* body text and headings */
+		--admin-label: #3a414d; /* labels, button text */
+		--admin-muted: #535b67; /* secondary text */
+		--admin-faint: #6b7280; /* hints, empty states */
+		--admin-border: #e2e4e8;
+		--admin-border-strong: #cfd3d9;
+		--admin-border-soft: #eef0f2;
+		--admin-link: #1d4ed8;
+		--admin-link-hover: #1e3a8a;
+		--admin-dark: #2b313b; /* dark buttons, spinner, backdrop */
+		--admin-dark-hover: #3c4350;
+		--admin-on-dark: #f4f5f7; /* text on dark buttons */
+		--admin-on-color: #f4f5f7; /* text on coloured buttons (blue, green, red …), also in dark mode */
+	}
+	/* Dark mode (button «Dunkel/Hell» in the admin header, src/lib/components/admin/AdminTheme*.svelte) */
+	:root[data-admin-theme='dark'] {
+		--admin-page: #16191e;
+		--admin-surface: #1f2329;
+		--admin-subtle: #252a31;
+		--admin-hover: #2c323a;
+		--admin-text: #e4e6ea;
+		--admin-label: #cfd3d9;
+		--admin-muted: #aab0b9;
+		--admin-faint: #8d949e;
+		--admin-border: #343a43;
+		--admin-border-strong: #454c57;
+		--admin-border-soft: #2a2f36;
+		--admin-link: #8ab4f8;
+		--admin-link-hover: #b6cffb;
+		--admin-dark: #d9dce1; /* «dark» buttons become light */
+		--admin-dark-hover: #c3c8cf;
+		--admin-on-dark: #1a1d22;
+	}
 	.admin {
-		@apply min-h-screen bg-gray-50 font-sans text-gray-900;
+		@apply min-h-screen bg-[var(--admin-page)] font-sans text-[var(--admin-text)];
 	}
 	.admin-container {
 		@apply mx-auto w-full max-w-6xl px-4 py-8 md:px-6;
@@ -1173,7 +1243,7 @@ p {
 	/* Element defaults via :where() → low specificity, utility/admin classes still win;
 	   still beats the global heading sizes/colors (h1 { … }) */
 	.admin :where(h1, h2, h3, h4) {
-		@apply m-0 font-sans leading-tight tracking-tight text-gray-900;
+		@apply m-0 font-sans leading-tight tracking-tight text-[var(--admin-text)];
 	}
 	.admin :where(h1) {
 		@apply text-2xl font-bold;
@@ -1201,55 +1271,55 @@ p {
 		@apply ml-auto flex flex-wrap items-center gap-2;
 	}
 	.admin-count {
-		@apply text-sm font-normal text-gray-500;
+		@apply text-sm font-normal text-[var(--admin-faint)];
 	}
 	.admin-intro {
-		@apply mb-6 text-sm text-gray-600;
+		@apply mb-6 text-sm text-[var(--admin-muted)];
 	}
 
 	/* Cards / sections */
 	.admin-card {
-		@apply mb-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm md:p-6;
+		@apply mb-6 rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] p-5 shadow-sm md:p-6;
 	}
 	.admin-card-title {
 		@apply mb-4 flex flex-wrap items-center gap-2;
 	}
 	.admin-section-title {
-		@apply mb-3 mt-8 flex flex-wrap items-center gap-2 border-b-2 border-gray-200 pb-2;
+		@apply mb-3 mt-8 flex flex-wrap items-center gap-2 border-b-2 border-[var(--admin-border)] pb-2;
 	}
 
 	/* Buttons */
 	.admin-btn {
-		@apply inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
+		@apply inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-[var(--admin-border-strong)] bg-[var(--admin-surface)] px-3 py-1.5 text-sm font-medium text-[var(--admin-label)] transition-colors hover:bg-[var(--admin-hover)];
 		text-decoration-line: none;
 	}
 	.admin-btn:disabled {
 		@apply cursor-not-allowed opacity-50;
 	}
 	.admin-btn-primary {
-		@apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700;
+		@apply border-blue-600 bg-blue-600 text-[var(--admin-on-color)] hover:bg-blue-700;
 	}
 	.admin-btn-success {
-		@apply border-green-600 bg-green-600 text-white hover:bg-green-700;
+		@apply border-green-600 bg-green-600 text-[var(--admin-on-color)] hover:bg-green-700;
 	}
 	.admin-btn-danger {
-		@apply border-red-600 bg-red-600 text-white hover:bg-red-700;
+		@apply border-red-600 bg-red-600 text-[var(--admin-on-color)] hover:bg-red-700;
 	}
 	.admin-btn-danger-outline {
-		@apply border-red-300 bg-white text-red-700 hover:bg-red-50;
+		@apply border-red-300 bg-[var(--admin-surface)] text-red-700 hover:bg-red-50;
 	}
 	.admin-btn-warn {
-		@apply border-amber-600 bg-amber-600 text-white hover:bg-amber-700;
+		@apply border-amber-600 bg-amber-600 text-[var(--admin-on-color)] hover:bg-amber-700;
 	}
 	.admin-btn-toggle-on {
-		@apply border-sky-700 bg-sky-700 text-white hover:bg-sky-800;
+		@apply border-sky-700 bg-sky-700 text-[var(--admin-on-color)] hover:bg-sky-800;
 	}
 	/* Action still pending (e.g. reminder not yet sent) */
 	.admin-btn-highlight {
 		@apply border-yellow-300 bg-yellow-50 text-yellow-800 hover:bg-yellow-100;
 	}
 	.admin-btn-dark {
-		@apply border-gray-900 bg-gray-900 text-white hover:bg-gray-700;
+		@apply border-[var(--admin-dark)] bg-[var(--admin-dark)] text-[var(--admin-on-dark)] hover:bg-[var(--admin-dark-hover)];
 	}
 	.admin-btn-sm {
 		@apply px-2 py-1 text-xs;
@@ -1260,7 +1330,7 @@ p {
 
 	/* Links */
 	.admin-link {
-		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-blue-700 underline-offset-2 hover:text-blue-900 hover:underline;
+		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-[var(--admin-link)] underline-offset-2 hover:text-[var(--admin-link-hover)] hover:underline;
 	}
 	.admin-link-danger {
 		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-red-700 underline-offset-2 hover:text-red-900 hover:underline;
@@ -1272,19 +1342,19 @@ p {
 		@apply cursor-pointer border-0 bg-transparent p-0 font-medium text-green-700 underline-offset-2 hover:text-green-900 hover:underline;
 	}
 	.admin-back {
-		@apply mb-4 inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900;
+		@apply mb-4 inline-flex items-center gap-1 text-sm text-[var(--admin-muted)] hover:text-[var(--admin-text)];
 		text-decoration-line: none;
 	}
 
 	/* Form fields */
 	.admin-label {
-		@apply mb-1 block text-sm font-medium text-gray-700;
+		@apply mb-1 block text-sm font-medium text-[var(--admin-label)];
 	}
 	.admin-hint {
-		@apply mt-1 text-xs text-gray-500;
+		@apply mt-1 text-xs text-[var(--admin-faint)];
 	}
 	.admin-input {
-		@apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
+		@apply block w-full rounded-md border border-[var(--admin-border-strong)] bg-[var(--admin-surface)] px-3 py-2 text-sm text-[var(--admin-text)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
 	}
 	.admin-input-sm {
 		@apply px-2 py-1 text-xs;
@@ -1293,18 +1363,18 @@ p {
 		@apply h-4 w-4 cursor-pointer accent-blue-600;
 	}
 	.admin-fieldset {
-		@apply mb-4 rounded-md border border-gray-200 bg-gray-50 p-4;
+		@apply mb-4 rounded-md border border-[var(--admin-border)] bg-[var(--admin-subtle)] p-4;
 	}
 	.admin-fieldset > legend {
-		@apply px-2 text-sm font-semibold text-gray-700;
+		@apply px-2 text-sm font-semibold text-[var(--admin-label)];
 	}
 
 	/* Scrollable list of checkbox rows (e.g. recipients) */
 	.admin-checklist {
-		@apply max-h-72 overflow-y-auto rounded-md border border-gray-200 bg-white px-3 py-1;
+		@apply max-h-72 overflow-y-auto rounded-md border border-[var(--admin-border)] bg-[var(--admin-surface)] px-3 py-1;
 	}
 	.admin-checklist-item {
-		@apply flex cursor-pointer items-center gap-3 border-b border-gray-100 py-2 last:border-b-0;
+		@apply flex cursor-pointer items-center gap-3 border-b border-[var(--admin-border-soft)] py-2 last:border-b-0;
 	}
 
 	/* Bulk actions above a table (AdminBulkActions.svelte) */
@@ -1320,41 +1390,41 @@ p {
 		@apply w-full border-collapse text-left text-sm;
 	}
 	.admin-table th {
-		@apply whitespace-nowrap border-b-2 border-gray-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-600;
+		@apply whitespace-nowrap border-b-2 border-[var(--admin-border)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--admin-muted)];
 	}
 	.admin-table td {
-		@apply border-b border-gray-100 px-3 py-2 align-top;
+		@apply border-b border-[var(--admin-border-soft)] px-3 py-2 align-top;
 	}
 	.admin-table tbody tr:hover {
-		@apply bg-gray-50;
+		@apply bg-[var(--admin-subtle)];
 	}
 	.admin-table .nowrap {
 		@apply whitespace-nowrap;
 	}
 	/* Past / inactive rows: muted text, struck-through where cancelled */
 	.admin-table-muted td {
-		@apply text-gray-500;
+		@apply text-[var(--admin-faint)];
 	}
 	.admin-row-muted td {
-		@apply text-gray-500;
+		@apply text-[var(--admin-faint)];
 	}
 	/* Expandable detail row below a table row */
 	.admin-subrow-toggle {
 		@apply w-full cursor-pointer border-0 border-t border-green-100 bg-green-50 px-3 py-1.5 text-left text-xs text-green-800 hover:bg-green-100;
 	}
 	.admin-subtable {
-		@apply bg-gray-50 text-xs;
+		@apply bg-[var(--admin-subtle)] text-xs;
 	}
 	.admin-row-selected td {
 		@apply bg-sky-50;
 	}
 	.admin-empty {
-		@apply py-6 text-center text-sm text-gray-500;
+		@apply py-6 text-center text-sm text-[var(--admin-faint)];
 	}
 
 	/* Status badges */
 	.admin-badge {
-		@apply inline-block whitespace-nowrap rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700;
+		@apply inline-block whitespace-nowrap rounded-full bg-[var(--admin-hover)] px-2 py-0.5 text-xs font-medium text-[var(--admin-label)];
 	}
 	.admin-badge-yellow {
 		@apply bg-yellow-100 text-yellow-800;
@@ -1377,7 +1447,7 @@ p {
 
 	/* Notices */
 	.admin-notice {
-		@apply mb-4 rounded-md border border-gray-200 bg-gray-100 px-4 py-3 text-sm text-gray-800;
+		@apply mb-4 rounded-md border border-[var(--admin-border)] bg-[var(--admin-hover)] px-4 py-3 text-sm text-[var(--admin-text)];
 	}
 	.admin-notice-error {
 		@apply border-red-200 bg-red-50 text-red-800;
@@ -1394,18 +1464,18 @@ p {
 		@apply mb-6 grid grid-cols-2 gap-4 md:grid-cols-4;
 	}
 	.admin-stat {
-		@apply rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm;
+		@apply rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] p-4 text-center shadow-sm;
 	}
 	.admin-stat-value {
-		@apply block text-2xl font-bold text-gray-900;
+		@apply block text-2xl font-bold text-[var(--admin-text)];
 	}
 	.admin-stat-label {
-		@apply text-xs text-gray-600;
+		@apply text-xs text-[var(--admin-muted)];
 	}
 
 	/* Text helpers */
 	.admin-muted {
-		@apply text-gray-600;
+		@apply text-[var(--admin-muted)];
 	}
 	.admin-mono {
 		@apply break-all font-mono text-xs;
@@ -1416,18 +1486,18 @@ p {
 
 	/* Full-screen loading overlay while a form action runs */
 	.admin-loading-overlay {
-		@apply fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm;
+		@apply fixed inset-0 z-[9999] flex items-center justify-center bg-[color-mix(in_srgb,var(--admin-surface)_70%,transparent)] backdrop-blur-sm;
 	}
 	.admin-loading-spinner {
-		@apply h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900;
+		@apply h-12 w-12 animate-spin rounded-full border-4 border-[var(--admin-border)] border-t-[var(--admin-dark)];
 	}
 
 	/* Tabs (e.g. in modals) */
 	.admin-tabs {
-		@apply mb-4 flex gap-2 border-b border-gray-200;
+		@apply mb-4 flex gap-2 border-b border-[var(--admin-border)];
 	}
 	.admin-tab {
-		@apply -mb-px cursor-pointer border-0 border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50;
+		@apply -mb-px cursor-pointer border-0 border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-[var(--admin-muted)] hover:text-[var(--admin-text)] disabled:opacity-50;
 	}
 	.admin-tab.is-active {
 		@apply border-blue-600 text-blue-700;
@@ -1435,9 +1505,81 @@ p {
 
 	/* Modal */
 	.admin-modal-backdrop {
-		@apply fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4;
+		@apply fixed inset-0 z-[10000] flex items-center justify-center bg-[color-mix(in_srgb,var(--admin-dark)_40%,transparent)] p-4;
 	}
 	.admin-modal {
-		@apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 text-gray-900 shadow-xl;
+		@apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-[var(--admin-surface)] p-6 text-[var(--admin-text)] shadow-xl;
 	}
+}
+
+/* Admin dark mode: coloured tints and the few palette utilities used directly in admin pages.
+   Everything neutral already follows the --admin-* tokens above. */
+:root[data-admin-theme='dark'] .admin {
+	color-scheme: dark;
+}
+:root[data-admin-theme='dark'] :is(.admin, .admin-modal-backdrop) {
+	--tint: var(--admin-surface);
+}
+:root[data-admin-theme='dark']
+	.admin
+	:is(.admin-notice-ok, .admin-badge-green, .admin-subrow-toggle) {
+	background-color: color-mix(in srgb, #22c55e 18%, var(--tint));
+	border-color: color-mix(in srgb, #22c55e 35%, var(--tint));
+	color: #a7e9bf;
+}
+:root[data-admin-theme='dark'] .admin :is(.admin-notice-error, .admin-badge-red) {
+	background-color: color-mix(in srgb, #ef4444 18%, var(--tint));
+	border-color: color-mix(in srgb, #ef4444 35%, var(--tint));
+	color: #f8b4b4;
+}
+:root[data-admin-theme='dark']
+	.admin
+	:is(.admin-notice-warn, .admin-badge-yellow, .admin-btn-highlight, .bg-yellow-50) {
+	background-color: color-mix(in srgb, #eab308 16%, var(--tint));
+	border-color: color-mix(in srgb, #eab308 35%, var(--tint));
+	color: #f3dc8a;
+}
+:root[data-admin-theme='dark'] .admin .admin-badge-orange {
+	background-color: color-mix(in srgb, #f97316 18%, var(--tint));
+	color: #fdc49a;
+}
+:root[data-admin-theme='dark'] .admin .admin-badge-blue {
+	background-color: color-mix(in srgb, #3b82f6 20%, var(--tint));
+	color: #b3cdfb;
+}
+:root[data-admin-theme='dark'] .admin .admin-badge-purple {
+	background-color: color-mix(in srgb, #a855f7 20%, var(--tint));
+	color: #d9b8fb;
+}
+:root[data-admin-theme='dark'] .admin .admin-row-selected td {
+	background-color: color-mix(in srgb, #0ea5e9 14%, var(--tint));
+}
+:root[data-admin-theme='dark'] .admin .admin-btn-danger-outline {
+	border-color: color-mix(in srgb, #ef4444 45%, var(--tint));
+	color: #f8b4b4;
+}
+:root[data-admin-theme='dark'] .admin :is(.admin-link-danger, .admin-error-text, .text-red-600) {
+	color: #f8a5a5;
+}
+:root[data-admin-theme='dark'] .admin .admin-link-warn {
+	color: #f3c969;
+}
+:root[data-admin-theme='dark'] .admin .admin-link-success {
+	color: #8fdcab;
+}
+:root[data-admin-theme='dark'] .admin .admin-tab.is-active {
+	color: var(--admin-link);
+	border-color: var(--admin-link);
+}
+:root[data-admin-theme='dark'] .admin :is(.border-gray-100, .border-gray-200) {
+	border-color: var(--admin-border);
+}
+:root[data-admin-theme='dark'] .admin .bg-gray-50 {
+	background-color: var(--admin-subtle);
+}
+:root[data-admin-theme='dark'] .admin .bg-gray-100 {
+	background-color: var(--admin-hover);
+}
+:root[data-admin-theme='dark'] .admin .text-gray-500 {
+	color: var(--admin-faint);
 }

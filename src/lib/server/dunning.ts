@@ -22,7 +22,10 @@ import {
 	renderInvoicePdf,
 	type InvoiceSettings
 } from '$lib/server/invoicing';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
+import { dunningMail, dunningOperatorMail } from '$lib/server/invoiceMails';
+import { createClient } from '$lib/prismicio';
+import { loadMailTheme } from '$lib/mailLayout.js';
 
 export const MAX_DUNNING_LEVEL = 2;
 
@@ -48,6 +51,7 @@ async function sendMail(options: {
 	to: string;
 	subject: string;
 	text: string;
+	html?: string;
 	attachments?: { filename: string; content: string }[];
 }): Promise<boolean> {
 	const resendKey = env.RESEND_API_KEY;
@@ -73,6 +77,9 @@ export async function sendDueReminders(): Promise<string[]> {
 	);
 	if (!candidates.length) return [];
 
+	const style = await getTextStyle();
+	// Reminders in the page colours
+	const theme = await loadMailTheme(createClient()).catch(() => null);
 	const reminded: string[] = [];
 	const notes: string[] = [];
 	for (const inv of candidates) {
@@ -96,18 +103,17 @@ export async function sendDueReminders(): Promise<string[]> {
 				!!inv.email &&
 				(await sendMail({
 					to: inv.email,
-					subject: `${level}. Mahnung: Rechnung ${inv.invoiceNumber} – ${settings.name}`,
-					text: [
-						`Sehr geehrte/r ${name},`,
-						'',
-						`unsere Rechnung ${inv.invoiceNumber} vom ${formatDay(swissDay(inv.date))} über ${inv.currency || settings.currency} ${total.toFixed(2)} ist noch offen.`,
-						`Bitte begleichen Sie den Betrag bis ${formatDay(dueDate)}. Die Rechnung mit Einzahlungsschein liegt bei.`,
-						'',
-						'Falls Sie die Zahlung bereits ausgelöst haben, betrachten Sie dieses Schreiben bitte als gegenstandslos.',
-						'',
-						'Freundliche Grüsse',
-						settings.name
-					].join('\n'),
+					...dunningMail({
+						level,
+						invoiceNumber: inv.invoiceNumber,
+						invoiceDate: formatDay(swissDay(inv.date)),
+						amount: `${inv.currency || settings.currency} ${total.toFixed(2)}`,
+						dueDate: formatDay(dueDate),
+						name,
+						companyName: settings.name,
+						style,
+						theme
+					}),
 					attachments: [invoiceAttachment(inv.invoiceNumber, pdf)]
 				}));
 			await updateManualInvoice(inv.id, {
@@ -129,8 +135,7 @@ export async function sendDueReminders(): Promise<string[]> {
 		const to = await getNotifyTo();
 		await sendMail({
 			to,
-			subject: `Mahnwesen: ${notes.length} Rechnung${notes.length === 1 ? '' : 'en'}`,
-			text: notes.join('\n\n')
+			...dunningOperatorMail(notes)
 		}).catch((e) => console.error('[mahnungen] Info-Mail:', e));
 	}
 	return reminded;

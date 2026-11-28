@@ -6,36 +6,25 @@
  * wird die Ankunftserinnerung sofort geschickt statt auf den Scheduler zu warten.
  */
 import { createClient } from '$lib/prismicio';
-import { loadMailTheme, wrapMail } from '$lib/mailLayout.js';
-import {
-	loadVariablesData,
-	mailVariables,
-	renderMailHtml,
-	renderMailText
-} from '$lib/variables.js';
+import { loadMailTheme } from '$lib/mailLayout.js';
+import { loadVariablesData, mailVariables } from '$lib/variables.js';
 import { messengerButtonsHtml } from '$lib/messengerLinks.js';
-import * as prismic from '@prismicio/client';
 import { updateRessourceBuchung, type RessourceBuchung } from './ressourceBuchungen';
 import { env } from '$env/dynamic/private';
-import { t } from '$lib/i18n/translations';
-import { fallbackSubject, getRessourceDocForBooking, mailLang } from './ressourceMail';
+import {
+	arrivalReminderMail,
+	cmsReminderMail,
+	getRessourceDocForBooking,
+	reminderTokens,
+	type CmsMailContext
+} from './ressourceMail';
 import { getMailFrom } from '$lib/server/mailFrom';
-
-function fmtDate(dateStr: string): string {
-	const [y, m, d] = dateStr.split('-');
-	return `${d}.${m}.${y}`;
-}
+import { textStyleFrom } from '$lib/addressForm';
 
 function doorCode(uid: string): string {
 	const key = uid.toUpperCase().replace(/-/g, '_');
 	// $env (not process.env): in dev only $env contains the values from .env
 	return env[`DOOR_CODE_${key}`] || env.DOOR_CODE || '';
-}
-
-/** {{Messenger-Apps}} (Signal, Telegram, WhatsApp); {{WhatsApp}} = old name, same buttons */
-function messengerTokens(tel: string | undefined): Record<string, string> {
-	const html = messengerButtonsHtml(tel);
-	return { 'Messenger-Apps': html, WhatsApp: html };
 }
 
 function dateInDays(n: number): string {
@@ -83,45 +72,25 @@ export async function maybeSendAnkunftsErinnerung(
 			loadVariablesData(client),
 			loadMailTheme(client, buchung.lang)
 		]);
-		const d = doc.data as any;
 		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
-		const vars = mailVariables(variablesData, buchung.lang);
-		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
-
-		const textField = d.reminder_text as prismic.RichTextField | undefined;
-		const tokens: Record<string, string> = {
-			Türcode: doorCode(buchung.ressourceUid),
-			Name: buchung.name || '',
-			Anreise: fmtDate(buchung.von),
-			Abreise: fmtDate(buchung.bis),
-			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			...messengerTokens(waTel)
+		const cms: CmsMailContext = {
+			doc: doc.data as Record<string, any>,
+			vars: mailVariables(variablesData, buchung.lang),
+			theme: mailTheme,
+			style: textStyleFrom(settings?.data)
 		};
-
-		const betreff =
-			renderMailText((d.reminder_betreff as string)?.trim() ?? '', tokens, vars) ||
-			fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name);
-
-		let html: string;
-		if (textField?.length) {
-			html = renderMailHtml(textField ?? [], tokens, vars, mailTheme);
-		} else {
-			// Fallback wenn reminder_text in Prismic nicht gesetzt
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+		const tokens = reminderTokens(
+			buchung,
+			doorCode(buchung.ressourceUid),
+			messengerButtonsHtml(waTel)
+		);
+		if (!(cms.doc?.reminder_text as unknown[] | undefined)?.length) {
 			console.log(
 				`[reminderMail] reminder_text leer für ${buchung.ressourceUid} — sende Fallback-Mail`
 			);
-			const lang = mailLang(buchung);
-			const intro = t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).', lang)
-				.replace('{anreise}', `<strong>${tokens.Anreise}</strong>`)
-				.replace('{abreise}', tokens.Abreise);
-			html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
-<p>${intro}</p>
-${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
-${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
-<p>${t('Referenz', lang)}: ${tokens.Buchungsreferenz}</p>`;
 		}
-		// Layout in the page colours
-		html = wrapMail(html, mailTheme, { lang: buchung.lang, subject: betreff });
+		const { subject: betreff, html } = arrivalReminderMail(buchung, cms, tokens);
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({
@@ -165,30 +134,27 @@ export async function sendAbreiseErinnerung(
 			loadVariablesData(client),
 			loadMailTheme(client, buchung.lang)
 		]);
-		const d = doc.data as any;
-		// Variablen (incl. multi-line text) in the booking language, may contain booking tokens
-		const vars = mailVariables(variablesData, buchung.lang);
-		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
-
-		const textField = d.abreise_text as prismic.RichTextField | undefined;
-		if (!textField?.length) return { sent: false, reason: 'missing_abreise_text' };
-
-		const tokens: Record<string, string> = {
-			Türcode: doorCode(buchung.ressourceUid),
-			Name: buchung.name || '',
-			Anreise: fmtDate(buchung.von),
-			Abreise: fmtDate(buchung.bis),
-			Buchungsreferenz: buchung.referenz ?? buchung.id,
-			...messengerTokens(waTel)
+		const cms: CmsMailContext = {
+			doc: doc.data as Record<string, any>,
+			vars: mailVariables(variablesData, buchung.lang),
+			theme: mailTheme,
+			style: textStyleFrom(settings?.data)
 		};
-
-		const betreff =
-			renderMailText((d.abreise_betreff as string)?.trim() ?? '', tokens, vars) ||
-			fallbackSubject('Ihre Abreise morgen: {ressource}', buchung, d.name);
-		const html = wrapMail(renderMailHtml(textField ?? [], tokens, vars, mailTheme), mailTheme, {
-			lang: buchung.lang,
-			subject: betreff
-		});
+		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
+		const tokens = reminderTokens(
+			buchung,
+			doorCode(buchung.ressourceUid),
+			messengerButtonsHtml(waTel)
+		);
+		const mail = cmsReminderMail(
+			buchung,
+			cms,
+			tokens,
+			'abreise',
+			'Ihre Abreise morgen: {ressource}'
+		);
+		if (!mail) return { sent: false, reason: 'missing_abreise_text' };
+		const { subject: betreff, html } = mail;
 
 		const { Resend } = await import('resend');
 		const { error } = await new Resend(resendKey).emails.send({

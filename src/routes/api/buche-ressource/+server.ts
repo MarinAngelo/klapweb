@@ -20,8 +20,7 @@
  *   500  { error: string }
  */
 import type { RequestHandler } from '@sveltejs/kit';
-import { plainTextMail } from '$lib/server/mailText';
-import { parseBookingLang } from '$lib/server/ressourceMail';
+import { parseBookingLang, requestProviderMail } from '$lib/server/ressourceMail';
 import {
 	bucheRessource,
 	getRelatedRessourceUids,
@@ -208,52 +207,26 @@ export const POST: RequestHandler = async ({ request, fetch, url }) => {
 		// Token only authorises this confirmation — the admin password is never sent by mail
 		const bestaetigungsLink = `${origin}/api/bestaetige-buchung?id=${encodeURIComponent(buchung.id)}&token=${adminActionToken('bestaetige-buchung', buchung.id)}`;
 
-		const [vonY, vonM, vonD] = von.split('-');
-		const [bisY, bisM, bisD] = bis.split('-');
-		const vonFormatted = `${vonD}.${vonM}.${vonY}`;
-		const bisFormatted = `${bisD}.${bisM}.${bisY}`;
-		const preisFormatted = new Intl.NumberFormat('de-CH', {
-			style: 'currency',
-			currency: 'CHF'
-		}).format(preisCHF);
-
-		const zimmerZeilen = (zimmerauswahl ?? []).map(
-			(z) => `           · ${z.zimmer_name || z.bett_typ} (${z.anzahl_betten}× ${z.bett_typ})`
-		);
-		const buchungsDetails = [
-			`Ressource: ${ressourceName} (${ressourceUid})`,
-			`Anreise:   ${vonFormatted}`,
-			`Abreise:   ${bisFormatted}`,
-			`Nächte:    ${anzahlNaechte}`,
-			`Personen:  ${personen}`,
-			...(zimmerZeilen.length ? [`Zimmer:`, ...zimmerZeilen] : [`Zimmer:    Ganze Wohnung`]),
-			`Total:     ${preisFormatted}`
-		].join('\n');
-
 		try {
 			const { Resend } = await import('resend');
 			const resend = new Resend(resendKey);
 			const { error: mailError } = await resend.emails.send({
 				from: emailFrom,
 				to: toEmail,
-				subject: `Neue Buchungsanfrage: ${ressourceName}`,
-				...plainTextMail(
-					[
-						`Neue Buchungsanfrage eingegangen.`,
-						``,
-						buchungsDetails,
-						``,
-						`Kontakt:`,
-						`Name:     ${name}`,
-						`E-Mail:   ${email}`,
-						...(telefon ? [`Telefon:  ${telefon}`] : []),
-						...(nachricht ? [``, `Nachricht:`, nachricht] : []),
-						``,
-						`─────────────────────────────────────`,
-						`Anfrage bestätigen (Mieter erhält dann die Bestätigungsmail):`,
-						bestaetigungsLink
-					].join('\n')
-				)
+				...requestProviderMail({
+					ressourceUid,
+					ressourceName,
+					von,
+					bis,
+					personen,
+					zimmerauswahl,
+					preisCHF,
+					name,
+					email,
+					telefon,
+					nachricht,
+					bestaetigungsLink
+				})
 			});
 			if (mailError) console.error('Buchung Anbieter-E-Mail fehlgeschlagen:', mailError);
 		} catch (e) {

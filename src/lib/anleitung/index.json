@@ -112,7 +112,7 @@
 	{
 		"id": "admin-bereich",
 		"title": "Der Admin-Bereich deiner Website",
-		"stand": "2026-11-11",
+		"stand": "2026-11-23",
 		"sources": ["src/routes/admin/dashboard"]
 	},
 	{
@@ -125,7 +125,7 @@
 		"id": "terminbuchung",
 		"title": "Terminbuchung einrichten",
 		"feature": "terminbuchung",
-		"stand": "2026-11-11",
+		"stand": "2026-11-28",
 		"sources": [
 			"customtypes/_features/terminbuchung",
 			"src/lib/server/bookings.ts",
@@ -134,6 +134,9 @@
 			"src/routes/api/buche-termin",
 			"src/lib/server/bookingCancel.ts",
 			"src/lib/server/bookingInvoices.ts",
+			"src/lib/server/bookingMails.ts",
+			"src/lib/server/bookingReminders.ts",
+			"src/lib/server/adminSlots.ts",
 			"src/routes/termin-stornieren",
 			"src/lib/slices/Kacheln/AngebotKacheln.svelte"
 		]
@@ -173,11 +176,23 @@
 		"id": "stundenabrechnung",
 		"title": "Stundenabrechnung",
 		"feature": "stundenabrechnung",
-		"stand": "2026-11-11",
+		"stand": "2026-11-28",
 		"sources": [
 			"src/lib/server/stunden.ts",
 			"src/routes/admin/stunden",
 			"src/lib/components/StundenErfassung.svelte"
+		]
+	},
+	{
+		"id": "assistenz",
+		"title": "Assistenz",
+		"feature": "assistenz",
+		"stand": "2026-11-23",
+		"sources": [
+			"src/lib/assistenz.ts",
+			"src/lib/server/assistenz.ts",
+			"src/lib/server/assistenzImport.ts",
+			"src/routes/admin/assistenz"
 		]
 	},
 	{
@@ -211,12 +226,13 @@
 		"id": "manuelle-rechnungen",
 		"title": "Manuelle Rechnungen",
 		"feature": "manuelle_rechnungen",
-		"stand": "2026-11-20",
+		"stand": "2026-11-26",
 		"sources": [
 			"src/routes/admin/rechnungen",
 			"src/lib/server/invoices.ts",
 			"src/lib/server/recurringInvoices.ts",
 			"src/lib/server/dunning.ts",
+			"src/lib/server/invoiceMails.ts",
 			"src/lib/server/paymentMatching.ts",
 			"src/lib/server/invoicing",
 			"src/lib/qrBill.js"
@@ -226,10 +242,12 @@
 		"id": "ressourcen-buchung",
 		"title": "Ressourcen-Buchung (Ferienwohnung, Zimmer, Räume)",
 		"feature": "ressourcenbuchung",
-		"stand": "2026-11-11",
+		"stand": "2026-11-26",
 		"sources": [
 			"customtypes/_features/ressourcenbuchung",
 			"src/lib/server/ressourceBuchungen.ts",
+			"src/lib/server/ressourceMail.ts",
+			"src/lib/server/aufgabenMails.ts",
 			"src/lib/slices/RessourceBuchung",
 			"src/routes/admin/ressource-buchungen"
 		]

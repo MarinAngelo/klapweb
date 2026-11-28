@@ -45,6 +45,14 @@
 	type Row = (typeof rows)[number];
 
 	const sumMinutes = (list: Row[]) => list.reduce((sum, r) => sum + r.minutes, 0);
+	/** Night hours (field «Stundenart»); everything else counts as day hours */
+	const isNight = (r: Row) => r.art === 'nacht';
+	const sumNight = (list: Row[]) => sumMinutes(list.filter(isNight));
+	/** « (Tag 6 Std. 00 Min. · Nacht 2 Std. 00 Min.)» — only if there are night hours */
+	const splitLabel = (list: Row[]) =>
+		sumNight(list)
+			? ` (${$_('Tag')} ${fmtDuration(sumMinutes(list) - sumNight(list))} · ${$_('Nacht')} ${fmtDuration(sumNight(list))})`
+			: '';
 	const sumSpesen = (list: Row[]) => list.reduce((sum, r) => sum + (r.spesen || 0), 0);
 
 	/**
@@ -135,7 +143,7 @@
 					</h3>
 					{#if group.open.length}
 						<span class="admin-muted"
-							>{fmtDuration(sumMinutes(group.open))} · {$_('Spesen')}
+							>{fmtDuration(sumMinutes(group.open))}{splitLabel(group.open)} · {$_('Spesen')}
 							{fmtChf(sumSpesen(group.open))}</span
 						>
 						<div class="ml-auto flex flex-wrap gap-2">
@@ -167,6 +175,7 @@
 								<tr>
 									<th>{$_('Von')}</th>
 									<th>{$_('Bis')}</th>
+									<th>{$_('Stundenart')}</th>
 									<th>{$_('Tätigkeit')}</th>
 									<th class="text-right">{$_('Dauer')}</th>
 									<th>{$_('Spesen-Beschreibung')}</th>
@@ -206,6 +215,18 @@
 													required
 													class="admin-input"
 												/>
+											</td>
+											<td>
+												<select
+													form="edit-{r.id}"
+													name="art"
+													value={r.art === 'nacht' ? 'nacht' : 'tag'}
+													aria-label={$_('Stundenart')}
+													class="admin-input"
+												>
+													<option value="tag">{$_('Tag')}</option>
+													<option value="nacht">{$_('Nacht')}</option>
+												</select>
 											</td>
 											<td>
 												<input
@@ -252,6 +273,7 @@
 										<tr class:bg-yellow-50={form && 'saved' in form && form.saved === r.id}>
 											<td class="nowrap">{fmtDateTime(r.von)}</td>
 											<td class="nowrap">{fmtBis(r.von, r.bis)}</td>
+											<td class="nowrap">{isNight(r) ? $_('Nacht') : $_('Tag')}</td>
 											<td class="whitespace-pre-wrap">{r.taetigkeit || '–'}</td>
 											<td class="nowrap text-right">{fmtDuration(r.minutes)}</td>
 											<td>{r.spesenText || '–'}</td>
@@ -283,7 +305,7 @@
 							</tbody>
 							<tfoot>
 								<tr class="font-semibold">
-									<td colspan="3">{$_('Total')}</td>
+									<td colspan="4">{$_('Total')}</td>
 									<td class="nowrap text-right">{fmtDuration(sumMinutes(group.open))}</td>
 									<td></td>
 									<td class="nowrap text-right">{fmtChf(sumSpesen(group.open))}</td>
@@ -311,7 +333,7 @@
 										>{billing.rows.length}
 										{billing.rows.length === 1 ? $_('Eintrag') : $_('Einträge')} · {fmtDuration(
 											sumMinutes(billing.rows)
-										)} · {$_('Spesen')}
+										)}{splitLabel(billing.rows)} · {$_('Spesen')}
 										{fmtChf(sumSpesen(billing.rows))}</span
 									>
 									<!-- CSV of this billing, visible without expanding -->
@@ -346,6 +368,7 @@
 												<tr>
 													<th>{$_('Von')}</th>
 													<th>{$_('Bis')}</th>
+													<th>{$_('Stundenart')}</th>
 													<th>{$_('Tätigkeit')}</th>
 													<th class="text-right">{$_('Dauer')}</th>
 													<th>{$_('Spesen-Beschreibung')}</th>
@@ -357,6 +380,7 @@
 													<tr>
 														<td class="nowrap">{fmtDateTime(r.von)}</td>
 														<td class="nowrap">{fmtBis(r.von, r.bis)}</td>
+														<td class="nowrap">{isNight(r) ? $_('Nacht') : $_('Tag')}</td>
 														<td class="whitespace-pre-wrap">{r.taetigkeit || '–'}</td>
 														<td class="nowrap text-right">{fmtDuration(r.minutes)}</td>
 														<td>{r.spesenText || '–'}</td>
@@ -366,7 +390,7 @@
 											</tbody>
 											<tfoot>
 												<tr class="font-semibold">
-													<td colspan="3">{$_('Total')}</td>
+													<td colspan="4">{$_('Total')}</td>
 													<td class="nowrap text-right">{fmtDuration(sumMinutes(billing.rows))}</td>
 													<td></td>
 													<td class="nowrap text-right">{fmtChf(sumSpesen(billing.rows))}</td>

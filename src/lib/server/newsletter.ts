@@ -20,6 +20,8 @@ import * as prismic from '@prismicio/client';
 import { listCustomers } from '$lib/server/customers';
 import { t } from '$lib/i18n/translations';
 import { getMailAddress } from '$lib/server/mailFrom';
+import { styledText } from '$lib/server/mailText';
+import { textStyleFrom, type TextStyle } from '$lib/addressForm';
 
 export type NewsletterRecipient = {
 	email: string;
@@ -265,6 +267,8 @@ export type NewsletterBranding = {
 	address: string; // postal address (plain text, one line)
 	color: string;
 	accent: string;
+	/** Settings Du/Sie, Wir/Ich, greeting, closing (standard texts, not the newsletter text) */
+	style?: TextStyle;
 };
 
 const TEXT_STYLE = 'margin:0 0 16px;font-size:16px;line-height:1.6;';
@@ -347,10 +351,11 @@ export function renderNewsletter(
 		options.recipient
 	);
 
+	const st = styledText(lang, branding.style);
 	const reason =
 		options.recipient?.source === 'abonnent'
-			? t('Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von', lang)
-			: t('Sie erhalten diese E-Mail als Kundin oder Kunde von', lang);
+			? st.t('Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von')
+			: st.t('Sie erhalten diese E-Mail als Kundin oder Kunde von');
 	const html = mailLayout(branding, {
 		lang,
 		subject,
@@ -399,7 +404,8 @@ export function brandingFromSettings(
 		sender: s.responsible_person_company || siteName,
 		address: (prismic.asText(s.responsible_address) ?? '').replace(/\s*\n\s*/g, ', '),
 		color: t.header_bg_color || '#27272a',
-		accent: t.page_button_bg_color || t.header_bg_color || '#2563eb'
+		accent: t.page_button_bg_color || t.header_bg_color || '#2563eb',
+		style: textStyleFrom(s)
 	};
 }
 
@@ -492,15 +498,14 @@ export async function sendSubscribeConfirmation(
 	const lang = data.lang || 'de-ch';
 	const link = subscribeConfirmUrl(origin, data);
 	const name = [data.vorname, data.nachname].filter(Boolean).join(' ');
-	const subject = t('Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails', lang);
-	const greeting = name ? `${t('Guten Tag', lang)} ${name}` : t('Guten Tag', lang);
-	const intro = t(
-		'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.',
-		lang
+	const st = styledText(lang, branding.style);
+	const subject = st.t('Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails');
+	const greeting = st.greeting(name || undefined);
+	const intro = st.t(
+		'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.'
 	);
-	const ignore = t(
-		'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.',
-		lang
+	const ignore = st.t(
+		'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.'
 	);
 	const button = t('Anmeldung bestätigen', lang);
 

@@ -4,36 +4,15 @@ import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingC
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
-import {
-	osmMarkerUrl,
-	osmSearchUrl,
-	parseMapPoint,
-	resolveGoogleShortLink
-} from '$lib/mapPoint.js';
+import { loadOfferLocation } from '$lib/server/bookingLocation';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { loadAllWorkdays } from '$lib/server/adminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
 import { isAdmin } from '$lib/server/adminAuth';
-
-function fmtDate(datum: string, uhrzeit: string): string {
-	const formatted = formatDateWithWeekday(datum, null, 'de-CH', 'long');
-	return uhrzeit ? `${formatted}, ${uhrzeit} Uhr` : formatted;
-}
-
-function applyTokens(str: string, tokens: Record<string, string>): string {
-	return str.replace(/\{\{([^{}]+)\}\}/g, (match, k) => tokens[k.trim()] ?? match);
-}
-
-function richTextToPlain(
-	blocks: Array<{ text?: string }> | null | undefined,
-	tokens: Record<string, string>
-): string {
-	if (!blocks?.length) return '';
-	return blocks
-		.filter((b) => b.text)
-		.map((b) => applyTokens(b.text!, tokens))
-		.join('\n\n');
-}
+import { confirmationMail, providerBookingMail } from '$lib/server/bookingMails';
+import { textStyleFrom } from '$lib/addressForm';
+import { loadMailTheme, type MailTheme } from '$lib/mailLayout.js';
 
 function buildDatetimeStr(datum: string, uhrzeit: string): string {
 	// Returns floating local datetime string: YYYYMMDDTHHMMSS
@@ -201,6 +180,8 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	// Cancellation terms: offer, otherwise default of the settings
 	let cancelHours: number | null = null;
 	let cancelFeePercent: number | null = null;
+	// Page colours for the HTML confirmation
+	let mailTheme: MailTheme | null = null;
 
 	try {
 		const client = createClient({ fetch });
@@ -217,13 +198,14 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				: null;
 		}
 
-		const [workdays, offers] = await Promise.all([
-			dynamicClient.getAllByType('arbeitstag'),
-			dynamicClient.getAllByType('angebot')
+		const [{ workdays, offers }, theme] = await Promise.all([
+			loadAllWorkdays(dynamicClient),
+			loadMailTheme(client).catch(() => null)
 		]);
+		mailTheme = theme;
 		const today = new Date().toISOString().slice(0, 10);
 		const slot = workdays
-			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.flatMap((doc: any) => expandArbeitstag(doc, offers, today))
 			.find((item) => item.id === terminId);
 		if (!slot) throw new Error('Termin nicht gefunden');
 		datum = slot.datum;
@@ -247,30 +229,11 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 			positive(od.cancel_free_hours) ?? positive(settingsData.booking_cancel_free_hours);
 		cancelFeePercent =
 			positive(od.cancel_fee_percent) ?? positive(settingsData.booking_cancel_fee_percent);
-		const ortLink = (offerDoc?.data as any)?.ort;
-		if (ortLink?.uid) {
-			try {
-				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
-				const o = ortDoc.data as any;
-				// Inactive location («Aktiv» off) → no location details
-				if (o.aktiv !== false) {
-					const lines = (blocks: unknown) =>
-						Array.isArray(blocks) ? blocks.map((b: any) => b?.text ?? '').filter(Boolean) : [];
-					ortName = o.name ?? '';
-					ortAdresse = lines(o.adresse).join(', ');
-					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
-					ortTelefon = (o.telefon ?? '').trim();
-					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
-					const punkt =
-						parseMapPoint(o.geo_koordinaten) ??
-						(await resolveGoogleShortLink(o.geo_koordinaten ?? '', fetch)).point;
-					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
-					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
-				}
-			} catch {
-				/* Ort nicht erreichbar */
-			}
-		}
+		({ ortName, ortAdresse, ortWegbeschreibung, ortTelefon, ortKarte } = await loadOfferLocation(
+			dynamicClient,
+			offerDoc,
+			fetch
+		));
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}
@@ -365,71 +328,33 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	const icsDownloadLink = `${origin}/api/termin-ics?id=${encodeURIComponent(terminId)}`;
 
 	if (resendKey && fromEmail && toEmail) {
-		const dateLabel = fmtDate(datum, uhrzeit);
-		const durationLine = sessionLaenge ? ` (${sessionLaenge} min)` : '';
-		const terminLine = `${titel}${durationLine}\n${dateLabel}`;
-		const customerName = name || 'Kunde/Kundin';
-
-		const tokens: Record<string, string> = {
-			Titel: titel,
-			Datum: datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–',
-			Uhrzeit: uhrzeit || '–',
-			Dauer: sessionLaenge ? `${sessionLaenge} min` : '–',
-			Name: name || '',
-			Firma: companyName,
-			Ort: ortAdresse || ortName,
-			Wegbeschreibung: ortWegbeschreibung,
-			'Ort-Telefon': ortTelefon,
-			'Ort-Karte': ortKarte,
-			Stornofrist: stornoFrist
-		};
-
-		const subject = custEmailSubject
-			? applyTokens(custEmailSubject, tokens)
-			: `Terminbestätigung: ${titel}`;
-
-		// .ics download works with every calendar app (no Google Calendar link)
-		const calendarLine = datum ? `\nZum Kalender hinzufügen: ${icsDownloadLink}` : '';
-
-		const convertedTime = customerTimezone
-			? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
-			: '';
-		const customerTzLine = convertedTime
-			? `\nDer Termin in Ihrer Zeitzone (${customerTimezone}): ${convertedTime}`
-			: '';
-
-		const bodyText =
-			richTextToPlain(custEmailBody, tokens) ||
-			[
-				`Guten Tag${name ? ' ' + name : ''}`,
-				``,
-				`Ihr Termin wurde erfolgreich gebucht.`,
-				``,
-				`Termin: ${terminLine}`,
-				// Location of the offer (if linked and active)
-				...(ortName || ortAdresse
-					? [``, `Ort: ${[ortName, ortAdresse].filter(Boolean).join(', ')}`]
-					: []),
-				...(ortWegbeschreibung ? [``, `Wegbeschreibung:`, ortWegbeschreibung] : []),
-				...(ortTelefon ? [`Telefon: ${ortTelefon}`] : []),
-				...(ortKarte ? [`Karte: ${ortKarte}`] : []),
-				``,
-				...(stornoFrist
-					? [
-							cancelFeePercent && offerPrice
-								? `Kostenlos stornierbar bis ${stornoFrist} Uhr, danach mit einer Stornogebühr von ${cancelFeePercent}%.`
-								: `Online stornierbar bis ${stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
-							``
-						]
-					: []),
-				`Bei Fragen stehen wir Ihnen gerne zur Verfügung.`,
-				``,
-				`Freundliche Grüsse`,
-				companyName
-			].join('\n');
-
-		const stornoLine = `\n\nStornieren: ${stornoLink}`;
-		const stornoHtml = `<p><a href="${stornoLink}" style="color:#1e2d5a;">Buchung stornieren</a></p>`;
+		const datumLabel = datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '';
+		const confirmation = confirmationMail({
+			titel,
+			datumLabel,
+			uhrzeit,
+			sessionLaenge,
+			name,
+			companyName,
+			ortName,
+			ortAdresse,
+			ortWegbeschreibung,
+			ortTelefon,
+			ortKarte,
+			stornoFrist,
+			cancelFeePercent,
+			offerPrice,
+			customSubject: custEmailSubject,
+			customBody: custEmailBody,
+			customerTimezone,
+			convertedTime: customerTimezone
+				? convertToTimezone(datum, uhrzeit, zeitzone, customerTimezone)
+				: '',
+			icsLink: icsDownloadLink,
+			stornoLink,
+			theme: mailTheme,
+			style: textStyleFrom(settingsData)
+		});
 
 		const icsContent = generateICS(terminId, titel, datum, uhrzeit, sessionLaenge);
 		const icsAttachment = icsContent
@@ -449,24 +374,13 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 
 				// E-Mail an Kunden (admin booking: only if requested)
 				if (email && (!byAdmin || body.sendConfirmation)) {
-					const htmlBody =
-						bodyText
-							.split('\n')
-							.map((line) => (line.trim() ? `<p>${line}</p>` : ''))
-							.join('') +
-						(customerTzLine ? `<p>${customerTzLine.replace(/^\n+/, '')}</p>` : '') +
-						(calendarLine
-							? `<p><a href="${calendarLine.replace(/^\nZum Kalender hinzufügen: /, '')}">Zum Kalender hinzufügen</a></p>`
-							: '') +
-						stornoHtml;
-
 					resend.emails
 						.send({
 							from: fromEmail,
 							to: email,
-							subject,
-							text: bodyText + customerTzLine + calendarLine + stornoLine,
-							html: htmlBody,
+							subject: confirmation.subject,
+							text: confirmation.text,
+							html: confirmation.html,
 							attachments: icsAttachment
 						})
 						.then(({ error: e }) => {
@@ -492,25 +406,24 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 								.filter(Boolean)
 						: [];
 
+				const providerMail = providerBookingMail({
+					titel,
+					datumLabel,
+					uhrzeit,
+					endzeit,
+					sessionLaenge,
+					ortName,
+					ortAdresse,
+					name,
+					email,
+					extraLines
+				});
 				resend.emails
 					.send({
 						from: fromEmail,
 						to: toEmail,
-						subject: `Neue Buchung: ${titel}`,
-						text: [
-							`Neue Buchung eingegangen.`,
-							``,
-							`Angebot: ${titel}`,
-							`Datum: ${datum ? formatDateWithWeekday(datum, null, 'de-CH', 'long') : '–'}`,
-							`Zeit: ${uhrzeit || '–'}${endzeit ? ' – ' + endzeit : ''} Uhr`,
-							`Dauer: ${sessionLaenge ? sessionLaenge + ' Minuten' : '–'}`,
-							...(ortName ? [`Ort: ${ortName}`] : []),
-							...(ortAdresse ? [`Adresse: ${ortAdresse}`] : []),
-							``,
-							`Name: ${customerName}`,
-							...(email ? [`E-Mail: ${email}`] : []),
-							...(extraLines.length ? [``, ...extraLines] : [])
-						].join('\n'),
+						subject: providerMail.subject,
+						text: providerMail.text,
 						attachments: providerIcsAttachment
 					})
 					.then(({ error: e }) => {

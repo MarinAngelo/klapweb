@@ -3,7 +3,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { setResetToken, resetPassword } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
 import { FEATURE_KUNDENKONTO } from '$lib/server/features';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { passwordResetMail } from '$lib/server/kontoMails';
 
 export const prerender = false;
 
@@ -31,13 +32,11 @@ export const actions: Actions = {
 					await resend.emails.send({
 						from: fromEmail,
 						to: email,
-						subject: 'Passwort zurücksetzen',
-						html: `
-							<p>Hallo ${result.name},</p>
-							<p>Klicke auf den Link um dein Passwort zurückzusetzen:</p>
-							<p><a href="${resetUrl}">${resetUrl}</a></p>
-							<p>Der Link ist 1 Stunde gültig.</p>
-						`
+						...passwordResetMail({
+							name: result.name,
+							link: resetUrl,
+							style: await getTextStyle()
+						})
 					});
 				} catch {
 					// ignorieren
