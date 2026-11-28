@@ -123,7 +123,7 @@
 						required
 						bind:value={von}
 						on:change={onVonChange}
-						class="input form-input rounded-md w-full"
+						class="form-input form-input-lg"
 					/>
 				</div>
 				<div>
@@ -134,7 +134,7 @@
 						required
 						min={von || undefined}
 						bind:value={bis}
-						class="input form-input rounded-md w-full"
+						class="form-input form-input-lg"
 					/>
 				</div>
 			</div>
@@ -148,14 +148,9 @@
 				</p>
 			{/if}
 
-			<div class="md:max-w-xs">
+			<div>
 				<label class="block text-base font-bold" for="{idPrefix}-art">{$_('Stundenart')} *</label>
-				<select
-					id="{idPrefix}-art"
-					required
-					bind:value={art}
-					class="input form-input rounded-md w-full"
-				>
+				<select id="{idPrefix}-art" required bind:value={art} class="form-input form-input-lg">
 					<option value="tag">{$_('Tagstunden')}</option>
 					<option value="nacht">{$_('Nachtstunden')}</option>
 				</select>
@@ -180,7 +175,7 @@
 						inputmode="decimal"
 						placeholder="0.00"
 						bind:value={spesen}
-						class="input form-input rounded-md w-full"
+						class="form-input form-input-lg"
 					/>
 				</div>
 				<InputField

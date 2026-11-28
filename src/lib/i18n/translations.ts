@@ -2606,6 +2606,15 @@ export const translations: Record<string, Record<string, string>> = {
 	},
 	Stundenart: { 'de-ch': 'Stundenart', 'en-us': 'Type of hours' },
 	'Berechnete Stunden': { 'de-ch': 'Berechnete Stunden', 'en-us': 'Calculated hours' },
+	Zusammenfassung: { 'de-ch': 'Zusammenfassung', 'en-us': 'Summary' },
+	'Kostenpflichtig buchen': {
+		'de-ch': 'Kostenpflichtig buchen',
+		'en-us': 'Book with obligation to pay'
+	},
+	'Bitte die AGB akzeptieren.': {
+		'de-ch': 'Bitte die AGB akzeptieren.',
+		'en-us': 'Please accept the terms and conditions.'
+	},
 	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
 	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
 		{
