@@ -2560,6 +2560,46 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.',
 		'en-us': 'After every online booking, not for bookings made in the admin.'
 	},
+	'Freien Termin «{titel}» entfernen?': {
+		'de-ch': 'Freien Termin «{titel}» entfernen?',
+		'en-us': 'Remove free appointment «{titel}»?'
+	},
+	'Termin hinzufügen': { 'de-ch': 'Termin hinzufügen', 'en-us': 'Add appointment' },
+	'Termin hinzugefügt.': { 'de-ch': 'Termin hinzugefügt.', 'en-us': 'Appointment added.' },
+	'Einzelner freier Termin ohne Arbeitstag in Prismic. Pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot.':
+		{
+			'de-ch':
+				'Einzelner freier Termin ohne Arbeitstag in Prismic. Pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot.',
+			'en-us':
+				'Single free appointment without a working day in Prismic. Each selected offer creates one bookable appointment at the start time; the duration comes from the offer.'
+		},
+	Startzeit: { 'de-ch': 'Startzeit', 'en-us': 'Start time' },
+	'Kein aktives Angebot mit Dauer – zuerst in Prismic ein «Angebot» erfassen.': {
+		'de-ch': 'Kein aktives Angebot mit Dauer – zuerst in Prismic ein «Angebot» erfassen.',
+		'en-us': 'No active offer with a duration – first create an «Angebot» in Prismic.'
+	},
+	Hinzufügen: { 'de-ch': 'Hinzufügen', 'en-us': 'Add' },
+	'Datum und Startzeit angeben': {
+		'de-ch': 'Datum und Startzeit angeben',
+		'en-us': 'Enter date and start time'
+	},
+	'Mindestens ein Angebot wählen': {
+		'de-ch': 'Mindestens ein Angebot wählen',
+		'en-us': 'Select at least one offer'
+	},
+	'Der Termin liegt in der Vergangenheit': {
+		'de-ch': 'Der Termin liegt in der Vergangenheit',
+		'en-us': 'The appointment is in the past'
+	},
+	'Angebot nicht gefunden oder ohne Dauer': {
+		'de-ch': 'Angebot nicht gefunden oder ohne Dauer',
+		'en-us': 'Offer not found or without duration'
+	},
+	'Termin nicht gefunden': { 'de-ch': 'Termin nicht gefunden', 'en-us': 'Appointment not found' },
+	'Der Termin ist gebucht und kann nicht entfernt werden': {
+		'de-ch': 'Der Termin ist gebucht und kann nicht entfernt werden',
+		'en-us': 'The appointment is booked and cannot be removed'
+	},
 	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
 	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
 		{

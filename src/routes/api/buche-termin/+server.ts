@@ -6,6 +6,7 @@ import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 import { loadOfferLocation } from '$lib/server/bookingLocation';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { loadAllWorkdays } from '$lib/server/adminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
 import { isAdmin } from '$lib/server/adminAuth';
@@ -197,15 +198,14 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				: null;
 		}
 
-		const [workdays, offers, theme] = await Promise.all([
-			dynamicClient.getAllByType('arbeitstag'),
-			dynamicClient.getAllByType('angebot'),
+		const [{ workdays, offers }, theme] = await Promise.all([
+			loadAllWorkdays(dynamicClient),
 			loadMailTheme(client).catch(() => null)
 		]);
 		mailTheme = theme;
 		const today = new Date().toISOString().slice(0, 10);
 		const slot = workdays
-			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.flatMap((doc: any) => expandArbeitstag(doc, offers, today))
 			.find((item) => item.id === terminId);
 		if (!slot) throw new Error('Termin nicht gefunden');
 		datum = slot.datum;

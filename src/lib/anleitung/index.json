@@ -136,6 +136,7 @@
 			"src/lib/server/bookingInvoices.ts",
 			"src/lib/server/bookingMails.ts",
 			"src/lib/server/bookingReminders.ts",
+			"src/lib/server/adminSlots.ts",
 			"src/routes/termin-stornieren",
 			"src/lib/slices/Kacheln/AngebotKacheln.svelte"
 		]
