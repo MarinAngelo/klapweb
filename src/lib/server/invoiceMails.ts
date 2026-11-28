@@ -5,7 +5,7 @@
  * preview always shows exactly what is sent. `style` = settings «Anrede» / «Begrüssung in
  * Standardtexten» (getTextStyle()); customer mails with `theme` get an HTML part in the page colours.
  */
-import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
+import { duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
 import { applyTokens, richTextToMail, withHtml, type Mail } from '$lib/server/mailText';
 import type { MailTheme } from '$lib/mailLayout.js';
 
@@ -147,7 +147,7 @@ export function dunningMail(
 			text: [
 				greetingLine(c.style, c.name),
 				'',
-				`Unsere Rechnung ${c.invoiceNumber} vom ${c.invoiceDate} über ${c.amount} ist noch offen.`,
+				`${wirIch(c.style?.ich, 'Unsere', 'Meine')} Rechnung ${c.invoiceNumber} vom ${c.invoiceDate} über ${c.amount} ist noch offen.`,
 				duSie(
 					c.style?.du,
 					`Bitte begleichen Sie den Betrag bis ${c.dueDate}. Die Rechnung mit Einzahlungsschein liegt bei.`,

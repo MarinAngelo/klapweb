@@ -6,7 +6,7 @@
  * exactly what is sent. `style` = settings «Anrede» / «Begrüssung in Standardtexten» (getTextStyle()).
  */
 
-import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
+import { duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
 import { applyTokens, richTextToMail, withHtml, type Mail } from '$lib/server/mailText';
 import { mailButton, textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
 
@@ -91,11 +91,8 @@ function appointmentMail(c: ConfirmationInput, kind: 'confirmation' | 'reminder'
 			greetingLine(c.style, c.name),
 			``,
 			reminder
-				? duSie(
-						c.style?.du,
-						'Wir erinnern Sie an Ihren Termin.',
-						'Wir erinnern dich an deinen Termin.'
-					)
+				? wirIch(c.style?.ich, 'Wir erinnern', 'Ich erinnere') +
+					duSie(c.style?.du, ' Sie an Ihren Termin.', ' dich an deinen Termin.')
 				: duSie(c.style?.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
 			``,
 			`Angebot: ${c.titel}`,
@@ -112,11 +109,11 @@ function appointmentMail(c: ConfirmationInput, kind: 'confirmation' | 'reminder'
 				? [
 						c.cancelFeePercent && c.offerPrice
 							? `Kostenlos stornierbar bis ${c.stornoFrist} Uhr, danach mit einer Stornogebühr von ${c.cancelFeePercent}%.`
-							: `Online stornierbar bis ${c.stornoFrist} Uhr, danach bitte direkt bei uns melden.`,
+							: `Online stornierbar bis ${c.stornoFrist} Uhr, danach bitte direkt bei ${wirIch(c.style?.ich, 'uns', 'mir')} melden.`,
 						``
 					]
 				: []),
-			`Bei Fragen stehen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} gerne zur Verfügung.`,
+			`Bei Fragen ${wirIch(c.style?.ich, 'stehen wir', 'stehe ich')} ${duSie(c.style?.du, 'Ihnen', 'dir')} gerne zur Verfügung.`,
 			``,
 			`Freundliche Grüsse`,
 			c.companyName
@@ -250,9 +247,9 @@ export function cancelFeeMail(
 				``,
 				`Da die kostenlose Stornierungsfrist (bis ${c.freeUntilLabel}) abgelaufen war, ` +
 					(c.invoice
-						? `stellen wir ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) in Rechnung (siehe Anhang).`
+						? `${wirIch(c.style?.ich, 'stellen wir', 'stelle ich')} ${duSie(c.style?.du, 'Ihnen', 'dir')} die Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) in Rechnung (siehe Anhang).`
 						: `fällt eine Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) an. ` +
-							`Ich melde mich für die Bezahlung bei ${duSie(c.style?.du, 'Ihnen', 'dir')}.`),
+							`${wirIch(c.style?.ich, 'Wir melden uns', 'Ich melde mich')} für die Bezahlung bei ${duSie(c.style?.du, 'Ihnen', 'dir')}.`),
 				``,
 				`Freundliche Grüsse`,
 				c.companyName

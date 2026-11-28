@@ -3473,8 +3473,60 @@ export const duForms: Record<string, string> = {
 		'Übertragung deiner Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)'
 };
 
-/** `du` = Settings «Anrede in Standardtexten» is «Du» → German Du form (duForms) where available */
-export function t(key: string, lang: string, du = false): string {
+/**
+ * «Ich» form of German texts in Wir form — Settings › «Absender in Standardtexten» = Ich
+ * (layout data `senderIch`). `ichForms` = with «Sie», `duIchForms` = with «Du» (needed for every
+ * key that also has a Du form). New public text with wir/uns/unser → add the Ich form here.
+ */
+export const ichForms: Record<string, string> = {
+	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei Ihnen.',
+	'Wir melden uns zur Terminvereinbarung.': 'Ich melde mich zur Terminvereinbarung.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Ich habe Ihre Bestellung erhalten und melde mich in Kürze zur Terminvereinbarung.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehe ich Ihnen gerne zur Verfügung.',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreiben Sie mir, was gefehlt hat – mit E-Mail melde ich mich bei Ihnen.',
+	'Übersicht unserer Leistungen und Services': 'Übersicht meiner Leistungen und Services',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecken Sie mein Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Ihre Bestellung ist bei mir eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Ihre Bestellung {leistung} ist bei mir eingegangen.',
+	'Unsere Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.':
+		'Meine Allgemeinen Geschäftsbedingungen werden derzeit aktualisiert.',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Ich habe Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt meine Info-Mails.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie mich direkt.'
+};
+
+export const duIchForms: Record<string, string> = {
+	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei dir.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Ich habe deine Bestellung erhalten und melde mich in Kürze zur Terminvereinbarung.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehe ich dir gerne zur Verfügung.',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreib mir, was gefehlt hat – mit E-Mail melde ich mich bei dir.',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecke mein Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Deine Bestellung ist bei mir eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Deine Bestellung {leistung} ist bei mir eingegangen.',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Ich habe dir eine E-Mail geschickt. Bitte bestätige deine Anmeldung über den Link darin.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Deine Anmeldung ist bestätigt. Du erhältst ab jetzt meine Info-Mails.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktiere mich direkt.'
+};
+
+/**
+ * `du` = Settings «Anrede in Standardtexten» is «Du», `ich` = «Absender in Standardtexten» is «Ich»
+ * → German variant (duForms / ichForms / duIchForms) where available
+ */
+export function t(key: string, lang: string, du = false, ich = false): string {
 	const entry = translations[key];
 	if (!entry) {
 		if (dev) console.warn(`[i18n] Fehlender Key: "${key}"`);
@@ -3483,7 +3535,16 @@ export function t(key: string, lang: string, du = false): string {
 
 	// Wir suchen eine passende Übersetzung (z.B. 'en' findet 'en-us')
 	const langBase = lang.split('-')[0]; // 'en' oder 'de'
-	if (du && langBase === 'de' && duForms[key]) return duForms[key];
+	if (langBase === 'de' && (du || ich)) {
+		// Du + Ich: combined form; key without Du form → Ich form; otherwise at least the Du form
+		const variant =
+			du && ich
+				? (duIchForms[key] ?? (duForms[key] ? duForms[key] : ichForms[key]))
+				: ich
+					? ichForms[key]
+					: duForms[key];
+		if (variant) return variant;
+	}
 	const foundKey = Object.keys(entry).find((k) => k.startsWith(langBase));
 
 	return entry[foundKey || ''] || entry['de-ch'] || key;
