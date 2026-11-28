@@ -19,6 +19,7 @@ import {
 	type CmsMailContext
 } from './ressourceMail';
 import { getMailFrom } from '$lib/server/mailFrom';
+import { textStyleFrom } from '$lib/addressForm';
 
 function doorCode(uid: string): string {
 	const key = uid.toUpperCase().replace(/-/g, '_');
@@ -75,7 +76,8 @@ export async function maybeSendAnkunftsErinnerung(
 		const cms: CmsMailContext = {
 			doc: doc.data as Record<string, any>,
 			vars: mailVariables(variablesData, buchung.lang),
-			theme: mailTheme
+			theme: mailTheme,
+			style: textStyleFrom(settings?.data)
 		};
 		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 		const tokens = reminderTokens(
@@ -135,7 +137,8 @@ export async function sendAbreiseErinnerung(
 		const cms: CmsMailContext = {
 			doc: doc.data as Record<string, any>,
 			vars: mailVariables(variablesData, buchung.lang),
-			theme: mailTheme
+			theme: mailTheme,
+			style: textStyleFrom(settings?.data)
 		};
 		const waTel = (settings?.data as any)?.whatsapp_tel as string | undefined;
 		const tokens = reminderTokens(

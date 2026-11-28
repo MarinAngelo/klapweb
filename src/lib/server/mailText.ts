@@ -6,6 +6,30 @@
  */
 
 import { textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
+import { closingLine, greetingLine, type TextStyle } from '$lib/addressForm';
+import { t } from '$lib/i18n/translations';
+
+/**
+ * Texts of multilingual standard mails in the style of the settings (Du/Sie, Wir/Ich,
+ * «Begrüssung» / «Verabschiedung in Standardtexten»). The settings are German texts → they apply
+ * to German mails; other languages keep their translations («Hello …», «Kind regards»).
+ */
+export function styledText(lang: string, style?: TextStyle) {
+	const de = lang.startsWith('de');
+	return {
+		/** Translation incl. Du/Ich variant (duForms / ichForms in translations.ts) */
+		t: (key: string) => t(key, lang, style?.du, style?.ich),
+		/** «Guten Tag Anna» / «Hallo Anna» (German), «Hello Anna» (other languages) */
+		greeting: (name?: string) =>
+			de
+				? greetingLine(style, name)
+				: name
+					? t('Guten Tag {name}', lang).replace('{name}', name)
+					: t('Guten Tag', lang),
+		/** «Freundliche Grüsse» / «Liebe Grüsse» (German), translation otherwise */
+		closing: () => (de ? closingLine(style) : t('Freundliche Grüsse', lang))
+	};
+}
 
 /**
  * Plain text mail → { text, html }: the HTML part keeps the layout (monospace, line breaks)

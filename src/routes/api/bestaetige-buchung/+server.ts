@@ -19,7 +19,7 @@ import {
 	getRessourceDocForBooking,
 	type CmsMailContext
 } from '$lib/server/ressourceMail';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
 
 export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const id = url.searchParams.get('id');
@@ -61,7 +61,8 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	await maybeSendAnkunftsErinnerung(buchung, fetch).catch(console.error);
 
 	// ── CMS-Template in der Buchungssprache laden (Fallback: Hauptsprache) ───
-	const cms: CmsMailContext = { doc: null, vars: {}, theme: null };
+	// Standard texts: Du/Sie, Wir/Ich, greeting, closing from the settings
+	const cms: CmsMailContext = { doc: null, vars: {}, theme: null, style: await getTextStyle() };
 	let cmsDebug = '';
 	try {
 		const client = createClient({ fetch });

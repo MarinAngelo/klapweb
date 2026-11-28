@@ -12,7 +12,7 @@ import { fetchExchangeRates } from '$lib/utils/exchangeRates.server';
 import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 import { adminActionToken, isAuthorizedAdminAction } from '$lib/server/adminAuth';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
 import { finalBillingMail } from '$lib/server/ressourceMail';
 
 function fmt(chf: number) {
@@ -189,7 +189,8 @@ export const POST: RequestHandler = async ({ url, request, cookies }) => {
 					aufgaben: erledigt.map((a) => ({ titel: a.aufgabeTitel, credits: berechneCredits(a) })),
 					betrag,
 					betragEur,
-					eurRate: eurRate ?? null
+					eurRate: eurRate ?? null,
+					style: await getTextStyle()
 				})
 			});
 			if (e) {

@@ -10,7 +10,8 @@ import type { RessourceBuchung } from './ressourceBuchungen';
 import type * as prismic from '@prismicio/client';
 import { wrapMail, type MailTheme } from '$lib/mailLayout.js';
 import { mailVariables, renderMailHtml, renderMailText } from '$lib/variables.js';
-import { plainTextMail, type Mail } from '$lib/server/mailText';
+import { plainTextMail, styledText, type Mail } from '$lib/server/mailText';
+import type { TextStyle } from '$lib/addressForm';
 
 const LANG_RE = /^[a-z]{2}-[a-z]{2}$/;
 
@@ -84,28 +85,34 @@ export function bestaetigungTokens(
 }
 
 /** Subject when the CMS field is empty, e.g. 'Buchungsbestätigung: {ressource}' */
-export function fallbackSubject(key: string, buchung: RessourceBuchung, ressourceName?: string) {
-	return t(key, mailLang(buchung)).replace(
-		'{ressource}',
-		ressourceName || buchung.ressourceName || buchung.ressourceUid
-	);
+export function fallbackSubject(
+	key: string,
+	buchung: RessourceBuchung,
+	ressourceName?: string,
+	style?: TextStyle
+) {
+	return styledText(mailLang(buchung), style)
+		.t(key)
+		.replace('{ressource}', ressourceName || buchung.ressourceName || buchung.ressourceUid);
 }
 
 /** Plain text confirmation when the CMS text is empty */
 export function bestaetigungFallbackText(
 	buchung: RessourceBuchung,
-	tokens: Record<string, string>
+	tokens: Record<string, string>,
+	style?: TextStyle
 ): string {
 	const lang = mailLang(buchung);
+	const st = styledText(lang, style);
 	const label = (key: string) => `${t(key, lang)}:`.padEnd(11);
 	const zimmerZeilen = (buchung.zimmerauswahl ?? []).map((z) => {
 		const bett = t(z.bett_typ, lang);
 		return `           · ${z.zimmer_label || z.zimmer_name || bett} (${z.anzahl_betten}× ${bett})`;
 	});
 	return [
-		t('Guten Tag {name}', lang).replace('{name}', buchung.name ?? ''),
+		st.greeting(buchung.name),
 		``,
-		t('Ihre Buchungsanfrage wurde bestätigt.', lang),
+		st.t('Ihre Buchungsanfrage wurde bestätigt.'),
 		``,
 		`${label('Ressource')}${tokens.Ressource}`,
 		`${label('Anreise')}${tokens.Anreise}`,
@@ -117,12 +124,12 @@ export function bestaetigungFallbackText(
 			: [`${label('Zimmer')}${t('Ganze Wohnung', lang)}`]),
 		`${label('Total')}${tokens.Total}`,
 		``,
-		`${t('Ihre Buchungsreferenz', lang)}: ${tokens.Buchungsreferenz}`,
-		t('(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)', lang),
+		`${st.t('Ihre Buchungsreferenz')}: ${tokens.Buchungsreferenz}`,
+		st.t('(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)'),
 		``,
-		t('Wir melden uns in Kürze zur Zahlungsabwicklung.', lang),
+		st.t('Wir melden uns in Kürze zur Zahlungsabwicklung.'),
 		``,
-		t('Freundliche Grüsse', lang)
+		st.closing()
 	].join('\n');
 }
 
@@ -142,6 +149,8 @@ export type CmsMailContext = {
 	doc: Record<string, any> | null;
 	vars: ReturnType<typeof mailVariables>;
 	theme: MailTheme | null;
+	/** Settings Du/Sie, Wir/Ich, greeting, closing — for the standard texts (not the CMS texts) */
+	style?: TextStyle;
 };
 
 /** New booking request to the operator, with the confirmation link */
@@ -195,7 +204,7 @@ export function confirmationGuestMail(buchung: RessourceBuchung, cms: CmsMailCon
 	const cmsBetreff = (d.buchungsbestaetigung_betreff as string)?.trim() ?? '';
 	const subject = cmsBetreff
 		? renderMailText(cmsBetreff, tokens, cms.vars)
-		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, d.name);
+		: fallbackSubject('Buchungsbestätigung: {ressource}', buchung, d.name, cms.style);
 	const field = d.buchungsbestaetigung_text as prismic.RichTextField | undefined;
 	if (field?.length) {
 		return {
@@ -207,7 +216,7 @@ export function confirmationGuestMail(buchung: RessourceBuchung, cms: CmsMailCon
 			})
 		};
 	}
-	return { subject, text: bestaetigungFallbackText(buchung, tokens) };
+	return { subject, text: bestaetigungFallbackText(buchung, tokens, cms.style) };
 }
 
 /** Tokens of the reminder mails ({{Türcode}}, {{Messenger-Apps}} …) */
@@ -236,17 +245,19 @@ export function arrivalReminderMail(
 	const d = cms.doc ?? {};
 	const subject =
 		renderMailText((d.reminder_betreff as string)?.trim() ?? '', tokens, cms.vars) ||
-		fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name);
+		fallbackSubject('Ihre Anreise: {ressource}', buchung, d.name, cms.style);
 	const field = d.reminder_text as prismic.RichTextField | undefined;
 	let html: string;
 	if (field?.length) {
 		html = renderMailHtml(field, tokens, cms.vars, cms.theme);
 	} else {
 		const lang = mailLang(buchung);
-		const intro = t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).', lang)
+		const st = styledText(lang, cms.style);
+		const intro = st
+			.t('wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).')
 			.replace('{anreise}', `<strong>${tokens.Anreise}</strong>`)
 			.replace('{abreise}', tokens.Abreise);
-		html = `<p>${t('Hallo {name},', lang).replace('{name}', tokens.Name)}</p>
+		html = `<p>${st.greeting(tokens.Name)},</p>
 <p>${intro}</p>
 ${tokens.Türcode ? `<p><strong>${t('Türcode', lang)}:</strong> ${tokens.Türcode}</p>` : ''}
 ${tokens['Messenger-Apps'] ? `<p>${t('Bei Fragen', lang)}:</p>${tokens['Messenger-Apps']}` : ''}
@@ -275,7 +286,7 @@ export function cmsReminderMail(
 	if (!field?.length) return null;
 	const subject =
 		renderMailText((d[`${fieldPrefix}_betreff`] as string)?.trim() ?? '', tokens, cms.vars) ||
-		fallbackSubject(fallbackKey, buchung, d.name);
+		fallbackSubject(fallbackKey, buchung, d.name, cms.style);
 	return {
 		subject,
 		text: '',
@@ -375,9 +386,11 @@ export function finalBillingMail(
 		betrag: number;
 		betragEur: number | null;
 		eurRate: number | null;
+		style?: TextStyle;
 	}
 ): Mail {
 	const lang = mailLang(b);
+	const st = styledText(lang, b.style);
 	const locale = mailLocale(b);
 	const chf = (n: number) =>
 		new Intl.NumberFormat(locale, { style: 'currency', currency: 'CHF' }).format(n);
@@ -390,11 +403,11 @@ export function finalBillingMail(
 	const ressource = b.ressourceName ?? b.ressourceUid;
 	const line = '─────────────────────────────────────';
 	return {
-		subject: t('Ihre Abrechnung: {ressource}', lang).replace('{ressource}', ressource),
+		subject: st.t('Ihre Abrechnung: {ressource}').replace('{ressource}', ressource),
 		text: [
-			t('Guten Tag {name}', lang).replace('{name}', b.name ?? ''),
+			st.greeting(b.name),
 			``,
-			t('Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:', lang),
+			st.t('Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:'),
 			``,
 			`${label('Ressource', 11)}${ressource}`,
 			`${label('Anreise', 11)}${fmtDatum(b.von)}`,
@@ -423,7 +436,7 @@ export function finalBillingMail(
 				: []),
 			line,
 			``,
-			t('Freundliche Grüsse', lang)
+			st.closing()
 		].join('\n')
 	};
 }
