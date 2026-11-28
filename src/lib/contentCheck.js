@@ -356,7 +356,7 @@ export async function checkContent(
 	);
 	const invoiceSettings = docs.find((d) => d.type === 'settings' && d.lang === master);
 	const invoiceData = /** @type {any} */ (invoiceSettings?.data) ?? {};
-	// Appointment booking alone only sends invoices with «Rechnung nach dem Termin senden»
+	// Appointment booking alone only sends invoices with «Rechnungsstellung»
 	const features = options.invoicingFeatures;
 	const invoicesSent =
 		!features ||

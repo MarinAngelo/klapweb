@@ -1,6 +1,6 @@
 /**
  * Invoices of appointment bookings — sent after the appointment has ended
- * (setting «Rechnung nach dem Termin senden», offers with «Preis»).
+ * (setting «Rechnungsstellung», offers with «Preis»).
  *
  * The booking stores `invoicePending` + price + billing address; this job issues the invoice
  * via the invoice module and e-mails it. Called hourly by netlify/functions/termin-rechnungen.ts

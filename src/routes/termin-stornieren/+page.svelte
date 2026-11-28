@@ -95,7 +95,11 @@
 						</p>
 						<label class="mt-4 flex items-start gap-2">
 							<input type="checkbox" name="acceptFee" bind:checked={acceptFee} class="mt-1" />
-							<span>{$_('Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.')}</span>
+							<span
+								>{data.invoicing
+									? $_('Ich akzeptiere die Stornogebühr und erhalte dafür eine Rechnung.')
+									: $_('Ich akzeptiere die Stornogebühr.')}</span
+							>
 						</label>
 					{/if}
 					{#if error === 'fee_not_accepted'}

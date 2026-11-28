@@ -200,12 +200,15 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 			label: 'Stornierung mit Gebühr',
 			when: 'Stornierung nach Ablauf der kostenlosen Frist, wenn das Angebot einen Preis und eine Stornogebühr hat.',
 			to: SAMPLE.email,
-			attachment: `${sampleInvoice}.pdf`,
+			attachment: invoiceAfter ? `${sampleInvoice}.pdf` : undefined,
 			active: !!(freeUntil && feePercent && price),
 			...cancelFeeMail({
 				...base,
 				freeUntilLabel: stornoFrist || '…',
 				feePercent: feePercent ?? 50,
+				fee: Math.round((price ?? 120) * (feePercent ?? 50)) / 100,
+				// «Rechnungsstellung» off → fee only stated, no invoice attached
+				invoice: invoiceAfter,
 				companyName: invoiceSettings.name
 			})
 		},
@@ -226,7 +229,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		{
 			id: 'rechnung',
 			label: 'Rechnung nach dem Termin',
-			when: 'Nach Terminende, wenn «Rechnung nach dem Termin senden» aktiv ist und das Angebot einen Preis hat.',
+			when: 'Nach Terminende, wenn «Rechnungsstellung» aktiv ist und das Angebot einen Preis hat.',
 			to: SAMPLE.email,
 			attachment: `${sampleInvoice}.pdf`,
 			active: invoiceAfter,

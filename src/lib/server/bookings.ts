@@ -37,7 +37,7 @@ export interface BookingRecord {
 	/** Secret of the cancellation link; older bookings without it accept the id alone */
 	cancelToken?: string;
 	zeitzone?: string;
-	/** Invoice due after the appointment (setting «Rechnung nach dem Termin senden», offer with price) */
+	/** Invoice due after the appointment (setting «Rechnungsstellung», offer with price) */
 	invoicePending?: boolean;
 	/** Billing address from the booking form (for the invoice / QR bill) */
 	invoiceAddress?: { adresse?: string; plz?: string; ort?: string; land?: string };
