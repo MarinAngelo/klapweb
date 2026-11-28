@@ -2605,6 +2605,7 @@ export const translations: Record<string, Record<string, string>> = {
 		'en-us': 'I accept the cancellation fee.'
 	},
 	Stundenart: { 'de-ch': 'Stundenart', 'en-us': 'Type of hours' },
+	'Berechnete Stunden': { 'de-ch': 'Berechnete Stunden', 'en-us': 'Calculated hours' },
 	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
 	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
 		{
