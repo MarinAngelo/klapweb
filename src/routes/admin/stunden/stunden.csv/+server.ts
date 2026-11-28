@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { FEATURE_STUNDENABRECHNUNG } from '$lib/server/features';
-import { dauerMinuten, listStunden } from '$lib/server/stunden';
+import { dauerMinuten, listStunden, stundenArt } from '$lib/server/stunden';
 
 export const prerender = false;
 
@@ -36,15 +36,18 @@ export async function GET({ url }) {
 	const hours = (min: number) => (min / 60).toFixed(2);
 
 	let totalMin = 0;
+	let nightMin = 0;
 	let totalSpesen = 0;
 	const rows = entries.map((e) => {
 		const min = dauerMinuten(e.von, e.bis);
 		totalMin += min;
+		if (stundenArt(e) === 'nacht') nightMin += min;
 		totalSpesen += e.spesen;
 		return [
 			e.name ?? '',
 			dt(e.von),
 			dt(e.bis),
+			stundenArt(e) === 'nacht' ? 'Nacht' : 'Tag',
 			e.taetigkeit,
 			hours(min),
 			e.spesenText ?? '',
@@ -58,14 +61,24 @@ export async function GET({ url }) {
 		'Name',
 		'Von',
 		'Bis',
+		'Stundenart',
 		'Tätigkeit',
 		'Stunden',
 		'Spesen-Beschreibung',
 		'Spesen (CHF)',
 		'Status'
 	];
-	const total = ['Total', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2), ''];
-	const csv = [header.map(esc).join(';'), ...rows, total.map(esc).join(';')].join('\r\n');
+	const total = ['Total', '', '', '', '', hours(totalMin), '', totalSpesen.toFixed(2), ''];
+	// Split day / night hours (field «Stundenart»)
+	const totalDay = ['Total Tag', '', '', '', '', hours(totalMin - nightMin), '', '', ''];
+	const totalNight = ['Total Nacht', '', '', '', '', hours(nightMin), '', '', ''];
+	const csv = [
+		header.map(esc).join(';'),
+		...rows,
+		total.map(esc).join(';'),
+		totalDay.map(esc).join(';'),
+		totalNight.map(esc).join(';')
+	].join('\r\n');
 
 	const slug = [nameFilter ?? '', statusFilter ?? '', billingFilter ? 'abrechnung' : '']
 		.filter(Boolean)
