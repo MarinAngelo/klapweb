@@ -176,7 +176,7 @@
 		"id": "stundenabrechnung",
 		"title": "Stundenabrechnung",
 		"feature": "stundenabrechnung",
-		"stand": "2026-11-11",
+		"stand": "2026-11-28",
 		"sources": [
 			"src/lib/server/stunden.ts",
 			"src/routes/admin/stunden",

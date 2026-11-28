@@ -14,6 +14,8 @@ export type StundenEintrag = {
 	/** Start and end, local time «YYYY-MM-DDTHH:MM» */
 	von: string;
 	bis: string;
+	/** Day or night hours (missing in older entries = day) */
+	art?: StundenArt;
 	/** Who worked (missing in older entries) */
 	name?: string;
 	/** Former field «Projekt / Kunde» (removed from the form, only in older entries) */
@@ -30,11 +32,16 @@ export type StundenEintrag = {
 	abrechnung?: string;
 };
 
+export type StundenArt = 'tag' | 'nacht';
+/** Day/night of an entry; older entries without the field count as day hours */
+export const stundenArt = (e: Pick<StundenEintrag, 'art'>): StundenArt =>
+	e.art === 'nacht' ? 'nacht' : 'tag';
+
 export const isAbgerechnet = (e: Pick<StundenEintrag, 'abrechnung'>) => !!e.abrechnung;
 
 export type StundenInput = Pick<
 	StundenEintrag,
-	'von' | 'bis' | 'name' | 'taetigkeit' | 'spesen' | 'spesenText'
+	'von' | 'bis' | 'name' | 'art' | 'taetigkeit' | 'spesen' | 'spesenText'
 >;
 
 const LOCAL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
@@ -91,6 +98,7 @@ export function parseStundenInput(raw: Record<string, unknown>): StundenInput | 
 		von,
 		bis,
 		name,
+		art: raw.art === 'nacht' ? 'nacht' : 'tag',
 		taetigkeit: text(raw.taetigkeit),
 		spesen: Math.round(spesen * 100) / 100,
 		spesenText: text(raw.spesenText)
