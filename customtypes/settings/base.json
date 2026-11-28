@@ -133,7 +133,7 @@
 				"type": "Select",
 				"config": {
 					"label": "Anrede in Standardtexten",
-					"placeholder": "Sie oder Du in automatischen E-Mails",
+					"placeholder": "Sie oder Du auf der Website und in automatischen E-Mails",
 					"options": ["Sie", "Du"],
 					"default_value": "Sie"
 				}

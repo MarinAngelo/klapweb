@@ -3363,7 +3363,116 @@ export const translations: Record<string, Record<string, string>> = {
  * Die Helper-Funktion für Logik-Teile (Vorschlag 1)
  * Nutzt den Key als Fallback, falls keine Übersetzung existiert.
  */
-export function t(key: string, lang: string): string {
+
+/**
+ * «Du» form of German texts in Sie form — used when Settings › «Anrede in Standardtexten» = Du
+ * (layout data `addressDu`, $_ store). Key = German key in `translations`; new public text
+ * in Sie form → add the Du form here too.
+ */
+export const duForms: Record<string, string> = {
+	'Wir melden uns in Kürze bei Ihnen.': 'Wir melden uns in Kürze bei dir.',
+	'Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:':
+		'Links sind im Kontaktformular nicht erlaubt. Bitte entferne Links aus:',
+	'Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Buchung fehlgeschlagen. Bitte versuche es erneut.',
+	'Senden fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Senden fehlgeschlagen. Bitte versuche es erneut.',
+	'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.':
+		'Ein Fehler ist aufgetreten. Bitte versuche es erneut.',
+	'Verbindungsfehler. Bitte versuchen Sie es erneut.':
+		'Verbindungsfehler. Bitte versuche es erneut.',
+	'Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.':
+		'Übermittlung fehlgeschlagen. Bitte versuche es erneut.',
+	'Ihre Bestellung': 'Deine Bestellung',
+	'Ihre Angaben': 'Deine Angaben',
+	'Sie erhalten eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.':
+		'Du erhältst eine PDF-Rechnung per E-Mail. Zahlungsfrist 30 Tage.',
+	'Vielen Dank für Ihre Bestellung!': 'Vielen Dank für deine Bestellung!',
+	'Ihre Rechnung wurde soeben per E-Mail versandt.':
+		'Deine Rechnung wurde soeben per E-Mail versandt.',
+	'Bitte überweisen Sie den Betrag innerhalb von 30 Tagen.':
+		'Bitte überweise den Betrag innerhalb von 30 Tagen.',
+	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
+		'Wir haben deine Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.',
+	'Sie erhalten in Kürze eine Bestätigungs-E-Mail.':
+		'Du erhältst in Kürze eine Bestätigungs-E-Mail.',
+	'Bei Fragen stehen wir Ihnen gerne zur Verfügung.':
+		'Bei Fragen stehen wir dir gerne zur Verfügung.',
+	'Danke für Ihre Bewertung!': 'Danke für deine Bewertung!',
+	'Schade! Schreiben Sie uns, was gefehlt hat – mit E-Mail melden wir uns bei Ihnen.':
+		'Schade! Schreib uns, was gefehlt hat – mit E-Mail melden wir uns bei dir.',
+	'Ihre Auswahl': 'Deine Auswahl',
+	'Entdecken Sie unser Leistungsportfolio': 'Entdecke unser Leistungsportfolio',
+	'Ihre Bestellung ist bei uns eingegangen.': 'Deine Bestellung ist bei uns eingegangen.',
+	'Ihre Bestellung {leistung} ist bei uns eingegangen.':
+		'Deine Bestellung {leistung} ist bei uns eingegangen.',
+	'Ihre Nachricht wurde erfolgreich gesendet.': 'Deine Nachricht wurde erfolgreich gesendet.',
+	'Zu viele Nachrichten. Bitte versuchen Sie es in einigen Minuten erneut.':
+		'Zu viele Nachrichten. Bitte versuche es in einigen Minuten erneut.',
+	'Der Chat konnte nicht antworten. Bitte versuchen Sie es erneut.':
+		'Der Chat konnte nicht antworten. Bitte versuche es erneut.',
+	'Sie haben den KI-Chat in den Cookie-Einstellungen abgelehnt.':
+		'Du hast den KI-Chat in den Cookie-Einstellungen abgelehnt.',
+	'Ihre Nachrichten werden zur Beantwortung an Anthropic übertragen.':
+		'Deine Nachrichten werden zur Beantwortung an Anthropic übertragen.',
+	'Nicht-funktionale Dienste können Sie jederzeit ablehnen oder wieder zulassen':
+		'Nicht-funktionale Dienste kannst du jederzeit ablehnen oder wieder zulassen',
+	'Dabei können Cookies gesetzt und Daten wie Ihre IP-Adresse übertragen werden. Sie können dies jederzeit ablehnen.':
+		'Dabei können Cookies gesetzt und Daten wie deine IP-Adresse übertragen werden. Du kannst dies jederzeit ablehnen.',
+	'Hier sehen Sie, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste können Sie ablehnen.':
+		'Hier siehst du, welche Cookies und Dienste diese Website verwendet. Nicht-funktionale Dienste kannst du ablehnen.',
+	'Dieser Inhalt wird nicht geladen, weil Sie externe Inhalte abgelehnt haben.':
+		'Dieser Inhalt wird nicht geladen, weil du externe Inhalte abgelehnt hast.',
+	'Ihr Warenkorb ist leer.': 'Dein Warenkorb ist leer.',
+	'Sie wurden abgemeldet und erhalten keine weiteren Info-Mails mehr.':
+		'Du wurdest abgemeldet und erhältst keine weiteren Info-Mails mehr.',
+	'Dieser Abmelde-Link ist ungültig. Bitte verwenden Sie den Link aus der E-Mail.':
+		'Dieser Abmelde-Link ist ungültig. Bitte verwende den Link aus der E-Mail.',
+	'Möchten Sie für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?':
+		'Möchtest du für diese E-Mail-Adresse keine weiteren Info-Mails erhalten?',
+	'Fast geschafft! Wir haben Ihnen eine E-Mail geschickt. Bitte bestätigen Sie Ihre Anmeldung über den Link darin.':
+		'Fast geschafft! Wir haben dir eine E-Mail geschickt. Bitte bestätige deine Anmeldung über den Link darin.',
+	'Bitte bestätigen Sie, dass Sie Info-Mails erhalten möchten.':
+		'Bitte bestätige, dass du Info-Mails erhalten möchtest.',
+	'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es später erneut.':
+		'Die Anmeldung ist fehlgeschlagen. Bitte versuche es später erneut.',
+	'Bitte geben Sie eine gültige E-Mail-Adresse ein.': 'Bitte gib eine gültige E-Mail-Adresse ein.',
+	'Vielen Dank! Ihre Anmeldung ist bestätigt. Sie erhalten ab jetzt unsere Info-Mails.':
+		'Vielen Dank! Deine Anmeldung ist bestätigt. Du erhältst ab jetzt unsere Info-Mails.',
+	'Bitte melden Sie sich erneut an.': 'Bitte melde dich erneut an.',
+	'Bitte bestätigen Sie die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:':
+		'Bitte bestätige die Anmeldung für die Info-Mails mit dieser E-Mail-Adresse:',
+	'Ihre Buchung wurde storniert. Der Termin ist wieder verfügbar.':
+		'Deine Buchung wurde storniert. Der Termin ist wieder verfügbar.',
+	'Die Rechnung für die Stornogebühr erhalten Sie per E-Mail.':
+		'Die Rechnung für die Stornogebühr erhältst du per E-Mail.',
+	'Die Buchung konnte nicht geprüft werden. Bitte versuchen Sie es später erneut.':
+		'Die Buchung konnte nicht geprüft werden. Bitte versuche es später erneut.',
+	'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktieren Sie uns direkt.':
+		'Eine Online-Stornierung ist nicht mehr möglich. Bitte kontaktiere uns direkt.',
+	'Bitte bestätigen Sie die Stornogebühr.': 'Bitte bestätige die Stornogebühr.',
+	'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte laden Sie die Seite neu.':
+		'Die Stornierungsfrist ist inzwischen abgelaufen. Bitte lade die Seite neu.',
+	'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, Ihre Cookie-Auswahl). Können nicht deaktiviert werden.':
+		'Für den Betrieb der Website erforderlich (z.B. Anmeldung, geschützte Seiten, deine Cookie-Auswahl). Können nicht deaktiviert werden.',
+	'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten Ihre IP-Adresse.':
+		'Karten, Videos und andere eingebettete Inhalte von Drittanbietern. Diese können Cookies setzen und erhalten deine IP-Adresse.',
+	'Chat-Assistent, der Ihre Fragen mit künstlicher Intelligenz beantwortet. Ihre Nachrichten werden dafür an einen externen Anbieter übertragen.':
+		'Chat-Assistent, der deine Fragen mit künstlicher Intelligenz beantwortet. Deine Nachrichten werden dafür an einen externen Anbieter übertragen.',
+	'Hält Sie nach der Anmeldung in Ihrem Benutzerkonto angemeldet.':
+		'Hält dich nach der Anmeldung in deinem Benutzerkonto angemeldet.',
+	'Merkt sich die Leistungen in Ihrem Warenkorb bis zur Bestellung.':
+		'Merkt sich die Leistungen in deinem Warenkorb bis zur Bestellung.',
+	'Merkt sich Ihre Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).':
+		'Merkt sich deine Buchungs-Referenz für die Aufgabenliste (max. 14 Tage).',
+	'Speichert Ihre Auswahl in diesem Cookie-Dialog.':
+		'Speichert deine Auswahl in diesem Cookie-Dialog.',
+	'Übertragung Ihrer Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)':
+		'Übertragung deiner Chat-Nachrichten über unseren Server an Anthropic (nur beim Senden)'
+};
+
+/** `du` = Settings «Anrede in Standardtexten» is «Du» → German Du form (duForms) where available */
+export function t(key: string, lang: string, du = false): string {
 	const entry = translations[key];
 	if (!entry) {
 		if (dev) console.warn(`[i18n] Fehlender Key: "${key}"`);
@@ -3372,6 +3481,7 @@ export function t(key: string, lang: string): string {
 
 	// Wir suchen eine passende Übersetzung (z.B. 'en' findet 'en-us')
 	const langBase = lang.split('-')[0]; // 'en' oder 'de'
+	if (du && langBase === 'de' && duForms[key]) return duForms[key];
 	const foundKey = Object.keys(entry).find((k) => k.startsWith(langBase));
 
 	return entry[foundKey || ''] || entry['de-ch'] || key;
