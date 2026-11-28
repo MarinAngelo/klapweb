@@ -119,6 +119,8 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 		byAdmin?: boolean;
 		/** Admin booking: send the confirmation to the customer (only with e-mail) */
 		sendConfirmation?: boolean;
+		/** Online booking: AGB + privacy policy accepted in the summary step (required) */
+		agbAccepted?: boolean;
 	};
 	try {
 		body = await request.json();
@@ -135,6 +137,10 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 	const byAdmin = !!body.byAdmin;
 	if (byAdmin && !isAdmin(cookies)) {
 		return new Response(JSON.stringify({ error: 'Nicht angemeldet' }), { status: 403 });
+	}
+	// Online bookings only with accepted AGB (summary step of the form)
+	if (!byAdmin && body.agbAccepted !== true) {
+		return new Response(JSON.stringify({ error: 'Bitte die AGB akzeptieren.' }), { status: 400 });
 	}
 
 	// Check if already booked or cancelled
@@ -291,7 +297,9 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 				: undefined,
 		arbeitstagId,
 		angebotId,
-		source: byAdmin ? 'admin' : 'online'
+		source: byAdmin ? 'admin' : 'online',
+		// Proof of the AGB acceptance (online bookings)
+		agbAcceptedAt: byAdmin ? undefined : new Date().toISOString()
 	});
 	invalidateTermineCache();
 

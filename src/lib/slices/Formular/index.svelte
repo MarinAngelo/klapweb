@@ -15,6 +15,8 @@
 	import { onMount } from 'svelte';
 	import { t } from '$lib/i18n/translations';
 	import { _ } from '$lib/stores/i18n';
+	import { getLegalHref } from '$lib/utils/legalHref';
+	import { formatDateWithWeekday } from '$lib/utils/formatDate';
 	export let slice: FormSlice;
 	export let index: number = 0;
 	export let slices: any[] = [];
@@ -286,6 +288,157 @@
 		return offenders;
 	}
 
+	// ── Appointment: step 2 = summary + AGB confirmation ─────────────────────────
+	type ReviewSlot = {
+		titel: string;
+		datum: string;
+		uhrzeit: string;
+		endzeit?: string;
+		sessionLaenge: number | null;
+	};
+	let reviewing = false;
+	let reviewFormData: FormData | null = null;
+	let reviewTerminId = '';
+	let reviewSlot: ReviewSlot | null = null;
+	let reviewRows: { label: string; value: string }[] = [];
+	let agbAccepted = false;
+	$: agbHref = getLegalHref(lang, $page.data.mainLang, 'agb', 'terms-and-conditions');
+	$: privacyHref = getLegalHref(
+		lang,
+		$page.data.mainLang,
+		'datenschutzerklaerung',
+		'privacy-policy'
+	);
+
+	async function openReview(formData: FormData, terminId: string) {
+		// Appointment details from the list of free slots (cached on the server)
+		reviewSlot = null;
+		try {
+			const r = await fetch('/api/termine');
+			const list = r.ok ? await r.json() : [];
+			reviewSlot = Array.isArray(list) ? (list.find((x: any) => x.id === terminId) ?? null) : null;
+		} catch {
+			// summary without appointment details
+		}
+		reviewRows = formFields
+			.filter((f) => f && effectiveKey(f) && (f as any).field_type !== 'Termin')
+			.map((f) => ({
+				label: f.field_name ?? effectiveKey(f),
+				value: String(formData.get(effectiveKey(f)) ?? '').trim()
+			}))
+			.filter((row) => row.value);
+		reviewFormData = formData;
+		reviewTerminId = terminId;
+		agbAccepted = false;
+		reviewing = true;
+		scrollToForm();
+	}
+
+	function closeReview() {
+		reviewing = false;
+		linkError = null;
+		scrollToForm();
+	}
+
+	let formWrapper: HTMLElement;
+	let reviewSection: HTMLElement;
+	/** Step change: to the top of the summary, back to the top of the form */
+	function scrollToForm() {
+		setTimeout(
+			() =>
+				(reviewing ? reviewSection : formWrapper)?.scrollIntoView({
+					behavior: 'smooth',
+					block: 'start'
+				}),
+			0
+		);
+	}
+
+	async function confirmBooking() {
+		if (!reviewFormData || !agbAccepted || submitting) return;
+		submitting = true;
+		try {
+			await bookAppointment(reviewFormData, reviewTerminId);
+		} finally {
+			submitting = false;
+		}
+	}
+
+	const fmtReviewDate = (slot: ReviewSlot) =>
+		[
+			formatDateWithWeekday(slot.datum, null, lang === 'de-ch' ? 'de-CH' : lang, 'long'),
+			slot.uhrzeit ? `${slot.uhrzeit}${slot.endzeit ? `–${slot.endzeit}` : ''} ${$_('Uhr')}` : ''
+		]
+			.filter(Boolean)
+			.join(', ');
+
+	/** Books the slot (/api/buche-termin) and opens the confirmation page */
+	async function bookAppointment(formData: FormData, terminId: string) {
+		const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
+		const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
+		const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
+		const customerTimezone = zeitzoneField
+			? (formData.get('zeitzone') as string) || undefined
+			: undefined;
+		try {
+			const extraFields: Record<string, string> = {};
+			const extraLabels: Record<string, string> = {};
+			for (const field of formFields) {
+				const key = effectiveKey(field);
+				if (!key || ['termin', 'email'].includes(key)) continue;
+				if (/^name$/i.test(key)) continue;
+				const value = formData.get(key);
+				if (typeof value === 'string') {
+					extraFields[key] = value;
+					extraLabels[key] = field.field_name ?? key;
+				}
+			}
+			const resp = await fetch('/api/buche-termin', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					terminId,
+					agbAccepted: true,
+					name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
+					email: emailField ? String(formData.get('email') ?? '') : undefined,
+					customerTimezone,
+					fields: extraFields,
+					fieldLabels: extraLabels
+				})
+			});
+			if (resp.status === 409) {
+				const data = await resp.json();
+				linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
+				return;
+			}
+			if (!resp.ok) {
+				linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
+				return;
+			}
+			// Buchung erfolgreich → auf Success-Page weiterleiten
+			const result = await resp.json();
+			const params = new URLSearchParams({
+				titel: result.titel ?? '',
+				datum: result.datum ?? '',
+				uhrzeit: result.uhrzeit ?? '',
+				endzeit: result.endzeit ?? '',
+				dauer: String(result.dauer ?? ''),
+				name: result.name ?? '',
+				email: result.email ?? '',
+				storno: result.storno ?? '',
+				ics: result.ics ?? '',
+				ort: result.ort ?? '',
+				karte: result.karte ?? '',
+				returnTo: window.location.pathname + window.location.search
+			});
+			goto(`/termin-gebucht?${params.toString()}`);
+			return;
+		} catch {
+			linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
+			return;
+		}
+	}
+
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 
@@ -320,73 +473,13 @@
 			}
 			linkError = null;
 
-			// Termin-Buchung: Slot reservieren bevor Formular abgesendet wird
+			// Appointment booking: first a summary with AGB confirmation (step 2), then book
 			const terminField = formFields.find((f) => (f as any).field_type === 'Termin');
 			if (terminField) {
 				const terminId = formData.get('termin') as string;
 				if (terminId) {
-					const emailField = formFields.find((f) => (f as any).field_type === 'E-Mail');
-					const nameField2 = formFields.find((f) => /^name$/i.test(effectiveKey(f)));
-					const zeitzoneField = formFields.find((f) => (f as any).field_type === 'Zeitzone');
-					const customerTimezone = zeitzoneField
-						? (formData.get('zeitzone') as string) || undefined
-						: undefined;
-					try {
-						const extraFields: Record<string, string> = {};
-						const extraLabels: Record<string, string> = {};
-						for (const field of formFields) {
-							const key = effectiveKey(field);
-							if (!key || ['termin', 'email'].includes(key)) continue;
-							if (/^name$/i.test(key)) continue;
-							const value = formData.get(key);
-							if (typeof value === 'string') {
-								extraFields[key] = value;
-								extraLabels[key] = field.field_name ?? key;
-							}
-						}
-						const resp = await fetch('/api/buche-termin', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({
-								terminId,
-								name: nameField2 ? String(formData.get(effectiveKey(nameField2)) ?? '') : undefined,
-								email: emailField ? String(formData.get('email') ?? '') : undefined,
-								customerTimezone,
-								fields: extraFields,
-								fieldLabels: extraLabels
-							})
-						});
-						if (resp.status === 409) {
-							const data = await resp.json();
-							linkError = data.error ?? t('Dieser Termin ist leider nicht mehr verfügbar.', lang);
-							return;
-						}
-						if (!resp.ok) {
-							linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
-							return;
-						}
-						// Buchung erfolgreich → auf Success-Page weiterleiten
-						const result = await resp.json();
-						const params = new URLSearchParams({
-							titel: result.titel ?? '',
-							datum: result.datum ?? '',
-							uhrzeit: result.uhrzeit ?? '',
-							endzeit: result.endzeit ?? '',
-							dauer: String(result.dauer ?? ''),
-							name: result.name ?? '',
-							email: result.email ?? '',
-							storno: result.storno ?? '',
-							ics: result.ics ?? '',
-							ort: result.ort ?? '',
-							karte: result.karte ?? '',
-							returnTo: window.location.pathname + window.location.search
-						});
-						goto(`/termin-gebucht?${params.toString()}`);
-						return;
-					} catch {
-						linkError = t('Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.', lang);
-						return;
-					}
+					await openReview(formData, terminId);
+					return;
 				}
 			}
 
@@ -589,7 +682,8 @@
 				? '-mx-6 md:mx-0 px-6 md:px-0'
 				: ''}"
 		>
-			<div>
+			<!-- Step 2 replaces the whole form (like a next page): title and intro hidden -->
+			<div bind:this={formWrapper} class="scroll-mt-24" class:hidden={reviewing}>
 				{#if slice.primary?.form_title}
 					<Heading tag="h2" class="mt-0">{slice.primary?.form_title}</Heading>
 				{/if}
@@ -598,8 +692,75 @@
 				{/if}
 			</div>
 			<div>
+				{#if reviewing}
+					<!-- Step 2 of the appointment booking: summary + AGB confirmation -->
+					<section
+						bind:this={reviewSection}
+						class="scroll-mt-24"
+						aria-label={$_('Zusammenfassung')}
+					>
+						<Heading tag="h2" class="mt-0">{$_('Zusammenfassung')}</Heading>
+						<dl
+							class="panel-tinted m-0 grid grid-cols-1 gap-x-6 gap-y-2 rounded-md p-5 sm:grid-cols-[auto_1fr]"
+						>
+							{#if reviewSlot}
+								<dt class="font-bold">{$_('Angebot')}</dt>
+								<dd class="m-0">{reviewSlot.titel}</dd>
+								<dt class="font-bold">{$_('Termin')}</dt>
+								<dd class="m-0">{fmtReviewDate(reviewSlot)}</dd>
+								{#if reviewSlot.sessionLaenge}
+									<dt class="font-bold">{$_('Dauer')}</dt>
+									<dd class="m-0">{reviewSlot.sessionLaenge} min</dd>
+								{/if}
+							{/if}
+							{#each reviewRows as row}
+								<dt class="font-bold">{row.label}</dt>
+								<dd class="m-0 whitespace-pre-wrap break-words">{row.value}</dd>
+							{/each}
+						</dl>
+
+						<label
+							for="agb-accepted-{index ?? 0}"
+							class="mt-6 flex cursor-pointer items-start gap-3"
+						>
+							<Checkbox id="agb-accepted-{index ?? 0}" bind:checked={agbAccepted} />
+							<span>
+								{$_('Ich habe die')}
+								<a href={agbHref} target="_blank" rel="noopener" class="underline">{$_('AGB')}</a>
+								{$_('und die')}
+								<a href={privacyHref} target="_blank" rel="noopener" class="underline"
+									>{$_('Datenschutz')}</a
+								>
+								{$_('gelesen und akzeptiere diese.')}
+							</span>
+						</label>
+
+						{#if linkError}
+							<p role="alert" class="mt-3 text-sm text-red-600">{linkError}</p>
+						{/if}
+
+						<div class="mt-8 flex flex-wrap justify-center gap-3 md:justify-end">
+							<Button
+								text={$_('Zurück')}
+								variant="link"
+								link={undefined}
+								mb={false}
+								on:click={closeReview}
+							/>
+							<Button
+								text={submitting ? $_('Wird gesendet…') : $_('Kostenpflichtig buchen')}
+								disabled={!agbAccepted || submitting}
+								link={undefined}
+								mb={false}
+								styleName={submitBtnStyle}
+								on:click={confirmBooking}
+							/>
+						</div>
+					</section>
+				{/if}
 				<form
 					class="mt-16"
+					class:hidden={reviewing}
 					name={formName}
 					method="POST"
 					data-netlify="true"
@@ -651,7 +812,9 @@
 						<Button
 							text={submitting
 								? t('Wird gesendet…', lang)
-								: slice.primary?.submitt_button_text || t('Absenden', lang)}
+								: terminFields.length
+									? $_('Weiter')
+									: slice.primary?.submitt_button_text || t('Absenden', lang)}
 							disabled={!!linkError || submitting}
 							link={undefined}
 							styleName={submitBtnStyle}

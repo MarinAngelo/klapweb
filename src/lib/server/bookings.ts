@@ -23,6 +23,8 @@ export interface BookingRecord {
 	arbeitstagId?: string;
 	angebotId?: string;
 	reminderSent?: boolean;
+	/** Online booking: time the customer accepted AGB + privacy policy (summary step) */
+	agbAcceptedAt?: string;
 	telefon?: string;
 	/** Who booked: visitor online or operator in the admin («Für Kunde buchen»); missing = online */
 	source?: 'online' | 'admin';
