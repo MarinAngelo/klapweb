@@ -92,12 +92,16 @@ async function sendMail(
 	});
 	if (error) return error;
 
+	// Appointment bookings have no ressourceUid → omit it instead of printing "undefined"
+	const context = [buchung.ressourceUid, `${dateFieldLabel} ${dateLabel}`]
+		.filter(Boolean)
+		.join(', ');
 	await resend.emails.send({
 		from: fromEmail,
 		to: operatorEmail || fromEmail,
 		subject: `✓ ${typeLabel} gesendet an ${buchung.email}`,
 		html: `<p>${typeLabel} für <strong>${buchung.name || buchung.email}</strong>
-		         (${buchung.ressourceUid}, ${dateFieldLabel} ${dateLabel})
+		         (${context})
 		         wurde erfolgreich an <a href="mailto:${buchung.email}">${buchung.email}</a> gesendet.</p>
 		         <p><strong>Betreff:</strong> ${betreff}</p>`
 	});
@@ -438,7 +442,7 @@ ${datumLabel}, ${buchung.uhrzeit} Uhr</p>
 					betreff,
 					html,
 					'Termin-Erinnerungsmail',
-					datumLabel,
+					`${datumLabel}, ${buchung.uhrzeit} Uhr`,
 					'Termin'
 				);
 				if (error) {
