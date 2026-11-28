@@ -154,6 +154,13 @@
 					"placeholder": "Leer = «Guten Tag», z.B. «Hallo»"
 				}
 			},
+			"mail_closing": {
+				"type": "Text",
+				"config": {
+					"label": "Verabschiedung in Standardtexten",
+					"placeholder": "Leer = «Freundliche Grüsse», z.B. «Liebe Grüsse»"
+				}
+			},
 			"privacy_policy": {
 				"type": "StructuredText",
 				"config": {

@@ -7,7 +7,7 @@
  * Guest mails: form of address + greeting from the settings (`style`), HTML in the page colours
  * (`theme`); operator mails: plain text.
  */
-import { duSie, greetingLine, type TextStyle } from '$lib/addressForm';
+import { closingLine, duSie, greetingLine, type TextStyle } from '$lib/addressForm';
 import type { MailTheme } from '$lib/mailLayout.js';
 import { plainTextMail, withHtml, type Mail } from '$lib/server/mailText';
 
@@ -70,7 +70,7 @@ export function taskConfirmedMail(
 				),
 				`Buchungs-ID: ${c.buchungId}`,
 				``,
-				`Freundliche Grüsse`
+				closingLine(c.style)
 			].join('\n')
 		},
 		c.theme
@@ -113,7 +113,7 @@ export function taskSubmittedMail(c: Guest & { titel: string; lines: string[] })
 				``,
 				...c.lines,
 				``,
-				`Freundliche Grüsse`
+				closingLine(c.style)
 			].join('\n')
 		},
 		c.theme
@@ -193,7 +193,7 @@ export function taskApprovedMail(
 					? [``, `─────────────────────────────`, `Antwort des Betreibers:`, c.betreiberAntwort]
 					: []),
 				``,
-				`Freundliche Grüsse`
+				closingLine(c.style)
 			].join('\n')
 		},
 		c.theme

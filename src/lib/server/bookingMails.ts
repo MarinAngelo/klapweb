@@ -6,7 +6,7 @@
  * exactly what is sent. `style` = settings «Anrede» / «Begrüssung in Standardtexten» (getTextStyle()).
  */
 
-import { duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
+import { closingLine, duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
 import { applyTokens, richTextToMail, withHtml, type Mail } from '$lib/server/mailText';
 import { mailButton, textToMailHtml, wrapMail, type MailTheme } from '$lib/mailLayout.js';
 
@@ -115,7 +115,7 @@ function appointmentMail(c: ConfirmationInput, kind: 'confirmation' | 'reminder'
 				: []),
 			`Bei Fragen ${wirIch(c.style?.ich, 'stehen wir', 'stehe ich')} ${duSie(c.style?.du, 'Ihnen', 'dir')} gerne zur Verfügung.`,
 			``,
-			`Freundliche Grüsse`,
+			closingLine(c.style),
 			c.companyName
 		].join('\n');
 
@@ -251,7 +251,7 @@ export function cancelFeeMail(
 						: `fällt eine Stornogebühr von ${c.feePercent}% (${chf(c.fee)}) an. ` +
 							`${wirIch(c.style?.ich, 'Wir melden uns', 'Ich melde mich')} für die Bezahlung bei ${duSie(c.style?.du, 'Ihnen', 'dir')}.`),
 				``,
-				`Freundliche Grüsse`,
+				closingLine(c.style),
 				c.companyName
 			].join('\n')
 		},
@@ -313,7 +313,7 @@ export function bookingInvoiceMail(
 				`${c.titel}`,
 				c.dateLabel,
 				``,
-				`Freundliche Grüsse`,
+				closingLine(c.style),
 				c.companyName
 			].join('\n')
 		},

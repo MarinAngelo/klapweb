@@ -5,7 +5,7 @@
  * preview always shows exactly what is sent. `style` = settings «Anrede» / «Begrüssung in
  * Standardtexten» (getTextStyle()); customer mails with `theme` get an HTML part in the page colours.
  */
-import { duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
+import { closingLine, duSie, greetingLine, wirIch, type TextStyle } from '$lib/addressForm';
 import { applyTokens, richTextToMail, withHtml, type Mail } from '$lib/server/mailText';
 import type { MailTheme } from '$lib/mailLayout.js';
 
@@ -34,7 +34,7 @@ export function adminInvoiceMail(c: Base & { invoiceNumber: string }): Mail {
 					'Vielen Dank für deinen Auftrag. Deine Rechnung findest du im Anhang.'
 				),
 				'',
-				'Freundliche Grüsse',
+				closingLine(c.style),
 				c.companyName
 			].join('\n')
 		},
@@ -65,7 +65,7 @@ export function checkoutInvoiceMail(
 						'Vielen Dank für deine Bestellung. Deine Rechnung findest du im Anhang.'
 					),
 					'',
-					'Freundliche Grüsse',
+					closingLine(c.style),
 					c.companyName
 				].join('\n')
 		},
@@ -102,7 +102,7 @@ export function recurringInvoiceMail(c: Base & { invoiceNumber: string }): Mail 
 					`Im Anhang erhältst du die jährliche Rechnung ${c.invoiceNumber}.`
 				),
 				'',
-				'Freundliche Grüsse',
+				closingLine(c.style),
 				c.companyName
 			].join('\n')
 		},
@@ -160,7 +160,7 @@ export function dunningMail(
 					'Falls du die Zahlung bereits ausgelöst hast, betrachte dieses Schreiben bitte als gegenstandslos.'
 				),
 				'',
-				'Freundliche Grüsse',
+				closingLine(c.style),
 				c.companyName
 			].join('\n')
 		},
