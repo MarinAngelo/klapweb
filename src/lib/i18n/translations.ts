@@ -2560,6 +2560,22 @@ export const translations: Record<string, Record<string, string>> = {
 		'de-ch': 'Nach jeder Online-Buchung, nicht bei Buchungen im Admin.',
 		'en-us': 'After every online booking, not for bookings made in the admin.'
 	},
+	'Termin-Erinnerung': { 'de-ch': 'Termin-Erinnerung', 'en-us': 'Appointment reminder' },
+	'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).':
+		{
+			'de-ch':
+				'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).',
+			'en-us':
+				'Before the appointment, as many hours as set under «Erinnerung: Stunden vor Termin» (Settings › Terminbuchung).'
+		},
+	'Erinnerung gesendet (an Sie)': {
+		'de-ch': 'Erinnerung gesendet (an Sie)',
+		'en-us': 'Reminder sent (to you)'
+	},
+	'Nach jeder versendeten Termin-Erinnerung.': {
+		'de-ch': 'Nach jeder versendeten Termin-Erinnerung.',
+		'en-us': 'After every appointment reminder sent.'
+	},
 	'Stornierung bestätigt': { 'de-ch': 'Stornierung bestätigt', 'en-us': 'Cancellation confirmed' },
 	'Wenn die Kundin / der Kunde kostenlos storniert.': {
 		'de-ch': 'Wenn die Kundin / der Kunde kostenlos storniert.',
