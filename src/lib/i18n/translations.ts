@@ -3372,6 +3372,27 @@ export const translations: Record<string, Record<string, string>> = {
  * in Sie form → add the Du form here too.
  */
 export const duForms: Record<string, string> = {
+	'Ihre Buchungsanfrage wurde bestätigt.': 'Deine Buchungsanfrage wurde bestätigt.',
+	'Ihre Buchungsreferenz': 'Deine Buchungsreferenz',
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese brauchst du für den Check-in und Check-out auf unserer Website.)',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'wir freuen uns auf deine Anreise am {anreise} (Abreise: {abreise}).',
+	'Ihre Anreise: {ressource}': 'Deine Anreise: {ressource}',
+	'Ihre Abreise morgen: {ressource}': 'Deine Abreise morgen: {ressource}',
+	'Ihre Abrechnung: {ressource}': 'Deine Abrechnung: {ressource}',
+	'Vielen Dank für Ihren Aufenthalt. Hier ist Ihre definitive Abrechnung:':
+		'Vielen Dank für deinen Aufenthalt. Hier ist deine definitive Abrechnung:',
+	'Bitte bestätigen Sie Ihre Anmeldung für die Info-Mails':
+		'Bitte bestätige deine Anmeldung für die Info-Mails',
+	'Sie haben sich für die Info-Mails angemeldet. Bitte bestätigen Sie Ihre Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.':
+		'Du hast dich für die Info-Mails angemeldet. Bitte bestätige deine Anmeldung mit einem Klick auf den Button. Der Link ist 7 Tage gültig.',
+	'Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.':
+		'Falls du dich nicht angemeldet hast, ignoriere diese E-Mail einfach.',
+	'Sie erhalten diese E-Mail, weil Sie die Info-Mails abonniert haben von':
+		'Du erhältst diese E-Mail, weil du die Info-Mails abonniert hast von',
+	'Sie erhalten diese E-Mail als Kundin oder Kunde von':
+		'Du erhältst diese E-Mail als Kundin oder Kunde von',
 	'Wir melden uns in Kürze bei Ihnen.': 'Wir melden uns in Kürze bei dir.',
 	'Links sind im Kontaktformular nicht erlaubt. Bitte entfernen Sie Links aus:':
 		'Links sind im Kontaktformular nicht erlaubt. Bitte entferne Links aus:',
@@ -3479,6 +3500,12 @@ export const duForms: Record<string, string> = {
  * key that also has a Du form). New public text with wir/uns/unser → add the Ich form here.
  */
 export const ichForms: Record<string, string> = {
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese benötigen Sie für den Check-in und Check-out auf meiner Website.)',
+	'Wir melden uns in Kürze zur Zahlungsabwicklung.':
+		'Ich melde mich in Kürze zur Zahlungsabwicklung.',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'ich freue mich auf Ihre Anreise am {anreise} (Abreise: {abreise}).',
 	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei Ihnen.',
 	'Wir melden uns zur Terminvereinbarung.': 'Ich melde mich zur Terminvereinbarung.',
 	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
@@ -3503,6 +3530,10 @@ export const ichForms: Record<string, string> = {
 };
 
 export const duIchForms: Record<string, string> = {
+	'(Diese benötigen Sie für den Check-in und Check-out auf unserer Website.)':
+		'(Diese brauchst du für den Check-in und Check-out auf meiner Website.)',
+	'wir freuen uns auf Ihre Anreise am {anreise} (Abreise: {abreise}).':
+		'ich freue mich auf deine Anreise am {anreise} (Abreise: {abreise}).',
 	'Wir melden uns in Kürze bei Ihnen.': 'Ich melde mich in Kürze bei dir.',
 	'Wir haben Ihre Bestellung erhalten und melden uns in Kürze zur Terminvereinbarung.':
 		'Ich habe deine Bestellung erhalten und melde mich in Kürze zur Terminvereinbarung.',

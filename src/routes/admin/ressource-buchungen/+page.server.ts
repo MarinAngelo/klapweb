@@ -21,7 +21,7 @@ import {
 	getRessourceDocForBooking,
 	type CmsMailContext
 } from '$lib/server/ressourceMail';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
 
 export const prerender = false;
 
@@ -56,7 +56,8 @@ async function mailBestaetigung(buchung: RessourceBuchung, fetch: typeof globalT
 	if (!resendKey || !emailFrom || !buchung.email) return;
 
 	// CMS template in the booking language (fallback: main language)
-	const cms: CmsMailContext = { doc: null, vars: {}, theme: null };
+	// Standard texts: Du/Sie, Wir/Ich, greeting, closing from the settings
+	const cms: CmsMailContext = { doc: null, vars: {}, theme: null, style: await getTextStyle() };
 	try {
 		const client = createClient({ fetch });
 		const [doc, variablesData, theme] = await Promise.all([

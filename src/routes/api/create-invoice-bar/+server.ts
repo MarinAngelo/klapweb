@@ -4,7 +4,8 @@ import { listCustomers, saveCustomer } from '$lib/server/customers';
 import { saveEventRegistration } from '$lib/server/eventRegistrations';
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
-import { getMailFrom, getNotifyTo } from '$lib/server/mailFrom';
+import { getMailFrom, getNotifyTo, getTextStyle } from '$lib/server/mailFrom';
+import { barRegistrationMail } from '$lib/server/invoiceMails';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
@@ -122,7 +123,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 					const resend = new Resend(resendKey);
 					// Sender incl. name from the settings («Absender-Name»)
 					const fromWithName = fromEmail;
-					const customerName = [vorname, nachname].filter(Boolean).join(' ') || 'Teilnehmer/in';
+					const customerName = [vorname, nachname].filter(Boolean).join(' ');
 					const fmt = (n: number) =>
 						new Intl.NumberFormat('de-CH', {
 							style: 'currency',
@@ -136,8 +137,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 						await resend.emails.send({
 							from: fromWithName,
 							to: email,
-							subject: `Anmeldebestätigung – ${service}`,
-							text: `Hallo ${customerName}\n\nVielen Dank für deine Anmeldung zu «${service}».\n\nBetrag: ${fmt(amount ?? 0)}\nZahlungsart: Barzahlung\n\nIch freue mich auf deine Teilnahme!`
+							...barRegistrationMail({
+								name: customerName || undefined,
+								service,
+								amount: fmt(amount ?? 0),
+								style: await getTextStyle()
+							})
 						});
 					}
 
@@ -149,7 +154,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 									.filter(([k]) => body[k] !== undefined && body[k] !== '')
 									.map(([k, l]) => `${l}: ${body[k]}`)
 									.join('\n')
-							: `Name: ${customerName}\nE-Mail: ${email ?? '—'}`;
+							: `Name: ${customerName || '—'}\nE-Mail: ${email ?? '—'}`;
 						await resend.emails.send({
 							from: fromWithName,
 							to: notifyEmail,

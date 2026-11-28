@@ -24,6 +24,7 @@ import {
 	requestProviderMail,
 	type CmsMailContext
 } from '$lib/server/ressourceMail';
+import { textStyleFrom } from '$lib/addressForm';
 
 export const prerender = false;
 
@@ -54,7 +55,12 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		? (((await getRessourceDocForBooking(client, { ressourceUid: uid, lang }).catch(() => null))
 				?.data ?? null) as Record<string, any> | null)
 		: null;
-	const cms: CmsMailContext = { doc, vars: mailVariables(variablesData, lang), theme };
+	const cms: CmsMailContext = {
+		doc,
+		vars: mailVariables(variablesData, lang),
+		theme,
+		style: textStyleFrom(settings?.data)
+	};
 	const ressourceName = doc?.name || 'Ferienwohnung';
 
 	const buchung: RessourceBuchung = {
@@ -173,6 +179,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 			to: SAMPLE.email,
 			active: true,
 			...finalBillingMail({
+				style: cms.style,
 				...buchung,
 				creditsCHF: 30,
 				aufgaben,

@@ -175,3 +175,27 @@ export function dunningOperatorMail(notes: string[]): Mail {
 		text: notes.join('\n\n')
 	};
 }
+
+/** Registration with cash payment (event, /api/create-invoice-bar) to the participant */
+export function barRegistrationMail(c: {
+	name?: string;
+	service: string;
+	amount: string;
+	style?: TextStyle;
+}): Mail {
+	return {
+		subject: `Anmeldebestätigung – ${c.service}`,
+		text: [
+			greetingLine(c.style, c.name),
+			'',
+			`Vielen Dank für ${duSie(c.style?.du, 'Ihre', 'deine')} Anmeldung zu «${c.service}».`,
+			'',
+			`Betrag: ${c.amount}`,
+			'Zahlungsart: Barzahlung',
+			'',
+			`${wirIch(c.style?.ich, 'Wir freuen uns', 'Ich freue mich')} auf ${duSie(c.style?.du, 'Ihre', 'deine')} Teilnahme!`,
+			'',
+			closingLine(c.style)
+		].join('\n')
+	};
+}

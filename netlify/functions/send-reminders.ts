@@ -73,6 +73,10 @@ function dateInDays(days: number): string {
 	return d.toISOString().slice(0, 10);
 }
 
+/** Settings «Anrede in Standardtexten» (set in handler): «Ihre» / «Deine» in fallback subjects */
+let addressDu = false;
+const possessive = () => (addressDu ? 'Deine' : 'Ihre');
+
 /** «Benachrichtigungen an (intern)», else «Verantwortliche E-Mail» / «Korrespondenz E-Mail» (set in handler) */
 let operatorEmail = '';
 
@@ -137,6 +141,7 @@ export default async function handler() {
 	// «Absender-Name», else website name / company (same as src/lib/server/mailFrom.ts)
 	const sd = (settings?.data ?? {}) as any;
 	const isEmail = (v: unknown) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v ?? '').trim());
+	addressDu = sd.address_form === 'Du';
 	operatorEmail =
 		[sd.notification_email, sd.responsible_email, sd.e_mail]
 			.map((v) => String(v ?? '').trim())
@@ -246,7 +251,7 @@ export default async function handler() {
 						tokens(buchung, doorCode(buchung.ressourceUid)),
 						mailVariables(variablesData, buchung.lang)
 					) ||
-					`${isEnglish(buchung) ? 'Your departure tomorrow' : 'Ihre Abreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
+					`${isEnglish(buchung) ? 'Your departure tomorrow' : `${possessive()} Abreise morgen`}: ${d.name ?? buchung.ressourceUid}`;
 
 				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(
@@ -309,7 +314,7 @@ export default async function handler() {
 						tokens(buchung, doorCode(buchung.ressourceUid)),
 						mailVariables(variablesData, buchung.lang)
 					) ||
-					`${isEnglish(buchung) ? 'Your arrival tomorrow' : 'Ihre Anreise morgen'}: ${d.name ?? buchung.ressourceUid}`;
+					`${isEnglish(buchung) ? 'Your arrival tomorrow' : `${possessive()} Anreise morgen`}: ${d.name ?? buchung.ressourceUid}`;
 
 				const mailTheme = await themeFor(buchung.lang);
 				const html = replaceTokens(

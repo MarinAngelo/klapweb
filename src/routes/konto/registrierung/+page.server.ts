@@ -3,7 +3,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { createUser } from '$lib/server/users';
 import { env } from '$env/dynamic/private';
 import { FEATURE_KUNDENKONTO } from '$lib/server/features';
-import { getMailFrom } from '$lib/server/mailFrom';
+import { getMailFrom, getTextStyle } from '$lib/server/mailFrom';
+import { verifyEmailMail } from '$lib/server/kontoMails';
 
 export const prerender = false;
 
@@ -53,13 +54,7 @@ export const actions: Actions = {
 				await resend.emails.send({
 					from: fromEmail,
 					to: email,
-					subject: 'E-Mail-Adresse bestätigen',
-					html: `
-						<p>Hallo ${name},</p>
-						<p>Bitte bestätige deine E-Mail-Adresse:</p>
-						<p><a href="${verifyUrl}">${verifyUrl}</a></p>
-						<p>Der Link ist 24 Stunden gültig.</p>
-					`
+					...verifyEmailMail({ name, link: verifyUrl, style: await getTextStyle() })
 				});
 			} catch {
 				// E-Mail-Fehler nicht blockend — User wurde trotzdem erstellt
