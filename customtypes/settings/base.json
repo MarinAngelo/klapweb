@@ -138,6 +138,15 @@
 					"default_value": "Sie"
 				}
 			},
+			"sender_form": {
+				"type": "Select",
+				"config": {
+					"label": "Absender in Standardtexten",
+					"placeholder": "Wir oder Ich auf der Website und in automatischen E-Mails",
+					"options": ["Wir", "Ich"],
+					"default_value": "Wir"
+				}
+			},
 			"mail_greeting": {
 				"type": "Text",
 				"config": {
