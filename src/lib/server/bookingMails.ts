@@ -41,8 +41,24 @@ export type ConfirmationInput = {
 	style?: TextStyle;
 };
 
+/** Reminder before the appointment: same text as the confirmation, other subject + intro */
+export type ReminderInput = Omit<
+	ConfirmationInput,
+	'customSubject' | 'customBody' | 'customerTimezone' | 'convertedTime'
+>;
+
 /** Confirmation to the customer (with .ics attachment) */
 export function confirmationMail(c: ConfirmationInput): Mail {
+	return appointmentMail(c, 'confirmation');
+}
+
+/** Reminder X hours before the appointment (setting «Erinnerung: Stunden vor Termin») */
+export function reminderMail(c: ReminderInput): Mail {
+	return appointmentMail({ ...c, customSubject: null, customBody: null }, 'reminder');
+}
+
+function appointmentMail(c: ConfirmationInput, kind: 'confirmation' | 'reminder'): Mail {
+	const reminder = kind === 'reminder';
 	const dateLabel = c.uhrzeit ? `${c.datumLabel}, ${c.uhrzeit} Uhr` : c.datumLabel;
 
 	const tokens: Record<string, string> = {
@@ -61,7 +77,7 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 
 	const subject = c.customSubject
 		? applyTokens(c.customSubject, tokens)
-		: `Terminbestätigung: ${c.titel}`;
+		: `${reminder ? 'Erinnerung' : 'Terminbestätigung'}: ${c.titel}`;
 
 	// .ics download works with every calendar app (no Google Calendar link)
 	const calendarLine = c.datumLabel ? `\nZum Kalender hinzufügen: ${c.icsLink}` : '';
@@ -74,7 +90,13 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 		[
 			greetingLine(c.style, c.name),
 			``,
-			duSie(c.style?.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
+			reminder
+				? duSie(
+						c.style?.du,
+						'Wir erinnern Sie an Ihren Termin.',
+						'Wir erinnern dich an deinen Termin.'
+					)
+				: duSie(c.style?.du, 'Ihr Termin', 'Dein Termin') + ' wurde erfolgreich gebucht.',
 			``,
 			`Angebot: ${c.titel}`,
 			`Datum: ${dateLabel}`,
@@ -105,15 +127,37 @@ export function confirmationMail(c: ConfirmationInput): Mail {
 		textToMailHtml(bodyText + (customerTzLine ? `\n${customerTzLine}` : ''), c.theme) +
 			`<p style="margin:20px 0 0;">${
 				calendarLine ? mailButton(c.icsLink, 'Zum Kalender hinzufügen', c.theme) : ''
-			}${mailButton(c.stornoLink, 'Buchung stornieren', c.theme)}</p>`,
+			}${c.stornoLink ? mailButton(c.stornoLink, 'Buchung stornieren', c.theme) : ''}</p>`,
 		c.theme,
 		{ subject }
 	);
 
 	return {
 		subject,
-		text: bodyText + customerTzLine + calendarLine + `\n\nStornieren: ${c.stornoLink}`,
+		text:
+			bodyText +
+			customerTzLine +
+			calendarLine +
+			(c.stornoLink ? `\n\nStornieren: ${c.stornoLink}` : ''),
 		html
+	};
+}
+
+/** Info to the operator that the reminder went out */
+export function reminderSentProviderMail(p: {
+	titel: string;
+	dateLabel: string;
+	name?: string;
+	email: string;
+	subject: string;
+}): Mail {
+	return {
+		subject: `✓ Termin-Erinnerung gesendet an ${p.email}`,
+		text: [
+			`Die Termin-Erinnerung für ${p.name || p.email} (${p.titel}, ${p.dateLabel}) wurde an ${p.email} gesendet.`,
+			``,
+			`Betreff: ${p.subject}`
+		].join('\n')
 	};
 }
 

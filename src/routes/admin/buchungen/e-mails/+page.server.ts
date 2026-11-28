@@ -15,7 +15,9 @@ import {
 	cancelFeeMail,
 	cancelProviderMail,
 	confirmationMail,
-	providerBookingMail
+	providerBookingMail,
+	reminderMail,
+	reminderSentProviderMail
 } from '$lib/server/bookingMails';
 import { SAMPLE_CUSTOMER as SAMPLE, type PreviewMail } from '$lib/server/mailText';
 
@@ -88,6 +90,28 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	const invoiceAfter = s.booking_invoice === true;
 	const sampleInvoice = 'INV-1700000000000';
 
+	const reminderHours = Number(s.booking_reminder_hours) > 0 ? Number(s.booking_reminder_hours) : 0;
+	const reminder = reminderMail({
+		titel,
+		datumLabel,
+		uhrzeit,
+		sessionLaenge,
+		name: SAMPLE.name,
+		companyName: (s.responsible_person_company as string) ?? '',
+		ortName,
+		ortAdresse,
+		ortWegbeschreibung,
+		ortTelefon,
+		ortKarte: ortName || ortAdresse ? 'https://www.openstreetmap.org/…' : '',
+		stornoFrist,
+		cancelFeePercent: feePercent,
+		offerPrice: price,
+		icsLink: `${url.origin}/api/termin-ics?id=…`,
+		stornoLink: cancelLink(url.origin, { terminId: '…', cancelToken: '…' }),
+		theme,
+		style
+	});
+
 	const mails: PreviewMail[] = [
 		{
 			id: 'bestaetigung',
@@ -119,6 +143,28 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 				stornoLink: cancelLink(url.origin, { terminId: '…', cancelToken: '…' }),
 				theme,
 				style
+			})
+		},
+		{
+			id: 'erinnerung',
+			label: 'Termin-Erinnerung',
+			when: 'Vor dem Termin, so viele Stunden wie unter «Erinnerung: Stunden vor Termin» eingestellt (Einstellungen › Terminbuchung).',
+			to: SAMPLE.email,
+			active: reminderHours > 0,
+			...reminder
+		},
+		{
+			id: 'erinnerung-intern',
+			label: 'Erinnerung gesendet (an Sie)',
+			when: 'Nach jeder versendeten Termin-Erinnerung.',
+			to: notifyTo,
+			active: reminderHours > 0,
+			...reminderSentProviderMail({
+				titel,
+				dateLabel,
+				name: SAMPLE.name,
+				email: SAMPLE.email,
+				subject: reminder.subject
 			})
 		},
 		{

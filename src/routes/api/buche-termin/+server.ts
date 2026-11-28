@@ -4,12 +4,7 @@ import { cancelDeadline, cancelLink, formatDeadline } from '$lib/server/bookingC
 import { createClient } from '$lib/prismicio';
 import { env } from '$env/dynamic/private';
 import { formatDateWithWeekday, SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
-import {
-	osmMarkerUrl,
-	osmSearchUrl,
-	parseMapPoint,
-	resolveGoogleShortLink
-} from '$lib/mapPoint.js';
+import { loadOfferLocation } from '$lib/server/bookingLocation';
 import { expandArbeitstag } from '$lib/server/terminSlots';
 import { invalidateTermineCache } from '$lib/server/termineCache';
 import { getMailFrom } from '$lib/server/mailFrom';
@@ -234,30 +229,11 @@ export const POST: RequestHandler = async ({ request, fetch, cookies }) => {
 			positive(od.cancel_free_hours) ?? positive(settingsData.booking_cancel_free_hours);
 		cancelFeePercent =
 			positive(od.cancel_fee_percent) ?? positive(settingsData.booking_cancel_fee_percent);
-		const ortLink = (offerDoc?.data as any)?.ort;
-		if (ortLink?.uid) {
-			try {
-				const ortDoc = await dynamicClient.getByUID('ort', ortLink.uid);
-				const o = ortDoc.data as any;
-				// Inactive location («Aktiv» off) → no location details
-				if (o.aktiv !== false) {
-					const lines = (blocks: unknown) =>
-						Array.isArray(blocks) ? blocks.map((b: any) => b?.text ?? '').filter(Boolean) : [];
-					ortName = o.name ?? '';
-					ortAdresse = lines(o.adresse).join(', ');
-					ortWegbeschreibung = lines(o.wegbeschreibung).join('\n');
-					ortTelefon = (o.telefon ?? '').trim();
-					// Map link: exact «Kartenpunkt» of the location, otherwise search for the address
-					const punkt =
-						parseMapPoint(o.geo_koordinaten) ??
-						(await resolveGoogleShortLink(o.geo_koordinaten ?? '', fetch)).point;
-					const suche = [ortName, ortAdresse].filter(Boolean).join(', ');
-					ortKarte = punkt ? osmMarkerUrl(punkt) : suche ? osmSearchUrl(suche) : '';
-				}
-			} catch {
-				/* Ort nicht erreichbar */
-			}
-		}
+		({ ortName, ortAdresse, ortWegbeschreibung, ortTelefon, ortKarte } = await loadOfferLocation(
+			dynamicClient,
+			offerDoc,
+			fetch
+		));
 	} catch {
 		return new Response(JSON.stringify({ error: 'Termin nicht gefunden' }), { status: 404 });
 	}

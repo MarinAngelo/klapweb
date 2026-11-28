@@ -125,7 +125,7 @@
 		"id": "terminbuchung",
 		"title": "Terminbuchung einrichten",
 		"feature": "terminbuchung",
-		"stand": "2026-11-26",
+		"stand": "2026-11-28",
 		"sources": [
 			"customtypes/_features/terminbuchung",
 			"src/lib/server/bookings.ts",
@@ -135,6 +135,7 @@
 			"src/lib/server/bookingCancel.ts",
 			"src/lib/server/bookingInvoices.ts",
 			"src/lib/server/bookingMails.ts",
+			"src/lib/server/bookingReminders.ts",
 			"src/routes/termin-stornieren",
 			"src/lib/slices/Kacheln/AngebotKacheln.svelte"
 		]
