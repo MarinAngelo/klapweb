@@ -155,6 +155,17 @@
 		onFilterChange();
 	}
 	$: someFreeSelected = selectedFreeSlots.length > 0;
+
+	// «Termin hinzufügen»: single free appointment without Prismic
+	let showAddSlot = false;
+	$: if (form?.addError) showAddSlot = true;
+	const todayIso = new Date().toISOString().slice(0, 10);
+
+	function confirmRemove(e: SubmitEvent, titel: string) {
+		if (!confirm($_('Freien Termin «{titel}» entfernen?').replace('{titel}', titel))) return;
+		actionLoading = true;
+		(e.currentTarget as HTMLFormElement).submit();
+	}
 </script>
 
 <svelte:head><title>Buchungen</title></svelte:head>
@@ -252,6 +263,91 @@
 					: data.freeSlots.length})</span
 			>
 		</h2>
+		<div class="mb-4">
+			<button
+				type="button"
+				class="admin-btn admin-btn-sm"
+				class:admin-btn-toggle-on={showAddSlot}
+				on:click={() => (showAddSlot = !showAddSlot)}>+ {$_('Termin hinzufügen')}</button
+			>
+			{#if form?.added}
+				<span class="admin-muted ml-2 text-xs">{$_('Termin hinzugefügt.')}</span>
+			{/if}
+		</div>
+		{#if form?.addError}
+			<p class="admin-notice admin-notice-error">{$_(form.addError)}</p>
+		{/if}
+		{#if showAddSlot}
+			<form
+				method="POST"
+				action="?/addSlot"
+				class="admin-notice mb-4"
+				on:submit={() => (actionLoading = true)}
+			>
+				<p class="admin-hint mb-3">
+					{$_(
+						'Einzelner freier Termin ohne Arbeitstag in Prismic. Pro gewähltem Angebot entsteht ein buchbarer Termin zur Startzeit; die Dauer kommt aus dem Angebot.'
+					)}
+				</p>
+				<div class="flex flex-wrap items-end gap-3">
+					<div>
+						<label class="admin-label" for="add-datum">{$_('Datum')} *</label>
+						<input
+							id="add-datum"
+							name="datum"
+							type="date"
+							min={todayIso}
+							required
+							class="admin-input admin-input-sm"
+						/>
+					</div>
+					<div>
+						<label class="admin-label" for="add-startzeit">{$_('Startzeit')} *</label>
+						<input
+							id="add-startzeit"
+							name="startzeit"
+							type="time"
+							step="300"
+							required
+							class="admin-input admin-input-sm"
+						/>
+					</div>
+				</div>
+				<fieldset class="mt-3">
+					<legend class="admin-label">{$_('Angebote')} *</legend>
+					{#if data.bookableOffers.length === 0}
+						<p class="admin-hint">
+							{$_('Kein aktives Angebot mit Dauer – zuerst in Prismic ein «Angebot» erfassen.')}
+						</p>
+					{:else}
+						<div class="flex flex-wrap gap-x-4 gap-y-1">
+							{#each data.bookableOffers as offer, i}
+								<label class="flex items-center gap-2 text-sm">
+									<input
+										type="checkbox"
+										name="angebot"
+										value={offer.uid}
+										class="admin-checkbox"
+										checked={data.bookableOffers.length === 1 && i === 0}
+									/>
+									{offer.titel} <span class="admin-muted">({offer.dauer} min)</span>
+								</label>
+							{/each}
+						</div>
+					{/if}
+				</fieldset>
+				<div class="mt-4 flex gap-3">
+					<button type="submit" class="admin-btn admin-btn-primary admin-btn-sm"
+						>{$_('Hinzufügen')}</button
+					>
+					<button
+						type="button"
+						class="admin-btn admin-btn-sm"
+						on:click={() => (showAddSlot = false)}>{$_('Abbrechen')}</button
+					>
+				</div>
+			</form>
+		{/if}
 		{#if data.freeSlots.length === 0}
 			<p class="admin-empty">Keine freien Termine.</p>
 			{#if data.freeSlotHints.length}
@@ -385,6 +481,20 @@
 											<input type="hidden" name="id" value={s.id} />
 											<button type="submit" class="admin-link-warn text-xs">Sperren</button>
 										</form>
+										{#if s.adminSlotId}
+											·
+											<form
+												method="POST"
+												action="?/deleteSlot"
+												class="inline"
+												on:submit|preventDefault={(e) => confirmRemove(e, s.titel)}
+											>
+												<input type="hidden" name="adminSlotId" value={s.adminSlotId} />
+												<button type="submit" class="admin-link-danger text-xs"
+													>{$_('Entfernen')}</button
+												>
+											</form>
+										{/if}
 									</td>
 									<td class="nowrap">{formatDateWithWeekday(s.datum, null)}</td>
 									<td class="nowrap">{fmtTimeRange(s.uhrzeit, s.endzeit)}</td>

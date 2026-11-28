@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { createClient } from '$lib/prismicio';
 import { listBookings, listCancelled } from '$lib/server/bookings';
 import { expandArbeitstag } from '$lib/server/terminSlots';
+import { loadAllWorkdays } from '$lib/server/adminSlots';
 import { getCachedTermine, setCachedTermine } from '$lib/server/termineCache';
 import { SITE_TIME_ZONE, zonedTimeToUtc } from '$lib/utils/formatDate';
 
@@ -24,13 +25,11 @@ export const GET: RequestHandler = async () => {
 	try {
 		const client = createClient();
 		const dynamicClient = client as any;
-		const [workdays, offers] = await Promise.all([
-			dynamicClient.getAllByType('arbeitstag').catch(() => []),
-			dynamicClient.getAllByType('angebot').catch(() => [])
-		]);
+		// Prismic working days + single appointments from the admin
+		const { workdays, offers } = await loadAllWorkdays(dynamicClient);
 		const today = new Date().toISOString().slice(0, 10);
 
-		const allSlots = workdays.flatMap((doc) => expandArbeitstag(doc, offers, today));
+		const allSlots = workdays.flatMap((doc: any) => expandArbeitstag(doc, offers, today));
 
 		// Buchungen und Sperrungen einmalig laden statt pro Slot einzeln
 		let bookedIds = new Set<string>();

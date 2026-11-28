@@ -46,15 +46,13 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	try {
 		const client = createClient({ fetch });
 		const dynamicClient = client as any;
-		const [workdays, offers] = await Promise.all([
-			dynamicClient.getAllByType('arbeitstag').catch(() => []),
-			dynamicClient.getAllByType('angebot').catch(() => [])
-		]);
+		const { loadAllWorkdays } = await import('$lib/server/adminSlots');
+		const { workdays, offers } = await loadAllWorkdays(dynamicClient);
 
 		const today = new Date().toISOString().slice(0, 10);
 		const { expandArbeitstag } = await import('$lib/server/terminSlots');
 		const slot = workdays
-			.flatMap((doc) => expandArbeitstag(doc, offers, today))
+			.flatMap((doc: any) => expandArbeitstag(doc, offers, today))
 			.find((item) => item.id === id);
 
 		if (!slot) return new Response('Termin nicht gefunden', { status: 404 });
