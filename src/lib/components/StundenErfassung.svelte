@@ -36,6 +36,17 @@
 		von && bis ? Math.round((Date.parse(`${bis}:00Z`) - Date.parse(`${von}:00Z`)) / 60000) : 0;
 	$: durationLabel =
 		minutes > 0 ? `${Math.floor(minutes / 60)} ${$_('Std.')} ${minutes % 60} ${$_('Min.')}` : '';
+	/** Decimal hours «2.50» (as in the CSV / Assistenz) */
+	$: decimalHours = (minutes / 60).toFixed(2);
+	/** Both fields filled, but not a valid duration (same limits as the server) */
+	$: durationError =
+		von && bis
+			? minutes <= 0
+				? '«Bis» muss nach «Von» liegen.'
+				: minutes > 24 * 60
+					? 'Ein Eintrag darf höchstens 24 Stunden dauern.'
+					: ''
+			: '';
 
 	// «Bis» starts on the same day as «Von» (saves typing the date twice)
 	function onVonChange() {
@@ -127,8 +138,14 @@
 					/>
 				</div>
 			</div>
-			{#if durationLabel}
-				<p class="text-muted m-0 text-sm">{$_('Dauer')}: {durationLabel}</p>
+			<!-- Calculated hours as soon as both fields are filled -->
+			{#if durationError}
+				<p role="alert" class="m-0 text-sm text-red-600">{$_(durationError)}</p>
+			{:else if durationLabel}
+				<p class="panel-tinted m-0 rounded-md px-4 py-3" aria-live="polite">
+					{$_('Berechnete Stunden')}: <strong>{durationLabel}</strong>
+					<span class="text-muted">({decimalHours} {$_('Std.')})</span>
+				</p>
 			{/if}
 
 			<div class="md:max-w-xs">
